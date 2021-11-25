@@ -1192,7 +1192,7 @@ public class Board implements Serializable, IBoard {
                     if (Terrains.AUTOMATIC.contains(terrType)) {
                         continue;
                     }
-                    ITerrain terrain = hex.getTerrain(terrType);
+                    Terrain terrain = hex.getTerrain(terrType);
                     if (terrain != null) {
                         if (!firstTerrain) {
                             hexBuff.append(";");

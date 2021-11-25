@@ -372,7 +372,7 @@ public class CityBuilder {
     private void connectHexes(Coords src, Coords dest, int roadStyle) {
         if (board.contains(src)) {
             IHex hex = board.getHex(src);
-            ITerrain t = hex.getTerrain(Terrains.ROAD);
+            Terrain t = hex.getTerrain(Terrains.ROAD);
             if (t == null) {
                 t = hex.getTerrain(Terrains.BRIDGE);
             }

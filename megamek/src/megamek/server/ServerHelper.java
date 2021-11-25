@@ -417,7 +417,7 @@ public class ServerHelper {
             
             if (!entityOnTopOfBridge) {
                 // *Only* use this if there actually is water in the hex, otherwise
-                // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
+                // we get Terrain.LEVEL_NONE, i.e. Integer.minValue...
                 waterDepth = fallHex.terrainLevel(Terrains.WATER);
                 entity.setElevation(-waterDepth);
             }

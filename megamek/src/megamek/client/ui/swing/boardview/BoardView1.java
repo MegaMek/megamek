@@ -121,7 +121,7 @@ import megamek.common.IBoard;
 import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
-import megamek.common.ITerrain;
+import megamek.common.Terrain;
 import megamek.common.Infantry;
 import megamek.common.KeyBindParser;
 import megamek.common.LosEffects;
@@ -2486,7 +2486,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int level = hex.getLevel();
         int depth = hex.depth(false);
 
-        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
+        Terrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
         if (basement != null) {
             depth = 0;
         }

@@ -33,7 +33,7 @@ public class Hex implements IHex, Serializable {
      * types that the old <code>terrains</code> did, however it allows an
      * efficient way to access all present terrains.
      */
-    private HashMap<Integer, ITerrain> terrains = new HashMap<>(1);
+    private HashMap<Integer, Terrain> terrains = new HashMap<>(1);
     private String theme;
     private String originalTheme;
     private int fireTurn;
@@ -46,18 +46,18 @@ public class Hex implements IHex, Serializable {
 
     /** Constructs clean, plain hex at specified level. */
     public Hex(int level) {
-        this(level, new ITerrain[Terrains.SIZE], null, new Coords(0, 0));
+        this(level, new Terrain[Terrains.SIZE], null, new Coords(0, 0));
     }
 
-    public Hex(int level, ITerrain[] terrains, String theme) {
+    public Hex(int level, Terrain[] terrains, String theme) {
         this(level, terrains, theme, new Coords(0, 0));
     }
 
     /** Constructs hex with all parameters. */
-    public Hex(int level, ITerrain[] terrains, String theme, Coords c) {
+    public Hex(int level, Terrain[] terrains, String theme, Coords c) {
         this.level = level;
         coords = c;
-        for (ITerrain t : terrains) {
+        for (Terrain t : terrains) {
             if (t != null)
                 this.terrains.put(t.getType(), t);
         }
@@ -76,7 +76,7 @@ public class Hex implements IHex, Serializable {
 
     /** Constructs hex with string terrain info */
     public Hex(int level, String terrain, String theme, Coords c) {
-        this(level, new ITerrain[Terrains.SIZE], theme, c);
+        this(level, new Terrain[Terrains.SIZE], theme, c);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
             addTerrain(new Terrain(st.nextToken()));
         }
@@ -144,7 +144,7 @@ public class Hex implements IHex, Serializable {
      */
     public void clearExits() {
         for (Integer i : terrains.keySet()) {
-            ITerrain t = terrains.get(i);
+            Terrain t = terrains.get(i);
             if ((t != null) && !t.hasExitsSpecified()) {
                 t.setExits(0);
             }
@@ -167,8 +167,8 @@ public class Hex implements IHex, Serializable {
      */
     public void setExits(IHex other, int direction, boolean roadsAutoExit) {
         for (Integer i : terrains.keySet()) {
-            ITerrain cTerr = getTerrain(i);
-            ITerrain oTerr;
+            Terrain cTerr = getTerrain(i);
+            Terrain oTerr;
 
             if ((cTerr == null) || cTerr.hasExitsSpecified()) {
                 continue;
@@ -217,7 +217,7 @@ public class Hex implements IHex, Serializable {
      */
     public boolean containsTerrainExit(int terrType, int direction) {
         boolean result = false;
-        final ITerrain terr = getTerrain(terrType);
+        final Terrain terr = getTerrain(terrType);
 
         // Do we have the given terrain that has exits?
         if ((direction >= 0) && (direction <= 5) && (terr != null)) {
@@ -317,8 +317,8 @@ public class Hex implements IHex, Serializable {
      */
     public int depth(boolean hidden) {
         int depth = 0;
-        ITerrain water = getTerrain(Terrains.WATER);
-        ITerrain basement = getTerrain(Terrains.BLDG_BASEMENT_TYPE);
+        Terrain water = getTerrain(Terrains.WATER);
+        Terrain basement = getTerrain(Terrains.BLDG_BASEMENT_TYPE);
 
         if (water != null) {
             depth += water.getLevel();
@@ -390,7 +390,7 @@ public class Hex implements IHex, Serializable {
      */
     @Override
     public boolean containsTerrain(int type, int level) {
-        ITerrain terrain = getTerrain(type);
+        Terrain terrain = getTerrain(type);
         if (terrain != null) {
             return terrain.getLevel() == level;
         }
@@ -414,11 +414,11 @@ public class Hex implements IHex, Serializable {
      */
     @Override
     public int terrainLevel(int type) {
-        ITerrain terrain = getTerrain(type);
+        Terrain terrain = getTerrain(type);
         if (terrain != null) {
             return terrain.getLevel();
         }
-        return ITerrain.LEVEL_NONE;
+        return Terrain.LEVEL_NONE;
     }
 
     /*
@@ -427,12 +427,12 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#getTerrain(int)
      */
     @Override
-    public ITerrain getTerrain(int type) {
+    public Terrain getTerrain(int type) {
         return terrains.get(type);
     }
     
     @Override
-    public ITerrain getAnyTerrainOf(int type, int... types) {
+    public Terrain getAnyTerrainOf(int type, int... types) {
         if (containsTerrain(type)) {
             return terrains.get(type);
         }
@@ -449,7 +449,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#addTerrain(megamek.common.Terrain)
      */
-    public void addTerrain(ITerrain terrain) {
+    public void addTerrain(Terrain terrain) {
         terrains.put(terrain.getType(), terrain);
     }
 
@@ -504,7 +504,7 @@ public class Hex implements IHex, Serializable {
      */
     @Override
     public IHex duplicate() {
-        ITerrain[] tcopy = new ITerrain[Terrains.SIZE];
+        Terrain[] tcopy = new Terrain[Terrains.SIZE];
         for (Integer i : terrains.keySet()) {
             tcopy[i] = new Terrain(terrains.get(i));
         }
@@ -521,7 +521,7 @@ public class Hex implements IHex, Serializable {
     @Override
     public int movementCost(Entity entity) {
         int rv = 0;
-        for (ITerrain terrain : terrains.values()) {
+        for (Terrain terrain : terrains.values()) {
             rv += terrain.movementCost(entity);
         }
         return rv;
@@ -532,7 +532,7 @@ public class Hex implements IHex, Serializable {
         String temp;
         temp = "Level: " + getLevel();
         temp = temp + "  Features: ";
-        for (ITerrain terrain : terrains.values()) {
+        for (Terrain terrain : terrains.values()) {
             if (terrain != null) {
                 switch (terrain.getType()) {
                     case Terrains.WOODS:
@@ -580,7 +580,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getIgnitionModifier() {
         int mod = 0;
-        for (ITerrain terrain : terrains.values()) {
+        for (Terrain terrain : terrains.values()) {
             if (terrain != null) {
                 mod += terrain.ignitionModifier();
             }
@@ -632,7 +632,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
-        for (ITerrain terrain : terrains.values()) {
+        for (Terrain terrain : terrains.values()) {
             if ((terrain != null) && (mod < terrain.getBogDownModifier(moveMode, largeVee))) {
                 mod = terrain.getBogDownModifier(moveMode, largeVee);
             }
@@ -644,7 +644,7 @@ public class Hex implements IHex, Serializable {
      * get any modifiers to a an unstuck roll in this hex.
      */
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
-        for (ITerrain terrain : terrains.values()) {
+        for (Terrain terrain : terrains.values()) {
             terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
@@ -700,7 +700,7 @@ public class Hex implements IHex, Serializable {
         }
         
         // Check individual terrains for validity
-        for (ITerrain terrain : terrains.values()) {
+        for (Terrain terrain : terrains.values()) {
             if (terrain == null) {
                 valid = false;
                 errBuff.append("Hex contains a null terrain!\n");

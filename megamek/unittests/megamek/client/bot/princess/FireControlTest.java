@@ -31,7 +31,7 @@ import megamek.common.EquipmentType;
 import megamek.common.IBoard;
 import megamek.common.Game;
 import megamek.common.IHex;
-import megamek.common.ITerrain;
+import megamek.common.Terrain;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
@@ -965,8 +965,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)))
                .thenReturn(false);
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
-        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
         Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
         ToHitData expected = new ToHitData();
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
@@ -1175,7 +1175,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in heavy woods.
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(2);
@@ -1187,7 +1187,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in super heavy woods.
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(3);
@@ -1199,7 +1199,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in jungle.
         Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(2);
@@ -1211,7 +1211,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
 
         // Give the shooter the anti-air quirk but fire on a ground target.
         Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(true);

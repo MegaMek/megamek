@@ -439,7 +439,7 @@ public class BoardUtilities {
                 field.removeAllTerrains();
             }
             int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            ITerrain tempTerrain = new Terrain(terrainType, tempInt);
+            Terrain tempTerrain = new Terrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
             if (terrainType == Terrains.WOODS) {
                 field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
@@ -514,7 +514,7 @@ public class BoardUtilities {
                 field.removeAllTerrains();
             }
             int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            ITerrain tempTerrain = new Terrain(terrainType, tempInt);
+            Terrain tempTerrain = new Terrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
             field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 1));
             unUsed.remove(field);
@@ -888,7 +888,7 @@ public class BoardUtilities {
         for (n = 0; n < hexSet.length; n++) {
             field = hexSet[n];
             level = field.terrainLevel(Terrains.WOODS);
-            if (level != ITerrain.LEVEL_NONE) {
+            if (level != Terrain.LEVEL_NONE) {
                 severity = Compute.randomInt(5) - 2 + modifier;
                 newlevel = level - severity;
 
@@ -932,7 +932,7 @@ public class BoardUtilities {
                 }
             }
             level = field.terrainLevel(Terrains.WATER);
-            if (level != ITerrain.LEVEL_NONE) {
+            if (level != Terrain.LEVEL_NONE) {
                 newlevel = level - severity;
                 field.removeTerrain(Terrains.WATER);
                 if (newlevel == 0) {
@@ -1292,7 +1292,7 @@ public class BoardUtilities {
         int newX;
         int newY;
         IHex tempHex;
-        ITerrain terr;
+        Terrain terr;
         for (int oldX = 0; oldX < stopX; oldX++) {
             // Calculate the new X position of the flipped hex.
             if (horiz) {

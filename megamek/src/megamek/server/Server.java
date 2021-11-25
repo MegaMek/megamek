@@ -14894,10 +14894,10 @@ public class Server implements Runnable {
         if (h == null) {
             return vPhaseReport;
         }
-        ITerrain woods = h.getTerrain(Terrains.WOODS);
-        ITerrain jungle = h.getTerrain(Terrains.JUNGLE);
-        ITerrain ice = h.getTerrain(Terrains.ICE);
-        ITerrain magma = h.getTerrain(Terrains.MAGMA);
+        Terrain woods = h.getTerrain(Terrains.WOODS);
+        Terrain jungle = h.getTerrain(Terrains.JUNGLE);
+        Terrain ice = h.getTerrain(Terrains.ICE);
+        Terrain magma = h.getTerrain(Terrains.MAGMA);
         Report r;
         int reportType = Report.HIDDEN;
         if (entityId == Entity.NONE) {
@@ -28176,7 +28176,7 @@ public class Server implements Runnable {
         int waterDepth = 0;
         if (fallHex.containsTerrain(Terrains.WATER)) {
             // *Only* use this if there actually is water in the hex, otherwise
-            // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
+            // we get Terrain.LEVEL_NONE, i.e. Integer.minValue...
             waterDepth = fallHex.terrainLevel(Terrains.WATER);
         }
         boolean fallOntoBridge = false;
@@ -31966,7 +31966,7 @@ public class Server implements Runnable {
             final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             int numLoads = numFloors;
-            if (bridgeEl != ITerrain.LEVEL_NONE) {
+            if (bridgeEl != Terrain.LEVEL_NONE) {
                 numLoads++;
             }
             if (numLoads < 1) {

@@ -127,13 +127,13 @@ public class BoardEditor extends JPanel
      */
     private static class TerrainTypeHelper implements Comparable<TerrainTypeHelper> {
 
-        ITerrain terrain;
+        Terrain terrain;
 
-        TerrainTypeHelper(ITerrain terrain) {
+        TerrainTypeHelper(Terrain terrain) {
             this.terrain = terrain;
         }
 
-        public ITerrain getTerrain() {
+        public Terrain getTerrain() {
             return terrain;
         }
 
@@ -743,7 +743,7 @@ public class BoardEditor extends JPanel
                 int newLevel = Math.max(1, Math.min(4, oldLevel + wheelDir)); // keep between 1 and 4
 
                 if (newLevel != oldLevel) {
-                    ITerrain curTerr = curHex.getTerrain(Terrains.BUILDING);
+                    Terrain curTerr = curHex.getTerrain(Terrains.BUILDING);
                     curHex.addTerrain(new Terrain(Terrains.BUILDING, 
                             newLevel, curTerr.hasExitsSpecified(), curTerr.getExits()));
 
@@ -783,7 +783,7 @@ public class BoardEditor extends JPanel
                 newLevel = Math.max(10, oldLevel + wheelDir*10);
                 curHex.addTerrain(new Terrain(terrainType, newLevel));
             } else if (e.isControlDown()) {
-                ITerrain terrain = curHex.getTerrain(Terrains.BRIDGE);
+                Terrain terrain = curHex.getTerrain(Terrains.BRIDGE);
                 boolean hasExits = terrain.hasExitsSpecified();
                 int exits = terrain.getExits();
                 newLevel = Math.max(1, terrain.getLevel() + wheelDir);
@@ -1170,7 +1170,7 @@ public class BoardEditor extends JPanel
         int[] terrainTypes = curHex.getTerrainTypes();
         List<TerrainTypeHelper> types = new ArrayList<>();
         for (int terrainType : terrainTypes) {
-            ITerrain terrain = curHex.getTerrain(terrainType);
+            Terrain terrain = curHex.getTerrain(terrainType);
             if ((terrain != null) && !Terrains.AUTOMATIC.contains(terrainType)) {
                 TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
                 types.add(tth);
@@ -1191,7 +1191,7 @@ public class BoardEditor extends JPanel
      * Returns a new instance of the terrain that is currently entered in the
      * terrain input fields
      */
-    private ITerrain enteredTerrain() {
+    private Terrain enteredTerrain() {
         int type = ((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).getTerrainType();
         int level = texTerrainLevel.getNumber();  
         // For the terrain subtypes that only add to a main terrain type exits make no
@@ -1214,7 +1214,7 @@ public class BoardEditor extends JPanel
      * Add or set the terrain to the list based on the fields.
      */
     private void addSetTerrain() {
-        ITerrain toAdd = enteredTerrain();
+        Terrain toAdd = enteredTerrain();
         if (((toAdd.getType() == Terrains.BLDG_ELEV) || (toAdd.getType() == Terrains.BRIDGE_ELEV))
                 && (toAdd.getLevel() < 0)) {
             texTerrainLevel.setNumber(0);
@@ -1237,12 +1237,12 @@ public class BoardEditor extends JPanel
     private void addSetTerrainEasy(int type, int level) {
         boolean exitsSpecified = false;
         int exits = 0;
-        ITerrain present = curHex.getTerrain(type);
+        Terrain present = curHex.getTerrain(type);
         if (present != null) {
             exitsSpecified = present.hasExitsSpecified();
             exits = present.getExits();
         }
-        ITerrain toAdd = new Terrain(type, level, exitsSpecified, exits);
+        Terrain toAdd = new Terrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
         refreshTerrainList();
         repaintWorkingHex();
@@ -1311,7 +1311,7 @@ public class BoardEditor extends JPanel
 
         // When clicked with ALT, only toggle the exits
         if (ALT_Held) {
-            ITerrain curTerr = curHex.getTerrain(Terrains.BUILDING);
+            Terrain curTerr = curHex.getTerrain(Terrains.BUILDING);
             curHex.addTerrain(new Terrain(Terrains.BUILDING, 
                     curTerr.getLevel(), !curTerr.hasExitsSpecified(), curTerr.getExits()));
         }
@@ -1330,7 +1330,7 @@ public class BoardEditor extends JPanel
             butDelTerrain.setEnabled(false);
         } else {
             butDelTerrain.setEnabled(true);
-            ITerrain terrain = new Terrain(lisTerrain.getSelectedValue().getTerrain());
+            Terrain terrain = new Terrain(lisTerrain.getSelectedValue().getTerrain());
             terrain = curHex.getTerrain(terrain.getType());
             TerrainHelper terrainHelper = new TerrainHelper(terrain.getType());
             terrListBlocker = true;
@@ -1794,7 +1794,7 @@ public class BoardEditor extends JPanel
             correctExits();
             validateBoard(true);
         } else if (ae.getSource().equals(butDelTerrain) && !lisTerrain.isSelectionEmpty()) {
-            ITerrain toRemove = new Terrain(lisTerrain.getSelectedValue().getTerrain());
+            Terrain toRemove = new Terrain(lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
@@ -2160,7 +2160,7 @@ public class BoardEditor extends JPanel
         endCurrentUndoSet();
     }
 
-    private void setConvenientTerrain(ActionEvent event, ITerrain... terrains) {
+    private void setConvenientTerrain(ActionEvent event, Terrain... terrains) {
         if (terrains.length == 0) {
             return;
         }
@@ -2177,9 +2177,9 @@ public class BoardEditor extends JPanel
     }
     
     /** Selects the given terrain in the terrain list, if possible. All but terrain type is ignored. */
-    private void selectTerrain(ITerrain terrain) {
+    private void selectTerrain(Terrain terrain) {
         for (int i = 0; i < lisTerrain.getModel().getSize(); i++) {
-            ITerrain listEntry = lisTerrain.getModel().getElementAt(i).getTerrain();
+            Terrain listEntry = lisTerrain.getModel().getElementAt(i).getTerrain();
             if (listEntry.getType() == terrain.getType()) {
                 lisTerrain.setSelectedIndex(i);
                 return;

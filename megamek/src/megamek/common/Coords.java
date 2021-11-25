@@ -464,6 +464,20 @@ public class Coords implements Serializable {
     }
     
     /**
+     * Returns a list of all coordinates at the given distance dist 
+     * and anything less than dist as well.
+     */
+    public ArrayList<Coords> allAtDistanceOrLess(int dist) {
+        ArrayList<Coords> retval = new ArrayList<>();
+        
+        for (int radius = 0; radius < dist; radius++) {
+            retval.addAll(allAtDistance(radius));
+        }
+        
+        return retval;
+    }
+    
+    /**
      * Returns a list of all coordinates at the given distance dist, 
      * regardless of whether they're on the board or not. Returns an 
      * empty Set for dist < 0 and the calling Coords itself for dist == 0.

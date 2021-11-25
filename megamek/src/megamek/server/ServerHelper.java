@@ -18,7 +18,11 @@
  */
 package megamek.server;
 
+import java.time.Clock;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
@@ -546,7 +550,7 @@ public class ServerHelper {
             return false;
         }
        
-        int probeRange = detector.getBAPRange();
+        int probeRange = 100;//detector.getBAPRange();
         
         // if no probe, save ourselves a few loops
         if (probeRange <= 0) {
@@ -555,7 +559,7 @@ public class ServerHelper {
                 
         // Get all hidden units in probe range
         List<Entity> hiddenUnits = new ArrayList<>();
-        for (Coords coords : detectorCoords.allAtDistance(probeRange)) {
+        for (Coords coords : detectorCoords.allAtDistanceOrLess(probeRange)) {
             for (Entity entity : game.getEntitiesVector(coords, true)) {
                 if (entity.isHidden() && entity.isEnemyOf(detector)) {
                     hiddenUnits.add(entity);

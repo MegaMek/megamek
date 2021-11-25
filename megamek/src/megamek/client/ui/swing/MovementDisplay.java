@@ -1956,6 +1956,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 return;
             }
             butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
+            butDone.setEnabled(clientgui.getClient().isMyTurn());
             updateProneButtons();
             updateRACButton();
             updateSearchlightButton();

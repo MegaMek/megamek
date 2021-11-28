@@ -75,7 +75,6 @@ public class SmokeCloud implements Serializable {
             default:
                 smokeLevel = SMOKE_NONE;
                 break;
-
         }
     }
     

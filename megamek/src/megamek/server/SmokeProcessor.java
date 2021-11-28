@@ -107,7 +107,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
         removeEmptyClouds();
         //Create new Smoke Clouds.
         for (SmokeCloud cloud : server.getSmokeCloudList()) {
-            if ((cloud.getCoordsList().size() > 0) && (cloud.getSmokeLevel() > 0)) {
+            if (!cloud.getCoordsList().isEmpty() && (cloud.getSmokeLevel() > 0)) {
                 createSmokeTerrain(cloud);
             }
         }

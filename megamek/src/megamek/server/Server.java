@@ -9883,7 +9883,7 @@ public class Server implements Runnable {
      */
     private void checkForTakeoffDamage(IAero a) {
         boolean unsecured = false;
-        for (Entity loaded : ((Entity)a).getLoadedUnits()) {
+        for (Entity loaded : ((Entity) a).getLoadedUnits()) {
             if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
                 unsecured = true;
                 // uh-oh, you forgot your seat belt
@@ -9903,9 +9903,9 @@ public class Server implements Runnable {
         }
         if (unsecured) {
             // roll hit location to get a new critical
-            HitData hit = ((Entity)a).rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
-            addReport(applyCriticalHit((Entity)a, hit.getLocation(), new CriticalSlot(
-                    0, ((Aero)a).getPotCrit()), true, 1, false));
+            HitData hit = ((Entity) a).rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
+            addReport(applyCriticalHit((Entity) a, hit.getLocation(), new CriticalSlot(
+                    0, ((Aero) a).getPotCrit()), true, 1, false));
         }
 
     }
@@ -14912,8 +14912,8 @@ public class Server implements Runnable {
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
-                h.removeTerrain(Terrains.WOODS);h.addTerrain(new Terrain(
-                        Terrains.WOODS, 2));
+                h.removeTerrain(Terrains.WOODS);
+                h.addTerrain(new Terrain(Terrains.WOODS, 2));
                 if (folEl != 1) {
                     h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
@@ -14982,8 +14982,7 @@ public class Server implements Runnable {
                 r.subject = entityId;
                 vPhaseReport.add(r);
                 h.removeTerrain(Terrains.MAGMA);
-                h.addTerrain(new Terrain(
-                        Terrains.MAGMA, 2));
+                h.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 for (Entity en : game.getEntitiesVector(c)) {
                     doMagmaDamage(en, false);
                 }
@@ -14993,7 +14992,7 @@ public class Server implements Runnable {
         }
         sendChangedHex(c);
 
-        // any attempt to clear an heavy industrial hex may cause an exposion
+        // any attempt to clear an heavy industrial hex may cause an explosion
         checkExplodeIndustrialZone(c, vPhaseReport);
 
         return vPhaseReport;
@@ -15007,8 +15006,7 @@ public class Server implements Runnable {
         addReport(new Report(4000, Report.PUBLIC));
 
         // add any pending charges
-        for (Enumeration<AttackAction> i = game.getCharges(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements(); ) {
             game.addAction(i.nextElement());
         }
         game.resetCharges();
@@ -34448,10 +34446,8 @@ public class Server implements Runnable {
             vDesc.addAll(resolveIceBroken(c));
         }
         // if we were not in water, then add mud
-        if (!hex.containsTerrain(Terrains.MUD)
-            && !hex.containsTerrain(Terrains.WATER)) {
-            hex.addTerrain(new Terrain(
-                    Terrains.MUD, 1));
+        if (!hex.containsTerrain(Terrains.MUD) && !hex.containsTerrain(Terrains.WATER)) {
+            hex.addTerrain(new Terrain(Terrains.MUD, 1));
             sendChangedHex(c);
         }
         return vDesc;
@@ -35296,8 +35292,7 @@ public class Server implements Runnable {
                     addReport(r);
                     // fortification complete - add to map
                     IHex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(new Terrain(
-                            Terrains.FORTIFIED, 1));
+                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
                     sendChangedHex(c);
                     // Clear the dig in for any units in same hex, since they
                     // get it for free by fort

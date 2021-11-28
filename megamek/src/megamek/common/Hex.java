@@ -57,7 +57,7 @@ public class Hex implements IHex, Serializable {
     public Hex(int level, Terrain[] terrains, String theme, Coords c) {
         this.level = level;
         coords = c;
-        for (Terrain t : terrains) {
+        for (final Terrain t : terrains) {
             if (t != null)
                 this.terrains.put(t.getType(), t);
         }
@@ -133,6 +133,7 @@ public class Hex implements IHex, Serializable {
     }
 
     /** Resets the theme to what was specified in the board file. */
+    @Override
     public void resetTheme() {
         setTheme(originalTheme);
     }
@@ -142,6 +143,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#clearExits()
      */
+    @Override
     public void clearExits() {
         for (Integer i : terrains.keySet()) {
             Terrain t = terrains.get(i);
@@ -521,7 +523,7 @@ public class Hex implements IHex, Serializable {
     @Override
     public int movementCost(Entity entity) {
         int rv = 0;
-        for (Terrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             rv += terrain.movementCost(entity);
         }
         return rv;
@@ -532,7 +534,7 @@ public class Hex implements IHex, Serializable {
         String temp;
         temp = "Level: " + getLevel();
         temp = temp + "  Features: ";
-        for (Terrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if (terrain != null) {
                 switch (terrain.getType()) {
                     case Terrains.WOODS:
@@ -580,7 +582,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getIgnitionModifier() {
         int mod = 0;
-        for (Terrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if (terrain != null) {
                 mod += terrain.ignitionModifier();
             }
@@ -599,7 +601,7 @@ public class Hex implements IHex, Serializable {
     }
 
     public boolean isClearForTakeoff() {
-        for (Integer i : terrains.keySet()) {
+        for (final Integer i : terrains.keySet()) {
             if (containsTerrain(i) && (i != Terrains.PAVEMENT) && (i != Terrains.ROAD) && (i != Terrains.FLUFF)
                     && (i != Terrains.ARMS) && (i != Terrains.LEGS) && (i != Terrains.SNOW) && (i != Terrains.MUD)
                     && (i != Terrains.SMOKE) && (i != Terrains.METAL_CONTENT)) {
@@ -632,7 +634,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
-        for (Terrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if ((terrain != null) && (mod < terrain.getBogDownModifier(moveMode, largeVee))) {
                 mod = terrain.getBogDownModifier(moveMode, largeVee);
             }
@@ -644,7 +646,7 @@ public class Hex implements IHex, Serializable {
      * get any modifiers to a an unstuck roll in this hex.
      */
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
-        for (Terrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
@@ -700,12 +702,13 @@ public class Hex implements IHex, Serializable {
         }
         
         // Check individual terrains for validity
-        for (Terrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if (terrain == null) {
                 valid = false;
                 errBuff.append("Hex contains a null terrain!\n");
                 continue;
             }
+
             StringBuffer terrainErr = new StringBuffer();
             if (!terrain.isValid(terrainErr)) {
                 valid = false;

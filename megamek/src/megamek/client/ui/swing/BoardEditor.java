@@ -86,7 +86,7 @@ public class BoardEditor extends JPanel
     private static class TerrainHelper implements Comparable<TerrainHelper> {
         private int terrainType;
 
-        TerrainHelper (int terrain) {
+        TerrainHelper(int terrain) {
             terrainType = terrain;
         }
 
@@ -112,11 +112,11 @@ public class BoardEditor extends JPanel
         public boolean equals(Object other) {
             if (other instanceof Integer) {
                 return getTerrainType() == (Integer) other;
-            }
-            if (!(other instanceof TerrainHelper)) {
+            } else if (!(other instanceof TerrainHelper)) {
                 return false;
+            } else {
+                return getTerrainType() == ((TerrainHelper) other).getTerrainType();
             }
-            return getTerrainType() == ((TerrainHelper)other).getTerrainType();
         }
     }
 
@@ -570,7 +570,7 @@ public class BoardEditor extends JPanel
     private ScalingIconToggleButton prepareToggleButton(String iconName, String buttonName, 
             List<ScalingIconToggleButton> bList, int width) {
         // Get the normal icon
-        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
+        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + ".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton == null) {
             imageButton = ImageUtil.failStandardImage();
@@ -578,16 +578,16 @@ public class BoardEditor extends JPanel
         ScalingIconToggleButton button = new ScalingIconToggleButton(imageButton, width);
         
         // Get the hover icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + "_H.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setRolloverImage(imageButton);
         
         // Get the selected icon, if any
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile();
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + "_S.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setSelectedImage(imageButton);
         
-        button.setToolTipText(Messages.getString("BoardEditor."+iconName+"TT"));
+        button.setToolTipText(Messages.getString("BoardEditor." + iconName + "TT"));
         if (bList != null) {
             bList.add(button);
         }
@@ -1169,15 +1169,15 @@ public class BoardEditor extends JPanel
         lisTerrainRenderer.setTerrainTypes(null);
         int[] terrainTypes = curHex.getTerrainTypes();
         List<TerrainTypeHelper> types = new ArrayList<>();
-        for (int terrainType : terrainTypes) {
-            Terrain terrain = curHex.getTerrain(terrainType);
+        for (final int terrainType : terrainTypes) {
+            final Terrain terrain = curHex.getTerrain(terrainType);
             if ((terrain != null) && !Terrains.AUTOMATIC.contains(terrainType)) {
-                TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
+                final TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
                 types.add(tth);
             }
         }
         Collections.sort(types);
-        for (TerrainTypeHelper tth : types) {
+        for (final TerrainTypeHelper tth : types) {
             ((DefaultListModel<TerrainTypeHelper>) lisTerrain.getModel()).addElement(tth);
         }
         lisTerrainRenderer.setTerrainTypes(types);

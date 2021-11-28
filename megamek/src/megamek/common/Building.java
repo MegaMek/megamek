@@ -476,8 +476,7 @@ public class Building implements Serializable {
         vPhaseReport.add(r);
         System.err.println("basement " + basement + "is collapsing, hex:"
                 + coords.toString() + " set terrain!");
-        board.getHex(coords).addTerrain(new Terrain(
-                Terrains.BLDG_BASE_COLLAPSED, 1));
+        board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
         basementCollapsed.put(coords, true);
 
     }
@@ -498,33 +497,27 @@ public class Building implements Serializable {
             r.add(basementRoll);
             if (basementRoll == 2) {
                 basement.put(coords, BasementType.TWO_DEEP_FEET);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 3) {
                 basement.put(coords, BasementType.ONE_DEEP_FEET);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 4) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 10) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 11) {
                 basement.put(coords, BasementType.ONE_DEEP_HEAD);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 12) {
                 basement.put(coords, BasementType.TWO_DEEP_HEAD);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else {
                 basement.put(coords, BasementType.NONE);
-                hex.addTerrain(new Terrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             }
+
             r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).desc);
             vPhaseReport.add(r);
             return true;

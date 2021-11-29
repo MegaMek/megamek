@@ -348,8 +348,8 @@ public class EntityListFile {
                         
                         String bayIndex = "";
                         
-                        for(Mounted bay : baySlotMap.keySet()) {
-                            if(bay.ammoInBay(entity.getEquipmentNum(mount))) {
+                        for (Mounted bay : baySlotMap.keySet()) {
+                            if (bay.ammoInBay(entity.getEquipmentNum(mount))) {
                                 bayIndex = String.valueOf(baySlotMap.get(bay));
                             }
                         }
@@ -361,7 +361,7 @@ public class EntityListFile {
                         thisLoc.append("\" shots=\"");
                         thisLoc.append(mount.getBaseShotsLeft());
                         
-                        if(!bayIndex.isEmpty()) {
+                        if (!bayIndex.isEmpty()) {
                             thisLoc.append("\" weaponsBayIndex=\"");
                             thisLoc.append(bayIndex);
                         }
@@ -384,7 +384,7 @@ public class EntityListFile {
                     }
 
                     // Record trooper missing equipment on BattleArmor
-                    else if(null != mount && mount.isAnyMissingTroopers()) {
+                    else if (null != mount && mount.isAnyMissingTroopers()) {
                         thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),
                                 slot.isDestroyed(), slot.isRepairable(),
@@ -409,7 +409,7 @@ public class EntityListFile {
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
                         thisLoc.append(EntityListFile.formatSlot("N/A", mount,
-                        		mount.isHit(), mount.isDestroyed(), mount.isRepairable(), mount.isMissing(), indentLvl + 1));
+                                mount.isHit(), mount.isDestroyed(), mount.isRepairable(), mount.isMissing(), indentLvl + 1));
                         haveSlot = true;
                     }
                 } // Check the next ammo.
@@ -509,8 +509,7 @@ public class EntityListFile {
      * @throws IOException
      *             is thrown on any error.
      */
-    public static void saveTo(File file, ArrayList<Entity> list)
-            throws IOException {
+    public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
 
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
@@ -520,12 +519,7 @@ public class EntityListFile {
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
         output.write("<unit version=\"" + MegaMekConstants.VERSION + "\" >\n\n");
 
-        try {
-            writeEntityList(output, list);
-        } catch (IOException exception) {
-            throw exception;
-        }
-
+        writeEntityList(output, list);
 
         // Finish writing.
         output.write("</unit>\n");
@@ -550,9 +544,7 @@ public class EntityListFile {
      * @throws IOException
      *             is thrown on any error.
      */
-    public static void saveTo(File file, Client client)
-            throws IOException {
-
+    public static void saveTo(File file, Client client) throws IOException {
         if (null == client.getGame()) {
             return;
         }
@@ -574,17 +566,17 @@ public class EntityListFile {
 
         //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
         Iterator<Entity> entities = client.getGame().getEntities();
-        while(entities.hasNext()) {
+        while (entities.hasNext()) {
             Entity entity = entities.next();
             if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
-            	living.add(entity);
-            } else if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
-                 if(!entity.canEscape()) {
+                living.add(entity);
+            } else if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+                 if (!entity.canEscape()) {
                      kills.put(entity.getDisplayName(), "None");
                  }
                  salvage.add(entity);
             } else {
-            	allied.add(entity);
+                allied.add(entity);
             }
         }
 
@@ -592,11 +584,11 @@ public class EntityListFile {
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
             if (ent.getOwner().getId() == client.getLocalPlayer().getId()) {
-            	living.add(ent);
+                living.add(ent);
             } else if (!ent.getOwner().isEnemyOf(client.getLocalPlayer())) {
-            	allied.add(ent);
+                allied.add(ent);
             } else {
-            	retreated.add(ent);
+                retreated.add(ent);
             }
         }
 
@@ -604,9 +596,9 @@ public class EntityListFile {
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
-            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                if(null != killer
+                if (null != killer
                         && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
@@ -620,9 +612,9 @@ public class EntityListFile {
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
-            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            if (entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                if(null != killer
+                if (null != killer
                         && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
@@ -635,72 +627,42 @@ public class EntityListFile {
         if (!living.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<survivors>\n\n");
-            try {
-                writeEntityList(output, living);
-            } catch (IOException exception) {
-                throw exception;
-            }
-            // Finish writing.
+            writeEntityList(output, living);
             output.write(indentStr(1) + "</survivors>\n");
         }
 
         if (!allied.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<allies>\n\n");
-            try {
-                writeEntityList(output, allied);
-            } catch (IOException exception) {
-                throw exception;
-            }
-            // Finish writing.
+            writeEntityList(output, allied);
             output.write(indentStr(1) + "</allies>\n");
         }
 
         if (!salvage.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<salvage>\n\n");
-            try {
-                writeEntityList(output, salvage);
-            } catch (IOException exception) {
-                throw exception;
-            }
-            // Finish writing.
+            writeEntityList(output, salvage);
             output.write(indentStr(1) + "</salvage>\n");
         }
 
         if (!retreated.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<retreated>\n\n");
-            try {
-                writeEntityList(output, retreated);
-            } catch (IOException exception) {
-                throw exception;
-            }
-            // Finish writing.
+            writeEntityList(output, retreated);
             output.write(indentStr(1) + "</retreated>\n");
         }
 
         if (!devastated.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<devastated>\n\n");
-            try {
-                writeEntityList(output, devastated);
-            } catch (IOException exception) {
-                throw exception;
-            }
-            // Finish writing.
+            writeEntityList(output, devastated);
             output.write(indentStr(1) + "</devastated>\n");
         }
 
         if (!kills.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<kills>\n\n");
-            try {
-                writeKills(output, kills);
-            } catch (IOException exception) {
-                throw exception;
-            }
-             // Finish writing.
+            writeKills(output, kills);
             output.write(indentStr(1) + "</kills>\n");
         }
 
@@ -712,7 +674,7 @@ public class EntityListFile {
 
     private static void writeKills(Writer output, Hashtable<String,String> kills) throws IOException {
         int indentLvl = 2;
-        for(String killed : kills.keySet()) {
+        for (String killed : kills.keySet()) {
             output.write(indentStr(indentLvl) + "<kill killed=\"");
             output.write(killed.replaceAll("\"", "&quot;"));
             output.write("\" killer=\"");
@@ -920,15 +882,15 @@ public class EntityListFile {
 
                 //large craft bays and doors. 
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
-                	for (Bay nextbay : a.getTransportBays()) {
-                		output.write(indentStr(indentLvl + 1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">\n");
+                    for (Bay nextbay : a.getTransportBays()) {
+                        output.write(indentStr(indentLvl + 1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">\n");
                         output.write(indentStr(indentLvl + 2) + "<damage>" + nextbay.getBayDamage() + "</damage>\n");
                         output.write(indentStr(indentLvl + 2) + "<doors>" + nextbay.getCurrentDoors() + "</doors>\n");
                         for (Entity e : nextbay.getLoadedUnits()) {
                             output.write(indentStr(indentLvl + 2) + "<loaded>" + e.getId() + "</loaded>\n");
                         }
-                		output.write(indentStr(indentLvl + 1) + "</transportBay>\n");
-                	}
+                        output.write(indentStr(indentLvl + 1) + "</transportBay>\n");
+                    }
                 }
 
                 // jumpship, warship and space station stuff
@@ -951,8 +913,8 @@ public class EntityListFile {
                 
                 // dropship only crits
                 if (a instanceof Dropship) {
-                	Dropship d = (Dropship) a;
-                	output.write(EntityListFile.getDropshipCritString(d));
+                    Dropship d = (Dropship) a;
+                    output.write(EntityListFile.getDropshipCritString(d));
                 }
 
             }
@@ -1353,17 +1315,17 @@ public class EntityListFile {
     }
     // Dropship crits
     private static String getDropshipCritString(Dropship a) {
-    	String retVal = "      <dcriticals";
-    	String critVal = "";
-    	
-    	//crits
-    	if (a.isDockCollarDamaged()) {
-    		critVal = critVal.concat(" dockingcollar=\"none\"");
-    	}
-    	if (a.isKFBoomDamaged()) {
-    		critVal = critVal.concat(" kfboom=\"none\"");
-    	}
-    	
+        String retVal = "      <dcriticals";
+        String critVal = "";
+
+        //crits
+        if (a.isDockCollarDamaged()) {
+            critVal = critVal.concat(" dockingcollar=\"none\"");
+        }
+        if (a.isKFBoomDamaged()) {
+            critVal = critVal.concat(" kfboom=\"none\"");
+        }
+
         if (!critVal.equals("")) {
             // then add beginning and end
             retVal = retVal.concat(critVal);

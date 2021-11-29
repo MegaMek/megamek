@@ -1801,8 +1801,7 @@ public class Server implements Runnable {
         for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
             // Record the player.
             IPlayer p = i.nextElement();
-            sb.append("++++++++++ ").append(p.getName()).append(" ++++++++++");
-            sb.append(CommonConstants.NL);
+            sb.append("++++++++++ ").append(p.getName()).append(" ++++++++++\n");
 
             // Record the player's alive, retreated, or salvageable units.
             for (int x = 0; x < vAllUnits.size(); x++) {
@@ -1815,10 +1814,8 @@ public class Server implements Runnable {
             // Record the player's devastated units.
             Enumeration<Entity> devastated = game.getDevastatedEntities();
             if (devastated.hasMoreElements()) {
-                sb.append("=============================================================");
-                sb.append(CommonConstants.NL);
-                sb.append("The following utterly destroyed units are not available for salvage:");
-                sb.append(CommonConstants.NL);
+                sb.append("=============================================================\n");
+                sb.append("The following utterly destroyed units are not available for salvage:\n");
                 while (devastated.hasMoreElements()) {
                     Entity e = devastated.nextElement();
                     if (e.getOwner() == p) {
@@ -1826,13 +1823,11 @@ public class Server implements Runnable {
                         for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
                             sb.append(", ").append(e.getCrew().getNameAndRole(pos)).append(" (")
                                 .append(e.getCrew().getGunnery()).append('/')
-                                .append(e.getCrew().getPiloting()).append(')');
-                            sb.append(CommonConstants.NL);
+                                .append(e.getCrew().getPiloting()).append(")\n");
                         }
                     }
                 } // Handle the next non-salvageable unit for the player
-                sb.append("=============================================================");
-                sb.append(CommonConstants.NL);
+                sb.append("=============================================================\n");
             }
 
         } // Handle the next player

@@ -1228,7 +1228,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } catch (InterruptedException ex) {
                 //Ignore
             } catch (ExecutionException e) {
-                e.getCause().printStackTrace();
+                MegaMek.getLogger().error(e);
             } finally {
                 btnGenerate.setEnabled(true);
             }

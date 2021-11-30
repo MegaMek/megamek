@@ -284,12 +284,12 @@ public class MULParser {
         pilots = new Vector<>();
     }
 
-    public MULParser(InputStream fin){
+    public MULParser(InputStream fin) {
         this();
         parse(fin);
     }
 
-    public void parse(InputStream fin){
+    public void parse(InputStream fin) {
         // Reset the warning message.
         warning = new StringBuffer();
 
@@ -311,9 +311,8 @@ public class MULParser {
 
             // Parse using builder to get DOM representation of the XML file
             xmlDoc = db.parse(fin);
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             warning.append("Error parsing MUL file!\n");
             return;
         }
@@ -581,7 +580,7 @@ public class MULParser {
                 key.append(" ").append(model);
                 ms = MechSummaryCache.getInstance().getMech(
                         key.toString());
-                // That didn't work. Try swaping model and chassis.
+                // That didn't work. Try swapping model and chassis.
                 if (ms == null) {
                     key = new StringBuffer(model);
                     key.append(" ").append(chassis);
@@ -601,14 +600,14 @@ public class MULParser {
                 try {
                     newEntity = new MechFileParser(ms.getSourceFile(),
                             ms.getEntryName()).getEntity();
-                } catch (EntityLoadingException excep) {
-                    excep.printStackTrace(System.err);
+                } catch (Exception e) {
+                    MegaMek.getLogger().error(e);
                     warning.append("Unable to load mech: ")
                             .append(ms.getSourceFile()).append(": ")
                             .append(ms.getEntryName()).append(": ")
-                            .append(excep.getMessage());
+                            .append(e.getMessage());
                 }
-            } // End found-MechSummary
+            }
         }
         return newEntity;
     }
@@ -1820,17 +1819,15 @@ public class MULParser {
      * @param turretLockTag
      * @param entity
      */
-    private void parseTurretLock(Element turretLockTag, Entity entity){
+    private void parseTurretLock(Element turretLockTag, Entity entity) {
         String value = turretLockTag.getAttribute(DIRECTION);
         try {
             int turDir = Integer.parseInt(value);
-            ((Tank) entity).setSecondaryFacing(turDir);
-            ((Tank) entity).lockTurret(((Tank)entity).getLocTurret());
+            entity.setSecondaryFacing(turDir);
+            ((Tank) entity).lockTurret(((Tank) entity).getLocTurret());
         } catch (Exception e) {
-            System.err.println(e);
-            e.printStackTrace();
-            warning.append("Invalid turret lock direction value in " +
-                    "movement tag.\n");
+            MegaMek.getLogger().error(e);
+            warning.append("Invalid turret lock direction value in " + "movement tag.\n");
         }
     }
 
@@ -1840,17 +1837,15 @@ public class MULParser {
      * @param turret2LockTag
      * @param entity
      */
-    private void parseTurret2Lock(Element turret2LockTag, Entity entity){
+    private void parseTurret2Lock(Element turret2LockTag, Entity entity) {
         String value = turret2LockTag.getAttribute(DIRECTION);
         try {
             int turDir = Integer.parseInt(value);
             ((Tank) entity).setDualTurretOffset(turDir);
-            ((Tank) entity).lockTurret(((Tank)entity).getLocTurret2());
+            ((Tank) entity).lockTurret(((Tank) entity).getLocTurret2());
         } catch (Exception e) {
-            System.err.println(e);
-            e.printStackTrace();
-            warning.append("Invalid turret2 lock direction value in " +
-                    "movement tag.\n");
+            MegaMek.getLogger().error(e);
+            warning.append("Invalid turret2 lock direction value in " + "movement tag.\n");
         }
     }
 
@@ -2439,12 +2434,11 @@ public class MULParser {
         // Add the newly mounted maniplator
         try{
             int baMountLoc = mountedManip.getBaMountLoc();
-            mountedManip = entity.addEquipment(manipType,
-                    mountedManip.getLocation());
+            mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());
             mountedManip.setBaMountLoc(baMountLoc);
-        } catch (LocationFullException ex){
+        } catch (LocationFullException ex) {
             // This shouldn't happen for BA...
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
     }
 
@@ -2507,15 +2501,14 @@ public class MULParser {
         }
 
         // Add the newly mounted weapon
-        try{
-            Mounted newWeap =  entity.addEquipment(apType,
-                    apMount.getLocation());
+        try {
+            Mounted newWeap =  entity.addEquipment(apType, apMount.getLocation());
             apMount.setLinked(newWeap);
             newWeap.setLinked(apMount);
             newWeap.setAPMMounted(true);
-        } catch (LocationFullException ex){
+        } catch (LocationFullException ex) {
             // This shouldn't happen for BA...
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
 
     }

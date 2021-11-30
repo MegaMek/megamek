@@ -9,6 +9,7 @@ package megamek.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -70,7 +71,7 @@ public class EjectedCrew extends Infantry {
                         Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                MegaMek.getLogger().error(ex);
             }
         }
     }
@@ -137,7 +138,7 @@ public class EjectedCrew extends Infantry {
                         Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                MegaMek.getLogger().error(ex);
             }
         }
     }

@@ -17,6 +17,7 @@ package megamek.client.bot;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 
+import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
@@ -186,7 +187,7 @@ public class ChatProcessor {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
     }
 

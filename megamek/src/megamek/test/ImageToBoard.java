@@ -14,6 +14,8 @@
  */
 package megamek.test;
 
+import megamek.MegaMek;
+
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -85,7 +87,7 @@ public class ImageToBoard {
             boardOut = new BufferedWriter(new FileWriter(new File(outputDir,
                     "new.board")));
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return;
         } 
         loaded = true;
@@ -95,13 +97,12 @@ public class ImageToBoard {
         if (!loaded) {
             return;
         }
-        BufferedImage hexImg = new BufferedImage(hexWidth, hexHeight,
-                BufferedImage.TYPE_INT_ARGB);
+        BufferedImage hexImg = new BufferedImage(hexWidth, hexHeight, BufferedImage.TYPE_INT_ARGB);
         
         try {
             boardOut.write("size " + hexCols + " " + hexRows + "\n");
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             return;
         }
         
@@ -151,7 +152,7 @@ public class ImageToBoard {
                     boardOut.write("hex " + terrName + " 0 \"fluff:99"
                             + terrName + "\" \"\"\n");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    MegaMek.getLogger().error(e);
                     return;
                 }
             }
@@ -160,7 +161,7 @@ public class ImageToBoard {
             boardOut.close();
             tilesetOut.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }        
     }
 }

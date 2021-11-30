@@ -1607,8 +1607,7 @@ public class MapSettings implements Serializable {
 
             marshaller.marshal(element, os);
         } catch (JAXBException ex) {
-            System.err.println("Error writing XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+            MegaMek.getLogger().error("Error writing XML for map settings", ex);
         }
     }
 }

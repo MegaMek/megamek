@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -192,7 +193,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return ImageUtil.failStandardImage();
         }
     }
@@ -380,7 +381,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             }
         } catch (Exception e) {
             // Fall back to the default colors
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -448,7 +449,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     SwingUtilities.invokeLater(drawMapable);
                 }
             } catch (Throwable t) {
-                t.printStackTrace();
+                MegaMek.getLogger().error(t);
             }
         }
     };
@@ -1343,8 +1344,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 						+ e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException ex) {
+                    MegaMek.getLogger().error(ex);
                 }
 
             }

@@ -917,8 +917,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (Throwable error) {
-            error.printStackTrace();
+        } catch (Throwable t) {
+            MegaMek.getLogger().error(t);
         }
         client.die();
 
@@ -1483,13 +1483,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         }
                     }
                 }
-                if (loadedUnits.size() > 0){
+                if (loadedUnits.size() > 0) {
                     client.sendAddEntity(loadedUnits);
                     addedUnits = true;
                 }
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
+            } catch (IOException e) {
+                MegaMek.getLogger().error(e);
+                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), e.getMessage());
             }
         }
 
@@ -1518,7 +1518,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // the name
             String path = fc.getSelectedFile().getParentFile().getPath();
             path = path.replace(" ", "|");
-            client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
+            client.sendChat("/localsave " + file + " " + path);
             return true;
         }
         return false;
@@ -1586,9 +1586,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+            } catch (IOException e) {
+                MegaMek.getLogger().error(e);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
             }
         }
     }
@@ -1628,9 +1628,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, getClient());
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+            } catch (Exception e) {
+                MegaMek.getLogger().error(e);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
             }
         }
     }
@@ -2168,7 +2168,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());

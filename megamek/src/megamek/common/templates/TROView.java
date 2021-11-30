@@ -142,7 +142,6 @@ public class TROView {
                 return os.toString();
             } catch (TemplateException | IOException e) {
                 MegaMek.getLogger().error(e);
-                e.printStackTrace();
             }
         }
         return null;

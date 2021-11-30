@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -561,10 +562,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         }
                         entities.add(e);
                     } catch (EntityLoadingException ex) {
-                        System.out.println("Unable to load mech: " + //$NON-NLS-1$ 
-                                ms.getSourceFile() + ": " + ms.getEntryName() + //$NON-NLS-1$
-                                ": " + ex.getMessage()); //$NON-NLS-1$ 
-                        ex.printStackTrace();
+                        MegaMek.getLogger().error(String.format("Unable to load entity %s: %s",
+                                ms.getSourceFile(), ms.getEntryName()), ex);
                         return;
                     }
                 }
@@ -828,9 +827,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         createRatTreeNodes(root, ratTree);
         m_treeRAT.setModel(new DefaultTreeModel(root));
         
-        String selectedRATPath = 
-                GUIPreferences.getInstance().getRATSelectedRAT();
-        if (!selectedRATPath.equals("")) {
+        String selectedRATPath = GUIPreferences.getInstance().getRATSelectedRAT();
+        if (!selectedRATPath.isEmpty()) {
             String[] nodes = selectedRATPath.replace('[', ' ')
                     .replace(']', ' ').split(",");
             TreePath path = findPathByName(nodes);

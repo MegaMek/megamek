@@ -1,30 +1,26 @@
-/**
- * MegaMek -
- *  Copyright (C) 2013
- *    Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 import java.io.PrintWriter;
 import java.util.List;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
 public class TripodMech extends Mech {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4166375446709772785L;
 
     private static final String[] LOCATION_NAMES = {"Head", "Center Torso",
@@ -1024,9 +1020,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
                 switch (roll) {
@@ -1311,9 +1308,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
                 switch (roll) {
@@ -1428,9 +1426,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
                 // front/rear kick hits
                 switch (roll) {
@@ -1488,20 +1487,18 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             // Swarm attack locations.
             switch (roll) {
                 case 2:
                     if (getCrew().hasEdgeRemaining()
-                        && getCrew().getOptions().booleanOption(
-                            "edge_when_headhit")) {
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                                         aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
-                                                             false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
                         return result;
                     } // if
                     return new HitData(Mech.LOC_HEAD, false, effects);
@@ -1525,13 +1522,10 @@ public class TripodMech extends Mech {
                     return new HitData(Mech.LOC_CT, true, effects);
                 case 12:
                     if (getCrew().hasEdgeRemaining()
-                        && getCrew().getOptions().booleanOption(
-                            "edge_when_headhit")) {
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                                         aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
-                                                             false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
                         return result;
                     } // if
                     return new HitData(Mech.LOC_HEAD, false, effects);
@@ -1540,8 +1534,7 @@ public class TripodMech extends Mech {
         if (table == ToHitData.HIT_ABOVE) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                                                  .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -1549,9 +1542,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             // Hits from above.
             switch (roll) {
                 case 1:
@@ -1596,9 +1590,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             // Hits from below.
             switch (roll) {
                 case 1:

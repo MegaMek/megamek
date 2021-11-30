@@ -2193,9 +2193,10 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
                 switch (roll) {
@@ -2452,9 +2453,10 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
                 switch (roll) {
@@ -2569,28 +2571,29 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
                 // front/rear kick hits
                 switch (roll) {
                     case 1:
                     case 2:
                     case 3:
-                        return new HitData(Mech.LOC_RLEG,
-                                (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
                     case 4:
                     case 5:
                     case 6:
-                        return new HitData(Mech.LOC_LLEG,
-                                (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 }
             }
+
             if (side == ToHitData.SIDE_LEFT) {
                 // left side kick hits
                 return new HitData(Mech.LOC_LLEG);
             }
+
             if (side == ToHitData.SIDE_RIGHT) {
                 // right side kick hits
                 return new HitData(Mech.LOC_RLEG);
@@ -2615,20 +2618,18 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             // Swarm attack locations.
             switch (roll) {
                 case 2:
                     if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                    OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
-                                false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
                         return result;
                     } // if
                     return new HitData(Mech.LOC_HEAD, false, effects);
@@ -2676,9 +2677,10 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             // Hits from above.
             switch (roll) {
                 case 1:
@@ -2723,29 +2725,24 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
             }
+
             // Hits from below.
             switch (roll) {
                 case 1:
-                    return new HitData(Mech.LOC_LLEG,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 case 2:
-                    return new HitData(Mech.LOC_LLEG,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 case 3:
-                    return new HitData(Mech.LOC_LT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
                 case 4:
-                    return new HitData(Mech.LOC_RT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
                 case 5:
-                    return new HitData(Mech.LOC_RLEG,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
                 case 6:
-                    return new HitData(Mech.LOC_RLEG,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
             }
         }
         return null;

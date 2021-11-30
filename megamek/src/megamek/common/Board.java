@@ -343,15 +343,14 @@ public class Board implements Serializable, IBoard {
                             while (iter.hasMoreElements()) {
                                 bldgByCoords.put(iter.nextElement(), bldg);
                             }
-                        } catch (IllegalArgumentException excep) {
+                        } catch (IllegalArgumentException e) {
                             // Log the error and remove the
                             // building from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error("Unable to create building.");
-                                excep.printStackTrace();
+                                MegaMek.getLogger().error("Unable to create building.", e);
                             } else {
-                                errBuff.append("Unable to create building at " + coords + "!\n");
-                                errBuff.append(excep.getMessage() + "\n");
+                                errBuff.append("Unable to create building at ").append(coords)
+                                        .append("!\n").append(e.getMessage()).append("\n");
                             }
                             curHex.removeTerrain(Terrains.BUILDING);
                         }
@@ -373,15 +372,14 @@ public class Board implements Serializable, IBoard {
                             while (iter.hasMoreElements()) {
                                 bldgByCoords.put(iter.nextElement(), bldg);
                             }
-                        } catch (IllegalArgumentException excep) {
+                        } catch (IllegalArgumentException e) {
                             // Log the error and remove the
                             // fuel tank from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error("Unable to create fuel tank.");
-                                excep.printStackTrace();
+                                MegaMek.getLogger().error("Unable to create fuel tank.", e);
                             } else {
-                                errBuff.append("Unable to create fuel tank at " + coords.toString() + "!\n");
-                                errBuff.append(excep.getMessage() + "\n");
+                                errBuff.append("Unable to create fuel tank at ").append(coords)
+                                        .append("!\n").append(e.getMessage()).append("\n");
                             }
                             curHex.removeTerrain(Terrains.FUEL_TANK);
                         }
@@ -403,15 +401,14 @@ public class Board implements Serializable, IBoard {
                             while (iter.hasMoreElements()) {
                                 bldgByCoords.put(iter.nextElement(), bldg);
                             }
-                        } catch (IllegalArgumentException excep) {
+                        } catch (IllegalArgumentException e) {
                             // Log the error and remove the
                             // bridge from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error("Unable to create bridge.");
-                                excep.printStackTrace();
+                                MegaMek.getLogger().error("Unable to create bridge.", e);
                             } else {
-                                errBuff.append("Unable to create bridge at " + coords.toString() + "!\n");
-                                errBuff.append(excep.getMessage() + "\n");
+                                errBuff.append("Unable to create bridge at ").append(coords)
+                                        .append("!\n").append(e.getMessage()).append("\n");
                             }
                             curHex.removeTerrain(Terrains.BRIDGE);
                         }

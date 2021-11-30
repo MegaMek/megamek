@@ -2541,7 +2541,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         List<Entity> newEntities = new ArrayList<>();
         if (hasTransferableText) {
             try {
-                String result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+                String result = (String) contents.getTransferData(DataFlavor.stringFlavor);
                 StringTokenizer lines = new StringTokenizer(result, "\n");
                 while (lines.hasMoreTokens()) {
                     String line = lines.nextToken();
@@ -2564,10 +2564,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         newEntities.add(newEntity);
                     }
                 }
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
+
             if (!newEntities.isEmpty()) {
                 client().sendAddEntity(newEntities);
             }
@@ -2682,16 +2682,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String[] command = action.getActionCommand().split(":");
 
             switch (command[0]) {
-            case MapListPopup.MLP_BOARD:
-                boolean rotate = (command.length > 3) && Boolean.valueOf(command[3]);
-                String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
-                
-                changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));
-                break;
+                case MapListPopup.MLP_BOARD:
+                    boolean rotate = (command.length > 3) && Boolean.parseBoolean(command[3]);
+                    String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
 
-            case MapListPopup.MLP_SURPRISE:
-                changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
-                break;
+                    changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));
+                    break;
+
+                case MapListPopup.MLP_SURPRISE:
+                    changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
+                    break;
             }
         }
 
@@ -3279,14 +3279,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     class ImageLoader extends SwingWorker<Void, Image> {
 
-        private BlockingQueue<String> boards = new LinkedBlockingQueue<String>();
+        private BlockingQueue<String> boards = new LinkedBlockingQueue<>();
 
         private synchronized void add(String name) {
             if (!boards.contains(name)) {
                 try {
                     boards.put(name);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    MegaMek.getLogger().error(e);
                 }
             }
         }

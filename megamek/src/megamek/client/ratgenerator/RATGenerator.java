@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1148,9 +1149,9 @@ public class RATGenerator {
 
         file = new File(dir + "/factions.xml");
         try {
-            pw = new PrintWriter(file, "UTF-8");
-        } catch (Exception e1) {
-            e1.printStackTrace();
+            pw = new PrintWriter(file, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             return;
         }
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
@@ -1172,7 +1173,7 @@ public class RATGenerator {
             int nextEra = (i < ERAS.size() - 1)? ERAS.get(i + 1) : era;
             try {
                 file = new File(dir + "/" + era + ".xml");
-                pw = new PrintWriter(file, "UTF-8");
+                pw = new PrintWriter(file, StandardCharsets.UTF_8);
                 pw.println("<?xml version='1.0' encoding='UTF-8'?>");
                 pw.println("<!-- Era " + era + "-->");
                 pw.println("<ratgen>");
@@ -1262,7 +1263,7 @@ public class RATGenerator {
                 pw.println("</ratgen>");
                 pw.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         }
     }

@@ -28,6 +28,8 @@ package megamek.common.util; // add to this package so BLKMechFile can read
 
 // it's files...
 
+import megamek.MegaMek;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -323,10 +325,9 @@ public class BuildingBlock {
                 }
                 data[dataRecord] = Integer.parseInt(rawString);
                 dataRecord++;
-            } catch (NumberFormatException oops) {
+            } catch (NumberFormatException e) {
                 data[0] = 0;
-                System.err.println("getDataAsInt(\"" + blockName + "\") failed.  NumberFormatException was caught."); //$NON-NLS-1$ //$NON-NLS-2$
-                oops.printStackTrace();
+                MegaMek.getLogger().error("getDataAsInt(\"" + blockName + "\") failed", e);
             }
         }
         return data; // hand back the goods...

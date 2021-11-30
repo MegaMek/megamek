@@ -21,13 +21,16 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 
 /**
  * Class to encapsulate a map that maps old image paths to the subsequent location in an image atlas.  This allows us
@@ -106,10 +109,10 @@ public class ImageAtlasMap {
     public boolean writeToFile() {
         XStream xstream = new XStream();
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(Configuration.imageFileAtlasMapFile()),
-                Charset.forName("UTF-8"));) {
+                StandardCharsets.UTF_8)) {
             xstream.toXML(imgFileToAtlasMap, writer);
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return false;
         }
         return true;
@@ -120,7 +123,7 @@ public class ImageAtlasMap {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static ImageAtlasMap readFromFile() {
+    public static @Nullable ImageAtlasMap readFromFile() {
         if (!Configuration.imageFileAtlasMapFile().exists()) {
             return null;
         }
@@ -129,13 +132,11 @@ public class ImageAtlasMap {
         try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
             XStream xstream = new XStream();
             map = new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             map = null;
-            e.printStackTrace();
-        } catch (IOException e) {
-            map = null;
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
+
         return map;
     }
 

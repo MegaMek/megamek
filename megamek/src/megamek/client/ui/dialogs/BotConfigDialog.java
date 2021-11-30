@@ -31,6 +31,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
@@ -618,7 +619,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 princessBehavior = ((Princess)bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (PrincessException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         }
     }

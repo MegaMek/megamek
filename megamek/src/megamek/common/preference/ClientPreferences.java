@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+import megamek.MegaMek;
 import megamek.common.MovePath;
 import megamek.common.util.LocaleParser;
 
@@ -303,11 +304,10 @@ class ClientPreferences extends PreferenceStoreProxy implements
         String name = store.getString(MEK_HIT_LOC_LOG);
         if (name.length() != 0) {
             try {
-                mekHitLocLog = new PrintWriter(new BufferedWriter(
-                        new FileWriter(name)));
+                mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
                 mekHitLocLog.println("Table\tSide\tRoll");
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                MegaMek.getLogger().error(t);
                 mekHitLocLog = null;
             }
         }

@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
@@ -1334,7 +1335,7 @@ public class EquipmentType implements ITechnology {
             w.flush();
             w.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -1434,7 +1435,7 @@ public class EquipmentType implements ITechnology {
             w.flush();
             w.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 

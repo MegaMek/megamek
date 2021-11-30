@@ -1,5 +1,6 @@
 package megamek.common;
 
+import megamek.MegaMek;
 import megamek.common.loaders.EntityLoadingException;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class EquipmentTypeLookupTest {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         }
 
@@ -57,7 +58,7 @@ public class EquipmentTypeLookupTest {
                         ms.getEntryName()).getEntity();
                 failedEquipment.addAll(entity.failedEquipmentList);
             } catch (EntityLoadingException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         }
 

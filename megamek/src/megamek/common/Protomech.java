@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -706,8 +707,8 @@ public class Protomech extends Entity {
                 pw.print("\t");
                 pw.println(roll);
             }
-        } catch (Throwable thrown) {
-            thrown.printStackTrace();
+        } catch (Throwable t) {
+            MegaMek.getLogger().error(t);
         }
 
         switch (roll) {

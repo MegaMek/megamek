@@ -91,7 +91,7 @@ public class BASE64ImageView extends ImageView {
             try {
                 this.url = new URL("file:/" + this.getElement().toString());
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
 
             return this.url;

@@ -37,6 +37,7 @@ import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
@@ -348,34 +349,35 @@ public class RandomUnitGenerator implements Serializable {
                 }
                 continue;
             }
-            if( ratFileNameLC.endsWith(".zip") ) { //$NON-NLS-1$
-                try(ZipFile zipFile = new ZipFile(ratFile)) {
+
+            if (ratFileNameLC.endsWith(".zip")) {
+                try (ZipFile zipFile = new ZipFile(ratFile)) {
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                    while(entries.hasMoreElements()) {
+                    while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
                         String entryName = entry.getName();
-                        if(!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) //$NON-NLS-1$
+                        if (!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt"))
                         {
                             RatTreeNode subNode = getNodeByPath(node, entryName);
-                            try(InputStream zis = zipFile.getInputStream(entry))
+                            try (InputStream zis = zipFile.getInputStream(entry))
                             {
-                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc); //$NON-NLS-1$
+                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc);
                             }
                         }
                     }
-                } catch(IOException e) {
-                    System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
+                } catch (IOException e) {
+                    MegaMek.getLogger().error("Unable to load " + ratFile.getName());
                 }
             }
-            if (!ratFileNameLC.endsWith(".txt")) { //$NON-NLS-1$
+
+            if (!ratFileNameLC.endsWith(".txt")) {
                 continue;
             }
-            try(InputStream ratInputStream = new FileInputStream(ratFile)) {
+
+            try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
-            } catch(IOException e) {
-                System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
-                System.err.println(e.getMessage());
-                e.printStackTrace();
+            } catch (IOException e) {
+                MegaMek.getLogger().error("Unable to load " + ratFile.getName(), e);
             }
         }
     }
@@ -461,7 +463,7 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
         return units;
     }

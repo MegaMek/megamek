@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -913,15 +914,14 @@ public class EquipChoicePanel extends JPanel {
                 }
                     
                 // Add the newly mounted weapon
-                try{
-                    Mounted newWeap =  entity.addEquipment(apType, 
-                            m_APmounted.getLocation());
+                try {
+                    Mounted newWeap =  entity.addEquipment(apType, m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
                     newWeap.setAPMMounted(true);
-                } catch (LocationFullException ex){
+                } catch (LocationFullException ex) {
                     // This shouldn't happen for BA...
-                    ex.printStackTrace();
+                    MegaMek.getLogger().error(ex);
                 }
 
             }
@@ -974,7 +974,7 @@ public class EquipChoicePanel extends JPanel {
                 if (m != null){
                     curType = m.getType();
                 }
-                m_choice = new JComboBox<String>();
+                m_choice = new JComboBox<>();
                 m_choice.addItem("None");
                 m_choice.setSelectedIndex(0);
                 Iterator<MiscType> it = m_Manipulators.iterator();
@@ -1013,29 +1013,28 @@ public class EquipChoicePanel extends JPanel {
                     return;
                 }
                 MiscType manipType = null;
-                if (n > 0 && n <= m_Manipulators.size()){
+                if (n > 0 && n <= m_Manipulators.size()) {
                     // Need to account for the "None" selection
-                    manipType = m_Manipulators.get(n-1);
+                    manipType = m_Manipulators.get(n - 1);
                 }
 
-                if (m_Manipmounted != null){
+                if (m_Manipmounted != null) {
                     entity.getEquipment().remove(m_Manipmounted);
                     entity.getMisc().remove(m_Manipmounted);
                 }            
                 
                 // Was no manipulator selected?
-                if (n == 0){
+                if (n == 0) {
                     return;
                 }
                     
                 // Add the newly mounted maniplator
-                try{
-                    m_Manipmounted = entity.addEquipment(manipType, 
-                            m_Manipmounted.getLocation());
+                try {
+                    m_Manipmounted = entity.addEquipment(manipType, m_Manipmounted.getLocation());
                     m_Manipmounted.setBaMountLoc(baMountLoc);
-                } catch (LocationFullException ex){
+                } catch (LocationFullException ex) {
                     // This shouldn't happen for BA...
-                    ex.printStackTrace();
+                    MegaMek.getLogger().error(ex);
                 }
 
             }

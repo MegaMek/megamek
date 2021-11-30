@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import megamek.MegaMek;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -267,7 +268,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
                 int blu = Integer.parseInt(s.substring(5,7), 16);
                 textColor = new Color(red, grn, blu);
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
             s = s.substring(7);
         }

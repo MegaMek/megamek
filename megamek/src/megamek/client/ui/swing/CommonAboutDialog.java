@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
@@ -65,8 +66,8 @@ public class CommonAboutDialog extends JDialog {
             try {
                 tracker.waitForID(0);
                 imgTitleImage = image;
-            } catch (InterruptedException exp) {
-                exp.printStackTrace();
+            } catch (Exception e) {
+                MegaMek.getLogger().error(e);
             }
         } // End load-imgTitleImage
 

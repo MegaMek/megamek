@@ -1955,9 +1955,9 @@ public class Infantry extends Entity {
     		try {
     			addEquipment(armorKit, LOC_INFANTRY);
     		} catch (LocationFullException ex) {
-    			ex.printStackTrace();
+    			MegaMek.getLogger().error(ex);
     		}
-    		damageDivisor = ((MiscType)armorKit).getDamageDivisor();
+    		damageDivisor = ((MiscType) armorKit).getDamageDivisor();
     		encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
     		spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
     		dest = (armorKit.getSubType() & MiscType.S_DEST) != 0;
@@ -2036,7 +2036,7 @@ public class Infantry extends Entity {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (LocationFullException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         } else if ((spec & TRENCH_ENGINEERS) == 0
                 && (infSpecs & TRENCH_ENGINEERS) > 0) {
@@ -2058,7 +2058,7 @@ public class Infantry extends Entity {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (LocationFullException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         } else if ((spec & DEMO_ENGINEERS) == 0
                 && (infSpecs & DEMO_ENGINEERS) > 0) {

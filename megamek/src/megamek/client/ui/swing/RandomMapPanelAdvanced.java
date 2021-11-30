@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.util.VerifyIsInteger;
@@ -1052,7 +1053,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         String result = field.verifyTextS();
         if (result != null) {
             result = field.getName() + ": " + result;
-            new RuntimeException(result).printStackTrace();
+            MegaMek.getLogger().error(new RuntimeException(result));
             field.requestFocus();
             showDataValidationError(result);
         }
@@ -1068,7 +1069,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
         final String INVALID = "Minimum cannot exceed maximum.";
         if (min.getAsInt() > max.getAsInt()) {
-            new RuntimeException(INVALID).printStackTrace();
+            MegaMek.getLogger().error(new RuntimeException(INVALID));
             min.setOldToolTip(min.getToolTipText());
             max.setOldToolTip(max.getToolTipText());
             min.setBackground(VerifiableTextField.getInvalidColor());

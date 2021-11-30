@@ -324,7 +324,7 @@ public class MapMenu extends JPopupMenu {
                                 .selectEntity(selectedEntity.getId());
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    MegaMek.getLogger().error(ex);
                 }
             }
         });
@@ -338,16 +338,13 @@ public class MapMenu extends JPopupMenu {
                 + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    selectedEntity = game.getEntity(Integer.parseInt(e
-                            .getActionCommand()));
-                    GUIPreferences.getInstance().showUnitDisplay();
-                    gui.mechD.displayEntity(selectedEntity);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                selectedEntity = game.getEntity(Integer.parseInt(e.getActionCommand()));
+                GUIPreferences.getInstance().showUnitDisplay();
+                gui.mechD.displayEntity(selectedEntity);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -472,17 +469,13 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (entityInHex) {
-            JMenuItem item = new JMenuItem(
-                    Messages.getString("MovementDisplay.MoveEnvelope")); //$NON-NLS-1$
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_ENVELOPE
-                                          .getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        ((MovementDisplay) currentPanel).actionPerformed(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.MoveEnvelope"));
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_ENVELOPE.getCmd());
+            item.addActionListener(e -> {
+                try {
+                    ((MovementDisplay) currentPanel).actionPerformed(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
             menu.add(item);
@@ -491,13 +484,11 @@ public class MapMenu extends JPopupMenu {
             item = new JMenuItem(Messages.getString("MovementDisplay.butWalk"));
 
             item.setActionCommand(MovementDisplay.MoveCommand.MOVE_WALK.getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        ((MovementDisplay) currentPanel).actionPerformed(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            item.addActionListener(e -> {
+                try {
+                    ((MovementDisplay) currentPanel).actionPerformed(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
             menu.add(item);
@@ -505,87 +496,69 @@ public class MapMenu extends JPopupMenu {
             item = new JMenuItem(Messages.getString("MovementDisplay.butBackup"));
 
             item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BACK_UP.getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        ((MovementDisplay) currentPanel).actionPerformed(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            item.addActionListener(e -> {
+                try {
+                    ((MovementDisplay) currentPanel).actionPerformed(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
 
             menu.add(item);
 
             if (myEntity.getJumpMP() > 0) {
-                item = new JMenuItem(
-                        Messages.getString("CommonMenuBar.moveJump"));
+                item = new JMenuItem(Messages.getString("CommonMenuBar.moveJump"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ((MovementDisplay) currentPanel).actionPerformed(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        ((MovementDisplay) currentPanel).actionPerformed(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
-                item = new JMenuItem(
-                        Messages.getString("MovementDisplay.butEvade"));
+                item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ((MovementDisplay) currentPanel).actionPerformed(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        ((MovementDisplay) currentPanel).actionPerformed(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-                item = new JMenuItem(
-                        Messages.getString("MovementDisplay.butEvade"));
+                item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BOOTLEGGER
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ((MovementDisplay) currentPanel).actionPerformed(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BOOTLEGGER.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        ((MovementDisplay) currentPanel).actionPerformed(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                && !game.getBoard().inSpace()
-                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
-                item = new JMenuItem(
-                        Messages.getString("MovementDisplay.butReckless"));
+                    && !game.getBoard().inSpace()
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+                item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            ((MovementDisplay) currentPanel).actionPerformed(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        ((MovementDisplay) currentPanel).actionPerformed(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
@@ -593,125 +566,97 @@ public class MapMenu extends JPopupMenu {
 
         } else {
 
-            JMenuItem item = new JMenuItem(
-                    Messages.getString("MovementDisplay.butWalk"));
+            JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butWalk"));
 
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_WALK
-                                          .getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        plotCourse(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_WALK.getCmd());
+            item.addActionListener(e -> {
+                try {
+                    plotCourse(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
 
             menu.add(item);
 
-            item = new JMenuItem(
-                    Messages.getString("MovementDisplay.butBackup"));
+            item = new JMenuItem(Messages.getString("MovementDisplay.butBackup"));
 
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BACK_UP
-                                          .getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        plotCourse(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BACK_UP.getCmd());
+            item.addActionListener(e -> {
+                try {
+                    plotCourse(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
 
             menu.add(item);
 
             if (myEntity.getJumpMP() > 0) {
-                item = new JMenuItem(
-                        Messages.getString("CommonMenuBar.moveJump"));
+                item = new JMenuItem(Messages.getString("CommonMenuBar.moveJump"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            plotCourse(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_JUMP.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        plotCourse(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
             }
 
-            item = new JMenuItem(
-                    Messages.getString("MovementDisplay.moveLongestRun")); //$NON-NLS-1$
+            item = new JMenuItem(Messages.getString("MovementDisplay.moveLongestRun"));
 
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_LONGEST_RUN
-                                          .getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        plotCourse(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_LONGEST_RUN.getCmd());
+            item.addActionListener(e -> {
+                try {
+                    plotCourse(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
 
             menu.add(item);
 
-            item = new JMenuItem(
-                    Messages.getString("MovementDisplay.moveLongestWalk")); //$NON-NLS-1$
+            item = new JMenuItem(Messages.getString("MovementDisplay.moveLongestWalk"));
 
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_LONGEST_WALK
-                                          .getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        plotCourse(e);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_LONGEST_WALK.getCmd());
+            item.addActionListener(e -> {
+                try {
+                    plotCourse(e);
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
 
             menu.add(item);
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
-                item = new JMenuItem(
-                        Messages.getString("MovementDisplay.butEvade"));
+                item = new JMenuItem(Messages.getString("MovementDisplay.butEvade"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            plotCourse(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        plotCourse(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
             }
 
             if (game.getPlanetaryConditions().isRecklessConditions()
-                && !game.getBoard().inSpace()
-                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
-                item = new JMenuItem(
-                        Messages.getString("MovementDisplay.butReckless"));
+                    && !game.getBoard().inSpace()
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
+                item = new JMenuItem(Messages.getString("MovementDisplay.butReckless"));
 
-                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS
-                                              .getCmd());
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            plotCourse(e);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_RECKLESS.getCmd());
+                item.addActionListener(e -> {
+                    try {
+                        plotCourse(e);
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error(ex);
                     }
                 });
                 menu.add(item);
@@ -724,50 +669,40 @@ public class MapMenu extends JPopupMenu {
     private JMenu createTurnMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.butTurn"));
 
-        JMenuItem item = new JMenuItem(
-                Messages.getString("MovementDisplay.butTurnRight"));
+        JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butTurnRight"));
 
-        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_RIGHT
-                                      .getCmd());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_RIGHT.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
         menu.add(item);
 
         item = new JMenuItem(Messages.getString("MovementDisplay.butTurnLeft"));
 
-        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_LEFT
-                                      .getCmd());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_LEFT.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
         menu.add(item);
 
         item = new JMenuItem("About Face");
 
-        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_RIGHT
-                                      .getCmd());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TURN_RIGHT.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
         menu.add(item);
@@ -797,13 +732,11 @@ public class MapMenu extends JPopupMenu {
 
     private JMenuItem createSkipJMenuItem() {
         JMenuItem item = new JMenuItem("Skip");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((FiringDisplay) currentPanel).nextWeapon();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((FiringDisplay) currentPanel).nextWeapon();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -812,43 +745,40 @@ public class MapMenu extends JPopupMenu {
 
     private JMenuItem createAlphaStrikeJMenuItem() {
         JMenuItem item = new JMenuItem("Alpha Strike");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    FiringDisplay panel = (FiringDisplay) currentPanel;
-                    // Get all weapons
-                    ArrayList<Mounted> weapons = myEntity.getWeaponList();
-                    // We will need to map a Mounted to it's weapon number
-                    HashMap<Mounted, Integer> weapToId = 
-                            new HashMap<Mounted, Integer>();
-                    for (Mounted weapon : weapons) {
-                        weapToId.put(weapon, myEntity.getEquipmentNum(weapon));
-                    }
-                    // Sort weapons from high damage to low
-                    Collections.sort(weapons, new WeaponComparatorDamage(false));
-                    
-                    Targetable target = panel.getTarget();
-                    for (Mounted weapon : weapons) {
-                        // If the weapon has been used at all this turn, ignore
-                        if (weapon.usedInPhase() != GamePhase.UNKNOWN) {
-                            continue;
-                        }
-                        int weaponNum = weapToId.get(weapon);
-                        // Used to determine if attack is valid
-                        WeaponAttackAction waa = new WeaponAttackAction(
-                                myEntity.getId(), target.getTargetType(),
-                                target.getTargetId(), weaponNum);
-                        // Only fire weapons that have a chance to hit
-                        int toHitVal = waa.toHit(game).getValue(); 
-                        if ((toHitVal != TargetRoll.IMPOSSIBLE)
-                                && (toHitVal <= 12)) {
-                            gui.mechD.wPan.selectWeapon(weaponNum);
-                            panel.fire();
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+        item.addActionListener(e -> {
+            try {
+                FiringDisplay panel = (FiringDisplay) currentPanel;
+                // Get all weapons
+                ArrayList<Mounted> weapons = myEntity.getWeaponList();
+                // We will need to map a Mounted to it's weapon number
+                HashMap<Mounted, Integer> weapToId = new HashMap<>();
+                for (Mounted weapon : weapons) {
+                    weapToId.put(weapon, myEntity.getEquipmentNum(weapon));
                 }
+                // Sort weapons from high damage to low
+                weapons.sort(new WeaponComparatorDamage(false));
+
+                Targetable target = panel.getTarget();
+                for (Mounted weapon : weapons) {
+                    // If the weapon has been used at all this turn, ignore
+                    if (weapon.usedInPhase() != GamePhase.UNKNOWN) {
+                        continue;
+                    }
+                    int weaponNum = weapToId.get(weapon);
+                    // Used to determine if attack is valid
+                    WeaponAttackAction waa = new WeaponAttackAction(
+                            myEntity.getId(), target.getTargetType(),
+                            target.getTargetId(), weaponNum);
+                    // Only fire weapons that have a chance to hit
+                    int toHitVal = waa.toHit(game).getValue();
+                    if ((toHitVal != TargetRoll.IMPOSSIBLE)
+                            && (toHitVal <= 12)) {
+                        gui.mechD.wPan.selectWeapon(weaponNum);
+                        panel.fire();
+                    }
+                }
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -859,16 +789,14 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem("Flip Arms");
 
         item.setActionCommand(Integer.toString(myEntity.getId()));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    FiringDisplay display = (FiringDisplay) currentPanel;
+        item.addActionListener(e -> {
+            try {
+                FiringDisplay display = (FiringDisplay) currentPanel;
 
-                    int id = Integer.parseInt(e.getActionCommand());
-                    display.updateFlipArms(!game.getEntity(id).getArmsFlipped());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                int id = Integer.parseInt(e.getActionCommand());
+                display.updateFlipArms(!game.getEntity(id).getArmsFlipped());
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -878,13 +806,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createFireJMenuItem() {
         JMenuItem item = new JMenuItem("Fire");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((FiringDisplay) currentPanel).fire();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((FiringDisplay) currentPanel).fire();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1051,24 +977,19 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem createStandJMenuItem(boolean carefulStand) {
-        JMenuItem item = new JMenuItem(
-                Messages.getString("MovementDisplay.butUp"));
+        JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butUp"));
 
         if (carefulStand) {
             item.setText("Careful Stand");
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CAREFUL_STAND
-                                          .getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CAREFUL_STAND.getCmd());
         } else {
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_GET_UP
-                                          .getCmd());
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_GET_UP.getCmd());
         }
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1076,18 +997,14 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem createHullDownJMenuItem() {
-        JMenuItem item = new JMenuItem(
-                Messages.getString("MovementDisplay.butHullDown"));
+        JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butHullDown"));
 
-        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_HULL_DOWN
-                                      .getCmd());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_HULL_DOWN.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1095,18 +1012,14 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem createProneJMenuItem() {
-        JMenuItem item = new JMenuItem(
-                Messages.getString("MovementDisplay.butDown"));
+        JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.butDown"));
 
-        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_GO_PRONE
-                                      .getCmd());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((MovementDisplay) currentPanel).actionPerformed(e);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.setActionCommand(MovementDisplay.MoveCommand.MOVE_GO_PRONE.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1116,7 +1029,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu createConvertMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
         
-        if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
+        if (myEntity instanceof Mech && ((Mech) myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
@@ -1134,15 +1047,15 @@ public class MapMenu extends JPopupMenu {
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
                     currentMode == LandAirMech.CONV_MODE_MECH);
             item.setEnabled(currentMode == LandAirMech.CONV_MODE_MECH
-                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                    || ((LandAirMech) myEntity).canConvertTo(currentMode,
                             LandAirMech.CONV_MODE_MECH));
             menu.add(item);
-            if (((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
+            if (((LandAirMech) myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                         currentMode == LandAirMech.CONV_MODE_AIRMECH);
                 item.setEnabled(currentMode == LandAirMech.CONV_MODE_AIRMECH
-                        || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                        || ((LandAirMech) myEntity).canConvertTo(currentMode,
                                 LandAirMech.CONV_MODE_AIRMECH));
                 menu.add(item);
             }
@@ -1150,7 +1063,7 @@ public class MapMenu extends JPopupMenu {
                     MovementDisplay.MoveCommand.MOVE_MODE_AIR,
                     currentMode == LandAirMech.CONV_MODE_FIGHTER);
             item.setEnabled(currentMode == LandAirMech.CONV_MODE_FIGHTER
-                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                    || ((LandAirMech) myEntity).canConvertTo(currentMode,
                             LandAirMech.CONV_MODE_FIGHTER));
             menu.add(item);
         }
@@ -1169,7 +1082,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 ((MovementDisplay) currentPanel).actionPerformed(e);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                MegaMek.getLogger().error(ex);
             }
         });
         return item;
@@ -1374,7 +1287,7 @@ public class MapMenu extends JPopupMenu {
         }
 
         for (Mounted wpn : myEntity.getWeaponList()) {
-            if (((WeaponType) wpn.getType()).hasFlag(weaponFlag)) {
+            if (wpn.getType().hasFlag(weaponFlag)) {
                 return true;
             }
         }
@@ -1424,16 +1337,14 @@ public class MapMenu extends JPopupMenu {
         }
 
         item.setActionCommand(Integer.toString(direction));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int twistDir = Integer.parseInt(e.getActionCommand());
-                    if (currentPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) currentPanel).torsoTwist(twistDir);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+        item.addActionListener(e -> {
+            try {
+                int twistDir = Integer.parseInt(e.getActionCommand());
+                if (currentPanel instanceof FiringDisplay) {
+                    ((FiringDisplay) currentPanel).torsoTwist(twistDir);
                 }
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1444,27 +1355,22 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem("Twist");
 
         item.setActionCommand(twistCoords.getX() + "|" + twistCoords.getY());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    StringTokenizer result = new StringTokenizer(e
-                                                                         .getActionCommand(), "|");
-                    Coords coord = new Coords(Integer.parseInt(result
-                                                                       .nextToken()), Integer.parseInt(result.nextToken()));
-                    if (currentPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) currentPanel).torsoTwist(coord);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+        item.addActionListener(e -> {
+            try {
+                StringTokenizer result = new StringTokenizer(e.getActionCommand(), "|");
+                Coords coord = new Coords(Integer.parseInt(result.nextToken()), Integer.parseInt(result.nextToken()));
+                if (currentPanel instanceof FiringDisplay) {
+                    ((FiringDisplay) currentPanel).torsoTwist(coord);
                 }
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
         return item;
     }
 
-    private JMenuItem createRotateTurretJMenuItem(final Mech mech,
-                                                  final Mounted turret) {
+    private JMenuItem createRotateTurretJMenuItem(final Mech mech, final Mounted turret) {
         String turretString;
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
             turretString = "Rotate Shoulder Turret ("
@@ -1475,12 +1381,9 @@ public class MapMenu extends JPopupMenu {
             turretString = "Rotate Quad Turret";
         }
         JMenuItem item = new JMenuItem(turretString);
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                TurretFacingDialog tfe = new TurretFacingDialog(gui.frame,
-                                                                mech, turret, gui);
-                tfe.setVisible(true);
-            }
+        item.addActionListener(ae -> {
+            TurretFacingDialog tfe = new TurretFacingDialog(gui.frame, mech, turret, gui);
+            tfe.setVisible(true);
         });
         return item;
     }
@@ -1489,12 +1392,9 @@ public class MapMenu extends JPopupMenu {
         String turretString;
         turretString = "Rotate Front Turret";
         JMenuItem item = new JMenuItem(turretString);
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                TurretFacingDialog tfe = new TurretFacingDialog(gui.frame,
-                                                                tank, gui);
-                tfe.setVisible(true);
-            }
+        item.addActionListener(ae -> {
+            TurretFacingDialog tfe = new TurretFacingDialog(gui.frame, tank, gui);
+            tfe.setVisible(true);
         });
         return item;
     }
@@ -1606,18 +1506,15 @@ public class MapMenu extends JPopupMenu {
         }
 
         item.setActionCommand(Integer.toString(position));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int modePosition = Integer.parseInt(e.getActionCommand());
-                    int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
-                    Mounted equip = myEntity.getEquipment(weaponNum);
-                    equip.setMode(modePosition);
-                    client.sendModeChange(myEntity.getId(), weaponNum,
-                                          modePosition);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                int modePosition = Integer.parseInt(e.getActionCommand());
+                int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
+                Mounted equip = myEntity.getEquipment(weaponNum);
+                equip.setMode(modePosition);
+                client.sendModeChange(myEntity.getId(), weaponNum, modePosition);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
         return item;
@@ -1627,13 +1524,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createPunchJMenuItem() {
         JMenuItem item = new JMenuItem("Punch");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).punch();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).punch();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1643,13 +1538,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createKickJMenuItem() {
         JMenuItem item = new JMenuItem("Kick");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).kick();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).kick();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1659,13 +1552,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createPushJMenuItem() {
         JMenuItem item = new JMenuItem("Push");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).push();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).push();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1675,13 +1566,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createVibroClawMenuItem() {
         JMenuItem item = new JMenuItem("Vibro Claw Attack");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).vibroclawatt();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).vibroclawatt();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1691,13 +1580,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createJumpJetAttackJMenuItem() {
         JMenuItem item = new JMenuItem("Jump Jet Attack");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).jumpjetatt();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).jumpjetatt();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1707,13 +1594,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createThrashJMenuItem() {
         JMenuItem item = new JMenuItem("Thrash");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).thrash();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).thrash();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1723,13 +1608,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createGrappleJMenuItem() {
         JMenuItem item = new JMenuItem("Grapple");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).doGrapple();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).doGrapple();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1739,13 +1622,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createTripJMenuItem() {
         JMenuItem item = new JMenuItem("Trip");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).trip();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).trip();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1755,13 +1636,11 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createDodgeJMenuItem() {
         JMenuItem item = new JMenuItem("Dodge");
 
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    ((PhysicalDisplay) currentPanel).dodge();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                ((PhysicalDisplay) currentPanel).dodge();
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1784,15 +1663,13 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(clubName);
 
         item.setActionCommand(Integer.toString(clubNumber));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Mounted club = myEntity.getClubs().get(
-                            Integer.parseInt(e.getActionCommand()));
-                    ((PhysicalDisplay) currentPanel).club(club);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+        item.addActionListener(e -> {
+            try {
+                Mounted club = myEntity.getClubs().get(
+                        Integer.parseInt(e.getActionCommand()));
+                ((PhysicalDisplay) currentPanel).club(club);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -1810,5 +1687,4 @@ public class MapMenu extends JPopupMenu {
     public boolean getHasMenu() {
         return hasMenu;
     }
-
 }

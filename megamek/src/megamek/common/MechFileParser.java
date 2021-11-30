@@ -32,6 +32,7 @@ import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.zip.ZipFile;
 
+import megamek.MegaMek;
 import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKConvFighterFile;
@@ -67,28 +68,26 @@ import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
 
-/*
+/**
  * Switches between the various type-specific parsers depending on suffix
  */
-
 public class MechFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
-    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; //$NON-NLS-1$
+    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt";
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
 
-    public MechFileParser(File f, String entryName)
-            throws EntityLoadingException {
+    public MechFileParser(File f, String entryName) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
-            try(InputStream is = new FileInputStream(f.getAbsolutePath())) {
+            try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
                 parse(is, f.getName());
             } catch (Exception ex) {
                 System.out.println("Error parsing " + entryName + "!");
-                ex.printStackTrace();
+                MegaMek.getLogger().error(ex);
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException("While parsing file "
                             + f.getName() + ", " + ex.getMessage());
@@ -109,19 +108,18 @@ public class MechFileParser {
             } catch (NullPointerException npe) {
                 throw new NullPointerException();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                MegaMek.getLogger().error(ex);
                 throw new EntityLoadingException("Exception from "
                         + ex.getClass() + ": " + ex.getMessage());
             }
         }
     }
 
-    public MechFileParser(InputStream is, String fileName)
-            throws EntityLoadingException {
+    public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
             parse(is, fileName);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             if (ex instanceof EntityLoadingException) {
                 throw new EntityLoadingException(ex.getMessage());
             }
@@ -134,8 +132,7 @@ public class MechFileParser {
         return m_entity;
     }
 
-    public void parse(InputStream is, String fileName)
-            throws EntityLoadingException {
+    public void parse(InputStream is, String fileName) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -214,14 +211,11 @@ public class MechFileParser {
      * Automatically add BattleArmorHandles to all OmniMechs.
      */
     public static void postLoadInit(Entity ent) throws EntityLoadingException {
-
         try {
             ent.loadDefaultQuirks();
             ent.loadDefaultCustomWeaponOrder();
         } catch (Exception e) {
-            System.out.println("Error in postLoadInit for "
-                    + ent.getDisplayName() + "!");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Error in postLoadInit for " + ent.getDisplayName(), e);
         }
 
         // add any sensors to the entity's vector of sensors
@@ -964,8 +958,7 @@ public class MechFileParser {
         try {
             entity = new MechFileParser(f, entityName).getEntity();
         } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString());
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
         return entity;
     }

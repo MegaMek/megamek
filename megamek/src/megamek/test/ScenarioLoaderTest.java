@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import megamek.MegaMek;
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
 import megamek.server.ScenarioLoader;
@@ -76,21 +77,21 @@ public class ScenarioLoaderTest {
         if(null == file) {
             return;
         }
-        if(file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) { //$NON-NLS-1$
+        if(file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
                 Game game = loader.createGame();
-                Server server = new Server("test", port ++); //$NON-NLS-1$
+                Server server = new Server("test", port ++);
                 server.setGame(game);
                 loader.applyDamage(server);
                 server.die();
-            } catch(Exception e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                MegaMek.getLogger().error(e);
             }
             
             if(errCache.size() > 0) {
-                errorAccumulator.add("ERROR in " + file.getPath()); //$NON-NLS-1$
-                originalErr.println("ERROR in " + file.getPath()); //$NON-NLS-1$
+                errorAccumulator.add("ERROR in " + file.getPath());
+                originalErr.println("ERROR in " + file.getPath());
                 for(String line : errCache) {
                     errorAccumulator.add(line);
                     originalErr.println(line);

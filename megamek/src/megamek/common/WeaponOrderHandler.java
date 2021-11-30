@@ -260,16 +260,13 @@ public class WeaponOrderHandler {
      * @return A {@code Map} for the custom weapon order for the given
      *         unit. If the unit is not in the list, a NULL value is returned.
      */
-    @Nullable
-    public static synchronized WeaponOrder getWeaponOrder(
-            String chassis, String model) {
+    public static synchronized @Nullable WeaponOrder getWeaponOrder(String chassis, String model) {
         if (!initialized.get() || (null == weaponOrderMap)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
             } catch (IOException e) {
-                System.out.println("Failed to load custom weapon order file!");
-                e.printStackTrace();
+                MegaMek.getLogger().error("Failed to load custom weapon order file", e);
                 return null;
             }
         }
@@ -313,8 +310,7 @@ public class WeaponOrderHandler {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
             } catch (IOException e) {
-                System.out.println("Failed to load custom weapon order file!");
-                e.printStackTrace();
+                MegaMek.getLogger().error("Failed to load custom weapon order file", e);
             }
         }
 

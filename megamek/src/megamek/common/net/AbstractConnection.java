@@ -30,6 +30,7 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import megamek.MegaMek;
 import megamek.common.net.marshall.PacketMarshaller;
 import megamek.common.net.marshall.PacketMarshallerFactory;
 import megamek.common.util.CircularIntegerBuffer;
@@ -210,7 +211,7 @@ public abstract class AbstractConnection implements IConnection {
                 System.err.println(e.getMessage());
                 // We don't need a full stack trace... we're
                 // just closing the connection anyway.
-                // e.printStackTrace();
+                // MegaMek.getLogger().error(e);
             }
             socket = null;
         }
@@ -281,7 +282,7 @@ public abstract class AbstractConnection implements IConnection {
             sendNetworkPacket(packet.getData(), packet.isCompressed());
             debugLastFewCommandsSent.push(packet.getCommand());
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -406,7 +407,7 @@ public abstract class AbstractConnection implements IConnection {
      * @return
      */
     protected String getConnectionTypeAbbrevation() {
-        return isServer() ? "s:" : "c:"; //$NON-NLS-1$ //$NON-NLS-2$
+        return isServer() ? "s:" : "c:";
     }
 
     /**
@@ -452,18 +453,14 @@ public abstract class AbstractConnection implements IConnection {
             while ((np = readNetworkPacket()) != null) {
                 processPacket(np);
             }
-        } catch (SocketException e) {
-            // Do nothing, happens when the socket closes
-            close();
-        } catch (EOFException e) {
+        } catch (SocketException | EOFException e) {
             // Do nothing, happens when the socket closes
             close();
         } catch (IOException e) {
-            System.out
-                    .println("IOException during AbstractConnection#update()");
+            MegaMek.getLogger().error(e);
             close();
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             reportReceiveException(e);
             close();
         }
@@ -627,7 +624,7 @@ public abstract class AbstractConnection implements IConnection {
                 data = bos.toByteArray();
                 bytesSent += data.length;
             } catch (Exception e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
         }
 

@@ -38,6 +38,7 @@ import java.util.TimerTask;
 
 import javax.swing.SwingUtilities;
 
+import megamek.MegaMek;
 import megamek.common.Board;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
@@ -236,8 +237,8 @@ public class PacketTool extends Frame implements Runnable {
             board = new Board();
             panConnect.setEnabled(false);
             panXmit.setEnabled(true);
-        } catch (Throwable err) {
-            err.printStackTrace();
+        } catch (Throwable t) {
+            MegaMek.getLogger().error(t);
         }
     }
 
@@ -315,8 +316,8 @@ public class PacketTool extends Frame implements Runnable {
             panConnect.setEnabled(false);
             panXmit.setEnabled(true);
 
-        } catch (Throwable err) {
-            err.printStackTrace();
+        } catch (Throwable t) {
+            MegaMek.getLogger().error(t);
         }
     }
 
@@ -426,10 +427,10 @@ public class PacketTool extends Frame implements Runnable {
                      * * Save the board here.
                      */
                     Board recvBoard = (Board) packet.getObject(0);
-                    try(OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
+                    try (OutputStream os = new FileOutputStream("xmit.board")) {
                         recvBoard.save(os);
-                    } catch (IOException ioErr) {
-                        ioErr.printStackTrace();
+                    } catch (IOException e) {
+                        MegaMek.getLogger().error(e);
                     }
                     break;
                 case Packet.COMMAND_SENDING_ENTITIES:
@@ -517,5 +518,4 @@ public class PacketTool extends Frame implements Runnable {
         }
 
     };
-
 }

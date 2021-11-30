@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
@@ -333,8 +334,7 @@ public class SkinXMLHandler {
                 return false;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return false;
         }
         // Skin spec didn't specify UnitDisplay skin, use default
@@ -549,11 +549,10 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        File filePath = new MegaMekFile(Configuration.skinsDir(),
-                filename).getFile();
+        File filePath = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
 
         try (Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(filePath)));){
+                new FileOutputStream(filePath)))){
             output.write(SKIN_HEADER);
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);
@@ -562,10 +561,8 @@ public class SkinXMLHandler {
                 writeUnitDisplaySkinSpec(output);
             }
             output.write(SKIN_FOOTER);
-            output.close();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 

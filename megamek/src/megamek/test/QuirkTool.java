@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -35,6 +36,7 @@ import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
 import megamek.common.Tank;
 import megamek.common.VTOL;
+import megamek.common.loaders.EntityLoadingException;
 
 /**
  * This program is a tool to help gather information about quirks.  It goes
@@ -66,8 +68,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
         try {
             QuirksHandler.initQuirksList();
         } catch (IOException e) {
-            System.err.println("Error initializing quirks!");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Error initializing quirks!", e);
             return;
         }
         
@@ -142,11 +143,9 @@ public class QuirkTool implements MechSummaryCache.Listener {
         Entity entity = null;
         try {
             entity = new MechFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString()); //$NON-NLS-1$
+        } catch (EntityLoadingException e) {
+            MegaMek.getLogger().error(e);
         }
         return entity;
     }
-
-    
 }

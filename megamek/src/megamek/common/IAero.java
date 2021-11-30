@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.MovePath.MoveStepType;
 
 /**
@@ -219,8 +220,7 @@ public interface IAero {
                         newmount.setNWeapons(groups.get(key));
                         getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
-                        ex.printStackTrace();
+                        MegaMek.getLogger().error("Unable to compile weapon groups", ex);
                         return;
                     }
                 } else if (name != "0") {

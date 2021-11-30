@@ -48,6 +48,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
@@ -380,10 +381,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Cache the selected boards, so we can restore them
         ArrayList<String> selectedBoards = mapSettings.getBoardsSelectedVector();
         // Load the file.  If there is an error, log it and return.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return;
         }
         mapSettings.setBoardsSelectedVector(selectedBoards);
@@ -412,10 +413,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
 
         // Load the changed settings into the existing map settings object.
-        try(OutputStream os = new FileOutputStream(selectedFile)) {
+        try (OutputStream os = new FileOutputStream(selectedFile)) {
             mapSettings.save(os);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
         return true;
     }

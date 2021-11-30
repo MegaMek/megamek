@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -390,7 +391,7 @@ public class HmvFile implements IMechLoader {
 
             dis.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("I/O Error reading file");
         }
     }
@@ -570,23 +571,18 @@ public class HmvFile implements IMechLoader {
 
             return vehicle;
         } catch (Exception e) {
-            // System.out.println(structureType.toString());
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             throw new EntityLoadingException(e.getMessage());
         }
     }
 
     private void addEquipmentType(EquipmentType equipmentType, int weaponCount, HMVWeaponLocation weaponLocation) {
-        Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.get(weaponLocation);
-        if (equipmentAtLocation == null) {
-            equipmentAtLocation = new Hashtable<EquipmentType, Integer>();
-            equipment.put(weaponLocation, equipmentAtLocation);
-        }
+        Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.computeIfAbsent(weaponLocation, k -> new Hashtable<>());
         Integer prevCount = equipmentAtLocation.get(equipmentType);
         if (null != prevCount) {
-            weaponCount += prevCount.intValue();
+            weaponCount += prevCount;
         }
-        equipmentAtLocation.put(equipmentType, Integer.valueOf(weaponCount));
+        equipmentAtLocation.put(equipmentType, weaponCount);
     }
 
     private void addEquipment(Tank tank, HMVWeaponLocation weaponLocation, int location) throws Exception {

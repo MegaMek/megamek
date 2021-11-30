@@ -286,33 +286,28 @@ class FovHighlightingAndDarkening {
         ringsRadii= new ArrayList<>();
         ringsColors= new ArrayList<>();
 
-        for(String rrRaw: dRingsRadiiRaw){
+        for (String rrRaw: dRingsRadiiRaw) {
             try {
-                int rr= Integer.parseInt(rrRaw.trim());
-                ringsRadii.add( Math.min(rr, max_dist) );
+                int rr = Integer.parseInt(rrRaw.trim());
+                ringsRadii.add(Math.min(rr, max_dist));
             } catch (NumberFormatException e) {
-                System.err.printf("%s parameter unparsable '%s'"
-                        ,GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw );
-                e.printStackTrace();
-                System.err.flush();
+                MegaMek.getLogger().error(String.format("%s parameter unparsable '%s'",
+                        GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw), e);
                 break;
             }
         }
 
-        for(String rcr: dRingsColorsRaw ){
+        for (String rcr : dRingsColorsRaw) {
             try {
-                String[] hsbr= rcr.trim().split("\\s+");
-                float h=Float.parseFloat( hsbr[0] );
-                float s=Float.parseFloat( hsbr[1] );
-                float b=Float.parseFloat( hsbr[2] );
+                String[] hsbr = rcr.trim().split("\\s+");
+                float h = Float.parseFloat( hsbr[0] );
+                float s = Float.parseFloat( hsbr[1] );
+                float b = Float.parseFloat( hsbr[2] );
                 Color tc= new Color( Color.HSBtoRGB(h, s, b) );
-                ringsColors.add(new Color(tc.getRed(), tc.getGreen(), tc
-                        .getBlue(), highlight_alpha));
+                ringsColors.add(new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), highlight_alpha));
             } catch (NumberFormatException e) {
-                System.err.printf("%s parameter unparsable '%s'"
-                        ,GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr );
-                e.printStackTrace();
-                System.err.flush();
+                MegaMek.getLogger().error(String.format("%s paremater unparsable '%s'",
+                        GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr), e);
                 break;
             }
         }

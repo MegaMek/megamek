@@ -434,8 +434,7 @@ public class GameOptions extends AbstractOptions {
             
             marshaller.marshal(element, new File(file));
         } catch (JAXBException ex) {
-            System.err.println("Error writing XML for game options: " + ex.getMessage()); 
-            ex.printStackTrace();
+            MegaMek.getLogger().error("Error writing Game Options XML", ex);
         }
     }
 

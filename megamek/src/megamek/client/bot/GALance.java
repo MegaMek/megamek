@@ -17,6 +17,7 @@ package megamek.client.bot;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import megamek.MegaMek;
 import megamek.client.bot.ga.Chromosome;
 import megamek.client.bot.ga.GA;
 import megamek.common.Compute;
@@ -182,7 +183,7 @@ public class GALance extends GA {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
         double max = 0;
         // bonuses for endangering or dooming opponent mechs

@@ -23,6 +23,7 @@ package megamek.common.loaders;
 import java.io.*;
 import java.util.*;
 
+import megamek.MegaMek;
 import megamek.common.*;
 
 /**
@@ -145,13 +146,13 @@ public class MtfFile implements IMechLoader {
 
             readCrits(r);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
@@ -507,13 +508,13 @@ public class MtfFile implements IMechLoader {
             }
             return mech;
         } catch (NumberFormatException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("NumberFormatException parsing file");
         } catch (NullPointerException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
             throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
         }
     }

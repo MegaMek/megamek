@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -42,7 +43,6 @@ import org.w3c.dom.NodeList;
  * the XML file.
  *
  * @author arlith
- *
  */
 public class KeyBindParser {
 
@@ -75,15 +75,15 @@ public class KeyBindParser {
         // Build the XML document.
         try {
             DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
+            MegaMek.getLogger().info("Parsing " + file.getName());
             System.out.println("Parsing " + file.getName());
             Document doc = builder.parse(file);
-            System.out.println("Parsing finished.");
+            MegaMek.getLogger().info("Finished Parsing " + file.getName());
 
             // Get the list of units.
             NodeList listOfUnits = doc.getElementsByTagName(KEY_BIND);
             int totalBinds = listOfUnits.getLength();
-            System.out.println("Total number of key binds parsed: "
-                    + totalBinds);
+            MegaMek.getLogger().info("Total number of key binds parsed: " + totalBinds);
 
             for (int bindCount = 0; bindCount < totalBinds; bindCount++) {
 
@@ -91,52 +91,42 @@ public class KeyBindParser {
                 Element bindingList = (Element) listOfUnits.item(bindCount);
 
                 // Get the key code
-                Element elem = (Element) bindingList
-                        .getElementsByTagName(KEY_CODE).item(0);
+                Element elem = (Element) bindingList.getElementsByTagName(KEY_CODE).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + KEY_CODE + " element #"
-                            + bindCount);
+                    MegaMek.getLogger().error(String.format("Missing %s element #%s", KEY_CODE, bindCount));
                     continue;
                 }
                 int keyCode = Integer.parseInt(elem.getTextContent());
 
                 // Get the modifier.
-                elem = (Element) bindingList
-                        .getElementsByTagName(KEY_MODIFIER).item(0);
+                elem = (Element) bindingList.getElementsByTagName(KEY_MODIFIER).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + KEY_MODIFIER + " element #"
-                            + bindCount);
+                    MegaMek.getLogger().error(String.format("Missing %s element #%s", KEY_MODIFIER, bindCount));
                     continue;
                 }
                 int modifiers = Integer.parseInt(elem.getTextContent());
 
 
                 // Get the command
-                elem = (Element) bindingList
-                        .getElementsByTagName(COMMAND).item(0);
+                elem = (Element) bindingList.getElementsByTagName(COMMAND).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + COMMAND + " element #"
-                            + bindCount);
+                    MegaMek.getLogger().error(String.format("Missing %s element #%s", COMMAND, bindCount));
                     continue;
                 }
                 String command = elem.getTextContent();
 
                 // Get the isRepeatable
-                elem = (Element) bindingList
-                        .getElementsByTagName(IS_REPEATABLE).item(0);
+                elem = (Element) bindingList.getElementsByTagName(IS_REPEATABLE).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + IS_REPEATABLE + " element #"
-                            + bindCount);
+                    MegaMek.getLogger().error(String.format("Missing %s element #%s", IS_REPEATABLE, bindCount));
                     continue;
                 }
-                boolean isRepeatable =
-                        Boolean.parseBoolean(elem.getTextContent());
+                boolean isRepeatable = Boolean.parseBoolean(elem.getTextContent());
 
                 KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
 
-                if (keyBind == null){
-                    System.err.println("Unknown command: " + command +
-                            ", element #" + bindCount);
+                if (keyBind == null) {
+                    MegaMek.getLogger().error(String.format("Unknown command: %s, element #%s", command, bindCount));
                 } else {
                     keyBind.key = keyCode;
                     keyBind.modifiers = modifiers;
@@ -145,8 +135,7 @@ public class KeyBindParser {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error parsing key bindings!");
-            e.printStackTrace(System.err);
+            MegaMek.getLogger().error("Error parsing key bindings", e);
             controller.removeAllKeyCommandBinds();
             registerDefaultKeyBinds(controller);
         }
@@ -230,7 +219,7 @@ public class KeyBindParser {
 
     private synchronized static void fireKeyBindsChangeEvent() {
         final PreferenceChangeEvent pe = new PreferenceChangeEvent(KeyBindParser.class, KEYBINDS_CHANGED, null, null);
-        listeners.stream().forEach(l -> l.preferenceChange(pe));
+        listeners.forEach(l -> l.preferenceChange(pe));
     }
 
 }

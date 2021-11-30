@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import megamek.MegaMek;
 import megamek.common.net.Packet;
 
 /**
@@ -44,7 +45,7 @@ public abstract class PacketMarshaller {
             bo.flush();
             return bo.toByteArray();
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return null;
         }
     }
@@ -71,7 +72,7 @@ public abstract class PacketMarshaller {
         try {
             return unmarshall(new ByteArrayInputStream(data));
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return null;
         }
 

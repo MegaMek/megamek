@@ -146,8 +146,7 @@ public class PreferenceManager {
             
             marshaller.marshal(element, file);
         } catch (JAXBException ex) {
-            System.err.println("Error writing XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+            MegaMek.getLogger().error("Error writing XML for client settings", ex);
         }
     }
 

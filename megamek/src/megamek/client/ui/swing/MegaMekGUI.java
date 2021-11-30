@@ -128,8 +128,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
         } catch (Exception e) {
-            System.err.println("Error setting look and feel!");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Error setting look and feel!", e);
         }
 
         ToolTipManager.sharedInstance().setInitialDelay(

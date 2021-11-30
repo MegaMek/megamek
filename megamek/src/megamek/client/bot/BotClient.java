@@ -452,14 +452,14 @@ public abstract class BotClient extends Client {
                     break;
                 case VICTORY:
                     runEndGame();
-                    sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
+                    sendChat(Messages.getString("BotClient.Bye"));
                     die();
                     break;
                 default:
                     break;
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            MegaMek.getLogger().error(t);
         }
     }
 
@@ -493,9 +493,9 @@ public abstract class BotClient extends Client {
         try {
             // Save the entities to the file.
             EntityListFile.saveTo(unitFile, living);
-        } catch (IOException excep) {
-            excep.printStackTrace(System.err);
-            doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
+            doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
         }
     }
 
@@ -1170,8 +1170,7 @@ public abstract class BotClient extends Client {
             return null;
         }// CYA exception
         catch (Exception ex) {
-            System.err.println("Error while reading ./mmconf/botmessages.txt.");
-            ex.printStackTrace();
+            MegaMek.getLogger().error("Exception reading bot messages", ex);
             return null;
         }
         return message;

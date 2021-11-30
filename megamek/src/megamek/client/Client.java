@@ -270,11 +270,11 @@ public class Client implements IClientCommandHandler {
             try {
                 log.close();
             } catch (IOException e) {
-                System.err.print("Exception closing logfile: "); //$NON-NLS-1$
-                e.printStackTrace();
+                MegaMek.getLogger().error("Exception closing logfile", e);
             }
         }
-        System.out.println("client: died"); //$NON-NLS-1$
+        MegaMek.getLogger().info("Client: Died");
+
         System.out.flush();
     }
 
@@ -287,7 +287,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals("localhost")) { //$NON-NLS-1$
+            if (!host.equals("localhost")) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
@@ -944,13 +944,12 @@ public class Client implements IClientCommandHandler {
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Can't find local savegame " + f); //$NON-NLS-1$
+            MegaMek.getLogger().error("Can't find local save game " + f, e);
         }
     }
 
     public void sendExplodeBuilding(DemolitionCharge charge) {
-        Object data[] = new Object[1];
+        Object[] data = new Object[1];
         data[0] = charge;
         send(new Packet(Packet.COMMAND_BLDG_EXPLODE, data));
     }
@@ -999,12 +998,12 @@ public class Client implements IClientCommandHandler {
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
-            for(Entity e: newOutOfGame) {
+            for (Entity e: newOutOfGame) {
                 cacheImgTag(e);
             }
         }
         //cache the image data for the entities
-        for(Entity e: newEntities) {
+        for (Entity e: newEntities) {
             cacheImgTag(e);
         }
     }
@@ -1317,7 +1316,7 @@ public class Client implements IClientCommandHandler {
             fw.flush();
             fw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -1615,8 +1614,7 @@ public class Client implements IClientCommandHandler {
                 fout.flush();
                 fout.close();
             } catch (Exception e) {
-                System.err.println("Unable to save file: " + sFinalFile);
-                e.printStackTrace();
+                MegaMek.getLogger().error("Unable to save file: " + sFinalFile, e);
             }
             break;
         case Packet.COMMAND_LOAD_SAVEGAME:
@@ -1625,7 +1623,7 @@ public class Client implements IClientCommandHandler {
                 File f = new File("savegames", loadFile);
                 sendLoadGame(f);
             } catch (Exception e) {
-                System.err.println("Unable to find the file: " + loadFile);
+                MegaMek.getLogger().error("Unable to find the file: " + loadFile, e);
             }
             break;
         case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
@@ -1662,12 +1660,12 @@ public class Client implements IClientCommandHandler {
                 cfrEvt.setTargetId((int) c.getObject(2));
                 break;
             case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                cfrEvt.setTeleguidedMissileTargets((List<Integer>)c.getObject(1));
-                cfrEvt.setTmToHitValues((List<Integer>)c.getObject(2));
+                cfrEvt.setTeleguidedMissileTargets((List<Integer>) c.getObject(1));
+                cfrEvt.setTmToHitValues((List<Integer>) c.getObject(2));
                 break;
             case Packet.COMMAND_CFR_TAG_TARGET:
-                cfrEvt.setTAGTargets((List<Integer>)c.getObject(1));
-                cfrEvt.setTAGTargetTypes((List<Integer>)c.getObject(2));
+                cfrEvt.setTAGTargets((List<Integer>) c.getObject(1));
+                cfrEvt.setTAGTargetTypes((List<Integer>) c.getObject(2));
                 break;
             }
             game.processGameEvent(cfrEvt);
@@ -1693,19 +1691,18 @@ public class Client implements IClientCommandHandler {
                 e.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
-
     }
 
     public void sendDominoCFRResponse(MovePath mp) {
-        Object data[] = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
+        Object[] data = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAMSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

@@ -14,6 +14,8 @@
 
 package megamek.common.net;
 
+import megamek.MegaMek;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -134,9 +136,8 @@ class DataStreamConnection extends AbstractConnection {
             // to, and it's not a big deal, since the connection is being broken
             // anyways
             close();
-        } catch (IOException ioe) {
-            // Log non-SocketException IOExceptions
-            ioe.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             // close this connection, because it's broken
             close();
         }

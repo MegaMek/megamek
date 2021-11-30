@@ -10690,7 +10690,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (LocationFullException e) {
                     // can't happen
-                    e.printStackTrace();
+                    MegaMek.getLogger().error(e);
                 }
             }
         }
@@ -10713,7 +10713,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (LocationFullException e) {
                     // can't happen
-                    e.printStackTrace();
+                    MegaMek.getLogger().error(e);
                 }
             }
         }
@@ -10736,7 +10736,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (LocationFullException e) {
                     // can't happen
-                    e.printStackTrace();
+                    MegaMek.getLogger().error(e);
                 }
             }
         }

@@ -14,6 +14,7 @@
 
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -86,13 +87,13 @@ public class Ruler extends JDialog implements BoardViewListener {
             //getContentPane().add(panel1);
             pack();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
     }
 
     private void jbInit() {
         buttonPanel = new JPanel();
-        butFlip.setText(Messages.getString("Ruler.flip")); //$NON-NLS-1$
+        butFlip.setText(Messages.getString("Ruler.flip"));
         butFlip.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 butFlip_actionPerformed();

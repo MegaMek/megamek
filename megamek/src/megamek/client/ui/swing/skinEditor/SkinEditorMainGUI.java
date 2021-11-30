@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.skinEditor;
 
+import megamek.MegaMek;
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -128,7 +129,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             testEntity = new MechFileParser(ms.getSourceFile(),
                     ms.getEntryName()).getEntity();
         } catch (EntityLoadingException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -212,9 +213,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (IOException e) {
-            e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
+            MegaMek.getLogger().error(e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
+                    Messages.getString("ClientGUI.FatalError.message") + e);
             die();
         }
         switchPanel(GamePhase.MOVEMENT);
@@ -252,9 +253,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception e) {
-            e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
+            MegaMek.getLogger().error(e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
+                    Messages.getString("ClientGUI.FatalError.message") + e);
             die();
         }
 
@@ -348,8 +349,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (Throwable error) {
-            error.printStackTrace();
+        } catch (Throwable t) {
+            MegaMek.getLogger().error(t);
         }
 
         TimerSingleton.getInstance().killTimer();

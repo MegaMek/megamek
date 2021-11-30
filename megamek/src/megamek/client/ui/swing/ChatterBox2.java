@@ -15,6 +15,7 @@
 
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -34,10 +35,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -546,7 +545,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         while (words.hasMoreElements()) {
             String nextWord = words.nextElement();
             if (fm.stringWidth(nextLine + " " + nextWord) < lineWidth) {
-                nextLine = (nextLine.equals("")) ? nextWord : nextLine + " "
+                nextLine = (nextLine.isEmpty()) ? nextWord : nextLine + " "
                         + nextWord;
             } else {
                 messages.addElement(nextLine);
@@ -716,18 +715,10 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     content.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
-                    addChatMessage((String)content.getTransferData(
-                            DataFlavor.stringFlavor));
-                  }
-                  catch (UnsupportedFlavorException ex){
-                    //highly unlikely since we are using a standard DataFlavor
-                    System.out.println(ex);
-                    ex.printStackTrace();
-                  }
-                  catch (IOException ex) {
-                      System.out.println(ex);
-                      ex.printStackTrace();
-                  }
+                    addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
+                } catch (Exception  ex) {
+                    MegaMek.getLogger().error(ex);
+                }
             }            
             return;
         }
@@ -809,7 +800,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:
-                if ((message == null) || message.equals("")) {
+                if ((message == null) || message.isEmpty()) {
                     return;
                 }
 

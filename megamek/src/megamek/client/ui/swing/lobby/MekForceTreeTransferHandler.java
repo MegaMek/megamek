@@ -31,6 +31,7 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
+import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.force.Force;
 
@@ -111,7 +112,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return false;
         }
         return true;
@@ -177,7 +178,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             
             
         } catch (Exception e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return false;
         }
         return false;

@@ -1,5 +1,6 @@
 package megamek.utils;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -21,14 +22,12 @@ import megamek.common.loaders.EntityLoadingException;
  * Note that some failures may be due to system or construction options rather than EquipmentType.
  * 
  * @author Neoancient
- *
  */
-
 public class TechLevelCompareTool {
     
-    static Set<EquipmentType> weaponSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
-    static Set<EquipmentType> ammoSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
-    static Set<EquipmentType> miscSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
+    static Set<EquipmentType> weaponSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> ammoSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
+    static Set<EquipmentType> miscSet = new TreeSet<>(Comparator.comparing(EquipmentType::getName));
     
     public static void main(String[] args) {
         int bad = 0;
@@ -37,23 +36,23 @@ public class TechLevelCompareTool {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+
         for (MechSummary ms : msc.getAllMechs()) {
             Entity en = null;
             try {
                 en = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             } catch (EntityLoadingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+
             if (null != en) {
                  SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(en.getTechLevel());
                  SimpleTechLevel calc = en.getStaticTechLevel();
                 if (fixed.compareTo(calc) < 0) {
-                    System.out.println(en.getShortName() + ": " + fixed.toString() + "/" + calc.toString());
+                    System.out.println(en.getShortName() + ": " + fixed + "/" + calc);
                     for (Mounted m : en.getEquipment()) {
                         if (fixed.compareTo(m.getType().getStaticTechLevel()) < 0) {
                             if (m.getType() instanceof WeaponType) {

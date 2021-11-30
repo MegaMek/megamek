@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.border.EtchedBorder;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -259,10 +260,8 @@ public class MegamekBorder extends EtchedBorder {
             } else {
                 insets = new Insets(5, 5, 5, 5);
             }
-        } catch (Exception e){
-            System.out.println("Error: loading icons for " +
-                    "a MegamekBorder!");
-            e.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Failed Loading icons for a MegaMek Border", e);
             iconsLoaded = false;
         }      
     }
@@ -270,14 +269,13 @@ public class MegamekBorder extends EtchedBorder {
     /**
      * Paints the border using the loaded corner icons and edge icons.
      */
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, 
-            int height) {
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         // Do nothing if we don't want to draw a border
         if (noBorder) {
             return;
         }
         
-        // If the icons didn't loaded, treat this as a regualar border
+        // If the icons didn't load, treat this as a regular border
         if (!iconsLoaded) {
             super.paintBorder(c, g, x, y, width, height);
             return;
@@ -286,7 +284,7 @@ public class MegamekBorder extends EtchedBorder {
         g.translate(x, y);
         
         // Draw Top Left Corner Icon
-        if (tlCorner.getImageLoadStatus() == MediaTracker.COMPLETE){
+        if (tlCorner.getImageLoadStatus() == MediaTracker.COMPLETE) {
             paintCorner(c, g, 0, 0, tlCorner);
         }
         

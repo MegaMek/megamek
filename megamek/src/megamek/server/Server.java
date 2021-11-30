@@ -30135,7 +30135,7 @@ public class Server implements Runnable {
             // by the clients possible input.
             e.setNewRoundNovaNetworkString(networkID);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
 
     }
@@ -34021,7 +34021,7 @@ public class Server implements Runnable {
                     guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon
                             .get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    MegaMek.getLogger().error(ex);
                 }
                 guerrilla.setDeployed(true);
                 guerrilla.setDone(true);
@@ -35339,7 +35339,7 @@ public class Server implements Runnable {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
             return "";
         }
     }

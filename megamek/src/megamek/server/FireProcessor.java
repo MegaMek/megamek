@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -228,7 +229,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         try {
             burnDamage = game.getOptions().intOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            MegaMek.getLogger().error(ex);
         }
         // Report that damage applied to terrain
         Report r = new Report(3383, Report.PUBLIC);
@@ -236,8 +237,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         r.add(burnDamage);
         burnReports.addElement(r);
 
-        Vector<Report> newReports =
-                server.tryClearHex(coords, burnDamage, Entity.NONE);
+        Vector<Report> newReports = server.tryClearHex(coords, burnDamage, Entity.NONE);
         for (Report nr : newReports) {
             nr.indent(2);
         }

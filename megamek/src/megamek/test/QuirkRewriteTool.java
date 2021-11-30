@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import megamek.MegaMek;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
@@ -55,8 +56,7 @@ public class QuirkRewriteTool implements MechSummaryCache.Listener {
         try {
             QuirksHandler.initQuirksList();
         } catch (IOException e) {
-            System.err.println("Error initializing quirks!");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Error initializing quirks!", e);
             return;
         }
 
@@ -96,7 +96,7 @@ public class QuirkRewriteTool implements MechSummaryCache.Listener {
         try {
             QuirksHandler.saveCustomQuirksList();
         } catch (IOException e) {
-            e.printStackTrace();
+            MegaMek.getLogger().error(e);
         }
         System.out.println("\n");
 

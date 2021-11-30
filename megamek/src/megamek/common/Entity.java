@@ -14815,7 +14815,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void loadDefaultQuirks() {
-
         // Get a list of quirks for this entity.
         List<QuirkEntry> quirks = QuirksHandler.getQuirks(this);
 
@@ -14824,87 +14823,67 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return;
         }
 
-        // System.out.println("Loading quirks for " + getChassis() + " " +
-        // getModel());
-
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
-
-            // System.out.print("  " + q.toLog() + "... ");
 
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
             if (StringUtil.isNullOrEmpty(q.getLocation())) {
-
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {
-                    System.out.println(q.toLog() + " failed for "
-                                       + getChassis() + " " + getModel()
-                                       + " - Invalid quirk!");
+                    MegaMek.getLogger().error(String.format("%s failed for %s %s - Invalid Quirk Name",
+                            q.toLog(), getChassis(), getModel()));
                     continue;
                 }
                 getQuirks().getOption(q.getQuirk()).setValue(true);
-                // System.out.println("Loaded.");
                 continue;
             }
 
             // Get the weapon in the indicated location and slot.
-            // System.out.print("Getting CriticalSlot... ");
-            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()),
-                                          q.getSlot());
+            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
             if (cs == null) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - Critical slot ("
-                                   + q.getLocation() + "-" + q.getSlot()
-                                   + ") did not load!");
+                MegaMek.getLogger().error(String.format("%s failed for %s %s - Critical Slot (%s-%s) did not load",
+                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
             Mounted m = cs.getMount();
             if (m == null) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - Critical slot ("
-                                   + q.getLocation() + "-" + q.getSlot() + ") is empty!");
+                MegaMek.getLogger().error(String.format("%s failed for %s %s - Critical Slot (%s-%s) is empty",
+                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
 
             // Make sure this is a weapon.
-            // System.out.print("Getting WeaponType... ");
-            if (!(m.getType() instanceof WeaponType)
-                    && !(m.getType().hasFlag(MiscType.F_CLUB))) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - " + m.getName()
-                                   + " is not a weapon!");
+            if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
+
+                MegaMek.getLogger().error(String.format("%s failed for %s %s - %s is not a weapon",
+                        q.toLog(), getChassis(), getModel(), m.getName()));
                 continue;
             }
 
             // Make sure it is the weapon we expect.
-            // System.out.print("Matching weapon... ");
             boolean matchFound = false;
             Enumeration<String> typeNames = m.getType().getNames();
             while (typeNames.hasMoreElements()) {
                 String typeName = typeNames.nextElement();
-                // System.out.print(typeName + "... ");
                 if (typeName.equals(q.getWeaponName())) {
                     matchFound = true;
                     break;
                 }
             }
             if (!matchFound) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - " + m.getType().getName()
-                                   + " != " + q.getWeaponName());
+                MegaMek.getLogger().error(String.format("%s failed for %s %s - %s != %s",
+                        q.toLog(), getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
                 continue;
             }
 
             // Activate the weapon quirk.
-            // System.out.print("Activating quirk... ");
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - Invalid quirk!");
+                MegaMek.getLogger().error(String.format("%s failed for %s %s - Invalid Quirk",
+                        q.toLog(), getChassis(), getModel()));
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
-            // System.out.println("Loaded.");
         }
     }
 

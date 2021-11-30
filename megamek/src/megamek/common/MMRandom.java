@@ -1,24 +1,19 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * MMRandom.java
- *
- * Created on April 27, 2003, 11:29 PM
- */
-
 package megamek.common;
+
+import megamek.MegaMek;
 
 import java.util.Random;
 
@@ -26,7 +21,7 @@ import java.util.Random;
  * Used by Compute to generate random numbers, usually dice rolls. The base
  * class is abstract, having a number of concrete subclasses that it will give
  * using the generate() method.
- * 
+ * Created on April 27, 2003, 11:29 PM
  * @author Ben
  */
 public abstract class MMRandom {
@@ -42,7 +37,7 @@ public abstract class MMRandom {
      * errors.
      */
     static MMRandom generate(int type) {
-        System.err.println("MMRandom: generating RNG type #" + type);
+        MegaMek.getLogger().info("MMRandom: generating RNG type #" + type);
         try {
             switch (type) {
                 case R_CRYPTO:
@@ -54,10 +49,7 @@ public abstract class MMRandom {
                     return new MMRandom.SunRandom();
             }
         } catch (Exception ex) {
-            System.err.println("MMRandom: could not create desired RNG #"
-                    + type);
-            System.err.println("MMRandom: using SunRandom (#0) instead");
-
+            MegaMek.getLogger().error("Could not create desired RNG #" + type + "using SunRandom (#0) instead.", ex);
             return new MMRandom.SunRandom();
         }
     }

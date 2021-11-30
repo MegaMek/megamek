@@ -36,9 +36,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
+import megamek.common.annotations.Nullable;
 
 /**
  * Generic utility methods for image data
@@ -203,7 +205,7 @@ public final class ImageUtil {
         public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                System.out.println(String.format("Trying to load image for a non-existent file! Path: %s", fileName));
+                MegaMek.getLogger().error(String.format("Trying to load image for a non-existent file! Path: %s", fileName));
                 return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
@@ -231,19 +233,20 @@ public final class ImageUtil {
          * @param c
          * @return
          */
-        protected Coords parseCoords(String c) {
-            if(null == c || c.isEmpty()) {
+        protected @Nullable Coords parseCoords(String c) {
+            if (null == c || c.isEmpty()) {
                 return null;
             }
-            String[] elements = c.split(",", -1); //$NON-NLS-1$
-            if(elements.length != 2) {
+            String[] elements = c.split(",", -1);
+            if (elements.length != 2) {
                 return null;
             }
+
             try {
                 int x = Integer.parseInt(elements[0]);
                 int y = Integer.parseInt(elements[1]);
                 return new Coords(x, y);
-            } catch(NumberFormatException nfe) {
+            } catch (NumberFormatException nfe) {
                 return null;
             }
         }
@@ -257,17 +260,17 @@ public final class ImageUtil {
         public Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
-            if((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
+            if ((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
                 return null;
             }
             String coords = fileName.substring(tileStart + 1, tileEnd);
             int coordsSplitter = coords.indexOf('-');
-            if(coordsSplitter == -1) {
+            if (coordsSplitter == -1) {
                 return null;
             }
             Coords start = parseCoords(coords.substring(0, coordsSplitter));
             Coords size = parseCoords(coords.substring(coordsSplitter + 1));
-            if((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
+            if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
@@ -275,9 +278,9 @@ public final class ImageUtil {
             if (!baseFile.exists()) {
                 return null;
             }
-            System.out.println("Loading atlas: " + baseFile);
+            MegaMek.getLogger().info("Loading Atlas: " + baseFile);
             Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
-            if(null == base) {
+            if (null == base) {
                 return null;
             }
             waitUntilLoaded(base);

@@ -531,15 +531,11 @@ public class RandomUnitGenerator implements Serializable {
             rug.initializing = true;
             interrupted = false;
             dispose = false;
-            rug.loader = new Thread(new Runnable() {
-                public void run() {
-                    long start = System.currentTimeMillis();
-                    rug.populateUnits();
-                    long end = System.currentTimeMillis();
-                    System.out.println("Loaded Rats in: " + (end - start)
-                            + "ms.");
-                    System.out.flush();
-                }
+            rug.loader = new Thread(() -> {
+                long start = System.currentTimeMillis();
+                rug.populateUnits();
+                long end = System.currentTimeMillis();
+                MegaMek.getLogger().info(String.format("Loaded RATs in: %sms", (end - start)));
             }, "Random Unit Generator unit populator");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rug.loader.start();

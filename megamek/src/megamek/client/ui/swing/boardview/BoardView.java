@@ -2395,7 +2395,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int level = hex.getLevel();
         int depth = hex.depth(false);
 
-        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
+        Terrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
         if (basement != null) {
             depth = 0;
         }

@@ -455,7 +455,7 @@ public class Server implements Runnable {
             Entity ent = e.next();
             ent.setGame(game);
             
-            if(ent.getOwner() == null) {
+            if (ent.getOwner() == null) {
                 orphanEntities.add(ent.getId());
                 continue;
             }
@@ -563,8 +563,7 @@ public class Server implements Runnable {
         }
 
         // kill pending connections
-        for (Enumeration<IConnection> connEnum = connectionsPending.elements(); connEnum
-                .hasMoreElements(); ) {
+        for (Enumeration<IConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
             IConnection conn = connEnum.nextElement();
             conn.close();
         }
@@ -592,7 +591,8 @@ public class Server implements Runnable {
         if (serverBrowserUpdateTimer != null) {
             serverBrowserUpdateTimer.cancel();
         }
-        if (!metaServerUrl.equals("")) {
+
+        if (!metaServerUrl.isBlank()) {
             registerWithServerBrowser(false, metaServerUrl);
         }
 
@@ -3782,7 +3782,7 @@ public class Server implements Runnable {
         }
         if (!abbreviatedReport) {
             // we don't much care about wind direction and such in a hard vacuum
-            if(!game.getBoard().inSpace()) {
+            if (!game.getBoard().inSpace()) {
                 // Wind direction and strength
                 Report rWindDir = new Report(1025, Report.PUBLIC);
                 rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
@@ -3844,7 +3844,7 @@ public class Server implements Runnable {
                 hex.removeTerrain(Terrains.WOODS);
                 hex.removeTerrain(Terrains.JUNGLE);
                 hex.removeTerrain(Terrains.FOLIAGE_ELEV);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
             }
             sendChangedHex(pos);
         }
@@ -6088,8 +6088,7 @@ public class Server implements Runnable {
 
                 if (!victim.isDoomed() && !victim.isDestroyed()) {
                     // entity displacement
-                    Coords dest = Compute.getValidDisplacement(game,
-                                                               victim.getId(), hitCoords, direction);
+                    Coords dest = Compute.getValidDisplacement(game, victim.getId(), hitCoords, direction);
                     if (null != dest) {
                         doEntityDisplacement(
                                 victim,
@@ -6097,11 +6096,9 @@ public class Server implements Runnable {
                                 dest,
                                 new PilotingRollData(victim.getId(), 0, "crash"));
                     } else if (!(victim instanceof Dropship)) {
-                        // destroy entity - but not dropships which are
-                        // immovable
-                        addReport(destroyEntity(victim,
-                                                "impossible displacement",
-                                                victim instanceof Mech, victim instanceof Mech));
+                        // destroy entity - but not DropShips which are immovable
+                        addReport(destroyEntity(victim, "impossible displacement",
+                                victim instanceof Mech, victim instanceof Mech));
                     }
                 }
 
@@ -6113,20 +6110,16 @@ public class Server implements Runnable {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.WOODS);
                     h.removeTerrain(Terrains.FOLIAGE_ELEV);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.ROUGH, 1));
+                    h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 } else {
                     int level = h.terrainLevel(Terrains.WOODS) - 1;
                     int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
                     h.removeTerrain(Terrains.WOODS);
                     if (level > 0) {
-                        h.addTerrain(Terrains.getTerrainFactory()
-                                .createTerrain(Terrains.WOODS, level));
-                        h.addTerrain(Terrains.getTerrainFactory()
-                                .createTerrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
+                        h.addTerrain(new Terrain(Terrains.WOODS, level));
+                        h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
                     } else {
-                        h.addTerrain(Terrains.getTerrainFactory()
-                                             .createTerrain(Terrains.ROUGH, 1));
+                        h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                         h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     }
                 }
@@ -6136,20 +6129,16 @@ public class Server implements Runnable {
                 if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.JUNGLE);
                     h.removeTerrain(Terrains.FOLIAGE_ELEV);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.ROUGH, 1));
+                    h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 } else {
                     int level = h.terrainLevel(Terrains.JUNGLE) - 1;
                     int folEl = h.terrainLevel(Terrains.FOLIAGE_ELEV);
                     h.removeTerrain(Terrains.JUNGLE);
                     if (level > 0) {
-                        h.addTerrain(Terrains.getTerrainFactory()
-                                .createTerrain(Terrains.JUNGLE, level));
-                        h.addTerrain(Terrains.getTerrainFactory()
-                                .createTerrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
+                        h.addTerrain(new Terrain(Terrains.JUNGLE, level));
+                        h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, folEl == 1 ? 1 : 2));
                     } else {
-                        h.addTerrain(Terrains.getTerrainFactory()
-                                             .createTerrain(Terrains.ROUGH, 1));
+                        h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                         h.removeTerrain(Terrains.FOLIAGE_ELEV);
                     }
                 }
@@ -6161,8 +6150,7 @@ public class Server implements Runnable {
                     if (!h.containsTerrain(Terrains.WATER)) {
                         h.removeAllTerrains();
                     }
-                    h.addTerrain(new Terrain(Terrains.WATER, crateredElevation,
-                                             false, 0));
+                    h.addTerrain(new Terrain(Terrains.WATER, crateredElevation, false, 0));
                 }
             }
             sendChangedHex(hitCoords);
@@ -6301,7 +6289,7 @@ public class Server implements Runnable {
         for (Integer mechWarriorId : entity.getPickedUpMechWarriors()) {
             Entity mw = game.getEntity(mechWarriorId);
             
-            if(mw == null) {
+            if (mw == null) {
                 continue;
             }
 
@@ -9827,26 +9815,24 @@ public class Server implements Runnable {
                 } catch (InterruptedException e) {
                     return 0;
                 }
+
                 // Get the packet, if there's something to get
-                ReceivedPacket rp;
-                if (cfrPacketQueue.size() > 0) {
-                    rp = cfrPacketQueue.poll();
-                    int cfrType = rp.packet.getIntValue(0);
-                    // Make sure we got the right type of response
-                    if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
-                        MegaMek.getLogger().error("Expected a " 
-                                + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet, " + "received: " + cfrType);
-                        continue;
-                    }
-                    // Check packet came from right ID
-                    if (rp.connId != playerId) {
-                        MegaMek.getLogger().error("Expected a " 
-                                + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
-                                + " but instead it came from player " + rp.connId);
-                        continue;
-                    }
-                    return (int)rp.packet.getData()[1];
-                } // If no packets, wait again
+                ReceivedPacket rp = cfrPacketQueue.poll();
+                int cfrType = rp.packet.getIntValue(0);
+                // Make sure we got the right type of response
+                if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
+                    MegaMek.getLogger().error("Expected a "
+                            + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet, " + "received: " + cfrType);
+                    continue;
+                }
+                // Check packet came from right ID
+                if (rp.connId != playerId) {
+                    MegaMek.getLogger().error("Expected a "
+                            + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
+                            + " but instead it came from player " + rp.connId);
+                    continue;
+                }
+                return (int) rp.packet.getData()[1];
             }
         }
     }
@@ -9864,24 +9850,22 @@ public class Server implements Runnable {
                 }
                 // Get the packet, if there's something to get
                 ReceivedPacket rp;
-                if (cfrPacketQueue.size() > 0) {
-                    rp = cfrPacketQueue.poll();
-                    int cfrType = rp.packet.getIntValue(0);
-                    // Make sure we got the right type of response
-                    if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
-                        MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, "
-                                        + "received: " + cfrType);
-                        continue;
-                    }
-                    // Check packet came from right ID
-                    if (rp.connId != playerId) {
-                        MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet "
-                                        + "from player  " + playerId
-                                        + " but instead it came from player " + rp.connId);
-                        continue;
-                    }
-                    return (int) rp.packet.getData()[1];
+                rp = cfrPacketQueue.poll();
+                int cfrType = rp.packet.getIntValue(0);
+                // Make sure we got the right type of response
+                if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
+                    MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, "
+                                    + "received: " + cfrType);
+                    continue;
                 }
+                // Check packet came from right ID
+                if (rp.connId != playerId) {
+                    MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet "
+                                    + "from player  " + playerId
+                                    + " but instead it came from player " + rp.connId);
+                    continue;
+                }
+                return (int) rp.packet.getData()[1];
             }
         }
     }
@@ -9894,7 +9878,7 @@ public class Server implements Runnable {
      */
     private void checkForTakeoffDamage(IAero a) {
         boolean unsecured = false;
-        for (Entity loaded : ((Entity)a).getLoadedUnits()) {
+        for (Entity loaded : ((Entity) a).getLoadedUnits()) {
             if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
                 unsecured = true;
                 // uh-oh, you forgot your seat belt
@@ -9914,9 +9898,9 @@ public class Server implements Runnable {
         }
         if (unsecured) {
             // roll hit location to get a new critical
-            HitData hit = ((Entity)a).rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
-            addReport(applyCriticalHit((Entity)a, hit.getLocation(), new CriticalSlot(
-                    0, ((Aero)a).getPotCrit()), true, 1, false));
+            HitData hit = ((Entity) a).rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
+            addReport(applyCriticalHit((Entity) a, hit.getLocation(), new CriticalSlot(
+                    0, ((Aero) a).getPotCrit()), true, 1, false));
         }
 
     }
@@ -10194,7 +10178,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, smokeType, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, smokeType));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, smokeType));
         sendChangedHex(coords);
     }
 
@@ -10205,8 +10189,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LIGHT, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_LIGHT));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LIGHT));
         sendChangedHex(coords);
     }
 
@@ -10217,8 +10200,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, duration);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
     }
 
@@ -10229,8 +10211,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
         sendChangedHex(coords);
     }
 
@@ -10246,8 +10227,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -10263,8 +10243,7 @@ public class Server implements Runnable {
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
             hex = game.getBoard().getHex(tempcoords);
-            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+            hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
         }
     }
@@ -10281,8 +10260,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -10298,8 +10276,7 @@ public class Server implements Runnable {
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
             hex = game.getBoard().getHex(tempcoords);
-            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+            hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);
         }
     }
@@ -10386,11 +10363,9 @@ public class Server implements Runnable {
         int nscreens = h.terrainLevel(Terrains.SCREEN);
         if (nscreens > 0) {
             h.removeTerrain(Terrains.SCREEN);
-            h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.SCREEN, nscreens + 1));
+            h.addTerrain(new Terrain(Terrains.SCREEN, nscreens + 1));
         } else {
-            h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.SCREEN, 1));
+            h.addTerrain(new Terrain(Terrains.SCREEN, 1));
         }
         sendChangedHex(coords);
     }
@@ -13022,7 +12997,7 @@ public class Server implements Runnable {
             int[] v = {0, 0, 0, 0, 0, 0};
 
             // if this is the entity's first time deploying, we want to respect the "velocity" setting from the lobby
-            if(entity.wasNeverDeployed()) {
+            if (entity.wasNeverDeployed()) {
                 if (a.getCurrentVelocityActual() > 0) {
                     v[nFacing] = a.getCurrentVelocityActual();
                     entity.setVectors(v);
@@ -13030,7 +13005,7 @@ public class Server implements Runnable {
             // this means the entity is coming back from off board, so we'll rotate the velocity vector by 180
             // and set it to 1/2 the magnitude
             } else {
-                for(int x = 0; x < 6; x++) {
+                for (int x = 0; x < 6; x++) {
                     v[(x + 3) % 6] = entity.getVector(x) / 2;
                 }
 
@@ -14639,8 +14614,7 @@ public class Server implements Runnable {
         // Is there a blown off arm in the hex?
         if (curHex.terrainLevel(Terrains.ARMS) > 0) {
             clubType = EquipmentType.get(EquipmentTypeLookup.LIMB_CLUB);
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.ARMS, curHex.terrainLevel(Terrains.ARMS) - 1));
+            curHex.addTerrain(new Terrain(Terrains.ARMS, curHex.terrainLevel(Terrains.ARMS) - 1));
             sendChangedHex(entity.getPosition());
             r = new Report(3035);
             r.subject = entity.getId();
@@ -14650,8 +14624,7 @@ public class Server implements Runnable {
         // Is there a blown off leg in the hex?
         else if (curHex.terrainLevel(Terrains.LEGS) > 0) {
             clubType = EquipmentType.get(EquipmentTypeLookup.LIMB_CLUB);
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.LEGS, curHex.terrainLevel(Terrains.LEGS) - 1));
+            curHex.addTerrain(new Terrain(Terrains.LEGS, curHex.terrainLevel(Terrains.LEGS) - 1));
             sendChangedHex(entity.getPosition());
             r = new Report(3040);
             r.subject = entity.getId();
@@ -14901,10 +14874,10 @@ public class Server implements Runnable {
         if (h == null) {
             return vPhaseReport;
         }
-        ITerrain woods = h.getTerrain(Terrains.WOODS);
-        ITerrain jungle = h.getTerrain(Terrains.JUNGLE);
-        ITerrain ice = h.getTerrain(Terrains.ICE);
-        ITerrain magma = h.getTerrain(Terrains.MAGMA);
+        Terrain woods = h.getTerrain(Terrains.WOODS);
+        Terrain jungle = h.getTerrain(Terrains.JUNGLE);
+        Terrain ice = h.getTerrain(Terrains.ICE);
+        Terrain magma = h.getTerrain(Terrains.MAGMA);
         Report r;
         int reportType = Report.HIDDEN;
         if (entityId == Entity.NONE) {
@@ -14917,19 +14890,16 @@ public class Server implements Runnable {
             if (tf <= 0) {
                 h.removeTerrain(Terrains.WOODS);
                 h.removeTerrain(Terrains.FOLIAGE_ELEV);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.ROUGH, 1));
+                h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 // light converted to rough
                 r = new Report(3090, reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
                 h.removeTerrain(Terrains.WOODS);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.WOODS, 1));
+                h.addTerrain(new Terrain(Terrains.WOODS, 1));
                 if (folEl != 1) {
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 woods = h.getTerrain(Terrains.WOODS);
                 // heavy converted to light
@@ -14938,11 +14908,9 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
                 h.removeTerrain(Terrains.WOODS);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.WOODS, 2));
+                h.addTerrain(new Terrain(Terrains.WOODS, 2));
                 if (folEl != 1) {
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 woods = h.getTerrain(Terrains.WOODS);
                 // ultra heavy converted to heavy
@@ -14959,19 +14927,16 @@ public class Server implements Runnable {
             if (tf < 0) {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.removeTerrain(Terrains.FOLIAGE_ELEV);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.ROUGH, 1));
+                h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 // light converted to rough
                 r = new Report(3091, reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
                 h.removeTerrain(Terrains.JUNGLE);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.JUNGLE, 1));
+                h.addTerrain(new Terrain(Terrains.JUNGLE, 1));
                 if (folEl != 1) {
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // heavy converted to light
@@ -14980,11 +14945,9 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
                 h.removeTerrain(Terrains.JUNGLE);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.JUNGLE, 2));
+                h.addTerrain(new Terrain(Terrains.JUNGLE, 2));
                 if (folEl != 1) {
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // ultra heavy converted to heavy
@@ -15014,8 +14977,7 @@ public class Server implements Runnable {
                 r.subject = entityId;
                 vPhaseReport.add(r);
                 h.removeTerrain(Terrains.MAGMA);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.MAGMA, 2));
+                h.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 for (Entity en : game.getEntitiesVector(c)) {
                     doMagmaDamage(en, false);
                 }
@@ -15025,7 +14987,7 @@ public class Server implements Runnable {
         }
         sendChangedHex(c);
 
-        // any attempt to clear an heavy industrial hex may cause an exposion
+        // any attempt to clear an heavy industrial hex may cause an explosion
         checkExplodeIndustrialZone(c, vPhaseReport);
 
         return vPhaseReport;
@@ -15039,8 +15001,7 @@ public class Server implements Runnable {
         addReport(new Report(4000, Report.PUBLIC));
 
         // add any pending charges
-        for (Enumeration<AttackAction> i = game.getCharges(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements(); ) {
             game.addAction(i.nextElement());
         }
         game.resetCharges();
@@ -15179,7 +15140,7 @@ public class Server implements Runnable {
         for (Integer loc : criticalLocs) {
             addReport(criticalEntity(ae, loc, false, 0, 1));
         }
-        if(missed) {
+        if (missed) {
             game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
         }
     }
@@ -15302,7 +15263,7 @@ public class Server implements Runnable {
 
             }
 
-            if(paa.isZweihandering()) {
+            if (paa.isZweihandering()) {
                 ArrayList<Integer> criticalLocs = new ArrayList<>();
                 criticalLocs.add(Mech.LOC_RARM);
                 criticalLocs.add(Mech.LOC_LARM);
@@ -15328,7 +15289,7 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
-            if(paa.isZweihandering()) {
+            if (paa.isZweihandering()) {
                 ArrayList<Integer> criticalLocs = new ArrayList<>();
                 criticalLocs.add(Mech.LOC_RARM);
                 criticalLocs.add(Mech.LOC_LARM);
@@ -15436,7 +15397,7 @@ public class Server implements Runnable {
         }
         addNewLines();
 
-        if(paa.isZweihandering()) {
+        if (paa.isZweihandering()) {
             ArrayList<Integer> criticalLocs = new ArrayList<>();
             criticalLocs.add(Mech.LOC_RARM);
             criticalLocs.add(Mech.LOC_LARM);
@@ -16638,7 +16599,7 @@ public class Server implements Runnable {
                 game.addPSR(new PilotingRollData(ae.getId(), 0,
                                                  "missed a flail/wrecking ball attack"));
             }
-            if(caa.isZweihandering()) {
+            if (caa.isZweihandering()) {
                 ArrayList<Integer> criticalLocs = new ArrayList<>();
                 criticalLocs.add(caa.getClub().getLocation());
                 applyZweihanderSelfDamage(ae, true, criticalLocs);
@@ -16668,7 +16629,7 @@ public class Server implements Runnable {
                 r = new Report(4037);
                 r.subject = ae.getId();
                 addReport(r);
-                if(caa.isZweihandering()) {
+                if (caa.isZweihandering()) {
                     ArrayList<Integer> criticalLocs = new ArrayList<>();
                     criticalLocs.add(caa.getClub().getLocation());
                     applyZweihanderSelfDamage(ae, true, criticalLocs);
@@ -16700,7 +16661,7 @@ public class Server implements Runnable {
                             "missed a mace attack"));
                 }
             }
-            if(caa.isZweihandering()) {
+            if (caa.isZweihandering()) {
                 ArrayList<Integer> criticalLocs = new ArrayList<>();
                 criticalLocs.add(caa.getClub().getLocation());
                 applyZweihanderSelfDamage(ae, true, criticalLocs);
@@ -16775,7 +16736,7 @@ public class Server implements Runnable {
                 }
 
             }
-            if(caa.isZweihandering()) {
+            if (caa.isZweihandering()) {
                 ArrayList<Integer> criticalLocs = new ArrayList<>();
                 criticalLocs.add(caa.getClub().getLocation());
                 applyZweihanderSelfDamage(ae, true, criticalLocs);
@@ -16799,7 +16760,7 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
-            if(caa.isZweihandering()) {
+            if (caa.isZweihandering()) {
                 ArrayList<Integer> criticalLocs = new ArrayList<>();
                 criticalLocs.add(caa.getClub().getLocation());
                 applyZweihanderSelfDamage(ae, false, criticalLocs);
@@ -17003,7 +16964,7 @@ public class Server implements Runnable {
             ae.removeMisc(caa.getClub().getName());
         }
 
-        if(caa.isZweihandering()) {
+        if (caa.isZweihandering()) {
             ArrayList<Integer> criticalLocs = new ArrayList<>();
             criticalLocs.add(caa.getClub().getLocation());
             applyZweihanderSelfDamage(ae, false, criticalLocs);
@@ -21973,7 +21934,7 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if(ServerHelper.infantryInOpen(te, te_hex, game, isPlatoon, ammoExplosion, hit.isIgnoreInfantryDoubleDamage())) {
+        if (ServerHelper.infantryInOpen(te, te_hex, game, isPlatoon, ammoExplosion, hit.isIgnoreInfantryDoubleDamage())) {
             // PBI. Damage is doubled.
             damage *= 2;
             r = new Report(6040);
@@ -23053,27 +23014,17 @@ public class Server implements Runnable {
                             r.add(te.getLocationName(blownOffLocation));
                             vDesc.addElement(r);
                             IHex h = game.getBoard().getHex(te.getPosition());
-                            if(null != h) {
+                            if (null != h) {
                                 if (te instanceof BipedMech) {
                                     if (!h.containsTerrain(Terrains.ARMS)) {
-                                        h.addTerrain(Terrains.getTerrainFactory()
-                                                             .createTerrain(Terrains.ARMS, 1));
+                                        h.addTerrain(new Terrain(Terrains.ARMS, 1));
                                     } else {
-                                        h.addTerrain(Terrains
-                                                             .getTerrainFactory()
-                                                             .createTerrain(
-                                                                     Terrains.ARMS,
-                                                                     h.terrainLevel(Terrains.ARMS) + 1));
+                                        h.addTerrain(new Terrain(Terrains.ARMS, h.terrainLevel(Terrains.ARMS) + 1));
                                     }
                                 } else if (!h.containsTerrain(Terrains.LEGS)) {
-                                    h.addTerrain(Terrains.getTerrainFactory()
-                                                         .createTerrain(Terrains.LEGS, 1));
+                                    h.addTerrain(new Terrain(Terrains.LEGS, 1));
                                 } else {
-                                    h.addTerrain(Terrains
-                                                         .getTerrainFactory()
-                                                         .createTerrain(
-                                                                 Terrains.LEGS,
-                                                                 h.terrainLevel(Terrains.LEGS) + 1));
+                                    h.addTerrain(new Terrain(Terrains.LEGS, h.terrainLevel(Terrains.LEGS) + 1));
                                 }
                                 sendChangedHex(te.getPosition());
                             }
@@ -23672,10 +23623,10 @@ public class Server implements Runnable {
         int hitsPerRound = 4;
         Engine engine = en.getEngine();
 
-        if(en instanceof Tank) {
+        if (en instanceof Tank) {
             explosionBTH = 12;
             hitsPerRound = 1;
-        } else if(!(en instanceof Mech)) {
+        } else if (!(en instanceof Mech)) {
             explosionBTH = 12;
             hitsPerRound = 1;
         }
@@ -24132,7 +24083,7 @@ public class Server implements Runnable {
     public void doNuclearExplosion(Coords position, int nukeType, Vector<Report> vDesc) {
         NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
         
-        if(nukeStats == null) {
+        if (nukeStats == null) {
             MegaMek.getLogger().error("Illegal nuke not listed in HS:3070");
         }
         
@@ -25453,9 +25404,9 @@ public class Server implements Runnable {
                             }
                             //Hit the weapon then also hit all the other weapons in the bay
                             weapon.setHit(true);
-                            for(int next : weapon.getBayWeapons()) {
+                            for (int next : weapon.getBayWeapons()) {
                                 Mounted bayWeap = aero.getEquipment(next);
-                                if(null != bayWeap) {
+                                if (null != bayWeap) {
                                     bayWeap.setHit(true);
                                     //Taharqa: We should also damage the critical slot, or
                                     //MM and MHQ won't remember that this weapon is damaged on the MUL
@@ -25548,9 +25499,9 @@ public class Server implements Runnable {
                         }
                     }
                     //if this is a weapons bay then also hit all the other weapons
-                    for(int wId : weapon.getBayWeapons()) {
+                    for (int wId : weapon.getBayWeapons()) {
                         Mounted bayWeap = aero.getEquipment(wId);
-                        if(null != bayWeap) {
+                        if (null != bayWeap) {
                             bayWeap.setHit(true);
                             //Taharqa: We should also damage the critical slot, or
                             //MM and MHQ won't remember that this weapon is damaged on the MUL
@@ -26642,7 +26593,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
-        if(en.hasEngine() && en.getEngine().isFusion()) {
+        if (en.hasEngine() && en.getEngine().isFusion()) {
             // fusion engine, no effect
             r = new Report(6300);
             r.subject = en.getId();
@@ -27022,12 +26973,9 @@ public class Server implements Runnable {
                     }
                     if (null != hex) {
                         if (!hex.containsTerrain(Terrains.LEGS)) {
-                            hex.addTerrain(Terrains.getTerrainFactory()
-                                    .createTerrain(Terrains.LEGS, 1));
+                            hex.addTerrain(new Terrain(Terrains.LEGS, 1));
                         } else {
-                            hex.addTerrain(Terrains.getTerrainFactory()
-                                    .createTerrain(Terrains.LEGS,
-                                            hex.terrainLevel(Terrains.LEGS) + 1));
+                            hex.addTerrain(new Terrain(Terrains.LEGS, hex.terrainLevel(Terrains.LEGS) + 1));
                         }
                     }
                     sendChangedHex(en.getPosition());
@@ -27052,12 +27000,9 @@ public class Server implements Runnable {
                     en.destroyLocation(loc, true);
                     if (null != hex) {
                         if (!hex.containsTerrain(Terrains.ARMS)) {
-                            hex.addTerrain(Terrains.getTerrainFactory()
-                                    .createTerrain(Terrains.ARMS, 1));
+                            hex.addTerrain(new Terrain(Terrains.ARMS, 1));
                         } else {
-                            hex.addTerrain(Terrains.getTerrainFactory()
-                                    .createTerrain(Terrains.ARMS,
-                                            hex.terrainLevel(Terrains.ARMS) + 1));
+                            hex.addTerrain(new Terrain(Terrains.ARMS, hex.terrainLevel(Terrains.ARMS) + 1));
                         }
                     }
                     sendChangedHex(en.getPosition());
@@ -27562,7 +27507,7 @@ public class Server implements Runnable {
     public Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable,
                                          boolean canSalvage) {
         // can't destroy an entity if it's already been destroyed        
-        if(entity.isDestroyed()) {
+        if (entity.isDestroyed()) {
             return new Vector<Report>();
         }
         
@@ -27610,7 +27555,7 @@ public class Server implements Runnable {
                 // probably this is brought about by picking up a mechwarrior in a previous MekHQ scenario
                 // then having the same unit get blown up in a subsequent scenario
                 // in that case, we simply move on
-                if(mw == null) {
+                if (mw == null) {
                     continue;
                 }
 
@@ -27814,13 +27759,11 @@ public class Server implements Runnable {
             // large support vees will create ultra rough, otherwise rough
             if (entity instanceof LargeSupportTank) {
                 if (entityHex.terrainLevel(Terrains.ROUGH) < 2) {
-                    entityHex.addTerrain(Terrains.getTerrainFactory()
-                            .createTerrain(Terrains.ROUGH, 2));
+                    entityHex.addTerrain(new Terrain(Terrains.ROUGH, 2));
                     sendChangedHex(curPos);
                 }
             } else if ((entity.getWeight() >= 40) && !entityHex.containsTerrain(Terrains.ROUGH)) {
-                entityHex.addTerrain(Terrains.getTerrainFactory()
-                        .createTerrain(Terrains.ROUGH, 1));
+                entityHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 sendChangedHex(curPos);
             }
         }
@@ -27889,7 +27832,7 @@ public class Server implements Runnable {
             }
         }
 
-        if(!overrideExplosiveCheck && !mounted.getType().isExplosive(mounted, false)) {
+        if (!overrideExplosiveCheck && !mounted.getType().isExplosive(mounted, false)) {
             return vDesc;
         }
 
@@ -27906,7 +27849,7 @@ public class Server implements Runnable {
 
         // Inferno bombs in LAM bomb bays
         if ((mounted.getType() instanceof BombType)
-                && (((BombType)mounted.getType()).getBombType() == BombType.B_INFERNO)) {
+                && (((BombType) mounted.getType()).getBombType() == BombType.B_INFERNO)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
 
@@ -28201,7 +28144,7 @@ public class Server implements Runnable {
         int waterDepth = 0;
         if (fallHex.containsTerrain(Terrains.WATER)) {
             // *Only* use this if there actually is water in the hex, otherwise
-            // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
+            // we get Terrain.LEVEL_NONE, i.e. Integer.minValue...
             waterDepth = fallHex.terrainLevel(Terrains.WATER);
         }
         boolean fallOntoBridge = false;
@@ -28853,7 +28796,7 @@ public class Server implements Runnable {
         if (null != vReport) {
             vReport.add(r);
         }
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, fireLevel));
+        hex.addTerrain(new Terrain(Terrains.FIRE, fireLevel));
         sendChangedHex(c);
     }
 
@@ -30379,6 +30322,7 @@ public class Server implements Runnable {
 
                                     private final char lastUnitNum = oldMax;
 
+                                    @Override
                                     public boolean accept(Entity entity) {
                                         return (entity instanceof Protomech)
                                                 && (ownerId == entity.getOwnerId())
@@ -31990,7 +31934,7 @@ public class Server implements Runnable {
             final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             int numLoads = numFloors;
-            if (bridgeEl != ITerrain.LEVEL_NONE) {
+            if (bridgeEl != Terrain.LEVEL_NONE) {
                 numLoads++;
             }
             if (numLoads < 1) {
@@ -32291,7 +32235,7 @@ public class Server implements Runnable {
             // the ground
             if (topFloor && numFloors > 1) {
                 curHex.removeTerrain(Terrains.BLDG_ELEV);
-                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.BLDG_ELEV, numFloors - 1));
+                curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, numFloors - 1));
                 sendChangedHex(coords);
             } else {
                 bldg.setCurrentCF(0, coords);
@@ -33945,7 +33889,7 @@ public class Server implements Runnable {
             return getEjectModifiers(game, entity, crewPos, autoEject, squadron.getPosition(),
                     "ejecting");
         }
-        if(null == entity.getPosition()) {
+        if (null == entity.getPosition()) {
             // Off-board unit?
             return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
         }
@@ -34192,7 +34136,7 @@ public class Server implements Runnable {
             // Make them not get a move this turn
             crew.setDone(true);
             // Place on board
-            if(game.getBoard().contains(entity.getPosition())) {
+            if (game.getBoard().contains(entity.getPosition())) {
                 crew.setPosition(entity.getPosition());
             }
             // Update the entity
@@ -34200,7 +34144,7 @@ public class Server implements Runnable {
             // Check if the crew lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew, entity.getPosition(),
                     entity.getPosition(), entity.getElevation()));
-            if(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -34442,14 +34386,6 @@ public class Server implements Runnable {
         }
     }
 
-    /*
-     * //See note above where knownDeadEntities variable is declared private
-     * void deadEntitiesCleanup() { Entity en = null; for(Enumeration k =
-     * game.getGraveyardEntities(); k.hasMoreElements(); en = (Entity)
-     * k.nextElement()) { if (en != null) { if (!knownDeadEntities.contains(en))
-     * { knownDeadEntities.add(en); } } } }
-     */
-
     /**
      * remove Ice in the hex that's at the passed coords, and let entities fall
      * into water below it, if there is water
@@ -34505,10 +34441,8 @@ public class Server implements Runnable {
             vDesc.addAll(resolveIceBroken(c));
         }
         // if we were not in water, then add mud
-        if (!hex.containsTerrain(Terrains.MUD)
-            && !hex.containsTerrain(Terrains.WATER)) {
-            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.MUD, 1));
+        if (!hex.containsTerrain(Terrains.MUD) && !hex.containsTerrain(Terrains.WATER)) {
+            hex.addTerrain(new Terrain(Terrains.MUD, 1));
             sendChangedHex(c);
         }
         return vDesc;
@@ -34525,7 +34459,7 @@ public class Server implements Runnable {
             if (Compute.d6(2) == 12) {
                 // better find a rope
                 hex.removeTerrain(Terrains.SWAMP);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SWAMP, 2));
+                hex.addTerrain(new Terrain(Terrains.SWAMP, 2));
                 sendChangedHex(c);
                 r = new Report(2440);
                 r.indent(1);
@@ -35133,9 +35067,9 @@ public class Server implements Runnable {
             if (!((ammo != null) && (ammo.getMunitionType() == AmmoType.M_FLECHETTE))) {
                 int actualDamage = damage;
                 
-                if(isFuelAirBomb) {
+                if (isFuelAirBomb) {
                     // light buildings take 1.5x damage from fuel-air bombs
-                    if(bldg.getType() == Building.LIGHT) {
+                    if (bldg.getType() == Building.LIGHT) {
                         actualDamage = (int) Math.ceil(actualDamage * 1.5);
                         
                         r = new Report(9991);
@@ -35148,7 +35082,7 @@ public class Server implements Runnable {
                     // armored and "castle brian" buildings take .5 damage from fuel-air bombs
                     // but I have no idea how to determine if a building is a castle or a brian
                     // note that being armored and being "light" are not mutually exclusive
-                    if(bldg.getArmor(coords) > 0) {
+                    if (bldg.getArmor(coords) > 0) {
                         actualDamage = (int) Math.floor(actualDamage * .5);
                         
                         r = new Report(9992);
@@ -35218,7 +35152,7 @@ public class Server implements Runnable {
         
         int damage = damageFalloff.damage;
         int falloff = damageFalloff.falloff;
-        if(damageFalloff.clusterMunitionsFlag) {
+        if (damageFalloff.clusterMunitionsFlag) {
             attackSource = centre;
         }
         
@@ -35353,8 +35287,7 @@ public class Server implements Runnable {
                     addReport(r);
                     // fortification complete - add to map
                     IHex hex = game.getBoard().getHex(c);
-                    hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                            Terrains.FORTIFIED, 1));
+                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
                     sendChangedHex(c);
                     // Clear the dig in for any units in same hex, since they
                     // get it for free by fort

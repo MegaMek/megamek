@@ -1169,7 +1169,7 @@ public class LosEffects {
         // check if there's a clear hex between the targets that's higher than
         // one of them, if we're in underwater combat
         if (ai.underWaterCombat
-                && (hex.terrainLevel(Terrains.WATER) == ITerrain.LEVEL_NONE)
+                && (hex.terrainLevel(Terrains.WATER) == Terrain.LEVEL_NONE)
                 && ((totalEl > ai.attackAbsHeight) || (totalEl > ai.targetAbsHeight))) {
             los.blocked = true;
         }
@@ -1183,7 +1183,7 @@ public class LosEffects {
             //heavy industrial zones can vary in height up to 10 levels, so lets
             //put all of this into a for loop
             int industrialLevel = hex.terrainLevel(Terrains.INDUSTRIAL);
-            if (industrialLevel != ITerrain.LEVEL_NONE) {
+            if (industrialLevel != Terrain.LEVEL_NONE) {
                 for (int level = 1; level < 11; level++) {
                     if ((hexEl + level > maxUnitHeight)
                             || ((hexEl + level > ai.attackAbsHeight) && attackerAdjc)
@@ -1210,7 +1210,7 @@ public class LosEffects {
             int woodsLevel = hex.terrainLevel(Terrains.WOODS);
             int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
             int foliageElev = hex.terrainLevel(Terrains.FOLIAGE_ELEV);
-            boolean hasFoliage = (woodsLevel != ITerrain.LEVEL_NONE) || (jungleLevel != ITerrain.LEVEL_NONE);
+            boolean hasFoliage = (woodsLevel != Terrain.LEVEL_NONE) || (jungleLevel != Terrain.LEVEL_NONE);
             
             // Check 1 level high woods and jungle
             if (hasFoliage && foliageElev == 1) {
@@ -1234,7 +1234,7 @@ public class LosEffects {
             }
             
             // Intervening smoke and elevation 2 light/heavy woods/jungle
-            if (smokeLevel != ITerrain.LEVEL_NONE 
+            if (smokeLevel != Terrain.LEVEL_NONE 
                     || (hasFoliage && foliageElev > 1)) {
                 int terrainEl = hexEl + 2;
                 if (diagramLoS) {

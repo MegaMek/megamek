@@ -592,7 +592,7 @@ public class Compute {
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying or QuadVee in vehicle mode.
         if ((movementType != EntityMovementType.MOVE_JUMP)
-                && !(entity.getElevation() > destHex.surface())
+                && !(entity.getElevation() > destHex.getLevel())
                 && !((entity.getMovementMode() == EntityMovementMode.HOVER)
                         || (entity.getMovementMode() == EntityMovementMode.NAVAL)
                         || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
@@ -2710,7 +2710,7 @@ public class Compute {
                 || !hex.containsTerrain(Terrains.SMOKE);
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
-                               && (entityTarget.getElevation() < hex.surface());
+                               && (entityTarget.getElevation() < hex.getLevel());
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -6762,7 +6762,7 @@ public class Compute {
                     && ((other instanceof SmallCraft) || other.getTowing() != Entity.NONE || other.getTowedBy() != Entity.NONE)
                     && other.canLoad(en)
                     && !other.isAirborne()
-                    && (Math.abs((hex.surface() + other.getElevation())
+                    && (Math.abs((hex.getLevel() + other.getElevation())
                                  - elev) < 3) && !mountable.contains(other)) {
                     mountable.add(other);
                 }

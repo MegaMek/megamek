@@ -745,8 +745,7 @@ public class TestBot extends BotClient {
             // To a greedy bot, it always seems nice to stay in here...
             Hex h = game.getBoard().getHex(option.getFinalCoords());
             if (h.containsTerrain(Terrains.WATER)
-                && (h.surface() > (self.getEntity().getElevation() + ((option
-                    .getFinalProne()) ? 0 : 1)))) {
+                    && (h.getLevel() > (self.getEntity().getElevation() + ((option.getFinalProne()) ? 0 : 1)))) {
                 double mod = ((self.getEntity().heat + option
                         .getMovementheatBuildup()) <= 7) ? 100 : 30;
                 adjustment += self.bv / mod;

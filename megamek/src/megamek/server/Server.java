@@ -4189,7 +4189,7 @@ public class Server implements Runnable {
         } else {
             // default to the floor of the hex.
             // unit elevation is relative to the surface
-            unit.setElevation(hex.floor() - hex.surface());
+            unit.setElevation(hex.floor() - hex.getLevel());
         }
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
@@ -4898,17 +4898,17 @@ public class Server implements Runnable {
                                              nextHex.getLevel() + nextHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     }
                 }
-                if ((nextAltitude <= nextHex.surface())
-                    && (curAltitude >= curHex.surface())) {
+                if ((nextAltitude <= nextHex.getLevel())
+                    && (curAltitude >= curHex.getLevel())) {
                     // Hovercraft and WiGEs can "skid" over water.
                     // all units can skid over ice.
                     if ((entity.getMovementMode().equals(EntityMovementMode.HOVER)
                                 || entity.getMovementMode().equals(EntityMovementMode.WIGE))
                             && nextHex.containsTerrain(Terrains.WATER)) {
-                        nextAltitude = nextHex.surface();
+                        nextAltitude = nextHex.getLevel();
                     } else {
                         if (nextHex.containsTerrain(Terrains.ICE)) {
-                            nextAltitude = nextHex.surface();
+                            nextAltitude = nextHex.getLevel();
                         }
                     }
                 }
@@ -4924,7 +4924,7 @@ public class Server implements Runnable {
             }
 
             // The elevation the skidding unit will occupy in next hex
-            int nextElevation = nextAltitude - nextHex.surface();
+            int nextElevation = nextAltitude - nextHex.getLevel();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
             if (entity.getMovementMode() == EntityMovementMode.VTOL
@@ -7929,7 +7929,7 @@ public class Server implements Runnable {
                 boolean underwater = game.getBoard().getHex(curPos)
                         .containsTerrain(Terrains.WATER)
                         && (game.getBoard().getHex(curPos).depth() > 0)
-                        && (step.getElevation() < game.getBoard().getHex(curPos).surface());
+                        && (step.getElevation() < game.getBoard().getHex(curPos).getLevel());
                 if (game.getBoard().getHex(curPos).containsTerrain(
                         Terrains.FIRE) && !lastPos.equals(curPos)
                         && (stepMoveType != EntityMovementType.MOVE_JUMP)
@@ -12308,7 +12308,7 @@ public class Server implements Runnable {
         }
         final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(false);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
-                - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface() : destHex.floor()))
+                - (destHex.containsTerrain(Terrains.ICE) ? destHex.getLevel() : destHex.floor()))
                 - fallReduction;
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
@@ -12531,8 +12531,8 @@ public class Server implements Runnable {
         }
         int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV)
             ? destHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
-        int fallElevation = srcHex.surface() + entity.getElevation()
-                - (destHex.surface() + bldgElev);
+        int fallElevation = srcHex.getLevel() + entity.getElevation()
+                - (destHex.getLevel() + bldgElev);
         if (fallElevation > 1) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
@@ -13025,7 +13025,7 @@ public class Server implements Runnable {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the
             // ground.
-            entity.setElevation((hex.ceiling() - hex.surface()) + 1);
+            entity.setElevation((hex.ceiling() - hex.getLevel()) + 1);
             while ((Compute.stackingViolation(game, entity, coords, null) != null)
                    && (entity.getElevation() <= 50)) {
                 entity.setElevation(entity.getElevation() + 1);
@@ -17463,8 +17463,8 @@ public class Server implements Runnable {
             if (hex.containsTerrain(Terrains.WATER)) {
                 scores[i] += hex.terrainLevel(Terrains.WATER);
             }
-            if ((curHex.surface() - hex.surface()) >= 2) {
-                scores[i] += 2 * (curHex.surface() - hex.surface());
+            if ((curHex.getLevel() - hex.getLevel()) >= 2) {
+                scores[i] += 2 * (curHex.getLevel() - hex.getLevel());
             }
         }
 
@@ -20290,7 +20290,7 @@ public class Server implements Runnable {
             final Hex curHex = game.getBoard().getHex(entity.getPosition());
             final boolean underwater = curHex.containsTerrain(Terrains.WATER)
                     && (curHex.depth() > 0)
-                    && (entity.getElevation() < curHex.surface());
+                    && (entity.getElevation() < curHex.getLevel());
             final int numFloors = curHex.terrainLevel(Terrains.BLDG_ELEV);
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater
                     && ((entity.getElevation() <= 1)
@@ -24031,7 +24031,7 @@ public class Server implements Runnable {
         }
 
         // Get the absolute height of the unit relative to level 0.
-        entityAbsHeight += game.getBoard().getHex(entityPosition).surface();
+        entityAbsHeight += game.getBoard().getHex(entityPosition).getLevel();
 
         // Now find the height that needs to be sheltered, and compare.
         return entityAbsHeight < shelterLevel;

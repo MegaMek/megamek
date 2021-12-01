@@ -2733,7 +2733,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
                 && game.getBoard().contains(pos)
                 && !Compute.getMountableUnits(ce, pos,
-                    elev + game.getBoard().getHex(pos).surface(), game).isEmpty()) {
+                    elev + game.getBoard().getHex(pos).getLevel(), game).isEmpty()) {
             setMountEnabled(true);
         }
 

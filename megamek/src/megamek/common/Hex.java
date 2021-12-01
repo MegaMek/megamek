@@ -38,14 +38,14 @@ public class Hex implements Serializable {
 
     //region Constructors
     /**
-     * Constructs clear, plain hex at level 0.
+     * Constructs a clear, plain hex at level 0.
      */
     public Hex() {
         this(0);
     }
 
     /**
-     * Constructs clean, plain hex at specified level.
+     * Constructs a clean, plain hex at specified level.
      */
     public Hex(int level) {
         this(level, new Terrain[Terrains.SIZE], null, new Coords(0, 0));
@@ -79,7 +79,7 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Constructs a Hex with string terrain info
+     * Constructs a Hex from a combined string terrains format
      */
     public Hex(int level, String terrain, String theme, Coords c) {
         this(level, new Terrain[Terrains.SIZE], theme, c);

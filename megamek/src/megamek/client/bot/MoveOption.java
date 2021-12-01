@@ -347,19 +347,19 @@ public class MoveOption extends MovePath {
         toHitd.append(Compute.getAttackerTerrainModifier(getGame(), te.getId()));
 
         Hex attHex = getGame().getBoard().getHex(ae.getPosition());
-        if (attHex.containsTerrain(Terrains.WATER) && (attHex.surface() > attEl)) {
+        if (attHex.containsTerrain(Terrains.WATER) && (attHex.getLevel() > attEl)) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
             toHitd.addModifier(TargetRoll.IMPOSSIBLE,
                     "Defender in depth 2+ water");
-        } else if ((attHex.surface() == attEl) && (ae.height() > 0)) {
+        } else if ((attHex.getLevel() == attEl) && (ae.height() > 0)) {
             apc = true;
         }
         Hex targHex = getGame().getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
-            if ((targHex.surface() == targEl) && (te.height() > 0)) {
+            if ((targHex.getLevel() == targEl) && (te.height() > 0)) {
                 pc = true;
-            } else if (targHex.surface() > targEl) {
+            } else if (targHex.getLevel() > targEl) {
                 toHita.addModifier(TargetRoll.IMPOSSIBLE,
                         "Attacker in depth 2+ water");
                 toHitd.addModifier(TargetRoll.IMPOSSIBLE,

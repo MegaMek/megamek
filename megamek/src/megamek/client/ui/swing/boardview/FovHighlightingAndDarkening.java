@@ -367,17 +367,17 @@ class FovHighlightingAndDarkening {
                 // otherwise we use entity's elevation
                 elevation = this.boardView1.selectedEntity.getElevation();
             }
-            ai.attackAbsHeight = srcHex.surface() + elevation
+            ai.attackAbsHeight = srcHex.getLevel() + elevation
                     + this.boardView1.selectedEntity.getHeight();
         } else {
             ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
-            ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
+            ai.attackAbsHeight = srcHex.getLevel() + ai.attackHeight;
         }
         // First, we take the tallest unit in the destination hex, if no units are present we use
         // the mechInSecond GUIPref.
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
         for (Entity ent : boardView1.game.getEntitiesVector(dest)) {
-            int trAbsheight = dstHex.surface() + ent.relHeight();
+            int trAbsheight = dstHex.getLevel() + ent.relHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();
                 ai.targetAbsHeight = trAbsheight;
@@ -386,7 +386,7 @@ class FovHighlightingAndDarkening {
         if ((ai.targetHeight == Integer.MIN_VALUE)
                 && (ai.targetAbsHeight == Integer.MIN_VALUE)) {
             ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
-            ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
+            ai.targetAbsHeight = dstHex.getLevel() + ai.targetHeight;
         }
         return LosEffects.calculateLos(boardView1.game, ai);
     }

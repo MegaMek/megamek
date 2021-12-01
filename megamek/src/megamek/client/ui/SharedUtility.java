@@ -331,14 +331,12 @@ public class SharedUtility {
             // check for non-mech entering a fire
             boolean underwater = curHex.containsTerrain(Terrains.WATER)
                     && (curHex.depth() > 0)
-                    && (step.getElevation() < curHex.surface());
+                    && (step.getElevation() < curHex.getLevel());
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater
                     && !(entity instanceof Mech) && (step.getElevation() <= 1)
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !(curPos.equals(lastPos))) {
-                nagReport.append(Messages.getString(
-                        "MovementDisplay.FireMoving",
-                        new Object[] { Integer.valueOf(8) }));
+                nagReport.append(Messages.getString("MovementDisplay.FireMoving", 8));
             }
 
             // check for magma

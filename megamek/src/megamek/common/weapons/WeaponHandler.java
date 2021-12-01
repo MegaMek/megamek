@@ -1580,7 +1580,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean unitGainsPartialCoverFromWater(Hex targetHex, Entity entityTarget) {
         return (targetHex != null) && 
                 targetHex.containsTerrain(Terrains.WATER) &&
-                (entityTarget.relHeight() == targetHex.surface());
+                (entityTarget.relHeight() == targetHex.getLevel());
     }
     
     /**

@@ -1570,21 +1570,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // then we can shoot aft weapons at it
                 // note that this cannot actually happen in MegaMek currently but is left here for the possible eventuality
                 // that overhanging dropships are implemented
-                if(!ae.isAirborne() && !target.isAirborne()) {
+                if (!ae.isAirborne() && !target.isAirborne()) {
                     boolean targetInAttackerHex = ae.getOccupiedCoords().contains(target.getPosition()) ||
                             ae.getPosition().equals(target.getPosition());
-                    boolean targetBelowAttacker = game.getBoard().getHex(ae.getPosition()).surface() >
-                            game.getBoard().getHex(target.getPosition()).surface() + target.getElevation();
+                    boolean targetBelowAttacker = game.getBoard().getHex(ae.getPosition()).getLevel() >
+                            game.getBoard().getHex(target.getPosition()).getLevel() + target.getElevation();
                     
-                    if(!targetInAttackerHex || !targetBelowAttacker) {
+                    if (!targetInAttackerHex || !targetBelowAttacker) {
                         return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");
                     }
                 }
             }
+
             // and aft-side-mounted weapons can only be fired at targets at the same or lower altitude
             if ((weapon.isRearMounted()) && (altDif > 0)) {
                 return Messages.getString("WeaponAttackAction.TooHighForAftSide");
             }
+
             if (Compute.inDeadZone(game, ae, target)) {
                 // Only nose weapons can fire at targets in the dead zone at higher altitude
                 if ((altDif > 0) && (weapon.getLocation() != Aero.LOC_NOSE)) {

@@ -1946,7 +1946,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * hex being moved to, returns the elevation the Entity will be considered
      * to be at w/r/t it's new hex.
      */
-    public int calcElevation(IHex current, IHex next, int assumedElevation,
+    public int calcElevation(Hex current, Hex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
         if (isAero()) {
@@ -2104,7 +2104,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return retVal;
     }
 
-    public int calcElevation(IHex current, IHex next) {
+    public int calcElevation(Hex current, Hex next) {
         return calcElevation(current, next, elevation, false, false);
     }
 
@@ -2142,7 +2142,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!getGame().getBoard().contains(assumedPos)) {
             return false;
         }
-        IHex hex = getGame().getBoard().getHex(assumedPos);
+        Hex hex = getGame().getBoard().getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.surface();
         int minAlt = hex.surface();
         switch (getMovementMode()) {
@@ -2243,7 +2243,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!getGame().getBoard().contains(assumedPos)) {
             return false;
         }
-        IHex hex = getGame().getBoard().getHex(assumedPos);
+        Hex hex = getGame().getBoard().getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.surface();
         int maxAlt = hex.surface();
         switch (getMovementMode()) {
@@ -2310,7 +2310,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Check if this entity can legally occupy the requested elevation. Does not
      * check stacking, only terrain limitations
      */
-    public boolean isElevationValid(int assumedElevation, IHex hex) {
+    public boolean isElevationValid(int assumedElevation, Hex hex) {
         int assumedAlt = assumedElevation + hex.surface();
         if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((this instanceof Infantry)
@@ -2973,11 +2973,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Hovercraft, naval vessels, and hydrofoils move on the
      * surface of the water
      */
-    public int elevationOccupied(IHex hex) {
+    public int elevationOccupied(Hex hex) {
         return elevationOccupied(hex, getElevation());
     }
 
-    public int elevationOccupied(IHex hex, int elevation) {
+    public int elevationOccupied(Hex hex, int elevation) {
         if (hex == null) {
             return 0;
         }
@@ -3013,7 +3013,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return !isAirborne();
         }
@@ -7282,8 +7282,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * carefully
      */
     public PilotingRollData checkRecklessMove(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
-            Coords curPos, IHex prevHex) {
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
+            Coords curPos, Hex prevHex) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
         if (step.isCareful()) {
@@ -7380,7 +7380,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if an entity is landing (from a jump) in heavy woods.
      */
     public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
@@ -7401,7 +7401,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is landing (from a jump) on ice-covered water.
      */
     public PilotingRollData checkLandingOnIce(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if (curHex.containsTerrain(Terrains.ICE)
@@ -7465,7 +7465,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity might skid on pavement. If so, returns the target
      * roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
+    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex,
             EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
@@ -7501,7 +7501,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         /*
-         * IHex curHex = null; if (null != curPos) { curHex =
+         * Hex curHex = null; if (null != curPos) { curHex =
          * game.getBoard().getHex(curPos); }
          */
 
@@ -7558,7 +7558,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * roll for the piloting skill check.
      */
     public PilotingRollData checkRubbleMove(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         boolean enteringRubble = true;
@@ -7585,7 +7585,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * down. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkBogDown(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, int lastElev, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
@@ -7628,7 +7628,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, boolean isPavementStep) {
         if ((curHex.terrainLevel(Terrains.WATER) > 0)
             && (step.getElevation() < 0) && !lastPos.equals(curPos)
@@ -7718,8 +7718,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             || (prevPos.equals(curPos) && !(this instanceof Protomech))) {
             return 0;
         }
-        IHex curHex = game.getBoard().getHex(curPos);
-        IHex prevHex = game.getBoard().getHex(prevPos);
+        Hex curHex = game.getBoard().getHex(curPos);
+        Hex prevHex = game.getBoard().getHex(prevPos);
         // ineligible because of movement type or unit type
         if (isAirborne()) {
             return 0;
@@ -7937,7 +7937,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(+1, "assault vehicle");
         }
 
-        IHex currHex = game.getBoard().getHex(currPos);
+        Hex currHex = game.getBoard().getHex(currPos);
         if (movementMode != EntityMovementMode.HOVER
                 && movementMode != EntityMovementMode.VTOL
                 && movementMode != EntityMovementMode.WIGE) {
@@ -10029,7 +10029,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             return hex.containsTerrain(Terrains.BUILDING);
         }
         // only mechs and protos have physical attacks (except tank charges)
@@ -11138,8 +11138,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            IHex srcHex = game.getBoard().getHex(src);
-            IHex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = game.getBoard().getHex(src);
+            Hex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                                                                       getPosition(), 1, getElevation(), srcHex.floor(),
@@ -11282,7 +11282,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (isOffBoard() || !(isDeployed())) {
             return;
         }
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
 
         if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
@@ -11623,7 +11623,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
-                                          IHex prevHex, EntityMovementType overallMoveType,
+                                          Hex prevHex, EntityMovementType overallMoveType,
                                           MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
                                           Coords curPos, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -14933,7 +14933,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if the entity is underwater, else false.
      */
     public boolean isUnderwater() {
-        IHex occupiedHex = game.getBoard().getHex(getPosition());
+        Hex occupiedHex = game.getBoard().getHex(getPosition());
         if (occupiedHex.containsTerrain(Terrains.WATER)
             && (relHeight() < occupiedHex.surface())) {
             return true;

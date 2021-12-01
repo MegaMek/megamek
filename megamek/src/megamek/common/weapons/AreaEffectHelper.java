@@ -33,7 +33,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -351,7 +351,7 @@ public class AreaEffectHelper {
     public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs, 
             boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
             Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
-            Entity killer, IHex hex, int subjectId, Vector<Report> vPhaseReport, Server server) {
+            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, Server server) {
         Report r;
         
         int hits = damage;

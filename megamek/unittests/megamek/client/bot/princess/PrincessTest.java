@@ -14,20 +14,7 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.GameTurn;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
@@ -482,7 +469,7 @@ public class PrincessTest {
         Mockito.when(mockPrincess.isImmobilized(Mockito.any(Entity.class))).thenCallRealMethod();
         Mockito.when(mockPrincess.getBooleanOption(Mockito.eq("tacops_careful_stand"))).thenReturn(false);
 
-        IHex mockHex = Mockito.mock(IHex.class);
+        Hex mockHex = Mockito.mock(Hex.class);
         Mockito.when(mockHex.getLevel()).thenReturn(0);
         Mockito.when(mockPrincess.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
 

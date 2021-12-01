@@ -52,7 +52,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
@@ -979,7 +979,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         Coords position = entity.getPosition();
         if (!en.isOffBoard() && (position != null)) {
-            IHex hex = game.getBoard().getHex(position);
+            Hex hex = game.getBoard().getHex(position);
             if (hex.containsTerrain(Terrains.FIRE)
                 && (hex.getFireTurn() > 0)) {
                 // standing in fire

@@ -51,7 +51,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -509,7 +509,7 @@ public class Princess extends BotClient {
         }
 
         final Entity deployEntity = game.getEntity(entityNum);
-        final IHex deployHex = game.getBoard().getHex(deployCoords);
+        final Hex deployHex = game.getBoard().getHex(deployCoords);
 
         int deployElevation = getDeployElevation(deployEntity, deployHex);
 
@@ -522,8 +522,8 @@ public class Princess extends BotClient {
      * Calculate the deployment elevation for the given entity.
      * Gun Emplacements should deploy on the rooftop of the building for maximum visibility.
      */
-    private int getDeployElevation(Entity deployEntity, IHex deployHex) {
-        // Entity.elevationOccupied performs a null check on IHex
+    private int getDeployElevation(Entity deployEntity, Hex deployHex) {
+        // Entity.elevationOccupied performs a null check on Hex
         if (deployEntity instanceof GunEmplacement) {
            return deployEntity.elevationOccupied(deployHex) + deployHex.terrainLevel(Terrains.BLDG_ELEV);
         } else {
@@ -593,7 +593,7 @@ public class Princess extends BotClient {
 
         for (final Coords coords : possibleDeployCoords) {
             final Building building = game.getBoard().getBuildingAt(coords);
-            final IHex hex = game.getBoard().getHex(coords);
+            final Hex hex = game.getBoard().getHex(coords);
 
             if (null != building) {
                 final int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
@@ -628,7 +628,7 @@ public class Princess extends BotClient {
         //      This way, we will generally favor unpopulated higher CF buildings, 
         //      but have some wiggle room in case of a really tall high CF building
         final Building building = game.getBoard().getBuildingAt(coords);
-        final IHex hex = game.getBoard().getHex(coords);
+        final Hex hex = game.getBoard().getHex(coords);
         final int turretCount = 1 + game.getGunEmplacements(coords).size();
 
         return (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
@@ -1265,7 +1265,7 @@ public class Princess extends BotClient {
         // How likely are we to get unstuck.
         final MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
         final MoveStep walk = new MoveStep(movePath, type);
-        final IHex hex = getHex(mech.getPosition());
+        final Hex hex = getHex(mech.getPosition());
         final PilotingRollData target = mech.checkBogDown(walk,
                                                           movePath.getLastStepMovementType(), hex,
                                                           mech.getPriorPosition(), mech.getPosition(), hex.getLevel(),
@@ -1279,7 +1279,7 @@ public class Princess extends BotClient {
         return getGame().getOptions().booleanOption(name);
     }
 
-    protected IHex getHex(final Coords coords) {
+    protected Hex getHex(final Coords coords) {
         return getBoard().getHex(coords);
     }
 

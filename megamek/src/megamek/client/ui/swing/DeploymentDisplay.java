@@ -301,7 +301,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         int elevation = en.getElevation();
         // If elevation was set in lounge, try to preserve it
         // Server.processDeployment will adjust elevation, so we want to account for this
-        IHex hex = game.getBoard().getHex(en.getPosition());
+        Hex hex = game.getBoard().getHex(en.getPosition());
         if ((en instanceof VTOL) && (elevation >= 1)) {
             elevation = Math.max(0, elevation - (hex.ceiling() - hex.surface() + 1));
         }
@@ -438,7 +438,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         Coords moveto = b.getCoords();
         final IBoard board = clientgui.getClient().getGame().getBoard();
         final Game game = clientgui.getClient().getGame();
-        final IHex deployhex = board.getHex(moveto);
+        final Hex deployhex = board.getHex(moveto);
         final Building bldg = board.getBuildingAt(moveto);
         boolean isAero = ce().isAero();
         boolean isVTOL = ce() instanceof VTOL;
@@ -575,7 +575,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     
     private boolean processBridgeDeploy(Coords moveto) {
         final IBoard board = clientgui.getClient().getGame().getBoard();
-        final IHex deployhex = board.getHex(moveto);
+        final Hex deployhex = board.getHex(moveto);
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);
         List<String> floors = new ArrayList<>(2);

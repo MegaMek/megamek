@@ -18,7 +18,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
@@ -123,8 +123,8 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mech mode");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation()

@@ -21,7 +21,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.TargetRoll;
@@ -118,8 +118,8 @@ public class PushAttackAction extends DisplacementAttackAction {
                                  "You can't target a null entity!");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(te.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(te.getPosition());
 
         if (attHex == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + ae.getId() + " does not know its position.");

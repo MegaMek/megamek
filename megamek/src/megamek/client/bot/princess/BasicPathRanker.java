@@ -38,7 +38,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -804,7 +804,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             if (path.isJumping()) {
                 logMsg.append("\n\tJumping");
                 Coords endCoords = path.getFinalCoords();
-                IHex endHex = game.getBoard().getHex(endCoords);
+                Hex endHex = game.getBoard().getHex(endCoords);
                 return checkHexForHazards(endHex, movingUnit, true,
                                           path.getLastStep(), true,
                                           path, game.getBoard(), logMsg);
@@ -818,7 +818,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 if ((coords == null) || coords.equals(previousCoords)) {
                     continue;
                 }
-                IHex hex = game.getBoard().getHex(coords);
+                Hex hex = game.getBoard().getHex(coords);
                 totalHazard += checkHexForHazards(hex, movingUnit,
                                                   lastStep.equals(step), step,
                                                   false, path,
@@ -832,7 +832,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
     }
 
-    private double checkHexForHazards(IHex hex, Entity movingUnit,
+    private double checkHexForHazards(Hex hex, Entity movingUnit,
                                       boolean endHex, MoveStep step,
                                       boolean jumpLanding,
                                       MovePath movePath, IBoard board,
@@ -932,7 +932,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazard;
     }
     
-    private double calcBridgeHazard(Entity movingUnit, IHex hex, MoveStep step, boolean jumpLanding, IBoard board, StringBuilder logMsg) {
+    private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding, IBoard board, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating bridge hazard:  ");
         
         // if we are going to BWONGGG into a bridge from below, then it's treated as a building.
@@ -946,7 +946,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return 0;
     }
 
-    private double calcIceHazard(Entity movingUnit, IHex hex, MoveStep step,
+    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step,
                                  boolean jumpLanding,
                                  StringBuilder logMsg) {
         logMsg.append("\n\tCalculating ice hazard:  ");
@@ -977,7 +977,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazard;
     }
 
-    private double calcWaterHazard(Entity movingUnit, IHex hex, MoveStep step,
+    private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step,
                                    StringBuilder logMsg) {
         logMsg.append("\n\tCalculating water hazard:  ");
 
@@ -1124,7 +1124,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazardValue;
     }
 
-    private double calcMagmaHazard(IHex hex, boolean endHex, Entity movingUnit,
+    private double calcMagmaHazard(Hex hex, boolean endHex, Entity movingUnit,
                                    boolean jumpLanding, MoveStep step,
                                    StringBuilder logMsg) {
         logMsg.append("\n\tCalculating magma hazard:  ");

@@ -1,23 +1,9 @@
-/*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
 package megamek.common;
 
 import megamek.common.annotations.Nullable;
 
 /**
- * IHex represents a single hex on the board.
+ * Hex represents a single hex on the board.
  */
 public interface IHex extends Cloneable {
 
@@ -27,14 +13,14 @@ public interface IHex extends Cloneable {
      * 
      * @return Hex level
      */
-    public abstract int getLevel();
+    int getLevel();
 
     /**
      * Set the level of the hex.
      *
      * @param level
      */
-    public abstract void setLevel(int level);
+    void setLevel(int level);
 
     /**
      * The theme is intended as a tag for the tileset file to indicate a special
@@ -42,7 +28,7 @@ public interface IHex extends Cloneable {
      *
      * @return theme name
      */
-    public abstract String getTheme();
+    String getTheme();
 
     /**
      * Set the hex theme.
@@ -51,16 +37,16 @@ public interface IHex extends Cloneable {
      *            theme name
      * @see getTheme
      */
-    public abstract void setTheme(String theme);
+    void setTheme(String theme);
 
     /** Resets the theme to what was specified in the board file. */
-    public abstract void resetTheme();
+    void resetTheme();
 
     /**
      * Clears the "exits" flag for all terrains in the hex where it is not
      * manually specified.
      */
-    public abstract void clearExits();
+    void clearExits();
 
     /**
      * Sets the "exits" flag appropriately, assuming the specified hex lies in
@@ -73,9 +59,9 @@ public interface IHex extends Cloneable {
      * @param direction
      *            - the <code>int</code> direction of the exit. This value
      *            should be between 0 and 5 (inclusive).
-     * @see IHex#setExits(IHex, int, boolean)
+     * @see Hex#setExits(Hex, int, boolean)
      */
-    public abstract void setExits(IHex other, int direction);
+    void setExits(Hex other, int direction);
 
     /**
      * Sets the "exits" flag appropriately, assuming the specified hex lies in
@@ -90,9 +76,9 @@ public interface IHex extends Cloneable {
      *            - the <code>int</code> direction of the exit. This value
      *            should be between 0 and 5 (inclusive).
      * @param roadsAutoExit
-     * @see IHex#setExits(IHex, int)
+     * @see Hex#setExits(Hex, int)
      */
-    public abstract void setExits(IHex other, int direction, boolean roadsAutoExit);
+    void setExits(Hex other, int direction, boolean roadsAutoExit);
 
     /**
      * Determine if this <code>Hex</code> contains the indicated terrain that
@@ -107,9 +93,9 @@ public interface IHex extends Cloneable {
      *         terrain that exits in the specified direction. <code>false</code>
      *         if bad input is supplied, if no such terrain exists, or if it
      *         doesn't exit in that direction.
-     * @see IHex#setExits(IHex, int, boolean)
+     * @see Hex#setExits(Hex, int, boolean)
      */
-    public abstract boolean containsTerrainExit(int terrType, int direction);
+    boolean containsTerrainExit(int terrType, int direction);
 
     /**
      * Determines if this <code>Hex</code> contains any exists in the specified
@@ -121,22 +107,22 @@ public interface IHex extends Cloneable {
      * @return <code>true</code> if this <code>Hex</code> contains any terrain
      *         that exits in the specified direction. <code>false</code> if bad
      *         input is supplied, if no terrain exits in that direction.
-     * @see IHex#setExits(IHex, int, boolean)
+     * @see Hex#setExits(Hex, int, boolean)
      */
-    public abstract boolean containsExit(int direction);
+    boolean containsExit(int direction);
 
     /**
      * Returns true if this hex contains a terrain type that can have exits,
      * else false.
      * 
      */
-    public abstract boolean hasExitableTerrain();
+    boolean hasExitableTerrain();
 
     /**
      * @return the highest level that features in this hex extend to. Above this
      *         level is assumed to be air. This assumes a ground map.
      */
-    public abstract int ceiling();
+    int ceiling();
 
     /**
      * 
@@ -147,7 +133,7 @@ public interface IHex extends Cloneable {
      *         in this hex extend to. Above this level is assumed to be air.
      * 
      */
-    public abstract int ceiling(boolean inAtmosphere);
+    int ceiling(boolean inAtmosphere);
 
     /**
      * Returns the elevation or altitude of the terrain feature that rises the
@@ -158,12 +144,12 @@ public interface IHex extends Cloneable {
      *            Determines if altitudes or elevations are returned
      * @return
      */
-    public abstract int maxTerrainFeatureElevation(boolean inAtmo);
+    int maxTerrainFeatureElevation(boolean inAtmo);
 
     /**
      * @return the surface level of the hex. Equal to getLevel().
      */
-    public abstract int surface();
+    int surface();
 
     /**
      * Returns the lowest reachable point of this hex, used for terrain types
@@ -174,38 +160,38 @@ public interface IHex extends Cloneable {
      *         Below this level is assumed to be bedrock and/or basement.
      *         Unrevealed basements will not effect this value.
      */
-    public abstract int floor();
+    int floor();
 
     /**
      * @return a level indicating how far features in this hex extend below the
      *         surface level.
      */
-    public abstract int depth();
+    int depth();
 
-    public abstract int depth(boolean hidden);
+    int depth(boolean hidden);
 
     /**
      * @return true if there is pavement, a road or a bridge in the hex.
      */
-    public abstract boolean hasPavement();
+    boolean hasPavement();
 
     /**
      * Returns true if this hex has a terrain with a non-zero terrain factor
      * 
      * @return
      */
-    public boolean hasTerrainfactor();
+    boolean hasTerrainfactor();
 
     /**
      * @return <code>true</code> if the specified terrain is represented in the
      *         hex at any level.
      * @param type
      *            terrain to check
-     * @see IHex#containsTerrain(int, int)
-     * @see IHex#containsAllTerrainsOf(int...)
-     * @see IHex#containsAnyTerrainOf(int...)
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainOf(int...)
      */
-    public abstract boolean containsTerrain(int type);
+    boolean containsTerrain(int type);
 
     /**
      * @param type
@@ -214,46 +200,46 @@ public interface IHex extends Cloneable {
      *            level to check the presence of the given terrain at
      * @return <code>true</code> if the specified terrain is represented in the
      *         hex at given level.
-     * @see IHex#containsTerrain(int)
-     * @see IHex#containsAllTerrainsOf(int...)
-     * @see IHex#containsAnyTerrainOf(int...)
+     * @see Hex#containsTerrain(int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainOf(int...)
      */
-    public abstract boolean containsTerrain(int type, int level);
+    boolean containsTerrain(int type, int level);
     
     /**
      * @return <code>true</code> if at least one of the specified terrains are represented in the
      *         hex at any level.
      * @param types
      *            terrains to check
-     * @see IHex#containsTerrain(int, int)
-     * @see IHex#containsTerrain(int)
-     * @see IHex#containsAllTerrainsOf(int...)
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsTerrain(int)
+     * @see Hex#containsAllTerrainsOf(int...)
      */
-    public abstract boolean containsAnyTerrainOf(int... types);
+    boolean containsAnyTerrainOf(int... types);
     
     /**
      * @return <code>true</code> if all of the specified terrains are represented in the
      *         hex at any level.
      * @param types
      *            terrains to check
-     * @see IHex#containsTerrain(int, int)
-     * @see IHex#containsAllTerrainsOf(int...)
-     * @see IHex#containsAnyTerrainOf(int...)
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainOf(int...)
      */
-    public abstract boolean containsAllTerrainsOf(int... types);
+    boolean containsAllTerrainsOf(int... types);
 
     /**
      * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
      *         terrain is not present in the hex
      */
-    public abstract int terrainLevel(int type);
+    int terrainLevel(int type);
 
     /**
      * @param type
      * @return the terrain of the specified type, or <code>null</code> if the
      *         terrain is not present in the hex
      */
-    public abstract Terrain getTerrain(int type);
+    Terrain getTerrain(int type);
 
     /**
      * Returns the Terrain for one of the given types of terrain if at least one of 
@@ -263,16 +249,16 @@ public interface IHex extends Cloneable {
      * @return One of the Terrains of the types that is present in the hex or null if none are 
      * present in the hex.
      * @param types the terrain types to check
-     * @see IHex#containsAnyTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainsOf(int...)
      */
-    public abstract Terrain getAnyTerrainOf(int type, int... types);
+    Terrain getAnyTerrainOf(int type, int... types);
 
     /**
      * Returns a collection of terrain ids for all terrains present in this hex.
      * 
      * @return A set that contains an id for each terrain present in this hex.
      */
-    public abstract int[] getTerrainTypes();
+    int[] getTerrainTypes();
 
     /**
      * Adds the specified terrain
@@ -280,40 +266,40 @@ public interface IHex extends Cloneable {
      * @param terrain
      *            terrain to add
      */
-    public abstract void addTerrain(Terrain terrain);
+    void addTerrain(Terrain terrain);
 
     /**
      * Removes the specified terrain
      *
      * @param type
      */
-    public abstract void removeTerrain(int type);
+    void removeTerrain(int type);
 
     /**
      * Removes all Terrains from the hex.
      */
-    public abstract void removeAllTerrains();
+    void removeAllTerrains();
 
     /**
      * @return the number of terrain attributes present that are displayable in
      *         tooltips
      */
-    public abstract int displayableTerrainsPresent();
+    int displayableTerrainsPresent();
 
     /**
      * @return the number of terrain attributes present
      */
-    public abstract int terrainsPresent();
+    int terrainsPresent();
 
     /**
      * @return new hex which is equal to this
      */
-    public abstract IHex duplicate();
+    Hex duplicate();
 
     /**
      * @return modifier to PSRs made in the hex
      */
-    public abstract void terrainPilotingModifier(EntityMovementMode moveType, PilotingRollData roll,
+    void terrainPilotingModifier(EntityMovementMode moveType, PilotingRollData roll,
             boolean enteringRubble);
 
     /**
@@ -321,31 +307,31 @@ public interface IHex extends Cloneable {
      *
      * @return extra movement cost for entering the hex
      */
-    public abstract int movementCost(Entity entity);
+    int movementCost(Entity entity);
 
     /**
      * @return the modifier to the roll to ignite this hex
      */
-    public abstract int getIgnitionModifier();
+    int getIgnitionModifier();
 
     /**
      * @return <code>true</code> if this hex is ignitable
      */
-    public abstract boolean isIgnitable();
+    boolean isIgnitable();
 
-    public abstract int getFireTurn();
+    int getFireTurn();
 
-    public abstract void incrementFireTurn();
+    void incrementFireTurn();
 
-    public abstract void resetFireTurn();
+    void resetFireTurn();
 
-    public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
+    int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
 
-    public abstract void getUnstuckModifier(int elev, PilotingRollData rollTarget);
+    void getUnstuckModifier(int elev, PilotingRollData rollTarget);
 
-    public abstract boolean isClearForTakeoff();
+    boolean isClearForTakeoff();
 
-    public abstract boolean isClearForLanding();
+    boolean isClearForLanding();
 
     /**
      * Used to determine if this hex is "clear", based on the absense of most
@@ -353,13 +339,13 @@ public interface IHex extends Cloneable {
      * 
      * @return
      */
-    public abstract boolean isClearHex();
+    boolean isClearHex();
 
-    public abstract Coords getCoords();
+    Coords getCoords();
 
-    public abstract void setCoords(Coords c);
+    void setCoords(Coords c);
     
-    public abstract boolean hasCliffTopTowards(IHex otherHex); 
+    boolean hasCliffTopTowards(Hex otherHex); 
 
     /**
      * Determines if the Hex is valid or not. <code>errBuff</code> can be used to return a report of why the hex is
@@ -369,5 +355,5 @@ public interface IHex extends Cloneable {
      * @param errBuff  Buffer to contain error messages.  If null, method returns on first failure.
      * @return
      */
-    public abstract boolean isValid(@Nullable StringBuffer errBuff);
+    boolean isValid(@Nullable StringBuffer errBuff);
 }

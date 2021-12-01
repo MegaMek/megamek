@@ -553,7 +553,7 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -2126,7 +2126,7 @@ public class Tank extends Entity {
         }
 
         // are we wheeled and in light snow?
-        IHex hex = game.getBoard().getHex(getPosition());
+        Hex hex = game.getBoard().getHex(getPosition());
         if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                 && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
@@ -2950,7 +2950,7 @@ public class Tank extends Entity {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
-        IHex occupiedHex = game.getBoard().getHex(getPosition());
+        Hex occupiedHex = game.getBoard().getHex(getPosition());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }

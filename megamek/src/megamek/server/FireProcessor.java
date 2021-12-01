@@ -28,7 +28,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -128,7 +128,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 if (currentHex.containsTerrain(Terrains.FIRE)) {
                     //If the woods has been cleared, or the building
@@ -176,7 +176,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 if(currentHex.containsTerrain(Terrains.FIRE)) {
                     Building bldg = game.getBoard().getBuildingAt(
@@ -275,8 +275,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // Spread to the next hex downwind on a 12 if the first hex wasn't
         // burning...
         // unless a higher hex intervenes
-        IHex nextHex = game.getBoard().getHex(nextCoords);
-        IHex jumpHex = game.getBoard().getHex(nextCoords.translated(windDir));
+        Hex nextHex = game.getBoard().getHex(nextCoords);
+        Hex jumpHex = game.getBoard().getHex(nextCoords.translated(windDir));
         if ((nextHex != null) && (jumpHex != null) && !(nextHex.containsTerrain(Terrains.FIRE))
                 && ((curHeight >= nextHex.ceiling()) || (jumpHex.ceiling() >= nextHex.ceiling()))) {
             // we've already gone one step in the wind direction, now go another
@@ -302,7 +302,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
      */
     public void spreadFire(final Coords origin, final Coords coords, final TargetRoll roll,
                            final int height) {
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         if ((hex == null) || (Math.abs(hex.ceiling() - height) > 4)) {
             // Don't attempt to spread fire off the board or for large differences in height
             return;

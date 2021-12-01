@@ -30,7 +30,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
@@ -743,7 +743,7 @@ public class TestBot extends BotClient {
                           / enemy_array.size();
             // fix for hiding in level 2 water
             // To a greedy bot, it always seems nice to stay in here...
-            IHex h = game.getBoard().getHex(option.getFinalCoords());
+            Hex h = game.getBoard().getHex(option.getFinalCoords());
             if (h.containsTerrain(Terrains.WATER)
                 && (h.surface() > (self.getEntity().getElevation() + ((option
                     .getFinalProne()) ? 0 : 1)))) {

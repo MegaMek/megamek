@@ -177,7 +177,7 @@ public class Building implements Serializable {
         }
 
         // Get the nextHex hex.
-        IHex nextHex = board.getHex(coords);
+        Hex nextHex = board.getHex(coords);
         if ((null == nextHex) || !(nextHex.containsTerrain(structureType))) {
             return;
         }
@@ -313,7 +313,7 @@ public class Building implements Serializable {
         burning.put(coords, false);
 
         // Get the Hex for those coords.
-        IHex startHex = board.getHex(coords);
+        Hex startHex = board.getHex(coords);
 
         // Read our construction type from the hex.
         if (!startHex.containsTerrain(structureType)) {
@@ -489,7 +489,7 @@ public class Building implements Serializable {
      */
     public boolean rollBasement(Coords coords, IBoard board, Vector<Report> vPhaseReport) {
         if (basement.get(coords) == BasementType.UNKNOWN) {
-            IHex hex = board.getHex(coords);
+            Hex hex = board.getHex(coords);
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
             r.add(coords.getBoardNum());

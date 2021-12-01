@@ -430,8 +430,8 @@ public class LosEffects {
             return los;
         }
 
-        final IHex attackerHex = game.getBoard().getHex(attackerPosition);
-        final IHex targetHex = game.getBoard().getHex(targetPosition);
+        final Hex attackerHex = game.getBoard().getHex(attackerPosition);
+        final Hex targetHex = game.getBoard().getHex(targetPosition);
         if ((attackerHex == null) || (targetHex == null)) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
@@ -1074,7 +1074,7 @@ public class LosEffects {
             los.buildingLevelsOrHexes += 1;
         }
 
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
 
         // Handle minimum water depth.
@@ -1450,7 +1450,7 @@ public class LosEffects {
                 continue;
             }
            if(!c.equals(lowPos)) {
-               IHex hex = game.getBoard().getHex(c);
+               Hex hex = game.getBoard().getHex(c);
                int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
                // Handle building elevation.
                // Attacks thru a building are not blocked by that building.

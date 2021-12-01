@@ -20,7 +20,7 @@ package megamek.common.enums;
 
 import megamek.common.Coords;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Terrains;
 
 import java.util.Objects;
@@ -75,7 +75,7 @@ public enum IlluminationLevel {
         }
 
         // Fires can reduce nighttime penalties by up to 2 points.
-        final IHex hex = game.getBoard().getHex(coords);
+        final Hex hex = game.getBoard().getHex(coords);
         if ((hex != null) && hex.containsTerrain(Terrains.FIRE)) {
             return IlluminationLevel.FIRE;
         }

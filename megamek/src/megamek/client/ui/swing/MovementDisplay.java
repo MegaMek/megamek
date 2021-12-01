@@ -2035,7 +2035,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         boolean hullDownEnabled = clientgui.getClient()
                                                            .getGame().getOptions()
                                                            .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
-                        IHex occupiedHex = clientgui.getClient().getGame()
+                        Hex occupiedHex = clientgui.getClient().getGame()
                                                     .getBoard()
                                                     .getHex(cmd.getLastStep().getPosition());
                         boolean fortifiedHex = occupiedHex
@@ -2596,7 +2596,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        IHex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
+        Hex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
         if (currHex.containsTerrain(Terrains.WATER)
                 && ce.getElevation() < 0) {
             setModeConvertEnabled(false);
@@ -2742,7 +2742,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                              || (gear == MovementDisplay.GEAR_BACKUP)
                              || (gear == MovementDisplay.GEAR_JUMP));
         int unloadEl = cmd.getFinalElevation();
-        IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
+        Hex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
         
         boolean finalCoordinatesOnBoard = ce.getGame().getBoard().contains(cmd.getFinalCoords());
         boolean canUnloadHere = false;
@@ -2841,7 +2841,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             pos = cmd.getFinalCoords();
             elev = cmd.getFinalElevation();
         }
-        IHex hex = clientgui.getClient().getGame().getBoard().getHex(pos);
+        Hex hex = clientgui.getClient().getGame().getBoard().getHex(pos);
         if (null != hex) {
             elev += hex.getLevel();
         }

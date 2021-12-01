@@ -571,7 +571,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (isAirborne()) {
                 return false;
             }
-            IHex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard().getHex(c);
 
             // Additional restrictions for hidden units
             if (isHidden()) {
@@ -599,7 +599,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             // Cannot enter woods or a building hex in AirMech mode unless using
             // ground movement
             // or flying over the terrain.
-            IHex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard().getHex(c);
             return (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)
                     || hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > currElevation;
         } else {

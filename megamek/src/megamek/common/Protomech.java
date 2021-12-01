@@ -1972,7 +1972,7 @@ public class Protomech extends Entity {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -2059,13 +2059,13 @@ public class Protomech extends Entity {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int,
+     * @see megamek.common.Entity#checkSkid(int, megamek.common.Hex, int,
      * megamek.common.MoveStep, int, int, megamek.common.Coords,
      * megamek.common.Coords, boolean, int)
      */
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType,
-            IHex prevHex, EntityMovementType overallMoveType,
+            Hex prevHex, EntityMovementType overallMoveType,
             MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos,
             Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
@@ -2333,7 +2333,7 @@ public class Protomech extends Entity {
     }
     
     public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE,
                          "Protomechs cannot fall");

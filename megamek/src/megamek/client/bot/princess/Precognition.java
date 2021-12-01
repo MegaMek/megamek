@@ -166,13 +166,13 @@ public class Precognition implements Runnable {
                     break;
                 case Packet.COMMAND_CHANGE_HEX:
                     getGame().getBoard().setHex((Coords) c.getObject(0),
-                                           (IHex) c.getObject(1));
+                                           (Hex) c.getObject(1));
                     break;
                 case Packet.COMMAND_CHANGE_HEXES:
                     List<Coords> coords = new ArrayList<>(
                             (Set<Coords>) c.getObject(0));
-                    List<IHex> hexes = new ArrayList<>(
-                            (Set<IHex>) c.getObject(1));
+                    List<Hex> hexes = new ArrayList<>(
+                            (Set<Hex>) c.getObject(1));
                     getGame().getBoard().setHexes(coords, hexes);
                     break;
                 case Packet.COMMAND_BLDG_UPDATE:

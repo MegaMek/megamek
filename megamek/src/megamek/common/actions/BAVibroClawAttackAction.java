@@ -18,7 +18,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.TargetRoll;
@@ -82,8 +82,8 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
             }
         }
 
-        final IHex attHex = game.getBoard().getHex(ae.getPosition());
-        final IHex targHex = game.getBoard().getHex(target.getPosition());
+        final Hex attHex = game.getBoard().getHex(ae.getPosition());
+        final Hex targHex = game.getBoard().getHex(target.getPosition());
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }

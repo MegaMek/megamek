@@ -21,7 +21,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityRemovalConditions;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -133,7 +133,7 @@ public class EntityWreckHelper {
      * Utility function that determines if the entity is on a bridge
      */
     public static boolean entityOnBridge(Entity entity) {   
-        IHex hex = entity.getGame().getBoard().getHex(entity.getPosition());
+        Hex hex = entity.getGame().getBoard().getHex(entity.getPosition());
         if(hex != null) {
             boolean hexHasBridge = hex.containsTerrain(Terrains.BRIDGE_CF);
             

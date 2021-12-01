@@ -19,7 +19,7 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -144,8 +144,8 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();

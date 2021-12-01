@@ -18,7 +18,7 @@ import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -220,8 +220,8 @@ public class GrappleAttackAction extends PhysicalAttackAction {
                                 + "attack.");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         // final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation() + targHex.getLevel();

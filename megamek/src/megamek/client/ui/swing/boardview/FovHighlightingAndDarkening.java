@@ -338,12 +338,12 @@ class FovHighlightingAndDarkening {
          */
         GUIPreferences guip = GUIPreferences.getInstance();
         IBoard board = this.boardView1.game.getBoard();
-        IHex srcHex = board.getHex(src);
+        Hex srcHex = board.getHex(src);
         if (srcHex == null) {
             MegaMek.getLogger().error("Cannot process line of sight effects with a null source hex.");
             return null;
         }
-        IHex dstHex = board.getHex(dest);
+        Hex dstHex = board.getHex(dest);
         if (dstHex == null) {
             MegaMek.getLogger().error("Cannot process line of sight effects with a null destination hex.");
             return null;

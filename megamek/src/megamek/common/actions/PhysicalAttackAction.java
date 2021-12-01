@@ -25,7 +25,7 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -250,7 +250,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            IHex targHex = game.getBoard().getHex(te.getPosition());
+            Hex targHex = game.getBoard().getHex(te.getPosition());
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
                 && (targHex.terrainLevel(Terrains.WATER) == te.height())) {

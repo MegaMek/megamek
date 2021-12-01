@@ -32,7 +32,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -128,8 +128,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
 
-        IHex srcHex = game.getBoard().getHex(src);
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex srcHex = game.getBoard().getHex(src);
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
         // the target's hex

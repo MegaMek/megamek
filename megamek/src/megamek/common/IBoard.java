@@ -58,7 +58,7 @@ public interface IBoard {
      * @param errBuff
      *            A buffer for storing error messages, if any.  This is allowed to be null.
      */
-    public abstract void newData(int width, int height, IHex[] data, @Nullable StringBuffer errBuff);
+    void newData(int width, int height, Hex[] data, @Nullable StringBuffer errBuff);
 
     /**
      * Creates a new data set for the board, with the specified dimensions;
@@ -69,7 +69,7 @@ public interface IBoard {
      * @param height
      *            the height dimension.
      */
-    public abstract void newData(int width, int height);
+    void newData(int width, int height);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, returns
@@ -79,7 +79,7 @@ public interface IBoard {
      * @param y the y Coords.
      * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    @Nullable IHex getHex(int x, int y);
+    @Nullable Hex getHex(int x, int y);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -92,7 +92,7 @@ public interface IBoard {
      * @return the hex in the specified direction from the specified starting
      *         coordinates.
      */
-    public abstract IHex getHexInDir(Coords c, int dir);
+    Hex getHexInDir(Coords c, int dir);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -108,7 +108,7 @@ public interface IBoard {
      * @return the hex in the specified direction from the specified starting
      *         coordinates.
      */
-    public abstract IHex getHexInDir(int x, int y, int dir);
+    public abstract Hex getHexInDir(int x, int y, int dir);
 
     /**
      * Initialize a hex and the hexes around it
@@ -144,7 +144,7 @@ public interface IBoard {
      * @param c the Coords, which may be null
      * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    @Nullable IHex getHex(final @Nullable Coords c);
+    @Nullable Hex getHex(final @Nullable Coords c);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, sets the
@@ -157,7 +157,7 @@ public interface IBoard {
      * @param hex
      *            the hex to be set into position.
      */
-    public abstract void setHex(int x, int y, IHex hex);
+    public abstract void setHex(int x, int y, Hex hex);
 
     /**
      * Similar to the setHex function for a collection of coordinates and hexes.
@@ -174,7 +174,7 @@ public interface IBoard {
      *            The hex to be updated for each coordinate
      * @see setHex
      */
-    public abstract void setHexes(List<Coords> coords, List<IHex> hexes);
+    public abstract void setHexes(List<Coords> coords, List<Hex> hexes);
 
     /**
      * Sets the hex into the location specified by the Coords.
@@ -184,7 +184,7 @@ public interface IBoard {
      * @param hex
      *            the hex to be set into position.
      */
-    public abstract void setHex(Coords c, IHex hex);
+    public abstract void setHex(Coords c, Hex hex);
 
     /**
      * Adds the specified board listener to receive board events from this

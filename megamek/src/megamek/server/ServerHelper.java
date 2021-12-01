@@ -40,7 +40,7 @@ public class ServerHelper {
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
-    public static boolean infantryInOpen(Entity te, IHex te_hex, Game game, 
+    public static boolean infantryInOpen(Entity te, Hex te_hex, Game game, 
             boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
@@ -407,7 +407,7 @@ public class ServerHelper {
             return;
         }
         
-        IHex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
+        Hex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
         int waterDepth = 0;
         
         // we're going hull down, we still sink to the bottom if appropriate
@@ -424,7 +424,7 @@ public class ServerHelper {
         }
     }
     
-    public static void checkAndApplyMagmaCrust(IHex hex, int elevation, Entity entity, Coords curPos,
+    public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
             boolean jumpLanding, Vector<Report> vPhaseReport, Server server) {
         
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {

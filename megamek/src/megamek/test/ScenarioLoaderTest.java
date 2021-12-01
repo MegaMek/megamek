@@ -41,9 +41,9 @@ public class ScenarioLoaderTest {
             
             @Override
             public void write(int b) throws IOException {
-                if(b == '\n') {
+                if (b == '\n') {
                     String s = line.toString();
-                    if(!s.startsWith("MMRandom: generating RNG")) { //$NON-NLS-1$
+                    if (!s.startsWith("MMRandom: generating RNG")) {
                         errCache.add(s);
                     }
                     line.setLength(0);
@@ -57,13 +57,15 @@ public class ScenarioLoaderTest {
 
         // Wait for MSC (we have to wait anyway, better to do it once if we want to measure)
         MechSummaryCache msc = MechSummaryCache.getInstance();
-        while(!msc.isInitialized()) {
+        while (!msc.isInitialized()) {
             try {
                 Thread.sleep(1000);
-            } catch(InterruptedException e) {}
+            } catch (InterruptedException e) {
+
+            }
         }
         
-        File baseDir = new File("data/scenarios"); //$NON-NLS-1$
+        File baseDir = new File("data/scenarios");
         checkScenarioFile(baseDir, errorAccumulator);
         System.setOut(originalOut);
         System.setErr(originalErr);
@@ -74,14 +76,14 @@ public class ScenarioLoaderTest {
     
     private void checkScenarioFile(File file, List<String> errorAccumulator) {
         int port = 7770;
-        if(null == file) {
+        if (null == file) {
             return;
         }
-        if(file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {
+        if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
                 Game game = loader.createGame();
-                Server server = new Server("test", port ++);
+                Server server = new Server("test", port++);
                 server.setGame(game);
                 loader.applyDamage(server);
                 server.die();
@@ -89,17 +91,17 @@ public class ScenarioLoaderTest {
                 MegaMek.getLogger().error(e);
             }
             
-            if(errCache.size() > 0) {
+            if (!errCache.isEmpty()) {
                 errorAccumulator.add("ERROR in " + file.getPath());
                 originalErr.println("ERROR in " + file.getPath());
-                for(String line : errCache) {
+                for (String line : errCache) {
                     errorAccumulator.add(line);
                     originalErr.println(line);
                 }
                 errCache.clear();
             }
-        } else if(file.isDirectory()) {
-            for(File subFile : file.listFiles()) {
+        } else if (file.isDirectory()) {
+            for (File subFile : file.listFiles()) {
                 checkScenarioFile(subFile, errorAccumulator);
             }
         }

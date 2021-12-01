@@ -320,7 +320,7 @@ public class MovePath implements Cloneable, Serializable {
             try {
                 step.compile(getGame(), getEntity(), prev, getCachedEntityState());
             } catch (final RuntimeException re) {
-                // // N.B. the pathfinding will try steps off the map.
+                // N.B. the pathfinding will try steps off the map.
                 // MegaMek.getLogger().error(re);
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
@@ -331,12 +331,11 @@ public class MovePath implements Cloneable, Serializable {
         final Coords start = getEntity().getPosition();
         final Coords land = step.getPosition();
         if ((start == null) || (land == null)) {
-            // If we have null for either coordinate then we know the step
-            // isn't legal.
+            // If we have null for either coordinate then we know the step isn't legal.
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         } else {
             // if we're jumping without a mechanical jump booster (?)
-            // or we're acting like a spheroid dropship in the atmosphere
+            // or we're acting like a spheroid DropShip in the atmosphere
             if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
                     (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
                 int distance = start.distance(land);
@@ -353,7 +352,7 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
-        // If jumpships turn, they can't do anything else 
+        // If JumpShips turn, they can't do anything else
         if (game.getBoard().inSpace()
                 && (entity instanceof Jumpship)
                 && !(entity instanceof Warship)
@@ -369,8 +368,10 @@ public class MovePath implements Cloneable, Serializable {
             for (int i = 0; i < steps.size() - 1; i++) {
                 if (steps.get(i).getType() == MoveStepType.LAY_MINE) {
                     containsOtherLayMineStep = true;
+                    break;
                 }
             }
+
             if (containsOtherLayMineStep) {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }

@@ -37,7 +37,6 @@ import megamek.common.weapons.other.ISFireExtinguisher;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.math.BigInteger;
@@ -58,7 +57,7 @@ public class MapMenu extends JPopupMenu {
     Entity selectedEntity;
     Entity myEntity;
     Targetable myTarget = null;
-    private boolean hasMenu = false;
+    private boolean hasMenu;
 
     public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
         this.coords = coords;
@@ -248,17 +247,14 @@ public class MapMenu extends JPopupMenu {
         }
 
         item.setActionCommand(targetCode);
-        item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                myTarget = decodeTargetInfo(e.getActionCommand());
-                if (currentPanel instanceof FiringDisplay) {
-                    ((FiringDisplay) currentPanel).target(myTarget);
-                } else if (currentPanel instanceof PhysicalDisplay) {
-                    ((PhysicalDisplay) currentPanel).target(myTarget);
-                } else if (currentPanel instanceof TargetingPhaseDisplay) {
-                    ((TargetingPhaseDisplay) currentPanel).target(myTarget);
-                }
+        item.addActionListener(e -> {
+            myTarget = decodeTargetInfo(e.getActionCommand());
+            if (currentPanel instanceof FiringDisplay) {
+                ((FiringDisplay) currentPanel).target(myTarget);
+            } else if (currentPanel instanceof PhysicalDisplay) {
+                ((PhysicalDisplay) currentPanel).target(myTarget);
+            } else if (currentPanel instanceof TargetingPhaseDisplay) {
+                ((TargetingPhaseDisplay) currentPanel).target(myTarget);
             }
         });
 
@@ -273,12 +269,7 @@ public class MapMenu extends JPopupMenu {
             return null;
         }
         item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CHARGE.getCmd());
-        item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                plotCourse(e);
-            }
-        });
+        item.addActionListener(this::plotCourse);
 
         return item;
     }
@@ -291,12 +282,7 @@ public class MapMenu extends JPopupMenu {
             return null;
         }
         item.setActionCommand(MovementDisplay.MoveCommand.MOVE_DFA.getCmd());
-        item.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                plotCourse(e);
-            }
-        });
+        item.addActionListener(this::plotCourse);
 
         return item;
     }
@@ -307,25 +293,18 @@ public class MapMenu extends JPopupMenu {
                 + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Entity entity = game.getEntity(Integer.parseInt(e
-                            .getActionCommand()));
-                    selectedEntity = entity;
-                    if (currentPanel instanceof MovementDisplay) {
-                        ((MovementDisplay) currentPanel)
-                                .selectEntity(selectedEntity.getId());
-                    } else if (currentPanel instanceof FiringDisplay) {
-                        ((FiringDisplay) currentPanel)
-                                .selectEntity(selectedEntity.getId());
-                    } else if (currentPanel instanceof PhysicalDisplay) {
-                        ((PhysicalDisplay) currentPanel)
-                                .selectEntity(selectedEntity.getId());
-                    }
-                } catch (Exception ex) {
-                    MegaMek.getLogger().error(ex);
+        item.addActionListener(e -> {
+            try {
+                selectedEntity = game.getEntity(Integer.parseInt(e.getActionCommand()));
+                if (currentPanel instanceof MovementDisplay) {
+                    ((MovementDisplay) currentPanel).selectEntity(selectedEntity.getId());
+                } else if (currentPanel instanceof FiringDisplay) {
+                    ((FiringDisplay) currentPanel).selectEntity(selectedEntity.getId());
+                } else if (currentPanel instanceof PhysicalDisplay) {
+                    ((PhysicalDisplay) currentPanel).selectEntity(selectedEntity.getId());
                 }
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(ex);
             }
         });
 
@@ -333,8 +312,7 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem viewJMenuItem(Entity en) {
-        JMenuItem item = new JMenuItem(
-                Messages.getString("ClientGUI.viewMenuItem")
+        JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.viewMenuItem")
                 + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
@@ -360,11 +338,7 @@ public class MapMenu extends JPopupMenu {
                 if (charge.playerId == client.getLocalPlayer().getId()
                         && coords.equals(charge.pos)) {
                     JMenuItem item = new JMenuItem(charge.damage + " Damage");
-                    item.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            client.sendExplodeBuilding(charge);
-                        }
-                    });
+                    item.addActionListener(e -> client.sendExplodeBuilding(charge));
                     menu.add(item);
                 }
             }
@@ -404,26 +378,20 @@ public class MapMenu extends JPopupMenu {
             finalNote = note;
         }
         JMenuItem item = new JMenuItem(Messages.getString("NoteDialog.action")); //$NON-NLS-1$
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                NoteDialog nd = new NoteDialog(gui.frame, finalNote);
-                gui.getBoardView().setShouldIgnoreKeys(true);
-                nd.setVisible(true);
-                gui.getBoardView().setShouldIgnoreKeys(false);
-                if (nd.isAccepted()) {
-                    client.sendSpecialHexDisplayAppend(coords, finalNote);
-                }
+        item.addActionListener(e -> {
+            NoteDialog nd = new NoteDialog(gui.frame, finalNote);
+            gui.getBoardView().setShouldIgnoreKeys(true);
+            nd.setVisible(true);
+            gui.getBoardView().setShouldIgnoreKeys(false);
+            if (nd.isAccepted()) {
+                client.sendSpecialHexDisplayAppend(coords, finalNote);
             }
         });
         menu.add(item);
 
         if (note != null) {
             item = new JMenuItem(Messages.getString("NoteDialog.delete")); //$NON-NLS-1$
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    client.sendSpecialHexDisplayDelete(coords, finalNote);
-                }
-            });
+            item.addActionListener(e -> client.sendSpecialHexDisplayDelete(coords, finalNote));
         }
         menu.add(item);
 
@@ -434,8 +402,7 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Select");
         // add select options
         if (canSelectEntities()) {
-            for (Entity entity : client.getGame().getEntitiesVector(coords,
-                    canTargetEntities())) {
+            for (Entity entity : client.getGame().getEntitiesVector(coords, canTargetEntities())) {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }
@@ -1071,7 +1038,7 @@ public class MapMenu extends JPopupMenu {
     }
     
     private JMenuItem createConvertMenuItem(String resourceKey, MovementDisplay.MoveCommand cmd,
-            boolean isCurrent) {
+                                            boolean isCurrent) {
         String text = Messages.getString(resourceKey);
         if (isCurrent) {
             text = "No Conversion";
@@ -1106,7 +1073,7 @@ public class MapMenu extends JPopupMenu {
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
         
         IPlayer localPlayer = client.getLocalPlayer();
         
@@ -1114,8 +1081,7 @@ public class MapMenu extends JPopupMenu {
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may have unseen units
-            if (!entity.isSensorReturn(localPlayer)
-                    && entity.hasSeenEntity(localPlayer)
+            if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)
                     && !entity.isHidden()) {
                 menu.add(TargetMenuItem(entity));
             }
@@ -1194,6 +1160,7 @@ public class MapMenu extends JPopupMenu {
                         || hasAmmoType(AmmoType.T_BA_TUBE)) {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY)));
                 }
+
                 if (canStartFires && hasFireExtinguisher()
                     && h.containsTerrain(Terrains.FIRE)) {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_EXTINGUISH)));

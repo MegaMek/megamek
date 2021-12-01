@@ -545,8 +545,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         while (words.hasMoreElements()) {
             String nextWord = words.nextElement();
             if (fm.stringWidth(nextLine + " " + nextWord) < lineWidth) {
-                nextLine = (nextLine.isEmpty()) ? nextWord : nextLine + " "
-                        + nextWord;
+                nextLine = nextLine.isEmpty() ? nextWord : nextLine + " " + nextWord;
             } else {
                 messages.addElement(nextLine);
                 nextLine = nextWord;

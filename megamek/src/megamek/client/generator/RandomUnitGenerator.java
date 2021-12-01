@@ -343,8 +343,8 @@ public class RandomUnitGenerator implements Serializable {
                 // recursion is fun
                 loadRatsFromDirectory(ratFile, msc, newNode);
 
-                // Prune empty nodes (this removes the "Unofficial" place holder)
-                if (newNode.children.size() == 0) {
+                // Prune empty nodes (this removes the "Unofficial" placeholder)
+                if (newNode.children.isEmpty()) {
                     node.children.remove(newNode);
                 }
                 continue;
@@ -356,11 +356,9 @@ public class RandomUnitGenerator implements Serializable {
                     while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
                         String entryName = entry.getName();
-                        if (!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt"))
-                        {
+                        if (!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) {
                             RatTreeNode subNode = getNodeByPath(node, entryName);
-                            try (InputStream zis = zipFile.getInputStream(entry))
-                            {
+                            try (InputStream zis = zipFile.getInputStream(entry)) {
                                 readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc);
                             }
                         }
@@ -406,10 +404,10 @@ public class RandomUnitGenerator implements Serializable {
             int retryCount = 0;
             
             // give the RATs a few seconds to load
-            while(!initialized && retryCount < 5) {
+            while (!initialized && retryCount < 5) {
                 try {
                     Thread.sleep(1000);
-                } catch(Exception e) {
+                } catch (Exception ignored) {
                     
                 }
                 
@@ -527,6 +525,7 @@ public class RandomUnitGenerator implements Serializable {
         if (null == rug) {
             rug = new RandomUnitGenerator();
         }
+
         if (!rug.initialized && !rug.initializing) {
             rug.initializing = true;
             interrupted = false;

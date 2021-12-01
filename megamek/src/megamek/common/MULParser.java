@@ -2427,12 +2427,12 @@ public class MULParser {
         }
 
         // Was no manipulator selected?
-        if (manipType == null){
+        if (manipType == null) {
             return;
         }
 
         // Add the newly mounted maniplator
-        try{
+        try {
             int baMountLoc = mountedManip.getBaMountLoc();
             mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());
             mountedManip.setBaMountLoc(baMountLoc);
@@ -2448,10 +2448,9 @@ public class MULParser {
      * @param apmTag
      * @param entity
      */
-    private void parseBAAPM(Element apmTag, Entity entity){
-        if (!(entity instanceof BattleArmor)){
-            warning.append("Found a BA APM tag but Entity is not " +
-                    "BattleArmor!\n");
+    private void parseBAAPM(Element apmTag, Entity entity) {
+        if (!(entity instanceof BattleArmor)) {
+            warning.append("Found a BA APM tag but Entity is not " + "BattleArmor!\n");
             return;
         }
 

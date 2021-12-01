@@ -14855,7 +14855,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             // Make sure this is a weapon.
             if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
-
                 MegaMek.getLogger().error(String.format("%s failed for %s %s - %s is not a weapon",
                         q.toLog(), getChassis(), getModel(), m.getName()));
                 continue;

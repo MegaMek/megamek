@@ -605,7 +605,7 @@ public class TestBot extends BotClient {
         // top balanced
         filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1, 1), 100);
         // top damage
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(.5, 1), 100);
+        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(0.5, 1), 100);
     }
 
     /**

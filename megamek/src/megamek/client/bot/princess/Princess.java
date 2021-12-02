@@ -155,7 +155,7 @@ public class Princess extends BotClient {
      * @return
      */
     public ArtilleryTargetingControl getArtilleryTargetingControl() {
-        if(atc == null) {
+        if (atc == null) {
             atc = new ArtilleryTargetingControl();
         }
         
@@ -1616,7 +1616,7 @@ public class Princess extends BotClient {
 
         try {
             initialize();
-            checkMoral();
+            checkMorale();
             unitBehaviorTracker.clear();
 
             // reset strategic targets
@@ -1863,7 +1863,7 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected void checkMoral() {
+    protected void checkMorale() {
         moraleUtil.checkMorale(behaviorSettings.isForcedWithdrawal(),
                              behaviorSettings.getBraveryIndex(),
                              behaviorSettings.getSelfPreservationIndex(),
@@ -1880,7 +1880,7 @@ public class Princess extends BotClient {
      * spinning up a rapid fire autocannon.
      */
     public int getSpinupThreshold() {
-        if(spinupThreshold == null) {
+        if (spinupThreshold == null) {
     	// we start spinning up the cannon at 11+ TN at highest aggression levels
         // dropping it down to 6+ TN at the lower aggression levels
         	spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
@@ -1905,8 +1905,7 @@ public class Princess extends BotClient {
     }
 
     protected void handlePacket(final Packet c) {
-        final StringBuilder msg = new StringBuilder("Received packet, cmd: "
-                                                    + c.getCommand());
+        final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.getCommand());
         try {
             super.handlePacket(c);
             getPrecognition().handlePacket(c);
@@ -1941,8 +1940,7 @@ public class Princess extends BotClient {
         int highestEnemyInitiativeBonus = -1;
         int highestEnemyInitiativeId = -1;
         for (final Entity entity : getEnemyEntities()) {
-            final int initBonus = entity.getHQIniBonus() +
-                                  entity.getQuirkIniBonus();
+            final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();
             if (initBonus > highestEnemyInitiativeBonus) {
                 highestEnemyInitiativeBonus = initBonus;
                 highestEnemyInitiativeId = entity.getId();
@@ -1989,7 +1987,7 @@ public class Princess extends BotClient {
      * @param path The path to process.
      */
     private void unjamRAC(MovePath path) { 
-        if(path.getEntity().canUnjamRAC() && 
+        if (path.getEntity().canUnjamRAC() &&
                 (path.getMpUsed() <= path.getEntity().getWalkMP()) &&
                 !path.isJumping()) {
             path.addStep(MoveStepType.UNJAM_RAC);
@@ -2004,7 +2002,7 @@ public class Princess extends BotClient {
         Entity pathEntity = path.getEntity();
         
         // we cannot evade if we are out of control
-        if(pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
+        if (pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
             return;
         }
         
@@ -2012,7 +2010,7 @@ public class Princess extends BotClient {
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR
         // then evade
-        if(pathEntity.isAirborne() &&
+        if (pathEntity.isAirborne() &&
            !possibleToInflictDamage &&
            (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
             path.addStep(MoveStepType.EVADE);
@@ -2026,7 +2024,7 @@ public class Princess extends BotClient {
      */
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
-        if(possibleToInflictDamage &&
+        if (possibleToInflictDamage &&
                 pathEntity.hasSearchlight() && 
                 !pathEntity.isUsingSearchlight() &&
                 (path.getGame().getPlanetaryConditions().getLight() >= PlanetaryConditions.L_FULL_MOON)) {
@@ -2055,20 +2053,20 @@ public class Princess extends BotClient {
 
         // if there are no enemies on the board, then we're not unloading anything.
         // infantry can't clear hexes, so let's not unload them for that purpose
-        if((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
+        if ((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return;
         }
         
         int distanceToClosestEnemy = pathEndpoint.distance(closestEnemy.getPosition());
         
         // loop through all entities carried by the current entity
-        for(Transporter transport : movingEntity.getTransports()) {
+        for (Transporter transport : movingEntity.getTransports()) {
             // this operation is intended for entities on the ground
             if (transport instanceof Bay) {
                 continue;
             }
             
-            for(Entity loadedEntity : transport.getLoadedUnits()) {
+            for (Entity loadedEntity : transport.getLoadedUnits()) {
                 // there's really no good reason for Princess to disconnect trailers.
                 // Let's skip those for now. We don't want to create a bogus 'unload' step for them anyhow.
                 if (loadedEntity.isTrailer() && loadedEntity.getTowedBy() != Entity.NONE) {
@@ -2092,7 +2090,7 @@ public class Princess extends BotClient {
                 // where "engagement range" is defined as the maximum range of our weapons plus our walking movement
                 boolean inEngagementRange = loadedEntity.getWalkMP() + getMaxWeaponRange(loadedEntity) >= distanceToClosestEnemy;
                 
-                if(!unloadFatal && !unloadIllegal && inEngagementRange) {
+                if (!unloadFatal && !unloadIllegal && inEngagementRange) {
                     path.addStep(MoveStepType.UNLOAD, loadedEntity, pathEndpoint);
                     return; // we can only unload one infantry unit per hex per turn, so once we've unloaded, we're done. 
                 }
@@ -2149,8 +2147,7 @@ public class Princess extends BotClient {
         }
     }
     
-    public void sendChat(final String message,
-                         final LogLevel logLevel) {
+    public void sendChat(final String message, final LogLevel logLevel) {
         if (getVerbosity().willLog(logLevel)) {
             super.sendChat(message);
         }

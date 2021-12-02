@@ -13,22 +13,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
@@ -37,47 +21,18 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Bay;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.EjectedCrew;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.HexTarget;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Tank;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.Transporter;
-import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
@@ -86,6 +41,12 @@ import megamek.common.pathfinder.PathDecorator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Princess extends BotClient {
 
@@ -121,8 +82,8 @@ public class Princess extends BotClient {
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
-    private final IMoralUtil moralUtil = new MoralUtil(getLogger());
-    private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final MoraleUtil moraleUtil = new MoraleUtil(getLogger());
+    private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
     
@@ -150,8 +111,7 @@ public class Princess extends BotClient {
                     final LogLevel verbosity) {
         super(name, host, port);
         getLogger().setLogLevel(LOGGING_CATEGORY, verbosity);
-        setBehaviorSettings(BehaviorSettingsFactory.getInstance(getLogger())
-                                    .DEFAULT_BEHAVIOR);
+        setBehaviorSettings(BehaviorSettingsFactory.getInstance(getLogger()).DEFAULT_BEHAVIOR);
         
         fireControlState = new FireControlState();
         pathRankerState = new PathRankerState();
@@ -159,8 +119,7 @@ public class Princess extends BotClient {
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
         precognition = new Precognition(this);
-        precogThread = new Thread(precognition, "Princess-precognition ("
-                + getName() + ")");
+        precogThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
         precogThread.start();
     }
 
@@ -1141,8 +1100,7 @@ public class Princess extends BotClient {
             }
 
             // the original bot's physical options seem superior
-            PhysicalOption bestPhysical = PhysicalCalculator.getBestPhysical(attacker, game);
-            return bestPhysical;
+            return PhysicalCalculator.getBestPhysical(attacker, game);
         } finally {
             getLogger().methodEnd();
         }
@@ -1152,8 +1110,8 @@ public class Princess extends BotClient {
         return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
 
-    IMoralUtil getMoralUtil() {
-        return moralUtil;
+    MoraleUtil getMoraleUtil() {
+        return moraleUtil;
     }
 
     /**
@@ -1906,7 +1864,7 @@ public class Princess extends BotClient {
 
     @Override
     protected void checkMoral() {
-        moralUtil.checkMoral(behaviorSettings.isForcedWithdrawal(),
+        moraleUtil.checkMorale(behaviorSettings.isForcedWithdrawal(),
                              behaviorSettings.getBraveryIndex(),
                              behaviorSettings.getSelfPreservationIndex(),
                              getLocalPlayer(),

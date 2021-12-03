@@ -79,15 +79,13 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
  */
-public class WeaponPanel extends PicMap implements ListSelectionListener,
-        ActionListener {
+public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
     
     /**
      * Mouse adaptor for the weapon list.  Supports rearranging the weapons
      * to define a custom ordering.
      *
      * @author arlith
-     *
      */
     private class WeaponListMouseAdapter extends MouseInputAdapter {
 
@@ -152,13 +150,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
      * the Mounteds given WeaponComparators.
      *
      * @author arlith
-     *
      */
     class WeaponListModel extends AbstractListModel<String> {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = 6312003196674512339L;
 
         /**
@@ -173,7 +166,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         WeaponListModel(Entity e) {
             en = e;
-            weapons = new ArrayList<Mounted>();
+            weapons = new ArrayList<>();
         }
 
         /**
@@ -2617,12 +2610,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             // Tell the <Phase>Display to update the 
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
-                unitDisplay.getClientGUI().bv.clearFieldofF();
+                unitDisplay.getClientGUI().getBoardView().clearFieldofF();
             }
         }
         onResize();
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         ClientGUI clientgui = unitDisplay.getClientGUI();
         if (ev.getSource().equals(m_chAmmo)

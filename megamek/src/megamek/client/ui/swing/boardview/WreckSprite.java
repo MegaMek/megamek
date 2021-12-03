@@ -24,7 +24,7 @@ import megamek.common.Entity;
  * and an identification label.
  */
 class WreckSprite extends AbstractWreckSprite {   
-    public WreckSprite(BoardView1 boardView1, final Entity entity, int secondaryPos) {
+    public WreckSprite(BoardView boardView1, final Entity entity, int secondaryPos) {
         super(boardView1);
         this.entity = entity;
         this.secondaryPos = secondaryPos;

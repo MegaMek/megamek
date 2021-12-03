@@ -5923,6 +5923,23 @@ Mastodon B:JUGGERNAUT
 Mastodon C:JUGGERNAUT
 Mastodon D:MISSILE_BOAT
 #ilClan Rec Guide 21
+Hankyu (Arctic Cheetah) T:SCOUT
+Hankyu (Arctic Cheetah) E:STRIKER
+Hankyu (Arctic Cheetah) F:STRIKER
+Hankyu (Arctic Cheetah) I:STRIKER
+Hankyu (Arctic Cheetah) J:SNIPER
+Kontio (Standard):STRIKER
+Hunchback C:SKIRMISHER
+Ostroc OSR-2D:SKIRMISHER
+Ostroc OSR-3M:SKIRMISHER
+Ostroc OSR-6R:SKIRMISHER
+Ostroc OSR-9C:JUGGERNAUT
+Cyclops C:BRAWLER
+Regent Prime:JUGGERNAUT
+Regent A:SNIPER
+Regent B:JUGGERNAUT
+Regent C:SNIPER
+Regent D:SNIPER
 #ilClan Rec Guide 22
 #ilClan Rec Guide 23
 #ilClan Rec Guide 24

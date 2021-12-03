@@ -2,17 +2,16 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.server;
 
 import java.io.Serializable;
@@ -21,7 +20,7 @@ import java.util.List;
 
 import megamek.common.Coords;
 
-public class SmokeCloud implements Serializable{
+public class SmokeCloud implements Serializable {
 
     private static final long serialVersionUID = -8937331680271675046L;
 
@@ -38,17 +37,17 @@ public class SmokeCloud implements Serializable{
     private int smokeLevel = 1;
     private boolean didDrift = false;
     
-    public SmokeCloud(){
+    public SmokeCloud() {
         
     }
     
-    public SmokeCloud(Coords coords, int level, int duration){
+    public SmokeCloud(Coords coords, int level, int duration) {
         this.smokeDuration = duration;
         this.smokeHexList.add(coords);
         this.smokeLevel = level;
     }
     
-    public SmokeCloud(ArrayList<Coords> coords, int level, int duration){
+    public SmokeCloud(ArrayList<Coords> coords, int level, int duration) {
         this.smokeDuration = duration;
         this.smokeLevel = level;
         this.smokeHexList.addAll(coords);
@@ -64,17 +63,17 @@ public class SmokeCloud implements Serializable{
      */
     public void reduceSmokeLevel() {
         switch (smokeLevel) {
-            case SMOKE_LIGHT:
-            case SMOKE_LI_LIGHT:
-            case SMOKE_CHAFF_LIGHT:
-            default:
-                smokeLevel = SMOKE_NONE;
-                break;
             case SMOKE_HEAVY:
                 smokeLevel = SMOKE_LIGHT;
                 break;
             case SMOKE_LI_HEAVY:
                 smokeLevel = SMOKE_LI_LIGHT;
+                break;
+            case SMOKE_LIGHT:
+            case SMOKE_LI_LIGHT:
+            case SMOKE_CHAFF_LIGHT:
+            default:
+                smokeLevel = SMOKE_NONE;
                 break;
         }
     }

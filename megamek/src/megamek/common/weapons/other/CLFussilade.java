@@ -53,10 +53,14 @@ public class CLFussilade extends CLIATMWeapon {
         criticals = 1;
         bv = 11;
         rulesRefs = "65,IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-            .setClanAdvancement(3072).setPrototypeFactions(F_CCY)
-            .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setClanAdvancement(3072,DATE_NONE,DATE_NONE,3075,DATE_NONE)
+            .setClanApproximate(true,false,false,false,false)
+            .setPrototypeFactions(F_CCY)
+            .setProductionFactions(F_CCY)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override

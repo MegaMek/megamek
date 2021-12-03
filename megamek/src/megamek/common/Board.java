@@ -318,7 +318,7 @@ public class Board implements Serializable, IBoard {
         // Initialize all buildings.
         buildings.removeAllElements();
         if (bldgByCoords == null) {
-            bldgByCoords = new Hashtable<Coords, Building>();
+            bldgByCoords = new Hashtable<>();
         } else {
             bldgByCoords.clear();
         }
@@ -350,7 +350,7 @@ public class Board implements Serializable, IBoard {
                                 MegaMek.getLogger().error("Unable to create building.");
                                 excep.printStackTrace();
                             } else {
-                                errBuff.append("Unable to create building at " + coords.toString() + "!\n");
+                                errBuff.append("Unable to create building at " + coords + "!\n");
                                 errBuff.append(excep.getMessage() + "\n");
                             }
                             curHex.removeTerrain(Terrains.BUILDING);
@@ -436,6 +436,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Initialize a hex and the hexes around it
      */
+    @Override
     public void initializeAround(int x, int y) {
         initializeHex(x, y);
         for (int i = 0; i < 6; i++) {
@@ -455,6 +456,7 @@ public class Board implements Serializable, IBoard {
      * parameter appropriately to the surrounding hexes. If a surrounding hex is
      * off the board, it checks the hex opposite the missing hex.
      */
+    @Override
     public void initializeHex(int x, int y) {
         initializeHex(x, y, true);
     }
@@ -500,11 +502,9 @@ public class Board implements Serializable, IBoard {
         // Foliage is missing, therefore add it with the standard TW values
         // elevation 3 for Ultra Woods/Jungle and 2 for Light/Heavy
         if (hex.terrainLevel(Terrains.WOODS) == 3 || hex.terrainLevel(Terrains.JUNGLE) == 3) {
-            hex.addTerrain(Terrains.getTerrainFactory()
-                    .createTerrain(Terrains.FOLIAGE_ELEV, 3));    
+            hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 3));
         } else {
-            hex.addTerrain(Terrains.getTerrainFactory()
-                    .createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
         }
     }
     
@@ -546,14 +546,13 @@ public class Board implements Serializable, IBoard {
             boolean manualCliffTopExitInThisDir = ((origCliffTopExits & (1 << i)) != 0);
             boolean cliffTopExitInThisDir = false;
 
-            if ( ((levelDiff == 1) || (levelDiff == 2))  
-                    && manualCliffTopExitInThisDir ) {
+            if (((levelDiff == 1) || (levelDiff == 2)) && manualCliffTopExitInThisDir) {
                 correctedCliffTopExits += (1 << i);
                 cliffTopExitInThisDir = true;
             }
 
             // Should there be an incline top?
-            if ( ((levelDiff == 1) || (levelDiff == 2))  
+            if (((levelDiff == 1) || (levelDiff == 2))
                     && !cliffTopExitInThisDir 
                     && !inWater
                     && !towardsWater) {
@@ -611,8 +610,7 @@ public class Board implements Serializable, IBoard {
      */
     private void addOrRemoveAutoTerrain(IHex hex, int terrainType, int exits) {
         if (exits > 0) {
-            hex.addTerrain(Terrains.getTerrainFactory()
-                    .createTerrain(terrainType, 1, true, exits));
+            hex.addTerrain(new Terrain(terrainType, 1, true, exits));
         } else {
             hex.removeTerrain(terrainType);
         }
@@ -621,6 +619,7 @@ public class Board implements Serializable, IBoard {
     /** Rebuilds automatic terrains for the whole board.
      * @param useInclines Indicates whether or not to use inclines on hex exits.
      */
+    @Override
     public void initializeAllAutomaticTerrain(boolean useInclines) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -633,11 +632,10 @@ public class Board implements Serializable, IBoard {
     /**
      * Determines whether this Board "contains" the specified Coords.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
+     * @param x the x Coords.
+     * @param y the y Coords.
      */
+    @Override
     public boolean contains(int x, int y) {
         return (x >= 0) && (y >= 0) && (x < width) && (y < height);
     }
@@ -648,6 +646,7 @@ public class Board implements Serializable, IBoard {
      * @param c
      *            the Coords.
      */
+    @Override
     public boolean contains(Coords c) {
         if (c == null) {
             return false;
@@ -675,6 +674,7 @@ public class Board implements Serializable, IBoard {
      * @param hex
      *            the hex to be set into position.
      */
+    @Override
     public void setHex(int x, int y, IHex hex) {
         data[(y * width) + x] = hex;
         initializeHex(x, y);
@@ -703,9 +703,10 @@ public class Board implements Serializable, IBoard {
      * @param hexes
      *            The hex to be updated for each coordinate
      */
+    @Override
     public void setHexes(List<Coords> coords, List<IHex> hexes) {
         // Keeps track of hexes that will need to be reinitialized
-        LinkedHashSet<Coords> needsUpdate = new LinkedHashSet<Coords>((int) (coords.size() * 1.25 + 0.5));
+        LinkedHashSet<Coords> needsUpdate = new LinkedHashSet<>((int) (coords.size() * 1.25 + 0.5));
 
         // Sanity check
         if (coords.size() != hexes.size()) {
@@ -1191,7 +1192,7 @@ public class Board implements Serializable, IBoard {
                     if (Terrains.AUTOMATIC.contains(terrType)) {
                         continue;
                     }
-                    ITerrain terrain = hex.getTerrain(terrType);
+                    Terrain terrain = hex.getTerrain(terrType);
                     if (terrain != null) {
                         if (!firstTerrain) {
                             hexBuff.append(";");
@@ -1525,7 +1526,7 @@ public class Board implements Serializable, IBoard {
         // Add rubble terrain that matches the building type.
         if (type > 0) {
             int rubbleLevel = bldg.getBldgClass() == Building.FORTRESS ? 2 : 1;
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.RUBBLE, rubbleLevel));
+            curHex.addTerrain(new Terrain(Terrains.RUBBLE, rubbleLevel));
         }
 
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {

@@ -185,7 +185,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         setupButtonPanel();
 
-        clientgui.bv.addKeyListener(this);
+        clientgui.getBoardView().addKeyListener(this);
 
         // mech display.
         clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
@@ -203,13 +203,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
         // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
                 new CommandAction() {
 
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -231,7 +231,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -254,7 +254,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -277,11 +277,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()
-                                || !buttons.get(FiringCommand.FIRE_FIRE)
-                                        .isEnabled()) {
+                                || !buttons.get(FiringCommand.FIRE_FIRE).isEnabled()) {
                             return false;
                         } else {
                             return true;
@@ -301,7 +300,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -323,7 +322,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -345,7 +344,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -368,7 +367,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -391,7 +390,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -413,7 +412,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -435,7 +434,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -457,7 +456,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -479,7 +478,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -501,7 +500,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -523,7 +522,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -545,7 +544,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -566,7 +565,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -588,7 +587,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -609,7 +608,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (clientgui.bv.getChatterBoxActive()
+                        if (clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -741,7 +740,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             cacheVisibleTargets();
 
             if (!ce().isOffBoard()) {
-                clientgui.bv.centerOnHex(ce().getPosition());
+                clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
 
             // only twist if crew conscious
@@ -824,10 +823,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void beginMyTurn() {
         target = null;
 
-        if (!clientgui.bv.isMovingUnits()) {
+        if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-        clientgui.bv.clearFieldofF();
+        clientgui.getBoardView().clearFieldofF();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
 
@@ -890,10 +889,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.bv.clearMovementData();
-        clientgui.bv.clearFiringSolutionData();
-        clientgui.bv.clearStrafingCoords();
-        clientgui.bv.clearFieldofF();
+        clientgui.getBoardView().clearMovementData();
+        clientgui.getBoardView().clearFiringSolutionData();
+        clientgui.getBoardView().clearStrafingCoords();
+        clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 
@@ -1112,7 +1111,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // HACK : don't show the choice dialog.
         showTargetChoice = false;
 
-        clientgui.bv.centerOnHex(targ.getPosition());
+        clientgui.getBoardView().centerOnHex(targ.getPosition());
         clientgui.getBoardView().select(targ.getPosition());
 
         // HACK : show the choice dialog again.
@@ -1375,7 +1374,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
-        clientgui.bv.addAttack(saa);
+        clientgui.getBoardView().addAttack(saa);
 
         // refresh weapon panel, as bth will have changed
         updateTarget();
@@ -1742,7 +1741,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void clearAttacks() {
         isStrafing = false;
         strafingCoords.clear();
-        clientgui.bv.clearStrafingCoords();
+        clientgui.getBoardView().clearStrafingCoords();
         
         // We may not have an entity selected yet (race condition).
         if (ce() == null) {
@@ -1774,7 +1773,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void removeTempAttacks() {
         // remove temporary attacks from game & board
         clientgui.getClient().getGame().removeActionsFor(cen);
-        clientgui.bv.removeAttacksFor(ce());
+        clientgui.getBoardView().removeAttacksFor(ce());
     }
 
     /**
@@ -1789,7 +1788,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 attacks.removeElement(o);
                 clientgui.mechD.wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
-                clientgui.bv.refreshAttacks();
+                clientgui.getBoardView().refreshAttacks();
             }
         }
     }
@@ -1801,7 +1800,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        clientgui.bv.redrawEntity(ce());
+        clientgui.getBoardView().redrawEntity(ce());
         clientgui.mechD.displayEntity(ce());
         clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
         clientgui.mechD.wPan.selectFirstWeapon();
@@ -1989,16 +1988,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * during the movement phase. 
      */
     void updateVTOLGroundTarget() {
-        clientgui.bv.clearStrafingCoords();
+        clientgui.getBoardView().clearStrafingCoords();
         target(null);
         isStrafing = false;
         strafingCoords.clear();
         if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
             target(((IBomber)ce()).getVTOLBombTarget());
-            clientgui.bv.addStrafingCoords(target.getPosition());
+            clientgui.getBoardView().addStrafingCoords(target.getPosition());
         } else if ((ce() instanceof VTOL) && ((VTOL)ce()).getStrafingCoords().size() > 0) {
             strafingCoords.addAll(((VTOL)ce()).getStrafingCoords());
-            strafingCoords.forEach(c -> clientgui.bv.addStrafingCoords(c));
+            strafingCoords.forEach(c -> clientgui.getBoardView().addStrafingCoords(c));
             isStrafing = true;
         }
     }
@@ -2108,7 +2107,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (isStrafing) {
                 if (validStrafingCoord(evtCoords)) {
                     strafingCoords.add(evtCoords);
-                    clientgui.bv.addStrafingCoords(evtCoords);
+                    clientgui.getBoardView().addStrafingCoords(evtCoords);
                     updateStrafingTargets();
                 }
             } else if (!evtCoords.equals(ce().getPosition())){
@@ -2460,7 +2459,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         if (clientgui.getClient().isMyTurn() && (ce() != null)) {
             clientgui.maybeShowUnitDisplay();
-            clientgui.bv.centerOnHex(ce().getPosition());
+            clientgui.getBoardView().centerOnHex(ce().getPosition());
         }
     }
 
@@ -2481,7 +2480,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-                clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.getBoardView().centerOnHex(e.getPosition());
             }
         }
     }
@@ -2684,12 +2683,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // do nothing here outside the movement phase
         if (!(clientgui.getClient().getGame().getPhase() == GamePhase.FIRING)) return;
         
-        clientgui.bv.fieldofFireUnit = unit;
-        clientgui.bv.fieldofFireRanges = ranges;
-        clientgui.bv.fieldofFireWpArc = arc;
-        clientgui.bv.fieldofFireWpLoc = loc;
+        clientgui.getBoardView().fieldofFireUnit = unit;
+        clientgui.getBoardView().fieldofFireRanges = ranges;
+        clientgui.getBoardView().fieldofFireWpArc = arc;
+        clientgui.getBoardView().fieldofFireWpLoc = loc;
         
-        clientgui.bv.setWeaponFieldofFire(facing, unit.getPosition());
+        clientgui.getBoardView().setWeaponFieldofFire(facing, unit.getPosition());
     }
     
 }

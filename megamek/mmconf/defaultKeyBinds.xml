@@ -162,6 +162,13 @@
     </KeyBind>
 
     <KeyBind>
+         <command>undoLastStep</command> <!-- Backspace -->
+        <keyCode>8</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
          <command>undo</command> <!-- Ctrl-Z -->
         <keyCode>90</keyCode>
         <modifier>128</modifier>

@@ -67,8 +67,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private final Color fillColor;
     private final int rangeBracket;
     
-    public FieldofFireSprite(BoardView1 boardView1, int rangeBracket, Coords l,
-            int borders) {
+    public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
+                             int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
         fillColor = new Color(fieldofFireColors[rangeBracket].getRed(), 

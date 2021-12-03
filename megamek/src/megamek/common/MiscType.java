@@ -1398,46 +1398,25 @@ public class MiscType extends EquipmentType {
             return returnBV;
         }
         // check for known formulas
+        double tsmMod = entity.hasWorkingMisc(F_TSM) ? 2 : 1;
         if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
-            returnBV = Math.ceil((entity.getWeight() / 10.0) + 1) * 1.725;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil((entity.getWeight() / 10.0) + 1) * 1.725 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE_THB)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.0;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
-            returnBV = Math.ceil(entity.getWeight() / 4.0);
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 4.0) * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            returnBV = Math.ceil((entity.getWeight() / 10.0) * 1.725);
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 10.0) * 1.725 * tsmMod;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
-            returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
+            returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275 * tsmMod;
         } else if (hasFlag(F_TALON)) {
-            // according to an email from TPTB, Talon BV is the extra damage
-            // they
+            // according to an email from TPTB, Talon BV is the extra damage they
             // do for kicks, so 50% of normal kick damage
-            returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5);
-            if (entity.hasWorkingMisc(MiscType.F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5) * tsmMod;
         } else if (hasFlag(MiscType.F_RAM_PLATE)) {
             // half the maximum charge damage (rounded down) * 1.1
             int damage = ((int) (entity.getWeight() * entity.getRunMP() * 0.1)) / 2;

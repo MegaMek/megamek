@@ -243,7 +243,7 @@ public interface IHex extends Cloneable {
     public abstract boolean containsAllTerrainsOf(int... types);
 
     /**
-     * @return the level of the terrain specified, or ITerrain.LEVEL_NONE if the
+     * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
      *         terrain is not present in the hex
      */
     public abstract int terrainLevel(int type);
@@ -253,7 +253,7 @@ public interface IHex extends Cloneable {
      * @return the terrain of the specified type, or <code>null</code> if the
      *         terrain is not present in the hex
      */
-    public abstract ITerrain getTerrain(int type);
+    public abstract Terrain getTerrain(int type);
 
     /**
      * Returns the Terrain for one of the given types of terrain if at least one of 
@@ -265,7 +265,7 @@ public interface IHex extends Cloneable {
      * @param types the terrain types to check
      * @see IHex#containsAnyTerrainsOf(int...)
      */
-    public abstract ITerrain getAnyTerrainOf(int type, int... types);
+    public abstract Terrain getAnyTerrainOf(int type, int... types);
 
     /**
      * Returns a collection of terrain ids for all terrains present in this hex.
@@ -280,7 +280,7 @@ public interface IHex extends Cloneable {
      * @param terrain
      *            terrain to add
      */
-    public abstract void addTerrain(ITerrain terrain);
+    public abstract void addTerrain(Terrain terrain);
 
     /**
      * Removes the specified terrain

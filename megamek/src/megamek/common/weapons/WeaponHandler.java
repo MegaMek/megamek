@@ -1,17 +1,26 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
+
+import megamek.MegaMek;
+import megamek.common.*;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.server.Server;
+import megamek.server.Server.DamageType;
+import megamek.server.SmokeCloud;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,42 +29,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
-
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.IAero;
-import megamek.common.IAimingModes;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.GamePhase;
-import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
-import megamek.server.SmokeCloud;
 
 /**
  * @author Andrew Hunter A basic, simple attack handler. May or may not work for
@@ -1939,8 +1912,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 && hasWoods
                 && !isAboveWoods
                 && !(entityTarget.getSwarmAttackerId() == ae.getId())) {
-            ITerrain woodHex = hex.getTerrain(Terrains.WOODS);
-            ITerrain jungleHex = hex.getTerrain(Terrains.JUNGLE);
+            Terrain woodHex = hex.getTerrain(Terrains.WOODS);
+            Terrain jungleHex = hex.getTerrain(Terrains.JUNGLE);
             int treeAbsorbs = 0;
             String hexType = "";
             if (woodHex != null) {
@@ -1972,8 +1945,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Check for Laser Inhibiting smoke clouds
      */
-    public int checkLI(int nDamage, Entity entityTarget,
-            Vector<Report> vPhaseReport) {
+    public int checkLI(int nDamage, Entity entityTarget, Vector<Report> vPhaseReport) {
 
         weapon = ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
@@ -1996,8 +1968,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (!game.getBoard().contains(curr)) {
                 continue;
             }
-            ITerrain smokeHex = game.getBoard().getHex(curr)
-                    .getTerrain(Terrains.SMOKE);
+            Terrain smokeHex = game.getBoard().getHex(curr).getTerrain(Terrains.SMOKE);
             if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
                     && wtype.hasFlag(WeaponType.F_ENERGY)
                     && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT) || (smokeHex
@@ -2132,18 +2103,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return nMissilesModifier;
     }
 
+    @Override
     public boolean isStrafing() {
         return isStrafing;
     }
 
+    @Override
     public void setStrafing(boolean isStrafing) {
         this.isStrafing = isStrafing;
     }
 
+    @Override
     public boolean isStrafingFirstShot() {
         return isStrafingFirstShot;
     }
 
+    @Override
     public void setStrafingFirstShot(boolean isStrafingFirstShot) {
         this.isStrafingFirstShot = isStrafingFirstShot;
     }
@@ -2166,7 +2141,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected double applyGlancingBlowModifier(double initialValue, boolean roundup) {
         // if we're not going to be applying any glancing blow modifiers, just return what we came in with
-        if(!bGlancing && !bLowProfileGlancing) {
+        if (!bGlancing && !bLowProfileGlancing) {
             return initialValue;
         }
         

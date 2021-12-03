@@ -14,7 +14,7 @@ class GhostEntitySprite extends Sprite {
 
     private Rectangle modelRect;
 
-    public GhostEntitySprite(BoardView1 boardView1, final Entity entity) {
+    public GhostEntitySprite(BoardView boardView1, final Entity entity) {
         super(boardView1);
         this.entity = entity;
 

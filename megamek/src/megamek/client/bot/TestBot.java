@@ -2580,7 +2580,7 @@ public class TestBot extends BotClient {
     }
 
     @Override
-    protected void checkMoral() {
+    protected void checkMorale() {
         // unused.
     }
 }

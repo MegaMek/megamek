@@ -2946,7 +2946,7 @@ v0.37.12-exp (2014-06-03 19:06 UTC)
     "@" symbol as a reference to anther RAT to roll on.  Updated the EXAMPLE RAT
     FILE.txt file to reflect this information and also copied it into the docs
     folder to make it easier to find.
-+ Added a basic moral system for Princess to have her potentially retreat units
++ Added a basic morale system for Princess to have her potentially retreat units
     off the board before Forced Withdrawal would take effect.
 + Updated the Xotl RAT files to incorporate the most recent version (including
     the 3050 IS mechs) and to make use of the changes for Feature Request

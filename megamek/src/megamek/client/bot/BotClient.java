@@ -291,7 +291,7 @@ public abstract class BotClient extends Client {
 
     protected abstract Vector<Coords> calculateArtyAutoHitHexes();
 
-    protected abstract void checkMoral();
+    protected abstract void checkMorale();
 
     @Override
     protected boolean keepGameLog() {

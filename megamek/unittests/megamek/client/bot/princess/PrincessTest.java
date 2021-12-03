@@ -35,7 +35,7 @@ import java.util.List;
  * @version $Id$
  * @since 11/22/13 8:33 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class PrincessTest {
 
     private Princess mockPrincess;
@@ -45,13 +45,13 @@ public class PrincessTest {
     public void setUp() {
         mockPathRanker = Mockito.mock(BasicPathRanker.class);
 
-        MoralUtil mockMoralUtil = Mockito.mock(MoralUtil.class);
+        MoraleUtil mockMoralUtil = Mockito.mock(MoraleUtil.class);
 
         MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
-        Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
+        Mockito.when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
     }
 

@@ -23,7 +23,7 @@ class MovementEnvelopeSprite extends HexSprite {
     protected final Color drawColor;
     protected final int borders;
 
-    public MovementEnvelopeSprite(BoardView1 boardView1, Color c, Coords l, int borders) {
+    public MovementEnvelopeSprite(BoardView boardView1, Color c, Coords l, int borders) {
         super(boardView1, l);
         drawColor = c;
         this.borders = borders;

@@ -141,7 +141,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, mech);
         Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager) clientgui.bv.getTilesetManager()).baseFor(new Hex());
+        Image hexImage = ((TilesetManager) clientgui.getBoardView().getTilesetManager()).baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
@@ -211,7 +211,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, tank);
         Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager) clientgui.bv.getTilesetManager()).baseFor(new Hex());
+        Image hexImage = ((TilesetManager) clientgui.getBoardView().getTilesetManager()).baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);

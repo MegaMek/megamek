@@ -3,32 +3,32 @@ Ostroc
 OSR-4L
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3066
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3066
+source:Civil War
+rules level:2
 
-Mass:60
-Engine:300 Fusion Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:60
+engine:300 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:5
-Jump MP:5
+heat sinks:13 IS Double
+walk mp:5
+jump mp:5
 
-Armor:Stealth(Inner Sphere)
-LA Armor:18
-RA Armor:18
-LT Armor:20
-RT Armor:20
-CT Armor:22
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Stealth(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:20
+RT armor:20
+CT armor:22
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:4
 ER Large Laser, Left Torso
@@ -41,12 +41,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -55,12 +55,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -72,11 +72,11 @@ ISERLargeLaser
 ISERMediumLaser
 ISGuardianECMSuite
 ISGuardianECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Right Torso:
 ISDoubleHeatSink
@@ -87,10 +87,10 @@ Jump Jet
 ISERLargeLaser
 ISERLargeLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Center Torso:
 Fusion Engine
@@ -104,7 +104,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -148,4 +148,20 @@ Stealth
 -Empty-
 -Empty-
 
+overview:The Ostroc is a heavy 'Mech, weighing in at the lower end of its weight class, originally designed to act as an urban combatant during the Age of War.
+
+capabilities:Its unique walker/pod profile, later seen in the Stalker and Marauder, combined with a low silhouette similar to the UrbanMech makes the Ostroc difficult to spot in an urban environment. Fast for its size, well-armored and boasting good medium- and short-range firepower, the Ostroc was also capable when fighting outside a cityscape, particularly as a heavy scout/raider.
+
+deployment:A complete redesign of the Ostroc, the 4L carries the best technology the Capellan Confederation has to offer in 3067. It uses an Ceresplex Ostroc Light Endo Steel chassis to carry two Martell ER Large Lasers and two Ceres Arms ER Medium Lasers split between the side torsos. Five HildCo 13 jump jets split between the side and center torsos gives it a jumping distance of 180 meters. Finally, the 4L Ostroc has a Guardian ECM Suite for electronics warfare use and also to work with ten and a half tons of Stealth Armor which makes it extremely difficult to hit. While it was originally suppose to use only standard armor, the addition of stealth capabilities makes this variant well suited for operating as a member of Capellan Shadow Lances. For electronics the Ostroc carries the Ceres Metals Model 686 and Ceres Bullseye systems.
+
+history:The best-known of Ostman Industries' Ost Class of 'Mechs, the Ostroc debuted in 2511 and proved so successful in this role production continued for approximately 200 years. While a quality 'Mech, the low production capacity of Ostman Industries made the Ostroc a rarity; indeed the company licensed their other Ost 'Mechs out to Kong Interstellar just to maintain their rate of production, and the majority of those produced were assigned garrison duties within the Terran Hegemony. Still, the 'Mech saw action in every major conflict of the Star League, especially towards the end in the civil war and subsequent First Succession War. The destruction of Ostman Industries meant an end to any new Ostrocs, although all sides of the Succession Wars continued to field these 'Mechs in combat, particularly the Draconis Combine. It was because of the small number and wide dispersal of surviving Ostrocs that the design was largely passed over while others were being updated after the Helm Memory Core discovery. A major revitalization of the design took place within the Capellan Confederation after the Clan Invasion. Having largely rebuilt their forces after the previous decades' setbacks, the Strategios wanted to update the ancient 'Mech, but rather than reverse-engineering the original they ordered all Capellan 'Mech manufacturers to submit bids for a replacement. Ceres Metals was the only one to send in a proposal which matched exactly what they wanted and won the contract, completing the first production run in January 3067. Versions of these new Ostrocs also started showing up in the Taurian Concordat and Circinus Federation, a result of espionage according to Capellan charges.
+
+manufacturer:Ceres Metals Industries,Detroit Consolidated Mechworks,Ceres Metals Industries
+primaryfactory:Capella,Detroit,Warlock
+systemmanufacturer:CHASSIS:Ceresplex Ostroc Lite Endo Steel
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Ceres Heavy Stealth Armor
+systemmanufacturer:JUMPJET:HildCo 13 Jump Jets
+systemmanufacturer:COMMUNICATIONS:Ceres Metals Model 686 with Guardian ECM
+systemmanufacturer:TARGETING:Ceres Bullseye
 

@@ -32,7 +32,7 @@ class IsometricWreckSprite extends AbstractWreckSprite {
     /**
      * Isometric wreck sprite constructor, calculates boundaries
      */
-    public IsometricWreckSprite(BoardView1 boardView1, final Entity entity, int secondaryPos) {
+    public IsometricWreckSprite(BoardView boardView1, final Entity entity, int secondaryPos) {
         super(boardView1);
         this.entity = entity;
         this.secondaryPos = secondaryPos;

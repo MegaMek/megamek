@@ -28,7 +28,7 @@ import java.util.Vector;
 
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.common.Configuration;
-import megamek.common.ITerrain;
+import megamek.common.Terrain;
 import megamek.common.util.StringUtil;
 
 
@@ -91,7 +91,7 @@ public class HexSetTest {
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int) st.nval;
                 } else {
-                    elevation = ITerrain.WILDCARD;
+                    elevation = Terrain.WILDCARD;
                 }
                 st.nextToken();
                 terrain = st.sval;

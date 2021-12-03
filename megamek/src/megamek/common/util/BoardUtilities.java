@@ -25,24 +25,12 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Hex;
-import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.ITerrainFactory;
-import megamek.common.MapSettings;
-import megamek.common.OffBoardDirection;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 
 public class BoardUtilities {
-    private static List<ElevationGenerator> elevationGenerators = new ArrayList<ElevationGenerator>();
+    private static List<ElevationGenerator> elevationGenerators = new ArrayList<>();
     static {
         // TODO: make this externally accessible via registerElevationGenerator()
         elevationGenerators.add(new SimplexGenerator());
@@ -87,7 +75,7 @@ public class BoardUtilities {
                 copyBoardInto(resultData, resultWidth, j * width, i * height,
                         boards[i * sheetWidth + j]);
                 // Copy in the other board's options.
-                if (boards[i * sheetWidth + j].getRoadsAutoExit() == false) {
+                if (!boards[i * sheetWidth + j].getRoadsAutoExit()) {
                     roadsAutoExit = false;
                 }
                 boardListContainsBackground |= b.hasBoardBackground();
@@ -379,8 +367,7 @@ public class BoardUtilities {
         int type = building.getType();
         int cf = building.getCF();
         int height = building.getHeight();
-        ITerrainFactory tf = Terrains.getTerrainFactory();
-        ArrayList<IHex> hexes = new ArrayList<IHex>();
+        ArrayList<IHex> hexes = new ArrayList<>();
         int level = 0;
         for (Iterator<Coords> i = building.getCoords(); i.hasNext();) {
             Coords c = i.next();
@@ -395,13 +382,10 @@ public class BoardUtilities {
 
             // remove everything
             hex.removeAllTerrains();
-            hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
-            hex.addTerrain(tf.createTerrain(Terrains.BUILDING, type, true,
-                    exits));
-            hex.addTerrain(tf.createTerrain(Terrains.BLDG_CF, cf));
-            hex.addTerrain(tf.createTerrain(Terrains.BLDG_ELEV, height));
-            // hex.addTerrain(tf.createTerrain(Terrains.BLDG_BASEMENT,
-            // building.getBasement()));
+            hex.addTerrain(new Terrain(Terrains.PAVEMENT, 1));
+            hex.addTerrain(new Terrain(Terrains.BUILDING, type, true, exits));
+            hex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
+            hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
             hexes.add(hex);
             level += hex.getLevel();
         }
@@ -431,8 +415,8 @@ public class BoardUtilities {
         }
         IHex field;
 
-        HashSet<IHex> alreadyUsed = new HashSet<IHex>();
-        HashSet<IHex> unUsed = new HashSet<IHex>();
+        HashSet<IHex> alreadyUsed = new HashSet<>();
+        HashSet<IHex> unUsed = new HashSet<>();
         field = board.getHex(p.x, p.y);
         if (!field.containsTerrain(terrainType)) {
             unUsed.add(field);
@@ -440,7 +424,7 @@ public class BoardUtilities {
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
                     reverseHex);
         }
-        ITerrainFactory f = Terrains.getTerrainFactory();
+
         for (int i = 0; i < count; i++) {
             if (unUsed.isEmpty()) {
                 return;
@@ -455,10 +439,10 @@ public class BoardUtilities {
                 field.removeAllTerrains();
             }
             int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
+            Terrain tempTerrain = new Terrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
             if (terrainType == Terrains.WOODS) {
-                field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV, 2));
+                field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
             }
             unUsed.remove(field);
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
@@ -507,16 +491,15 @@ public class BoardUtilities {
         }
         IHex field;
 
-        HashSet<IHex> alreadyUsed = new HashSet<IHex>();
-        HashSet<IHex> unUsed = new HashSet<IHex>();
+        HashSet<IHex> alreadyUsed = new HashSet<>();
+        HashSet<IHex> unUsed = new HashSet<>();
         field = board.getHex(p.x, p.y);
         if (!field.containsTerrain(terrainType)) {
             unUsed.add(field);
         } else {
-            findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
-                    reverseHex);
+            findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
-        ITerrainFactory f = Terrains.getTerrainFactory();
+
         for (int i = 0; i < count; i++) {
             if (unUsed.isEmpty()) {
                 return;
@@ -531,12 +514,11 @@ public class BoardUtilities {
                 field.removeAllTerrains();
             }
             int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
+            Terrain tempTerrain = new Terrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
-            field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV, 1));
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 1));
             unUsed.remove(field);
-            findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
-                    reverseHex);
+            findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
 
         
@@ -558,7 +540,7 @@ public class BoardUtilities {
             HashSet<IHex> alreadyUsed, HashSet<IHex> unUsed, IHex searchFrom,
             HashMap<IHex, Point> reverseHex) {
         IHex field;
-        HashSet<IHex> notYetUsed = new HashSet<IHex>();
+        HashSet<IHex> notYetUsed = new HashSet<>();
 
         notYetUsed.add(searchFrom);
         do {
@@ -619,7 +601,7 @@ public class BoardUtilities {
             int maxDepth = maxDepthM / 6;
 
             /* generate CraterProfile */
-            int cratDepth[] = new int[radius];
+            int[] cratDepth = new int[radius];
             for (int x = 0; x < radius; x++) {
                 cratDepth[x] = craterProfile(x, radius, maxDepth);
             }
@@ -718,7 +700,7 @@ public class BoardUtilities {
      */
     public static void addRiver(IBoard board, HashMap<IHex, Point> reverseHex) {
         int minElevation = Integer.MAX_VALUE;
-        HashSet<IHex> riverHexes = new HashSet<IHex>();
+        HashSet<IHex> riverHexes = new HashSet<>();
         IHex field;
         Point p = null;
         int direction = 0;
@@ -756,11 +738,11 @@ public class BoardUtilities {
         } // switch
         /* place the river */
         field = board.getHex(p.x, p.y);
-        ITerrainFactory f = Terrains.getTerrainFactory();
+
         do {
             /* first the hex itself */
             field.removeAllTerrains();
-            field.addTerrain(f.createTerrain(Terrains.WATER, 1));
+            field.addTerrain(new Terrain(Terrains.WATER, 1));
             riverHexes.add(field);
             p = reverseHex.get(field);
             /* then maybe the left and right neighbours */
@@ -783,7 +765,7 @@ public class BoardUtilities {
         } while (field != null);
 
         /* search the elevation for the river */
-        HashSet<IHex> tmpRiverHexes = new HashSet<IHex>(riverHexes);
+        HashSet<IHex> tmpRiverHexes = new HashSet<>(riverHexes);
         while (!tmpRiverHexes.isEmpty()) {
             Iterator<IHex> iter = tmpRiverHexes.iterator();
             field = iter.next();
@@ -808,31 +790,27 @@ public class BoardUtilities {
             field = iter.next();
             field.setLevel(minElevation);
         }
-
-        return;
     }
 
     /**
      * Extends a river hex to left and right sides.
      *
-     * @param hexloc The location of the river hex, from which it should get
-     *            started.
-     * @param width The width to wich the river should extend in the direction.
+     * @param hexloc The location of the river hex, from which it should get started.
+     * @param width The width to which the river should extend in the direction.
      *            So the actual width of the river is 2*width+1.
-     * @param direction Direction too which the riverhexes should be extended.
+     * @param direction Direction to which the river hexes should be extended.
      * @return Hashset with the hexes from the side.
      */
     private static HashSet<IHex> extendRiverToSide(IBoard board, Point hexloc,
             int width, int direction, HashMap<IHex, Point> reverseHex) {
         Point current = new Point(hexloc);
-        HashSet<IHex> result = new HashSet<IHex>();
+        HashSet<IHex> result = new HashSet<>();
         IHex hex;
 
         hex = board.getHexInDir(current.x, current.y, direction);
         while ((hex != null) && (width-- > 0)) {
             hex.removeAllTerrains();
-            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    Terrains.WATER, 1));
+            hex.addTerrain(new Terrain(Terrains.WATER, 1));
             result.add(hex);
             current = reverseHex.get(hex);
             hex = board.getHexInDir(current.x, current.y, direction);
@@ -847,19 +825,19 @@ public class BoardUtilities {
     protected static void postProcessFlood(IHex[] hexSet, int modifier) {
         int n;
         IHex field;
-        ITerrainFactory f = Terrains.getTerrainFactory();
+
         for (n = 0; n < hexSet.length; n++) {
             field = hexSet[n];
             int elev = field.getLevel() - modifier;
             if ((elev == 0) && !(field.containsTerrain(Terrains.WATER))
                     && !(field.containsTerrain(Terrains.PAVEMENT))) {
-                field.addTerrain(f.createTerrain(Terrains.SWAMP, 1));
+                field.addTerrain(new Terrain(Terrains.SWAMP, 1));
             } else if (elev < 0) {
                 if (elev < -4) {
                     elev = -4;
                 }
                 field.removeAllTerrains();
-                field.addTerrain(f.createTerrain(Terrains.WATER, -elev));
+                field.addTerrain(new Terrain(Terrains.WATER, -elev));
                 field.setLevel(modifier);
             }
         }
@@ -871,7 +849,6 @@ public class BoardUtilities {
     protected static void postProcessDeepFreeze(IHex[] hexSet, int modifier) {
         int n;
         IHex field;
-        ITerrainFactory f = Terrains.getTerrainFactory();
         for (n = 0; n < hexSet.length; n++) {
             field = hexSet[n];
             if (field.containsTerrain(Terrains.WATER)) {
@@ -880,20 +857,19 @@ public class BoardUtilities {
                     level -= modifier;
                     field.removeTerrain(Terrains.WATER);
                     if (level > 0) {
-                        field.addTerrain(f.createTerrain(Terrains.WATER,
-                                        level));
+                        field.addTerrain(new Terrain(Terrains.WATER, level));
                     }
                 }
-                field.addTerrain(f.createTerrain(Terrains.ICE, 1));
+                field.addTerrain(new Terrain(Terrains.ICE, 1));
             } else if (field.containsTerrain(Terrains.SWAMP)) {
                 field.removeTerrain(Terrains.SWAMP);
                 if (field.terrainsPresent() == 0) {
                     if (Compute.randomInt(100) < 30) {
                         // if no other terrains present, 30% chance to change to
                         // rough
-                        field.addTerrain(f.createTerrain(Terrains.ROUGH, 1));
+                        field.addTerrain(new Terrain(Terrains.ROUGH, 1));
                     } else {
-                        field.addTerrain(f.createTerrain(Terrains.ICE, 1));
+                        field.addTerrain(new Terrain(Terrains.ICE, 1));
                     }
                 }
             }
@@ -908,11 +884,11 @@ public class BoardUtilities {
         IHex field;
         int level, newlevel;
         int severity;
-        ITerrainFactory f = Terrains.getTerrainFactory();
+
         for (n = 0; n < hexSet.length; n++) {
             field = hexSet[n];
             level = field.terrainLevel(Terrains.WOODS);
-            if (level != ITerrain.LEVEL_NONE) {
+            if (level != Terrain.LEVEL_NONE) {
                 severity = Compute.randomInt(5) - 2 + modifier;
                 newlevel = level - severity;
 
@@ -920,13 +896,11 @@ public class BoardUtilities {
                     field.removeTerrain(Terrains.WOODS);
                     field.removeTerrain(Terrains.FOLIAGE_ELEV);
                     if (newlevel <= 0) {
-                        field.addTerrain(f.createTerrain(Terrains.ROUGH, 1));
+                        field.addTerrain(new Terrain(Terrains.ROUGH, 1));
                     } else {
-                        field.addTerrain(f.createTerrain(Terrains.WOODS,
-                                newlevel));
-                        field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV,
-                                newlevel == 3 ? 3 : 2));
-                        field.addTerrain(f.createTerrain(Terrains.FIRE, 1));
+                        field.addTerrain(new Terrain(Terrains.WOODS, newlevel));
+                        field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, (newlevel == 3) ? 3 : 2));
+                        field.addTerrain(new Terrain(Terrains.FIRE, 1));
                     }
                 }
             }
@@ -945,7 +919,7 @@ public class BoardUtilities {
         if (severity < 0) {
             return;
         }
-        ITerrainFactory f = Terrains.getTerrainFactory();
+
         for (n = 0; n < hexSet.length; n++) {
             field = hexSet[n];
             if (field.containsTerrain(Terrains.SWAMP)) {
@@ -954,20 +928,21 @@ public class BoardUtilities {
                 if ((field.terrainsPresent() == 0) && (Compute.randomInt(100) < 30)) {
                     // if no other terrains present, 30% chance to change to
                     // rough
-                    field.addTerrain(f.createTerrain(Terrains.ROUGH, 1));
+                    field.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 }
             }
             level = field.terrainLevel(Terrains.WATER);
-            if (level != ITerrain.LEVEL_NONE) {
+            if (level != Terrain.LEVEL_NONE) {
                 newlevel = level - severity;
                 field.removeTerrain(Terrains.WATER);
                 if (newlevel == 0) {
-                    field.addTerrain(f.createTerrain(Terrains.SWAMP, 1));
+                    field.addTerrain(new Terrain(Terrains.SWAMP, 1));
                 } else if (newlevel < 0) {
-                    field.addTerrain(f.createTerrain(Terrains.ROUGH, 1));
+                    field.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 } else {
-                    field.addTerrain(f.createTerrain(Terrains.WATER, newlevel));
+                    field.addTerrain(new Terrain(Terrains.WATER, newlevel));
                 }
+
                 if (level > severity) {
                     newlevel = severity;
                 } else {
@@ -1023,9 +998,8 @@ public class BoardUtilities {
     }
 
     protected static void addCliffs(IBoard board, int modifier) {
-        HashSet<Coords> ignore = new HashSet<Coords>(); // previously considered
-                                                        // hexes
-        ArrayList<Coords> candidate = new ArrayList<Coords>();
+        HashSet<Coords> ignore = new HashSet<>(); // previously considered hexes
+        ArrayList<Coords> candidate = new ArrayList<>();
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
@@ -1046,6 +1020,7 @@ public class BoardUtilities {
                     } else {
                         elevation++;
                     }
+
                     for (Iterator<Coords> e = candidate.iterator(); e.hasNext();) {
                         c = e.next();
                         IHex hex = board.getHex(c);
@@ -1061,18 +1036,16 @@ public class BoardUtilities {
      * adjust the board based on weather conditions
      */
     public static void addWeatherConditions(IBoard board, int weatherCond, int windCond) {
-        ITerrainFactory tf = Terrains.getTerrainFactory();
-
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 IHex hex = board.getHex(c);
 
                 //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
-                if(weatherCond == PlanetaryConditions.WE_MOD_RAIN) {
-                    if((hex.terrainsPresent() == 0) || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))) {
-                        hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
-                        if(hex.containsTerrain(Terrains.WATER)) {
+                if (weatherCond == PlanetaryConditions.WE_MOD_RAIN) {
+                    if ((hex.terrainsPresent() == 0) || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))) {
+                        hex.addTerrain(new Terrain(Terrains.MUD, 1));
+                        if (hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
                         }
                     }
@@ -1082,14 +1055,13 @@ public class BoardUtilities {
                 //rapids in all depth 1+ water
                 if ((weatherCond == PlanetaryConditions.WE_HEAVY_RAIN)
                         || (weatherCond == PlanetaryConditions.WE_GUSTING_RAIN)) {
-                    if(hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
-                        hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 1));
-                    }
-                    else if(!hex.containsTerrain(Terrains.BUILDING)
+                    if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
+                        hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
+                    } else if (!hex.containsTerrain(Terrains.BUILDING)
                             && !hex.containsTerrain(Terrains.PAVEMENT)
                             && !hex.containsTerrain(Terrains.ROAD)) {
-                        hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
-                        if(hex.containsTerrain(Terrains.WATER)) {
+                        hex.addTerrain(new Terrain(Terrains.MUD, 1));
+                        if (hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
                         }
                     }
@@ -1097,32 +1069,30 @@ public class BoardUtilities {
 
                 //torrential downpour - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //torrent in all depth 1+ water, swamps in all depth 0 water hexes
-                if(weatherCond == PlanetaryConditions.WE_DOWNPOUR) {
-                    if(hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && (hex.depth() > 0)) {
-                        hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 2));
-                    }
-                    else if(hex.containsTerrain(Terrains.WATER)) {
-                        hex.addTerrain(tf.createTerrain(Terrains.SWAMP, 1));
+                if (weatherCond == PlanetaryConditions.WE_DOWNPOUR) {
+                    if (hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && (hex.depth() > 0)) {
+                        hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
+                    } else if (hex.containsTerrain(Terrains.WATER)) {
+                        hex.addTerrain(new Terrain(Terrains.SWAMP, 1));
                         hex.removeTerrain(Terrains.WATER);
-                    }
-                    else if(!hex.containsTerrain(Terrains.BUILDING)
+                    } else if (!hex.containsTerrain(Terrains.BUILDING)
                             && !hex.containsTerrain(Terrains.PAVEMENT)
                             && !hex.containsTerrain(Terrains.ROAD)) {
-                        hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
+                        hex.addTerrain(new Terrain(Terrains.MUD, 1));
                     }
                 }
 
                 //check for rapids/torrents created by wind
-                if((windCond > PlanetaryConditions.WI_MOD_GALE)
+                if ((windCond > PlanetaryConditions.WI_MOD_GALE)
                         && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
 
-                    if(windCond > PlanetaryConditions.WI_STORM) {
-                        if(!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
-                            hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 2));
+                    if (windCond > PlanetaryConditions.WI_STORM) {
+                        if (!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
+                            hex.addTerrain(new Terrain(Terrains.RAPIDS, 2));
                         }
                     } else {
-                        if(!hex.containsTerrain(Terrains.RAPIDS)) {
-                            hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 1));
+                        if (!hex.containsTerrain(Terrains.RAPIDS)) {
+                            hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                         }
                     }
                 }
@@ -1136,16 +1106,15 @@ public class BoardUtilities {
      * @param hilliness The Hilliness
      * @param width The Width of the map.
      * @param height The Height of the map.
-     * @param range Max difference betweenn highest and lowest level.
+     * @param range Max difference between highest and lowest level.
      * @param invertProb Probability for the invertion of the map (0..100)
      * @param invertNegative If 1, invert negative hexes, else do nothing
      * @param elevationMap here is the result stored
      */
-    public static void generateElevation(int hilliness, int width, int height,
-            int range, int invertProb, int invertNegative,
-            int elevationMap[][], int algorithm) {
+    public static void generateElevation(int hilliness, int width, int height, int range,
+                                         int invertProb, int invertNegative, int[][] elevationMap,
+                                         int algorithm) {
         int minLevel = 0;
-        int maxLevel = range;
         boolean invert = (Compute.randomInt(100) < invertProb);
 
         /* init elevation map with 0 */
@@ -1187,9 +1156,9 @@ public class BoardUtilities {
             }
         }
 
-        double scale = (double) (maxLevel - minLevel) / (double) (max - min);
+        double scale = (double) (range - minLevel) / (double) (max - min);
         int inc = (int) (-scale * min + minLevel);
-        int[] elevationCount = new int[maxLevel + 1];
+        int[] elevationCount = new int[range + 1];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 elevationMap[w][h] *= scale;
@@ -1228,8 +1197,6 @@ public class BoardUtilities {
         final int mapW = board.getWidth();
         final int mapH = board.getHeight();
 
-        ITerrainFactory tf = Terrains.getTerrainFactory();
-
         for (int x = 0; x < mapW; x++) {
             for (int y = 0; y < mapH; y++) {
                 Coords c = new Coords(x, y);
@@ -1255,23 +1222,23 @@ public class BoardUtilities {
                             if (depth < 1) { // eliminates depth 0 water
                                 depth = 1;
                             }
-                            hex.addTerrain(tf.createTerrain(Terrains.WATER,
-                                    (depth)));
+                            hex.addTerrain(new Terrain(Terrains.WATER, (depth)));
                             elev -= (Math.abs(lake - elev) - 1);
                             break;
                     }
                 }
+
                 if (elev == height) {
                     // for volcanoes, invert the peak
                     switch (capStyle) {
                         case MapSettings.MOUNTAIN_VOLCANO_ACTIVE:
                             hex.removeAllTerrains();
-                            hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
+                            hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                             elev -= 2;
                             break;
                         case MapSettings.MOUNTAIN_VOLCANO_DORMANT:
                             hex.removeAllTerrains();
-                            hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 1));
+                            hex.addTerrain(new Terrain(Terrains.MAGMA, 1));
                             elev -= 2;
                             break;
                         case MapSettings.MOUNTAIN_VOLCANO_EXTINCT:
@@ -1325,7 +1292,7 @@ public class BoardUtilities {
         int newX;
         int newY;
         IHex tempHex;
-        ITerrain terr;
+        Terrain terr;
         for (int oldX = 0; oldX < stopX; oldX++) {
             // Calculate the new X position of the flipped hex.
             if (horiz) {
@@ -1395,8 +1362,7 @@ public class BoardUtilities {
     /**
      * one of the landscape generation algorithms
      */
-    protected static void cutSteps(int hilliness, int width, int height,
-            int elevationMap[][]) {
+    protected static void cutSteps(int hilliness, int width, int height, int[][] elevationMap) {
         Point p1, p2;
         int sideA, sideB;
         int type;
@@ -1464,8 +1430,7 @@ public class BoardUtilities {
      * Helper function for the map generator increased a heightmap my a given
      * value
      */
-    protected static void markRect(int x1, int x2, int inc,
-            int elevationMap[][], int height) {
+    protected static void markRect(int x1, int x2, int inc, int[][] elevationMap, int height) {
         for (int x = x1; x < x2; x++) {
             for (int y = 0; y < height; y++) {
                 elevationMap[x][y] += inc;
@@ -1477,8 +1442,8 @@ public class BoardUtilities {
      * Helper function for map generator inreases all of one side and decreased
      * on other side
      */
-    protected static void markSides(Point p1, Point p2, int upperInc,
-            int lowerInc, int elevationMap[][], int height) {
+    protected static void markSides(Point p1, Point p2, int upperInc, int lowerInc,
+                                    int[][] elevationMap, int height) {
         for (int x = p1.x; x < p2.x; x++) {
             for (int y = 0; y < height; y++) {
                 int point = (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
@@ -1494,13 +1459,12 @@ public class BoardUtilities {
     /**
      * midpoint algorithm for landscape generartion
      */
-    protected static void midPoint(int hilliness, int width, int height,
-            int elevationMap[][]) {
+    protected static void midPoint(int hilliness, int width, int height, int[][] elevationMap) {
         int size;
         int steps = 1;
-        int tmpElevation[][];
+        int[][] tmpElevation;
 
-        size = (width > height) ? width : height;
+        size = Math.max(width, height);
         while (size > 0) {
             steps++;
             size /= 2;
@@ -1531,8 +1495,8 @@ public class BoardUtilities {
     /**
      * Helper function for landscape generation
      */
-    protected static void midPointStep(double fracdim, int size, int delta,
-            int elevationMap[][], int step, boolean newBorder) {
+    protected static void midPointStep(double fracdim, int size, int delta, int[][] elevationMap,
+                                       int step, boolean newBorder) {
         int d1, d2;
         int delta5;
         int x, y;
@@ -1584,8 +1548,7 @@ public class BoardUtilities {
      *
      * @param p Starting point.
      */
-    protected static void diagMid(Point p, int d1, int d2, int delta, int size,
-            int elevationMap[][]) {
+    protected static void diagMid(Point p, int d1, int d2, int delta, int size, int[][] elevationMap) {
         int x = p.x;
         int y;
         int hx = x + d2;
@@ -1611,8 +1574,7 @@ public class BoardUtilities {
      * range of delta.
      */
     protected static int middleValue(int a, int b, int c, int delta) {
-        int result = (((a + b + c) / 3) + normRNG(delta));
-        return result;
+        return (((a + b + c) / 3) + normRNG(delta));
     }
 
     /**
@@ -1620,8 +1582,7 @@ public class BoardUtilities {
      * range of delta.
      */
     protected static int middleValue(int a, int b, int c, int d, int delta) {
-        int result = (((a + b + c + d) / 4) + normRNG(delta));
-        return result;
+        return (((a + b + c + d) / 4) + normRNG(delta));
     }
 
     /**

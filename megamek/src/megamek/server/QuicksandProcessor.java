@@ -16,13 +16,7 @@ package megamek.server;
 
 import java.util.Vector;
 
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Report;
-import megamek.common.Terrains;
+import megamek.common.*;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 
@@ -94,7 +88,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                 // check for any quicksand created this turn
                 else if (currentHex.terrainLevel(Terrains.SWAMP) == 2){
                     currentHex.removeTerrain(Terrains.SWAMP);
-                    currentHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SWAMP, 3));
+                    currentHex.addTerrain(new Terrain(Terrains.SWAMP, 3));
                     server.getHexUpdateSet().add(currentCoords);
                 }
             }

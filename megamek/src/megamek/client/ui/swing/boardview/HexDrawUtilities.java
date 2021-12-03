@@ -32,7 +32,7 @@ import java.awt.geom.Point2D;
  */
 public class HexDrawUtilities {
 
-    public static final double HEX_WID = BoardView1.HEX_W;
+    public static final double HEX_WID = BoardView.HEX_W;
     public static final double HEX_HGT = HEX_WID*Math.sqrt(3)/2;
 
     public static final Point2D.Double HEX_CTR = new Point2D.Double(HEX_WID/2,HEX_HGT/2);
@@ -43,7 +43,7 @@ public class HexDrawUtilities {
     public static final Point2D.Double HEX_LL = new Point2D.Double(HEX_WID*0.25,HEX_HGT);
     public static final Point2D.Double HEX_LR = new Point2D.Double(HEX_WID*0.75,HEX_HGT);
     
-    public static final double PerfectHextoHexY = ((double)BoardView1.HEX_H)/HEX_HGT;
+    public static final double PerfectHextoHexY = ((double) BoardView.HEX_H)/HEX_HGT;
     
     public static final AffineTransform PerfectHextoHex = 
             AffineTransform.getScaleInstance(1, PerfectHextoHexY);
@@ -248,7 +248,7 @@ public class HexDrawUtilities {
     }
     
     public static AffineTransform getHexRotation(int facing) {
-        return AffineTransform.getRotateInstance(Math.toRadians(facing*60), BoardView1.HEX_W/2, BoardView1.HEX_H/2);
+        return AffineTransform.getRotateInstance(Math.toRadians(facing*60), BoardView.HEX_W/2, BoardView.HEX_H/2);
     }
     
     public static Shape getHexBorderLine(int hexFace) {

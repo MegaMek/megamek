@@ -21,13 +21,13 @@ import java.util.*;
  * A helper class for highlighting and darkening hexes.
  */
 class FovHighlightingAndDarkening {
-    private final BoardView1 boardView1;
+    private final BoardView boardView1;
     private java.util.List<Color> ringsColors = new ArrayList<>();
     private java.util.List<Integer> ringsRadii = new ArrayList<>();
     GUIPreferences gs = GUIPreferences.getInstance();
     private IPreferenceChangeListener ringsChangeListner;
 
-    public FovHighlightingAndDarkening(BoardView1 boardView1) {
+    public FovHighlightingAndDarkening(BoardView boardView1) {
         this.boardView1 = boardView1;
         updateRingsProperties();
         ringsChangeListner = new IPreferenceChangeListener() {

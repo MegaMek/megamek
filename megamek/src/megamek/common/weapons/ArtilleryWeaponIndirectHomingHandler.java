@@ -433,6 +433,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      * Checks to see if the basic conditions needed for point defenses to work are in place
      * Artillery weapons need to change this slightly
      */
+    @Override
     protected boolean checkPDConditions() {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         if ((target == null) || !advancedPD || (target.getTargetType() != Targetable.TYPE_ENTITY)) {

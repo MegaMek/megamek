@@ -147,19 +147,19 @@ Heat Sink
 -Empty-
 
 
-Overview: As a product of, unsurprisingly, Ostmann Industries, the Ostroc was created to fight in urban environments. First appearing in 2511, the low profile of the BattleMech made it a difficult target when surrounded by buildings and trees, making it a popular 'Mech in the SLDF's garrison units. The 'Mech was slow to spread beyond the Hegemony; Ostmann Industries' production on Terra was limited, and largely served to feed the massive demand of the SLDF. Even so, the fall of the Star League would spread the design throughout the Successor States where it would become a popular component of many regiments.
+overview:The Ostroc is a heavy 'Mech, weighing in at the lower end of its weight class, originally designed to act as an urban combatant during the Age of War.
 
-Capabilities: With a wide array of weaponry and reasonable cooling capabilities, Ostrocs make for powerful heavy BattleMechs. Their above-average speed for their weight class also makes them well suited to cavalry or quick reaction roles. While their armor is mostly adequate, Ostroc arms are notoriously fragile and are often destroyed in combat. Indeed, in ComStar's original 3025 Technical Readout, their holo of the Ostroc featured repurposed Ostwar arms instead of the original limbs.
+capabilities:Its unique walker/pod profile, later seen in the Stalker and Marauder, combined with a low silhouette similar to the UrbanMech makes the Ostroc difficult to spot in an urban environment. Fast for its size, well-armored and boasting good medium- and short-range firepower, the Ostroc was also capable when fighting outside a cityscape, particularly as a heavy scout/raider.
 
-Deployment: While not a numerous design, the Ostroc is widespread. Production originally ceased after the destruction of Ostmann's facilities on Terra in 2777, and the Ostroc did not reenter full production until the rediscovery of the Helm Core. Kong Interstellar, owning a century-old license to the design, would be the first to reintroduce the BattleMech. Their first attempt would be the -2M, manufactured for the Free Worlds League in low numbers until their plant's destruction on Connaught.
+deployment:An experimental model produced by Kong Interstellar for the Free Worlds League in 2793, the 2M variant of the Ostroc focuses on the 'Mech's maneuverability. Five jump jets, two in each leg and one in the rear torso, have been added to the design, giving it a maximum jumping distance of one hundred and fifty meters. In order to make this change, the medium lasers and the SRM-4 launcher were removed. Relatively few of these were built between the League's annexation of Connaught and the factory's destruction.
 
-systemmanufacturer:CHASSIS:Ost
-systemmode:CHASSIS:-II
-systemmanufacturer:ENGINE:Vlar
-systemmode:ENGINE:300
-systemmanufacturer:ARMOR:Riese
-systemmode:ARMOR:475
-systemmanufacturer:COMMUNICATIONS:Ostmann
-systemmode:COMMUNICATIONS:-L
-systemmanufacturer:TARGETING:Ferdinand
-systemmode:TARGETING:-a
+history:he best-known of Ostman Industries' Ost Class of 'Mechs, the Ostroc debuted in 2511 and proved so successful in this role production continued for approximately 200 years. While a quality 'Mech, the low production capacity of Ostman Industries made the Ostroc a rarity; indeed the company licensed their other Ost 'Mechs out to Kong Interstellar just to maintain their rate of production, and the majority of those produced were assigned garrison duties within the Terran Hegemony. Still, the 'Mech saw action in every major conflict of the Star League, especially towards the end in the civil war and subsequent First Succession War. The destruction of Ostman Industries meant an end to any new Ostrocs, although all sides of the Succession Wars continued to field these 'Mechs in combat, particularly the Draconis Combine. It was because of the small number and wide dispersal of surviving Ostrocs that the design was largely passed over while others were being updated after the Helm Memory Core discovery. A major revitalization of the design took place within the Capellan Confederation after the Clan Invasion. Having largely rebuilt their forces after the previous decades' setbacks, the Strategios wanted to update the ancient 'Mech, but rather than reverse-engineering the original they ordered all Capellan 'Mech manufacturers to submit bids for a replacement. Ceres Metals was the only one to send in a proposal which matched exactly what they wanted and won the contract, completing the first production run in January 3067. Versions of these new Ostrocs also started showing up in the Taurian Concordat and Circinus Federation, a result of espionage according to Capellan charges.
+
+manufacturer:Kong Interstellar Corporation
+primaryfactory:Connaught
+systemmanufacturer:CHASSIS:Ost II
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Riese 475
+systemmanufacturer:JUMPJET:HildCo 13 Jump Jets
+systemmanufacturer:COMMUNICATIONS:Ostmann-L
+systemmanufacturer:TARGETING:Ferdinand-a

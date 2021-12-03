@@ -64,10 +64,12 @@ public enum KeyCommandBind {
     PREV_TARGET_NOALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
     NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
-    // Undo an action, such as a move step in the movement phase
+    // Remove the last move step or the last added weapon fire
+    UNDO_LAST_STEP("undoLastStep", VK_BACK_SPACE),
+    // General Undo and Redo, e.g. for the Board Editor
     UNDO("undo", VK_Z, CTRL_DOWN_MASK),
     REDO("redo", VK_Y, CTRL_DOWN_MASK),
-    /** Center on the currently seleected unit. */
+    /** Center on the currently selected unit. */
     CENTER_ON_SELECTED("centerOnSelected", VK_SPACE),
     AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone", VK_Z, SHIFT_DOWN_MASK),
     /** Used to cancel moves/fires/chatterbox */

@@ -34,7 +34,7 @@ class IsometricSprite extends Sprite {
     private Rectangle modelRect;
     private int secondaryPos;
 
-    public IsometricSprite(BoardView1 boardView1, Entity entity, int secondaryPos, Image radarBlipImage) {
+    public IsometricSprite(BoardView boardView1, Entity entity, int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
@@ -50,7 +50,7 @@ class IsometricSprite extends Sprite {
             altAdjust = (int) (bv.DROPSHDW_DIST * bv.scale);
         } else if (bv.useIsometric() && (entity.getElevation() != 0)
                 && !(entity instanceof GunEmplacement)) {
-            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
+            altAdjust = (int) (entity.getElevation() * BoardView.HEX_ELEV * bv.scale);
         }
 
         Dimension dim = new Dimension(bv.hex_size.width, bv.hex_size.height
@@ -131,7 +131,7 @@ class IsometricSprite extends Sprite {
             shadow = bv.getScaledImage(shadow, true);
 
             // Entities on a bridge hex or submerged in water.
-            int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
+            int altAdjust = (int) (entity.getElevation() * BoardView.HEX_ELEV * bv.scale);
             if (makeTranslucent) {
                 if (entity.relHeight() < 0) {
                     g2.setComposite(AlphaComposite.getInstance(

@@ -42,7 +42,7 @@ public abstract class AbstractWreckSprite extends Sprite {
 
     protected int secondaryPos;
     
-    public AbstractWreckSprite(BoardView1 boardView1) {
+    public AbstractWreckSprite(BoardView boardView1) {
         super(boardView1);
     }
     
@@ -71,7 +71,7 @@ public abstract class AbstractWreckSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        image = ImageUtil.createAcceleratedImage(BoardView1.HEX_W, BoardView1.HEX_H);
+        image = ImageUtil.createAcceleratedImage(BoardView.HEX_W, BoardView.HEX_H);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent

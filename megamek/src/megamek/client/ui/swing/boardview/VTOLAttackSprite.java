@@ -22,12 +22,12 @@ import megamek.common.VTOL;
  */
 class VTOLAttackSprite extends Sprite {
     
-    private BoardView1 bv;
+    private BoardView bv;
     private Entity entity;
     private List<Coords> targets;
     private Color spriteColor;
 
-    VTOLAttackSprite(BoardView1 boardView, Entity en) {
+    VTOLAttackSprite(BoardView boardView, Entity en) {
         super(boardView);
         
         this.bv = boardView;

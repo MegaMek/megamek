@@ -476,19 +476,19 @@ public class MechView {
             list.addItem(quirksList.toString());
             sFluff.add(list);
         }
-        
+        sFluff.add(new SingleLine());
         if (!entity.getFluff().getOverview().isEmpty()) {
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
         }
-        
+        sFluff.add(new SingleLine());        
         if (!entity.getFluff().getCapabilities().isEmpty()) {
             sFluff.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
         }
-        
+        sFluff.add(new SingleLine());        
         if (!entity.getFluff().getDeployment().isEmpty()) {
             sFluff.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
         }
-        
+        sFluff.add(new SingleLine());        
         if (!entity.getFluff().getHistory().isEmpty()) {
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }

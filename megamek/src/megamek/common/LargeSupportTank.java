@@ -16,6 +16,7 @@ package megamek.common;
 import java.util.ArrayList;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -77,8 +78,8 @@ public class LargeSupportTank extends SupportTank {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -106,8 +107,7 @@ public class LargeSupportTank extends SupportTank {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
 
             int roll = Compute.d6(2);
 

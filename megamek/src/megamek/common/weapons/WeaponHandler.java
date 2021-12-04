@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -1385,8 +1386,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            int savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            AimingMode savedAimingMode = waa.getAimingMode();
+            waa.setAimingMode(AimingMode.NONE);
             int savedAimedLocation = waa.getAimedLocation();
             waa.setAimedLocation(Entity.LOC_NONE);
             boolean savedSalvo = bSalvo;

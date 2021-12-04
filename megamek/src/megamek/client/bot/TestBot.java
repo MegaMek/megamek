@@ -12,45 +12,19 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  */
-
 package megamek.client.bot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.Vector;
-
 import megamek.client.bot.MoveOption.DamageInfo;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EquipmentType;
-import megamek.common.IAimingModes;
-import megamek.common.IHex;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Protomech;
-import megamek.common.TargetRoll;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.enums.AimingMode;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
+
+import java.util.*;
 
 public class TestBot extends BotClient {
 
@@ -2238,14 +2212,12 @@ public class TestBot extends BotClient {
                             // increased to-hit number
 
                             refactored_head = 0.0;
-                            if (((base_to_hit + 4) <= 12) && Compute.allowAimedShotWith(test_weapon,
-                                                                                        IAimingModes
-                                                                                                .AIM_MODE_TARG_COMP)) {
-                                refactored_damage = base_damage
-                                                    * (Compute.oddsAbove(base_to_hit + 4, aptGunnery) / 100.0);
+                            if (((base_to_hit + 4) <= 12)
+                                    && Compute.allowAimedShotWith(test_weapon, AimingMode.TARGETING_COMPUTER)) {
+                                refactored_damage = base_damage * (Compute.oddsAbove(base_to_hit + 4, aptGunnery) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
-                                        .setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
+                                        .setAimingMode(AimingMode.TARGETING_COMPUTER);
                                 // Consider that a regular shot has a roughly
                                 // 20% chance of hitting the same location
                                 // Use the better of the regular shot or aimed
@@ -2257,13 +2229,13 @@ public class TestBot extends BotClient {
                                                         * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0);
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
-                                            .setAimingMode(IAimingModes.AIM_MODE_NONE);
+                                            .setAimingMode(AimingMode.NONE);
                                 }
                             } else {
                                 refactored_damage = 0.0;
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
-                                        .setAimingMode(IAimingModes.AIM_MODE_NONE);
+                                        .setAimingMode(AimingMode.NONE);
                             }
 
                         }
@@ -2275,10 +2247,8 @@ public class TestBot extends BotClient {
 
                             // If the attacker has a tcomp, consider both
                             // options: immobile aim, tcomp aim
-
                             if (has_tcomp) {
-
-                                if (Compute.allowAimedShotWith(test_weapon, IAimingModes.AIM_MODE_TARG_COMP)) {
+                                if (Compute.allowAimedShotWith(test_weapon, AimingMode.TARGETING_COMPUTER)) {
                                     // Refactor the expected damage to account for
                                     // increased to-hit number of the tcomp
 
@@ -2287,16 +2257,15 @@ public class TestBot extends BotClient {
                                     refactored_head = 0.0;
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
-                                            .setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
+                                            .setAimingMode(AimingMode.TARGETING_COMPUTER);
 
                                     // Check against immobile aim mode w/tcomp
                                     // assist
 
                                 }
-                                if (((0.50 * base_damage * (Compute
-                                                                    .oddsAbove(base_to_hit, aptGunnery) / 100.0)) >
-                                     refactored_damage) && Compute.allowAimedShotWith(test_weapon,
-                                                                                      IAimingModes.AIM_MODE_IMMOBILE)) {
+
+                                if (((0.50 * base_damage * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0)) > refactored_damage)
+                                        && Compute.allowAimedShotWith(test_weapon, AimingMode.IMMOBILE)) {
                                     refactored_damage = 0.50
                                                         * base_damage
                                                         * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0);
@@ -2306,10 +2275,10 @@ public class TestBot extends BotClient {
                                                                  .oddsAbove(base_to_hit + 7, aptGunnery) / 100.0);
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
-                                            .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
+                                            .setAimingMode(AimingMode.IMMOBILE);
                                 }
 
-                            } else if (Compute.allowAimedShotWith(test_weapon, IAimingModes.AIM_MODE_IMMOBILE)) {
+                            } else if (Compute.allowAimedShotWith(test_weapon, AimingMode.IMMOBILE)) {
 
                                 // If the attacker doesn't have a tcomp, settle
                                 // for immobile aim
@@ -2322,7 +2291,7 @@ public class TestBot extends BotClient {
                                                   * (Compute.oddsAbove(base_to_hit + 7, aptGunnery) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
-                                        .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
+                                        .setAimingMode(AimingMode.IMMOBILE);
 
                             }
                         }
@@ -2530,39 +2499,26 @@ public class TestBot extends BotClient {
                 aimed_attack = (WeaponAttackAction) entityAction;
 
                 // If the target of the action is the current target
-
                 if (aimed_attack.getTargetId() == test_target) {
-
                     // If the weapon aim mode is set to use a tcomp
-
-                    if (aimed_attack.getAimingMode() == IAimingModes.AIM_MODE_TARG_COMP) {
-
+                    if (aimed_attack.getAimingMode().isTargetingComputer()) {
                         // If the location is at least close to being breached
                         // or the target is immobile
 
                         if (values[temp_index] <= Compute.randomInt(5)) {
                             aimed_attack.setAimedLocation(best_loc);
                         } else {
-                            aimed_attack
-                                    .setAimingMode(IAimingModes.AIM_MODE_NONE);
+                            aimed_attack.setAimingMode(AimingMode.NONE);
                             aimed_attack.setAimedLocation(Entity.LOC_NONE);
                         }
 
-                    }
-
-                    // If the weapon aim mode is set for immobile aim
-
-                    if (aimed_attack.getAimingMode() == IAimingModes.AIM_MODE_IMMOBILE) {
+                    } else if (aimed_attack.getAimingMode().isImmobile()) {
                         aimed_attack.setAimedLocation(best_loc_head);
                     }
-
                 }
-
             }
 
-            // Any targets after this are secondary targets. Use secondary odds
-            // and damage.
-
+            // Any targets after this are secondary targets. Use secondary odds and damage.
             is_primary_target = false;
         }
     }

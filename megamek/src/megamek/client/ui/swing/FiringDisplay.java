@@ -25,6 +25,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -1409,7 +1410,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 }
                 
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
-                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
+                        Entity.LOC_NONE, AimingMode.NONE, true);
                 toHitBuff.append(t.getShortName() + ": ");
                 toHitBuff.append(toHit.getDesc());
                 toHitBuff.append("\n");
@@ -1422,14 +1423,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (bldg != null) {
                 Targetable t = new BuildingTarget(c, game.getBoard(), false);
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
-                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
+                        Entity.LOC_NONE, AimingMode.NONE, true);
                 toHitBuff.append(t.getDisplayName() + ": ");
                 toHitBuff.append(toHit.getDesc());
                 toHitBuff.append("\n");
             }
             Targetable hexTarget = new HexTarget(c, HexTarget.TYPE_HEX_CLEAR);
             toHit = WeaponAttackAction.toHit(game, cen, hexTarget, weaponId,
-                    Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
+                    Entity.LOC_NONE, AimingMode.NONE, true);
             if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                     || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
                 setFireEnabled(false);
@@ -1604,13 +1605,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 }
             }
 
-            if (ash.allowAimedShotWith(mounted) && ash.inAimingMode()
-                    && ash.isAimingAtLocation()) {
+            if (ash.allowAimedShotWith(mounted) && !ash.getAimingMode().isNone() && ash.isAimingAtLocation()) {
                 waa.setAimedLocation(ash.getAimingAt());
                 waa.setAimingMode(ash.getAimingMode());
             } else {
                 waa.setAimedLocation(Entity.LOC_NONE);
-                waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+                waa.setAimingMode(AimingMode.NONE);
             }
             waa.setStrafing(isStrafing);
             waa.setStrafingFirstShot(firstShot);
@@ -1889,7 +1889,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else if ((target != null) && (target.getPosition() != null)
             && (weaponId != -1) && (ce() != null)) {
             ToHitData toHit;
-            if (ash.inAimingMode()) {
+            if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation()
                         && ash.allowAimedShotWith(weapon);
@@ -1902,16 +1902,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                             .getDisplayName()
                             + " (" + ash.getAimingLocation() + ")"); //$NON-NLS-1$ // $NON-NLS-2$
                 } else {
-                    toHit = WeaponAttackAction.toHit(game, cen, target,
-                            weaponId, Entity.LOC_NONE,
-                            IAimingModes.AIM_MODE_NONE, false);
-                    clientgui.mechD.wPan.wTargetR.setText(target
-                            .getDisplayName());
+                    toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
+                            AimingMode.NONE, false);
+                    clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, cen, target, weaponId,
-                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
+                        Entity.LOC_NONE, AimingMode.NONE, false);
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             }
             int effectiveDistance = Compute.effectiveDistance(

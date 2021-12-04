@@ -43,6 +43,7 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
@@ -1047,8 +1048,7 @@ public class Compute {
     
     
     public static ToHitData getImmobileMod(Targetable target) {
-        return Compute.getImmobileMod(target, Entity.LOC_NONE,
-                                      IAimingModes.AIM_MODE_NONE);
+        return Compute.getImmobileMod(target, Entity.LOC_NONE, AimingMode.NONE);
     }
 
     /**
@@ -1059,17 +1059,15 @@ public class Compute {
      * @return The relevant ToHitData
      */
     @Nullable
-    public static ToHitData getImmobileMod(Targetable target, int aimingAt,
-                                           int aimingMode) {
+    public static ToHitData getImmobileMod(Targetable target, int aimingAt, AimingMode aimingMode) {
         // if we are bombing hexes, they are not considered immobile.
-        if(target.getTargetType() == Targetable.TYPE_HEX_BOMB ||
-           target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
+        if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB)
+                || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             return null;
         }
 
         if (target.isImmobile()) {
-            if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD)
-                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+            if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }
             return new ToHitData(-4, "target immobile");
@@ -6773,29 +6771,31 @@ public class Compute {
 
     }
 
-    public static boolean allowAimedShotWith(Mounted weapon, int aimingMode) {
+    public static boolean allowAimedShotWith(Mounted weapon, AimingMode aimingMode) {
         WeaponType wtype = (WeaponType) weapon.getType();
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-        boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA)
-                           && !isWeaponInfantry;
+        boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
         Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
         // Leg and swarm attacks can't be aimed.
         if (wtype.getInternalName().equals(Infantry.LEG_ATTACK)
-            || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
+                || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
             return false;
         }
+
         switch (aimingMode) {
-            case (IAimingModes.AIM_MODE_NONE):
+            case NONE:
                 return false;
-            case (IAimingModes.AIM_MODE_IMMOBILE):
+            case IMMOBILE:
                 if (weapon.getCurrentShots() > 1) {
                     return false;
                 }
+
                 if (atype == null) {
                     break;
                 }
+
                 switch (atype.getAmmoType()) {
                     case AmmoType.T_SRM_STREAK:
                     case AmmoType.T_LRM_STREAK:
@@ -6846,7 +6846,7 @@ public class Compute {
                 }
 
                 break;
-            case (IAimingModes.AIM_MODE_TARG_COMP):
+            case TARGETING_COMPUTER:
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                     || wtype.hasFlag(WeaponType.F_PULSE)
                     || (wtype instanceof HAGWeapon)) {
@@ -6872,6 +6872,8 @@ public class Compute {
                     && (atype.getMunitionType() == AmmoType.M_FLAK)) {
                     return false;
                 }
+                break;
+            default:
                 break;
         }
         return true;

@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
@@ -319,7 +320,8 @@ public class FighterSquadron extends Aero {
      * Fighter Squadron units can only get hit in undestroyed fighters.
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         List<Entity> activeFighters = getActiveSubEntities();
         
         // If this squadron is doomed or is of size 1 then just return the first one
@@ -334,7 +336,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     @Override

@@ -2,33 +2,17 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.swing.AbstractAction;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -36,21 +20,11 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HexTarget;
-import megamek.common.IAimingModes;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -58,18 +32,19 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.*;
+import java.util.*;
+
 /**
  * This display is used for when hidden units are taking pointblank shots.
  * 
  * @author arlith
  *
  */
-public class PointblankShotDisplay extends FiringDisplay implements
-        ItemListener, ListSelectionListener {
-
-    /**
-     * 
-     */
+public class PointblankShotDisplay extends FiringDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -58785096133753153L;
 
     /**
@@ -733,13 +708,12 @@ public class PointblankShotDisplay extends FiringDisplay implements
             }
         }
 
-        if (ash.allowAimedShotWith(mounted) && ash.inAimingMode()
-                && ash.isAimingAtLocation()) {
+        if (ash.allowAimedShotWith(mounted) && !ash.getAimingMode().isNone() && ash.isAimingAtLocation()) {
             waa.setAimedLocation(ash.getAimingAt());
             waa.setAimingMode(ash.getAimingMode());
         } else {
             waa.setAimedLocation(Entity.LOC_NONE);
-            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            waa.setAimingMode(AimingMode.NONE);
         }
         waa.setPointblankShot(true);
 
@@ -823,10 +797,9 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
         // update target panel
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
-        if ((target != null) && (target.getPosition() != null)
-            && (weaponId != -1) && (ce() != null)) {
+        if ((target != null) && (target.getPosition() != null) && (weaponId != -1) && (ce() != null)) {
             ToHitData toHit;
-            if (ash.inAimingMode()) {
+            if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation()
                         && ash.allowAimedShotWith(weapon);
@@ -839,18 +812,16 @@ public class PointblankShotDisplay extends FiringDisplay implements
                             .getDisplayName()
                             + " (" + ash.getAimingLocation() + ")"); //$NON-NLS-1$ // $NON-NLS-2$
                 } else {
-                    toHit = WeaponAttackAction.toHit(game, cen, target,
-                            weaponId, Entity.LOC_NONE,
-                            IAimingModes.AIM_MODE_NONE, false, false, null,
-                            null, false, true);
-                    clientgui.mechD.wPan.wTargetR.setText(target
-                            .getDisplayName());
+                    toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
+                            AimingMode.NONE, false, false,
+                            null, null, false, true);
+                    clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
-                toHit = WeaponAttackAction.toHit(game, cen, target, weaponId,
-                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false,
-                        false, null, null, false, true);
+                toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
+                        AimingMode.NONE, false, false, null,
+                        null, false, true);
                 clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
             }
             int effectiveDistance = Compute.effectiveDistance(

@@ -27,6 +27,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -1092,7 +1093,8 @@ public class Aero extends Entity implements IAero, IBomber {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         return rollHitLocation(table, side);
     }
 

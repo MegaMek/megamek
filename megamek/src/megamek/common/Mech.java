@@ -2169,7 +2169,7 @@ public abstract class Mech extends Entity {
                                    int cover) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE) && aimingMode.isNone()) {
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {

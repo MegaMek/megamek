@@ -1,31 +1,20 @@
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.image.ImageObserver;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IPlayer;
-import megamek.common.options.IOptions;
+import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
+
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
 /**
  * Sprite used for isometric rendering to render an entity partially hidden
  * behind a hill.
- *
  */
 class IsometricSprite extends Sprite {
 
@@ -222,7 +211,7 @@ class IsometricSprite extends Sprite {
         if (localPlayer == null) {
             return false;
         }
-        IOptions opts = this.bv.game.getOptions();
+        AbstractOptions opts = this.bv.game.getOptions();
         if (opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
                 && ((e.getOwner().getId() == localPlayer.getId()) 
                         || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$

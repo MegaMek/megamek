@@ -1,26 +1,26 @@
 /*
  * MegaMek - Copyright (C) 2007-2008 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.victory;
+
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.Report;
 
 /**
  * quick implementation of a Victory.Result stores player scores and a flag if
@@ -42,20 +42,20 @@ public class VictoryResult implements IResult {
     protected VictoryResult(boolean win, int player, int team) {
     	this.victory = win;
     	tr = new Throwable();
-        if (player != IPlayer.PLAYER_NONE) {
+        if (player != Player.PLAYER_NONE) {
             addPlayerScore(player, 1.0);
         }
-        if (team != IPlayer.TEAM_NONE) {
+        if (team != Player.TEAM_NONE) {
             addTeamScore(team, 1.0);
         }
     }
     
     protected static VictoryResult noResult() {
-    	return new VictoryResult(false, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
+    	return new VictoryResult(false, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
     
     protected static VictoryResult drawResult() {
-        return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
+        return new VictoryResult(true, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
 
     private int getWinningPlayerOrTeam(HashMap<Integer, Double> entities, int defaultEntity) {
@@ -78,11 +78,11 @@ public class VictoryResult implements IResult {
     }
 
     public int getWinningPlayer() {
-        return getWinningPlayerOrTeam(playerScore, IPlayer.PLAYER_NONE);
+        return getWinningPlayerOrTeam(playerScore, Player.PLAYER_NONE);
     }
 
     public int getWinningTeam() {
-        return getWinningPlayerOrTeam(teamScore, IPlayer.TEAM_NONE);
+        return getWinningPlayerOrTeam(teamScore, Player.TEAM_NONE);
     }
 
     protected void updateHiScore() {
@@ -163,20 +163,22 @@ public class VictoryResult implements IResult {
             int wonPlayer = getWinningPlayer();
             int wonTeam = getWinningTeam();
 
-            if (wonPlayer != IPlayer.PLAYER_NONE) {
+            if (wonPlayer != Player.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add(game.getPlayer(wonPlayer).getColorForPlayer());
                 someReports.add(r);
             }
-            if (wonTeam != IPlayer.TEAM_NONE) {
+
+            if (wonTeam != Player.TEAM_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team " + wonTeam);
                 someReports.add(r);
             }
+
             if (draw) {
                 // multiple-won draw
-                game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
-                game.setVictoryTeam(IPlayer.TEAM_NONE);
+                game.setVictoryPlayerId(Player.PLAYER_NONE);
+                game.setVictoryTeam(Player.TEAM_NONE);
             } else {
                 // nobody-won draw or
                 // single player won or
@@ -211,6 +213,6 @@ public class VictoryResult implements IResult {
     }
 
     public boolean isDraw() {
-        return (getWinningPlayer() == IPlayer.PLAYER_NONE && getWinningTeam() == IPlayer.TEAM_NONE);
+        return (getWinningPlayer() == Player.PLAYER_NONE) && (getWinningTeam() == Player.TEAM_NONE);
     }
 }

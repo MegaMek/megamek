@@ -14,18 +14,7 @@
 
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.IPlayer;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Protomech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -104,10 +93,10 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity)target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit "
                         + "can never be the target of a direct attack.");
             }
@@ -120,8 +109,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         }
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetHeight = target.relHeight() + targHex.getLevel();
-        final int targetElevation = target.getElevation()
-                + targHex.getLevel();
+        final int targetElevation = target.getElevation() + targHex.getLevel();
         
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
         

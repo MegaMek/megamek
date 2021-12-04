@@ -1,25 +1,17 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -28,16 +20,19 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Coords;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.SpecialHexDisplay;
+import megamek.common.*;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
@@ -49,7 +44,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      * string for the command plus a flag that determines what unit type it is 
      * appropriate for.
      * @author arlith
-     *
      */
     public static enum ArtyAutoHitCommand implements PhaseCommand {
     SET_HIT_HEX("setAutoHitHex");
@@ -86,8 +80,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     // buttons
     protected Map<ArtyAutoHitCommand,MegamekButton> buttons;
 
-    private IPlayer p;
-    private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
+    private Player p;
+    private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
     
     private int startingHexes;
 

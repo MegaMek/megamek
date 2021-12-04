@@ -69,7 +69,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private boolean deployI = false;
     private boolean remove = false;
 
-    private IPlayer p;
+    private Player p;
     private Vector<Minefield> deployedMinefields = new Vector<>();
 
     /**

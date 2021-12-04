@@ -13,76 +13,27 @@
  */
 package megamek.client.bot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.ECMInfo;
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.GameTurn;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.*;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.*;
 
 public abstract class BotClient extends Client {
 	public static final int BOT_TURN_RETRY_COUNT = 3;
@@ -864,7 +815,7 @@ public abstract class BotClient extends Client {
                     }
                 }
                 boolean foundAdj = false;
-                IPlayer owner = deployed_ent.getOwner();
+                Player owner = deployed_ent.getOwner();
                 for (int x = 0; x < 6 && !foundAdj; x++) {
                     highestHex = coord.getCoords().translated(x);
                     for (Entity test_ent : game.getEntitiesVector(highestHex)) {

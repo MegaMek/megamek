@@ -512,7 +512,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
 
         Vector<String> playerNames = new Vector<>();
-        for (IPlayer player : newGame.getPlayersVector()) {
+        for (Player player : newGame.getPlayersVector()) {
             playerNames.add(player.getName());
         }
 
@@ -795,9 +795,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // If he didn't have a name when hasSlot was set, then the host should
         // be an observer.
         if (!hasSlot) {
-            Enumeration<IPlayer> pE = server.getGame().getPlayers();
+            Enumeration<Player> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
-                IPlayer tmpP = pE.nextElement();
+                Player tmpP = pE.nextElement();
                 if (tmpP.getName().equals(localName)) {
                     tmpP.setObserver(true);
                 }

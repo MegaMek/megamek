@@ -1,16 +1,12 @@
-/**
- * 
- */
 package megamek.server.commands;
 
 import megamek.common.Entity;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson (Taharqa)
  */
-
 public class ListEntitiesCommand extends ServerCommand {
 
     public ListEntitiesCommand(Server server) {
@@ -28,7 +24,7 @@ public class ListEntitiesCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        IPlayer p = server.getGame().getPlayer(connId);
+        Player p = server.getGame().getPlayer(connId);
         if(null == p) {
             return;
         }

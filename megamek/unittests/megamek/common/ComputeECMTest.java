@@ -40,7 +40,7 @@ public class ComputeECMTest {
     @Test
     public void testEntityGetECMInfo() {
         // Mock Player
-        IPlayer mockPlayer = Mockito.mock(IPlayer.class);
+        Player mockPlayer = Mockito.mock(Player.class);
         
         // Mock the board
         Board mockBoard = Mockito.mock(Board.class);
@@ -190,12 +190,12 @@ public class ComputeECMTest {
     public void testBasicECM() {
         
         // Create a player
-        IPlayer mockPlayer =  Mockito.mock(IPlayer.class);
+        Player mockPlayer =  Mockito.mock(Player.class);
         Mockito.when(mockPlayer.isEnemyOf(mockPlayer)).thenReturn(false);
         Mockito.when(mockPlayer.getName()).thenReturn("MockPlayer");
         
         // Create an enemy player
-        IPlayer mockEnemy =  Mockito.mock(IPlayer.class);
+        Player mockEnemy =  Mockito.mock(Player.class);
         Mockito.when(mockEnemy.isEnemyOf(mockEnemy)).thenReturn(false);
         Mockito.when(mockEnemy.getName()).thenReturn("MockEnemy");
         Mockito.when(mockPlayer.isEnemyOf(mockEnemy)).thenReturn(true);
@@ -439,12 +439,12 @@ public class ComputeECMTest {
     public void testBasicECMMultiHex() {
         
         // Create a player
-        IPlayer mockPlayer =  Mockito.mock(IPlayer.class);
+        Player mockPlayer =  Mockito.mock(Player.class);
         Mockito.when(mockPlayer.isEnemyOf(mockPlayer)).thenReturn(false);
         Mockito.when(mockPlayer.getName()).thenReturn("MockPlayer");
         
         // Create an enemy player
-        IPlayer mockEnemy =  Mockito.mock(IPlayer.class);
+        Player mockEnemy =  Mockito.mock(Player.class);
         Mockito.when(mockEnemy.isEnemyOf(mockEnemy)).thenReturn(false);
         Mockito.when(mockEnemy.getName()).thenReturn("MockEnemy");
         Mockito.when(mockPlayer.isEnemyOf(mockEnemy)).thenReturn(true);
@@ -701,7 +701,7 @@ public class ComputeECMTest {
      * @param mockGame
      * @return
      */
-    private static Vector<Entity> createECMEnemy(IPlayer owner, 
+    private static Vector<Entity> createECMEnemy(Player owner, 
             Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<Entity>();
         
@@ -759,9 +759,8 @@ public class ComputeECMTest {
      * @param mockGame
      * @return
      */    
-    private static Vector<Entity> createAngelEnemy(IPlayer owner, 
-            Game mockGame) {
-        Vector<Entity> entitiesVector = new Vector<Entity>();
+    private static Vector<Entity> createAngelEnemy(Player owner, Game mockGame) {
+        Vector<Entity> entitiesVector = new Vector<>();
         
         // Attacking Entity
         Entity enemy1 = Mockito.mock(Mech.class);

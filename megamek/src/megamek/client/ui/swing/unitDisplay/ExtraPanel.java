@@ -354,43 +354,41 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         // can't be more teams than players.
         StringBuffer buff;
         if (clientgui != null) {
-            Enumeration<IPlayer> loop = clientgui.getClient().getGame().getPlayers();
+            Enumeration<Player> loop = clientgui.getClient().getGame().getPlayers();
             while (loop.hasMoreElements()) {
-                IPlayer player = loop.nextElement();
+                Player player = loop.nextElement();
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
-                    buff = new StringBuffer(
-                            Messages.getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
-                    buff.append(player.getName());
-                    buff.append(" [")//$NON-NLS-1$
-                            .append(IPlayer.teamNames[team]).append(']');
-                    ((DefaultListModel<String>) narcList.getModel())
-                            .addElement(buff.toString());
+                    buff = new StringBuffer(Messages.getString("MechDisplay.NARCedBy"));
+                    buff.append(player.getName())
+                            .append(" [").append(Player.TEAM_NAMES[team]).append(']');
+                    ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
+
                 if (en.isINarcedBy(team) && !player.isObserver()) {
-                    buff = new StringBuffer(
-                            Messages.getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
-                    buff.append(player.getName());
-                    buff.append(" [")//$NON-NLS-1$
-                            .append(IPlayer.teamNames[team]).append("] ")//$NON-NLS-1$
-                            .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
+                    buff = new StringBuffer(Messages.getString("MechDisplay.INarcHoming"));
+                    buff.append(player.getName()).append(" [")
+                            .append(Player.TEAM_NAMES[team]).append("] ")
+                            .append(Messages.getString("MechDisplay.attached"))
                             .append('.');
-                    ((DefaultListModel<String>) narcList.getModel())
-                            .addElement(buff.toString());
+                    ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
             }
+
             if (en.isINarcedWith(INarcPod.ECM)) {
                 buff = new StringBuffer(
                         Messages.getString("MechDisplay.iNarcECMPodAttached")); //$NON-NLS-1$
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(buff.toString());
             }
+
             if (en.isINarcedWith(INarcPod.HAYWIRE)) {
                 buff = new StringBuffer(
                         Messages.getString("MechDisplay.iNarcHaywirePodAttached")); //$NON-NLS-1$
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(buff.toString());
             }
+
             if (en.isINarcedWith(INarcPod.NEMESIS)) {
                 buff = new StringBuffer(
                         Messages.getString("MechDisplay.iNarcNemesisPodAttached")); //$NON-NLS-1$
@@ -406,6 +404,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(buff.toString());
             }
+
             if ((en instanceof Tank) && ((Tank) en).isOnFire()) {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$

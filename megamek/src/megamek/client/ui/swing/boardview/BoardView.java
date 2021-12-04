@@ -263,7 +263,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private static BufferedImageOp blurOp = new ConvolveOp(kernel);
 
     // the player who owns this BoardView's client
-    private IPlayer localPlayer = null;
+    private Player localPlayer = null;
 
     /**
      * Stores the currently deploying entity, used for highlighting deployment
@@ -1843,8 +1843,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                Enumeration<IPlayer> allP = game.getPlayers();
-                IPlayer cp;
+                Enumeration<Player> allP = game.getPlayers();
+                Player cp;
                 int pCount = 0;
                 int bThickness = 1 + 10 / game.getNoOfPlayers();
                 // loop through all players
@@ -1852,8 +1852,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     cp = allP.nextElement();
                     if (board.isLegalDeployment(c, cp.getStartingPos())) {
                         Color bC = cp.getColour().getColour();
-                        drawHexBorder(g, getHexLocation(c), bC, (bThickness+2)
-                                * pCount, bThickness);
+                        drawHexBorder(g, getHexLocation(c), bC, (bThickness + 2) * pCount, bThickness);
                         pCount++;
                     }
                 }
@@ -4125,11 +4124,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         drawCenteredText(g2D, text, pos, color, translucent);
     }
 
-    public void setLocalPlayer(IPlayer p) {
+    public void setLocalPlayer(Player p) {
         localPlayer = p;
     }
 
-    public IPlayer getLocalPlayer() {
+    public Player getLocalPlayer() {
         return localPlayer;
     }
 
@@ -5784,12 +5783,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // in the artillery autohit designation phase
         if ((game.getPhase() == GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) && (mhex != null)) {
             txt.append("<TABLE BORDER=0 width=100%><TR><TD>"); //$NON-NLS-1$
-            Enumeration<IPlayer> allP = game.getPlayers();
+            Enumeration<Player> allP = game.getPlayers();
             boolean foundPlayer = false;
             // loop through all players
-            while (allP.hasMoreElements())
-            {
-                IPlayer cp = allP.nextElement();
+            while (allP.hasMoreElements()) {
+                Player cp = allP.nextElement();
                 if (game.getBoard().isLegalDeployment(mcoords, cp.getStartingPos())) {
                     if (!foundPlayer) {
                         foundPlayer = true;

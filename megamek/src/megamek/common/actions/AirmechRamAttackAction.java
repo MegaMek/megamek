@@ -11,46 +11,21 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  */
-
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.LandAirMech;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
+
+import java.util.Enumeration;
 
 /**
  * Ram attack by an airborne LAM in airmech mode. This is treated like a charge in the movement path,
  * but has significant difference in the way damage is calculated and in the final locations.
  * 
  * @author Neoancient
- *
  */
 public class AirmechRamAttackAction extends DisplacementAttackAction {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5110608317218688433L;
 
     public AirmechRamAttackAction(Entity attacker, Targetable target) {
@@ -106,8 +81,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                 && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                        || ((((Entity) target).getOwner().getTeam() != IPlayer.TEAM_NONE)
-                                && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
+                        || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                                 && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "A friendly unit can never be the target of a direct attack.");

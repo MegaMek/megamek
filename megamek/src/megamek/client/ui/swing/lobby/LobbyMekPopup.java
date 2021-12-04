@@ -583,7 +583,7 @@ class LobbyMekPopup {
         Forces gameForces = game.getForces();
         
         if (!entities.isEmpty()) {
-            for (IPlayer player: game.getPlayersVector()) {
+            for (Player player: game.getPlayersVector()) {
                 String command = LMP_ASSIGN + "|" + player.getId() + ":" + foToken(forces) + enToken(entities);
                 menu.add(menuItem(player.getName(), command, enabled, listener));
             }
@@ -596,7 +596,7 @@ class LobbyMekPopup {
             assignMenu.add(fOnlyMenu);
             assignMenu.add(fFullMenu);
             Force force = anyOneElement(forces);
-            for (IPlayer player: game.getPlayersVector()) {
+            for (Player player: game.getPlayersVector()) {
                 if (!player.isEnemyOf(gameForces.getOwner(force))) {
                     String command = LMP_FASSIGNONLY + "|" + player.getId() + ":" + foToken(forces) + NOINFO;
                     fOnlyMenu.add(menuItem(player.getName(), command, true, listener));

@@ -114,7 +114,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         }
     }
 
-    private void autoSetSkillsAndName(Entity e, IPlayer player) {
+    private void autoSetSkillsAndName(Entity e, Player player) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
         if (cs.useAverageSkills()) {

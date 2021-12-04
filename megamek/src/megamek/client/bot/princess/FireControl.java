@@ -13,62 +13,8 @@
  */
 package megamek.client.bot.princess;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.FixedWingSupport;
-import megamek.common.GunEmplacement;
-import megamek.common.HexTarget;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.RangeType;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.TargetRollModifier;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.*;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.enums.IlluminationLevel;
@@ -80,6 +26,10 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * FireControl selects which weapons a unit wants to fire and at whom Pay
@@ -2377,12 +2327,12 @@ public class FireControl {
      * @param game    The game being played.
      * @return A list of potential targets.
      */
-    static List<Targetable> getAllTargetableEnemyEntities(final IPlayer player, final Game game, final FireControlState fireControlState) {
+    static List<Targetable> getAllTargetableEnemyEntities(final Player player, final Game game,
+                                                          final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
         for (final Entity entity : game.getEntitiesVector()) {
-
             // If they are my enemy and on the board, they're a target.
             if (entity.getOwner().isEnemyOf(player)
                 && (null != entity.getPosition())

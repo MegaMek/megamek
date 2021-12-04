@@ -381,7 +381,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (getSelectedClient() == null) {
             return;
         }
-        IPlayer player = getSelectedClient().getLocalPlayer();
+        Player player = getSelectedClient().getLocalPlayer();
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
 
         // If the dialog was canceled or nothing selected, do nothing
@@ -1248,7 +1248,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /** Refreshes the player info table. */
     private void refreshPlayerTable() {
         // Remember the selected players
-        var selPlayerIds = getselectedPlayers().stream().map(IPlayer::getId).collect(toSet());
+        var selPlayerIds = getselectedPlayers().stream().map(Player::getId).collect(toSet());
 
         // Empty and refill the player table
         playerModel.replaceData(game().getPlayersVector());
@@ -1270,7 +1270,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if ((tablePlayers == null) || (playerModel == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return;
         }
-        IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+        Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         if (player != null) {
             butCamo.setIcon(player.getCamouflage().getImageIcon());
         }
@@ -1278,8 +1278,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** Sets up the team choice box. */
     private void setupTeamCombo() {
-        for (int i = 0; i < IPlayer.MAX_TEAMS; i++) {
-            comboTeam.addItem(IPlayer.teamNames[i]);
+        for (int i = 0; i < Player.TEAM_NAMES.length; i++) {
+            comboTeam.addItem(Player.TEAM_NAMES[i]);
         }
     }
 
@@ -1427,9 +1427,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * or its teammates. 
      */
     void sendUpdates(Collection<Entity> entities) {
-        List<IPlayer> owners = entities.stream().map(e -> e.getOwner()).distinct().collect(toList());
-        for (IPlayer owner: owners) {
-            client().sendUpdateEntity(new ArrayList<Entity>(
+        List<Player> owners = entities.stream().map(Entity::getOwner).distinct().collect(toList());
+        for (Player owner: owners) {
+            client().sendUpdateEntity(new ArrayList<>(
                     entities.stream().filter(e -> e.getOwner().equals(owner)).collect(toList())));
         }
     }
@@ -1439,7 +1439,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     void disembarkAll(Collection<Entity> entities) {
         Set<Entity> updateCandidates = new HashSet<>();
-        entities.stream().filter(e -> isEditable(e)).forEach(e -> disembark(e, updateCandidates));
+        entities.stream().filter(this::isEditable).forEach(e -> disembark(e, updateCandidates));
         sendUpdate(updateCandidates);
     }
 
@@ -1497,7 +1497,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c);
         if (psd.showDialog().isConfirmed()) {
-            IPlayer player = c.getLocalPlayer();
+            Player player = c.getLocalPlayer();
             player.setConstantInitBonus(psd.getInit());
             player.setNbrMFConventional(psd.getCnvMines());
             player.setNbrMFVibra(psd.getVibMines());
@@ -1902,7 +1902,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    private void configAndCreateBot(@Nullable IPlayer toReplace) {
+    private void configAndCreateBot(@Nullable Player toReplace) {
         BehaviorSettings behavior = null;
         String botName = null;
         if (toReplace != null) {
@@ -2010,7 +2010,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     private void doBotSettings() {
-        IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+        Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         Princess bot = (Princess) clientgui.getBots().get(player.getName());
         var bcd = new BotConfigDialog(clientgui.frame, bot.getLocalPlayer().getName(), bot.getBehaviorSettings(), clientgui);
         bcd.setVisible(true);
@@ -2150,7 +2150,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         final GameOptions gOpts = game.getOptions();
         
         // enforce exclusive deployment zones in double blind
-        for (IPlayer player: client.getGame().getPlayersVector()) {
+        for (Player player: client.getGame().getPlayersVector()) {
             if (!isValidStartPos(game, player)) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"), 
                         Messages.getString("ChatLounge.OverlapDeploy.msg"));
@@ -2195,7 +2195,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if ((tablePlayers == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return null;
         }
-        IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+        Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         if (localPlayer().equals(player)) {
             return client();
         } else if (client().bots.containsKey(player.getName())) {
@@ -2383,7 +2383,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Returns false when any blind-drop option is active and player is not on the local team; 
      * true otherwise. When true, individual units of the given player should not be shown/saved/etc. 
      */ 
-    private boolean unitsVisible(IPlayer player) {
+    private boolean unitsVisible(Player player) {
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         boolean isBlindDrop = opts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                 || opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
@@ -2396,7 +2396,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
                 int row = tablePlayers.rowAtPoint(e.getPoint());
-                IPlayer player = playerModel.getPlayerAt(row);
+                Player player = playerModel.getPlayerAt(row);
                 if (player != null) {
                     boolean isLocalPlayer = player.equals(localPlayer());
                     boolean isLocalBot = clientgui.getBots().get(player.getName()) != null;
@@ -2465,7 +2465,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         && (startPos >= 1) && (startPos <= 9)) {
                     startPos += 10;
                 }
-                for (IPlayer player: getselectedPlayers()) {
+
+                for (Player player: getselectedPlayers()) {
                     if (lobbyActions.isSelfOrLocalBot(player)) {
                         if (client().isLocalBot(player)) {
                             // must use the bot's own player object:
@@ -2480,17 +2481,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 break;
                 
             case PlayerTablePopup.PTP_REPLACE:
-                IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+                Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
                 configAndCreateBot(player);
             }
         }
     };
     
     
-    private ArrayList<IPlayer> getselectedPlayers() {
-        var result = new ArrayList<IPlayer>(); 
+    private ArrayList<Player> getselectedPlayers() {
+        var result = new ArrayList<Player>(); 
         for (int row: tablePlayers.getSelectedRows()) {
-            IPlayer player = playerModel.getPlayerAt(row);
+            Player player = playerModel.getPlayerAt(row);
             if (player != null) {
                 result.add(player);
             }
@@ -3002,7 +3003,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** Returns the owner of the given entity. Should be used over entity.getowner(). */
-    private IPlayer ownerOf(Entity entity) {
+    private Player ownerOf(Entity entity) {
         return clientgui.getClient().getGame().getPlayer(entity.getOwnerId());
     }
     
@@ -3261,7 +3262,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     /** Helper method to shorten calls. */
-    IPlayer localPlayer() {
+    Player localPlayer() {
         return clientgui.getClient().getLocalPlayer();
     }
     

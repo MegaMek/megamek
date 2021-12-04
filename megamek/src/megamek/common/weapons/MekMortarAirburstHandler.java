@@ -13,25 +13,12 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+
+import java.util.Vector;
 
 /**
  * @author arlith
@@ -186,7 +173,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             
             // Units in a building apply damage to building
             if (Compute.isInBuilding(game, target, targetPos)) {
-                IPlayer tOwner = target.getOwner();
+                Player tOwner = target.getOwner();
                 String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
                 newReports = server.damageBuilding(bldg, numRounds, " shields "
                         + target.getShortName() + " (<B><font color='"

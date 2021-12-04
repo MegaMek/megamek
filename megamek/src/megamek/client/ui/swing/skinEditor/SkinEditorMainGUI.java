@@ -761,7 +761,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         return frame;
     }
 
-    public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
+    public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
         final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp)));
     }

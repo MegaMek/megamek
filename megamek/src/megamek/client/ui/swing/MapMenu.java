@@ -451,13 +451,12 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("View");
         Game game = client.getGame();
                 
-        IPlayer localPlayer = client.getLocalPlayer();
+        Player localPlayer = client.getLocalPlayer();
         
         for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
-            if (!entity.isSensorReturn(localPlayer)
-                    && entity.hasSeenEntity(localPlayer)) {
+            if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)) {
                 menu.add(viewJMenuItem(entity));
             }
         }
@@ -1195,7 +1194,7 @@ public class MapMenu extends JPopupMenu {
         final boolean canStartFires = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE); //$NON-NLS-1$
         
-        IPlayer localPlayer = client.getLocalPlayer();
+        Player localPlayer = client.getLocalPlayer();
         
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
@@ -1544,11 +1543,10 @@ public class MapMenu extends JPopupMenu {
     }
 
     private void selectTarget() {
-        Vector<Entity> list = new Vector<Entity>();
+        Vector<Entity> list = new Vector<>();
 
-        IPlayer localPlayer = client.getLocalPlayer();
-        boolean friendlyFire = (game.getOptions()
-                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
+        Player localPlayer = client.getLocalPlayer();
+        boolean friendlyFire = (game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
 
         for (Entity en : game.getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible

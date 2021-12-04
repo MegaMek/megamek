@@ -17,26 +17,7 @@
 package megamek.common.actions;
 
 import megamek.client.ui.Messages;
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.RangeType;
-import megamek.common.SmallCraft;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.TripodMech;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
@@ -74,12 +55,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                 && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != IPlayer.TEAM_NONE)
-                        && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
+                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                        && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                         && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
             }
-
         }
 
         // check range

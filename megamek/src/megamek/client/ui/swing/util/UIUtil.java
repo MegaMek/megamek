@@ -13,36 +13,29 @@
 */ 
 package megamek.client.ui.swing.util;
 
-import java.awt.Rectangle;
-import java.util.*;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Image;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import javax.swing.*;
-import javax.swing.border.*;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Configuration;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public final class UIUtil {
 
@@ -189,7 +182,7 @@ public final class UIUtil {
      * oneself from the GUIPreferences depending on the relation
      * of the given player1 and player2. 
      */
-    public static Color teamColor(IPlayer player1, IPlayer player2) {
+    public static Color teamColor(Player player1, Player player2) {
         if (player1.getId() == player2.getId()) {
             return GUIPreferences.getInstance().getMyUnitColor();
         } else if (player1.isEnemyOf(player2)) {

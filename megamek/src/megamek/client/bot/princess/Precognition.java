@@ -112,7 +112,7 @@ public class Precognition implements Runnable {
                     receivePlayerInfo(c);
                     break;
                 case Packet.COMMAND_PLAYER_READY:
-                    final IPlayer player = getPlayer(c.getIntValue(0));
+                    final Player player = getPlayer(c.getIntValue(0));
                     if (player != null) {
                         player.setDone(c.getBooleanValue(1));
                     }
@@ -663,7 +663,7 @@ public class Precognition implements Runnable {
     /**
      * Returns the individual player assigned the index parameter.
      */
-    protected @Nullable IPlayer getPlayer(final int idx) {
+    protected @Nullable Player getPlayer(final int idx) {
         return getGame().getPlayer(idx);
     }
 
@@ -672,7 +672,7 @@ public class Precognition implements Runnable {
      */
     private void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
-        IPlayer newPlayer = (IPlayer) c.getObject(1);
+        Player newPlayer = (Player) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
             getGame().addPlayer(pindex, newPlayer);
         } else {
@@ -751,8 +751,8 @@ public class Precognition implements Runnable {
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
-            e.setWhoCanSee((Vector<IPlayer>)packet.getObject(4));
-            e.setWhoCanDetect((Vector<IPlayer>)packet.getObject(5));
+            e.setWhoCanSee((Vector<Player>) packet.getObject(4));
+            e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
             // this next call is only needed sometimes, but we'll just
             // call it everytime
             getGame().processGameEvent(new GameEntityChangeEvent(this, e));

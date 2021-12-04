@@ -1,43 +1,34 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * LoadGameCommand.java
- *
- * Created on November 19, 2008
- */
-
 package megamek.server.commands;
+
+import megamek.common.IPlayer;
+import megamek.common.net.AbstractConnection;
+import megamek.server.Server;
 
 import java.io.File;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.IPlayer;
-import megamek.common.net.IConnection;
-import megamek.server.Server;
-
 /**
- * Resets the server
+ * Loads a saved game on the server
  * 
  * @author Taharqa
- * @version
+ * @since November 19, 2008
  */
 public class LoadGameCommand extends ServerCommand {
-
-    /** Creates new ResetCommand */
     public LoadGameCommand(Server server) {
         super(server, "load",
                 "load a saved game from the savegames directory.  Usage: /load [filename]");
@@ -78,14 +69,15 @@ public class LoadGameCommand extends ServerCommand {
             nameToIdMap.put(p.getName(), p.getId());
             idToNameMap.put(p.getId(), p.getName());
         }
-        if(!server.loadGame(f, false)) {
+
+        if (!server.loadGame(f, false)) {
             server.sendServerChat(f.getName() + " could not be loaded");
         } else {
             server.remapConnIds(nameToIdMap, idToNameMap);
             // update all the clients with the new game info
-            Enumeration<IConnection> connEnum = server.getConnections();
+            Enumeration<AbstractConnection> connEnum = server.getConnections();
             while (connEnum.hasMoreElements()) {
-                IConnection conn = connEnum.nextElement();
+                AbstractConnection conn = connEnum.nextElement();
                 server.sendCurrentInfo(conn.getId());
             }
         }

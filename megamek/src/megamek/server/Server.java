@@ -164,7 +164,7 @@ public class Server implements Runnable {
     }
 
     // game info
-    private Vector<IConnection> connections = new Vector<>(4);
+    private Vector<AbstractConnection> connections = new Vector<>(4);
 
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
@@ -175,9 +175,9 @@ public class Server implements Runnable {
      */
     private final ConcurrentLinkedQueue<ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
-    private Vector<IConnection> connectionsPending = new Vector<>(4);
+    private Vector<AbstractConnection> connectionsPending = new Vector<>(4);
 
-    private Hashtable<Integer, IConnection> connectionIds = new Hashtable<>();
+    private Hashtable<Integer, AbstractConnection> connectionIds = new Hashtable<>();
 
     private int connectionCounter;
 
@@ -244,7 +244,7 @@ public class Server implements Runnable {
 
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -252,7 +252,7 @@ public class Server implements Runnable {
         @Override
         public void disconnected(DisconnectedEvent e) {
             synchronized (serverLock) {
-                IConnection conn = e.getConnection();
+                AbstractConnection conn = e.getConnection();
 
                 // write something in the log
                 MegaMek.getLogger().info("s: connection " + conn.getId() + " disconnected");
@@ -563,22 +563,22 @@ public class Server implements Runnable {
         }
 
         // kill pending connections
-        for (Enumeration<IConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             conn.close();
         }
         connectionsPending.removeAllElements();
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
 
         // kill active connections
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             conn.close();
         }
 
@@ -744,7 +744,7 @@ public class Server implements Runnable {
      * connection.
      */
     private void receivePlayerName(Packet packet, int connId) {
-        final IConnection conn = getPendingConnection(connId);
+        final AbstractConnection conn = getPendingConnection(connId);
         String name = (String) packet.getObject(0);
         boolean isBot = (boolean) packet.getObject(1);
         boolean returning = false;
@@ -1258,7 +1258,7 @@ public class Server implements Runnable {
         }
 
         // update all the clients with the new game info
-        for (IConnection conn : connections) {
+        for (AbstractConnection conn : connections) {
             sendCurrentInfo(conn.getId());
         }
         return true;
@@ -1280,7 +1280,7 @@ public class Server implements Runnable {
      */
     public void remapConnIds(Map<String, Integer> nameToIdMap, Map<Integer, String> idToNameMap) {
         // Keeps track of connections without Ids
-        List<IConnection> unassignedConns = new ArrayList<>();
+        List<AbstractConnection> unassignedConns = new ArrayList<>();
        // Keep track of which ids are used
         Set<Integer> usedPlayerIds = new HashSet<>();
         Set<String> currentPlayerNames = new HashSet<>();
@@ -1318,7 +1318,7 @@ public class Server implements Runnable {
         // Remap old connection Ids to new ones
         for (Integer currConnId : connIdRemapping.keySet()) {
             Integer newId = connIdRemapping.get(currConnId);
-            IConnection conn = connectionIds.get(currConnId);
+            AbstractConnection conn = connectionIds.get(currConnId);
             conn.setId(newId);
             // If this Id is used, make sure we reassign that connection
             if (connectionIds.containsKey(newId)) {
@@ -1332,7 +1332,7 @@ public class Server implements Runnable {
         }
 
         // It's possible we have players not in the saved game, add 'em
-        for (IConnection conn : unassignedConns) {
+        for (AbstractConnection conn : unassignedConns) {
             int newId = 0;
             while (usedPlayerIds.contains(newId)) {
                 newId++;
@@ -1402,29 +1402,29 @@ public class Server implements Runnable {
     /**
      * a shorter name for getConnection()
      */
-    private IConnection getClient(int connId) {
+    private AbstractConnection getClient(int connId) {
         return getConnection(connId);
     }
 
     /**
      * Returns a connection, indexed by id
      */
-    public Enumeration<IConnection> getConnections() {
+    public Enumeration<AbstractConnection> getConnections() {
         return connections.elements();
     }
 
     /**
      * Returns a connection, indexed by id
      */
-    public IConnection getConnection(int connId) {
+    public AbstractConnection getConnection(int connId) {
         return connectionIds.get(connId);
     }
 
     /**
      * Returns a pending connection
      */
-    IConnection getPendingConnection(int connId) {
-        for (IConnection conn : connectionsPending) {
+    AbstractConnection getPendingConnection(int connId) {
+        for (AbstractConnection conn : connectionsPending) {
             if (conn.getId() == connId) {
                 return conn;
             }
@@ -2903,7 +2903,7 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (IConnection connection : connections) {
+        for (AbstractConnection connection : connections) {
             if (connection != null) {
                 connection.send(createTagInfoUpdatesPacket());
             }
@@ -2914,7 +2914,7 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (IConnection connection : connections) {
+        for (AbstractConnection connection : connections) {
             if (connection != null) {
                 connection.send(new Packet(Packet.COMMAND_RESET_TAGINFO));
             }
@@ -30387,7 +30387,7 @@ public class Server implements Runnable {
      * Sends out the game victory event to all connections
      */
     private void transmitGameVictoryEventToAll() {
-        for (IConnection conn : connections) {
+        for (AbstractConnection conn : connections) {
             send(conn.getId(), new Packet(Packet.COMMAND_GAME_VICTORY_EVENT));
         }
     }
@@ -30395,7 +30395,7 @@ public class Server implements Runnable {
     /**
      * Sends out all player info to the specified connection
      */
-    private void transmitPlayerConnect(IConnection connection) {
+    private void transmitPlayerConnect(AbstractConnection connection) {
         for (var player: game.getPlayersVector()) {
             var connectionId = connection.getId();
             connection.send(
@@ -30915,8 +30915,8 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             conn.send(packet);
         }
     }
@@ -30954,8 +30954,8 @@ public class Server implements Runnable {
             return;
         }
 
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             IPlayer p = game.getPlayer(conn.getId());
             Packet packet;
             if (tacticalGeniusReport) {
@@ -30982,7 +30982,7 @@ public class Server implements Runnable {
      * Send a packet to a pending connection
      */
     private void sendToPending(int connId, Packet packet) {
-        IConnection pendingConn = getPendingConnection(connId);
+        AbstractConnection pendingConn = getPendingConnection(connId);
         if (pendingConn != null) {
             pendingConn.send(packet);
         }
@@ -31064,7 +31064,7 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_CLOSE_CONNECTION:
                 // We have a client going down!
-                IConnection c = getConnection(connId);
+                AbstractConnection c = getConnection(connId);
                 if (c != null) {
                     c.close();
                 }
@@ -31311,7 +31311,7 @@ public class Server implements Runnable {
                 try {
                     sendServerChat(getPlayer(connId).getName() + " loaded a new game.");
                     setGame((Game) packet.getObject(0));
-                    for (IConnection conn : connections) {
+                    for (AbstractConnection conn : connections) {
                         sendCurrentInfo(conn.getId());
                     }
                 } catch (Exception e) {
@@ -31352,7 +31352,7 @@ public class Server implements Runnable {
                     int id = getFreeConnectionId();
                     MegaMek.getLogger().info("s: accepting player connection #" + id + "...");
 
-                    IConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
+                    AbstractConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
                     c.addConnectionListener(connectionListener);
                     c.open();
                     connectionsPending.addElement(c);
@@ -35512,7 +35512,7 @@ public class Server implements Runnable {
                       + URLEncoder.encode(
                               Integer.toString(serverSocket.getLocalPort()), "UTF-8");
             if (register) {
-                for (IConnection iconn : connections) {
+                for (AbstractConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());
                 }
                 if ((game.getPhase() != GamePhase.LOUNGE)

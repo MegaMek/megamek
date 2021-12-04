@@ -66,7 +66,7 @@ public class Client implements IClientCommandHandler {
     // we need these to communicate with the server
     private String name;
 
-    private IConnection connection;
+    private AbstractConnection connection;
 
     // the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<>();
@@ -137,7 +137,7 @@ public class Client implements IClientCommandHandler {
 
     private Thread connThread;
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.

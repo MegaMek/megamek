@@ -1792,8 +1792,8 @@ public class Princess extends BotClient {
     
     private boolean isEnemyGunEmplacement(final Entity entity,
                                           final Coords coords) {
-        // crippled gun turrets aren't worth shooting at, even if we're fighting to the death
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
+               && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
                && !entity.isCrippled();
@@ -1801,11 +1801,11 @@ public class Princess extends BotClient {
 
     private boolean isEnemyInfantry(final Entity entity,
                                     final Coords coords) {
-        // crippled infantry aren't worth shooting at, even if we're fighting to the death
         return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
-               && entity.getOwner().isEnemyOf(getLocalPlayer())
-               && !getStrategicBuildingTargets().contains(coords)
-               && !entity.isCrippled();
+                && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
+                && entity.getOwner().isEnemyOf(getLocalPlayer())
+                && !getStrategicBuildingTargets().contains(coords)
+                && !entity.isCrippled();
     }
 
     @Override

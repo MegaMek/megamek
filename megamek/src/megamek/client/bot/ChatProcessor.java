@@ -287,6 +287,31 @@ public class ChatProcessor {
             }
             princess.sendChat(out.toString());
         }
+        
+        if (command.toLowerCase().startsWith(ChatCommands.IGNORE_TARGET.getAbbreviation())) {
+            if ((arguments == null) || (arguments.length == 0)) {
+                msg = "Please specify entity ID to ignore.";
+                princess.sendChat(msg);
+                return;
+            }
+            
+            Integer targetID = null;
+            
+            try {
+                targetID = Integer.parseInt(arguments[0]);
+            } catch (Exception ignored) { }
+            
+            if (targetID == null) {
+                msg = "Please specify entity ID as an integer to ignore.";
+                princess.sendChat(msg);
+                return;
+            }
+            
+            princess.getBehaviorSettings().addIgnoredUnitTarget(targetID);
+            msg = "Ignoring target with ID " + targetID;
+            princess.sendChat(msg);
+            return;
+        }
 
         // Make sure the command came from my team.
         int speakerTeam = speakerPlayer.getTeam();

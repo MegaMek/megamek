@@ -573,12 +573,18 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
                                             losRange);
             }
-            if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
-                damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+            
+            // if we're not ignoring the enemy, we consider damage that we may do to them;
+            // however, just because we're ignoring them doesn't mean they won't shoot at us.
+            if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
+                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+                }
+                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
+                }
             }
-            if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
-            }
+            
             expectedDamageTaken += eval.getEstimatedEnemyDamage();
         }
 

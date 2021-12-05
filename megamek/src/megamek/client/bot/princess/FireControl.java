@@ -2419,6 +2419,11 @@ public class FireControl {
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
 
+            if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getTargetId())) {
+                owner.getLogger().info(enemy.getDisplayName() + " is being explicitly ignored");
+                continue;
+            }
+            
             final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getTargetId());
 
             // Skip retreating enemies so long as they haven't fired on me while retreating.

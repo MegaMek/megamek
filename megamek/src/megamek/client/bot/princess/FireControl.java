@@ -2420,7 +2420,7 @@ public class FireControl {
         for (final Targetable enemy : enemies) {
 
             if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getTargetId())) {
-                owner.getLogger().info(enemy.getDisplayName() + " is beign explicitly ignored");
+                owner.getLogger().info(enemy.getDisplayName() + " is being explicitly ignored");
                 continue;
             }
             

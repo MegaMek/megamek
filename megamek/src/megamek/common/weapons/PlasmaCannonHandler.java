@@ -13,27 +13,13 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.IAimingModes;
-import megamek.common.Game;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+
+import java.util.Vector;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2304364403526293671L;
@@ -128,8 +114,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            int savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            AimingMode savedAimingMode = waa.getAimingMode();
+            waa.setAimingMode(AimingMode.NONE);
 
             int savedAimedLocation = waa.getAimedLocation();
             waa.setAimedLocation(Entity.LOC_NONE);

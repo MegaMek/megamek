@@ -22,6 +22,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
@@ -3139,15 +3140,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (locations.size() > limit) {
             return "*";
         } else {
-            return locations.stream().map(l -> getLocationAbbr(l)).collect(Collectors.joining("/"));
+            return locations.stream().map(this::getLocationAbbr).collect(Collectors.joining("/"));
         }
     }
 
     /**
      * Rolls the to-hit number
      */
-    public abstract HitData rollHitLocation(int table, int side,
-                                            int aimedLocation, int aimingMode, int cover);
+    public abstract HitData rollHitLocation(int table, int side, int aimedLocation,
+                                            AimingMode aimingMode, int cover);
 
     /**
      * Rolls up a hit location

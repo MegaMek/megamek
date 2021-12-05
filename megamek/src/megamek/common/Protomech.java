@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.common.enums.AimingMode;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -674,22 +675,19 @@ public class Protomech extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+        if ((aimedLocation != LOC_NONE) && aimingMode.isImmobile()) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
 
         }

@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -2155,8 +2156,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     /*
@@ -2165,27 +2165,22 @@ public abstract class Mech extends Entity {
      * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
 
-        if ((table == ToHitData.HIT_NORMAL)
-                || (table == ToHitData.HIT_PARTIAL_COVER)) {
+        if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
             roll = Compute.d6(2);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences()
-                        .getMekHitLocLog();
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");

@@ -19,6 +19,7 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.util.List;
 
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
@@ -435,10 +436,11 @@ public class QuadMech extends Mech {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
-        int roll = -1;
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
+        int roll;
 
-        if ((aimedLocation != LOC_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -494,7 +496,7 @@ public class QuadMech extends Mech {
                         if ((getCrew().hasEdgeRemaining()
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, cover, aimingMode);
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
                         } // if

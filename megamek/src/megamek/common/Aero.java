@@ -3334,7 +3334,7 @@ public class Aero extends Entity implements IAero, IBomber {
             return false;
         }
 
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
 
         // Additional restrictions for hidden units
         if (isHidden()) {

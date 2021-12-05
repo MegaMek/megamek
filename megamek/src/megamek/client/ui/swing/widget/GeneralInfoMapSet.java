@@ -43,11 +43,7 @@ import megamek.common.QuadVee;
 import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.IOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
+import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -562,11 +558,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     }
 
     /**
-     * Add all options from the given IOptions instance into an array of PMSimpleLabel elements.
-     * @param optionsInstance IOptions instance
+     * Add all options from the given AbstractOptions instance into an array of PMSimpleLabel elements.
+     * @param optionsInstance AbstractOptions instance
      * @param quirksAndPartReps
      */
-    public void addOptionsToList(IOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
+    public void addOptionsToList(AbstractOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {

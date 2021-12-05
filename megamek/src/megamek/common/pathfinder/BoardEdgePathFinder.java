@@ -29,7 +29,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
@@ -512,7 +512,7 @@ public class BoardEdgePathFinder {
     protected MoveLegalityIndicator isLegalMove(MovePath movePath) {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
-        IHex destHex = board.getHex(dest);
+        Hex destHex = board.getHex(dest);
         Building destinationBuilding = board.getBuildingAt(dest);
         
         return isLegalMove(movePath, destHex, destinationBuilding);
@@ -527,11 +527,11 @@ public class BoardEdgePathFinder {
      * @param destinationBuilding the building at the end of the path, can be null
      * @return Whether or not the given move path is "legal" in the context of this pathfinder.
      */
-    private MoveLegalityIndicator isLegalMove(MovePath movePath, IHex destHex, Building destinationBuilding) {        
+    private MoveLegalityIndicator isLegalMove(MovePath movePath, Hex destHex, Building destinationBuilding) {        
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         Coords src = movePath.getSecondLastStep().getPosition();
-        IHex srcHex = board.getHex(src);
+        Hex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
 
         MoveLegalityIndicator mli = new MoveLegalityIndicator();
@@ -625,7 +625,7 @@ public class BoardEdgePathFinder {
      * @param entity The entity to check
      * @return The effective elevation
      */
-    public static int calculateUnitElevationInHex(IHex hex, Entity entity, boolean isHovercraft, boolean isAmphibious) {
+    public static int calculateUnitElevationInHex(Hex hex, Entity entity, boolean isHovercraft, boolean isAmphibious) {
         return calculateUnitElevationInHex(hex, entity, isHovercraft, isAmphibious, false);
     }
     
@@ -636,7 +636,7 @@ public class BoardEdgePathFinder {
      * @param bridgeTop Whether we're going on top of a bridge or under it
      * @return The effective elevation
      */
-    public static int calculateUnitElevationInHex(IHex hex, Entity entity, boolean isHovercraft, boolean isAmphibious, boolean useBridgeTop) {
+    public static int calculateUnitElevationInHex(Hex hex, Entity entity, boolean isHovercraft, boolean isAmphibious, boolean useBridgeTop) {
         // we calculate the height of a hex as "on the ground" by default
         // Special exceptions:
         // We are a mech, which can hop on top of some buildings

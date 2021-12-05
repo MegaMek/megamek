@@ -203,8 +203,8 @@ public class LargeSupportTank extends SupportTank {
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            IHex srcHex = game.getBoard().getHex(src);
-            IHex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = game.getBoard().getHex(src);
+            Hex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                         getPosition(), 1, getElevation(), srcHex.floor(),
@@ -397,7 +397,7 @@ public class LargeSupportTank extends SupportTank {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         // Additional restrictions for hidden large support tanks
         if (isHidden()) {
             // Can't deploy in paved hexes

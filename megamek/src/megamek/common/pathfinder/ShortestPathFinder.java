@@ -10,7 +10,7 @@ import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -377,7 +377,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         if (ignore || !board.onGround() || (mp.getFinalElevation() != 0)) {
             return 0;
         }
-        IHex currHex = board.getHex(mp.getFinalCoords());
+        Hex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
             MegaMek.getLogger().debug("getLevelDiff: currHex was null!" +
                                "\nStart: " + mp.getStartCoords() +
@@ -385,7 +385,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                                "\nPath: " + mp.toString());
             return 0;
         }
-        IHex destHex = board.getHex(dest);
+        Hex destHex = board.getHex(dest);
         if (destHex == null) {
             MegaMek.getLogger().debug("getLevelDiff: destHex was null!" +
                                "\nStart: " + mp.getStartCoords() +
@@ -413,7 +413,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         if (mp.isJumping()) {
             return 0;
         }
-        IHex destHex = board.getHex(dest);
+        Hex destHex = board.getHex(dest);
         int currElevation = mp.getFinalElevation();
         // Get elevation in destination hex, ignoring buildings
         int destElevation = ent.elevationOccupied(destHex,

@@ -1,43 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.ConvFighter;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Hex;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
@@ -52,13 +30,7 @@ import org.mockito.Mockito;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -1246,7 +1218,7 @@ public class BasicPathRankerTest {
     private IBoard generateMockBoard() {
         // we'll be on a nice, empty, 20x20 board, not in space.
         final IBoard mockBoard = Mockito.mock(Board.class);
-        final IHex mockHex = new Hex();
+        final Hex mockHex = new Hex();
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
         Mockito.when(mockBoard.inSpace()).thenReturn(false);
@@ -1330,10 +1302,10 @@ public class BasicPathRankerTest {
         final Coords testCoordsThree = new Coords(10, 9);
         final Coords testFinalCoords = new Coords(10, 10);
 
-        final IHex mockHexOne = Mockito.mock(IHex.class);
-        final IHex mockHexTwo = Mockito.mock(IHex.class);
-        final IHex mockHexThree = Mockito.mock(IHex.class);
-        final IHex mockFinalHex = Mockito.mock(IHex.class);
+        final Hex mockHexOne = Mockito.mock(Hex.class);
+        final Hex mockHexTwo = Mockito.mock(Hex.class);
+        final Hex mockHexThree = Mockito.mock(Hex.class);
+        final Hex mockFinalHex = Mockito.mock(Hex.class);
         Mockito.when(mockHexOne.getTerrainTypes()).thenReturn(new int[0]);
         Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
         Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);

@@ -125,8 +125,8 @@ public class TestBot extends BotClient {
             Iterator<Entity> i = getEntitiesOwned().iterator();
             boolean short_circuit = false;
 
-            List<Thread> threads = new ArrayList<Thread>();
-            List<CalculateEntityMove> tasks = new ArrayList<CalculateEntityMove>();
+            List<Thread> threads = new ArrayList<>();
+            List<CalculateEntityMove> tasks = new ArrayList<>();
             while (i.hasNext() && !short_circuit) {
                 Entity entity = i.next();
 
@@ -185,7 +185,7 @@ public class TestBot extends BotClient {
                     short_circuit = true;
                 } else if (!cen.moved) {
                     if (result.length < 6) {
-                        min = result.length > 0 ? (MoveOption) result[0] : null;
+                        min = result.length > 0 ? result[0] : null;
                         short_circuit = true;
                     }
                     possible.add(result);
@@ -262,7 +262,7 @@ public class TestBot extends BotClient {
                              || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                                  && ((test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA)
                                      || (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB))))
-                            && (equip.isJammed() == true)) {
+                            && equip.isJammed()) {
                             rac_damage = rac_damage + (4 * (test_weapon.getDamage()));
                         } else {
                             if (equip.canFire()) {
@@ -284,11 +284,8 @@ public class TestBot extends BotClient {
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {
                             if (enemy.isVisibleToEnemy()) {
-                                if (min.getCEntity().entity.getPosition()
-                                                           .distance(enemy.getPosition()) < check_range) {
-                                    check_range = min.getCEntity().entity
-                                            .getPosition().distance(
-                                                    enemy.getPosition());
+                                if (min.getCEntity().entity.getPosition().distance(enemy.getPosition()) < check_range) {
+                                    check_range = min.getCEntity().entity.getPosition().distance(enemy.getPosition());
                                 }
                             }
                         }
@@ -717,10 +714,9 @@ public class TestBot extends BotClient {
                           / enemy_array.size();
             // fix for hiding in level 2 water
             // To a greedy bot, it always seems nice to stay in here...
-            IHex h = game.getBoard().getHex(option.getFinalCoords());
+            Hex h = game.getBoard().getHex(option.getFinalCoords());
             if (h.containsTerrain(Terrains.WATER)
-                && (h.surface() > (self.getEntity().getElevation() + ((option
-                    .getFinalProne()) ? 0 : 1)))) {
+                    && (h.getLevel() > (self.getEntity().getElevation() + ((option.getFinalProne()) ? 0 : 1)))) {
                 double mod = ((self.getEntity().heat + option
                         .getMovementheatBuildup()) <= 7) ? 100 : 30;
                 adjustment += self.bv / mod;

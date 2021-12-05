@@ -1947,7 +1947,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * hex being moved to, returns the elevation the Entity will be considered
      * to be at w/r/t it's new hex.
      */
-    public int calcElevation(IHex current, IHex next, int assumedElevation,
+    public int calcElevation(Hex current, Hex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
         if (isAero()) {
@@ -1962,13 +1962,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
 
             // Find level equivalent of current elevation
-            int level = current.surface() + assumedElevation;
+            int level = current.getLevel() + assumedElevation;
             // For WiGE purposes, the surface of a hex with a building is the roof; otherwise it's the surface of the hex.
-            int curSurface = current.surface();
+            int curSurface = current.getLevel();
             if (current.containsTerrain(Terrains.BLDG_ELEV)) {
                 curSurface += current.terrainLevel(Terrains.BLDG_ELEV);
             }
-            int nextSurface = next.surface();
+            int nextSurface = next.getLevel();
             if (next.containsTerrain(Terrains.BLDG_ELEV)) {
                 nextSurface += next.terrainLevel(Terrains.BLDG_ELEV);
             }
@@ -1987,24 +1987,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 nextLevel = nextSurface + 1;
             }
             // Elevation is this height of the level above the actual surface elevation of the hex.
-            retVal = nextLevel - next.surface();
+            retVal = nextLevel - next.getLevel();
         } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
-            || ((getMovementMode() == EntityMovementMode.INF_UMU)
-                && next.containsTerrain(Terrains.WATER) && current
-                .containsTerrain(Terrains.WATER))
-            || (getMovementMode() == EntityMovementMode.VTOL)
-            || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
-            || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
-            retVal += current.surface();
-            retVal -= next.surface();
+                || ((getMovementMode() == EntityMovementMode.INF_UMU)
+                    && next.containsTerrain(Terrains.WATER) && current.containsTerrain(Terrains.WATER))
+                || (getMovementMode() == EntityMovementMode.VTOL)
+                || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
+                || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
+            retVal += current.getLevel();
+            retVal -= next.getLevel();
         } else {
             // if we're a hovercraft, surface ship, WIGE or a "fully amphibious" vehicle, we go on the water surface
             // without adjusting elevation
             if ((getMovementMode() != EntityMovementMode.HOVER)
-                && (getMovementMode() != EntityMovementMode.NAVAL)
-                && (getMovementMode() != EntityMovementMode.HYDROFOIL)
-                && (getMovementMode() != EntityMovementMode.WIGE)
-                && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+                    && (getMovementMode() != EntityMovementMode.NAVAL)
+                    && (getMovementMode() != EntityMovementMode.HYDROFOIL)
+                    && (getMovementMode() != EntityMovementMode.WIGE)
+                    && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
@@ -2031,51 +2030,39 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
 
-            if (next.containsTerrain(Terrains.BUILDING)
-                || current.containsTerrain(Terrains.BUILDING)) {
-                int bldcur = Math.max(-current.depth(true),
-                                      current.terrainLevel(Terrains.BLDG_ELEV));
-                int bldnex = Math.max(-next.depth(true),
-                                      next.terrainLevel(Terrains.BLDG_ELEV));
+            if (next.containsTerrain(Terrains.BUILDING) || current.containsTerrain(Terrains.BUILDING)) {
+                int bldcur = Math.max(-current.depth(true), current.terrainLevel(Terrains.BLDG_ELEV));
+                int bldnex = Math.max(-next.depth(true), next.terrainLevel(Terrains.BLDG_ELEV));
                 if (((assumedElevation == bldcur)
-                     && (climb || isJumpingNow) && (this instanceof Mech))
-                    || (retVal > bldnex)) {
+                         && (climb || isJumpingNow) && (this instanceof Mech))
+                        || (retVal > bldnex)) {
                     retVal = bldnex;
-                } else if ((bldnex + next.surface())
-                        > (bldcur + current.surface())) {
-                    int nextBasement =
-                            next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE);
-                    int collapsedBasement =
-                            next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
+                } else if ((bldnex + next.getLevel()) > (bldcur + current.getLevel())) {
+                    int nextBasement = next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE);
+                    int collapsedBasement = next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climb || isJumpingNow) {
-                        retVal = bldnex + next.surface();
+                        retVal = bldnex + next.getLevel();
                     // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0)
                             && (nextBasement > BasementType.NONE.getValue())
                             && (collapsedBasement > 0)) {
                         retVal -= BasementType.getType(
-                                next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                              .getDepth();
+                                next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
                     } else {
-                        retVal += current.surface();
-                        retVal -= next.surface();
+                        retVal += current.getLevel();
+                        retVal -= next.getLevel();
                     }
                 } else if (elevation == -(current.depth(true))) {
                     if (climb || isJumpingNow) {
-                        retVal = bldnex + next.surface();
-                    } else if ((current
-                                        .terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE
-                                        .getValue())
+                        retVal = bldnex + next.getLevel();
+                    } else if ((current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE.getValue())
                                && (assumedElevation == -BasementType
-                            .getType(
-                                    current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                            .getType(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                             .getDepth())) {
-                        retVal = -BasementType.getType(
-                                next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                              .getDepth();
+                        retVal = -BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
                     } else {
-                        retVal += current.surface();
-                        retVal -= next.surface();
+                        retVal += current.getLevel();
+                        retVal -= next.getLevel();
                     }
                 }
             }
@@ -2089,8 +2076,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 } else {
                     bridgeElev = 0;
                 }
-                int elevDiff = Math.abs((next.surface() + bridgeElev)
-                        - (current.surface() + assumedElevation));
+                int elevDiff = Math.abs((next.getLevel() + bridgeElev)
+                        - (current.getLevel() + assumedElevation));
                 if (elevDiff <= getMaxElevationChange()) {
                     // bridge is reachable at least
                     if (climb || !isElevationValid(retVal, next)) {
@@ -2105,7 +2092,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return retVal;
     }
 
-    public int calcElevation(IHex current, IHex next) {
+    public int calcElevation(Hex current, Hex next) {
         return calcElevation(current, next, elevation, false, false);
     }
 
@@ -2143,9 +2130,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!getGame().getBoard().contains(assumedPos)) {
             return false;
         }
-        IHex hex = getGame().getBoard().getHex(assumedPos);
-        int assumedAlt = assumedElevation + hex.surface();
-        int minAlt = hex.surface();
+        Hex hex = getGame().getBoard().getHex(assumedPos);
+        int assumedAlt = assumedElevation + hex.getLevel();
+        int minAlt = hex.getLevel();
         switch (getMovementMode()) {
             case INF_JUMP:
             case INF_LEG:
@@ -2164,7 +2151,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     return false;
                 }
                 if (hex.containsTerrain(Terrains.WATER)) {
-                    minAlt = hex.surface();
+                    minAlt = hex.getLevel();
                     break;
                 }
                 // else fall through
@@ -2186,7 +2173,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                     minElev = Math.max(minElev, hex.terrainLevel(Terrains.BLDG_ELEV) - hex.depth());
                 }
-                minAlt = minElev + hex.surface();
+                minAlt = minElev + hex.getLevel();
                 break;
             case AERODYNE:
             case SPHEROID:
@@ -2244,9 +2231,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!getGame().getBoard().contains(assumedPos)) {
             return false;
         }
-        IHex hex = getGame().getBoard().getHex(assumedPos);
-        int assumedAlt = assumedElevation + hex.surface();
-        int maxAlt = hex.surface();
+        Hex hex = getGame().getBoard().getHex(assumedPos);
+        int assumedAlt = assumedElevation + hex.getLevel();
+        int maxAlt = hex.getLevel();
         switch (getMovementMode()) {
             case INF_JUMP:
             case INF_LEG:
@@ -2254,7 +2241,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                 break;
             case VTOL:
-                maxAlt = hex.surface() + 50;
+                maxAlt = hex.getLevel() + 50;
                 // When under a bridge, restrict upward movement
                 // "- 1" to correct that height() reports one less than the rules (TW p.99) say
                 if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
@@ -2270,27 +2257,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
                 break;
             case SUBMARINE:
-                maxAlt = hex.surface() - getHeight();
+                maxAlt = hex.getLevel() - getHeight();
                 break;
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:
                 // UMU's won't allow the entity to break the surface of the
                 // water
-                maxAlt = hex.surface() - (getHeight() + 1);
+                maxAlt = hex.getLevel() - (getHeight() + 1);
                 break;
             case WIGE:
                 if (this instanceof LandAirMech) {
                     if (isAirborne()) {
                         return false;
                     }
-                    maxAlt = hex.surface() + 25;
+                    maxAlt = hex.getLevel() + 25;
                 } else if (this instanceof Protomech) {
-                    maxAlt = hex.surface() + 12;
+                    maxAlt = hex.getLevel() + 12;
                 } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    maxAlt = Math.max(hex.surface(), hex.terrainLevel(Terrains.BLDG_ELEV)) + 1;
+                    maxAlt = Math.max(hex.getLevel(), hex.terrainLevel(Terrains.BLDG_ELEV)) + 1;
                 } else {
-                    maxAlt = hex.surface() + 1;
+                    maxAlt = hex.getLevel() + 1;
                 }
                 break;
             case BIPED:
@@ -2311,8 +2298,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Check if this entity can legally occupy the requested elevation. Does not
      * check stacking, only terrain limitations
      */
-    public boolean isElevationValid(int assumedElevation, IHex hex) {
-        int assumedAlt = assumedElevation + hex.surface();
+    public boolean isElevationValid(int assumedElevation, Hex hex) {
+        int assumedAlt = assumedElevation + hex.getLevel();
         if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((this instanceof Infantry)
                     && (hex.containsTerrain(Terrains.BUILDING)
@@ -2348,15 +2335,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 .containsTerrain(Terrains.WATER))
                    || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
                    || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
-            if (this instanceof Infantry && ((Infantry)this).hasSpecialization(Infantry.SCUBA)
+            if (this instanceof Infantry && ((Infantry) this).hasSpecialization(Infantry.SCUBA)
                     && getMovementMode() == EntityMovementMode.INF_UMU) {
                 return assumedAlt >= Math.max(hex.floor(), -2)
-                        && (assumedAlt <= hex.surface());
+                        && (assumedAlt <= hex.getLevel());
             }
-            return ((assumedAlt >= hex.floor()) && (assumedAlt <= hex.surface()));
+            return ((assumedAlt >= hex.floor()) && (assumedAlt <= hex.getLevel()));
         } else if ((getMovementMode() == EntityMovementMode.HYDROFOIL)
                    || (getMovementMode() == EntityMovementMode.NAVAL)) {
-            return assumedAlt == hex.surface();
+            return assumedAlt == hex.getLevel();
         } else if (getMovementMode() == EntityMovementMode.WIGE) {
             // WiGEs can possibly be at any location above or on the surface
             return (assumedAlt >= hex.floor());
@@ -2366,13 +2353,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 || (((getMovementMode() == EntityMovementMode.HOVER) || hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) &&
                         hex.containsTerrain(Terrains.WATER))) {
                 // surface of ice is OK, surface of water is OK for hovers and "fully amphibious" units
-                if (assumedAlt == hex.surface()) {
+                if (assumedAlt == hex.getLevel()) {
                     return true;
                 }
             }
             // only mechs can move underwater
             if (hex.containsTerrain(Terrains.WATER)
-                && (assumedAlt < hex.surface()) && !(this instanceof Mech)
+                && (assumedAlt < hex.getLevel()) && !(this instanceof Mech)
                 && !(this instanceof Protomech)) {
                 return false;
             }
@@ -2396,7 +2383,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech)
                     || (this instanceof Infantry)) {
-                    if ((assumedAlt >= (hex.surface() - hex.depth(true)))
+                    if ((assumedAlt >= (hex.getLevel() - hex.depth(true)))
                         && (assumedAlt <= hex.ceiling())) {
                         return true;
                     }
@@ -2974,23 +2961,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Hovercraft, naval vessels, and hydrofoils move on the
      * surface of the water
      */
-    public int elevationOccupied(IHex hex) {
+    public int elevationOccupied(Hex hex) {
         return elevationOccupied(hex, getElevation());
     }
 
-    public int elevationOccupied(IHex hex, int elevation) {
+    public int elevationOccupied(Hex hex, int elevation) {
         if (hex == null) {
             return 0;
         }
         if ((movementMode == EntityMovementMode.VTOL)
             || (movementMode == EntityMovementMode.WIGE)) {
-            return hex.surface() + elevation;
+            return hex.getLevel() + elevation;
         } else if (((movementMode == EntityMovementMode.HOVER)
                     || (movementMode == EntityMovementMode.NAVAL)
                     || (movementMode == EntityMovementMode.HYDROFOIL)
                     || hex.containsTerrain(Terrains.ICE))
                    && hex.containsTerrain(Terrains.WATER)) {
-            return hex.surface();
+            return hex.getLevel();
         } else {
             return hex.floor();
         }
@@ -3014,7 +3001,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return !isAirborne();
         }
@@ -7283,8 +7270,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * carefully
      */
     public PilotingRollData checkRecklessMove(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
-            Coords curPos, IHex prevHex) {
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
+            Coords curPos, Hex prevHex) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
         if (step.isCareful()) {
@@ -7381,7 +7368,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if an entity is landing (from a jump) in heavy woods.
      */
     public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
@@ -7402,7 +7389,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is landing (from a jump) on ice-covered water.
      */
     public PilotingRollData checkLandingOnIce(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if (curHex.containsTerrain(Terrains.ICE)
@@ -7466,7 +7453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity might skid on pavement. If so, returns the target
      * roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
+    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex,
             EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
@@ -7502,7 +7489,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         /*
-         * IHex curHex = null; if (null != curPos) { curHex =
+         * Hex curHex = null; if (null != curPos) { curHex =
          * game.getBoard().getHex(curPos); }
          */
 
@@ -7559,7 +7546,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * roll for the piloting skill check.
      */
     public PilotingRollData checkRubbleMove(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         boolean enteringRubble = true;
@@ -7586,7 +7573,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * down. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkBogDown(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, int lastElev, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
@@ -7629,7 +7616,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, boolean isPavementStep) {
         if ((curHex.terrainLevel(Terrains.WATER) > 0)
             && (step.getElevation() < 0) && !lastPos.equals(curPos)
@@ -7719,8 +7706,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             || (prevPos.equals(curPos) && !(this instanceof Protomech))) {
             return 0;
         }
-        IHex curHex = game.getBoard().getHex(curPos);
-        IHex prevHex = game.getBoard().getHex(prevPos);
+        Hex curHex = game.getBoard().getHex(curPos);
+        Hex prevHex = game.getBoard().getHex(prevPos);
         // ineligible because of movement type or unit type
         if (isAirborne()) {
             return 0;
@@ -7938,7 +7925,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(+1, "assault vehicle");
         }
 
-        IHex currHex = game.getBoard().getHex(currPos);
+        Hex currHex = game.getBoard().getHex(currPos);
         if (movementMode != EntityMovementMode.HOVER
                 && movementMode != EntityMovementMode.VTOL
                 && movementMode != EntityMovementMode.WIGE) {
@@ -10030,7 +10017,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             return hex.containsTerrain(Terrains.BUILDING);
         }
         // only mechs and protos have physical attacks (except tank charges)
@@ -11139,8 +11126,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            IHex srcHex = game.getBoard().getHex(src);
-            IHex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = game.getBoard().getHex(src);
+            Hex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                                                                       getPosition(), 1, getElevation(), srcHex.floor(),
@@ -11283,7 +11270,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (isOffBoard() || !(isDeployed())) {
             return;
         }
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
 
         if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
@@ -11624,7 +11611,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
-                                          IHex prevHex, EntityMovementType overallMoveType,
+                                          Hex prevHex, EntityMovementType overallMoveType,
                                           MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
                                           Coords curPos, int distance) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -14934,12 +14921,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if the entity is underwater, else false.
      */
     public boolean isUnderwater() {
-        IHex occupiedHex = game.getBoard().getHex(getPosition());
-        if (occupiedHex.containsTerrain(Terrains.WATER)
-            && (relHeight() < occupiedHex.surface())) {
-            return true;
-        }
-        return false;
+        Hex occupiedHex = game.getBoard().getHex(getPosition());
+        return occupiedHex.containsTerrain(Terrains.WATER)
+                && (relHeight() < occupiedHex.getLevel());
     }
 
     public int getTechLevelYear() {

@@ -17,7 +17,7 @@ package megamek.common.actions;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
@@ -113,8 +113,8 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             }
         }
 
-        final IHex attHex = game.getBoard().getHex(ae.getPosition());
-        final IHex targHex = game.getBoard().getHex(target.getPosition());
+        final Hex attHex = game.getBoard().getHex(ae.getPosition());
+        final Hex targHex = game.getBoard().getHex(target.getPosition());
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }

@@ -85,12 +85,12 @@ public class VTOL extends Tank implements IBomber {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int,
+     * @see megamek.common.Entity#checkSkid(int, megamek.common.Hex, int,
      *      megamek.common.MoveStep, int, int, megamek.common.Coords,
      *      megamek.common.Coords, boolean, int)
      */
     @Override
-	public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex, EntityMovementType overallMoveType,
+	public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
 	        MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
 	        boolean isInfantry, int distance) {
 		PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -115,7 +115,7 @@ public class VTOL extends Tank implements IBomber {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes

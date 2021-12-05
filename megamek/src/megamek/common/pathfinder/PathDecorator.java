@@ -23,7 +23,7 @@ import java.util.Set;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.EntityMovementMode;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
@@ -175,7 +175,7 @@ public class PathDecorator {
         
         // get the hex that is in the direction we're facing
         Coords destinationCoords = source.getFinalCoords().translated(source.getFinalFacing());
-        IHex destHex = source.getGame().getBoard().getHex(destinationCoords);
+        Hex destHex = source.getGame().getBoard().getHex(destinationCoords);
         if (destHex == null) {
             return;
         }
@@ -187,7 +187,7 @@ public class PathDecorator {
             return;
         }
         
-        IHex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
+        Hex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
         int absHeight = srcHex.getLevel() + entityElevation;  
         int destElevation = absHeight - destHex.getLevel();
         int safeElevation = destHex.maxTerrainFeatureElevation(false);

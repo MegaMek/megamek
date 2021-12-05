@@ -2587,7 +2587,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         
         // If we clicked on a wooded hex with no other targets, clear woods
         if (targets.size() == 0) {
-            IHex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.JUNGLE)) {
                 targets.add(new HexTarget(pos, Targetable.TYPE_HEX_CLEAR));

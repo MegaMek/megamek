@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -37,7 +37,7 @@ public class ShowTileCommand extends ServerCommand {
             String str = "";
             Coords coord = new Coords(Integer.parseInt(args[1]) - 1, Integer
                                                                              .parseInt(args[2]) - 1);
-            IHex hex;
+            Hex hex;
 
             do {
                 hex = server.getGame().getBoard().getHex(coord);

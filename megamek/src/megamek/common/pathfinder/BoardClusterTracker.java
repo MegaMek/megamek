@@ -29,7 +29,7 @@ import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MiscType;
 import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
@@ -363,7 +363,7 @@ public class BoardClusterTracker {
         // the relative height comparison is handled elsewhere
         
         IBoard board = entity.getGame().getBoard();
-        IHex hex = board.getHex(coords);
+        Hex hex = board.getHex(coords);
         
         if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {
             return false;

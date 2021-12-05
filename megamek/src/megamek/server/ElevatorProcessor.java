@@ -53,7 +53,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
 
         for (Iterator<Coords> i = elevators[roll].positions.iterator(); i.hasNext();) {
             Coords c = i.next();
-            IHex hex = server.getGame().getBoard().getHex(c);
+            Hex hex = server.getGame().getBoard().getHex(c);
             Terrain terr = hex.getTerrain(Terrains.ELEVATOR);
             // Swap the elevator and hex elevations
             // Entity elevations are not adjusted. This makes sense for

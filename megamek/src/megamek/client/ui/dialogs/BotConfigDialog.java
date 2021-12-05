@@ -812,7 +812,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                     } else if (!board.getHex(coords).containsAnyTerrainOf(BUILDING, FUEL_TANK, BRIDGE)) {
                         content += Messages.getString("BotConfigDialog.hexListNoBg");
                     } else {
-                        final IHex hex = board.getHex(coords); 
+                        final Hex hex = board.getHex(coords); 
                         final Building bldg = board.getBuildingAt(coords);
                         if (hex.containsTerrain(BUILDING)) {
                             content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),

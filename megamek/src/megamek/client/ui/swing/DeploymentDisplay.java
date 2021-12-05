@@ -301,9 +301,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         int elevation = en.getElevation();
         // If elevation was set in lounge, try to preserve it
         // Server.processDeployment will adjust elevation, so we want to account for this
-        IHex hex = game.getBoard().getHex(en.getPosition());
+        Hex hex = game.getBoard().getHex(en.getPosition());
         if ((en instanceof VTOL) && (elevation >= 1)) {
-            elevation = Math.max(0, elevation - (hex.ceiling() - hex.surface() + 1));
+            elevation = Math.max(0, elevation - (hex.ceiling() - hex.getLevel() + 1));
         }
         // Deploy grounded WiGEs on the roof of a building, and airborne at least one elevation above the roof.
         if ((en.getMovementMode() == EntityMovementMode.WIGE) && hex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -438,7 +438,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         Coords moveto = b.getCoords();
         final IBoard board = clientgui.getClient().getGame().getBoard();
         final Game game = clientgui.getClient().getGame();
-        final IHex deployhex = board.getHex(moveto);
+        final Hex deployhex = board.getHex(moveto);
         final Building bldg = board.getBuildingAt(moveto);
         boolean isAero = ce().isAero();
         boolean isVTOL = ce() instanceof VTOL;
@@ -505,9 +505,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     // everything else goes to elevation 0, or on the floor of a
                     // water hex, except non-mechanized SCUBA infantry, which have a max depth of 2.
                 	if (deployhex.containsTerrain(Terrains.WATER) && (ce() instanceof Infantry) && ((Infantry)ce()).isNonMechSCUBA()) {
-                		ce().setElevation(Math.max(deployhex.floor() - deployhex.surface(), -2));
+                		ce().setElevation(Math.max(deployhex.floor() - deployhex.getLevel(), -2));
                 	} else {
-                		ce().setElevation(deployhex.floor() - deployhex.surface());
+                		ce().setElevation(deployhex.floor() - deployhex.getLevel());
                 	}
                 }
             }
@@ -575,7 +575,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     
     private boolean processBridgeDeploy(Coords moveto) {
         final IBoard board = clientgui.getClient().getGame().getBoard();
-        final IHex deployhex = board.getHex(moveto);
+        final Hex deployhex = board.getHex(moveto);
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);
         List<String> floors = new ArrayList<>(2);
@@ -599,7 +599,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 if(ce().isNaval() && (ce().getMovementMode() != EntityMovementMode.SUBMARINE)) {
                     ce().setElevation(0);
                 } else {
-                    ce().setElevation(deployhex.floor() - deployhex.surface());
+                    ce().setElevation(deployhex.floor() - deployhex.getLevel());
                 }
             }
             return true;

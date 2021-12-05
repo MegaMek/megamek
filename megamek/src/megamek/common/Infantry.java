@@ -551,7 +551,7 @@ public class Infantry extends Entity {
         if (!game.getBoard().contains(c)) {
             return true;
         }
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         // Taharqa: waiting to hear back from Welshie but I am going to assume
         // that units pulling artillery
         // should be treated as wheeled rather than motorized because otherwise
@@ -1486,12 +1486,12 @@ public class Infantry extends Entity {
      * can bog down
      */
     public PilotingRollData checkBogDown(MoveStep step,
-            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, int lastElev, boolean isPavementStep) {
         return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
     }
 
-    public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
+    public PilotingRollData checkBogDown(MoveStep step, Hex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
         PilotingRollData roll = new PilotingRollData(getId(), 4,
                 "entering boggy terrain");
@@ -2678,7 +2678,7 @@ public class Infantry extends Entity {
     }
 
     public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE,
                          "Infantry cannot fall");

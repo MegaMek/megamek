@@ -26,7 +26,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
@@ -197,7 +197,7 @@ public class MoveOption extends MovePath {
         }
 
         //Don't jump onto a building with CF < weight
-        IHex h = getGame().getBoard().getHex(getFinalCoords());
+        Hex h = getGame().getBoard().getHex(getFinalCoords());
         if((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
             if (cf < getEntity().getWeight()) {
@@ -346,20 +346,20 @@ public class MoveOption extends MovePath {
         }
         toHitd.append(Compute.getAttackerTerrainModifier(getGame(), te.getId()));
 
-        IHex attHex = getGame().getBoard().getHex(ae.getPosition());
-        if (attHex.containsTerrain(Terrains.WATER) && (attHex.surface() > attEl)) {
+        Hex attHex = getGame().getBoard().getHex(ae.getPosition());
+        if (attHex.containsTerrain(Terrains.WATER) && (attHex.getLevel() > attEl)) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
             toHitd.addModifier(TargetRoll.IMPOSSIBLE,
                     "Defender in depth 2+ water");
-        } else if ((attHex.surface() == attEl) && (ae.height() > 0)) {
+        } else if ((attHex.getLevel() == attEl) && (ae.height() > 0)) {
             apc = true;
         }
-        IHex targHex = getGame().getBoard().getHex(te.getPosition());
+        Hex targHex = getGame().getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
-            if ((targHex.surface() == targEl) && (te.height() > 0)) {
+            if ((targHex.getLevel() == targEl) && (te.height() > 0)) {
                 pc = true;
-            } else if (targHex.surface() > targEl) {
+            } else if (targHex.getLevel() > targEl) {
                 toHita.addModifier(TargetRoll.IMPOSSIBLE,
                         "Attacker in depth 2+ water");
                 toHitd.addModifier(TargetRoll.IMPOSSIBLE,
@@ -513,8 +513,8 @@ public class MoveOption extends MovePath {
         max *= mod;
         if (!enemy.getFinalProne() && (distance == 1)
                 && (enemy_firing_arcs[0] != ToHitData.SIDE_REAR)) {
-            IHex h = getGame().getBoard().getHex(getFinalCoords());
-            IHex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
+            Hex h = getGame().getBoard().getHex(getFinalCoords());
+            Hex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getLevel() - h1.getLevel()) < 2) {
                 max += ((((((h1.getLevel() - h.getLevel()) == 1) || getFinalProne()) ? 5
                         : 1)

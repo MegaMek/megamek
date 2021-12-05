@@ -113,7 +113,7 @@ public class BuildingTarget implements Targetable {
         // Note that height of 0 is a single story building.
         // Bridges are always height 0, and the BRIDGE_ELEV indicates the
         // elevation
-        IHex targetHex = board.getHex(position);
+        Hex targetHex = board.getHex(position);
         elevation = Math.max(-targetHex.depth(), targetHex
                 .terrainLevel(Terrains.BRIDGE_ELEV));
         height = targetHex.terrainLevel(Terrains.BLDG_ELEV);

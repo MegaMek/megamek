@@ -16,7 +16,7 @@ package megamek.common.actions;
 
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -117,7 +117,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Check terrain.
-        IHex hex = game.getBoard().getHex(ae.getPosition());
+        Hex hex = game.getBoard().getHex(ae.getPosition());
         if (hex.containsTerrain(Terrains.WOODS)
                 || hex.containsTerrain(Terrains.JUNGLE)
                 || hex.containsTerrain(Terrains.ROUGH)

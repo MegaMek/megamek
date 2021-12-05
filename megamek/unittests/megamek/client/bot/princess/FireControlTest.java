@@ -30,7 +30,7 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Terrain;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
@@ -158,7 +158,7 @@ public class FireControlTest {
     private Crew mockCrew;
 
     private GameOptions mockGameOptions;
-    private IHex mockHex;
+    private Hex mockHex;
     private IBoard mockBoard;
     private Game mockGame;
 
@@ -221,7 +221,7 @@ public class FireControlTest {
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)))
             .thenReturn(true);
 
-        mockHex = Mockito.mock(IHex.class);
+        mockHex = Mockito.mock(Hex.class);
 
         mockBoard = Mockito.mock(IBoard.class);
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
@@ -1353,7 +1353,7 @@ public class FireControlTest {
         Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
         Mockito.doReturn(true).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
                                                              Mockito.any(Coords.class), Mockito.anyInt());
-        final IHex mockShooterHex = Mockito.mock(IHex.class);
+        final Hex mockShooterHex = Mockito.mock(Hex.class);
         Mockito.when(mockShooterHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockShooterState.getPosition()))).thenReturn(mockShooterHex);
         Mockito.when(mockShooter.getElevation()).thenReturn(0);
@@ -1368,7 +1368,7 @@ public class FireControlTest {
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG)).thenReturn(true);
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)).thenReturn(true);
 
-        final IHex mockTargetHex = Mockito.mock(IHex.class);
+        final Hex mockTargetHex = Mockito.mock(Hex.class);
         Mockito.when(mockTargetHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetState.getPosition()))).thenReturn(mockTargetHex);
         Mockito.when(mockTarget.getElevation()).thenReturn(0);
@@ -1646,7 +1646,7 @@ public class FireControlTest {
                               Mockito.any(Coords.class), Mockito.any(Coords.class), Mockito.anyBoolean());
         Mockito.doReturn(new ToHitData()).when(spyLosEffects).losModifiers(Mockito.eq(mockGame));
 
-        final IHex mockTargetHex = Mockito.mock(IHex.class);
+        final Hex mockTargetHex = Mockito.mock(Hex.class);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetCoords))).thenReturn(mockTargetHex);
         Mockito.when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false); // todo test water
 

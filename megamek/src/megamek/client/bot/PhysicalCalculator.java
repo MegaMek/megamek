@@ -23,7 +23,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -572,7 +572,7 @@ public final class PhysicalCalculator {
 
         // Conventional infantry in the open suffer double damage.
         if (to.isConventionalInfantry()) {
-            IHex e_hex = game.getBoard().getHex(to.getPosition());
+            Hex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 bestDmg *= 2.0;

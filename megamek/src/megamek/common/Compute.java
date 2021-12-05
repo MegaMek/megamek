@@ -539,8 +539,8 @@ public class Compute {
             boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
             int destElevation, MoveStep moveStep) {
         final Entity entity = game.getEntity(entityId);
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
         int delta_alt = (destElevation + destHex.getLevel())
                         - (srcElevation + srcHex.getLevel());
@@ -593,7 +593,7 @@ public class Compute {
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying or QuadVee in vehicle mode.
         if ((movementType != EntityMovementType.MOVE_JUMP)
-                && !(entity.getElevation() > destHex.surface())
+                && !(entity.getElevation() > destHex.getLevel())
                 && !((entity.getMovementMode() == EntityMovementMode.HOVER)
                         || (entity.getMovementMode() == EntityMovementMode.NAVAL)
                         || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
@@ -729,8 +729,8 @@ public class Compute {
     public static boolean isValidDisplacement(Game game, int entityId,
             Coords src, Coords dest) {
         final Entity entity = game.getEntity(entityId);
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final ArrayList<Coords> intervening = Coords.intervening(src, dest);
         final int direction = src.direction(dest);
 
@@ -772,7 +772,7 @@ public class Compute {
             if (!game.getBoard().contains(c)) {
                 continue;
             }
-            final IHex hex = game.getBoard().getHex(c);
+            final Hex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex)
                          - entity.elevationOccupied(srcHex);
             if (change > entity.getMaxElevationChange()) {
@@ -857,7 +857,7 @@ public class Compute {
                     // friendly unit here, try next hex
                     continue;
                 }
-                IHex hex = game.getBoard().getHex(dest);
+                Hex hex = game.getBoard().getHex(dest);
                 int elevation = entity.elevationOccupied(hex);
                 if (elevation > highestElev) {
                     highestElev = elevation;
@@ -878,7 +878,7 @@ public class Compute {
             Coords dest = src.translated((direction + offset) % 6);
             if (Compute.isValidDisplacement(game, entityId, src, dest)
                 && game.getBoard().contains(dest)) {
-                IHex hex = game.getBoard().getHex(dest);
+                Hex hex = game.getBoard().getHex(dest);
                 int elevation = entity.elevationOccupied(hex);
                 if (elevation > highestElev) {
                     highestElev = elevation;
@@ -902,8 +902,8 @@ public class Compute {
                                                      Coords src, int direction) {
         Coords first = src.translated((direction + 1) % 6);
         Coords second = src.translated((direction + 5) % 6);
-        IHex firstHex = game.getBoard().getHex(first);
-        IHex secondHex = game.getBoard().getHex(second);
+        Hex firstHex = game.getBoard().getHex(first);
+        Hex secondHex = game.getBoard().getHex(second);
         Entity entity = game.getEntity(entityId);
 
         if ((firstHex == null) || (secondHex == null)) {
@@ -1162,7 +1162,7 @@ public class Compute {
         }
 
         // is water involved?
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         int targTop = target.relHeight();
         int targBottom = target.getElevation();
 
@@ -2634,7 +2634,7 @@ public class Compute {
      */
     public static ToHitData getAttackerTerrainModifier(Game game, int entityId) {
         final Entity attacker = game.getEntity(entityId);
-        final IHex hex = game.getBoard().getHex(attacker.getPosition());
+        final Hex hex = game.getBoard().getHex(attacker.getPosition());
 
         ToHitData toHit = new ToHitData();
 
@@ -2678,7 +2678,7 @@ public class Compute {
         }
         
         Entity entityTarget = null;
-        IHex hex = game.getBoard().getHex(t.getPosition());
+        Hex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
             entityTarget = (Entity) t;
             if (hex == null) {
@@ -2708,7 +2708,7 @@ public class Compute {
                 || !hex.containsTerrain(Terrains.SMOKE);
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
-                               && (entityTarget.getElevation() < hex.surface());
+                               && (entityTarget.getElevation() < hex.getLevel());
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -2805,7 +2805,7 @@ public class Compute {
     }
 
     public static ToHitData getStrafingTerrainModifier(Game game,
-                                                       int eistatus, IHex hex) {
+                                                       int eistatus, Hex hex) {
         ToHitData toHit = new ToHitData();
         // Smoke and woods. With L3, the effects STACK.
         int woodsLevel = hex.terrainLevel(Terrains.WOODS);
@@ -2894,7 +2894,7 @@ public class Compute {
             }
         } else if (targetType == Targetable.TYPE_HEX_CLEAR) {
             // clearing a hex - the "HP" is the terrain factor of destroyable terrain on this hex
-            IHex mhex = game.getBoard().getHex(position);
+            Hex mhex = game.getBoard().getHex(position);
             int totalTF = 0;
             for (final int terrainType : mhex.getTerrainTypes()) {
                 totalTF += mhex.containsTerrain(terrainType) ? mhex.getTerrain(terrainType).getTerrainFactor() : 0;
@@ -3392,7 +3392,7 @@ public class Compute {
 
         // Conventional infantry take double damage in the open
         if (g.getEntity(waa.getTargetId()).isConventionalInfantry()) {
-            IHex e_hex = g.getBoard().getHex(
+            Hex e_hex = g.getBoard().getHex(
                     g.getEntity(waa.getTargetId()).getPosition().getX(),
                     g.getEntity(waa.getTargetId()).getPosition().getY());
             if (!e_hex.containsTerrain(Terrains.WOODS)
@@ -5176,7 +5176,7 @@ public class Compute {
         // affected
         int metalContent = 0;
         for (Coords c : coords) {
-            IHex hex = board.getHex(c);
+            Hex hex = board.getHex(c);
             if (hex != null && hex.containsTerrain(Terrains.METAL_CONTENT)) {
                 metalContent += hex.terrainLevel(Terrains.METAL_CONTENT);
             }
@@ -5843,8 +5843,8 @@ public class Compute {
      */
     public static boolean canMoveOnPavement(Game game, Coords src,
             Coords dest, MoveStep moveStep) {
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final int src2destDir = src.direction(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;
@@ -5982,7 +5982,7 @@ public class Compute {
     public static boolean isInBuilding(Game game, int entityElev, Coords coords) {
 
         // Get the Hex at those coordinates.
-        final IHex curHex = game.getBoard().getHex(coords);
+        final Hex curHex = game.getBoard().getHex(coords);
 
         if (curHex == null) {
             // probably off board artillery or reinforcement
@@ -6587,7 +6587,7 @@ public class Compute {
     }
 
     public static boolean isInUrbanEnvironment(Game game, Coords unitPOS) {
-        IHex unitHex = game.getBoard().getHex(unitPOS);
+        Hex unitHex = game.getBoard().getHex(unitPOS);
 
         if (unitHex.containsTerrain(Terrains.PAVEMENT)
                 || unitHex.containsTerrain(Terrains.BUILDING)
@@ -6598,7 +6598,7 @@ public class Compute {
         // loop through adjacent hexes
         for (int dir = 0; dir <= 5; dir++) {
             Coords adjCoords = unitPOS.translated(dir);
-            IHex adjHex = game.getBoard().getHex(adjCoords);
+            Hex adjHex = game.getBoard().getHex(adjCoords);
 
             if (!game.getBoard().contains(adjCoords)) {
                 continue;
@@ -6716,7 +6716,7 @@ public class Compute {
         ArrayList<Coords> acceptable = new ArrayList<Coords>();
 
         for (Coords pos : ring) {
-            IHex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getBoard().getHex(pos);
             if (null == hex) {
                 continue;
             }
@@ -6748,7 +6748,7 @@ public class Compute {
         // the rules don't say that the unit must be facing loader
         // so lets take the ring
         for (Coords c : pos.allAdjacent()) {
-            IHex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard().getHex(c);
             if (null == hex) {
                 continue;
             }
@@ -6760,7 +6760,7 @@ public class Compute {
                     && ((other instanceof SmallCraft) || other.getTowing() != Entity.NONE || other.getTowedBy() != Entity.NONE)
                     && other.canLoad(en)
                     && !other.isAirborne()
-                    && (Math.abs((hex.surface() + other.getElevation())
+                    && (Math.abs((hex.getLevel() + other.getElevation())
                                  - elev) < 3) && !mountable.contains(other)) {
                     mountable.add(other);
                 }

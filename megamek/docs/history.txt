@@ -15,7 +15,7 @@ VERSION HISTORY:
 + Issue #3237: Prevent VTOLs from getting stuck in a swamp while going up and down in the air
 + PR #3249: Ammo/Weapon techbase mismatch fixes + one instance of missing ammo
 + Increasing MegaMek's base RAM allocation to 2 GB
-+ Data:Updating mechfiles (fluff, some errata) new sprites updated quirks (includes fix for #3253).
++ Data: Updating mechfiles (fluff, some errata) new sprites updated quirks (includes fix for #3253).
 + Updating Mechview to have a line break between fluff text. 
 + Issue #3255: Add missing TSM BV modifier (x2) to Claws
 + PR #3625: Don't show ECM bubbles for hidden hostile units
@@ -24,6 +24,7 @@ VERSION HISTORY:
 + PR #3261: Allows active probes to reveal hidden units "on the move" as per TacOps Active Probe rules.
 + PR #3288: princess: ignoreTarget: unitID
 + PR #3292: Quad Mechs no longer swap cover and aiming mode when doing a head hit edge reroll
++ PR #3289: Upgrading Mockito to 4.1.0
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

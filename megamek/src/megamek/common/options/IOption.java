@@ -1,23 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * GameOption.java
- *
- * Created on April 26, 2002, 10:50 AM
- */
-
 package megamek.common.options;
 
 /**
@@ -29,12 +22,12 @@ package megamek.common.options;
  * dialog enough data to allow the user to set the option.
  * 
  * @author Ben
- * @version
+ * @since April 26, 2002, 10:50 AM
  */
 public interface IOption extends IBasicOption, IOptionInfo {
 
     /**
-     * Booolean option type
+     * Boolean option type
      */
     public static final int BOOLEAN = 0;
 
@@ -54,7 +47,7 @@ public interface IOption extends IBasicOption, IOptionInfo {
     public static final int STRING = 3;
 
     /**
-     * Choise option type
+     * Choice option type
      */
     public static final int CHOICE = 4;
 
@@ -63,7 +56,7 @@ public interface IOption extends IBasicOption, IOptionInfo {
      * 
      * @return option container
      */
-    public abstract IOptions getOwner();
+    AbstractOptions getOwner();
 
     /**
      * Returns option type.
@@ -71,7 +64,7 @@ public interface IOption extends IBasicOption, IOptionInfo {
      * @return option type
      * @see IOption#BOOLEAN etc
      */
-    public abstract int getType();
+    int getType();
 
     /**
      * Returns default option value

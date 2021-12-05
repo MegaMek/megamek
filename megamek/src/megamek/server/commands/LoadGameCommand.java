@@ -13,7 +13,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.net.AbstractConnection;
 import megamek.server.Server;
 
@@ -60,12 +60,11 @@ public class LoadGameCommand extends ServerCommand {
     }
 
     private void load(File f, int connId) {
-        server.sendServerChat(server.getPlayer(connId).getName()
-                + " loaded a new game.");
+        server.sendServerChat(server.getPlayer(connId).getName() + " loaded a new game.");
         // Keep track of the current id to name mapping
         Map<String, Integer> nameToIdMap = new HashMap<>();
         Map<Integer, String> idToNameMap = new HashMap<>();
-        for (IPlayer p: server.getGame().getPlayersVector()) {
+        for (Player p: server.getGame().getPlayersVector()) {
             nameToIdMap.put(p.getName(), p.getId());
             idToNameMap.put(p.getId(), p.getName());
         }

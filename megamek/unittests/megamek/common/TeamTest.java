@@ -34,21 +34,21 @@ public class TeamTest {
     @Test
     public void testTotalInitBonus() {
         Team testTeam = new Team(1);
-        IPlayer mockPlayer1, mockPlayer2, mockPlayer3;
+        Player mockPlayer1, mockPlayer2, mockPlayer3;
         // Setup Player 1
-        mockPlayer1 = Mockito.mock(IPlayer.class);
+        mockPlayer1 = Mockito.mock(Player.class);
         Mockito.when(mockPlayer1.getConstantInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer1.getTurnInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer1.getInitCompensationBonus()).thenReturn(0);
         Mockito.when(mockPlayer1.getCommandBonus()).thenReturn(0);
         // Setup Player 2
-        mockPlayer2 = Mockito.mock(IPlayer.class);
+        mockPlayer2 = Mockito.mock(Player.class);
         Mockito.when(mockPlayer2.getConstantInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getTurnInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getInitCompensationBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getCommandBonus()).thenReturn(0);
         // Setup Player 3
-        mockPlayer3 = Mockito.mock(IPlayer.class);
+        mockPlayer3 = Mockito.mock(Player.class);
         Mockito.when(mockPlayer2.getConstantInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getTurnInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getInitCompensationBonus()).thenReturn(0);

@@ -204,7 +204,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private String shortName = null;
     private int duplicateMarker = 1;
 
-    protected transient IPlayer owner;
+    protected transient Player owner;
     protected int ownerId;
     protected int traitorId = -1;
 
@@ -516,7 +516,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Need to keep a vector of entity IDs loaded in the chat lounge
      */
-    private Vector<Integer> loadedKeepers = new Vector<Integer>();
+    private Vector<Integer> loadedKeepers = new Vector<>();
 
     /**
      * The id of the <code>Entity</code> that is the current target of a swarm
@@ -585,13 +585,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Check to see who has seen this Entity Used for Double Blind Reports.
      */
-    private Vector<IPlayer> entitySeenBy = new Vector<IPlayer>();
+    private Vector<Player> entitySeenBy = new Vector<>();
 
     /**
      * Check to see what players have detected this entity with sensors, for
      * double blind play.
      */
-    private Vector<IPlayer> entityDetectedBy = new Vector<IPlayer>();
+    private Vector<Player> entityDetectedBy = new Vector<>();
 
     /**
      * Contains the ids of all entities that have been detected by this entity's sensors.
@@ -600,7 +600,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Entities need only be cleared from this when they move out of range,
      * are destroyed, or move off the board
      */
-    public Set<Integer> sensorContacts = new HashSet<Integer>();
+    public Set<Integer> sensorContacts = new HashSet<>();
 
     /**
      * Contains the ids of all entities that this entity has established a firing solution on.
@@ -609,7 +609,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Entities need only be cleared from this when they move out of range,
      * are destroyed, or move off the board
      */
-    public Set<Integer> firingSolutions = new HashSet<Integer>();
+    public Set<Integer> firingSolutions = new HashSet<>();
 
     /**
      * Whether this entity is captured or not.
@@ -1008,10 +1008,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Make sure the owner is set.
         if (null == owner) {
             if (Entity.NONE == ownerId) {
-                throw new IllegalStateException(
-                        "Entity doesn't know its owner's ID.");
+                throw new IllegalStateException("Entity doesn't know its owner's ID.");
             }
-            IPlayer player = game.getPlayer(ownerId);
+            Player player = game.getPlayer(ownerId);
             if (null == player) {
                 System.err.println("Entity can't find player #" + ownerId);
             } else {
@@ -1019,7 +1018,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         // also set game for our transports
-        // they need it to return correct entites, because they store just the
+        // they need it to return correct entities, because they store just the
         // IDs
         for (Transporter transport : getTransports()) {
             transport.setGame(game);
@@ -1463,7 +1462,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the player that "owns" this entity.
      */
-    public IPlayer getOwner() {
+    public Player getOwner() {
         // Replaced 24 NOV 2020
         // Server and other central classes already used game.getplayer(entity.getownerID())
         // instead of entity.getowner() and it is noted that getOwner is not reliable. 
@@ -1479,7 +1478,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    public void setOwner(IPlayer player) {
+    public void setOwner(Player player) {
         owner = player;
         ownerId = player.getId();
 
@@ -9599,17 +9598,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return detectedByEnemy;
     }
 
-    public void addBeenSeenBy(IPlayer p) {
+    public void addBeenSeenBy(Player p) {
         if ((p != null) && !entitySeenBy.contains(p)) {
             entitySeenBy.add(p);
         }
     }
 
-    public Vector<IPlayer> getWhoCanSee() {
+    public Vector<Player> getWhoCanSee() {
         return entitySeenBy;
     }
 
-    public void setWhoCanSee(Vector<IPlayer> entitySeenBy) {
+    public void setWhoCanSee(Vector<Player> entitySeenBy) {
         this.entitySeenBy = entitySeenBy;
     }
 
@@ -9618,11 +9617,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the the given player can see this Entity, including
+     * Returns true if the given player can see this Entity, including
      * teammates if team_vision is on.
      *
      */
-    public boolean hasSeenEntity(IPlayer p) {
+    public boolean hasSeenEntity(Player p) {
         // No double blind - everyone sees everything
         if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
@@ -9643,7 +9642,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Observers can see units spotted by an enemy
         if (p.isObserver()) {
-            for (IPlayer other : entitySeenBy) {
+            for (Player other : entitySeenBy) {
                 if (other.isEnemyOf(getOwner())) {
                     return true;
                 }
@@ -9656,9 +9655,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If team vision, see if any players on team can see
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
-            for (IPlayer teammate : game.getPlayersVector()) {
-                if ((teammate.getTeam() == p.getTeam())
-                        && entitySeenBy.contains(teammate)) {
+            for (Player teammate : game.getPlayersVector()) {
+                if ((teammate.getTeam() == p.getTeam()) && entitySeenBy.contains(teammate)) {
                     return true;
                 }
             }
@@ -9667,28 +9665,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public void addBeenDetectedBy(IPlayer p) {
+    public void addBeenDetectedBy(Player p) {
         // This is for saved-game backwards compatibility
         if (entityDetectedBy == null) {
-            entityDetectedBy = new Vector<IPlayer>();
+            entityDetectedBy = new Vector<>();
         }
+
         if ((p != null) && !entityDetectedBy.contains(p)) {
             entityDetectedBy.add(p);
         }
     }
 
-    public Vector<IPlayer> getWhoCanDetect() {
+    public Vector<Player> getWhoCanDetect() {
         return entityDetectedBy;
     }
 
-    public void setWhoCanDetect(Vector<IPlayer> entityDetectedBy) {
+    public void setWhoCanDetect(Vector<Player> entityDetectedBy) {
         this.entityDetectedBy = entityDetectedBy;
     }
 
     public void clearDetectedBy() {
         // This is for saved-game backwards compatibility
         if (entityDetectedBy == null) {
-            entityDetectedBy = new Vector<IPlayer>();
+            entityDetectedBy = new Vector<>();
         }
         entityDetectedBy.clear();
     }
@@ -9698,7 +9697,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * teammates if team_vision is on.
      *
      */
-    public boolean hasDetectedEntity(IPlayer p) {
+    public boolean hasDetectedEntity(Player p) {
         // No sensors - no one detects anything
         if ((game == null)
                 || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
@@ -9710,12 +9709,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // This is for saved-game backwards compatibility
         if (entityDetectedBy == null) {
-            entityDetectedBy = new Vector<IPlayer>();
+            entityDetectedBy = new Vector<>();
         }
 
         // Observers can detect units detected by an enemy
         if (p.isObserver()) {
-            for (IPlayer other : entityDetectedBy) {
+            for (Player other : entityDetectedBy) {
                 if (other.isEnemyOf(getOwner())) {
                     return true;
                 }
@@ -9728,9 +9727,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If team vision, see if any players on team can see
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
-            for (IPlayer teammate : game.getPlayersVector()) {
-                if ((teammate.getTeam() == p.getTeam())
-                        && entityDetectedBy.contains(teammate)) {
+            for (Player teammate : game.getPlayersVector()) {
+                if ((teammate.getTeam() == p.getTeam()) && entityDetectedBy.contains(teammate)) {
                     return true;
                 }
             }
@@ -9747,7 +9745,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if the given player can only see this Entity as a sensor
      *         return
      */
-    public boolean isSensorReturn(IPlayer spotter) {
+    public boolean isSensorReturn(Player spotter) {
         boolean alliedUnit =
                 !getOwner().isEnemyOf(spotter)
                 || (getOwner().getTeam() == spotter.getTeam()

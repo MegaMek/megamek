@@ -51,7 +51,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
     private boolean isSelected;
     private Color selectionColor = Color.BLUE;
     private Entity entity;
-    private IPlayer localPlayer;
+    private Player localPlayer;
     private JTree tree;
     private int row;
 
@@ -77,7 +77,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             setFont(scaledFont);
             entity = (Entity) value;
             this.row = row; 
-            IPlayer owner = entity.getOwner();
+            Player owner = entity.getOwner();
             if (lobby.isCompact()) {
                 setText(LobbyMekCellFormatter.formatUnitCompact(entity, lobby, true));
             } else {

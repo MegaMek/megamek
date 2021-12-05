@@ -13,27 +13,15 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.IPlayer;
 import megamek.common.Player;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -66,7 +54,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         playerTypes = new int[pa.length];
         final PlayerColour[] colours = PlayerColour.values();
         for (int x = 0; x < pa.length; x++) {
-            final IPlayer curPlayer = m_players[x];
+            final Player curPlayer = m_players[x];
             curPlayer.setColour(colours[x % colours.length]);
             m_labels[x] = new JLabel(pa[x].getName(), SwingConstants.LEFT);
             m_typeChoices[x] = new JComboBox<String>();

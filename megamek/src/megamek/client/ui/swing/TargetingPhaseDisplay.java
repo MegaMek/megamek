@@ -540,7 +540,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         Game game = clientgui.getClient().getGame();
-        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
@@ -1250,8 +1250,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // Convert the choices into a List of targets.
-        List<Targetable> targets = new ArrayList<Targetable>();
-        final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        List<Targetable> targets = new ArrayList<>();
+        final Player localPlayer = clientgui.getClient().getLocalPlayer();
         while (choices.hasNext()) {
             Targetable t = choices.next();
             boolean isSensorReturn = false;

@@ -581,7 +581,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity, secondaryPos);
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
-        IPlayer player = entity.getOwner();
+        Player player = entity.getOwner();
 
         Camouflage camouflage = (player == null) ? new Camouflage()
                 : entity.getCamouflageOrElse(player.getCamouflage());

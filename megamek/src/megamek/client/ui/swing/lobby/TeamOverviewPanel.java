@@ -18,30 +18,6 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Vector;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -50,11 +26,24 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import static megamek.client.ui.swing.util.UIUtil.*;
+
 /** 
- *  A JPanel that holds a table giving an overview of the current relative strength
- *  of the teams of the game. The table does not listen to game changes and requires
- *  being notified through {@link #refreshData()}. It accesses data through the stored
- *  ClientGUI.
+ * A JPanel that holds a table giving an overview of the current relative strength
+ * of the teams of the game. The table does not listen to game changes and requires
+ * being notified through {@link #refreshData()}. It accesses data through the stored
+ * ClientGUI.
  */
 public class TeamOverviewPanel extends JPanel {
 
@@ -219,9 +208,9 @@ public class TeamOverviewPanel extends JPanel {
                 int hiddenBv = 0;
                 boolean[] unitCritical = { false, false, false, false, false };
                 boolean[] unitWarnings = { false, false, false, false, false };
-                for (IPlayer teamMember: team.getPlayersVector()) {
+                for (Player teamMember: team.getPlayersVector()) {
                     // Get the "real" player object, as the team's may be wrong
-                    IPlayer player = game.getPlayer(teamMember.getId());
+                    Player player = game.getPlayer(teamMember.getId());
                     bv += player.getBV();
                     for (Entity entity: game.getPlayerEntities(player, false)) {
                         // Avoid counting fighters in squadrons twice 
@@ -437,10 +426,10 @@ public class TeamOverviewPanel extends JPanel {
             int size = scaleForGUI(2 * baseSize);
             Font font = new Font("Dialog", Font.PLAIN, scaleForGUI(baseSize));
             for (Object obj: playerList) {
-                if (!(obj instanceof IPlayer)) {
+                if (!(obj instanceof Player)) {
                     continue;
                 }
-                IPlayer player = (IPlayer)obj;
+                Player player = (Player) obj;
                 JLabel lblPlayer = new JLabel(player.getName());
                 lblPlayer.setBorder(new EmptyBorder(3, 3, 3, 3));
                 lblPlayer.setFont(font);

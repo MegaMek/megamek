@@ -672,13 +672,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_UNITS_REINFORCE_RAT:
                 ignoreHotKeys = true;
-                if (client.getLocalPlayer().getTeam() == IPlayer.TEAM_UNASSIGNED) {
-                    String title = Messages.getString(
-                            "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
-                    String msg = Messages.getString(
-                            "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$
-                    JOptionPane.showMessageDialog(frame, msg, title,
-                            JOptionPane.OK_OPTION, null);
+                if (client.getLocalPlayer().getTeam() == Player.TEAM_UNASSIGNED) {
+                    String title = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
+                    String msg = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage");
+                    JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
                     return;
                 }
                 getRandomArmyDialog().setVisible(true);
@@ -810,8 +807,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * and a file for salvage
      */
     public void doSaveUnit() {
-        for (Enumeration<IPlayer> iter = getClient().getGame().getPlayers(); iter.hasMoreElements(); ) {
-            IPlayer p = iter.nextElement();
+        for (Enumeration<Player> iter = getClient().getGame().getPlayers(); iter.hasMoreElements(); ) {
+            Player p = iter.nextElement();
             ArrayList<Entity> l = getClient().getGame().getPlayerEntities(p, false);
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter2 = getClient().getGame().getRetreatedEntities(); iter2.hasMoreElements(); ) {
@@ -1410,7 +1407,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      *
      * @param player
      */
-    public void loadListFile(IPlayer player) {
+    public void loadListFile(Player player) {
         loadListFile(player, false);
     }
 
@@ -1423,16 +1420,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      *
      * @param player
      */
-    protected void loadListFile(IPlayer player, boolean reinforce) {
+    protected void loadListFile(Player player, boolean reinforce) {
         boolean addedUnits = false;
 
-        if (reinforce && player.getTeam() == IPlayer.TEAM_UNASSIGNED){
-            String title = Messages.getString(
-                    "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
-            String msg = Messages.getString(
-                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$
-            JOptionPane.showMessageDialog(frame, msg, title,
-                    JOptionPane.OK_OPTION, null);
+        if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+            String title = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
+            String msg = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage");
+            JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
             return;
         }
         // Build the "load unit" dialog, if necessary.
@@ -1664,11 +1658,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * @param entity
      */
     public void loadPreviewImage(JLabel bp, Entity entity) {
-        IPlayer player = client.getGame().getPlayer(entity.getOwnerId());
+        Player player = client.getGame().getPlayer(entity.getOwnerId());
         loadPreviewImage(bp, entity, player);
     }
 
-    public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
+    public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
         final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
         Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp);
         bp.setIcon((icon == null) ? null : new ImageIcon(icon));
@@ -2318,8 +2312,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     void replacePlayer() {
-        Set<IPlayer> ghostPlayers = client.getGame().getPlayersVector().stream()
-                .filter(IPlayer::isGhost).collect(Collectors.toSet());
+        Set<Player> ghostPlayers = client.getGame().getPlayersVector().stream()
+                .filter(Player::isGhost).collect(Collectors.toSet());
         if (ghostPlayers.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No ghost players to replace.", "No Ghosts",
                     JOptionPane.INFORMATION_MESSAGE);

@@ -20,15 +20,11 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.common.Game;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -133,9 +129,9 @@ public class AddBotUtil {
             playerName = new StringBuilder(argLine.trim());
         }
 
-        IPlayer target = null;
-        for (final Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        Player target = null;
+        for (final Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
+            final Player player = i.nextElement();
             if (player.getName().equals(playerName.toString())) {
                 target = player;
             }
@@ -203,7 +199,7 @@ public class AddBotUtil {
         Objects.requireNonNull(behavior);
         Objects.requireNonNull(game);
 
-        Optional<IPlayer> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersVector().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -213,7 +209,7 @@ public class AddBotUtil {
             return null;
         }
         
-        final IPlayer target = possible.get();
+        final Player target = possible.get();
         final Princess princess = new Princess(target.getName(), host, port, behavior.getVerbosity());
         princess.setBehaviorSettings(behavior);
         princess.getGame().addGameListener(new BotGUI(princess));
@@ -227,16 +223,12 @@ public class AddBotUtil {
         return princess;
     }
 
-    BotClient makeNewPrincessClient(final IPlayer target,
-            final LogLevel verbosity,
-            final String host,
-            final int port) {
+    BotClient makeNewPrincessClient(final Player target, final LogLevel verbosity,
+                                    final String host, final int port) {
         return new Princess(target.getName(), host, port, (null == verbosity ? LogLevel.WARNING : verbosity));
     }
 
-    BotClient makeNewTestBotClient(final IPlayer target,
-            final String host,
-            final int port) {
+    BotClient makeNewTestBotClient(final Player target, final String host, final int port) {
         return new TestBot(target.getName(), host, port);
     }
 }

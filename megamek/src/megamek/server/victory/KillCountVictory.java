@@ -1,28 +1,27 @@
 /*
  * MegaMek - Copyright (C) 2007-2008 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.victory;
+
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
 
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
-
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.Player;
-import megamek.common.Report;
 
 /**
  * Implements a kill count victory condition.  Victory is achieved if a team (or
@@ -31,9 +30,6 @@ import megamek.common.Report;
  * player/team with the highest kill count.
  */
 public class KillCountVictory implements IVictoryConditions, Serializable {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6622529899835634696L;
     protected int killCondition;
 
@@ -77,7 +73,7 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
                 r.add("Team " + highestKillsId);
                 vr.addTeamScore(highestKillsId, 1.0);                
             } else {
-                IPlayer winner = game.getPlayer(highestKillsId);
+                Player winner = game.getPlayer(highestKillsId);
                 r.add(winner.getName());
                 vr.addPlayerScore(winner.getId(), 1.0);
             }

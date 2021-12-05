@@ -1387,7 +1387,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         Game game = client.getGame();
         boolean bd = game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP); //$NON-NLS-1$
         boolean rbd = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP); //$NON-NLS-1$
-        IPlayer p = client.getLocalPlayer();
+        Player p = client.getLocalPlayer();
 
         Entity nextOne;
         Entity entity;

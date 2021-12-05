@@ -323,7 +323,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Return an enumeration of the players in the game
      */
-    public Enumeration<IPlayer> getPlayers() {
+    public Enumeration<Player> getPlayers() {
         return game.getPlayers();
     }
 
@@ -334,14 +334,14 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns the individual player assigned the index parameter.
      */
-    public IPlayer getPlayer(int idx) {
+    public Player getPlayer(int idx) {
         return game.getPlayer(idx);
     }
 
     /**
      * Return the local player
      */
-    public IPlayer getLocalPlayer() {
+    public Player getLocalPlayer() {
         return getPlayer(localPlayerNumber);
     }
 
@@ -742,7 +742,7 @@ public class Client implements IClientCommandHandler {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        IPlayer player = game.getPlayer(localPlayerNumber);
+        Player player = game.getPlayer(localPlayerNumber);
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
 
@@ -754,7 +754,7 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendEntityWeaponOrderUpdate(Entity entity) {
-        Object data[];
+        Object[] data;
         if (entity.getWeaponSortOrder() == Entity.WeaponSortOrder.CUSTOM) {
             data = new Object[3];
             data[2] = entity.getCustomWeaponOrder();
@@ -848,7 +848,7 @@ public class Client implements IClientCommandHandler {
      * Sends a packet containing multiple entity updates. Should only be used 
      * in the lobby phase.
      */
-    public void sendChangeTeam(Collection<IPlayer> players, int newTeamId) {
+    public void sendChangeTeam(Collection<Player> players, int newTeamId) {
         send(new Packet(Packet.COMMAND_PLAYER_TEAMCHANGE, new Object[] { players, newTeamId }));
     }
 
@@ -856,7 +856,7 @@ public class Client implements IClientCommandHandler {
      * Sends an "update entity" packet
      */
     public void sendDeploymentUnload(Entity loader, Entity loaded) {
-        Object data[] = { loader.getId(), loaded.getId() };
+        Object[] data = { loader.getId(), loaded.getId() };
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY_UNLOAD, data));
     }
     
@@ -906,7 +906,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "update custom initiative" packet
      */
-    public void sendCustomInit(IPlayer player) {
+    public void sendCustomInit(Player player) {
         send(new Packet(Packet.COMMAND_CUSTOM_INITIATIVE, player));
     }
 
@@ -914,7 +914,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "delete entity" packet
      */
     public void sendDeleteEntity(int id) {
-        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(id);
         sendDeleteEntities(ids);
     }
@@ -960,7 +960,7 @@ public class Client implements IClientCommandHandler {
      */
     protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
-        IPlayer newPlayer = (IPlayer) c.getObject(1);
+        Player newPlayer = (Player) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
             game.addPlayer(pindex, newPlayer);
         } else {
@@ -1109,8 +1109,8 @@ public class Client implements IClientCommandHandler {
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
-            e.setWhoCanSee((Vector<IPlayer>) packet.getObject(4));
-            e.setWhoCanDetect((Vector<IPlayer>) packet.getObject(5));
+            e.setWhoCanSee((Vector<Player>) packet.getObject(4));
+            e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
             // this next call is only needed sometimes, but we'll just
             // call it everytime
             game.processGameEvent(new GameEntityChangeEvent(this, e));
@@ -1407,7 +1407,7 @@ public class Client implements IClientCommandHandler {
             receivePlayerInfo(c);
             break;
         case Packet.COMMAND_PLAYER_READY:
-            IPlayer player = getPlayer(c.getIntValue(0));
+            Player player = getPlayer(c.getIntValue(0));
             
             if (player != null) {
                 player.setDone(c.getBooleanValue(1));
@@ -1907,7 +1907,7 @@ public class Client implements IClientCommandHandler {
     }
     
     /** Returns true when the player is a bot added/controlled by this client. */
-    public boolean isLocalBot(IPlayer player) {
+    public boolean isLocalBot(Player player) {
         return bots.containsKey(player.getName());
     }
     
@@ -1915,7 +1915,7 @@ public class Client implements IClientCommandHandler {
      * Returns the Client associated with the given local bot player. If
      * the player is not a local bot, returns null. 
      */
-    public Client getBotClient(IPlayer player) {
+    public Client getBotClient(Player player) {
         return bots.get(player.getName());
     }
 }

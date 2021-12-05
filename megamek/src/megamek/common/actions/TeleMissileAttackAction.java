@@ -22,16 +22,7 @@ package megamek.common.actions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.TeleMissile;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 
@@ -285,12 +276,13 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+            }
         }
 
         //set the to-hit
@@ -299,11 +291,11 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         TeleMissile tm = (TeleMissile)ae;
         
         //thrust used
-        if(ae.mpUsed > 0) 
+        if (ae.mpUsed > 0)
             toHit.addModifier(ae.mpUsed, "thrust used");
         
         //out of fuel
-        if(tm.getCurrentFuel() <= 0) 
+        if (tm.getCurrentFuel() <= 0)
             toHit.addModifier(+6, "out of fuel");
         
         //modifiers for the originating unit need to be added later, because
@@ -312,5 +304,4 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         // done!
         return toHit;
     }
-
 }

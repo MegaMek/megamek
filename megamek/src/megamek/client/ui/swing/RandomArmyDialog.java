@@ -770,7 +770,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
         for (Client client : m_clientgui.getBots().values()) {
-            IPlayer player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
+            Player player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
 
             if (!player.isObserver()) {
                 m_chPlayer.addItem(client.getName());

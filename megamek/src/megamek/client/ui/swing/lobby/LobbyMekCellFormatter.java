@@ -51,8 +51,8 @@ class LobbyMekCellFormatter {
 
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
-        IPlayer localPlayer = client.getLocalPlayer();
-        IPlayer owner = entity.getOwner();
+        Player localPlayer = client.getLocalPlayer();
+        Player owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
                 && game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
@@ -391,8 +391,8 @@ class LobbyMekCellFormatter {
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
-        IPlayer localPlayer = client.getLocalPlayer();
-        IPlayer owner = entity.getOwner();
+        Player localPlayer = client.getLocalPlayer();
+        Player owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
                 && game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
@@ -678,9 +678,9 @@ class LobbyMekCellFormatter {
     private static String formatForce(Force force, ChatLounge lobby, float size) {
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
-        IPlayer localPlayer = client.getLocalPlayer();
+        Player localPlayer = client.getLocalPlayer();
         int ownerId = game.getForces().getOwnerId(force);
-        IPlayer owner = game.getPlayer(ownerId);
+        Player owner = game.getPlayer(ownerId);
         
         // Get the my / ally / enemy color and desaturate it
         Color color = GUIPreferences.getInstance().getEnemyUnitColor();

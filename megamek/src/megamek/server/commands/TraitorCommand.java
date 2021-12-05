@@ -19,7 +19,7 @@
 package megamek.server.commands;
 
 import megamek.common.Entity;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.server.Server;
 
 /**
@@ -48,14 +48,14 @@ public class TraitorCommand extends ServerCommand {
             int eid = Integer.parseInt(args[1]);
             Entity ent = server.getGame().getEntity(eid);
             int pid = Integer.parseInt(args[2]);
-            IPlayer player = server.getGame().getPlayer(pid);
+            Player player = server.getGame().getPlayer(pid);
             if (null == ent) {
                 server.sendServerChat(connId, "No such entity.");
             } else if (ent.getOwner().getId() != connId) {
                 server.sendServerChat(connId, "You must own an entity to make it switch sides.");
             } else if (null == player) {
                 server.sendServerChat(connId, "No such player.");
-            } else if (player.getTeam() == IPlayer.TEAM_UNASSIGNED) {
+            } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 server.sendServerChat(connId, "Player must be assigned a team.");
             } else if (pid == connId) {
                 server.sendServerChat(connId, "You can't switch to the same side.");

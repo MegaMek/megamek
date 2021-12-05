@@ -18,27 +18,21 @@
  */
 package megamek.server;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import megamek.MegaMek;
 import megamek.client.ui.swing.lobby.LobbyActions;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
+
 class ServerLobbyHelper {
-
-
     /**
      * Returns true when the given new force (that is not part of the given game's forces)
      * can be integrated into game's forces without error; i.e.:
@@ -243,7 +237,7 @@ class ServerLobbyHelper {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
-        IPlayer newOwner = game.getPlayer(newOwnerId);
+        Player newOwner = game.getPlayer(newOwnerId);
 
         if (entityList.isEmpty() || newOwner == null) {
             return;
@@ -269,7 +263,7 @@ class ServerLobbyHelper {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
-        IPlayer newOwner = game.getPlayer(newOwnerId);
+        Player newOwner = game.getPlayer(newOwnerId);
 
         if (forceList.isEmpty() || newOwner == null) {
             return;
@@ -329,11 +323,11 @@ class ServerLobbyHelper {
      */
     static void receiveLobbyTeamChange(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
-        var players = (Collection<IPlayer>) c.getObject(0);
+        var players = (Collection<Player>) c.getObject(0);
         var newTeam = (int) c.getObject(1);
         
         // Collect server-side player objects
-        var serverPlayers = new HashSet<IPlayer>();
+        Set<Player> serverPlayers = new HashSet<>();
         players.stream().map(p -> game.getPlayer(p.getId())).forEach(serverPlayers::add);
         
         // Check parameters and if there's an actual change to a player
@@ -343,7 +337,7 @@ class ServerLobbyHelper {
         }
         
         // First, change all teams, then correct all connections (load, C3, force)
-        for (IPlayer player: serverPlayers) {
+        for (Player player : serverPlayers) {
             player.setTeam(newTeam);
         }
         Forces forces = game.getForces();
@@ -352,7 +346,7 @@ class ServerLobbyHelper {
         correctC3Connections(game);
         
         server.send(server.createFullEntitiesPacket());
-        for (IPlayer player: serverPlayers) {
+        for (Player player: serverPlayers) {
             server.transmitPlayerUpdate(player);
         }
     }
@@ -481,7 +475,7 @@ class ServerLobbyHelper {
      * forces of other players if they are a subforce of one's own force.
      * @see LobbyActions#isEditable(Force)
      */
-    static boolean isEditable(Force force, Game game, IPlayer sender) {
+    static boolean isEditable(Force force, Game game, Player sender) {
         List<Force> chain = game.getForces().forceChain(force);
         return chain.stream().map(f -> game.getForces().getOwner(f)).anyMatch(p -> p.equals(sender));
     }

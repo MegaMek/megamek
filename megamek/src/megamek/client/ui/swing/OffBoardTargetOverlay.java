@@ -49,7 +49,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         return clientgui.getClient().getGame();
     }
     
-    private IPlayer getCurrentPlayer() {
+    private Player getCurrentPlayer() {
         return clientgui.getClient().getLocalPlayer();
     }
     
@@ -64,8 +64,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         this.clientgui = clientgui;
         
         offBoardTargetImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE)
-                        .toString());
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE).toString());
         
         //Maybe TODO: display dimmed version of off-board icon during movement phase OR targeting phase when weapon is ineligible to fire 
         //Maybe TODO: maybe tooltips?
@@ -79,7 +78,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         boolean visible = clientgui.getClient().isMyTurn() &&
                 (getCurrentGame().getPhase() == GamePhase.TARGETING);
         
-        if(!visible) {
+        if (!visible) {
             return false;
         }
         

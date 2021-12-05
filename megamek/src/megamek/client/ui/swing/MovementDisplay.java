@@ -658,16 +658,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         GameOptions opts = null;
         if (clientgui != null) {
             Game game = clientgui.getClient().getGame();
-            IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+            Player localPlayer = clientgui.getClient().getLocalPlayer();
             forwardIni = (game.getTeamForPlayer(localPlayer) != null)
                     && (game.getTeamForPlayer(localPlayer).getSize() > 1);
             opts = game.getOptions();
         }
 
-        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
+        ArrayList<MegamekButton> buttonList = new ArrayList<>();
 
         int i = 0;
-        MoveCommand commands[] = MoveCommand.values(flag, opts, forwardIni);
+        MoveCommand[] commands = MoveCommand.values(flag, opts, forwardIni);
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
         for (MoveCommand cmd : commands) {
@@ -5199,7 +5199,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             int idx = 0;
             for (var player : players) {
                 if (player.getName().equals(clientgui.getClient().getLocalPlayer().getName())
-                        || (player.getTeam() == IPlayer.TEAM_UNASSIGNED)) {
+                        || (player.getTeam() == Player.TEAM_UNASSIGNED)) {
                     continue;
                 }
                 playerIds[idx] = player.getId();

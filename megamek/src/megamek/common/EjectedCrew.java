@@ -109,7 +109,7 @@ public class EjectedCrew extends Infantry {
         initializeInternal(Integer.MAX_VALUE, Infantry.LOC_INFANTRY);
     }
     
-    public EjectedCrew(Crew crew, IPlayer owner, Game game) {
+    public EjectedCrew(Crew crew, Player owner, Game game) {
         super();
         setCrew(crew);
         setChassis(VEE_EJECT_NAME);

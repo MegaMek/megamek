@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.io.PrintWriter;
@@ -45,9 +44,6 @@ import megamek.common.weapons.prototypes.*;
  * You know what mechs are, silly.
  */
 public abstract class Mech extends Entity {
-    /**
-     *
-     */
     private static final long serialVersionUID = -1929593228891136561L;
 
     // system designators for critical hits
@@ -5031,16 +5027,14 @@ public abstract class Mech extends Entity {
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
                     || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
+                Player tmpP = getOwner();
 
                 if (tmpP != null) {
                     // Okay, actually check for friendly TAG.
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
-                            && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e
-                                .hasMoreElements();) {
+                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
+                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {

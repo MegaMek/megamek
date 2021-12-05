@@ -45,20 +45,20 @@ public final class UnitToolTip {
     final static float TT_SMALLFONT_DELTA = -0.2f;
     
     /** Returns the unit tooltip with values that are relevant in the lobby. */
-    public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 
+    public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
         return getEntityTip(entity, localPlayer, true, mapSettings);
     }
     
     /** Returns the unit tooltip with values that are relevant in-game. */
-    public static StringBuilder getEntityTipGame(Entity entity, IPlayer localPlayer) {
+    public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
         return getEntityTip(entity, localPlayer, false, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
-    private static StringBuilder getEntityTip(Entity entity, IPlayer localPlayer, 
+    private static StringBuilder getEntityTip(Entity entity, Player localPlayer,
             boolean inLobby, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
@@ -71,7 +71,7 @@ public final class UnitToolTip {
         GUIPreferences guip = GUIPreferences.getInstance();
 
         // Unit Chassis and Player
-        IPlayer owner = game.getPlayer(entity.getOwnerId());
+        Player owner = game.getPlayer(entity.getOwnerId());
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
         result.append(entity.getChassis()).append(clanStr);
@@ -565,7 +565,7 @@ public final class UnitToolTip {
     }
 
     /** Returns values that only are relevant when in-game such as heat. */
-    private static StringBuilder inGameValues(Entity entity, IPlayer localPlayer) {
+    private static StringBuilder inGameValues(Entity entity, Player localPlayer) {
         StringBuilder result = new StringBuilder();
         Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
@@ -687,7 +687,7 @@ public final class UnitToolTip {
             StringBuffer playerList = new StringBuffer();
             boolean teamVision = game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_TEAM_VISION);
-            for (IPlayer player : entity.getWhoCanSee()) {
+            for (Player player : entity.getWhoCanSee()) {
                 if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
                     playerList.append(player.getName());
                     playerList.append(", ");
@@ -762,8 +762,8 @@ public final class UnitToolTip {
     }
     
     /** Returns warnings about problems that should be solved before deploying. */
-    private static StringBuilder deploymentWarnings(Entity entity, IPlayer localPlayer,
-            MapSettings mapSettings) {
+    private static StringBuilder deploymentWarnings(Entity entity, Player localPlayer,
+                                                    MapSettings mapSettings) {
         StringBuilder result = new StringBuilder();
         // Critical (red) warnings
         result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
@@ -819,7 +819,7 @@ public final class UnitToolTip {
     }
     
     /** Returns the full force chain the entity is in as one text line. */
-    private static StringBuilder forceEntry(Entity entity, IPlayer localPlayer) {
+    private static StringBuilder forceEntry(Entity entity, Player localPlayer) {
         StringBuilder result = new StringBuilder();
         
         if (entity.partOfForce()) {

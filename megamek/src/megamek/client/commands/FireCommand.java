@@ -14,30 +14,18 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IAimingModes;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.AbstractEntityAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.*;
+import megamek.common.actions.*;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * @author dirk
@@ -247,7 +235,7 @@ public class FireCommand extends ClientCommand {
         }
 
         waa.setAimedLocation(Entity.LOC_NONE);
-        waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+        waa.setAimingMode(AimingMode.NONE);
 
         // add the attack to our temporary queue
         attacks.addElement(waa);
@@ -283,8 +271,8 @@ public class FireCommand extends ClientCommand {
         String str = "No Data";
         if (target != null && weaponId != -1 && ce() != null) {
             str = "";
-            toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target,
-                                             weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
+            toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target, weaponId,
+                    Entity.LOC_NONE, AimingMode.NONE, false);
             // str += "Target: " + target.toString();
 
             str += " Range: "

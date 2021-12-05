@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
@@ -925,8 +926,8 @@ public class Tank extends Entity {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
@@ -982,9 +983,7 @@ public class Tank extends Entity {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -1201,8 +1200,7 @@ public class Tank extends Entity {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     /**

@@ -48,6 +48,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -992,15 +993,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             Mounted m = ce().getEquipment(weaponId);
 
             int targetDistance = ce().getPosition().distance(target.getPosition()); 
-            boolean isArtilleryAttack = ((WeaponType) m.getType()).hasFlag(WeaponType.F_ARTILLERY)
+            boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
                     // For other weapons that can make artillery attacks
                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;            
             
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
-                    cen, target, weaponId, Entity.LOC_NONE, 0, false);
+                    cen, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
             
             String flightTimeText = ""; 
-            if(isArtilleryAttack) {
+            if (isArtilleryAttack) {
                 ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
                         target.getTargetId(), weaponId, clientgui.getClient().getGame());
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());

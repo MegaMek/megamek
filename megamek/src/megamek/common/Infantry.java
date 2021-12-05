@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -46,11 +47,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * compiler catches my "= for ==" errors.
  */
 public class Infantry extends Entity {
-    // Private attributes and helper functions.
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8706716079307721282L;
 
     /**
@@ -711,8 +707,8 @@ public class Infantry extends Entity {
      * Infantry only have one hit location.
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         return rollHitLocation(table, side);
     }
 

@@ -29,7 +29,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.EscapePods;
 import megamek.common.IAero;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MovePath;
@@ -198,7 +198,7 @@ public class SharedUtility {
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
         boolean firstStep;
         int prevFacing = curFacing;
-        IHex prevHex = game.getBoard().getHex(curPos);
+        Hex prevHex = game.getBoard().getHex(curPos);
         final boolean isInfantry = (entity instanceof Infantry);
 
         PilotingRollData rollTarget;
@@ -244,7 +244,7 @@ public class SharedUtility {
             curFacing = step.getFacing();
             curElevation = step.getElevation();
 
-            final IHex curHex = game.getBoard().getHex(curPos);
+            final Hex curHex = game.getBoard().getHex(curPos);
 
             //check for vertical takeoff
             if ((step.getType() == MoveStepType.VTAKEOFF)
@@ -331,14 +331,12 @@ public class SharedUtility {
             // check for non-mech entering a fire
             boolean underwater = curHex.containsTerrain(Terrains.WATER)
                     && (curHex.depth() > 0)
-                    && (step.getElevation() < curHex.surface());
+                    && (step.getElevation() < curHex.getLevel());
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater
                     && !(entity instanceof Mech) && (step.getElevation() <= 1)
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !(curPos.equals(lastPos))) {
-                nagReport.append(Messages.getString(
-                        "MovementDisplay.FireMoving",
-                        new Object[] { Integer.valueOf(8) }));
+                nagReport.append(Messages.getString("MovementDisplay.FireMoving", 8));
             }
 
             // check for magma
@@ -488,7 +486,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            IHex lastHex = game.getBoard().getHex(lastPos);
+            Hex lastHex = game.getBoard().getHex(lastPos);
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
@@ -584,7 +582,7 @@ public class SharedUtility {
             rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
             // jumped into water?
-            IHex hex = game.getBoard().getHex(curPos);
+            Hex hex = game.getBoard().getHex(curPos);
             // check for jumping into heavy woods
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,

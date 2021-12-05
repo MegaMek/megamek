@@ -164,7 +164,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         // check if this is a water hex
         boolean sea = false;
-        IHex hex = clientgui.getClient().getGame().getBoard().getHex(coords);
+        Hex hex = clientgui.getClient().getGame().getBoard().getHex(coords);
         if (hex.containsTerrain(Terrains.WATER)) {
             sea = true;
         }

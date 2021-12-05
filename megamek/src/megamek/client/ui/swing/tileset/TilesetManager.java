@@ -350,21 +350,21 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /**
      * Return the base image for the hex
      */
-    public Image baseFor(IHex hex) {
+    public Image baseFor(Hex hex) {
         return hexTileset.getBase(hex, boardview);
     }
 
     /**
      * Return a list of superimposed images for the hex
      */
-    public List<Image> supersFor(IHex hex) {
+    public List<Image> supersFor(Hex hex) {
         return hexTileset.getSupers(hex, boardview);
     }
 
     /**
      * Return a list of orthographic images for the hex
      */
-    public List<Image> orthoFor(IHex hex) {
+    public List<Image> orthoFor(Hex hex) {
         return hexTileset.getOrtho(hex, boardview);
     }
 
@@ -468,7 +468,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                IHex hex = board.getHex(x, y);
+                Hex hex = board.getHex(x, y);
                 loadHexImage(hex);
             }
         }
@@ -518,7 +518,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *
      * @param hex the hex to load
      */
-    private synchronized void loadHexImage(IHex hex) {
+    private synchronized void loadHexImage(Hex hex) {
         hexTileset.assignMatch(hex, boardview);
         hexTileset.trackHexImages(hex, tracker);
     }
@@ -528,7 +528,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *
      * @param hex
      */
-    public void clearHex(IHex hex) {
+    public void clearHex(Hex hex) {
         hexTileset.clearHex(hex);
     }
 
@@ -537,7 +537,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *
      * @param hex the hex to wait for
      */
-    public synchronized void waitForHex(IHex hex) {
+    public synchronized void waitForHex(Hex hex) {
         loadHexImage(hex);
         try {
             tracker.waitForID(1);

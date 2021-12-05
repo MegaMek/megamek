@@ -14,7 +14,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.common.net.IConnection;
+import megamek.common.net.AbstractConnection;
 import megamek.server.Server;
 
 import java.io.File;
@@ -23,14 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Resets the server
+ * Loads a saved game on the server
  * 
  * @author Taharqa
  * @since November 19, 2008
  */
 public class LoadGameCommand extends ServerCommand {
-
-    /** Creates new ResetCommand */
     public LoadGameCommand(Server server) {
         super(server, "load",
                 "load a saved game from the savegames directory.  Usage: /load [filename]");
@@ -62,8 +60,7 @@ public class LoadGameCommand extends ServerCommand {
     }
 
     private void load(File f, int connId) {
-        server.sendServerChat(server.getPlayer(connId).getName()
-                + " loaded a new game.");
+        server.sendServerChat(server.getPlayer(connId).getName() + " loaded a new game.");
         // Keep track of the current id to name mapping
         Map<String, Integer> nameToIdMap = new HashMap<>();
         Map<Integer, String> idToNameMap = new HashMap<>();
@@ -77,9 +74,9 @@ public class LoadGameCommand extends ServerCommand {
         } else {
             server.remapConnIds(nameToIdMap, idToNameMap);
             // update all the clients with the new game info
-            Enumeration<IConnection> connEnum = server.getConnections();
+            Enumeration<AbstractConnection> connEnum = server.getConnections();
             while (connEnum.hasMoreElements()) {
-                IConnection conn = connEnum.nextElement();
+                AbstractConnection conn = connEnum.nextElement();
                 server.sendCurrentInfo(conn.getId());
             }
         }

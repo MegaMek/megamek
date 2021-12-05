@@ -114,6 +114,8 @@ public class BehaviorSettings implements Serializable {
     private LogLevel verbosity = LogLevel.WARNING; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
 
     private MMLogger logger = null;
+    
+    private final Set<Integer> ignoredUnitTargets = new HashSet<>();
 
     public BehaviorSettings() {
     }
@@ -152,6 +154,10 @@ public class BehaviorSettings implements Serializable {
         for (final Integer p : getPriorityUnitTargets()) {
             copy.addPriorityUnit(p);
         }
+        for (final Integer i : getIgnoredUnitTargets()) {
+            copy.addIgnoredUnitTarget(i);
+        }
+        
         return copy;
     }
 
@@ -244,6 +250,34 @@ public class BehaviorSettings implements Serializable {
         strategicBuildingTargets.remove(target);
     }
 
+    /**
+     * @return A list of enemy units that Princess will ignore completely.
+     */
+    public Set<Integer> getIgnoredUnitTargets() {
+        return new HashSet<>(ignoredUnitTargets);
+    }
+    
+    /**
+     * Add the given unit ID to the ignored target list.
+     */
+    public void addIgnoredUnitTarget(int unitID) {
+        ignoredUnitTargets.add(unitID);
+    }
+    
+    /**
+     * Remove the given unit ID from the ignored target list.
+     */
+    public void removeIgnoredUnitTarget(int unitID) {
+        ignoredUnitTargets.remove(unitID);
+    }
+    
+    /**
+     * Empty out the ignored target list.
+     */
+    public void clearIgnoredUnitTargets() {
+        ignoredUnitTargets.clear();
+    }
+    
     /**
      * @return A list of enemy units that Princess will prioritize over others.
      */
@@ -787,6 +821,11 @@ public class BehaviorSettings implements Serializable {
                     unitElement.setTextContent(String.valueOf(id));
                     targetsNode.appendChild(unitElement);
                 }
+                for (final int id : getIgnoredUnitTargets()) {
+                    final Element ignoredUnitElement = doc.createElement("ignoredUnit");
+                    ignoredUnitElement.setTextContent(String.valueOf(id));
+                    targetsNode.appendChild(ignoredUnitElement);
+                }
             }
             behavior.appendChild(targetsNode);
 
@@ -822,6 +861,10 @@ public class BehaviorSettings implements Serializable {
         for (final int id : getPriorityUnitTargets()) {
             out.append("  ").append(id);
         }
+        out.append("\n\t\tIgnored Units:");
+        for (final int id : getIgnoredUnitTargets()) {
+            out.append("  ").append(id);
+        }
         return out.toString();
     }
 
@@ -843,13 +886,18 @@ public class BehaviorSettings implements Serializable {
         if (!description.equals(that.description)) return false;
         if (destinationEdge != that.destinationEdge) return false;
         if (retreatEdge != that.retreatEdge) return false;
-        if (null != strategicBuildingTargets ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : null != that
-                .strategicBuildingTargets) {
+        if ((null != strategicBuildingTargets) ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : 
+                (null != that.strategicBuildingTargets)) {
             return false;
         }
-        //noinspection RedundantIfStatement
-        if (null != priorityUnitTargets ? !priorityUnitTargets.equals(that.priorityUnitTargets) : null != that
-                .priorityUnitTargets) {
+
+        if ((null != priorityUnitTargets) ? !priorityUnitTargets.equals(that.priorityUnitTargets) : 
+                (null != that.priorityUnitTargets)) {
+            return false;
+        }
+        
+        if ((null != ignoredUnitTargets) ? !ignoredUnitTargets.equals(that.ignoredUnitTargets) : 
+                (null != that.ignoredUnitTargets)) {
             return false;
         }
 
@@ -869,6 +917,7 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + retreatEdge.hashCode();
         result = 31 * result + (null != strategicBuildingTargets ? strategicBuildingTargets.hashCode() : 0);
         result = 31 * result + (null != priorityUnitTargets ? priorityUnitTargets.hashCode() : 0);
+        result = 31 * result + (null != ignoredUnitTargets ? ignoredUnitTargets.hashCode() : 0);
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
         return result;

@@ -50,8 +50,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
         
         if ((atype == null) 
                 || (atype.getMunitionType() != AmmoType.M_AIRBURST)) {
@@ -142,16 +141,15 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
-            newReports = server.damageBuilding(bldg, numRounds, " receives ",
-                    targetPos);
+            newReports = server.damageBuilding(bldg, numRounds, " receives ", targetPos);
             adjustReports(newReports);
             vPhaseReport.addAll(newReports);
         }
         
         // Damage Terrain if applicable
-        IHex h = game.getBoard().getHex(targetPos);
-        newReports = new Vector<Report>();
-        if ((h != null) && h.hasTerrainfactor()) {
+        Hex h = game.getBoard().getHex(targetPos);
+        newReports = new Vector<>();
+        if ((h != null) && h.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.subject = subjectId;
@@ -207,12 +205,11 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     continue;
                 // Battlarmor take damage to each trooper
                 } else if (target instanceof BattleArmor) {
-                    newReports = new Vector<Report>();
+                    newReports = new Vector<>();
                     for (int loc = 0; loc < target.locations(); loc++) {
                         if (target.getInternal(loc) > 0) {
                             HitData hit = new HitData(loc);
-                            newReports.addAll(server.damageEntity(target, hit,
-                                    numRounds));
+                            newReports.addAll(server.damageEntity(target, hit, numRounds));
                         }
                     }
                     adjustReports(newReports);
@@ -250,7 +247,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         for (Report nr : reports) {
             nr.indent();
         }
-        if (reports.size() > 0) {
+
+        if (!reports.isEmpty()) {
             reports.get(reports.size() - 1).newlines++;
         }
     }

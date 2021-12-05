@@ -31,7 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.PlanetaryConditions;
@@ -293,7 +293,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * breached legs and effectively immobilize it.
      */
     private boolean underwaterLegBreachCheck(BulldozerMovePath path) {        
-        IHex hex = path.getGame().getBoard().getHex(path.getFinalCoords());
+        Hex hex = path.getGame().getBoard().getHex(path.getFinalCoords());
         
         // investigate: do we want quad mechs with a single breached leg
         // to risk this move? Currently not, but if we did, this is probably where

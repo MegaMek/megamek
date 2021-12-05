@@ -34,7 +34,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
@@ -412,7 +412,7 @@ public class PathEnumerator {
     private void adjustPathForBridge(MovePath path) {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
-            IHex hex = getGame().getBoard().getHex(c);
+            Hex hex = getGame().getBoard().getHex(c);
             if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
                 if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >=
                     path.getEntity().getWeight()) {

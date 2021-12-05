@@ -148,7 +148,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 //check for fires and potentially put them out
                 if (currentHex.containsTerrain(Terrains.FIRE)) {

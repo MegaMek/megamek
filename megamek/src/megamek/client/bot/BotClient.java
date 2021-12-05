@@ -554,7 +554,7 @@ public abstract class BotClient extends Client {
         double mass = 0;
 
         // Add the mass of anyone else standing in/on this building.
-        final IHex hex = game.getBoard().getHex(coords);
+        final Hex hex = game.getBoard().getHex(coords);
         final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
         final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
         Iterator<Entity> crowd = game.getEntities(coords);

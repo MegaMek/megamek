@@ -66,7 +66,7 @@ public class Client implements IClientCommandHandler {
     // we need these to communicate with the server
     private String name;
 
-    private IConnection connection;
+    private AbstractConnection connection;
 
     // the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<>();
@@ -137,7 +137,7 @@ public class Client implements IClientCommandHandler {
 
     private Thread connThread;
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -1484,11 +1484,11 @@ public class Client implements IClientCommandHandler {
             game.addSmokeCloud(cloud);
             break;
         case Packet.COMMAND_CHANGE_HEX:
-            game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
+            game.getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
             break;
         case Packet.COMMAND_CHANGE_HEXES:
             List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
-            List<IHex> hexes = new ArrayList<>((Set<IHex>) c.getObject(1));
+            List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
             game.getBoard().setHexes(coords, hexes);
             break;
         case Packet.COMMAND_BLDG_UPDATE:
@@ -1896,7 +1896,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Set the Current Hex, used by client commands for the visually impaired
      */
-    public void setCurrentHex(IHex hex) {
+    public void setCurrentHex(Hex hex) {
         if (hex != null) {
             currentHex = hex.getCoords();
         }

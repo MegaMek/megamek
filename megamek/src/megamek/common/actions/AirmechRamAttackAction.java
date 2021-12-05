@@ -29,12 +29,10 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
     private static final long serialVersionUID = 5110608317218688433L;
 
     public AirmechRamAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetType(), target.getTargetId(),
-             target.getPosition());
+        this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
     }
 
-    public AirmechRamAttackAction(int entityId, int targetType, int targetId,
-                              Coords targetPos) {
+    public AirmechRamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
         super(entityId, targetType, targetId, targetPos);
     }
 
@@ -89,7 +87,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
             }
         }
 
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
         // the target's hex
@@ -100,8 +98,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit = null;
-        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK) || (getTargetType() == Targetable
-                .TYPE_BUILDING));
+        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (getTargetType() == Targetable.TYPE_BUILDING));
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 

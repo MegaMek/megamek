@@ -19,7 +19,7 @@ import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
@@ -69,7 +69,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
             IBoard board = game.getBoard();
-            IHex currentHex = board.getHex(src);
+            Hex currentHex = board.getHex(src);
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;

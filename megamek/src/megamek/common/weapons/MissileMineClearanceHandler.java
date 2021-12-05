@@ -132,7 +132,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         // Handle mine clearance
-        List<Minefield> mfRemoved = new ArrayList<Minefield>();
+        List<Minefield> mfRemoved = new ArrayList<>();
         int missileDamage = (wtype instanceof LRMWeapon) ? 1 : 2;
         int mineDamage = wtype.getRackSize() * missileDamage;
         boolean updateMinefields = false;
@@ -178,16 +178,15 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
-            newReports = server.damageBuilding(bldg, damage, " receives ",
-                    targetPos);
+            newReports = server.damageBuilding(bldg, damage, " receives ", targetPos);
             adjustReports(newReports);
             vPhaseReport.addAll(newReports);
         }
 
         // Damage Terrain if applicable
-        IHex h = game.getBoard().getHex(targetPos);
-        newReports = new Vector<Report>();
-        if ((h != null) && h.hasTerrainfactor()) {
+        Hex h = game.getBoard().getHex(targetPos);
+        newReports = new Vector<>();
+        if ((h != null) && h.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.subject = subjectId;
@@ -261,7 +260,8 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         for (Report nr : reports) {
             nr.indent();
         }
-        if (reports.size() > 0) {
+
+        if (!reports.isEmpty()) {
             reports.get(reports.size() - 1).newlines++;
         }
     }

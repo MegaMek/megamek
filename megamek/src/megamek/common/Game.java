@@ -1651,7 +1651,7 @@ public class Game implements Serializable {
             return false;
         }
         
-        IHex hex = getBoard().getHex(c);
+        Hex hex = getBoard().getHex(c);
         
         for (Entity entity : getEntitiesVector(c, true)) {
             if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) && entity.getElevation() == hex.ceiling()) {
@@ -1673,7 +1673,7 @@ public class Game implements Serializable {
     public @Nullable Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<>();
         if (board.contains(c)) {
-            IHex hex = board.getHex(c);
+            Hex hex = board.getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
                         && ((entity.getElevation() == 0) // Standing on hex surface

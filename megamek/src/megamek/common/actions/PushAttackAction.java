@@ -14,7 +14,24 @@
 
 package megamek.common.actions;
 
+<<<<<<< HEAD
 import megamek.common.*;
+=======
+import megamek.common.Building;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.IPlayer;
+import megamek.common.Mech;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
+import megamek.common.Terrains;
+import megamek.common.ToHitData;
+>>>>>>> upstream/master
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -105,8 +122,8 @@ public class PushAttackAction extends DisplacementAttackAction {
                                  "You can't target a null entity!");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(te.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(te.getPosition());
 
         if (attHex == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + ae.getId() + " does not know its position.");

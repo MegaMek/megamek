@@ -164,7 +164,7 @@ public class Server implements Runnable {
     }
 
     // game info
-    private Vector<IConnection> connections = new Vector<>(4);
+    private Vector<AbstractConnection> connections = new Vector<>(4);
 
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
@@ -175,9 +175,9 @@ public class Server implements Runnable {
      */
     private final ConcurrentLinkedQueue<ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
 
-    private Vector<IConnection> connectionsPending = new Vector<>(4);
+    private Vector<AbstractConnection> connectionsPending = new Vector<>(4);
 
-    private Hashtable<Integer, IConnection> connectionIds = new Hashtable<>();
+    private Hashtable<Integer, AbstractConnection> connectionIds = new Hashtable<>();
 
     private int connectionCounter;
 
@@ -244,7 +244,7 @@ public class Server implements Runnable {
 
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -252,7 +252,7 @@ public class Server implements Runnable {
         @Override
         public void disconnected(DisconnectedEvent e) {
             synchronized (serverLock) {
-                IConnection conn = e.getConnection();
+                AbstractConnection conn = e.getConnection();
 
                 // write something in the log
                 MegaMek.getLogger().info("s: connection " + conn.getId() + " disconnected");
@@ -563,22 +563,22 @@ public class Server implements Runnable {
         }
 
         // kill pending connections
-        for (Enumeration<IConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             conn.close();
         }
         connectionsPending.removeAllElements();
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
         }
 
         // kill active connections
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             conn.close();
         }
 
@@ -744,7 +744,7 @@ public class Server implements Runnable {
      * connection.
      */
     private void receivePlayerName(Packet packet, int connId) {
-        final IConnection conn = getPendingConnection(connId);
+        final AbstractConnection conn = getPendingConnection(connId);
         String name = (String) packet.getObject(0);
         boolean isBot = (boolean) packet.getObject(1);
         boolean returning = false;
@@ -1255,7 +1255,7 @@ public class Server implements Runnable {
         }
 
         // update all the clients with the new game info
-        for (IConnection conn : connections) {
+        for (AbstractConnection conn : connections) {
             sendCurrentInfo(conn.getId());
         }
         return true;
@@ -1277,7 +1277,7 @@ public class Server implements Runnable {
      */
     public void remapConnIds(Map<String, Integer> nameToIdMap, Map<Integer, String> idToNameMap) {
         // Keeps track of connections without Ids
-        List<IConnection> unassignedConns = new ArrayList<>();
+        List<AbstractConnection> unassignedConns = new ArrayList<>();
        // Keep track of which ids are used
         Set<Integer> usedPlayerIds = new HashSet<>();
         Set<String> currentPlayerNames = new HashSet<>();
@@ -1315,7 +1315,7 @@ public class Server implements Runnable {
         // Remap old connection Ids to new ones
         for (Integer currConnId : connIdRemapping.keySet()) {
             Integer newId = connIdRemapping.get(currConnId);
-            IConnection conn = connectionIds.get(currConnId);
+            AbstractConnection conn = connectionIds.get(currConnId);
             conn.setId(newId);
             // If this Id is used, make sure we reassign that connection
             if (connectionIds.containsKey(newId)) {
@@ -1329,7 +1329,7 @@ public class Server implements Runnable {
         }
 
         // It's possible we have players not in the saved game, add 'em
-        for (IConnection conn : unassignedConns) {
+        for (AbstractConnection conn : unassignedConns) {
             int newId = 0;
             while (usedPlayerIds.contains(newId)) {
                 newId++;
@@ -1399,29 +1399,29 @@ public class Server implements Runnable {
     /**
      * a shorter name for getConnection()
      */
-    private IConnection getClient(int connId) {
+    private AbstractConnection getClient(int connId) {
         return getConnection(connId);
     }
 
     /**
      * Returns a connection, indexed by id
      */
-    public Enumeration<IConnection> getConnections() {
+    public Enumeration<AbstractConnection> getConnections() {
         return connections.elements();
     }
 
     /**
      * Returns a connection, indexed by id
      */
-    public IConnection getConnection(int connId) {
+    public AbstractConnection getConnection(int connId) {
         return connectionIds.get(connId);
     }
 
     /**
      * Returns a pending connection
      */
-    IConnection getPendingConnection(int connId) {
-        for (IConnection conn : connectionsPending) {
+    AbstractConnection getPendingConnection(int connId) {
+        for (AbstractConnection conn : connectionsPending) {
             if (conn.getId() == connId) {
                 return conn;
             }
@@ -2900,7 +2900,7 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (IConnection connection : connections) {
+        for (AbstractConnection connection : connections) {
             if (connection != null) {
                 connection.send(createTagInfoUpdatesPacket());
             }
@@ -2911,7 +2911,7 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (IConnection connection : connections) {
+        for (AbstractConnection connection : connections) {
             if (connection != null) {
                 connection.send(new Packet(Packet.COMMAND_RESET_TAGINFO));
             }
@@ -3809,7 +3809,7 @@ public class Server implements Runnable {
 
     private void applyDropShipLandingDamage(Coords centralPos, Entity killer) {
         // first cycle through hexes to figure out final elevation
-        IHex centralHex = game.getBoard().getHex(centralPos);
+        Hex centralHex = game.getBoard().getHex(centralPos);
         if (null == centralHex) {
             // shouldn't happen
             return;
@@ -3823,7 +3823,7 @@ public class Server implements Runnable {
         positions.add(centralPos);
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
-            IHex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getBoard().getHex(pos);
             if (null == hex) {
                 continue;
             }
@@ -3834,7 +3834,7 @@ public class Server implements Runnable {
         }
         // ok now cycle through hexes and make all changes
         for (Coords pos : positions) {
-            IHex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getBoard().getHex(pos);
             hex.setLevel(finalElev);
             // get rid of woods and replace with rough
             if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -4130,7 +4130,7 @@ public class Server implements Runnable {
         unit.setFacing(facing);
         unit.setSecondaryFacing(facing);
 
-        IHex hex = game.getBoard().getHex(pos);
+        Hex hex = game.getBoard().getHex(pos);
         boolean isBridge = (hex != null)
                 && hex.containsTerrain(Terrains.PAVEMENT);
 
@@ -4186,7 +4186,7 @@ public class Server implements Runnable {
         } else {
             // default to the floor of the hex.
             // unit elevation is relative to the surface
-            unit.setElevation(hex.floor() - hex.surface());
+            unit.setElevation(hex.floor() - hex.getLevel());
         }
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
@@ -4531,7 +4531,7 @@ public class Server implements Runnable {
                     Coords newPos = curPos.translated(dir, 2);
                     count = 0;
                     if (game.getBoard().contains(newPos)) {
-                        IHex newHex = game.getBoard().getHex(newPos);
+                        Hex newHex = game.getBoard().getHex(newPos);
                         Building bldg = game.getBoard().getBuildingAt(newPos);
                         boolean danger = newHex.containsTerrain(Terrains.WATER)
                                          || newHex.containsTerrain(Terrains.MAGMA)
@@ -4554,7 +4554,7 @@ public class Server implements Runnable {
                     newPos = newPos.translated((dir + 2) % 6);
                     count = 0;
                     if (game.getBoard().contains(newPos)) {
-                        IHex newHex = game.getBoard().getHex(newPos);
+                        Hex newHex = game.getBoard().getHex(newPos);
                         Building bldg = game.getBoard().getBuildingAt(newPos);
                         boolean danger = newHex.containsTerrain(Terrains.WATER)
                                          || newHex.containsTerrain(Terrains.MAGMA)
@@ -4811,7 +4811,7 @@ public class Server implements Runnable {
             EntityMovementType moveType, boolean flip) {
         Coords nextPos = start;
         Coords curPos = nextPos;
-        IHex curHex = game.getBoard().getHex(start);
+        Hex curHex = game.getBoard().getHex(start);
         Report r;
         int skidDistance = 0; // actual distance moved
         // Flipping vehicles take tonnage/10 points of damage for every hex they enter.
@@ -4857,7 +4857,7 @@ public class Server implements Runnable {
                 break;
             }
 
-            IHex nextHex = game.getBoard().getHex(nextPos);
+            Hex nextHex = game.getBoard().getHex(nextPos);
             distance -= nextHex.movementCost(entity) + 1;
             // By default, the unit is going to fall to the floor of the next
             // hex
@@ -4895,17 +4895,17 @@ public class Server implements Runnable {
                                              nextHex.getLevel() + nextHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     }
                 }
-                if ((nextAltitude <= nextHex.surface())
-                    && (curAltitude >= curHex.surface())) {
+                if ((nextAltitude <= nextHex.getLevel())
+                    && (curAltitude >= curHex.getLevel())) {
                     // Hovercraft and WiGEs can "skid" over water.
                     // all units can skid over ice.
                     if ((entity.getMovementMode().equals(EntityMovementMode.HOVER)
                                 || entity.getMovementMode().equals(EntityMovementMode.WIGE))
                             && nextHex.containsTerrain(Terrains.WATER)) {
-                        nextAltitude = nextHex.surface();
+                        nextAltitude = nextHex.getLevel();
                     } else {
                         if (nextHex.containsTerrain(Terrains.ICE)) {
-                            nextAltitude = nextHex.surface();
+                            nextAltitude = nextHex.getLevel();
                         }
                     }
                 }
@@ -4921,7 +4921,7 @@ public class Server implements Runnable {
             }
 
             // The elevation the skidding unit will occupy in next hex
-            int nextElevation = nextAltitude - nextHex.surface();
+            int nextElevation = nextAltitude - nextHex.getLevel();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
             if (entity.getMovementMode() == EntityMovementMode.VTOL
@@ -5626,7 +5626,7 @@ public class Server implements Runnable {
     private boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection,
             MoveStep prevStep, boolean isBackwards, EntityMovementType lastStepMoveType, int distance,
             int modifier, int marginOfFailure) {
-        IHex curHex = game.getBoard().getHex(curPos);
+        Hex curHex = game.getBoard().getHex(curPos);
         if (entity.getMovementMode() == EntityMovementMode.WHEELED
                 && !curHex.containsTerrain(Terrains.PAVEMENT)) {
             modifier += 2;
@@ -5948,7 +5948,7 @@ public class Server implements Runnable {
         // checks for all of them
         List<Coords> coords = new ArrayList<>();
         coords.add(c);
-        IHex h = game.getBoard().getHex(c);
+        Hex h = game.getBoard().getHex(c);
         int crateredElevation;
         boolean containsWater = false;
         if (h.containsTerrain(Terrains.WATER)) {
@@ -5963,7 +5963,7 @@ public class Server implements Runnable {
                 if (!game.getBoard().contains(adjCoords)) {
                     continue;
                 }
-                IHex adjHex = game.getBoard().getHex(adjCoords);
+                Hex adjHex = game.getBoard().getHex(adjCoords);
                 coords.add(adjCoords);
                 if (adjHex.containsTerrain(Terrains.WATER)) {
                     if (containsWater) {
@@ -6496,7 +6496,7 @@ public class Server implements Runnable {
         boolean detectedHiddenHazard = false;
         boolean turnOver;
         int prevFacing = curFacing;
-        IHex prevHex = game.getBoard().getHex(curPos);
+        Hex prevHex = game.getBoard().getHex(curPos);
         final boolean isInfantry = entity instanceof Infantry;
         AttackAction charge = null;
         RamAttackAction ram = null;
@@ -7579,7 +7579,7 @@ public class Server implements Runnable {
             // set climb mode in case of skid
             entity.setClimbMode(curClimbMode);
 
-            IHex curHex = game.getBoard().getHex(curPos);
+            Hex curHex = game.getBoard().getHex(curPos);
 
             // when first entering a building, we need to roll what type
             // of basement it has
@@ -7878,7 +7878,7 @@ public class Server implements Runnable {
             }
 
             // check to see if we are a mech and we've moved OUT of fire
-            IHex lastHex = game.getBoard().getHex(lastPos);
+            Hex lastHex = game.getBoard().getHex(lastPos);
             if (entity instanceof Mech) {
                 if (!lastPos.equals(curPos) && (prevStep != null)
                         && ((lastHex.containsTerrain(Terrains.FIRE)
@@ -7926,7 +7926,7 @@ public class Server implements Runnable {
                 boolean underwater = game.getBoard().getHex(curPos)
                         .containsTerrain(Terrains.WATER)
                         && (game.getBoard().getHex(curPos).depth() > 0)
-                        && (step.getElevation() < game.getBoard().getHex(curPos).surface());
+                        && (step.getElevation() < game.getBoard().getHex(curPos).getLevel());
                 if (game.getBoard().getHex(curPos).containsTerrain(
                         Terrains.FIRE) && !lastPos.equals(curPos)
                         && (stepMoveType != EntityMovementType.MOVE_JUMP)
@@ -8594,7 +8594,7 @@ public class Server implements Runnable {
             // Check for crushing buildings by Dropships/Mobile Structures
             for (Coords pos : step.getCrushedBuildingLocs()) {
                 Building bldg = game.getBoard().getBuildingAt(pos);
-                IHex hex = game.getBoard().getHex(pos);
+                Hex hex = game.getBoard().getHex(pos);
 
                 r = new Report(3443);
                 r.subject = entity.getId();
@@ -8863,7 +8863,7 @@ public class Server implements Runnable {
                 entity.setSwarmAttackerId(Entity.NONE);
                 swarmer.setSwarmTargetId(Entity.NONE);
 
-                IHex curHex = game.getBoard().getHex(curPos);
+                Hex curHex = game.getBoard().getHex(curPos);
 
                 // Did the infantry fall into water?
                 if (curHex.terrainLevel(Terrains.WATER) > 0) {
@@ -8897,7 +8897,7 @@ public class Server implements Runnable {
 
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
-            final IHex curHex = game.getBoard().getHex(curPos);
+            final Hex curHex = game.getBoard().getHex(curPos);
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -9133,7 +9133,7 @@ public class Server implements Runnable {
                         entity.setElevation(entity.getAltitude() * 10);
                         entity.setAltitude(0);
                     } else {
-                        IHex hex = game.getBoard().getHex(entity.getPosition());
+                        Hex hex = game.getBoard().getHex(entity.getPosition());
                         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                             entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         } else {
@@ -9204,7 +9204,7 @@ public class Server implements Runnable {
             }
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                IHex hex = game.getBoard().getHex(curPos);
+                Hex hex = game.getBoard().getHex(curPos);
                 if (md.automaticWiGELanding(false)) {
                     // try to land safely; LAMs require a psr when landing with gyro or leg actuator
                     // damage and ProtoMechs always require a roll
@@ -10175,7 +10175,7 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, smokeType, 3);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.SMOKE, smokeType));
         sendChangedHex(coords);
     }
@@ -10186,7 +10186,7 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LIGHT, 3);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LIGHT));
         sendChangedHex(coords);
     }
@@ -10197,7 +10197,7 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, duration);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
     }
@@ -10208,7 +10208,7 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
         sendChangedHex(coords);
     }
@@ -10224,7 +10224,7 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
@@ -10257,7 +10257,7 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
@@ -10288,7 +10288,7 @@ public class Server implements Runnable {
      */
     public void deliverArtilleryInferno(Coords coords, Entity ae,
             int subjectId, Vector<Report> vPhaseReport) {
-        IHex h = game.getBoard().getHex(coords);
+        Hex h = game.getBoard().getHex(coords);
         Report r;
         // Unless there is a fire in the hex already, start one.
         if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
@@ -10349,7 +10349,7 @@ public class Server implements Runnable {
     }
 
     public void deliverScreen(Coords coords, Vector<Report> vPhaseReport) {
-        IHex h = game.getBoard().getHex(coords);
+        Hex h = game.getBoard().getHex(coords);
         Report r;
         Report.addNewline(vPhaseReport);
         r = new Report(9070, Report.PUBLIC);
@@ -10469,7 +10469,7 @@ public class Server implements Runnable {
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
                 int missiles, int called, boolean areaEffect) {
-        IHex hex = game.getBoard().getHex(t.getPosition());
+        Hex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<>();
         int attId = Entity.NONE;
@@ -10510,8 +10510,8 @@ public class Server implements Runnable {
             case Targetable.TYPE_HEX_CLEAR:
             case Targetable.TYPE_HEX_IGNITE:
                 // Report that damage applied to terrain, if there's TF to damage
-                IHex h = game.getBoard().getHex(t.getPosition());
-                if ((h != null) && h.hasTerrainfactor()) {
+                Hex h = game.getBoard().getHex(t.getPosition());
+                if ((h != null) && h.hasTerrainFactor()) {
                     r = new Report(3384);
                     r.indent(2);
                     r.subject = attId;
@@ -11680,7 +11680,7 @@ public class Server implements Runnable {
      * @param coords The <code>Coords</code> the entity is at
      */
     void checkForWashedInfernos(Entity entity, Coords coords) {
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         int waterLevel = hex.terrainLevel(Terrains.WATER);
         // Mech on fire with infernos can wash them off.
         if (!(entity instanceof Mech) || !entity.infernos.isStillBurning()) {
@@ -11703,7 +11703,7 @@ public class Server implements Runnable {
         entity.infernos.clear();
 
         // Start a fire in the hex?
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         Report r = new Report(2170);
         r.subject = entity.getId();
         r.addDesc(entity);
@@ -11760,13 +11760,13 @@ public class Server implements Runnable {
      * @param entity
      *            The <code>Entity</code> who's exposure is being set
      * @param hex
-     *            The <code>IHex</code> the entity is in
+     *            The <code>Hex</code> the entity is in
      * @param isJump
      *            a <code>boolean</code> value whether the entity is jumping
      * @param elevation
      *            the elevation the entity should be at.
      */
-    public Vector<Report> doSetLocationsExposure(Entity entity, IHex hex,
+    public Vector<Report> doSetLocationsExposure(Entity entity, Hex hex,
             boolean isJump, int elevation) {
         Vector<Report> vPhaseReport = new Vector<>();
         if (hex == null) {
@@ -12290,12 +12290,12 @@ public class Server implements Runnable {
                                              int entitySrcElevation, Coords origSrc, Coords origDest,
                                              PilotingRollData roll, boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<>();
-        IHex srcHex = game.getBoard().getHex(origSrc);
-        IHex destHex = game.getBoard().getHex(origDest);
+        Hex srcHex = game.getBoard().getHex(origSrc);
+        Hex destHex = game.getBoard().getHex(origDest);
         Coords src, dest;
         // We need to fall into the lower of the two hexes, TW pg 68
         if (srcHex.getLevel() < destHex.getLevel()) {
-            IHex swapHex = destHex;
+            Hex swapHex = destHex;
             destHex = srcHex;
             srcHex = swapHex;
             src = origDest;
@@ -12306,7 +12306,7 @@ public class Server implements Runnable {
         }
         final int srcHeightAboveFloor = entitySrcElevation + srcHex.depth(false);
         int fallElevation = Math.abs((srcHex.floor() + srcHeightAboveFloor)
-                - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface() : destHex.floor()))
+                - (destHex.containsTerrain(Terrains.ICE) ? destHex.getLevel() : destHex.floor()))
                 - fallReduction;
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
@@ -12517,8 +12517,8 @@ public class Server implements Runnable {
             }
             return vPhaseReport;
         }
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final int direction = src.direction(dest);
 
         // Handle null hexes.
@@ -12529,8 +12529,8 @@ public class Server implements Runnable {
         }
         int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV)
             ? destHex.terrainLevel(Terrains.BLDG_ELEV) : 0;
-        int fallElevation = srcHex.surface() + entity.getElevation()
-                - (destHex.surface() + bldgElev);
+        int fallElevation = srcHex.getLevel() + entity.getElevation()
+                - (destHex.getLevel() + bldgElev);
         if (fallElevation > 1) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
@@ -12816,7 +12816,7 @@ public class Server implements Runnable {
     private Vector<Report> doEntityDisplacementBogDownCheck(Entity entity, Coords c, int elev) {
         Vector<Report> vReport = new Vector<>();
         Report r;
-        IHex destHex = game.getBoard().getHex(c);
+        Hex destHex = game.getBoard().getHex(c);
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(),
                 entity instanceof LargeSupportTank);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS)
@@ -13014,7 +13014,7 @@ public class Server implements Runnable {
         entity.setPosition(coords);
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         if (assaultDrop) {
             entity.setAltitude(1);
             // from the sky!
@@ -13023,7 +13023,7 @@ public class Server implements Runnable {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the
             // ground.
-            entity.setElevation((hex.ceiling() - hex.surface()) + 1);
+            entity.setElevation((hex.ceiling() - hex.getLevel()) + 1);
             while ((Compute.stackingViolation(game, entity, coords, null) != null)
                    && (entity.getElevation() <= 50)) {
                 entity.setElevation(entity.getElevation() + 1);
@@ -14512,7 +14512,7 @@ public class Server implements Runnable {
 
         // Get the entity's current hex.
         Coords coords = entity.getPosition();
-        IHex curHex = game.getBoard().getHex(coords);
+        Hex curHex = game.getBoard().getHex(coords);
 
         Report r;
 
@@ -14643,7 +14643,7 @@ public class Server implements Runnable {
             boolean bInferno, TargetRoll nTargetRoll, boolean bReportAttempt,
             int accidentTarget, Vector<Report> vPhaseReport) {
 
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         Report r;
 
         // Ignore bad coordinates.
@@ -14775,7 +14775,7 @@ public class Server implements Runnable {
 
     public Vector<Report> tryClearHex(Coords c, int nDamage, int entityId) {
         Vector<Report> vPhaseReport = new Vector<>();
-        IHex h = game.getBoard().getHex(c);
+        Hex h = game.getBoard().getHex(c);
         if (h == null) {
             return vPhaseReport;
         }
@@ -17357,19 +17357,19 @@ public class Server implements Runnable {
         Coords[] hexes = new Coords[6];
         int[] scores = new int[6];
 
-        IHex curHex = game.getBoard().getHex(ae.getPosition());
+        Hex curHex = game.getBoard().getHex(ae.getPosition());
         for (int i = 0; i < 6; i++) {
             hexes[i] = ae.getPosition().translated(i);
             scores[i] = 0;
-            IHex hex = game.getBoard().getHex(hexes[i]);
+            Hex hex = game.getBoard().getHex(hexes[i]);
             if (hex.containsTerrain(Terrains.MAGMA)) {
                 scores[i] += 10;
             }
             if (hex.containsTerrain(Terrains.WATER)) {
                 scores[i] += hex.terrainLevel(Terrains.WATER);
             }
-            if ((curHex.surface() - hex.surface()) >= 2) {
-                scores[i] += 2 * (curHex.surface() - hex.surface());
+            if ((curHex.getLevel() - hex.getLevel()) >= 2) {
+                scores[i] += 2 * (curHex.getLevel() - hex.getLevel());
             }
         }
 
@@ -18478,8 +18478,8 @@ public class Server implements Runnable {
             return;
         }
 
-        final IHex aeHex = game.getBoard().getHex(ae.getPosition());
-        final IHex teHex = game.getBoard().getHex(daa.getTargetPos());
+        final Hex aeHex = game.getBoard().getHex(ae.getPosition());
+        final Hex teHex = game.getBoard().getHex(daa.getTargetPos());
         final Targetable target = game.getTarget(daa.getTargetType(), daa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
@@ -18497,7 +18497,7 @@ public class Server implements Runnable {
             // because some units (Sylph, submarines) can be at ANY elevation
             // underwater, and VTOLs can be well above the surface.
             te = (Entity) target;
-            IHex hex = game.getBoard().getHex(te.getPosition());
+            Hex hex = game.getBoard().getHex(te.getPosition());
             if (hex.containsTerrain(Terrains.WATER)) {
                 if (te.relHeight() < 0) {
                     damage = (int) Math.ceil(damage * 0.5f);
@@ -18848,7 +18848,7 @@ public class Server implements Runnable {
             if ((null == entity.getPosition()) && !entity.isAero()) {
                 continue;
             }
-            IHex entityHex = game.getBoard().getHex(entity.getPosition());
+            Hex entityHex = game.getBoard().getHex(entity.getPosition());
 
             int hotDogMod = 0;
             if (entity.hasAbility(OptionsConstants.PILOT_HOT_DOG)) {
@@ -20192,10 +20192,10 @@ public class Server implements Runnable {
                     || entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard()) {
                 continue;
             }
-            final IHex curHex = game.getBoard().getHex(entity.getPosition());
+            final Hex curHex = game.getBoard().getHex(entity.getPosition());
             final boolean underwater = curHex.containsTerrain(Terrains.WATER)
                     && (curHex.depth() > 0)
-                    && (entity.getElevation() < curHex.surface());
+                    && (entity.getElevation() < curHex.getLevel());
             final int numFloors = curHex.terrainLevel(Terrains.BLDG_ELEV);
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater
                     && ((entity.getElevation() <= 1)
@@ -20425,7 +20425,7 @@ public class Server implements Runnable {
             if ((null == entity.getPosition()) || entity.isOffBoard()) {
                 continue;
             }
-            final IHex curHex = game.getBoard().getHex(entity.getPosition());
+            final Hex curHex = game.getBoard().getHex(entity.getPosition());
             if ((((entity.getElevation() < 0) && ((curHex
                     .terrainLevel(Terrains.WATER) > 1) || ((curHex
                     .terrainLevel(Terrains.WATER) == 1) && entity.isProne()))) || game
@@ -20604,7 +20604,7 @@ public class Server implements Runnable {
 
         // Mechs with UMU float and don't have to roll???
         if (entity instanceof Mech) {
-            IHex hex = game.getBoard().getHex(dest);
+            Hex hex = game.getBoard().getHex(dest);
             int water = hex.terrainLevel(Terrains.WATER);
             if ((water > 0) && (entity.getElevation() != -hex.depth(true))
                     && ((entity.getElevation() < 0) || ((entity.getElevation() == 0)
@@ -21004,7 +21004,7 @@ public class Server implements Runnable {
                                 r.addDesc(e);
                                 r.add(loss);
                                 vReport.add(r);
-                                IHex hex = game.getBoard().getHex(e.getPosition());
+                                Hex hex = game.getBoard().getHex(e.getPosition());
                                 int elevation = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                                 if (e.getElevation() - loss <= elevation) {
                                     crashAirMech(e, target, vReport);
@@ -21721,7 +21721,7 @@ public class Server implements Runnable {
         boolean isFerroFibrousTarget = false;
         boolean wasDamageIS = false;
         boolean tookInternalDamage = damageIS;
-        IHex te_hex = null;
+        Hex te_hex = null;
 
         boolean hardenedArmor = ((te instanceof Mech) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
@@ -22918,7 +22918,7 @@ public class Server implements Runnable {
                             r.subject = te_n;
                             r.add(te.getLocationName(blownOffLocation));
                             vDesc.addElement(r);
-                            IHex h = game.getBoard().getHex(te.getPosition());
+                            Hex h = game.getBoard().getHex(te.getPosition());
                             if (null != h) {
                                 if (te instanceof BipedMech) {
                                     if (!h.containsTerrain(Terrains.ARMS)) {
@@ -23707,7 +23707,7 @@ public class Server implements Runnable {
 
         // We need to damage terrain
         int maxDist = damages.length;
-        IHex hex = game.getBoard().getHex(position);
+        Hex hex = game.getBoard().getHex(position);
         // Center hex starts on fire for engine explosions
         if (engineExplosion && (hex != null) && !hex.containsTerrain(Terrains.FIRE)) {
             r = new Report(5136);
@@ -23722,7 +23722,7 @@ public class Server implements Runnable {
             }
             vDesc.addAll(reports);
         }
-        if ((hex != null) && hex.hasTerrainfactor()) {
+        if ((hex != null) && hex.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.type = Report.PUBLIC;
@@ -23741,7 +23741,7 @@ public class Server implements Runnable {
             List<Coords> coords = position.allAtDistance(dist);
             for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
-                if ((hex != null) && hex.hasTerrainfactor()) {
+                if ((hex != null) && hex.hasTerrainFactor()) {
                     r = new Report(3384);
                     r.indent(2);
                     r.type = Report.PUBLIC;
@@ -23918,7 +23918,7 @@ public class Server implements Runnable {
     public boolean canShelter(Coords entityPosition, Coords position, int entityAbsHeight) {
         // What is the next hex in the direction of the blast?
         Coords shelteringCoords = Coords.nextHex(entityPosition, position);
-        IHex shelteringHex = game.getBoard().getHex(shelteringCoords);
+        Hex shelteringHex = game.getBoard().getHex(shelteringCoords);
 
         // This is an error condition. It really shouldn't ever happen.
         if (shelteringHex == null) {
@@ -23936,7 +23936,7 @@ public class Server implements Runnable {
         }
 
         // Get the absolute height of the unit relative to level 0.
-        entityAbsHeight += game.getBoard().getHex(entityPosition).surface();
+        entityAbsHeight += game.getBoard().getHex(entityPosition).getLevel();
 
         // Now find the height that needs to be sheltered, and compare.
         return entityAbsHeight < shelterLevel;
@@ -24035,7 +24035,7 @@ public class Server implements Runnable {
                     continue;
                 }
                 
-                IHex myHex = game.getBoard().getHex(myHexCoords);
+                Hex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
                 myHex.setLevel((myHex.getLevel() - curDepth));
 
@@ -24132,7 +24132,7 @@ public class Server implements Runnable {
             addReport(r);
             tmpB.setCurrentCF(0, position);
         }
-        IHex gzHex = game.getBoard().getHex(position);
+        Hex gzHex = game.getBoard().getHex(position);
         if (gzHex.containsTerrain(Terrains.WATER)) {
             gzHex.setLevel(gzHex.floor());
         }
@@ -24155,7 +24155,7 @@ public class Server implements Runnable {
                         continue;
                     }
                     
-                    IHex myHex = game.getBoard().getHex(myHexCoords);
+                    Hex myHex = game.getBoard().getHex(myHexCoords);
 
                     // For each 3000 damage, water level is reduced by 1.
                     if ((damageAtRange >= 3000) && (myHex.containsTerrain(Terrains.WATER))) {
@@ -26113,7 +26113,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<>();
 
         lam.setPosition(pos);
-        IHex hex = game.getBoard().getHex(pos);
+        Hex hex = game.getBoard().getHex(pos);
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             lam.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
         } else {
@@ -26170,7 +26170,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<>();
 
         en.setPosition(pos);
-        IHex hex = game.getBoard().getHex(pos);
+        Hex hex = game.getBoard().getHex(pos);
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             en.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
         } else {
@@ -26201,7 +26201,7 @@ public class Server implements Runnable {
     private Vector<Report> forceLandVTOLorWiGE(Tank en) {
         Vector<Report> vDesc = new Vector<>();
         PilotingRollData psr = en.getBasePilotingRoll();
-        IHex hex = game.getBoard().getHex(en.getPosition());
+        Hex hex = game.getBoard().getHex(en.getPosition());
         if (en instanceof VTOL) {
             psr.addModifier(4, "VTOL making forced landing");
         } else {
@@ -26307,7 +26307,7 @@ public class Server implements Runnable {
             r.addDesc(en);
             vDesc.addElement(r);
             int newElevation = 0;
-            IHex fallHex = game.getBoard().getHex(crashPos);
+            Hex fallHex = game.getBoard().getHex(crashPos);
 
             // May land on roof of building or bridge
             if (fallHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -26505,7 +26505,7 @@ public class Server implements Runnable {
             vDesc.addElement(r);
         } else {
             Coords pos = en.getPosition();
-            IHex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
                 ignite(pos, Terrains.FIRE_LVL_NORMAL, vDesc);
             } else {
@@ -26789,7 +26789,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<>();
         Report r;
         Coords coords = en.getPosition();
-        IHex hex = null;
+        Hex hex = null;
         int hits;
         if (rollNumber) {
             if (null != coords) {
@@ -27111,11 +27111,11 @@ public class Server implements Runnable {
      * @param entity the <code>Entity</code> that needs to be checked.
      * @param loc    the <code>int</code> location on the entity that needs to be
      *               checked for a breach.
-     * @param hex    the <code>IHex</code> the entity occupies when checking. This
+     * @param hex    the <code>Hex</code> the entity occupies when checking. This
      *               value will be <code>null</code> if the check is the result of
      *               an attack, and non-null if it occurs during movement.
      */
-    private Vector<Report> breachCheck(Entity entity, int loc, IHex hex) {
+    private Vector<Report> breachCheck(Entity entity, int loc, Hex hex) {
         return breachCheck(entity, loc, hex, false);
     }
 
@@ -27126,12 +27126,12 @@ public class Server implements Runnable {
      * @param entity     the <code>Entity</code> that needs to be checked.
      * @param loc        the <code>int</code> location on the entity that needs to be
      *                   checked for a breach.
-     * @param hex        the <code>IHex</code> the entity occupies when checking. This
+     * @param hex        the <code>Hex</code> the entity occupies when checking. This
      *                   value will be <code>null</code> if the check is the result of
      *                   an attack, and non-null if it occurs during movement.
      * @param underWater Is the breach check a result of an underwater attack?
      */
-    private Vector<Report> breachCheck(Entity entity, int loc, IHex hex, boolean underWater) {
+    private Vector<Report> breachCheck(Entity entity, int loc, Hex hex, boolean underWater) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -27239,13 +27239,13 @@ public class Server implements Runnable {
      * @param entity the <code>Entity</code> that needs to be checked.
      * @param loc    the <code>int</code> location on the entity that needs to be
      *               checked for a breach.
-     * @param hex    the <code>IHex</code> the entity occupies when checking. This
+     * @param hex    the <code>Hex</code> the entity occupies when checking. This
      *               value will be <code>null</code> if the check is the result of
      *               an attack, and non-null if it occurs during movement.
      * @param harJel a <code>boolean</code> value indicating if the uselessness is
      *               the cause of a critically hit HarJel system
      */
-    private Vector<Report> breachLocation(Entity entity, int loc, IHex hex, boolean harJel) {
+    private Vector<Report> breachLocation(Entity entity, int loc, Hex hex, boolean harJel) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -27657,7 +27657,7 @@ public class Server implements Runnable {
         // unit
         // might convert the hex to rough
         Coords curPos = entity.getPosition();
-        IHex entityHex = game.getBoard().getHex(curPos);
+        Hex entityHex = game.getBoard().getHex(curPos);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
                 && (entityHex != null) && game.getBoard().onGround()
                 && !((entity instanceof Infantry) || (entity instanceof Protomech))) {
@@ -28008,7 +28008,7 @@ public class Server implements Runnable {
         Vector<Report> vPhaseReport = new Vector<>();
         Report r;
 
-        IHex fallHex = game.getBoard().getHex(fallPos);
+        Hex fallHex = game.getBoard().getHex(fallPos);
 
         boolean handlingBasement = false;
         int damageTable = ToHitData.HIT_NORMAL;
@@ -28467,7 +28467,7 @@ public class Server implements Runnable {
         boolean fallToSurface = false;
         // on ice
         int toSubtract = 0;
-        IHex currHex = game.getBoard().getHex(entity.getPosition());
+        Hex currHex = game.getBoard().getHex(entity.getPosition());
         if (currHex.containsTerrain(Terrains.ICE)
             && (entity.getElevation() != -currHex.depth())) {
             fallToSurface = true;
@@ -28582,7 +28582,7 @@ public class Server implements Runnable {
     public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno, int entityId,
                                  Vector<Report> vPhaseReport) {
 
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
 
         // The hex might be null due to spreadFire translation
         // goes outside of the board limit.
@@ -28674,7 +28674,7 @@ public class Server implements Runnable {
             return;
         }
 
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (null == hex) {
             return;
         }
@@ -28712,7 +28712,7 @@ public class Server implements Runnable {
      * @param reason
      */
     public void removeFire(Coords fireCoords, String reason) {
-        IHex hex = game.getBoard().getHex(fireCoords);
+        Hex hex = game.getBoard().getHex(fireCoords);
         if (null == hex) {
             return;
         }
@@ -28739,7 +28739,7 @@ public class Server implements Runnable {
 
         int smokeLevel = 0;
         for (Coords smokeCoords : coords) {
-            IHex smokeHex = game.getBoard().getHex(smokeCoords);
+            Hex smokeHex = game.getBoard().getHex(smokeCoords);
             Report r;
             if (smokeHex == null) {
                 continue;
@@ -30385,7 +30385,7 @@ public class Server implements Runnable {
      * Sends out the game victory event to all connections
      */
     private void transmitGameVictoryEventToAll() {
-        for (IConnection conn : connections) {
+        for (AbstractConnection conn : connections) {
             send(conn.getId(), new Packet(Packet.COMMAND_GAME_VICTORY_EVENT));
         }
     }
@@ -30393,7 +30393,7 @@ public class Server implements Runnable {
     /**
      * Sends out all player info to the specified connection
      */
-    private void transmitPlayerConnect(IConnection connection) {
+    private void transmitPlayerConnect(AbstractConnection connection) {
         for (var player: game.getPlayersVector()) {
             var connectionId = connection.getId();
             connection.send(
@@ -30754,7 +30754,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing a hex, and the coordinates it goes at.
      */
-    private Packet createHexChangePacket(Coords coords, IHex hex) {
+    private Packet createHexChangePacket(Coords coords, Hex hex) {
         final Object[] data = new Object[2];
         data[0] = coords;
         data[1] = hex;
@@ -30777,7 +30777,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing a hex, and the coordinates it goes at.
      */
-    private Packet createHexesChangePacket(Set<Coords> coords, Set<IHex> hex) {
+    private Packet createHexesChangePacket(Set<Coords> coords, Set<Hex> hex) {
         final Object[] data = new Object[2];
         data[0] = coords;
         data[1] = hex;
@@ -30788,7 +30788,7 @@ public class Server implements Runnable {
      * Sends notification to clients that the specified hex has changed.
      */
     public void sendChangedHexes(Set<Coords> coords) {
-        Set<IHex> hexes = new LinkedHashSet<>();
+        Set<Hex> hexes = new LinkedHashSet<>();
         for (Coords coord : coords) {
             hexes.add(game.getBoard().getHex(coord));
         }
@@ -30909,8 +30909,8 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             conn.send(packet);
         }
     }
@@ -30948,8 +30948,8 @@ public class Server implements Runnable {
             return;
         }
 
-        for (Enumeration<IConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            IConnection conn = connEnum.nextElement();
+        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
+            AbstractConnection conn = connEnum.nextElement();
             Player p = game.getPlayer(conn.getId());
             Packet packet;
             if (tacticalGeniusReport) {
@@ -30976,7 +30976,7 @@ public class Server implements Runnable {
      * Send a packet to a pending connection
      */
     private void sendToPending(int connId, Packet packet) {
-        IConnection pendingConn = getPendingConnection(connId);
+        AbstractConnection pendingConn = getPendingConnection(connId);
         if (pendingConn != null) {
             pendingConn.send(packet);
         }
@@ -31058,7 +31058,7 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_CLOSE_CONNECTION:
                 // We have a client going down!
-                IConnection c = getConnection(connId);
+                AbstractConnection c = getConnection(connId);
                 if (c != null) {
                     c.close();
                 }
@@ -31305,7 +31305,7 @@ public class Server implements Runnable {
                 try {
                     sendServerChat(getPlayer(connId).getName() + " loaded a new game.");
                     setGame((Game) packet.getObject(0));
-                    for (IConnection conn : connections) {
+                    for (AbstractConnection conn : connections) {
                         sendCurrentInfo(conn.getId());
                     }
                 } catch (Exception e) {
@@ -31346,7 +31346,7 @@ public class Server implements Runnable {
                     int id = getFreeConnectionId();
                     MegaMek.getLogger().info("s: accepting player connection #" + id + "...");
 
-                    IConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
+                    AbstractConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
                     c.addConnectionListener(connectionListener);
                     c.open();
                     connectionsPending.addElement(c);
@@ -31477,7 +31477,7 @@ public class Server implements Runnable {
      */
     public void checkExplodeIndustrialZone(Coords c, Vector<Report> vDesc) {
         Report r;
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (null == hex) {
             return;
         }
@@ -31832,7 +31832,7 @@ public class Server implements Runnable {
         // Are there any Entities at these coords?
         if (vector != null) {
             // How many levels does this building have in this hex?
-            final IHex curHex = game.getBoard().getHex(coords);
+            final Hex curHex = game.getBoard().getHex(coords);
             final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             int numLoads = numFloors;
@@ -32128,7 +32128,7 @@ public class Server implements Runnable {
         if (vector != null) {
 
             // How many levels does this building have in this hex?
-            final IHex curHex = game.getBoard().getHex(coords);
+            final Hex curHex = game.getBoard().getHex(coords);
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             final int numFloors = Math.max(bridgeEl,
                     curHex.terrainLevel(Terrains.BLDG_ELEV));
@@ -33831,7 +33831,7 @@ public class Server implements Runnable {
                             - entity.getInternal(Mech.LOC_HEAD),
                     "Head Internal Structure Damage");
         }
-        IHex targetHex = game.getBoard().getHex(targetCoords);
+        Hex targetHex = game.getBoard().getHex(targetCoords);
         //Terrain modifiers should only apply if the unit is on the ground...
         if (!entity.isSpaceborne() && !entity.isAirborne()) {
             if (targetHex != null) {
@@ -34187,7 +34187,7 @@ public class Server implements Runnable {
                             || !(entity instanceof Tank)) {
                         return false;
                     }
-                    final IHex hex = game.getBoard().getHex(entity.getPosition());
+                    final Hex hex = game.getBoard().getHex(entity.getPosition());
                     final boolean onBridge = (hex.terrainLevel(Terrains.BRIDGE) > 0)
                             && (entity.getElevation() == hex.terrainLevel(Terrains.BRIDGE_ELEV));
                     return ((entity.getMovementMode() == EntityMovementMode.TRACKED)
@@ -34230,7 +34230,7 @@ public class Server implements Runnable {
             rollTarget = entity.getBasePilotingRoll();
             entity.addPilotingModifierForTerrain(rollTarget);
             // apart from swamp & liquid magma, -1 modifier
-            IHex hex = game.getBoard().getHex(entity.getPosition());
+            Hex hex = game.getBoard().getHex(entity.getPosition());
             hex.getUnstuckModifier(entity.getElevation(), rollTarget);
             // okay, print the info
             r = new Report(2340);
@@ -34297,7 +34297,7 @@ public class Server implements Runnable {
      */
     private Vector<Report> resolveIceBroken(Coords c) {
         Vector<Report> vPhaseReport = new Vector<>();
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         hex.removeTerrain(Terrains.ICE);
         sendChangedHex(c);
         // if there is water below the ice
@@ -34330,7 +34330,7 @@ public class Server implements Runnable {
     private Vector<Report> meltIceAndSnow(Coords c, int entityId) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         r = new Report(3069);
         r.indent(2);
         r.subject = entityId;
@@ -34356,7 +34356,7 @@ public class Server implements Runnable {
     private Vector<Report> checkQuickSand(Coords c) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.terrainLevel(Terrains.SWAMP) == 1) {
             if (Compute.d6(2) == 12) {
                 // better find a rope
@@ -34747,7 +34747,7 @@ public class Server implements Runnable {
 
             // do fall damage from accidental fall
             //set elevation to fall height above ground or building roof
-            IHex hex = game.getBoard().getHex(entity.getPosition());
+            Hex hex = game.getBoard().getHex(entity.getPosition());
             int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV)
                     ? hex.terrainLevel(Terrains.BLDG_ELEV) : 0;
             entity.setElevation(fallHeight + bldgElev);
@@ -34760,7 +34760,7 @@ public class Server implements Runnable {
             }
         } else {
             // set entity to expected elevation
-            IHex hex = game.getBoard().getHex(entity.getPosition());
+            Hex hex = game.getBoard().getHex(entity.getPosition());
             int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV)
                     ? hex.terrainLevel(Terrains.BLDG_ELEV) : 0;
             entity.setElevation(bldgElev);
@@ -34928,7 +34928,7 @@ public class Server implements Runnable {
             Vector<Report> vPhaseReport, boolean asfFlak,
             Vector<Integer> alreadyHit, boolean variableDamage) {
 
-        IHex hex = game.getBoard().getHex(coords);
+        Hex hex = game.getBoard().getHex(coords);
         if (hex == null) {
             return alreadyHit; // not on board.
         }
@@ -34938,8 +34938,8 @@ public class Server implements Runnable {
         // Non-flak artillery damages terrain
         if (!flak) {
             // Report that damage applied to terrain, if there's TF to damage
-            IHex h = game.getBoard().getHex(coords);
-            if ((h != null) && h.hasTerrainfactor()) {
+            Hex h = game.getBoard().getHex(coords);
+            if ((h != null) && h.hasTerrainFactor()) {
                 r = new Report(3384);
                 r.indent(2);
                 r.subject = subjectId;
@@ -35136,7 +35136,7 @@ public class Server implements Runnable {
      */
     public void deliverBombInferno(Coords coords, Entity ae, int subjectId,
                                    Vector<Report> vPhaseReport) {
-        IHex h = game.getBoard().getHex(coords);
+        Hex h = game.getBoard().getHex(coords);
         Report r;
         // Unless there is a fire in the hex already, start one.
         if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_BOMB) {
@@ -35188,7 +35188,7 @@ public class Server implements Runnable {
                     r.subject = inf.getId();
                     addReport(r);
                     // fortification complete - add to map
-                    IHex hex = game.getBoard().getHex(c);
+                    Hex hex = game.getBoard().getHex(c);
                     hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
                     sendChangedHex(c);
                     // Clear the dig in for any units in same hex, since they
@@ -35394,7 +35394,7 @@ public class Server implements Runnable {
      */
     public void removeSmokeTerrain(SmokeCloud cloud) {
         for (Coords coords : cloud.getCoordsList()) {
-            IHex nextHex = game.getBoard().getHex(coords);
+            Hex nextHex = game.getBoard().getHex(coords);
             if ((nextHex != null) && nextHex.containsTerrain(Terrains.SMOKE)) {
                 nextHex.removeTerrain(Terrains.SMOKE);
                 sendChangedHex(coords);
@@ -35506,7 +35506,7 @@ public class Server implements Runnable {
                       + URLEncoder.encode(
                               Integer.toString(serverSocket.getLocalPort()), "UTF-8");
             if (register) {
-                for (IConnection iconn : connections) {
+                for (AbstractConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());
                 }
                 if ((game.getPhase() != GamePhase.LOUNGE)

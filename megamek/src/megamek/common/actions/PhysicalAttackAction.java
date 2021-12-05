@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.actions;
 
 import megamek.client.ui.Messages;
@@ -21,10 +20,6 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4702357516725749181L;
     // equipment that affects this attack (AMS, ECM?, etc)
 
@@ -44,9 +39,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      * @param target    Target
      * @return reason the attack is impossible, or null if it is possible
      */
-    protected static String toHitIsImpossible(Game game, Entity ae,
-                                              Targetable target) {
-
+    protected static String toHitIsImpossible(Game game, Entity ae, Targetable target) {
         if (target == null) {
             return "target is null";
         }
@@ -96,8 +89,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 return "Target is swarming a Mek.";
             }
 
-            if ((ae.getGrappled() != Entity.NONE) &&
-                (ae.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
+            if ((ae.getGrappled() != Entity.NONE) && (ae.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
                 return "Locked in Grapple";
 
             }
@@ -105,14 +97,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);
             if (targetInBuilding) {
-                Building TargBldg = game.getBoard().getBuildingAt(
-                        te.getPosition());
+                Building TargBldg = game.getBoard().getBuildingAt(te.getPosition());
 
                 // Can't target units in buildings (from the outside).
                 if (!Compute.isInBuilding(game, ae)) {
                     return "Target is inside building";
-                } else if (!game.getBoard().getBuildingAt(ae.getPosition())
-                                .equals(TargBldg)) {
+                } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(TargBldg)) {
                     return "Target is inside different building";
                 }
             }
@@ -121,7 +111,6 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (te.isMakingDfa()) {
                 return "Target is making a DFA attack";
             }
-
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -134,9 +123,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         return null;
     }
 
-    protected static void setCommonModifiers(ToHitData toHit, Game game,
-                                             Entity ae, Targetable target) {
-
+    protected static void setCommonModifiers(ToHitData toHit, Game game, Entity ae, Targetable target) {
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);
         int attackerId = ae.getId();
         int targetId = target.getTargetId();
@@ -169,7 +156,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "Modular Armor");
         }
 
-        if ((ae instanceof Mech) && ((Mech) ae).isSuperHeavy()) {
+        if ((ae instanceof Mech) && ae.isSuperHeavy()) {
             toHit.addModifier(1, "attacker is superheavy mech");
         }
         
@@ -187,11 +174,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                                                  Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
-                toHit.addModifier(4,
-                                  "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 
@@ -230,10 +216,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            IHex targHex = game.getBoard().getHex(te.getPosition());
+            Hex targHex = game.getBoard().getHex(te.getPosition());
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
-                && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
+                    && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
                 toHit.addModifier(1, "target has partial cover");
             }
 

@@ -430,8 +430,8 @@ public class LosEffects {
             return los;
         }
 
-        final IHex attackerHex = game.getBoard().getHex(attackerPosition);
-        final IHex targetHex = game.getBoard().getHex(targetPosition);
+        final Hex attackerHex = game.getBoard().getHex(attackerPosition);
+        final Hex targetHex = game.getBoard().getHex(targetPosition);
         if ((attackerHex == null) || (targetHex == null)) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
@@ -480,9 +480,9 @@ public class LosEffects {
             attackerOnLand = true;
         } else {
             attackerUnderWater = attackerHex.containsTerrain(Terrains.WATER)
-                    && (attackerHex.depth() > 0) && (attackerElevation < attackerHex.surface());
+                    && (attackerHex.depth() > 0) && (attackerElevation < attackerHex.getLevel());
             attackerInWater = attackerHex.containsTerrain(Terrains.WATER)
-                    && (attackerHex.depth() > 0) && (attackerElevation == attackerHex.surface());
+                    && (attackerHex.depth() > 0) && (attackerElevation == attackerHex.getLevel());
             attackerOnLand = !(attackerUnderWater || attackerInWater);
         }
 
@@ -491,9 +491,9 @@ public class LosEffects {
         final boolean targetOnLand;
         if (game.getBoard().contains(targetPosition)) {
             targetUnderWater = targetHex.containsTerrain(Terrains.WATER)
-                    && (targetHex.depth() > 0) && (targetElevation < targetHex.surface());
+                    && (targetHex.depth() > 0) && (targetElevation < targetHex.getLevel());
             targetInWater = targetHex.containsTerrain(Terrains.WATER)
-                    && (targetHex.depth() > 0) && (targetElevation == targetHex.surface());
+                    && (targetHex.depth() > 0) && (targetElevation == targetHex.getLevel());
             targetOnLand = !(targetUnderWater || targetInWater);
         } else {
             targetUnderWater = true;
@@ -737,16 +737,14 @@ public class LosEffects {
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
             targetInBuilding = Compute.isInBuilding(game, ai.targetAbsHeight
-                    - game.getBoard().getHex(ai.targetPos).surface(),
-                    ai.targetPos);
+                    - game.getBoard().getHex(ai.targetPos).getLevel(), ai.targetPos);
         }
 
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if (targetInBuilding
                 && Compute.isInBuilding(game, ai.attackAbsHeight
-                        - game.getBoard().getHex(ai.attackPos).surface(),
-                        ai.attackPos)) {
+                        - game.getBoard().getHex(ai.attackPos).getLevel(), ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
             //elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight-ai.attackHeight) - (ai.targetAbsHeight-ai.targetHeight)));
@@ -795,24 +793,21 @@ public class LosEffects {
      * attacker partial cover blocks leg weapons, as we want to return the same
      * sequence regardless of what weapon is attacking.
      */
-    private static LosEffects losDivided(Game game, AttackInfo ai,
-            boolean diagramLoS, boolean partialCover) {
-        ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
-                true);
+    private static LosEffects losDivided(Game game, AttackInfo ai, boolean diagramLoS,
+                                         boolean partialCover) {
+        ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos, true);
         LosEffects los = new LosEffects();
         boolean targetInBuilding = false;
         if (ai.targetEntity) {
             targetInBuilding = Compute.isInBuilding(game, ai.targetAbsHeight
-                    - game.getBoard().getHex(ai.targetPos).surface(),
-                    ai.targetPos);
+                    - game.getBoard().getHex(ai.targetPos).getLevel(), ai.targetPos);
         }
 
         // If the target and attacker are both in a
         // building, set that as the first LOS effect.
         if (targetInBuilding
                 && Compute.isInBuilding(game, ai.attackAbsHeight
-                        - game.getBoard().getHex(ai.attackPos).surface(),
-                        ai.attackPos)) {
+                        - game.getBoard().getHex(ai.attackPos).getLevel(), ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
             //elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math
@@ -1074,8 +1069,8 @@ public class LosEffects {
             los.buildingLevelsOrHexes += 1;
         }
 
-        IHex hex = game.getBoard().getHex(coords);
-        int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
+        Hex hex = game.getBoard().getHex(coords);
+        int hexEl = ai.underWaterCombat ? hex.floor() : hex.getLevel();
 
         // Handle minimum water depth.
         // Applies to Torpedos.
@@ -1450,8 +1445,8 @@ public class LosEffects {
                 continue;
             }
            if(!c.equals(lowPos)) {
-               IHex hex = game.getBoard().getHex(c);
-               int hexEl = ai.underWaterCombat ? hex.floor() : hex.surface();
+               Hex hex = game.getBoard().getHex(c);
+               int hexEl = ai.underWaterCombat ? hex.floor() : hex.getLevel();
                // Handle building elevation.
                // Attacks thru a building are not blocked by that building.
                // ASSUMPTION: bridges don't block LOS.

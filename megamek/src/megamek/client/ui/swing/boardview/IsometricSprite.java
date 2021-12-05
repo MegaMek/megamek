@@ -6,7 +6,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Player;
-import megamek.common.options.IOptions;
+import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 
 import java.awt.*;
@@ -66,9 +66,6 @@ class IsometricSprite extends Sprite {
         }
     }
 
-    /**
-     *
-     */
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
             boolean makeTranslucent) {
@@ -210,14 +207,12 @@ class IsometricSprite extends Sprite {
         if (localPlayer == null) {
             return false;
         }
-        IOptions opts = this.bv.game.getOptions();
-        if (opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                && ((e.getOwner().getId() == localPlayer.getId()) 
-                        || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
-                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
-            return true;
-        }
-        return false;
+
+        AbstractOptions opts = this.bv.game.getOptions();
+        return opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && ((e.getOwner().getId() == localPlayer.getId())
+                || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
+                && (e.getOwner().getTeam() == localPlayer.getTeam())));
     }
     
     /**
@@ -227,25 +222,18 @@ class IsometricSprite extends Sprite {
      * @return
      */
     private boolean onlyDetectedBySensors() {
-        boolean sensors = (bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+        boolean sensors = (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
-        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
+        boolean doubleBlind = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && !trackThisEntitiesVisibilityInfo(entity)
-                && hasDetected && !hasVisual) {
-            return true;
-        } else {
-            return false;
-        }
+        return sensors && doubleBlind && !sensorsDetectAll
+                && !trackThisEntitiesVisibilityInfo(entity) && hasDetected && !hasVisual;
     }
 
+    @Override
     protected int getSpritePriority() {
         return entity.getSpriteDrawPriority();
     }

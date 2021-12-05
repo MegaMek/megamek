@@ -326,7 +326,7 @@ public class CityBuilder {
      * @param hex
      * @return true if it is reasonable to build on this hex
      */
-    private boolean isHexBuildable(IHex hex) {
+    private boolean isHexBuildable(Hex hex) {
         if (hex.containsTerrain(Terrains.WATER)
                 || hex.containsTerrain(Terrains.IMPASSABLE)
                 || hex.containsTerrain(Terrains.MAGMA)
@@ -343,7 +343,7 @@ public class CityBuilder {
      * @param hex
      * @return true if the hex needs a bridge to cross
      */
-    private boolean hexNeedsBridge(IHex hex) {
+    private boolean hexNeedsBridge(Hex hex) {
         if (hex.containsTerrain(Terrains.ROAD)
                 || hex.containsTerrain(Terrains.BRIDGE))
             return false;
@@ -351,7 +351,7 @@ public class CityBuilder {
                 .containsTerrain(Terrains.MAGMA));
     }
 
-    private void addRoad(IHex hex, int exitDirection, int type) {
+    private void addRoad(Hex hex, int exitDirection, int type) {
         if (hex.containsTerrain(Terrains.WATER)) {
             hex.removeTerrain(Terrains.WATER);
             hex.addTerrain(new Terrain(Terrains.WATER, 0));
@@ -361,7 +361,7 @@ public class CityBuilder {
                 (1 << exitDirection) & 63));
     }
 
-    private void addBridge(IHex hex, int exits, int altitude, int cf) {
+    private void addBridge(Hex hex, int exits, int altitude, int cf) {
         int bridgeElevation = altitude - hex.getLevel();
 
         hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf), true, (exits & 63)));
@@ -371,7 +371,7 @@ public class CityBuilder {
 
     private void connectHexes(Coords src, Coords dest, int roadStyle) {
         if (board.contains(src)) {
-            IHex hex = board.getHex(src);
+            Hex hex = board.getHex(src);
             Terrain t = hex.getTerrain(Terrains.ROAD);
             if (t == null) {
                 t = hex.getTerrain(Terrains.BRIDGE);

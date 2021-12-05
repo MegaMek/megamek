@@ -10,7 +10,7 @@ import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Terrains;
@@ -144,7 +144,7 @@ public class InfantryPathFinder {
             // are we going into a building?
             // are we going onto a bridge?
             // make sure we're adjusting facing relative to the unit's current facing
-            IHex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(), 
+            Hex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(), 
                     FireControl.correctFacing(startingPath.getFinalFacing() + direction));
             
             // if we're going off board, we may as well not bother continuing

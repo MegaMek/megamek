@@ -40,7 +40,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.IPlayer;
@@ -394,7 +394,7 @@ public class FireControl {
         }
 
         // terrain modifiers, since "compute" won't let me do these remotely
-        final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
         int woodsLevel = targetHex.terrainLevel(Terrains.WOODS);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
             woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
@@ -520,8 +520,8 @@ public class FireControl {
         }
 
         // Check elevation difference.
-        final IHex attackerHex = game.getBoard().getHex(shooterState.getPosition());
-        final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex attackerHex = game.getBoard().getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
         final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
         final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
         final int targetElevation = target.getElevation() + targetHex.getLevel();
@@ -863,7 +863,7 @@ public class FireControl {
                 targetState.getPosition(), false);
 
         // water is a separate los effect
-        final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;

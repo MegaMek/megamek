@@ -74,7 +74,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
 
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 //check for quicksand that has been around at least one turn
                 if(currentHex.terrainLevel(Terrains.SWAMP) == 3) {

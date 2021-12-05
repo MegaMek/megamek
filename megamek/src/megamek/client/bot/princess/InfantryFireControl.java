@@ -21,7 +21,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
@@ -70,7 +70,7 @@ public class InfantryFireControl extends FireControl {
         double maxInfantryWeaponDamage = 0;
         Entity shooter = shooterPath.getEntity();
         Entity target = targetPath.getEntity();
-        IHex targetHex = target.getGame().getBoard().getHex(targetPath.getFinalCoords());
+        Hex targetHex = target.getGame().getBoard().getHex(targetPath.getFinalCoords());
 
         // some preliminary computations
         // whether the target is an infantry platoon

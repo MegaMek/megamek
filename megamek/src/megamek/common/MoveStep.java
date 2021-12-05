@@ -491,7 +491,7 @@ public class MoveStep implements Serializable {
     private void compileMove(final Game game, final Entity entity,
                              MoveStep prev, CachedEntityState cachedEntityState) {
 
-        IHex destHex = game.getBoard().getHex(getPosition());
+        Hex destHex = game.getBoard().getHex(getPosition());
 
         // Check for pavement movement.
         if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
@@ -545,23 +545,22 @@ public class MoveStep implements Serializable {
         }
 
         if (getType() == MoveStepType.DFA) {
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             setElevation(Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV)));
             // If we're DFA-ing, we want to be 1 above the level of the target.
             // However, if that puts us in the ground, we're instead 1 above the
             // level of the hex right before the target.
             int otherEl = 0;
-            IHex hex2 = game.getBoard().getHex(prev.getPosition());
+            Hex hex2 = game.getBoard().getHex(prev.getPosition());
             otherEl = Math.max(0, hex2.terrainLevel(Terrains.BLDG_ELEV));
             if (otherEl > getElevation()) {
                 setElevation(otherEl);
             }
             setElevation(getElevation() + 1);
         } else if (isJumping()) {
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             int maxElevation = (entity.getJumpMP() + entity.getElevation() + game
-                    .getBoard().getHex(entity.getPosition()).surface())
-                    - hex.surface();
+                    .getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
             // need to adjust depth for potential ice over water
@@ -570,7 +569,7 @@ public class MoveStep implements Serializable {
                     || (entity.getMovementMode() == EntityMovementMode.HOVER)) {
                 depth = 0;
             }
-            // grounded dropships are treated as level 10 buildings for purposes
+            // grounded DropShips are treated as level 10 buildings for purposes
             // of jumping over
             boolean grdDropship = false;
             if (building < 10) {
@@ -600,10 +599,10 @@ public class MoveStep implements Serializable {
             Building bld = game.getBoard().getBuildingAt(getPosition());
 
             if (bld != null) {
-                IHex hex = game.getBoard().getHex(getPosition());
+                Hex hex = game.getBoard().getHex(getPosition());
                 int maxElevation = (entity.getElevation() + game.getBoard()
-                        .getHex(entity.getPosition()).surface())
-                        - hex.surface();
+                        .getHex(entity.getPosition()).getLevel())
+                        - hex.getLevel();
 
                 // Meks can climb up level 2 walls or less while everything
                 // can only climb up one level
@@ -1290,7 +1289,7 @@ public class MoveStep implements Serializable {
 
         // check pavement & water
         if (position != null) {
-            IHex curHex = game.getBoard().getHex(position);
+            Hex curHex = game.getBoard().getHex(position);
             if (curHex.hasPavement()) {
                 onlyPavement = true;
                 isPavementStep = true;
@@ -1568,7 +1567,7 @@ public class MoveStep implements Serializable {
 
         // If this step isn't the end step anymore, we might not be in danger
         // after all
-        IHex pos = getGame().getBoard().getHex(position);
+        Hex pos = getGame().getBoard().getHex(position);
         if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             if (!isEnd
                     && isJumping()
@@ -2025,7 +2024,7 @@ public class MoveStep implements Serializable {
 
             if ((type == MoveStepType.FORWARDS)
                     && game.getBoard().inAtmosphere() && !a.isOutControl()) {
-                IHex desth = game.getBoard().getHex(getPosition());
+                Hex desth = game.getBoard().getHex(getPosition());
                 if (altitude <= desth.ceiling(true)) {
                     return; // can't fly into a cliff face or woods (unless out
                     // of control)
@@ -2308,8 +2307,8 @@ public class MoveStep implements Serializable {
             }
         }
 
-        IHex currHex = game.getBoard().getHex(curPos);
-        IHex lastHex = game.getBoard().getHex(lastPos);
+        Hex currHex = game.getBoard().getHex(curPos);
+        Hex lastHex = game.getBoard().getHex(lastPos);
         
         // Bootlegger ends movement
         if (prev.type == MoveStepType.BOOTLEGGER) {
@@ -2347,7 +2346,7 @@ public class MoveStep implements Serializable {
         if ((getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
                 && (currHex.containsTerrain(Terrains.WATER)
                 && lastHex.containsTerrain(Terrains.WATER) && (entity
-                .relHeight() < currHex.surface()))) {
+                .relHeight() < currHex.getLevel()))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
@@ -2915,8 +2914,8 @@ public class MoveStep implements Serializable {
         final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = getEntity()
                 .getMovementMode();
-        final IHex srcHex = game.getBoard().getHex(prev);
-        final IHex destHex = game.getBoard().getHex(getPosition());
+        final Hex srcHex = game.getBoard().getHex(prev);
+        final Hex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = getEntity() instanceof Infantry;
         final boolean isSuperHeavyMech = (getEntity() instanceof Mech)
                 && ((Mech) getEntity()).isSuperHeavy();
@@ -3020,7 +3019,7 @@ public class MoveStep implements Serializable {
                     && (moveMode != EntityMovementMode.WIGE)) {
                 // no additional cost when moving on surface of ice.
                 if (!destHex.containsTerrain(Terrains.ICE)
-                        || (nDestEl < destHex.surface())) {
+                        || (nDestEl < destHex.getLevel())) {
                     if ((destHex.terrainLevel(Terrains.WATER) == 1) && !isAmphibious) {
                         mp++;
                     } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {
@@ -3035,7 +3034,7 @@ public class MoveStep implements Serializable {
                 // if using non-careful movement on ice then reduce cost
                 if (destHex.containsTerrain(Terrains.ICE)
                         && !isCareful()
-                        && (nDestEl == destHex.surface())) {
+                        && (nDestEl == destHex.getLevel())) {
                     mp--;
                 }
 
@@ -3139,9 +3138,9 @@ public class MoveStep implements Serializable {
      * possible, just whether the <em>current</em> step is possible.
      */
     public boolean isMovementPossible(Game game, Coords src, int srcEl, CachedEntityState cachedEntityState) {
-        final IHex srcHex = game.getBoard().getHex(src);
+        final Hex srcHex = game.getBoard().getHex(src);
         final Coords dest = getPosition();
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
 
         if (null == dest) {
@@ -3221,24 +3220,19 @@ public class MoveStep implements Serializable {
         Building bld = game.getBoard().getBuildingAt(dest);
 
         if (bld != null) {
-            // protomechs that are jumping can't change the level inside a
-            // building,
+            // ProtoMechs that are jumping can't change the level inside a building,
             // they can only jump onto a building or out of it
             if (src.equals(dest) && (srcAlt != destAlt)
                     && (entity instanceof Protomech)
                     && (getMovementType(false) == EntityMovementType.MOVE_JUMP)) {
-                // System.err
-                // .println("no jumping inside buildings to change levels");
                 return false;
             }
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             int maxElevation = (2 + entity.getElevation() + game.getBoard()
-                    .getHex(entity.getPosition()).surface())
-                    - hex.surface();
+                    .getHex(entity.getPosition()).getLevel()) - hex.getLevel();
 
             if ((bld.getType() == Building.WALL)
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
-                // System.err.println("soemthing about walls");
                 return false;
             }
 
@@ -3246,7 +3240,6 @@ public class MoveStep implements Serializable {
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV))
                     && (bld.getArmor(dest) > 0)
                     && !(entity instanceof Infantry)) {
-                // System.err.println("no entering armored buildings for non-inf");
                 return false;
             }
 
@@ -3254,7 +3247,6 @@ public class MoveStep implements Serializable {
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV))
                     && (bld.getBldgClass() == Building.GUN_EMPLACEMENT)
                     && !(entity instanceof Infantry)) {
-                // System.err.println("no entering gun-emplacements for non-inf");
                 return false;
             }
         }
@@ -3267,13 +3259,11 @@ public class MoveStep implements Serializable {
                 OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) || (game.getOptions()
                 .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS) && (Math
                 .abs(destAlt - srcAlt) > 1)))) {
-            // System.err.println("Can't back up across an elevation change.");
             return false;
         }
 
         // Swarming entities can't move.
         if (Entity.NONE != entity.getSwarmTargetId()) {
-            // System.err.println("no moving for swarming infantry");
             return false;
         }
 
@@ -3587,7 +3577,7 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)) {
             for (int dir = 0; dir < 6; dir++) {
                 Coords secondaryCoords = dest.translated(dir);
-                IHex secondaryHex = game.getBoard().getHex(secondaryCoords);
+                Hex secondaryHex = game.getBoard().getHex(secondaryCoords);
                 if (!secondaryHex.hasPavement()) {
                     return false;
                 }
@@ -3676,7 +3666,7 @@ public class MoveStep implements Serializable {
                 if (elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                     return false;
                 }
-            } else if (elevation <= (destHex.ceiling() - destHex.surface())) {
+            } else if (elevation <= (destHex.ceiling() - destHex.getLevel())) {
                 // VTOLs and WiGEs can fly through woods and jungle below the level of the treetops on a road.
                 if (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE)) {
                     return destHex.containsTerrainExit(Terrains.ROAD, dest.direction(src));
@@ -3710,7 +3700,7 @@ public class MoveStep implements Serializable {
      * relative to the surface.
      */
     public int getClearance() {
-        IHex hex = entity.getGame().getBoard().getHex(getPosition());
+        Hex hex = entity.getGame().getBoard().getHex(getPosition());
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             return elevation - hex.terrainLevel(Terrains.BLDG_ELEV);
         }

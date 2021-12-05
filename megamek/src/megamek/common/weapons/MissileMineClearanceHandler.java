@@ -23,7 +23,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
@@ -197,9 +197,9 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         }
 
         // Damage Terrain if applicable
-        IHex h = game.getBoard().getHex(targetPos);
+        Hex h = game.getBoard().getHex(targetPos);
         newReports = new Vector<Report>();
-        if ((h != null) && h.hasTerrainfactor()) {
+        if ((h != null) && h.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.subject = subjectId;

@@ -48,7 +48,7 @@ import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -1172,7 +1172,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Infantry can't clear woods.
         if (isAttackerInfantry && (Targetable.TYPE_HEX_CLEAR == target.getTargetType())) {
-            IHex hexTarget = game.getBoard().getHex(target.getPosition());
+            Hex hexTarget = game.getBoard().getHex(target.getPosition());
             if (hexTarget.containsTerrain(Terrains.WOODS)) {
                 return Messages.getString("WeaponAttackAction.NoInfantryWoodsClearing");
             }
@@ -1570,21 +1570,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // then we can shoot aft weapons at it
                 // note that this cannot actually happen in MegaMek currently but is left here for the possible eventuality
                 // that overhanging dropships are implemented
-                if(!ae.isAirborne() && !target.isAirborne()) {
+                if (!ae.isAirborne() && !target.isAirborne()) {
                     boolean targetInAttackerHex = ae.getOccupiedCoords().contains(target.getPosition()) ||
                             ae.getPosition().equals(target.getPosition());
-                    boolean targetBelowAttacker = game.getBoard().getHex(ae.getPosition()).surface() >
-                            game.getBoard().getHex(target.getPosition()).surface() + target.getElevation();
+                    boolean targetBelowAttacker = game.getBoard().getHex(ae.getPosition()).getLevel() >
+                            game.getBoard().getHex(target.getPosition()).getLevel() + target.getElevation();
                     
-                    if(!targetInAttackerHex || !targetBelowAttacker) {
+                    if (!targetInAttackerHex || !targetBelowAttacker) {
                         return Messages.getString("WeaponAttackAction.GroundedSpheroidDropshipAftWeaponRestriction");
                     }
                 }
             }
+
             // and aft-side-mounted weapons can only be fired at targets at the same or lower altitude
             if ((weapon.isRearMounted()) && (altDif > 0)) {
                 return Messages.getString("WeaponAttackAction.TooHighForAftSide");
             }
+
             if (Compute.inDeadZone(game, ae, target)) {
                 // Only nose weapons can fire at targets in the dead zone at higher altitude
                 if ((altDif > 0) && (weapon.getLocation() != Aero.LOC_NOSE)) {
@@ -1642,8 +1644,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                     // Otherwise, check for a dead-zone, TW pg 243
                     Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                    IHex prevHex = game.getBoard().getHex(prevCoords);
-                    IHex currHex = game.getBoard().getHex(target.getPosition());
+                    Hex prevHex = game.getBoard().getHex(prevCoords);
+                    Hex currHex = game.getBoard().getHex(target.getPosition());
                     int prevElev = prevHex.getLevel();
                     int currElev = currHex.getLevel();
                     if ((prevElev - currElev - target.relHeight()) > 2) {
@@ -2228,7 +2230,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (!wtype.hasFlag(WeaponType.F_EXTINGUISHER) && !vf_cool) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
-                IHex hexTarget = game.getBoard().getHex(target.getPosition());
+                Hex hexTarget = game.getBoard().getHex(target.getPosition());
                 if (!hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
@@ -3202,7 +3204,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Heat Seeking Missles
         if (bHeatSeeking) {
-            IHex hexTarget = game.getBoard().getHex(target.getPosition());
+            Hex hexTarget = game.getBoard().getHex(target.getPosition());
             // -2 bonus if shooting at burning hexes or buildings
             if (te == null && hexTarget.containsTerrain(Terrains.FIRE)) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
@@ -3696,7 +3698,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     // Additional Nape-of-Earth restrictions for strafing
                     if (ae.getAltitude() == 1) {
                         Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
-                        IHex prevHex = game.getBoard().getHex(prevCoords);
+                        Hex prevHex = game.getBoard().getHex(prevCoords);
                         toHit.append(Compute.getStrafingTerrainModifier(game, eistatus, prevHex));
                     }
                 } else {
@@ -4092,7 +4094,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Target's hex
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
@@ -4425,7 +4427,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         //Target's hex
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         
         boolean targetHexContainsWater = targHex != null && targHex.containsTerrain(Terrains.WATER);
         boolean targetHexContainsFortified = targHex != null && targHex.containsTerrain(Terrains.FORTIFIED);
@@ -4602,7 +4604,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return false;
         }
         
-        IHex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
+        Hex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
         if (targetHex == null) {
             return false;
         }
@@ -4839,7 +4841,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 inSameBuilding, underWater));
         toHit.setCover(LosEffects.COVER_NONE);
         
-        IHex targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
+        Hex targHex = game.getBoard().getHex(swarmSecondaryTarget.getPosition());
         int targEl = swarmSecondaryTarget.relHeight();
         int distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
         

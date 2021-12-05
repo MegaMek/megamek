@@ -166,7 +166,7 @@ public class Dropship extends SmallCraft {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (isAirborne()) {
             if (hex.containsTerrain(Terrains.IMPASSABLE)) {
                 return true;
@@ -182,7 +182,7 @@ public class Dropship extends SmallCraft {
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
-            IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
+            Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
             if (secondaryHex == null) {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
@@ -235,7 +235,7 @@ public class Dropship extends SmallCraft {
         int numAdjacencies = 0;
         int centralElev = hex.getLevel();
         int secondElev = centralElev;
-        IHex currHex = game.getBoard().getHex(c.translated(5));
+        Hex currHex = game.getBoard().getHex(c.translated(5));
         // Ensure we aren't trying to deploy off the board
         if (currHex == null) {
             return true;
@@ -244,7 +244,7 @@ public class Dropship extends SmallCraft {
             if (currHex.getLevel() != centralElev) {
                 secondElev = currHex.getLevel();
             }
-            IHex nextHex = game.getBoard().getHex(c.translated(dir));
+            Hex nextHex = game.getBoard().getHex(c.translated(dir));
             // Ensure we aren't trying to deploy off the board
             if (nextHex == null) {
                 return true;
@@ -265,7 +265,7 @@ public class Dropship extends SmallCraft {
      * Worker function that checks if a given hex contains terrain onto which a grounded dropship
      * cannot deploy. 
      */
-    private boolean hexContainsProhibitedTerrain(IHex hex) {
+    private boolean hexContainsProhibitedTerrain(Hex hex) {
         return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
                 || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
                 || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
@@ -1763,7 +1763,7 @@ public class Dropship extends SmallCraft {
             positions.add(getPosition().translated(i));
         }
         for (Coords pos : positions) {
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             hex = game.getBoard().getHex(pos);
             // if the hex is null, then we are offboard. Don't let units
             // land offboard.

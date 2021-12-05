@@ -1208,7 +1208,7 @@ public class MapMenu extends JPopupMenu {
             }
         }
 
-        IHex h = board.getHex(coords);
+        Hex h = board.getHex(coords);
         // If the hex is null, we're done here
         if (h == null) {
             return menu;

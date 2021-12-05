@@ -30,7 +30,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.FighterSquadron;
 import megamek.common.IAero;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.IPlayer;
 import megamek.common.Jumpship;
 import megamek.common.MovePath;
@@ -122,8 +122,8 @@ public class RamAttackAction extends AbstractAttackAction {
                                     && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
         }
-        IHex attHex = game.getBoard().getHex(src);
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(src);
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = elevation + attHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();

@@ -492,7 +492,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             GUIPreferences.AntiAliasifSet(gg);
             for (int j = 0; j < board.getWidth(); j++) {
                 for (int k = 0; k < board.getHeight(); k++) {
-                    IHex h = board.getHex(j, k);
+                    Hex h = board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h));
                         if (h.containsTerrain(SPACE)) {
@@ -524,7 +524,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             if (SHOW_NO_HEIGHT != heightDisplayMode) {
                 for (int j = 0; j < board.getWidth(); j++) {
                     for (int k = 0; k < board.getHeight(); k++) {
-                        IHex h = board.getHex(j, k);
+                        Hex h = board.getHex(j, k);
                         paintHeight(g, h, j, k);
                     }
                 }
@@ -716,7 +716,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** Writes the height value (hex/building/none) in the minimap hexes. */
-    private void paintHeight(Graphics g, IHex h, int x, int y) {
+    private void paintHeight(Graphics g, Hex h, int x, int y) {
         if ((heightDisplayMode == SHOW_NO_HEIGHT) || (zoom < 4)) {
             return;
         }
@@ -1122,14 +1122,14 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** If the given hex contains ROAD or BRIDGE, adds an entry to roadHexes. */
-    private void addRoadElements(IHex hex, int boardX, int boardY) {
+    private void addRoadElements(Hex hex, int boardX, int boardY) {
         if (hex.containsAnyTerrainOf(ROAD, BRIDGE)) {
             var terrain = hex.getAnyTerrainOf(ROAD, BRIDGE);
             roadHexes.add(new int[] { boardX, boardY, terrain.getExits() } );
         }
     }
 
-    private Color terrainColor(IHex hex) {
+    private Color terrainColor(Hex hex) {
         Color terrColor = terrainColors[0];
         if (hex.getLevel() < 0) {
             terrColor = SINKHOLE;

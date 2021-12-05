@@ -1453,7 +1453,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         
         boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
         
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
         
         // a very specific situation where a mech is standing in a height 1 building
@@ -1577,17 +1577,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Worker function - does the entity gain partial cover from shallow water?
      */
-    protected boolean unitGainsPartialCoverFromWater(IHex targetHex, Entity entityTarget) {
+    protected boolean unitGainsPartialCoverFromWater(Hex targetHex, Entity entityTarget) {
         return (targetHex != null) && 
                 targetHex.containsTerrain(Terrains.WATER) &&
-                (entityTarget.relHeight() == targetHex.surface());
+                (entityTarget.relHeight() == targetHex.getLevel());
     }
     
     /**
      * Worker function - is a part of this unit inside the hex's terrain features, 
      * but part sticking out?
      */
-    protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+    protected boolean unitStickingOutOfBuilding(Hex targetHex, Entity entityTarget) {
         // target needs to be on the board,
         // be tall enough for it to make a difference,
         // target "feet" are below the "ceiling"
@@ -1903,7 +1903,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (entityTarget == null) {
             return nDamage;
         }
-        IHex hex = game.getBoard().getHex(entityTarget.getPosition());
+        Hex hex = game.getBoard().getHex(entityTarget.getPosition());
         boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
         boolean isAboveWoods = (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
                 || entityTarget.isAirborne() || !hasWoods;

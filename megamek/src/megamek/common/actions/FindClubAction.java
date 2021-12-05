@@ -24,7 +24,7 @@ import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
@@ -57,7 +57,7 @@ public class FindClubAction extends AbstractEntityAction {
         if ((null == entity) || null == (entity.getPosition())) {
             return false;
         }
-        final IHex hex = game.getBoard().getHex(entity.getPosition());
+        final Hex hex = game.getBoard().getHex(entity.getPosition());
 
         // Only biped and tripod 'Mechs qualify at all.
         if (!(entity instanceof BipedMech || entity instanceof TripodMech)) {

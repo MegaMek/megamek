@@ -150,7 +150,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             Coords coords = (Coords) value;
             String content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
             if (board != null && board.getHex(coords) != null) {
-                final IHex hex = board.getHex(coords); 
+                final Hex hex = board.getHex(coords); 
                 final Building bldg = board.getBuildingAt(coords);
                 if (hex.containsTerrain(BUILDING)) {
                     content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),

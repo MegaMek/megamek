@@ -201,7 +201,7 @@ public class BoardsTagger {
         
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
-                IHex hex = board.getHex(x, y);
+                Hex hex = board.getHex(x, y);
                 forest += hex.containsAnyTerrainOf(WOODS, JUNGLE) ? 1 : 0;
                 woods += hex.containsTerrain(WOODS) ? 1 : 0;
                 jungles += hex.containsTerrain(JUNGLE) ? 1 : 0;

@@ -1837,7 +1837,7 @@ public abstract class Mech extends Entity {
             return 0;
         }
 
-        IHex curHex = game.getBoard().getHex(getPosition());
+        Hex curHex = game.getBoard().getHex(getPosition());
         // are we even in water? is it depth 1+
         if ((curHex.terrainLevel(Terrains.WATER) <= 0) || (getElevation() >= 0)) {
             return 0;
@@ -6565,7 +6565,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }

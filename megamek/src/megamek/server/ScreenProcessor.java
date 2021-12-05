@@ -20,7 +20,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.Terrains;
 
@@ -79,7 +79,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
 
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 // check for existence of screen
                 if (currentHex.containsTerrain(Terrains.SCREEN)){

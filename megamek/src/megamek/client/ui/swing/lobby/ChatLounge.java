@@ -1008,7 +1008,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         || (!mapSettings.equalMapGenParameters(oldMapSettings) 
                                 && mapSettings.getMapWidth() == oldMapSettings.getMapWidth()
                                 && mapSettings.getMapHeight() == oldMapSettings.getMapHeight())) {
-                    IBoard buttonBoard; 
+                    Board buttonBoard;
                     Image image;
                     // Generated and space boards use a generated example
                     if (boardName.startsWith(MapSettings.BOARD_GENERATED) 
@@ -1109,7 +1109,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     public void previewGameBoard() {
-        IBoard newBoard = getPossibleGameBoard(false);
+        Board newBoard = getPossibleGameBoard(false);
         boardPreviewGame.setBoard(newBoard);
         boardPreviewW.setVisible(true);
     }
@@ -1120,9 +1120,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * replaced by empty boards, otherwise they are filled with a generated or
      * a choice of the surprise maps.
      */
-    public IBoard getPossibleGameBoard(boolean onlyFixedBoards) {
+    public Board getPossibleGameBoard(boolean onlyFixedBoards) {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
@@ -1154,9 +1154,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
-        IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
-                mapSettings.getMapHeight(), sheetBoards, rotateBoard, mapSettings.getMedium());
-        return newBoard;
+        return BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
+                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
+                mapSettings.getMedium());
     }
 
     /**
@@ -1176,10 +1176,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     private void refreshMekTable() {
-        List<Integer> enIds = getSelectedEntities().stream().map(e -> e.getId()).collect(toList());
+        List<Integer> enIds = getSelectedEntities().stream().map(Entity::getId).collect(toList());
         mekModel.clearData();
-        ArrayList<Entity> allEntities = new ArrayList<Entity>(clientgui.getClient().getEntitiesVector());
-        Collections.sort(allEntities, activeSorter);
+        ArrayList<Entity> allEntities = new ArrayList<>(clientgui.getClient().getEntitiesVector());
+        allEntities.sort(activeSorter);
 
         boolean localUnits = false;
         GameOptions opts = clientgui.getClient().getGame().getOptions();
@@ -3294,7 +3294,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         private Image prepareImage(String boardName) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
-            IBoard board;
+            Board board;
             StringBuffer errs = new StringBuffer();
             if (boardFile.exists()) {
                 board = new Board();
@@ -3370,7 +3370,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    Map<String, ImageIcon> mapIcons = new HashMap<String, ImageIcon>();
+    Map<String, ImageIcon> mapIcons = new HashMap<>();
     
     /** A renderer for the list of available boards. */
     public class BoardNameRenderer extends DefaultListCellRenderer  {

@@ -2367,7 +2367,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             velocityLeft = step.getVelocityLeft();
         }
 
-        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final Board board = clientgui.getClient().getGame().getBoard();
         // for spheroids in atmosphere we just need to check being on the edge
         if (a.isSpheroid() && !board.inSpace()) {
             setFlyOffEnabled((position != null) && (ce.getWalkMP() > 0)
@@ -5045,7 +5045,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 pos = last.getPosition();
                 distance = last.getDistance();
             }
-            IBoard board = clientgui.getClient().getGame().getBoard();
+            Board board = clientgui.getClient().getGame().getBoard();
             // On Atmospheric maps, elevations are treated as altitudes, so
             // hex ceiling is the ground
             int ceil = board.getHex(pos).ceiling(board.inAtmosphere());

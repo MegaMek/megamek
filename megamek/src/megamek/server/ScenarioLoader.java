@@ -352,7 +352,7 @@ public class ScenarioLoader {
         Game g = new Game();
 
         // build the board
-        g.board = createBoard(p);
+        g.setBoardDirect(createBoard(p));
 
         // build the faction players
         Collection<Player> players = createPlayers(p);
@@ -772,7 +772,7 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private IBoard createBoard(StringMultiMap p) throws ScenarioLoaderException {
+    private Board createBoard(StringMultiMap p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
         if (p.getString(PARAM_MAP_WIDTH) == null) {
             MegaMek.getLogger().info("No map width specified; using " + mapWidth);
@@ -833,7 +833,7 @@ public class ScenarioLoader {
             }
         }
 
-        IBoard[] ba = new IBoard[nWidth * nHeight];
+        Board[] ba = new Board[nWidth * nHeight];
         Queue<String> maps = new LinkedList<>(
             Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
         List<Boolean> rotateBoard = new ArrayList<>();

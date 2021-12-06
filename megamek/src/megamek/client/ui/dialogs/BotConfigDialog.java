@@ -801,7 +801,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 Coords coords = (Coords) value;
                 content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
                 if (client != null) {
-                    IBoard board = client.getBoard();
+                    Board board = client.getBoard();
                     if (client.getGame().getPhase() == GamePhase.LOUNGE) {
                         board = clientGui.chatlounge.getPossibleGameBoard(true);
                     }

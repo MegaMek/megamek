@@ -16,13 +16,7 @@ package megamek.server;
 
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Report;
-import megamek.common.Terrains;
+import megamek.common.*;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 
@@ -69,7 +63,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
      * Check to see if screen clears
      */
     private void resolveScreen() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         // Cycle through all hexes, checking for screens

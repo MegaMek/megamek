@@ -64,7 +64,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
      * Check or quicksand stuff
      */
     private void resolveQuicksand() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         // Cycle through all hexes, checking for screens

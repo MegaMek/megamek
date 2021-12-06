@@ -171,7 +171,7 @@ public class BulldozerMovePath extends MovePath {
      * to a form through which the current unit can move
      */
     public static int calculateLevelingCost(Coords finalCoords, Entity entity) {
-        IBoard board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard();
         Hex destHex = board.getHex(finalCoords);
         int levelingCost = CANNOT_LEVEL;
         
@@ -287,6 +287,7 @@ public class BulldozerMovePath extends MovePath {
          * Favors paths that spend less mp total
          * in case of tie, favors paths that use more hexes
          */
+        @Override
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
             int dd = (first.getMpUsed() + first.getLevelingCost() + first.getAdditionalCost()) - 
                     (second.getMpUsed() + second.getLevelingCost() + second.getAdditionalCost());

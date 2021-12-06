@@ -22,17 +22,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 public class FireProcessor extends DynamicTerrainProcessor {
@@ -82,7 +72,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * Level now denotes standard and inferno fires.
      */
     private void resolveFire() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         int windDirection = game.getPlanetaryConditions().getWindDirection();
@@ -325,7 +315,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * driftAddSmoke, driftSmokeDissipate, driftSmokeReport
      */
     private void resolveSmoke() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         int windDir = game.getPlanetaryConditions().getWindDirection();
         int windStr = game.getPlanetaryConditions().getWindStrength();
         //if the breeze option is turned on, then treat wind strength like light gale if none
@@ -418,7 +408,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     public Coords driftAddSmoke(Coords src, int windDir, int windStr, int directionChanges) {
         //Coords src = new Coords(x, y);
         Coords nextCoords = src.translated(windDir);
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
 
         //if the wind conditions are calm, then don't drift it
         if(windStr == PlanetaryConditions.WI_NONE) {

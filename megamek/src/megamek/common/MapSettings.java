@@ -686,7 +686,7 @@ public class MapSettings implements Serializable {
                     } else {
                         rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
                         // validate that the selected map is legal
-                        IBoard b = new Board(16, 17);
+                        Board b = new Board(16, 17);
                         String boardSelected = boardsAvailable.get(rindex);
                         if (!MapSettings.BOARD_GENERATED.equals(boardSelected)
                                 && !MapSettings.BOARD_RANDOM.equals(boardSelected)

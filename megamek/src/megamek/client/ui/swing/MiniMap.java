@@ -101,7 +101,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private BufferedImage mapImage;
     private final BoardView bv;
     private final Game game;
-    private IBoard board;
+    private Board board;
     private final JDialog dialog;
     private Client client;
     private final ClientGUI clientGui;
@@ -165,12 +165,12 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     
 
     /** Returns a minimap image of the given board at the maximum zoom index. */
-    public static BufferedImage getMinimapImageMaxZoom(IBoard board) {
+    public static BufferedImage getMinimapImageMaxZoom(Board board) {
         return getMinimapImage(board, MAX_ZOOM);
     }
     
     /** Returns a minimap image of the given board at the given zoom index. */
-    public static BufferedImage getMinimapImage(IBoard board, int zoom) {
+    public static BufferedImage getMinimapImage(Board board, int zoom) {
         Game game = new Game();
         game.setBoard(board);
         return getMinimapImage(game, null, zoom);
@@ -1358,7 +1358,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {
-            IBoard b = e.getOldBoard();
+            Board b = e.getOldBoard();
             if (b != null) {
                 b.removeBoardListener(boardListener);
             }

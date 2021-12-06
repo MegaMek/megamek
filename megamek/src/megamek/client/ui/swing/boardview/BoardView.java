@@ -1350,7 +1350,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      *          Returns ONLY hexes where board.getHex != null.
      */
     private List<Coords> allBoardHexes() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         if (board == null) {
             return Collections.emptyList();
         }
@@ -1411,7 +1411,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // too much hassle currently; it works so beautifully
         if (!GUIPreferences.getInstance().getShadowMap()) return;
 
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         if (board == null) return;
         if (board.inSpace()) return;
         if (boardSize == null) updateBoardSize();
@@ -1814,7 +1814,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -1838,7 +1838,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -2072,7 +2072,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int maxX = drawX + drawWidth;
         int maxY = drawY + drawHeight;
 
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         for (Enumeration<Coords> minedCoords = game.getMinedCoords();
              minedCoords.hasMoreElements(); ) {
             Coords c = minedCoords.nextElement();
@@ -2309,7 +2309,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // draw some hexes.
         if (useIsometric()) {
-            IBoard board = game.getBoard();
+            Board board = game.getBoard();
             for (int y = 0; y < drawHeight; y++) {
                 // Half of each row is one-half hex
                 // farther back (above) the other; draw those first
@@ -5108,7 +5108,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {
-            IBoard b = e.getOldBoard();
+            Board b = e.getOldBoard();
             if (b != null) {
                 b.removeBoardListener(BoardView.this);
             }
@@ -5118,10 +5118,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             boardBackgrounds.clear();
             if (b.hasBoardBackground()) {
-                ListIterator<Boolean> flipItHoriz = b.getFlipBGHoriz()
-                        .listIterator();
-                ListIterator<Boolean> flipItVert = b.getFlipBGVert()
-                        .listIterator();
+                ListIterator<Boolean> flipItHoriz = b.getFlipBGHoriz().listIterator();
+                ListIterator<Boolean> flipItVert = b.getFlipBGVert().listIterator();
                 for (String path : b.getBackgroundPaths()) {
                     boolean flipHoriz = flipItHoriz.next();
                     boolean flipVert = flipItVert.next();
@@ -5134,18 +5132,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             AffineTransform at = new AffineTransform();
 
                             if (flipHoriz) {
-                                at.concatenate(AffineTransform
-                                        .getScaleInstance(1, -1));
+                                at.concatenate(AffineTransform.getScaleInstance(1, -1));
                             }
                             if (flipVert) {
-                                at.concatenate(AffineTransform
-                                        .getTranslateInstance(0,
-                                                -bgImg.getHeight(null)));
+                                at.concatenate(AffineTransform.getTranslateInstance(0,
+                                        -bgImg.getHeight(null)));
                             }
                             ((Graphics2D) bgImg.getGraphics()).setTransform(at);
                         }
-                        boardBackgrounds.add(Toolkit.getDefaultToolkit()
-                                .createImage(prod));
+                        boardBackgrounds.add(Toolkit.getDefaultToolkit().createImage(prod));
                     }
                 }
             }
@@ -6585,7 +6580,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (game == null) {
             return null;
         }
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         if (board.inSpace()) {
             return null;
         }
@@ -6618,7 +6613,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     private Image getBoardBackgroundHexImage(Coords c, Hex hex) {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         if ((hex == null) || (board == null) || (hex.getTheme() == null)
                 || !hex.getTheme().equals(HexTileset.TRANSPARENT_THEME)
                 || !board.hasBoardBackground()) {

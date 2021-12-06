@@ -5161,7 +5161,7 @@ public class Compute {
         if ((ae == null) || (a == null) || (b == null)) {
             return 0;
         }
-        IBoard board = ae.getGame().getBoard();
+        Board board = ae.getGame().getBoard();
         if (board.inSpace()) {
             return 0;
         }

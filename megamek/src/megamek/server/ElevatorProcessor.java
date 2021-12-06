@@ -69,7 +69,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
     }
 
     private void findElevators() {
-        IBoard b = server.getGame().getBoard();
+        Board b = server.getGame().getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
         int exits = 0;

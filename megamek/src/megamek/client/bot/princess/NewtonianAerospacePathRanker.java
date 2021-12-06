@@ -17,15 +17,7 @@ package megamek.client.bot.princess;
 import java.util.Iterator;
 import java.util.List;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.LosEffects;
-import megamek.common.MovePath;
-import megamek.common.OffBoardDirection;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 
@@ -244,7 +236,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     private static OffBoardDirection calculateOffBoardDirection(Entity entity, Coords startingCoords, int[] vectors) {
         Coords nextCoords = Compute.getFinalPosition(startingCoords, vectors);
         int availableThrust = entity.getRunMP();
-        IBoard board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard();
         OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
 
         // step one: check if the position is out of bounds by more than the unit has available thrust

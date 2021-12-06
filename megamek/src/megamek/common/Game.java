@@ -58,7 +58,7 @@ public class Game implements Serializable {
 
     private GameOptions options = new GameOptions();
 
-    public IBoard board = new Board();
+    private Board board = new Board();
 
     private final List<Entity> entities = new CopyOnWriteArrayList<>();
     private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
@@ -184,14 +184,18 @@ public class Game implements Serializable {
         return version;
     }
 
-    public IBoard getBoard() {
+    public Board getBoard() {
         return board;
     }
 
-    public void setBoard(IBoard board) {
-        IBoard oldBoard = this.board;
-        this.board = board;
+    public void setBoard(Board board) {
+        Board oldBoard = this.board;
+        setBoardDirect(board);
         processGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+    }
+
+    public void setBoardDirect(final Board board) {
+        this.board = board;
     }
 
     public boolean containsMinefield(Coords coords) {
@@ -1197,7 +1201,7 @@ public class Game implements Serializable {
                         return null;
                     }
                 case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
+                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID));
                 case Targetable.TYPE_INARC_POD:
                     return INarcPod.idToInstance(nID);
                 default:

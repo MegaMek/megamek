@@ -205,7 +205,7 @@ public class BoardEditor extends JPanel
     // Components
     private JFrame frame = new JFrame();
     private Game game = new Game();
-    private IBoard board = game.getBoard();
+    private Board board = game.getBoard();
     private BoardView bv;
     public static final int [] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
@@ -1389,8 +1389,8 @@ public class BoardEditor extends JPanel
     }
 
     // When we resize a board, implant the old board's hexes where they should be in the new board
-    public IBoard implantOldBoard(Game game, int west, int north, int east, int south) {
-        IBoard oldBoard = game.getBoard();
+    public Board implantOldBoard(Game game, int west, int north, int east, int south) {
+        Board oldBoard = game.getBoard();
         for (int x = 0; x < oldBoard.getWidth(); x++) {
             for (int y = 0; y < oldBoard.getHeight(); y++) {
                 int newX = x + west;
@@ -1444,7 +1444,7 @@ public class BoardEditor extends JPanel
             // flipBGVert/flipBGHoriz lists for the board, which is necessary 
             // for the background image to work in the BoardEditor
             board = BoardUtilities.combine(board.getWidth(), board.getHeight(), 1, 1, 
-                    new IBoard[]{board}, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
+                    new Board[]{ board }, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
             // BoardUtilities.combine does not preserve tags, so add them back
             for (String tag : boardTags) {

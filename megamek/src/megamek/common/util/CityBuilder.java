@@ -36,10 +36,10 @@ public class CityBuilder {
     static final int E = 7;
 
     private MapSettings mapSettings;
-    private IBoard board;
+    private Board board;
     private HashSet<Coords> cityPlan;
 
-    public CityBuilder(MapSettings mapSettings, IBoard board) {
+    public CityBuilder(MapSettings mapSettings, Board board) {
         super();
         // Auto-generated constructor stub
 
@@ -76,7 +76,7 @@ public class CityBuilder {
         else if (cityType.equalsIgnoreCase("TOWN"))
             return buildTown(width, height, roads, mapSettings.getTownSize());
         else
-            return new ArrayList<BuildingTemplate>();
+            return new ArrayList<>();
 
         return placeBuildings(0);
     }
@@ -84,10 +84,10 @@ public class CityBuilder {
     public ArrayList<BuildingTemplate> placeBuildings(int radius) {
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
-        ArrayList<BuildingTemplate> buildingList = new ArrayList<BuildingTemplate>();
-        HashSet<Coords> buildingUsed = new HashSet<Coords>();
+        ArrayList<BuildingTemplate> buildingList = new ArrayList<>();
+        HashSet<Coords> buildingUsed = new HashSet<>();
 
-        ArrayList<Coords> coordList = new ArrayList<Coords>();
+        ArrayList<Coords> coordList = new ArrayList<>();
 
         Coords centre = new Coords(width / 2, height / 2);
         double falloff = (double) mapSettings.getCityDensity()
@@ -113,7 +113,7 @@ public class CityBuilder {
                 if (Compute.randomInt(100) > localdensity) {
                     continue; // empty lot
                 }
-                coordList = new ArrayList<Coords>();
+                coordList = new ArrayList<>();
                 coordList.add(coord);
                 buildingUsed.add(coord);
                 while (Compute.randomInt(100) < localdensity) {
@@ -189,7 +189,7 @@ public class CityBuilder {
         int midX = maxX / 2;
         int midY = maxY / 2;
 
-        Vector<Integer> directions = new Vector<Integer>(8);
+        Vector<Integer> directions = new Vector<>(8);
 
         directions.add(N);
         directions.add(NE);
@@ -212,8 +212,7 @@ public class CityBuilder {
             if (dir < 8) {
                 x = midX;
                 y = midY;
-                baseDirection = directions.remove(Compute.randomInt(directions
-                        .size()));
+                baseDirection = directions.remove(Compute.randomInt(directions.size()));
             } else {
                 switch (Compute.randomInt(4)) {
                     case 1:

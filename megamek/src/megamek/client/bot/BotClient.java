@@ -605,13 +605,12 @@ public abstract class BotClient extends Client {
         int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         Coords highestHex;
         List<RankedCoords> validCoords = new LinkedList<>();
         Vector<Entity> valid_attackers;
         WeaponAttackAction test_attack;
-        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                .getEntitiesVector());
+        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
 
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
@@ -912,7 +911,7 @@ public abstract class BotClient extends Client {
      * -50 if this can be accomplished but terrain must be destroyed,
      * -100 if this cannot be accomplished at all
      */
-    private int calculateEdgeAccessFitness(Entity entity, IBoard board) {
+    private int calculateEdgeAccessFitness(Entity entity, Board board) {
         // Flying units can always get anywhere
         if (entity.isAirborne() || entity instanceof VTOL) {
             return 0;

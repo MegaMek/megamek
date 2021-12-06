@@ -436,7 +436,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // check for a deployment
         Coords moveto = b.getCoords();
-        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final Board board = clientgui.getClient().getGame().getBoard();
         final Game game = clientgui.getClient().getGame();
         final Hex deployhex = board.getHex(moveto);
         final Building bldg = board.getBuildingAt(moveto);
@@ -523,7 +523,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
     
     private boolean processBuildingDeploy(Coords moveto) {
-        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final Board board = clientgui.getClient().getGame().getBoard();
         final Game game = clientgui.getClient().getGame();
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
@@ -574,7 +574,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     }
     
     private boolean processBridgeDeploy(Coords moveto) {
-        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final Board board = clientgui.getClient().getGame().getBoard();
         final Hex deployhex = board.getHex(moveto);
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);

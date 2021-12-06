@@ -18,13 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MinefieldTarget implements Targetable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 420672189241204590L;
     private Coords m_coords;
 
-    public MinefieldTarget(Coords c, IBoard board) {
+    public MinefieldTarget(Coords c) {
         m_coords = c;
     }
 

@@ -507,7 +507,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         } else if (size % 2 == 1) {
             // light smoke drifts
             for (int pos = 0; pos < cloud.getCoordsList().size(); pos++) {
-                r = new Report((pos == 0) ? 5210 : 5211, Report.PUBLIC);
+                r = new Report((pos == 0) ? 5220 : 5211, Report.PUBLIC);
                 r.add(cloud.getCoordsList().get(pos).getBoardNum());
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -519,7 +519,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
             // light smoke drifts and dissipates
             for (int pos = 0; pos < cloud.getCoordsList().size(); pos++) {
                 r = new Report((pos == 0) ? 5223 : 5211, Report.PUBLIC);
-
                 r.add(cloud.getCoordsList().get(pos).getBoardNum());
                 r.newlines = 0;
                 vPhaseReport.addElement(r);

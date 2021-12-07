@@ -187,7 +187,7 @@ public class Coords implements Serializable {
      * 0 if the coordinates are equal
      */
     public int approximateDirection(Coords second, int initialDirection, int previousDirection) {
-        if(this.equals(second)) {
+        if (this.equals(second)) {
             return 0;
         }
         
@@ -196,25 +196,25 @@ public class Coords implements Serializable {
         HexLine startLine = new HexLine(this, direction);
         int directionIncrement = 0;
         int pointJudgement = startLine.judgePoint(second);
-        if(pointJudgement == 0) {
+        if (pointJudgement == 0) {
             // we are either directly above or below
-            switch(direction) {
-            case 0:
-                direction = (getY() > second.getY()) ? 0 : 3;
-                break;
-            case 3:
-                direction = (getY() < second.getY()) ? 0 : 3;
-                break;
+            switch (direction) {
+                case 0:
+                    direction = (getY() > second.getY()) ? 0 : 3;
+                    break;
+                case 3:
+                    direction = (getY() < second.getY()) ? 0 : 3;
+                    break;
             }
             return direction;
-        } else if(pointJudgement < 0) {
+        } else if (pointJudgement < 0) {
             directionIncrement = 5;
-        } else if(pointJudgement > 0) {
+        } else if (pointJudgement > 0) {
             directionIncrement = 1;
         }
         
         int newDirection = (initialDirection + directionIncrement) % 6;
-        if(newDirection == previousDirection) {
+        if (newDirection == previousDirection) {
             return newDirection;
         } else {
             return approximateDirection(second, newDirection, initialDirection);

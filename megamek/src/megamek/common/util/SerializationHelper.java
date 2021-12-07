@@ -54,7 +54,7 @@ public class SerializationHelper {
                 boolean foundX = false, foundY = false;
                 while(reader.hasMoreChildren()) {
                     reader.moveDown();
-                    switch(reader.getNodeName()) {
+                    switch (reader.getNodeName()) {
                         case "x":
                             x = Integer.parseInt(reader.getValue());
                             foundX = true;

@@ -1649,9 +1649,9 @@ public class Protomech extends Entity {
         
         int finalBV;
         if (useGeometricMeanBV()) {
-            finalBV = (int)Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
+            finalBV = (int) Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
             if (finalBV == 0) {
-                finalBV = (int)Math.round(dbv + obv);
+                finalBV = (int) Math.round(dbv + obv);
             }
             
             bvText.append("Geometric Mean (2Sqrt(O*D) + X");
@@ -1983,7 +1983,7 @@ public class Protomech extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -2100,7 +2100,7 @@ public class Protomech extends Entity {
         if (hasMyomerBooster()) {
             walk *= 1.25;
         }
-        int baseWalk = (int)Math.round(walk * 2);
+        int baseWalk = (int) Math.round(walk * 2);
         int baseJump = getJumpMP() * 2;
         if (baseJump > 0) {
             if (baseJump != baseWalk) {
@@ -2324,7 +2324,7 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_PROTOMECH;
     }
     

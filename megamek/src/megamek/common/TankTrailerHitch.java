@@ -200,7 +200,7 @@ public class TankTrailerHitch implements Transporter {
 
     @Override
     public double getUnused() {
-        if (towed == Entity.NONE){
+        if (towed == Entity.NONE) {
             return 1;
         } else {
             return 0;

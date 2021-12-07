@@ -217,7 +217,7 @@ public class TeamOverviewPanel extends JPanel {
                         if (entity instanceof FighterSquadron) {
                             continue;
                         }
-                        cost += (long)entity.getCost(false);
+                        cost += (long) entity.getCost(false);
                         ton += entity.getWeight();
                         unitCounts[classIndex(entity)]++;
                         int mapType = clientGui.getClient().getMapSettings().getMedium();
@@ -240,10 +240,10 @@ public class TeamOverviewPanel extends JPanel {
                     }
                 }
                 units.add(unitSummary(unitCounts, unitCritical, unitWarnings));
-                bvs.add((long)bv);
-                hidden.add(bv != 0 ? (double)hiddenBv/bv : 0);
+                bvs.add((long) bv);
+                hidden.add(bv != 0 ? (double) hiddenBv / bv : 0);
                 costs.add(cost);
-                tons.add((long)(ton*1000));
+                tons.add((long) (ton * 1000));
             }
             teamOverviewTable.clearSelection();
             fireTableDataChanged();
@@ -314,58 +314,58 @@ public class TeamOverviewPanel extends JPanel {
             StringBuilder result = new StringBuilder("<HTML><NOBR>");
             TOMCOLS column = TOMCOLS.values()[col];
             switch (column) {
-            case TEAM:
-                boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
-                Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
-                result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
-                result.append(teamNames.get(row) + "</FONT>");
-                break;
+                case TEAM:
+                    boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
+                    Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
+                    result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
+                    result.append(teamNames.get(row) + "</FONT>");
+                    break;
 
-            case TONNAGE:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                double ton = (double)tons.get(row) / 1000;
-                if (ton < 10) {
-                    result.append(String.format("%.2f", ton) + " Tons");
-                } else {
-                    result.append(String.format("%,d", Math.round(ton)) + " Tons");
-                }
-                result.append(relativeValue(tons, row));
-                break;
+                case TONNAGE:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    double ton = (double) tons.get(row) / 1000;
+                    if (ton < 10) {
+                        result.append(String.format("%.2f", ton) + " Tons");
+                    } else {
+                        result.append(String.format("%,d", Math.round(ton)) + " Tons");
+                    }
+                    result.append(relativeValue(tons, row));
+                    break;
 
-            case COST:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                if (costs.get(row) < 10_000_000) {
-                    result.append(String.format("%,d", costs.get(row)) + " C-Bills");
-                } else {
-                    result.append(String.format("%,d", costs.get(row) / 1_000_000) + "\u00B7M C-Bills");
-                }
-                result.append(relativeValue(costs, row));
-                break;
+                case COST:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    if (costs.get(row) < 10_000_000) {
+                        result.append(String.format("%,d", costs.get(row)) + " C-Bills");
+                    } else {
+                        result.append(String.format("%,d", costs.get(row) / 1_000_000) + "\u00B7M C-Bills");
+                    }
+                    result.append(relativeValue(costs, row));
+                    break;
 
-            case MEMBERS:
-                return teams.get(row).getPlayersVector();
+                case MEMBERS:
+                    return teams.get(row).getPlayersVector();
 
-            case BV:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
-                result.append(relativeValue(bvs, row));
-                break;
-                
-            case UNITS:
-                if (!seeTeam(row)) {
-                    return "<HTML>" + guiScaledFontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
-                }
-                result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
-                result.append(units.get(row));
-                break;
-                
-            case HIDDEN:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                var percentage = hidden.get(row);
-                result.append(percentage == 0 ? "--": NumberFormat.getPercentInstance().format(percentage));
-                
-            default:
-                break;
+                case BV:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
+                    result.append(relativeValue(bvs, row));
+                    break;
+
+                case UNITS:
+                    if (!seeTeam(row)) {
+                        return "<HTML>" + guiScaledFontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
+                    }
+                    result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
+                    result.append(units.get(row));
+                    break;
+
+                case HIDDEN:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    var percentage = hidden.get(row);
+                    result.append(percentage == 0 ? "--": NumberFormat.getPercentInstance().format(percentage));
+
+                default:
+                    break;
             }
 
             return result.toString();
@@ -421,7 +421,7 @@ public class TeamOverviewPanel extends JPanel {
             }
             removeAll();
             add(Box.createVerticalGlue());
-            Vector<?> playerList = (Vector<?>)value;
+            Vector<?> playerList = (Vector<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
             int size = scaleForGUI(2 * baseSize);
             Font font = new Font("Dialog", Font.PLAIN, scaleForGUI(baseSize));

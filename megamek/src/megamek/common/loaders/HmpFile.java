@@ -675,7 +675,7 @@ implements IMechLoader
                     try {
                         equipment = EquipmentType.get(criticalName);
                         if (equipment == null) {
-                            equipment = EquipmentType.get(mech.isClan()?"Clan "+criticalName:"IS "+criticalName);
+                            equipment = EquipmentType.get((mech.isClan() ? "Clan " : "IS ") + criticalName);
                         }
                         if (equipment != null) {
                             // for experimental or unofficial equipment, we need
@@ -700,7 +700,7 @@ implements IMechLoader
                                     m = mech.addEquipment(equipment, location, rearMounted);
                                     spreadEquipment.put(equipment, m);
                                 }
-                            } else if (((equipment instanceof WeaponType) && ((WeaponType)equipment).isSplitable()) || ((equipment instanceof MiscType) && equipment.hasFlag(MiscType.F_SPLITABLE))) {
+                            } else if (((equipment instanceof WeaponType) && ((WeaponType) equipment).isSplitable()) || ((equipment instanceof MiscType) && equipment.hasFlag(MiscType.F_SPLITABLE))) {
                                 // do we already have this one in this or an
                                 // outer location?
                                 Mounted m = null;

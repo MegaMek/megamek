@@ -123,7 +123,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
-        if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
+        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
         }
         // this doesn't work...

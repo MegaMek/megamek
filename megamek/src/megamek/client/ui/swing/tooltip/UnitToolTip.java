@@ -327,7 +327,7 @@ public final class UnitToolTip {
         // Gather names, counts, Clan/IS
         WeaponInfo currentWp;
         for (Mounted curWp: weapons) {
-            WeaponType wtype = (WeaponType)curWp.getType();
+            WeaponType wtype = (WeaponType) curWp.getType();
             if (isNotTTRelevant(wtype)) {
                 continue;
             }
@@ -383,7 +383,7 @@ public final class UnitToolTip {
                         rangeString += "\u2B1D";
                     }
                 }
-                WeaponType wpT = ((WeaponType)curWp.getType());
+                WeaponType wpT = ((WeaponType) curWp.getType());
                 if (!wpT.hasFlag(WeaponType.F_AMS)
                         || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
@@ -618,7 +618,7 @@ public final class UnitToolTip {
                     result.append(addToTT("Evade", NOBR));
                 }
 
-                if ((entity instanceof Infantry) && ((Infantry)entity).isTakingCover()) { 
+                if ((entity instanceof Infantry) && ((Infantry) entity).isTakingCover()) { 
                     result.append(addToTT("TakingCover", NOBR));
                 }
 

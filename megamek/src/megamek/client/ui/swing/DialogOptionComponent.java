@@ -158,12 +158,12 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public void setValue(Object v) {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox.setSelected((Boolean)v);
+                checkbox.setSelected((Boolean) v);
                 break;
             case IOption.INTEGER:
             case IOption.FLOAT:
             case IOption.STRING:
-                textField.setText((String)v);
+                textField.setText((String) v);
                 break;
             case IOption.CHOICE:
                 choice.setSelectedItem(v);

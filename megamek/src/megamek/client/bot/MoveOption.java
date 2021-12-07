@@ -198,7 +198,7 @@ public class MoveOption extends MovePath {
 
         //Don't jump onto a building with CF < weight
         Hex h = getGame().getBoard().getHex(getFinalCoords());
-        if((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
+        if ((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
             if (cf < getEntity().getWeight()) {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -228,23 +228,24 @@ public class MoveOption extends MovePath {
         int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType(true)) {
-        case MOVE_WALK:
-        case MOVE_VTOL_WALK:
-            move = 1;
-            break;
-        case MOVE_RUN:
-        case MOVE_VTOL_RUN:
-            move = 2;
-            break;
-        case MOVE_SPRINT:
-        case MOVE_VTOL_SPRINT:
-            move = 3;
-            break;
-        case MOVE_JUMP:
-            move = getEntity().getJumpHeat(last.getMpUsed());
-            break;
-        default:
-            move = 1000;
+            case MOVE_WALK:
+            case MOVE_VTOL_WALK:
+                move = 1;
+                break;
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+                move = 2;
+                break;
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                move = 3;
+                break;
+            case MOVE_JUMP:
+                move = getEntity().getJumpHeat(last.getMpUsed());
+                break;
+            default:
+                move = 1000;
+                break;
         }
         return heat + move; // illegal?
     }

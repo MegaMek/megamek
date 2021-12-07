@@ -107,6 +107,6 @@ public class EncodeControl extends ResourceBundle.Control {
 
     // Also borrowed from overridden class.
     private String toResourceName0(String bundleName, String suffix) {
-        return bundleName.contains("://")?null:this.toResourceName(bundleName, suffix);
+        return bundleName.contains("://") ? null : this.toResourceName(bundleName, suffix);
     }
 }

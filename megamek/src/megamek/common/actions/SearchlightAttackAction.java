@@ -61,7 +61,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         
         // can't light up if you're stunned
-        if ((attacker instanceof Tank) && (((Tank)attacker).getStunnedTurns() > 0)) {
+        if ((attacker instanceof Tank) && (((Tank) attacker).getStunnedTurns() > 0)) {
             return false;
         }
         
@@ -160,7 +160,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
 
         ArrayList<Coords> intervening = Coords.intervening(apos, tpos);
         for (Coords c : intervening) {
-            if (game.getBoard().contains(c)){
+            if (game.getBoard().contains(c)) {
                 hexesAdded |= game.addIlluminatedPosition(c);
             }
         }

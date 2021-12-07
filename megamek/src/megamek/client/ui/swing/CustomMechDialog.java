@@ -782,7 +782,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choStartingMode.removeItemListener(this);
             choStartingMode.removeAllItems();
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeBiped"));
-            if (((LandAirMech)entity).getLAMType() != LandAirMech.LAM_BIMODAL) {
+            if (((LandAirMech) entity).getLAMType() != LandAirMech.LAM_BIMODAL) {
                 choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeAirMech"));
             }
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeFighter"));
@@ -968,7 +968,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))
                     || ((e instanceof LandAirMech)
                         && (choStartingMode.getSelectedIndex() == 2
-                            || ((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL
+                            || ((LandAirMech) e).getLAMType() == LandAirMech.LAM_BIMODAL
                                 && choStartingMode.getSelectedIndex() == 1));
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
             isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
@@ -976,7 +976,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMech);
             isAirMech &= (e instanceof LandAirMech)
-                    && (((LandAirMech)e).getLAMType() == LandAirMech.LAM_STANDARD)
+                    && (((LandAirMech) e).getLAMType() == LandAirMech.LAM_STANDARD)
                     && (choStartingMode.getSelectedIndex() == 1);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
         }
@@ -1103,7 +1103,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
 
                 if (entity.getCrew() instanceof LAMPilot) {
-                    LAMPilot pilot = (LAMPilot)entity.getCrew();
+                    LAMPilot pilot = (LAMPilot) entity.getCrew();
                     if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                         pilot.setGunneryMechL(gunneryL);
                         pilot.setGunneryMechB(gunneryB);

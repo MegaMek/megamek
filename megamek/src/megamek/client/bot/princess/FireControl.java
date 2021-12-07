@@ -243,9 +243,8 @@ public class FireControl {
      * @return The {@link Coords} from the target's flight path closest to the shooter.
      */
     @StaticWrapper
-    Coords getNearestPointInFlightPath(final Coords shooterPosition,
-                                       final IAero targetAero) {
-        return Compute.getClosestFlightPath(-1, shooterPosition, (Entity)targetAero);
+    Coords getNearestPointInFlightPath(final Coords shooterPosition, final IAero targetAero) {
+        return Compute.getClosestFlightPath(-1, shooterPosition, (Entity) targetAero);
     }
 
     /**
@@ -310,7 +309,7 @@ public class FireControl {
         // Ground units attacking airborne aeros.
         if (!shooterState.isAero() && targetState.isAirborneAero()) {
             final IAero targetAero = (IAero) target;
-            if (((Entity)targetAero).isNOE()) {
+            if (((Entity) targetAero).isNOE()) {
                 final Coords closestInFlightPath = getNearestPointInFlightPath(shooterState.getPosition(), targetAero);
                 final int aeroDistance = closestInFlightPath.distance(shooterState.getPosition());
                 if (1 >= aeroDistance) {
@@ -1581,7 +1580,7 @@ public class FireControl {
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
         	// respect restriction on manual AMS firing.
-        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+        	if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
         			weapon.getType().hasFlag(WeaponType.F_AMS)) {
         		continue;
         	}
@@ -1604,11 +1603,11 @@ public class FireControl {
         
         // if we're in a position to drop bombs because we're an aircraft on a ground map, then
         // the "alpha strike" may be a bombing plan.
-        if(shooter.isAirborneAeroOnGroundMap()) {
+        if (shooter.isAirborneAeroOnGroundMap()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
             calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
-            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+            if (bombingPlan.getUtility() > myPlan.getUtility()) {
                 return bombingPlan;
             }
         }
@@ -1672,7 +1671,7 @@ public class FireControl {
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
             // bombing attacks have to be carried out separately from other weapon attacks, so we handle them in a special case
-            if(weapon.isGroundBomb()) {
+            if (weapon.isGroundBomb()) {
                 continue;
             }
 
@@ -1700,7 +1699,7 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         
-        if(myPlan.getUtility() >= bombPlan.getUtility()) {
+        if (myPlan.getUtility() >= bombPlan.getUtility()) {
             return myPlan;
         } else {
             return bombPlan;
@@ -1736,13 +1735,13 @@ public class FireControl {
         }
         
         // not having any bombs (due to expenditure/damage)
-        if(shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
+        if (shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
             return diveBombPlan;
         }
 
         while (weaponIter.hasNext()) {
             final Mounted weapon = weaponIter.next();
-            if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 final int[] bombPayload = new int[BombType.B_NUM];
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
@@ -1797,7 +1796,7 @@ public class FireControl {
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
         	// respect restriction on manual AMS firing.
-        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+        	if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
         			weapon.getType().hasFlag(WeaponType.F_AMS)) {
         		continue;
         	}
@@ -1829,12 +1828,12 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         
-        if(shooter.isAero()) {
+        if (shooter.isAero()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
             calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             // if the bombing plan actually involves doing something
-            if((bombingPlan.size() > 0) && 
+            if ((bombingPlan.size() > 0) && 
                     (bombingPlan.getUtility() > myPlan.getUtility())) {
                 return bombingPlan;
             }
@@ -1854,7 +1853,7 @@ public class FireControl {
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
 
         // if we've got a combat computer, we get an automatic
-        if(entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
+        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
             baseTolerance += 4;
         }
         
@@ -1931,7 +1930,7 @@ public class FireControl {
                     //Only fire field guns up until we no longer have the men to fire more, since going over that limit results in nothing firing.
                     //In theory we could adapt the heat system to handle this(with tonnage as heat and shooting strength as heat capacity, no heat tolerance).
                     //This would behave much better for units with mixed type field guns, but given that those are rare, this should serve for now.
-                    if(fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry)shooter).getShootingStrength()) {
+                    if (fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry) shooter).getShootingStrength()) {
                         fieldGuns.add(weaponFireInfo);
                         fieldGunMassAlreadyFired += fieldGunMass;
                     }
@@ -1995,7 +1994,7 @@ public class FireControl {
                                                                  shooter.getGame(), shooter.passedOver(target), false);
             
             calculateUtility(diveBombPlan, Entity.DOES_NOT_TRACK_HEAT, true);
-            if(diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
+            if (diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
                 bestPlans[0] = diveBombPlan;
             }
         }
@@ -2024,11 +2023,11 @@ public class FireControl {
         FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
                                                     ammoConservation, game);
         
-        if(shooter.canFlipArms()) {
+        if (shooter.canFlipArms()) {
             shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
             betaStrike.setFlipArms(true);
-            if(betaStrike.getUtility() > alphaStrike.getUtility()) {
+            if (betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;
             }
             
@@ -2087,12 +2086,12 @@ public class FireControl {
         FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
                                                        target, targetState, game);
         
-        if(shooter.canFlipArms()) {
+        if (shooter.canFlipArms()) {
             shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = guessFullFiringPlan(shooter, shooterState,
                                                         target, targetState, game);
             betaStrike.setFlipArms(true);
-            if(betaStrike.getUtility() > alphaStrike.getUtility()) {
+            if (betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;
             }
             
@@ -2154,7 +2153,7 @@ public class FireControl {
         // Get the best plan without any twists.
         FiringPlan noTwistPlan = null;
         
-        switch(params.getCalculationType()) {
+        switch (params.getCalculationType()) {
             case GET:
                 noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
                 break;
@@ -2215,18 +2214,18 @@ public class FireControl {
      */
     public boolean entityCanIndirectFireMissile(FireControlState fireControlState, Entity shooter) {
     	// cache the results of our computation
-    	if(fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
+    	if (fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
     		return fireControlState.getEntityIDFStates().get(shooter.getId());
     	}
     	
     	// airborne aerospace units cannot use indirect fire
-    	if(shooter.isAirborne()) {
+    	if (shooter.isAirborne()) {
     	    fireControlState.getEntityIDFStates().put(shooter.getId(), false);
     	    return false;
     	}
     	
         for(Mounted weapon : shooter.getWeaponList()) {
-        	if(weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
+        	if (weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
         		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
         		return true;
         	}
@@ -2247,7 +2246,7 @@ public class FireControl {
     	// 		legally can't spot
     	//		am firing and don't have a command console to mitigate the spotting penalty
     	// otherwise, attempt to spot the closest enemy
-    	if(spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) || 
+    	if (spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) || 
     			(plan != null) && (plan.getExpectedDamage() > 0) && 
     			!spotter.getCrew().hasActiveCommandConsole()) {
     		return null;
@@ -2266,7 +2265,7 @@ public class FireControl {
             // if we're in LOS
     		if (effects.canSee()) {
     			int targetDistance = spotter.getPosition().distance(target.getPosition());
-    			if(targetDistance < shortestDistance) {
+    			if (targetDistance < shortestDistance) {
     				shortestDistance = targetDistance;
     				closestTargets.clear();
     				closestTargets.add(target);
@@ -2278,7 +2277,7 @@ public class FireControl {
     	
     	// if we found one or more targets, pick at random from the closest ones.
     	// otherwise, we still can't spot
-    	if(closestTargets.size() > 0) {
+    	if (closestTargets.size() > 0) {
 	    	Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
 	    	return new SpotAction(spotter.getId(), target.getTargetId());
     	}
@@ -2424,7 +2423,7 @@ public class FireControl {
                                                        useExtremeRange,
                                                        useLOSRange);
             // if the weapon has been disabled or is out of ammo, don't count it
-            if(weapon.isCrippled()) {
+            if (weapon.isCrippled()) {
                 continue;
             }
             
@@ -2434,7 +2433,7 @@ public class FireControl {
             // only a little over half of a cluster will generally hit
             // but some cluster munitions do more than 1 point of damage per individual hit
             // still better than just discounting them completely.
-            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = weaponType.getRackSize();
             }
             
@@ -3234,7 +3233,7 @@ public class FireControl {
                         boolean willbeIlluminated = false;
                         
                         for (SearchlightAttackAction searchlight : searchlights) {
-                            if(searchlight.willIlluminate(shooter.getGame(), ent)) {
+                            if (searchlight.willIlluminate(shooter.getGame(), ent)) {
                                 willbeIlluminated = true;
                                 break;
                             }

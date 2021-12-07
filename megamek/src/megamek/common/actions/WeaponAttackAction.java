@@ -1108,7 +1108,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Can't fire at hidden targets
-        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
+        if ((target instanceof Entity) && ((Entity) target).isHidden()) {
             return Messages.getString("WeaponAttackAction.NoFireAtHidden");
         }
         
@@ -1320,7 +1320,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // LAMs in fighter mode are restricted to only the ammo types that Aeros can use
         if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
                 && usesAmmo && ammo != null 
-                && !((AmmoType)ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
+                && !((AmmoType) ammo.getType()).canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))) {
             return Messages.getString("WeaponAttackAction.InvalidAmmoForFighter");
         }
         
@@ -3850,7 +3850,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Bonuses for dual cockpits, etc
         // Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
-        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
+        if (ae instanceof Mech && ((Mech) ae).getCockpitType() == Mech.COCKPIT_DUAL) {
             if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.GunnerHit"));                
             } else if (ae.getCrew().hasDedicatedGunner()) {

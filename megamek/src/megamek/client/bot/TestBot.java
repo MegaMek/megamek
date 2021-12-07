@@ -2379,7 +2379,6 @@ public class TestBot extends BotClient {
                 // relative to its value
 
                 if ((is_values[arr_index] <= 0) & (pen_counters[arr_index] > 0)) {
-
                     switch (arr_index) {
                         case 0: // Destroying the head is a hard kill and gets
                             // rid of the pilot, too

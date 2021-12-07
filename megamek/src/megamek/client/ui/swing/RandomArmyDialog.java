@@ -144,17 +144,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private UnitTable generatedRAT;
 
     public RandomArmyDialog(ClientGUI cl) {
-        super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
+        super(cl.frame, Messages.getString("RandomArmyDialog.title"), true);
         m_clientgui = cl;
         m_client = cl.getClient();
         rug = RandomUnitGenerator.getInstance();
         rug.registerListener(this);
-        if (rug.isInitialized()){
-            m_ratStatus = new JLabel(Messages
-                    .getString("RandomArmyDialog.ratStatusDoneLoading"));            
+        if (rug.isInitialized()) {
+            m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));            
         } else {
-            m_ratStatus = new JLabel(Messages
-                    .getString("RandomArmyDialog.ratStatusLoading"));
+            m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusLoading"));
         }
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
@@ -516,14 +514,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     public void valueChanged(TreeSelectionEvent ev) {
         if (ev.getSource().equals(m_treeRAT)) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)m_treeRAT.getLastSelectedPathComponent();
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) m_treeRAT.getLastSelectedPathComponent();
             if (node == null) {
                 return;
             }
 
             Object nodeInfo = node.getUserObject();
             if (node.isLeaf()) {
-                String ratName = (String)nodeInfo;
+                String ratName = (String) nodeInfo;
                 rug.setChosenRAT(ratName);
             }
         }
@@ -608,18 +606,18 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
-        } else if (ev.getSource().equals(m_bAdvSearch)){
+        } else if (ev.getSource().equals(m_bAdvSearch)) {
             searchFilter=asd.showDialog();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
-        } else if (ev.getSource().equals(m_bAdvSearchClear)){
+        } else if (ev.getSource().equals(m_bAdvSearchClear)) {
             searchFilter=null;
             m_bAdvSearchClear.setEnabled(false);
         } else if (ev.getSource().equals(m_bRoll)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
-                if(m_pMain.getSelectedIndex() == TAB_RAT) {
+                if (m_pMain.getSelectedIndex() == TAB_RAT) {
                     int units = Integer.parseInt(m_tUnits.getText());
-                    if(units > 0) {
+                    if (units > 0) {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else if (m_pMain.getSelectedIndex() == TAB_RAT_GENERATOR) {
@@ -857,12 +855,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     }
     
     private TreePath findPathByName(String[] nodeNames) {
-        TreeNode root = (TreeNode)m_treeRAT.getModel().getRoot();
+        TreeNode root = (TreeNode) m_treeRAT.getModel().getRoot();
         return findNextNode(new TreePath(root), nodeNames, 0);
     }
     
     private TreePath findNextNode(TreePath parent, String[] nodes, int depth) {
-        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
         String currNode = node.toString();
 
         // If equal, go down the branch
@@ -875,7 +873,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             // Traverse children
             if (node.getChildCount() >= 0) {
                 for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
-                    TreeNode n = (TreeNode)e.nextElement();
+                    TreeNode n = (TreeNode) e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = findNextNode(path, nodes, depth + 1);
                     // Found a match
@@ -937,7 +935,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if(!e.isMapSettingsOnlyChange()) {
+            if (!e.isMapSettingsOnlyChange()) {
                 updateRATYear();
             }
         }
@@ -1061,14 +1059,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         
         public int getPreferredWidth(int col) {
         	switch (col) {
-        	case COL_WEIGHT:
-        		return 12;
-        	case COL_UNIT:
-        		return 240;
-        	case COL_BV:
-        		return 18;
+                case COL_WEIGHT:
+                    return 12;
+                case COL_UNIT:
+                    return 240;
+                case COL_BV:
+                    return 18;
+                default:
+                    return 0;
         	}
-        	return 0;
         }
         
         @Override
@@ -1097,15 +1096,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         public Object getValueAt(int row, int col) {
         	if (generatedRAT != null) {
 		    	switch (col) {
-		    	case COL_WEIGHT:
-		    		return generatedRAT.getEntryWeight(row);
-		    	case COL_UNIT:
-		    		return generatedRAT.getEntryText(row);
-		    	case COL_BV:
-		    		int bv = generatedRAT.getBV(row);
-		    		if (bv > 0) {
-		    			return String.valueOf(bv);
-		    		}
+                    case COL_WEIGHT:
+                        return generatedRAT.getEntryWeight(row);
+                    case COL_UNIT:
+                        return generatedRAT.getEntryText(row);
+                    case COL_BV:
+                        int bv = generatedRAT.getBV(row);
+                        if (bv > 0) {
+                            return String.valueOf(bv);
+                        }
 		    	}
         	}
 		   	return "";

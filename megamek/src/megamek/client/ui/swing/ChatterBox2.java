@@ -199,7 +199,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         
-        if (isHit){
+        if (isHit) {
             isHit = false;
             return true;
         }            
@@ -384,7 +384,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         }
         
         bv.setChatterBoxActive(true);
-        if (isDown()){
+        if (isDown()) {
             slideUp();
         }
 
@@ -705,7 +705,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
-        if (!bv.getChatterBoxActive()){
+        if (!bv.getChatterBoxActive()) {
             return;
         }
         
@@ -716,10 +716,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     content.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
-                    addChatMessage((String)content.getTransferData(
-                            DataFlavor.stringFlavor));
+                    addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
                   }
-                  catch (UnsupportedFlavorException ex){
+                  catch (UnsupportedFlavorException ex) {
                     //highly unlikely since we are using a standard DataFlavor
                     System.out.println(ex);
                     ex.printStackTrace();
@@ -887,7 +886,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return height - 20;
     }
     
-    public void clearMessage(){
+    public void clearMessage() {
         message = "";
         visibleMessage ="";
     }

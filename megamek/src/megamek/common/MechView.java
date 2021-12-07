@@ -339,7 +339,7 @@ public class MechView {
                     entity.getWalkMP() + "/" + entity.getRunMPasString())); //$NON-NLS-1$
             entity.setConversionMode(originalMode);
         } else if (entity instanceof LandAirMech) {
-            if (((LandAirMech)entity).getLAMType() == LandAirMech.LAM_STANDARD) {
+            if (((LandAirMech) entity).getLAMType() == LandAirMech.LAM_STANDARD) {
                 sBasic.add(new LabeledElement(Messages.getString("MovementType.AirMech"), //$NON-NLS-1$
                         ((LandAirMech) entity).getAirMechWalkMP() + "/"
                                 + ((LandAirMech) entity).getAirMechRunMP() + "/"
@@ -678,7 +678,7 @@ public class MechView {
             }
         }
 
-        String armor = String.valueOf(entity.isCapitalFighter()? a.getCapArmor() : a.getTotalArmor());
+        String armor = String.valueOf(entity.isCapitalFighter() ? a.getCapArmor() : a.getTotalArmor());
         if (isJumpship) {
             armor += Messages.getString("MechView.CapitalArmor");
         }
@@ -772,7 +772,7 @@ public class MechView {
         }
         
         TableElement wpnTable = new TableElement(4);
-        wpnTable.setColNames("Weapons", "Loc", "Heat", entity.isOmni()? "Omni" : "");
+        wpnTable.setColNames("Weapons", "Loc", "Heat", entity.isOmni() ? "Omni" : "");
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT);
         for (Mounted mounted : entity.getWeaponList()) {
@@ -813,9 +813,7 @@ public class MechView {
             row[2] = String.valueOf(heat);
             
             if (entity.isOmni()) {
-                row[3] = mounted.isOmniPodMounted()?
-            		Messages.getString("MechView.Pod") : //$NON-NLS-1$
-            		Messages.getString("MechView.Fixed"); //$NON-NLS-1$
+                row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MechView.Pod" : "MechView.Fixed");
             } else if(wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
                 row[3] = warningStart() + Messages.getString("MechView.WeaponDamage")
                     + ")" + warningEnd();
@@ -865,7 +863,7 @@ public class MechView {
                     }
                     // Ignore ammo for one-shot launchers
                     if ((m.getLinkedBy() != null)
-                            && m.getLinkedBy().isOneShot()){
+                            && m.getLinkedBy().isOneShot()) {
                         continue;
                     }
                     if (mounted.getLocation() != Entity.LOC_NONE) {
@@ -887,14 +885,14 @@ public class MechView {
 
     private ViewElement getAmmo() {
         TableElement ammoTable = new TableElement(4);
-        ammoTable.setColNames("Ammo", "Loc", "Shots", entity.isOmni()? "Omni" : "");
+        ammoTable.setColNames("Ammo", "Loc", "Shots", entity.isOmni() ? "Omni" : "");
         ammoTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_RIGHT, TableElement.JUSTIFIED_LEFT);
 
         for (Mounted mounted : entity.getAmmo()) {
             // Ignore ammo for one-shot launchers
             if ((mounted.getLinkedBy() != null)
-                    && mounted.getLinkedBy().isOneShot()){
+                    && mounted.getLinkedBy().isOneShot()) {
                 continue;
             }
             // Ignore bay ammo bins for unused munition types
@@ -909,9 +907,7 @@ public class MechView {
             String[] row = { mounted.getName(), entity.getLocationAbbr(mounted.getLocation()),
                     String.valueOf(mounted.getBaseShotsLeft()), "" };
             if (entity.isOmni()) {
-                row[3] = mounted.isOmniPodMounted()?
-                        Messages.getString("MechView.Pod") : //$NON-NLS-1$
-                            Messages.getString("MechView.Fixed"); //$NON-NLS-1$
+                row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MechView.Pod" : "MechView.Fixed");
             }
 
             if (mounted.isDestroyed()) {
@@ -968,7 +964,7 @@ public class MechView {
         List<ViewElement> retVal = new ArrayList<>();
         
         TableElement miscTable = new TableElement(3);
-        miscTable.setColNames("Equipment", "Loc", entity.isOmni()? "Omni" : "");
+        miscTable.setColNames("Equipment", "Loc", entity.isOmni() ? "Omni" : "");
         miscTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_LEFT);
         int nEquip = 0;
@@ -1001,10 +997,9 @@ public class MechView {
             }
             
             if (entity.isOmni()) {
-                row[2] = mounted.isOmniPodMounted()?
-                        Messages.getString("MechView.Pod") : //$NON-NLS-1$
-                            Messages.getString("MechView.Fixed"); //$NON-NLS-1$
+                row[2] = Messages.getString(mounted.isOmniPodMounted() ? "MechView.Pod" : "MechView.Fixed");
             }
+
             if (mounted.isDestroyed()) {
                 miscTable.addRowWithBgColor("red", row);
             } else {
@@ -1027,7 +1022,7 @@ public class MechView {
         }
         
         if (isSmallCraft || isJumpship) {
-            Aero a = (Aero)entity;
+            Aero a = (Aero) entity;
             
             TableElement crewTable = new TableElement(2);
             crewTable.setColNames(Messages.getString("MechView.Crew"), "");

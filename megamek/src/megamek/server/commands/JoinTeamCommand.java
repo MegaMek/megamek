@@ -70,7 +70,7 @@ public class JoinTeamCommand extends ServerCommand {
             String teamString = "join Team " + teamId + ".  ";
             if (teamId == Player.TEAM_UNASSIGNED) {
                 teamString = " leave their team and go unassigned.  ";
-            } else if (teamId == Player.TEAM_NONE){
+            } else if (teamId == Player.TEAM_NONE) {
                 teamString = " go lone wolf!  ";
             }
 

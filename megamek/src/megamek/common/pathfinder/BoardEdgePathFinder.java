@@ -107,28 +107,26 @@ public class BoardEdgePathFinder {
      * @param destinationRegion The region
      */
     private int getAppropriateFacing(Entity entity, int destinationRegion) {
-        switch(destinationRegion) {
-        case Board.START_N:
-            return 0;
-        case Board.START_S:
-            return 3;
-        case Board.START_E:
-            if(entity.getPosition().getY() < entity.getGame().getBoard().getHeight() / 2) {
-                return 2;
-            }
-            else {
-                return 1;
-            }
-        case Board.START_W:
-            if(entity.getPosition().getY() < entity.getGame().getBoard().getHeight() / 2) {
-                return 4;
-            }
-            else {
-                return 5;
-            }
+        switch (destinationRegion) {
+            case Board.START_N:
+                return 0;
+            case Board.START_S:
+                return 3;
+            case Board.START_E:
+                if (entity.getPosition().getY() < entity.getGame().getBoard().getHeight() / 2) {
+                    return 2;
+                } else {
+                    return 1;
+                }
+            case Board.START_W:
+                if (entity.getPosition().getY() < entity.getGame().getBoard().getHeight() / 2) {
+                    return 4;
+                } else {
+                    return 5;
+                }
+            default:
+                return -1;
         }
-
-        return -1;
     }
 
     /**
@@ -654,17 +652,17 @@ public class BoardEdgePathFinder {
     protected boolean isOnBoardEdge(MovePath movePath, int destinationRegion) {
         Coords coords = movePath.getFinalCoords();
 
-        switch(destinationRegion) {
-        case Board.START_N:
-            return coords.getY() == 0;
-        case Board.START_S:
-            return coords.getY() == movePath.getGame().getBoard().getHeight() - 1;
-        case Board.START_E:
-            return coords.getX() == movePath.getGame().getBoard().getWidth() - 1;
-        case Board.START_W:
-            return coords.getX() == 0;
-        default:
-            return false;
+        switch (destinationRegion) {
+            case Board.START_N:
+                return coords.getY() == 0;
+            case Board.START_S:
+                return coords.getY() == movePath.getGame().getBoard().getHeight() - 1;
+            case Board.START_E:
+                return coords.getX() == movePath.getGame().getBoard().getWidth() - 1;
+            case Board.START_W:
+                return coords.getX() == 0;
+            default:
+                return false;
         }
     }
 
@@ -695,26 +693,26 @@ public class BoardEdgePathFinder {
             int costDifference = first.getMpUsed() - second.getMpUsed();
             int distanceDifference;
 
-            switch(targetRegion) {
-            // if we're heading south, the one with the bigger y coordinate is further along
-            case Board.START_S:
-                distanceDifference = second.getFinalCoords().getY() - first.getFinalCoords().getY();
-                break;
-            // if we're heading north, the one with the smaller y coordinate is further along
-            case Board.START_N:
-                distanceDifference = first.getFinalCoords().getY() - second.getFinalCoords().getY();
-                break;
-            // if we're heading east, the one with the bigger x coordinate is further along
-            case Board.START_E:
-                distanceDifference = second.getFinalCoords().getX() - first.getFinalCoords().getX();
-                break;
-            // if we're heading west, the one with the smaller x coordinate is further along
-            case Board.START_W:
-                distanceDifference = first.getFinalCoords().getX() - second.getFinalCoords().getX();
-                break;
-            default:
-                distanceDifference = 0;
-                break;
+            switch (targetRegion) {
+                // if we're heading south, the one with the bigger y coordinate is further along
+                case Board.START_S:
+                    distanceDifference = second.getFinalCoords().getY() - first.getFinalCoords().getY();
+                    break;
+                // if we're heading north, the one with the smaller y coordinate is further along
+                case Board.START_N:
+                    distanceDifference = first.getFinalCoords().getY() - second.getFinalCoords().getY();
+                    break;
+                // if we're heading east, the one with the bigger x coordinate is further along
+                case Board.START_E:
+                    distanceDifference = second.getFinalCoords().getX() - first.getFinalCoords().getX();
+                    break;
+                // if we're heading west, the one with the smaller x coordinate is further along
+                case Board.START_W:
+                    distanceDifference = first.getFinalCoords().getX() - second.getFinalCoords().getX();
+                    break;
+                default:
+                    distanceDifference = 0;
+                    break;
             }
 
             return distanceDifference != 0 ? distanceDifference : costDifference;

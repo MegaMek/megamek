@@ -390,14 +390,12 @@ public class UnitOverview implements IDisplayable {
         g.drawString(s, x, y);
     }
 
-    private void drawConditionStrings(Graphics graph, Entity entity, int x,
-            int y) {
+    private void drawConditionStrings(Graphics graph, Entity entity, int x, int y) {
+        // out of control conditions for ASF
+        if (entity.isAero()) {
+            IAero a = (IAero) entity;
 
-//      out of control conditions for ASF
-        if(entity.isAero()) {
-            IAero a = (IAero)entity;
-
-            if(a.isRolled()) {
+            if (a.isRolled()) {
                 // draw "rolled"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29);
@@ -405,12 +403,12 @@ public class UnitOverview implements IDisplayable {
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28);
             }
 
-            if(a.isOutControlTotal() && a.isRandomMove()) {
+            if (a.isOutControlTotal() && a.isRandomMove()) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24);
                 graph.setColor(Color.red);
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23);
-            } else if(a.isOutControlTotal()) {
+            } else if (a.isOutControlTotal()) {
                 // draw "CONTROL"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24);
@@ -419,7 +417,7 @@ public class UnitOverview implements IDisplayable {
             }
 
             //is the unit evading? - can't evade and be out of control so just draw on top
-            if(entity.isEvading()) {
+            if (entity.isEvading()) {
                 //draw evasion
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
@@ -528,7 +526,6 @@ public class UnitOverview implements IDisplayable {
     }
 
     protected String getIconName(Entity e, FontMetrics metrics) {
-
         if (e instanceof BattleArmor) {
             String iconName = e.getShortName();
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {

@@ -313,8 +313,6 @@ public class HexTileset implements BoardListener {
                     loadFromFile(incFile);
                 }
             }
-            // else if((st.ttype == StreamTokenizer.TT_WORD) &&
-            // st.sval.equals("ortho")){}
         }
         r.close();
         themes.add(TRANSPARENT_THEME);
@@ -641,7 +639,7 @@ public class HexTileset implements BoardListener {
 
     @Override
     public void boardChangedHex(BoardEvent b) {
-        clearHex(((Board)b.getSource()).getHex(b.getCoords()));
+        clearHex(((Board) b.getSource()).getHex(b.getCoords()));
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -498,77 +499,80 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setAttachments(chkAttachments.isSelected());
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
-            case UnitType.MEK:case UnitType.TANK:
-                if (chkRoleRecon.isSelected()) {
-                    fd.getRoles().add(MissionRole.RECON);
-                }
-                if (chkRoleFireSupport.isSelected()) {
-                    fd.getRoles().add(MissionRole.FIRE_SUPPORT);
-                }
-                if (chkRoleUrban.isSelected()) {
-                    fd.getRoles().add(MissionRole.URBAN);
-                }
-                if (chkRoleInfantrySupport.isSelected()) {
-                    fd.getRoles().add(MissionRole.INF_SUPPORT);
-                }
-                if (chkRoleCavalry.isSelected()) {
-                    fd.getRoles().add(MissionRole.CAVALRY);
-                }
-                if (chkRoleRaider.isSelected()) {
-                    fd.getRoles().add(MissionRole.RAIDER);
-                }
-                if (chkRoleIncindiary.isSelected()) {
-                    fd.getRoles().add(MissionRole.INCENDIARY);
-                }
-                if (chkRoleAntiAircraft.isSelected()) {
-                    fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
-                }
-                if (chkRoleAntiInfantry.isSelected()) {
-                    fd.getRoles().add(MissionRole.ANTI_INFANTRY);
-                }			
-                if (chkRoleArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.ARTILLERY);
-                }
-                if (chkRoleMissileArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                }
-                if (chkRoleTransport.isSelected()) {
-                    fd.getRoles().add(MissionRole.CARGO);
-                }
-                if (chkRoleEngineer.isSelected()) {
-                    fd.getRoles().add(MissionRole.ENGINEER);
-                }
-                break;
-            case UnitType.INFANTRY:
-            case UnitType.BATTLE_ARMOR:
-                if (chkRoleFieldGun.isSelected()) {
-                    fd.getRoles().add(MissionRole.FIELD_GUN);
-                }
-                if (chkRoleFieldArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.ARTILLERY);
-                }
-                if (chkRoleFieldMissileArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                }
-                break;
-            case UnitType.AERO:
-                if (chkRoleAirRecon.isSelected()) {
-                    fd.getRoles().add(MissionRole.RECON);
-                }
-                if (chkRoleGroundSupport.isSelected()) {
-                    fd.getRoles().add(MissionRole.GROUND_SUPPORT);
-                }
-                if (chkRoleInterceptor.isSelected()) {
-                    fd.getRoles().add(MissionRole.INTERCEPTOR);
-                }
-                if (chkRoleAssault.isSelected()) {
-                    fd.getRoles().add(MissionRole.ASSAULT);
-                }
-                if (chkRoleAirTransport.isSelected()) {
-                    fd.getRoles().add(MissionRole.CARGO);
-                }
+                case UnitType.MEK:
+                case UnitType.TANK:
+                    if (chkRoleRecon.isSelected()) {
+                        fd.getRoles().add(MissionRole.RECON);
+                    }
+                    if (chkRoleFireSupport.isSelected()) {
+                        fd.getRoles().add(MissionRole.FIRE_SUPPORT);
+                    }
+                    if (chkRoleUrban.isSelected()) {
+                        fd.getRoles().add(MissionRole.URBAN);
+                    }
+                    if (chkRoleInfantrySupport.isSelected()) {
+                        fd.getRoles().add(MissionRole.INF_SUPPORT);
+                    }
+                    if (chkRoleCavalry.isSelected()) {
+                        fd.getRoles().add(MissionRole.CAVALRY);
+                    }
+                    if (chkRoleRaider.isSelected()) {
+                        fd.getRoles().add(MissionRole.RAIDER);
+                    }
+                    if (chkRoleIncindiary.isSelected()) {
+                        fd.getRoles().add(MissionRole.INCENDIARY);
+                    }
+                    if (chkRoleAntiAircraft.isSelected()) {
+                        fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
+                    }
+                    if (chkRoleAntiInfantry.isSelected()) {
+                        fd.getRoles().add(MissionRole.ANTI_INFANTRY);
+                    }
+                    if (chkRoleArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.ARTILLERY);
+                    }
+                    if (chkRoleMissileArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
+                    }
+                    if (chkRoleTransport.isSelected()) {
+                        fd.getRoles().add(MissionRole.CARGO);
+                    }
+                    if (chkRoleEngineer.isSelected()) {
+                        fd.getRoles().add(MissionRole.ENGINEER);
+                    }
+                    break;
+                case UnitType.INFANTRY:
+                case UnitType.BATTLE_ARMOR:
+                    if (chkRoleFieldGun.isSelected()) {
+                        fd.getRoles().add(MissionRole.FIELD_GUN);
+                    }
+                    if (chkRoleFieldArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.ARTILLERY);
+                    }
+                    if (chkRoleFieldMissileArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
+                    }
+                    break;
+                case UnitType.AERO:
+                    if (chkRoleAirRecon.isSelected()) {
+                        fd.getRoles().add(MissionRole.RECON);
+                    }
+                    if (chkRoleGroundSupport.isSelected()) {
+                        fd.getRoles().add(MissionRole.GROUND_SUPPORT);
+                    }
+                    if (chkRoleInterceptor.isSelected()) {
+                        fd.getRoles().add(MissionRole.INTERCEPTOR);
+                    }
+                    if (chkRoleAssault.isSelected()) {
+                        fd.getRoles().add(MissionRole.ASSAULT);
+                    }
+                    if (chkRoleAirTransport.isSelected()) {
+                        fd.getRoles().add(MissionRole.CARGO);
+                    }
+                    break;
             }
         }
+
         try {
             fd.setDropshipPct(Double.parseDouble(txtDropshipPct.getText()) * 0.01);
         } catch (NumberFormatException ex) {
@@ -608,13 +612,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshFactions() {
-        FactionRecord oldFaction = (FactionRecord)cbFaction.getSelectedItem();
+        FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
         List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList()
                 .stream().filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
                 .collect(Collectors.toList());
-        sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
+        sorted.sort(Comparator.comparing(fr -> fr.getName(currentYear)));
         sorted.forEach(fr -> cbFaction.addItem(fr));
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
@@ -627,16 +631,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshSubfactions() {
-        FactionRecord oldFaction = (FactionRecord)cbSubfaction.getSelectedItem();
+        FactionRecord oldFaction = (FactionRecord) cbSubfaction.getSelectedItem();
         cbSubfaction.removeActionListener(this);
         cbSubfaction.removeAllItems();
-        String currentFaction = ((FactionRecord)cbFaction.getSelectedItem()).getKey();
+        String currentFaction = ((FactionRecord) cbFaction.getSelectedItem()).getKey();
         if (currentFaction != null) {
             List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList().stream()
                     .filter(fr -> fr.getKey().startsWith(currentFaction + ".")
                             && fr.isActiveInYear(currentYear))
+                    .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
                     .collect(Collectors.toList());
-            sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
             cbSubfaction.addItem(null);
             sorted.forEach(fr -> cbSubfaction.addItem(fr));
         }
@@ -686,7 +690,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
             Integer unitType = rs.getDefaultUnitType(forceDesc);
             if (unitType == null && cbUnitType.getItemCount() > 0) {
-                unitType = (Integer)cbUnitType.getItemAt(0);
+                unitType = cbUnitType.getItemAt(0);
             }
             cbUnitType.setSelectedItem(unitType);
             forceDesc.setUnitType(unitType);
@@ -698,7 +702,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void refreshFormations() {
         cbFormation.removeActionListener(this);
         if (cbUnitType.getSelectedItem() != null) {
-            Integer unitType = (Integer)cbUnitType.getSelectedItem();
+            Integer unitType = (Integer) cbUnitType.getSelectedItem();
             if (unitType != null) {
                 panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
                 panInfRole.setVisible(unitType == UnitType.INFANTRY
@@ -709,7 +713,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
 
         TOCNode tocNode = findTOCNode();
-        String currentFormation = (String)cbFormation.getSelectedItem();
+        String currentFormation = (String) cbFormation.getSelectedItem();
         boolean hasCurrent = false;
         Ruleset ruleset = Ruleset.findRuleset(forceDesc);
         cbFormation.removeAllItems();
@@ -733,7 +737,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             }
                         }
                     } while (fn == null && rs != null);
-                    String formName = (fn != null)?fn.getEschelonName() : formation;
+                    String formName = (fn != null) ? fn.getEschelonName() : formation;
                     if (formation.endsWith("+")) {
                         formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
                     }
@@ -758,7 +762,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             String esch = rs.getDefaultEschelon(forceDesc);
             if ((esch == null || !formationDisplayNames.containsKey(esch)
                     && cbFormation.getItemCount() > 0)) {
-                esch = (String)cbFormation.getItemAt(0);
+                esch = cbFormation.getItemAt(0);
             }
             if (esch != null) {
                 cbFormation.setSelectedItem(esch);
@@ -816,7 +820,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void refreshFlags() {
         cbFlags.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
-        String currentFlag = (String)cbFlags.getSelectedItem();
+        String currentFlag = (String) cbFlags.getSelectedItem();
         boolean hasCurrent = false;
         cbFlags.removeAllItems();
         cbFlags.addItem(null);
@@ -843,7 +847,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         forceDesc.getFlags().clear();
         if (cbFlags.getSelectedItem() != null) {
-            forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
+            forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
         }
         cbFlags.addActionListener(this);
     }
@@ -871,27 +875,27 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == cbFaction) {
             if (cbFaction.getSelectedItem() != null) {
-                forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshSubfactions();
         } else if (ev.getSource() == cbSubfaction) {
             if (cbSubfaction.getSelectedItem() != null) {
-                forceDesc.setFaction(((FactionRecord)cbSubfaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) cbSubfaction.getSelectedItem()).getKey());
             } else {
-                forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
-            forceDesc.setUnitType((Integer)cbUnitType.getSelectedItem());
+            forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
         } else if (ev.getSource() == cbFormation) {
-            String esch = (String)cbFormation.getSelectedItem();
+            String esch = (String) cbFormation.getSelectedItem();
             if (esch != null) {
                 setFormation(esch);
             }
             refreshRatings();
         } else if (ev.getSource() == cbRating) {
-            forceDesc.setRating((String)cbRating.getSelectedItem());
+            forceDesc.setRating((String) cbRating.getSelectedItem());
             refreshFlags();
         } else if (ev.getSource() == cbExperience) {
             if (cbExperience.getSelectedIndex() == 0) {
@@ -903,7 +907,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else if (ev.getSource() == cbFlags) {
             forceDesc.getFlags().clear();
             if (cbFlags.getSelectedItem() != null) {
-                forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
+                forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
             }
         } else if (ev.getSource() == cbWeightClass) {
             if (cbWeightClass.getSelectedIndex() < 1) {
@@ -1070,7 +1074,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (entry == null) {
                 setText(nullVal);
             } else {
-                setText(toString.apply((T)entry));
+                setText(toString.apply((T) entry));
             }
             return this;
         }
@@ -1096,7 +1100,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         public Object getChild(Object parent, int index) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().get(index);
+                return ((ForceDescriptor) parent).getAllChildren().get(index);
             }
             return null;
         }
@@ -1104,7 +1108,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         public int getChildCount(Object parent) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().size();
+                return ((ForceDescriptor) parent).getAllChildren().size();
             }
             return 0;
         }
@@ -1112,7 +1116,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         public int getIndexOfChild(Object parent, Object child) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().indexOf(child);
+                return ((ForceDescriptor) parent).getAllChildren().indexOf(child);
             }
             return 0;
         }
@@ -1124,8 +1128,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         @Override
         public boolean isLeaf(Object node) {
-            return ((ForceDescriptor)node).getEschelon() == 0
-                    || (node instanceof ForceDescriptor && getChildCount(node) == 0);
+            return (node instanceof ForceDescriptor) && (((ForceDescriptor) node).getEschelon() == 0)
+                    || (getChildCount(node) == 0);
         }
 
         @Override
@@ -1160,12 +1164,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     hasFocus);
             setBackground(UIManager.getColor("Tree.textBackground"));
             setForeground(UIManager.getColor("Tree.textForeground"));
-            if(sel) {
+            if (sel) {
                 setBackground(UIManager.getColor("Tree.selectionBackground"));
                 setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
-            ForceDescriptor fd = (ForceDescriptor)value;
+            ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
                 String uname = "";
@@ -1241,7 +1245,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 this.progress += progress;
                 this.message = message;
 
-                progressPercent = Math.min((int)Math.round(this.progress * 100.0), 100);
+                progressPercent = Math.min((int) Math.round(this.progress * 100.0), 100);
             }
 
             setProgress(progressPercent);

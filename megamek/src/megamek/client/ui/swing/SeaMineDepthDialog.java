@@ -90,7 +90,7 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOk) {
-            depth = Integer.parseInt((String)choDepth.getSelectedItem());
+            depth = Integer.parseInt((String) choDepth.getSelectedItem());
         }
         this.setVisible(false);
     }

@@ -601,7 +601,7 @@ public class MovePath implements Cloneable, Serializable {
         }
         
         if (getEntity() instanceof LandAirMech
-                && !((LandAirMech)getEntity()).canConvertTo(getFinalConversionMode())) {
+                && !((LandAirMech) getEntity()).canConvertTo(getFinalConversionMode())) {
             steps.forEach(s -> {
                 if (s.getType() == MoveStepType.CONVERT_MODE) {
                     s.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -628,7 +628,7 @@ public class MovePath implements Cloneable, Serializable {
                 getEntity().setConvertingNow(false);
                 //Mechs using tracks have the movement mode set at the beginning of the turn, so
                 //it will need to be reset.
-                if (getEntity() instanceof Mech && ((Mech)getEntity()).hasTracks()) {
+                if (getEntity() instanceof Mech && ((Mech) getEntity()).hasTracks()) {
                     getEntity().toggleConversionMode();
                 }
             }
@@ -1352,7 +1352,7 @@ public class MovePath implements Cloneable, Serializable {
             //  this is because getNextMoves only considers turning and
             //  forward/backward movement
             if (type == MoveStepType.CHARGE ||
-                    type == MoveStepType.DFA){
+                    type == MoveStepType.DFA) {
                 MovePath expandedPath = candidatePath.clone();
                 expandedPath.addStep(type);
                 if (expandedPath.getLastStep().isMovementPossible(getGame(),
@@ -1627,7 +1627,7 @@ public class MovePath implements Cloneable, Serializable {
         }
         // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
         if ((getEntity() instanceof LandAirMech)
-                && (((LandAirMech)getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)){
+                && (((LandAirMech) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)) {
             if (getLastStep() != null) {
                 return getLastStep().getClearance() > 0;
             } else {

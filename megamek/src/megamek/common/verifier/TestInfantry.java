@@ -126,7 +126,7 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-    	Infantry inf = (Infantry)getEntity();
+    	Infantry inf = (Infantry) getEntity();
     	boolean correct = true;
     	if (skip()) {
     		return true;
@@ -174,7 +174,7 @@ public class TestInfantry extends TestEntity {
     public static int maxSecondaryWeapons(Infantry inf) {
     	int max = 2;
     	if (inf.getMovementMode() == EntityMovementMode.VTOL) {
-    		max = inf.hasMicrolite()?0 : 1;
+    		max = inf.hasMicrolite() ? 0 : 1;
     	} else if (inf.getMovementMode() == EntityMovementMode.INF_UMU) {
     		max = inf.getAllUMUCount();
     	}
@@ -203,7 +203,7 @@ public class TestInfantry extends TestEntity {
      * @return              The maximum size of a squad.
      */
     public static int maxSquadSize(EntityMovementMode movementMode, boolean alt) {
-    	switch(movementMode) {
+    	switch (movementMode) {
         	case HOVER:
         	case SUBMARINE:
         		return 5;
@@ -222,7 +222,7 @@ public class TestInfantry extends TestEntity {
     
     public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain) {
     	int max;
-    	switch(movementMode) {
+    	switch (movementMode) {
         	case INF_UMU:
         		if (alt) {
         			max = 12;

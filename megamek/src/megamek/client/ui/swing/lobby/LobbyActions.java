@@ -558,7 +558,7 @@ public class LobbyActions {
                 // TODO: The following should ideally be part of setHotLoad in Mounted
                 if (hotLoadOn) {
                     m.setMode("HotLoad");
-                } else if (((EquipmentType)m.getType()).hasModeType("HotLoad")) {
+                } else if (m.getType().hasModeType("HotLoad")) {
                     m.setMode("");
                 }
                 updateCandidates.add(entity);
@@ -644,13 +644,13 @@ public class LobbyActions {
         Forces forces = game().getForces();
         // Remove redundant forces = subforces of other forces in the list 
         Set<Force> allSubForces = new HashSet<>();
-        foDelete.stream().forEach(f -> allSubForces.addAll(forces.getFullSubForces(f)));
-        foDelete.removeIf(f -> allSubForces.contains(f));
+        foDelete.forEach(f -> allSubForces.addAll(forces.getFullSubForces(f)));
+        foDelete.removeIf(allSubForces::contains);
         Set<Force> finalFoDelete = new HashSet<>(foDelete);
         // Remove redundant entities = entities in the given forces
-        Set<Entity> inForces = new HashSet<Entity>();
-        foDelete.stream().map(f -> forces.getFullEntities(f)).forEach(inForces::addAll);
-        enDelete.removeIf(e -> inForces.contains(e));
+        Set<Entity> inForces = new HashSet<>();
+        foDelete.stream().map(forces::getFullEntities).forEach(inForces::addAll);
+        enDelete.removeIf(inForces::contains);
         Set<Entity> finalEnDelete = new HashSet<>(enDelete);
         
         if (!enDelete.isEmpty() && !validateUpdate(finalEnDelete)) {

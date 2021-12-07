@@ -40,13 +40,13 @@ public class ScenarioLoaderTest {
             
             @Override
             public void write(int b) throws IOException {
-                if(b == '\n') {
+                if (b == '\n') {
                     String s = line.toString();
-                    if(!s.startsWith("MMRandom: generating RNG")) { //$NON-NLS-1$
+                    if (!s.startsWith("MMRandom: generating RNG")) { //$NON-NLS-1$
                         errCache.add(s);
                     }
                     line.setLength(0);
-                } else if(b != '\r') {
+                } else if (b != '\r') {
                     line.append((char) b);
                 }
             }
@@ -73,10 +73,10 @@ public class ScenarioLoaderTest {
     
     private void checkScenarioFile(File file, List<String> errorAccumulator) {
         int port = 7770;
-        if(null == file) {
+        if (null == file) {
             return;
         }
-        if(file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) { //$NON-NLS-1$
+        if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) { //$NON-NLS-1$
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
                 Game game = loader.createGame();
@@ -88,7 +88,7 @@ public class ScenarioLoaderTest {
                 e.printStackTrace();
             }
             
-            if(errCache.size() > 0) {
+            if (errCache.size() > 0) {
                 errorAccumulator.add("ERROR in " + file.getPath()); //$NON-NLS-1$
                 originalErr.println("ERROR in " + file.getPath()); //$NON-NLS-1$
                 for(String line : errCache) {
@@ -97,7 +97,7 @@ public class ScenarioLoaderTest {
                 }
                 errCache.clear();
             }
-        } else if(file.isDirectory()) {
+        } else if (file.isDirectory()) {
             for(File subFile : file.listFiles()) {
                 checkScenarioFile(subFile, errorAccumulator);
             }

@@ -206,7 +206,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             gbc.insets = new Insets(0, 5, 0, 5);
             gbc.gridwidth = 5;
             add(new JLabel("(" + entity.getLocationAbbr(bay.getLocation()) + ") "
-                    + (wtype.isPresent()? wtype.get().getName() : "?")), gbc);
+                    + (wtype.isPresent() ? wtype.get().getName() : "?")), gbc);
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
@@ -261,16 +261,16 @@ public class BayMunitionsChoicePanel extends JPanel {
             if (atype.getAmmoType() == AmmoType.T_MML) {
                 if ((atype.getMunitionType() & (AmmoType.M_ARTEMIS_CAPABLE | AmmoType.M_ARTEMIS_V_CAPABLE))
                         == 0) {
-                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)?
-                            "CustomMechDialog.LRM" : "CustomMechDialog.SRM"); //$NON-NLS-1$  //$NON-NLS-2$
+                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
+                            ? "CustomMechDialog.LRM" : "CustomMechDialog.SRM");
                 } else {
-                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)?
-                            "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis"); //$NON-NLS-1$  //$NON-NLS-2$
+                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
+                            ? "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis");
                 }
             }
             
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
-                String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE)? "-T":"";
+                String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE) ? "-T" : "";
                 if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
                     return Messages.getString("CustomMechDialog.Peacemaker") + tele; //$NON-NLS-1$
                 } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {

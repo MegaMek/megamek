@@ -593,7 +593,7 @@ public class BLKFile {
         blk.writeBlockData("transporters", transporter_array);
 
         if (!t.isConventionalInfantry()) {
-            if (t instanceof Aero){
+            if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
@@ -607,21 +607,21 @@ public class BLKFile {
 
         int numLocs = t.locations();
         if (!(t instanceof Infantry)) {
-            if (t instanceof Aero){
+            if (t instanceof Aero) {
                 if (t.isFighter()) {
-                    blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                    blk.writeBlockData("cockpit_type", ((Aero) t).getCockpitType());
                     if (t.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && ((Aero) t).isVSTOL()) {
                         blk.writeBlockData("vstol", 1);
                     }
-                } else if ((t instanceof Dropship) && ((Aero)t).isPrimitive()) {
-                    blk.writeBlockData("collartype", ((Dropship)t).getCollarType());
+                } else if ((t instanceof Dropship) && t.isPrimitive()) {
+                    blk.writeBlockData("collartype", ((Dropship) t).getCollarType());
                 }
-                blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
-                blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
-                if (((Aero)t).getPodHeatSinks() > 0) {
-                    blk.writeBlockData("omnipodheatsinks", ((Aero)t).getPodHeatSinks());
+                blk.writeBlockData("heatsinks", ((Aero) t).getHeatSinks());
+                blk.writeBlockData("sink_type", ((Aero) t).getHeatType());
+                if (((Aero) t).getPodHeatSinks() > 0) {
+                    blk.writeBlockData("omnipodheatsinks", ((Aero) t).getPodHeatSinks());
                 }
-                blk.writeBlockData("fuel", ((Aero)t).getFuel());
+                blk.writeBlockData("fuel", ((Aero) t).getFuel());
             }
             if(t.hasEngine()) {
                 int engineCode = BLKFile.FUSION;
@@ -720,7 +720,7 @@ public class BLKFile {
         for (Mounted m : t.getEquipment()) {
             // Ignore Mounteds that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
-            if (m.isWeaponGroup() || m.isAPMMounted()){
+            if (m.isWeaponGroup() || m.isAPMMounted()) {
                 continue;
             }
 
@@ -788,7 +788,7 @@ public class BLKFile {
         }
         
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            blk.writeBlockData("structural_integrity", ((Aero)t).get0SI());
+            blk.writeBlockData("structural_integrity", ((Aero) t).get0SI());
         }
 
         if (t.getFluff().getCapabilities().trim().length() > 0) {
@@ -862,7 +862,7 @@ public class BLKFile {
                 blk.writeBlockData("chassis", "quad");
                 if (ba.getTurretCapacity() > 0) {
                     blk.writeBlockData("turret",
-                            (ba.hasModularTurretMount()? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                            (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
                 }
             }
             if (ba.isExoskeleton()) {
@@ -1013,9 +1013,9 @@ public class BLKFile {
             if (js.hasLF()) {
                 blk.writeBlockData("lithium-fusion", 1);
             }
-            blk.writeBlockData("sail", js.hasSail()? 1 : 0);
+            blk.writeBlockData("sail", js.hasSail() ? 1 : 0);
             if (js.getTotalGravDeck() > 0) {
-                blk.writeBlockData("grav_decks", (Vector<String>)js.getGravDecks().stream()
+                blk.writeBlockData("grav_decks", (Vector<String>) js.getGravDecks().stream()
                         .map(String::valueOf)
                         .collect(Collectors.toCollection(Vector::new)));
             }

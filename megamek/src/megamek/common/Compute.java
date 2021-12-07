@@ -998,7 +998,7 @@ public class Compute {
         boolean targetTagged = false;
         
         Entity te = null;
-        if(target instanceof Entity) {
+        if (target instanceof Entity) {
             te = (Entity) target;
         }
         
@@ -1027,7 +1027,7 @@ public class Compute {
         boolean targetTagged = false;
         
         Entity te = null;
-        if(target instanceof Entity) {
+        if (target instanceof Entity) {
             te = (Entity) target;
         }
         
@@ -1333,7 +1333,7 @@ public class Compute {
                 !(isWeaponInfantry || isSwarmOrLegAttack
                   || isAttackerBA))
             && !(ae.isAirborne())
-            && !(ae.isBomber() && ((IBomber)ae).isVTOLBombing())
+            && !(ae.isBomber() && ((IBomber) ae).isVTOLBombing())
             && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                  && !ae.isAirborne() && !ae.isSpaceborne())
             && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target
@@ -1468,7 +1468,7 @@ public class Compute {
         if (isWeaponInfantry) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
                     (InfantryWeapon) wtype,
-                    (ae instanceof Infantry)? ((Infantry)ae).getSecondaryWeapon() : null,
+                    (ae instanceof Infantry) ? ((Infantry) ae).getSecondaryWeapon() : null,
                             weaponUnderwater);
 
             int rangeModifier = mods.getValue();
@@ -1981,7 +1981,7 @@ public class Compute {
         Mounted weapon = attacker.getEquipment(weaponId);
         if (attacker.entityIsQuad()) {
             int legsDead = ((Mech) attacker).countBadLegs();
-            if (legsDead == 0 && !((Mech)attacker).hasHipCrit()) {
+            if (legsDead == 0 && !attacker.hasHipCrit()) {
                 // No legs destroyed and no hip crits: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
@@ -2001,11 +2001,9 @@ public class Compute {
             if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
                 || (weapon.getLocation() == Mech.LOC_LARM || (weapon.getSecondLocation() == Mech.LOC_LARM))) {
                 int otherArm = (weapon.getLocation() == Mech.LOC_RARM
-                        || weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
-                                                                     : Mech.LOC_RARM;
+                        || weapon.getSecondLocation() == Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
-                if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
-                                                   otherArm)) {
+                if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                                          "Prone and firing from other front leg already.");
                 }
@@ -2016,7 +2014,7 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
-            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+            if (((Mech) attacker).getCockpitType() == Mech.COCKPIT_DUAL
                     && attacker.getCrew().hasDedicatedGunner()) {
                 mods.addModifier(1, "attacker prone");
             } else {
@@ -2054,8 +2052,7 @@ public class Compute {
                 }
 
                 int otherArm = (weapon.getLocation() == Mech.LOC_RARM
-                        || weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
-                                                                        : Mech.LOC_RARM;
+                        || weapon.getSecondLocation() == Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
                                                    otherArm)) {
@@ -2069,7 +2066,7 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire leg-mounted weapons while prone.");
             }
-            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+            if (((Mech) attacker).getCockpitType() == Mech.COCKPIT_DUAL
                     && attacker.getCrew().hasDedicatedGunner()) {
                 mods.addModifier(1, "attacker prone");
             } else {
@@ -2160,7 +2157,7 @@ public class Compute {
 
         // only mechs have arm actuators - for those, we check whether
         // there is arm actuator damage
-        else if(attacker instanceof Mech) {
+        else if (attacker instanceof Mech) {
             // split weapons need to account for arm actuator hits, too
             // see bug 1363690
             // we don't need to specifically check for weapons split between
@@ -2180,7 +2177,7 @@ public class Compute {
             }
             
             // only arms can have damaged arm actuators
-            if(location == Mech.LOC_LARM || location == Mech.LOC_RARM) {
+            if (location == Mech.LOC_LARM || location == Mech.LOC_RARM) {
                 if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                              Mech.ACTUATOR_SHOULDER, location) > 0) {
                     mods.addModifier(4, "shoulder actuator destroyed");
@@ -2216,7 +2213,7 @@ public class Compute {
                 mods.addModifier(2, "attacker sensors damaged");
             }
         } else if (sensorHits > 0) {
-            if (attacker instanceof Mech && ((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+            if (attacker instanceof Mech && ((Mech) attacker).getCockpitType() == Mech.COCKPIT_DUAL
                     && attacker.getCrew().hasDedicatedGunner()) {
                 mods.addModifier(1, "attacker sensors damaged");
             } else {
@@ -2310,7 +2307,7 @@ public class Compute {
                     } else if ((primaryTarget == Entity.NONE) && !curInFrontArc) {
                         primaryTarget = prevAttack.getTargetId();
                     }
-                } else if (primaryTarget == Entity.NONE){
+                } else if (primaryTarget == Entity.NONE) {
                     primaryTarget = prevAttack.getTargetId();
                 }
             }
@@ -2427,7 +2424,7 @@ public class Compute {
 
         //Dual cockpit with both pilot and gunner has lower modifier for attacker movement.
         if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
-                && entity instanceof Mech && ((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL
                 && entity.getCrew().hasDedicatedGunner()) {
             for (TargetRollModifier mod : toHit.getModifiers()) {
                 mod.setValue(mod.getValue() / 2);
@@ -2548,7 +2545,7 @@ public class Compute {
                         game);
         if (entity.moved != EntityMovementType.MOVE_JUMP
                 && entity.delta_distance > 0
-                && entity instanceof Mech && ((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL
                 && entity.getCrew().hasDedicatedPilot()) {
             if (toHit.getModifiers().isEmpty()) {
                 toHit.addModifier(1, "target moved 1-2 hexes");
@@ -3251,7 +3248,7 @@ public class Compute {
                 int rangeToTarget = attacker.getPosition().distance(target.getPosition());
                 
                 //Convert AV to fDamage for bay weapons, fighters, etc
-                if (attacker.usesWeaponBays()){
+                if (attacker.usesWeaponBays()) {
                     double av = 0;
                     double threat = 1;
                     for (int wId : weapon.getBayWeapons()) {
@@ -3819,7 +3816,7 @@ public class Compute {
         if (game.getBoard().inSpace()
             && ae.getPosition().equals(t.getPosition())
             && ae.isAero() && t.isAero()) {
-            int moveSort = shouldMoveBackHex(ae, (Entity)t);
+            int moveSort = shouldMoveBackHex(ae, (Entity) t);
             if (moveSort < 0) {
                 aPos = ae.getPriorPosition();
             }
@@ -4695,7 +4692,7 @@ public class Compute {
     public static boolean inSensorRange(Game game, LosEffects los, Entity ae,
             Targetable target, List<ECMInfo> allECMInfo) {
         // This is not applicable to objects on the same team.
-        if(!target.isEnemyOf(ae)) {
+        if (!target.isEnemyOf(ae)) {
             return false;
         }
 
@@ -4956,7 +4953,7 @@ public class Compute {
         if (isAirToAir(attacker, target)
             && attackPos.equals(target.getPosition())
             && attacker.isAero() && target.isAero()) {
-            int moveSort = shouldMoveBackHex(attacker, (Entity)target);
+            int moveSort = shouldMoveBackHex(attacker, (Entity) target);
             if (moveSort < 0) {
                 attackPos = attacker.getPriorPosition();
             }
@@ -5006,8 +5003,7 @@ public class Compute {
 
         int retVal = e1.getUnitType() - e2.getUnitType();
         if (retVal == 0) {
-            retVal = ((IAero)e2).getCurrentVelocity() -
-                    ((IAero)e1).getCurrentVelocity();
+            retVal = ((IAero) e2).getCurrentVelocity() - ((IAero) e1).getCurrentVelocity();
         }
         // if all criteria are the same, select randomly
         if (retVal == 0) {
@@ -5017,7 +5013,7 @@ public class Compute {
     }
 
     /**
-     * Maintain backwards compatability.
+     * Maintain backwards compatibility.
      *
      * @param missiles - the <code>int</code> number of missiles in the pack.
      */
@@ -5613,7 +5609,7 @@ public class Compute {
             toReturn.addModifier(modifier, men + " trooper(s) active");
         }
 
-        if (defender instanceof Mech && ((Mech)defender).hasTracks()) {
+        if (defender instanceof Mech && ((Mech) defender).hasTracks()) {
             toReturn.addModifier(-2, "has tracks");
         }
 
@@ -6480,8 +6476,8 @@ public class Compute {
                 r.messageId = 9970;
             }
 
-            r.add((int)origDamage);
-            r.add((int)damage);
+            r.add((int) origDamage);
+            r.add((int) damage);
             vReport.addElement(r);
         }
         return (int) damage;
@@ -7058,12 +7054,12 @@ public class Compute {
                     //and others do not
                     boolean useSuit = true;
                     for(Mounted m : entity.getEquipment()) {
-                        if(m.isMissingForTrooper(trooper)) {
+                        if (m.isMissingForTrooper(trooper)) {
                             useSuit = false;
                             break;
                         }
                     }
-                    if(useSuit) {
+                    if (useSuit) {
                         ntroopers++;
                     }
                 }

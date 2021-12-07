@@ -513,7 +513,7 @@ public class HmvFile implements IMechLoader {
             vehicle.setHasNoDualTurret(true);
 
             vehicle.autoSetInternal();
-            vehicle.setArmorType(vehicle.isClan()?"Clan ":"IS "+armorType.toString());
+            vehicle.setArmorType(vehicle.isClan() ? "Clan " : "IS " + armorType.toString());
             if (armorTechType == HMVTechType.CLAN) {
                 switch (rulesLevel) {
                     case 2:

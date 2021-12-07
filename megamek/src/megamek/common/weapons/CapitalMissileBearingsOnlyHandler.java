@@ -333,7 +333,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     if(bayWType instanceof Weapon) {
                         replaceReport = vPhaseReport.size();
                         WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                        AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                        AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                         bayWHandler.setAnnouncedEntityFiring(false);
                         // This should always be true. Maybe there's a better way to write this?
                         if (bayWHandler instanceof WeaponHandler) {
@@ -422,7 +422,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } else if (!bMissed){ // Hex is targeted, need to report a hit
+        } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);

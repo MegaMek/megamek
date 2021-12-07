@@ -15584,7 +15584,7 @@ public class AmmoType extends EquipmentType {
             double cost = base.cost;
             double bv = base.bv;
 
-            if(((munition.getAmmoType() == T_LONG_TOM) ||
+            if (((munition.getAmmoType() == T_LONG_TOM) ||
                     (munition.getAmmoType() == T_LONG_TOM_CANNON) ||
                     (munition.getAmmoType() == T_SNIPER) ||
                     (munition.getAmmoType() == T_SNIPER_CANNON) ||
@@ -15892,7 +15892,7 @@ public class AmmoType extends EquipmentType {
         // no ammo switching if the weapon doesn't exist
         // or if it doesn't have an ammo bin
         // or the other ammo type doesn't exist
-        if((weapon == null) ||
+        if ((weapon == null) ||
                 (weapon.getLinked() == null) ||
                 (!(weapon.getLinked().getType() instanceof AmmoType)) ||
                 (otherAmmo == null)) {

@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
@@ -21,23 +21,22 @@ import megamek.common.UnitType;
  * Base functionality for chassis and model records for RAT generator.
  *
  * @author Neoancient
- * 
  */
 public class AbstractUnitRecord {
 	
-	protected String chassis = "";
+	protected String chassis;
 	protected boolean omni;
 	protected boolean clan;
 	protected int unitType;
 	protected int introYear;
 	protected HashSet<String> includedFactions;
 
-	public AbstractUnitRecord(String chassis){
+	public AbstractUnitRecord(String chassis) {
 		this.chassis = chassis;
 		unitType = UnitType.MEK;
 		omni = false;
 		clan = false;
-		includedFactions = new HashSet<String>();
+		includedFactions = new HashSet<>();
 	}
 	
 	/**
@@ -49,8 +48,7 @@ public class AbstractUnitRecord {
 	 * @param year The game year
 	 * @return The adjusted availability rating.
 	 */
-	public int calcAvailability(AvailabilityRating ar,
-			int rating, int ratingLevels, int year) {
+	public int calcAvailability(AvailabilityRating ar, int rating, int ratingLevels, int year) {
 		int retVal = ar.adjustForRating(rating, ratingLevels);
 		
 		if (introYear == year) {
@@ -59,11 +57,8 @@ public class AbstractUnitRecord {
 		if (introYear == year + 1) {
 			retVal -= 1;
 		}
-		if (retVal < 0) {
-			return 0;
-		}
-		return retVal;
-	}
+        return Math.max(retVal, 0);
+    }
 
 	public String getChassis() {
 		return chassis;
@@ -115,7 +110,8 @@ public class AbstractUnitRecord {
 		return includedFactions;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		return getKey();
 	}
 

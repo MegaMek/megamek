@@ -172,7 +172,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             bMissed = roll < toHit.getValue();
 
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
-            if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            if (!(amsBayEngagedCap || pdBayEngagedCap)) {
                 addGlancingBlowReports(vPhaseReport);
     
                 if (bDirect) {

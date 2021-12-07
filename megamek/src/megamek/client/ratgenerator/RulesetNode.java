@@ -68,51 +68,52 @@ public class RulesetNode {
 
     public boolean matches(ForceDescriptor fd, boolean augmented) {
         for (Object key : predicates.keySet()) {
-            String property = predicates.getProperty((String)key);
-            switch ((String)key) {
+            String property = predicates.getProperty((String) key);
+            switch ((String) key) {
                 case "ifUnitType":
                     if (!matches(fd.getUnitType() == null?"":UnitType.getTypeName(fd.getUnitType()), property)) {
                         return false;
                     }
                     break;
                 case "ifWeightClass":
-                    if (!matches(fd.getWeightClassCode(), predicates.getProperty((String)key))) {
+                    if (!matches(fd.getWeightClassCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifRating":
-                    if (!matches(fd.getRating(), predicates.getProperty((String)key))) {
+                    if (!matches(fd.getRating(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifRole":
                     if (!collectionMatchesProperty(fd.getRoles().stream()
                             .filter(Objects::nonNull)
-                            .map(r -> r.toString())
-                            .collect(Collectors.toList()), predicates.getProperty((String)key))) {
+                            .map(MissionRole::toString)
+                            .collect(Collectors.toList()), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifFlags":
-                    if (!collectionMatchesProperty(fd.getFlags(), predicates.getProperty((String)key))) {
+                    if (!collectionMatchesProperty(fd.getFlags(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifMotive":
                     //FIXME: EntityMovementType::toString does not match the property from the file
-                    if (!collectionMatchesProperty(fd.getMovementModes().stream().map(mt -> mt.toString())
-                            .collect(Collectors.toList()), predicates.getProperty((String)key))) {
+                    if (!collectionMatchesProperty(fd.getMovementModes().stream()
+                            .map(EntityMovementMode::toString)
+                            .collect(Collectors.toList()), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifAugmented":
-                    if (predicates.getProperty((String)key).equals("1") !=
+                    if (predicates.getProperty((String) key).equals("1") !=
                     augmented) {
                         return false;
                     }
                     break;
                 case "ifDateBetween":
-                    if (!matchesDate(fd.getYear(), predicates.getProperty((String)key))) {
+                    if (!matchesDate(fd.getYear(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -126,23 +127,23 @@ public class RulesetNode {
                     }
                     break;
                 case "ifTopLevel":
-                    if(property.equals("1") != fd.isTopLevel()) {
+                    if (property.equals("1") != fd.isTopLevel()) {
                         return false;
                     }
                     break;
                 case "ifFaction":
-                    if (!matches(fd.getFaction(), predicates.getProperty((String)key))) {
+                    if (!matches(fd.getFaction(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifEschelon":
                     if (fd.getEschelon() == null ||
-                    !matches(fd.getEschelonCode(), predicates.getProperty((String)key))) {
+                    !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifIndex":
-                    if (!matches(String.valueOf(fd.getIndex()), predicates.getProperty((String)key))) {
+                    if (!matches(String.valueOf(fd.getIndex()), predicates.getProperty((String) key))) {
                         return false;
                     }
             }
@@ -246,8 +247,8 @@ public class RulesetNode {
 
     public void apply(ForceDescriptor fd, int i) {
         for (Object key : assertions.keySet()) {
-            String property = assertions.getProperty((String)key);
-            switch ((String)key) {
+            String property = assertions.getProperty((String) key);
+            switch ((String) key) {
                 case "unitType":
                     int unitType = ModelRecord.parseUnitType(property);
                     if (unitType < 0) {

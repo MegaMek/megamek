@@ -646,15 +646,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(MECH_SELECTOR_SHOW_ADVANCED);
     }
 
-    public int getMechSelectorUnitType(){
+    public int getMechSelectorUnitType() {
         return store.getInt(MECH_SELECTOR_UNIT_TYPE);
     }
 
-    public int getMechSelectorWeightClass(){
+    public int getMechSelectorWeightClass() {
         return store.getInt(MECH_SELECTOR_WEIGHT_CLASS);
     }
 
-    public String getMechSelectorRulesLevels(){
+    public String getMechSelectorRulesLevels() {
         return store.getString(MECH_SELECTOR_RULES_LEVELS);
     }
 
@@ -774,7 +774,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(MOUSE_WHEEL_ZOOM);
     }
 
-    public boolean getMouseWheelZoomFlip(){
+    public boolean getMouseWheelZoomFlip() {
         return store.getBoolean(MOUSE_WHEEL_ZOOM_FLIP);
     }
 
@@ -939,7 +939,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_MAPSHEETS);
     }
 
-    public boolean getShowUnitOverview(){
+    public boolean getShowUnitOverview() {
         return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
     
@@ -1051,15 +1051,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOCUS, state);
     }
 
-    public void setFiringSolutions(boolean state){
+    public void setFiringSolutions(boolean state) {
         store.setValue(FIRING_SOLUTIONS,state);
     }
     
-    public void setMoveEnvelope(boolean state){
+    public void setMoveEnvelope(boolean state) {
         store.setValue(MOVE_ENVELOPE,state);
     }   
 
-    public void setFovHighlight(boolean state){
+    public void setFovHighlight(boolean state) {
         store.setValue(FOV_HIGHLIGHT,state);
     }
 
@@ -1075,7 +1075,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOV_HIGHLIGHT_RINGS_COLORS_HSB, s);
     }
 
-    public void setFovDarken(boolean state){
+    public void setFovDarken(boolean state) {
         store.setValue(FOV_DARKEN,state);
     }
 
@@ -1127,15 +1127,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MECH_SELECTOR_SHOW_ADVANCED, showAdvanced);
     }
 
-    public void setMechSelectorUnitType(int unitType){
+    public void setMechSelectorUnitType(int unitType) {
         store.setValue(MECH_SELECTOR_UNIT_TYPE,unitType);
     }
 
-    public void setMechSelectorWeightClass(int weightClass){
+    public void setMechSelectorWeightClass(int weightClass) {
         store.setValue(MECH_SELECTOR_WEIGHT_CLASS,weightClass);
     }
 
-    public void setMechSelectorRulesLevels(String rulesLevels){
+    public void setMechSelectorRulesLevels(String rulesLevels) {
         store.setValue(MECH_SELECTOR_RULES_LEVELS,rulesLevels);
     }
 
@@ -1235,7 +1235,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MOUSE_WHEEL_ZOOM, b);
     }
 
-    public void setMouseWheelZoomFlip(boolean b){
+    public void setMouseWheelZoomFlip(boolean b) {
         store.setValue(MOUSE_WHEEL_ZOOM_FLIP,b);
     }
 
@@ -1243,7 +1243,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(NAG_FOR_BOT_README, b);
     }
 
-    public void setNagForCrushingBuildings(boolean b){
+    public void setNagForCrushingBuildings(boolean b) {
         store.setValue(NAG_FOR_CRUSHING_BUILDINGS,b);
     }
 
@@ -1279,11 +1279,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(NAG_FOR_LAUNCH_DOORS, b);
     }
 
-    public void setNagForMechanicalJumpFallDamage(boolean b){
+    public void setNagForMechanicalJumpFallDamage(boolean b) {
         store.setValue(NAG_FOR_MECHANICAL_FALL_DAMAGE,b);
     }
 
-    public void setNagForDoomed(boolean b){
+    public void setNagForDoomed(boolean b) {
         store.setValue(NAG_FOR_DOOMED,b);
     }
     
@@ -1354,7 +1354,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTooltipDismissDelay(int i) {
         store.setValue(TOOLTIP_DISMISS_DELAY, i);
-        if (i > 0){
+        if (i > 0) {
             ToolTipManager.sharedInstance().setDismissDelay(i);
         }
     }
@@ -1395,15 +1395,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(USE_ISOMETRIC, b);
     }
 
-    public void setShowUnitOverview(boolean b){
+    public void setShowUnitOverview(boolean b) {
         store.setValue(SHOW_UNIT_OVERVIEW, b);
     }
 
-    public void setShowDamageLevel(boolean b){
+    public void setShowDamageLevel(boolean b) {
         store.setValue(SHOW_DAMAGE_LEVEL, b);
     }
     
-    public void setShowDamageDecal(boolean b){
+    public void setShowDamageDecal(boolean b) {
         store.setValue(SHOW_DAMAGE_DECAL, b);
     }
     

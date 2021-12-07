@@ -914,7 +914,7 @@ public class MoveStep implements Serializable {
                         // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
                         // (LAMs and glider protomechs only)
                         if (getClearance() == 0) {
-                            setMp((entity instanceof Protomech)? 4 : 5);
+                            setMp((entity instanceof Protomech) ? 4 : 5);
                         } else {
                             setMp(1);
                         }
@@ -1097,7 +1097,7 @@ public class MoveStep implements Serializable {
                 break;
             case CONVERT_MODE:
                 if (entity instanceof QuadVee) {
-                    setMp(((QuadVee)entity).conversionCost());
+                    setMp(((QuadVee) entity).conversionCost());
                 } else {
                     setMp(0);
                 }
@@ -2033,8 +2033,8 @@ public class MoveStep implements Serializable {
 
             /*
              * TODO: better to disable this in movement display //don't let them
-             * evade more than once if(type == MoveStepType.EVADE ) {
-             * if(isEvading) { return; } else { setEvading(true); } }
+             * evade more than once if (type == MoveStepType.EVADE ) {
+             * if (isEvading) { return; } else { setEvading(true); } }
              */
 
             // check for thruster damage
@@ -2292,18 +2292,18 @@ public class MoveStep implements Serializable {
                 if (entity instanceof LandAirMech) {
                     // On the ground or underwater use AirMech walk/run.
                     // Sprint can only be used on the ground, so that is already set.
-                    tmpWalkMP = ((LandAirMech)entity).getAirMechWalkMP();
-                    runMPnoMASC = ((LandAirMech)entity).getAirMechRunMP();
+                    tmpWalkMP = ((LandAirMech) entity).getAirMechWalkMP();
+                    runMPnoMASC = ((LandAirMech) entity).getAirMechRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
-                    runMP = ((LandAirMech)entity).hasArmedMASC()? tmpWalkMP * 2 : runMPnoMASC;
+                    runMP = ((LandAirMech) entity).hasArmedMASC() ? tmpWalkMP * 2 : runMPnoMASC;
                 } else {
                     // Only 1 ground MP for ground effect vehicles and glider protomechs
                     tmpWalkMP = runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = 1;
                 }
             } else if (entity instanceof LandAirMech) {
                 // LAMs cannot use overdrive and MASC does not effect airborne MP.
-                tmpWalkMP = ((LandAirMech)entity).getAirMechCruiseMP();
-                runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = ((LandAirMech)entity).getAirMechFlankMP();
+                tmpWalkMP = ((LandAirMech) entity).getAirMechCruiseMP();
+                runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = ((LandAirMech) entity).getAirMechFlankMP();
             }
         }
 
@@ -2605,7 +2605,7 @@ public class MoveStep implements Serializable {
         
         // Bimodal LAMs cannot spend MP when converting to fighter mode on the ground.
         if (entity instanceof LandAirMech
-                && ((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL
+                && ((LandAirMech) entity).getLAMType() == LandAirMech.LAM_BIMODAL
                 && entity.getConversionMode() == LandAirMech.CONV_MODE_MECH
                 && movementMode == EntityMovementMode.AERODYNE
                 && altitude == 0
@@ -2961,7 +2961,7 @@ public class MoveStep implements Serializable {
                     break;
             }
             // Light
-            switch (game.getPlanetaryConditions().getLight()){
+            switch (game.getPlanetaryConditions().getLight()) {
                 case PlanetaryConditions.L_FULL_MOON:
                     mp += 1;
                     break;
@@ -3404,7 +3404,7 @@ public class MoveStep implements Serializable {
                 && (isUpCliff || isDownCliff)
                 && !isPavementStep) {
 
-            boolean isMountainTroop = ((Infantry)entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
+            boolean isMountainTroop = ((Infantry) entity).hasSpecialization(Infantry.MOUNTAIN_TROOPS);
             if (!isMountainTroop || stepHeight == 2) {
                 return false;
             }

@@ -439,7 +439,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
-        newMapSettings.setTheme((String)choTheme.getSelectedItem());
+        newMapSettings.setTheme((String) choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.

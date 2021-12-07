@@ -209,38 +209,38 @@ public class CrewDescriptor {
 		int type = Bloodname.P_GENERAL;
 		if (assignment.isElement()) {
 			switch (assignment.getUnitType()) {
-			case "Mek":
-				type = Bloodname.P_MECHWARRIOR;
-				break;
-			case "Aero":
-				type = Bloodname.P_AEROSPACE;
-				break;
-			case "Conventional Fighter":
-				type = Bloodname.P_AEROSPACE;
-				mod -= 2;
-				break;
-			case "BattleArmor":
-				type = Bloodname.P_ELEMENTAL;
-				break;
-			case "Infantry":
-				type = Bloodname.P_ELEMENTAL;
-				mod -= 2;
-				break;
-			case "ProtoMek":
-				type = Bloodname.P_PROTOMECH;
-				break;
-			case "Dropship":
-			case "Warship":
-				if (assignment.getFaction().startsWith("CSR")) {
-					type = Bloodname.P_NAVAL;
-				} else {
-					mod -= 2;
-				}
-				break;
-			case "Tank":
-			case "VTOL":
-			case "Jumpship":
-				return;
+                case "Mek":
+                    type = Bloodname.P_MECHWARRIOR;
+                    break;
+                case "Aero":
+                    type = Bloodname.P_AEROSPACE;
+                    break;
+                case "Conventional Fighter":
+                    type = Bloodname.P_AEROSPACE;
+                    mod -= 2;
+                    break;
+                case "BattleArmor":
+                    type = Bloodname.P_ELEMENTAL;
+                    break;
+                case "Infantry":
+                    type = Bloodname.P_ELEMENTAL;
+                    mod -= 2;
+                    break;
+                case "ProtoMek":
+                    type = Bloodname.P_PROTOMECH;
+                    break;
+                case "Dropship":
+                case "Warship":
+                    if (assignment.getFaction().startsWith("CSR")) {
+                        type = Bloodname.P_NAVAL;
+                    } else {
+                        mod -= 2;
+                    }
+                    break;
+                case "Tank":
+                case "VTOL":
+                case "Jumpship":
+                    return;
 			}
 		}
 		int roll = Compute.d6(2) + mod -

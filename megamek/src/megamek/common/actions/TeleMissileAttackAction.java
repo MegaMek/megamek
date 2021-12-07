@@ -50,10 +50,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     }
 
     public static int getDamageFor(Entity entity) {      
-        if(entity instanceof TeleMissile) {
-            return ((TeleMissile)entity).getDamageValue();
-        }
-        return 0;
+        return (entity instanceof TeleMissile) ? ((TeleMissile) entity).getDamageValue() : 0;
     }
     
     /**
@@ -288,7 +285,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         //set the to-hit
         ToHitData toHit = new ToHitData(2, "base");
 
-        TeleMissile tm = (TeleMissile)ae;
+        TeleMissile tm = (TeleMissile) ae;
         
         //thrust used
         if (ae.mpUsed > 0)

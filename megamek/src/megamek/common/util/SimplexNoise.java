@@ -64,7 +64,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     private static final double F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
     private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
-    // This method is a *lot* faster than using (int)Math.floor(x)
+    // This method is a *lot* faster than using (int) Math.floor(x)
     private static int fastfloor(double x) {
         int xi = (int) x;
         return (x < xi) ? xi - 1 : xi;

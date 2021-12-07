@@ -88,7 +88,7 @@ public class BulldozerMovePath extends MovePath {
             // would be able to get through if the terrain was "reduced"
             // don't bother to do this for jumping paths
             int levelingCost = calculateLevelingCost(mp.getFinalCoords(), getEntity());
-            if(levelingCost > CANNOT_LEVEL) {
+            if (levelingCost > CANNOT_LEVEL) {
                 coordLevelingCosts.put(mp.getFinalCoords(), levelingCost);
                 coordsToLevel.add(mp.getFinalCoords());
             }
@@ -96,9 +96,9 @@ public class BulldozerMovePath extends MovePath {
             // we want to make note of when we're going into water (if we are capable of it)
             // it may look cheaper, but it slows you down to max walking speed or worse, 
             // and we should flag it as costing extra, that extra being the difference between walking and running speed
-            if(hexWaterDepth > 0) {
+            if (hexWaterDepth > 0) {
                 MovementType mType = MovementType.getMovementType(mp.getEntity());
-                if(mType == MovementType.Walker || mType == MovementType.WheeledAmphi || mType == MovementType.TrackedAmphi) {
+                if (mType == MovementType.Walker || mType == MovementType.WheeledAmphi || mType == MovementType.TrackedAmphi) {
                     additionalCosts.put(mp.getFinalCoords(), 1);
                 }
             }
@@ -141,7 +141,7 @@ public class BulldozerMovePath extends MovePath {
         
         // if removing the last step changes the destination coordinates
         // we need to clear out some of the data we have for this path.
-        if(!getFinalCoords().equals(prevFinalCoords)) {
+        if (!getFinalCoords().equals(prevFinalCoords)) {
             coordLevelingCosts.remove(prevFinalCoords);
             additionalCosts.remove(prevFinalCoords);
             coordsToLevel.remove(prevFinalCoords);
@@ -175,7 +175,7 @@ public class BulldozerMovePath extends MovePath {
         Hex destHex = board.getHex(finalCoords);
         int levelingCost = CANNOT_LEVEL;
         
-        if(destHex == null) {
+        if (destHex == null) {
             return levelingCost;
         }
         
@@ -189,7 +189,7 @@ public class BulldozerMovePath extends MovePath {
         
         // tracked tanks can move through light woods, rough and rubble, so any terrain that can be reduced to that
         // can eventually be moved through
-        if(isTracked) {
+        if (isTracked) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 0) {
                 damageNeeded += Terrains.getTerrainFactor(Terrains.JUNGLE, destHex.terrainLevel(Terrains.JUNGLE));           
             }
@@ -207,7 +207,7 @@ public class BulldozerMovePath extends MovePath {
         
         // mechs can't go through ultra-heavy terrain, so must reduce it to heavy terrain
         // may as well consider blowing buildings away
-        if(isMech) {
+        if (isMech) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 2) {
                 damageNeeded += Terrains.getTerrainFactor(Terrains.JUNGLE, destHex.terrainLevel(Terrains.JUNGLE)) -
                         Terrains.getTerrainFactor(Terrains.JUNGLE, 2);            
@@ -225,7 +225,7 @@ public class BulldozerMovePath extends MovePath {
         
         // hovertanks can move through rough and rubble, so any terrain that can be reduced to that
         // can eventually be moved through
-        if(isHovercraft) {
+        if (isHovercraft) {
             if (destHex.terrainLevel(Terrains.JUNGLE) > 0) {
                 damageNeeded += Terrains.getTerrainFactor(Terrains.JUNGLE, destHex.terrainLevel(Terrains.JUNGLE));           
             }
@@ -239,7 +239,7 @@ public class BulldozerMovePath extends MovePath {
             }
         }
         
-        if(damageNeeded > 0) {
+        if (damageNeeded > 0) {
             // basically, the MP cost of leveling this terrain is equal to how many turns we're going to waste
             // shooting at it instead of moving.
             levelingCost = (int) Math.round(damageNeeded / getMaxPointBlankDamage(entity)) * entity.getRunMP();

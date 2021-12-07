@@ -128,7 +128,7 @@ public class ACAPHandler extends ACWeaponHandler {
                 critModifier -= 2;
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
                 critModifier -= 2;
             }

@@ -51,7 +51,7 @@ public class AeroPathUtil
 	 */
 	public static boolean willStall(MovePath movePath) {
 		// Stalling only happens in atmospheres on ground maps
-		if(!movePath.isOnAtmosphericGroundMap()) {
+		if (!movePath.isOnAtmosphericGroundMap()) {
 			return false;
 		}
 		
@@ -114,7 +114,7 @@ public class AeroPathUtil
         Collection<MovePath> paths = new ArrayList<MovePath>();
         
         // sanity check: if we've already done something else with the path, there's no acceleration to be done
-        if(startingPath.length() > 0) {
+        if (startingPath.length() > 0) {
             return paths;
         }
         
@@ -132,7 +132,7 @@ public class AeroPathUtil
         }
         
         // If the unaltered starting path is within acceptable velocity bounds, it's also a valid "acceleration".
-        if(startingPath.getFinalVelocity() <= upperBound &&
+        if (startingPath.getFinalVelocity() <= upperBound &&
            startingPath.getFinalVelocity() >= lowerBound) {
             paths.add(startingPath.clone());
         }
@@ -176,7 +176,7 @@ public class AeroPathUtil
             int altChangeCost = altChange * 2;
             
             // if we are going to attempt to change altitude but won't actually be able to, break out.
-            if((path.getFinalAltitude() + altChange > 10) ||
+            if ((path.getFinalAltitude() + altChange > 10) ||
                     path.getMpUsed() + altChangeCost > path.getEntity().getRunMP()) {
                 break;
             }
@@ -187,7 +187,7 @@ public class AeroPathUtil
                 childPath.addStep(MoveStepType.UP);
             }
             
-            if((childPath.getFinalAltitude() > 10) ||
+            if ((childPath.getFinalAltitude() > 10) ||
                     childPath.getMpUsed() > path.getEntity().getRunMP()) {
                 break;
             }
@@ -198,7 +198,7 @@ public class AeroPathUtil
         // clone path add DOWN
         // if the path is already at minimum altitude, skip this
         // if path uses more MP than entity has available or altitude lower than 1, stop
-        if(path.getFinalAltitude() > 1) {
+        if (path.getFinalAltitude() > 1) {
             for(int altChange = 1; ; altChange++) {
                 MovePath childPath = path.clone();
                 
@@ -208,7 +208,7 @@ public class AeroPathUtil
                 
                 // going down doesn't use MP, but if we drop down more than 2 altitude it causes a massive 
                 // difficulty PSR, which is just not worth it.
-                if((childPath.getFinalAltitude() < 1) ||
+                if ((childPath.getFinalAltitude() < 1) ||
                         childPath.length() > 2) {
                     break;
                 }

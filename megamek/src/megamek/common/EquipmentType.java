@@ -299,7 +299,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
         } else if (techAdvancement.getCommonDate(false) > 0) {
             techLevel.put(techAdvancement.getCommonDate(false),
-                    isIntroLevel()? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
+                    isIntroLevel() ? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
         }
         return techLevel;
     }
@@ -403,7 +403,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public boolean isExplosive(Mounted mounted, boolean ignoreCharge) {
-        if(null == mounted) {
+        if (null == mounted) {
             return explosive;
         }
         
@@ -542,12 +542,12 @@ public class EquipmentType implements ITechnology {
      * @return True or false.
      */
     public boolean hasModeType(String modeType) {
-    	if(!hasModes()) {
+    	if (!hasModes()) {
     		return false;
     	}
     	
     	for(EquipmentMode mode : modes) {
-    		if(mode.getName().equals(modeType)) {
+    		if (mode.getName().equals(modeType)) {
     			return true;
     		}
     	}
@@ -841,49 +841,49 @@ public class EquipmentType implements ITechnology {
 
     public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
         switch (type) {
-        case T_ARMOR_BA_STANDARD_PROTOTYPE:
-            return 0.1;
-        case T_ARMOR_BA_STANDARD_ADVANCED:
-            return 0.04;
-        case T_ARMOR_BA_STEALTH:
-            if (isClan) {
-                return 0.035;
-            }
-            return 0.06;
-        case T_ARMOR_BA_STEALTH_BASIC:
-            if (isClan) {
-                return 0.03;
-            }
-            return 0.055;
-        case T_ARMOR_BA_STEALTH_IMP:
-            if (isClan) {
-                return 0.035;
-            }
-            return 0.06;
-        case T_ARMOR_BA_STEALTH_PROTOTYPE:
-            return 0.1;
-        case T_ARMOR_BA_FIRE_RESIST:
-            return 0.03;
-        case T_ARMOR_BA_MIMETIC:
-            return 0.05;
-        case T_ARMOR_BA_REFLECTIVE:
-            if (isClan) {
-                return 0.03;
-            } else {
-                return 0.055;
-            }
-        case T_ARMOR_BA_REACTIVE:
-            if (isClan) {
-                return 0.035;
-            } else {
+            case T_ARMOR_BA_STANDARD_PROTOTYPE:
+                return 0.1;
+            case T_ARMOR_BA_STANDARD_ADVANCED:
+                return 0.04;
+            case T_ARMOR_BA_STEALTH:
+                if (isClan) {
+                    return 0.035;
+                }
                 return 0.06;
-            }
-        case T_ARMOR_BA_STANDARD:
-        default:
-            if (isClan) {
-                return 0.025;
-            }
-            return 0.05;
+            case T_ARMOR_BA_STEALTH_BASIC:
+                if (isClan) {
+                    return 0.03;
+                }
+                return 0.055;
+            case T_ARMOR_BA_STEALTH_IMP:
+                if (isClan) {
+                    return 0.035;
+                }
+                return 0.06;
+            case T_ARMOR_BA_STEALTH_PROTOTYPE:
+                return 0.1;
+            case T_ARMOR_BA_FIRE_RESIST:
+                return 0.03;
+            case T_ARMOR_BA_MIMETIC:
+                return 0.05;
+            case T_ARMOR_BA_REFLECTIVE:
+                if (isClan) {
+                    return 0.03;
+                } else {
+                    return 0.055;
+                }
+            case T_ARMOR_BA_REACTIVE:
+                if (isClan) {
+                    return 0.035;
+                } else {
+                    return 0.06;
+                }
+            case T_ARMOR_BA_STANDARD:
+            default:
+                if (isClan) {
+                    return 0.025;
+                }
+                return 0.05;
         }
     }
     
@@ -1276,10 +1276,10 @@ public class EquipmentType implements ITechnology {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final EquipmentType other = (EquipmentType) obj;

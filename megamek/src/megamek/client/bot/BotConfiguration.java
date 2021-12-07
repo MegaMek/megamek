@@ -41,12 +41,12 @@ public class BotConfiguration {
         }
 
         switch (difficulty) {
-        case 1:
-            return 8;
-        case 2:
-            return 9;
-        default:
-            return 10;
+            case 1:
+                return 8;
+            case 2:
+                return 9;
+            default:
+                return 10;
         }
     }
 
@@ -63,11 +63,8 @@ public class BotConfiguration {
 
     public boolean isDebug() {
         try {
-            if ("true".equalsIgnoreCase(BotProperties.getProperty("Debug",
-                    "false"))) {
-                return true;
-            }
-            return false;
+            return "true".equalsIgnoreCase(BotProperties.getProperty("Debug",
+                    "false"));
         } catch (Exception e) {
             return false;
         }

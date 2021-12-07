@@ -473,8 +473,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 Point inhexDelta = new Point(we.getPoint());
                 inhexDelta.translate(-HEX_W, -HEX_H);
                 inhexDelta.translate(-hexL.x, -hexL.y);
-                double ihdx = ((double)inhexDelta.x)/((double)HEX_W)/scale;
-                double ihdy = ((double)inhexDelta.y)/((double)HEX_H)/scale;
+                double ihdx = ((double) inhexDelta.x) / ((double) HEX_W) / scale;
+                double ihdy = ((double) inhexDelta.y) / ((double) HEX_H) / scale;
                 int oldzoomIndex = zoomIndex;
                 
                 boolean ZoomNoCtrl = GUIPreferences.getInstance().getMouseWheelZoom();
@@ -1256,7 +1256,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     @SuppressWarnings("unused")
     private void renderApproxHexDirection(Graphics2D g) {
-        if(selectedEntity == null || selected == null) {
+        if (selectedEntity == null || selected == null) {
             return;
         }
         
@@ -1276,7 +1276,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
-        if(selectedEntity != null) {
+        if (selectedEntity != null) {
             Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
@@ -1289,7 +1289,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     p.translate(HEX_W  / 2, HEX_H  / 2);
                     Coords c = new Coords(x, y);
 
-                    if(cba.contains(c)) {
+                    if (cba.contains(c)) {
 
                         drawHexBorder(g, p, Color.PINK, 0, 6);
                     }
@@ -1298,7 +1298,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             for(Integer x = 0; x < 6; x++) {
                 Coords c = cba.getVertexNum(x);
-                if(c == null) {
+                if (c == null) {
                     continue;
                 }
 
@@ -1441,7 +1441,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         shadowMap = config.createCompatibleImage(width, height,
                 Transparency.TRANSLUCENT);
 
-        Graphics2D g = (Graphics2D)(shadowMap.createGraphics());
+        Graphics2D g = shadowMap.createGraphics();
 
         if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) ||
         (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {
@@ -1457,18 +1457,18 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // 1a) Sort the board hexes by elevation
         // 1b) Create a reduced list of shadowcasting hexes
         double angle = Math.atan2(-lightDirection[1], lightDirection[0]);
-        int mDir = (int)(0.5+1.5-angle/Math.PI*3); // +0.5 to counter the (int)
-        int[] sDirs = { mDir%6, (mDir+1)%6, (mDir+5)%6 };
-        HashMap<Integer,Set<Coords>> sortedHexes = new HashMap<Integer,Set<Coords>>();
-        HashMap<Integer,Set<Coords>> shadowCastingHexes = new HashMap<Integer,Set<Coords>>();
+        int mDir = (int) (0.5 + 1.5 - angle / Math.PI * 3); // +0.5 to counter the (int)
+        int[] sDirs = { mDir % 6, (mDir + 1) % 6, (mDir + 5) % 6 };
+        HashMap<Integer,Set<Coords>> sortedHexes = new HashMap<>();
+        HashMap<Integer,Set<Coords>> shadowCastingHexes = new HashMap<>();
         for (Coords c: allBoardHexes()) {
             Hex hex = board.getHex(c);
             int level = hex.getLevel();
             if (!sortedHexes.containsKey(level)) { // no hexes yet for this height
-                sortedHexes.put(level, new HashSet<Coords>());
+                sortedHexes.put(level, new HashSet<>());
             }
             if (!shadowCastingHexes.containsKey(level)) { // no hexes yet for this height
-                shadowCastingHexes.put(level, new HashSet<Coords>());
+                shadowCastingHexes.put(level, new HashSet<>());
             }
             sortedHexes.get(level).add(c);
             // add a hex to the shadowcasting hexes only
@@ -1488,14 +1488,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // 2) Create clipping areas
-        HashMap<Integer,Shape> levelClips = new HashMap<Integer,Shape>();
+        HashMap<Integer,Shape> levelClips = new HashMap<>();
         for (Integer h: sortedHexes.keySet()) {
             Path2D path = new Path2D.Float();
             for (Coords c: sortedHexes.get(h)) {
                 Point p = getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                AffineTransform t = AffineTransform.getTranslateInstance(p.x+HEX_W/2, p.y+HEX_H/2);
+                AffineTransform t = AffineTransform.getTranslateInstance(p.x + HEX_W / 2, p.y + HEX_H / 2);
                 t.scale(1.02, 1.02);
-                t.translate(-HEX_W/2, -HEX_H/2);
+                t.translate(-HEX_W / 2, -HEX_H / 2);
                 path.append(t.createTransformedShape(hexPoly), false);
             }
             levelClips.put(h, path);
@@ -1504,16 +1504,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // 3) Find all level differences
         final int maxDiff = 35; // limit all diffs to this value
-        Set<Integer> lDiffs = new TreeSet<Integer>();
-        for (int shadowed = board.getMinElevation();
-                shadowed < board.getMaxElevation();
-                shadowed++) {
-            if (levelClips.get(shadowed) == null) continue;
+        Set<Integer> lDiffs = new TreeSet<>();
+        for (int shadowed = board.getMinElevation(); shadowed < board.getMaxElevation(); shadowed++) {
+            if (levelClips.get(shadowed) == null) {
+                continue;
+            }
 
-            for (int shadowcaster = shadowed+1;
-                    shadowcaster <= board.getMaxElevation();
-                    shadowcaster++) {
-                if (levelClips.get(shadowcaster) == null) continue;
+            for (int shadowcaster = shadowed+1; shadowcaster <= board.getMaxElevation(); shadowcaster++) {
+                if (levelClips.get(shadowcaster) == null) {
+                    continue;
+                }
 
                 lDiffs.add(Math.min(shadowcaster-shadowed, maxDiff));
             }
@@ -1523,55 +1523,50 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int n = 10;
         double deltaX = lightDirection[0]/n;
         double deltaY = lightDirection[1]/n;
-        Map<Integer,BufferedImage> hS = new HashMap<Integer,BufferedImage>();
+        Map<Integer,BufferedImage> hS = new HashMap<>();
         for (int lDiff: lDiffs) {
             Dimension eSize = new Dimension(
-                    (int)(Math.abs(lightDirection[0])*lDiff+HEX_W)*2,
-                    (int)(Math.abs(lightDirection[1])*lDiff+HEX_H)*2);
+                    (int) (Math.abs(lightDirection[0]) * lDiff + HEX_W) * 2,
+                    (int) (Math.abs(lightDirection[1]) * lDiff + HEX_H) * 2);
 
             BufferedImage elevShadow = config.createCompatibleImage(eSize.width, eSize.height,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
-            Point2D p1 = new Point2D.Double(eSize.width/2, eSize.height/2);
+            Point2D p1 = new Point2D.Double(eSize.width / 2, eSize.height / 2);
             if (GUIPreferences.getInstance().getHexInclines()) {
                 // With inclines, the level 1 shadows are only very slight
                 int beg = 4;
-                p1.setLocation(p1.getX()+deltaX*beg, p1.getY()+deltaY*beg);
-                for (int i = beg; i<n*(lDiff-0.4); i++) {
-                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                p1.setLocation(p1.getX() + deltaX * beg, p1.getY() + deltaY * beg);
+                for (int i = beg; i < n * (lDiff - 0.4); i++) {
+                    gS.drawImage(hexShadow, (int) p1.getX(), (int) p1.getY(), null);
+                    p1.setLocation(p1.getX() + deltaX, p1.getY() + deltaY);
                 }   
             } else {
-                for (int i = 0; i<n*lDiff; i++) {
-                    gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                for (int i = 0; i < n * lDiff; i++) {
+                    gS.drawImage(hexShadow, (int) p1.getX(), (int) p1.getY(), null);
+                    p1.setLocation(p1.getX() + deltaX, p1.getY() + deltaY);
                 }
-                
             }
             gS.dispose();
             hS.put(lDiff, elevShadow);
         }
 
         // 5) Actually draw the elevation shadows
-        for (int shadowed = board.getMinElevation();
-                shadowed < board.getMaxElevation();
-                shadowed++) {
+        for (int shadowed = board.getMinElevation(); shadowed < board.getMaxElevation(); shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
 
             Shape saveClip = g.getClip();
             g.setClip(levelClips.get(shadowed));
 
-            for (int shadowcaster = shadowed+1;
-                    shadowcaster <= board.getMaxElevation();
-                    shadowcaster++) {
+            for (int shadowcaster = shadowed+1; shadowcaster <= board.getMaxElevation(); shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
                 int lDiff = shadowcaster - shadowed;
 
                 for (Coords c: shadowCastingHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
                     g.drawImage(hS.get(Math.min(lDiff, maxDiff)),
-                            (int)p0.getX()-(int)(Math.abs(lightDirection[0])*Math.min(lDiff, maxDiff)+HEX_W),
-                            (int)p0.getY()-(int)(Math.abs(lightDirection[1])*Math.min(lDiff, maxDiff)+HEX_H), null);
+                            (int) p0.getX() - (int) (Math.abs(lightDirection[0]) * Math.min(lDiff, maxDiff) + HEX_W),
+                            (int) p0.getY() - (int) (Math.abs(lightDirection[1]) * Math.min(lDiff, maxDiff) + HEX_H), null);
                 }
             }
             g.setClip(saveClip);
@@ -1581,17 +1576,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         deltaX = lightDirection[0]/n;
         deltaY = lightDirection[1]/n;
         // 4) woods and bulding shadows
-        for (int shadowed = board.getMinElevation(); 
-                shadowed <= board.getMaxElevation(); 
-                shadowed++) {
+        for (int shadowed = board.getMinElevation(); shadowed <= board.getMaxElevation(); shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
 
             Shape saveClip = g.getClip();
             g.setClip(levelClips.get(shadowed));
 
-            for (int shadowcaster = board.getMinElevation();
-                    shadowcaster <= board.getMaxElevation();
-                    shadowcaster++) {
+            for (int shadowcaster = board.getMinElevation(); shadowcaster <= board.getMaxElevation(); shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
 
                 for (Coords c: sortedHexes.get(shadowcaster)) {
@@ -1603,7 +1594,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     List<Image> supers = tileManager.supersFor(hex);
 
                     if (!supers.isEmpty()) {
-                        Image lastSuper = createBlurredShadow(supers.get(supers.size()-1));
+                        Image lastSuper = createBlurredShadow(supers.get(supers.size() - 1));
                         if (lastSuper == null) {
                             clearShadowMap();
                             return;
@@ -1617,12 +1608,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             p1.setLocation(p0);
                             if ((shadowcaster + shadowHeight - shadowed) > 0) {
                                 for (int i = 0; i < n * (shadowcaster + shadowHeight - shadowed); i++) {
-                                    g.drawImage(lastSuper, (int)p1.getX(), (int)p1.getY(), null);
-                                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                                    g.drawImage(lastSuper, (int) p1.getX(), (int) p1.getY(), null);
+                                    p1.setLocation(p1.getX() + deltaX, p1.getY() + deltaY);
                                 }
                             }
                         }
-
 
                         // Buildings Shadow
                         if (hex.containsTerrain(Terrains.BUILDING)) {
@@ -1750,8 +1740,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
-            if (cp.equals(c) && view.intersects(sprite.getBounds())
-                && !sprite.isHidden()) {
+            if (cp.equals(c) && view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -1790,7 +1779,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Draws a sprite, if it is in the current view
      */
-    private final void drawSprite(Graphics g, Sprite sprite) {
+    private void drawSprite(Graphics g, Sprite sprite) {
         Rectangle view = g.getClipBounds();
         // This can potentially be an expensive operation
         Rectangle spriteBounds = sprite.getBounds();
@@ -1888,7 +1877,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     private void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV,
             double pad) {
-        Graphics2D g2D = (Graphics2D)g;
+        Graphics2D g2D = (Graphics2D) g;
         g.setColor(col);
 
         // create stripe effect for FOV darkening but not for colored weapon
@@ -1919,7 +1908,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     public void drawHexBorder(Graphics g, Point p, Color col, double pad,
             double linewidth) {
         g.setColor(col);
-        ((Graphics2D)g).fill(
+        ((Graphics2D) g).fill(
                 AffineTransform.getTranslateInstance(p.x, p.y).createTransformedShape(
                 AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
                 HexDrawUtilities.getHexFullBorderArea(linewidth, pad))));
@@ -2429,8 +2418,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int origImgWidth = imgWidth; // save for later, needed for large tiles
         int origImgHeight = imgHeight;
 
-        imgWidth = Math.min(imgWidth,(int)(HEX_W*scale));
-        imgHeight = Math.min(imgHeight,(int)(HEX_H*scale));
+        imgWidth = Math.min(imgWidth,(int) (HEX_W * scale));
+        imgHeight = Math.min(imgHeight,(int) (HEX_H * scale));
 
         if (useIsometric()) {
             int largestLevelDiff = 0;
@@ -2455,7 +2444,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         BufferedImage hexImage = new BufferedImage(imgWidth, imgHeight,
                 BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g = (Graphics2D)(hexImage.getGraphics());
+        Graphics2D g = (Graphics2D) (hexImage.getGraphics());
         GUIPreferences.AntiAliasifSet(g);
 
         if (standardTile) { // is the image hex-sized, 84*72?
@@ -2712,12 +2701,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // Used to make the following draw calls shorter
-        int s21 = (int)(21*scale);
-        int s71 = (int)(71*scale);
-        int s35 = (int)(35*scale);
-        int s36 = (int)(36*scale);
-        int s62 = (int)(62*scale);
-        int s83 = (int)(83*scale);
+        int s21 = (int) (21 * scale);
+        int s71 = (int) (71 * scale);
+        int s35 = (int) (35 * scale);
+        int s36 = (int) (36 * scale);
+        int s62 = (int) (62 * scale);
+        int s83 = (int) (83 * scale);
 
         Point p1 = new Point(s62, 0);
         Point p2 = new Point(s21, 0);
@@ -3037,32 +3026,33 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int al = (rgb >> 24);
 
         switch (game.getPlanetaryConditions().getLight()) {
-        case PlanetaryConditions.L_FULL_MOON:
-            rd = rd / 4; // 1/4 red
-            gr = gr / 4; // 1/4 green
-            bl = bl / 2; // half blue
-            break;
-        case PlanetaryConditions.L_PITCH_BLACK:
-            int gy = (rd + gr + bl) / 16;
-            if (Math.random() < 0.3) {
-                gy = gy * 4 / 5;
-            }
-            if (Math.random() < 0.3) {
-                gy = gy * 5 / 4;
-            }
-            rd = gy + rd / 5;
-            gr = gy + gr / 5;
-            bl = gy + bl / 5;
-            break;
-        case PlanetaryConditions.L_MOONLESS:
-            rd = rd / 4;
-            gr = gr / 4;
-            bl = bl / 2;
-            break;
-        case PlanetaryConditions.L_DUSK:
-            bl = bl * 3 / 4;
-            break;
-        default:
+            case PlanetaryConditions.L_FULL_MOON:
+                rd = rd / 4; // 1/4 red
+                gr = gr / 4; // 1/4 green
+                bl = bl / 2; // half blue
+                break;
+            case PlanetaryConditions.L_PITCH_BLACK:
+                int gy = (rd + gr + bl) / 16;
+                if (Math.random() < 0.3) {
+                    gy = gy * 4 / 5;
+                }
+                if (Math.random() < 0.3) {
+                    gy = gy * 5 / 4;
+                }
+                rd = gy + rd / 5;
+                gr = gy + gr / 5;
+                bl = gy + bl / 5;
+                break;
+            case PlanetaryConditions.L_MOONLESS:
+                rd = rd / 4;
+                gr = gr / 4;
+                bl = bl / 2;
+                break;
+            case PlanetaryConditions.L_DUSK:
+                bl = bl * 3 / 4;
+                break;
+            default:
+                break;
         }
 
         return (al << 24) + (rd << 16) + (gr << 8) + bl;
@@ -3672,8 +3662,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // set the target point
             Point p = getCentreHexLocation(c);
             softCenterTarget.setLocation(
-                    (double)p.x/boardSize.getWidth(),
-                    (double)p.y/boardSize.getHeight());
+                    (double) p.x/boardSize.getWidth(),
+                    (double) p.y/boardSize.getHeight());
 
             // adjust the target point because the board can't
             // center on points too close to an edge
@@ -3710,8 +3700,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // center on c directly
             Point p = getCentreHexLocation(c);
             centerOnPointRel(
-                    (double)p.x/boardSize.getWidth(),
-                    (double)p.y/boardSize.getHeight());
+                    (double) p.x/boardSize.getWidth(),
+                    (double) p.y/boardSize.getHeight());
         }
     }
 
@@ -3752,9 +3742,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // correct for upper left board padding
         hexPoint.translate(HEX_W, HEX_H);
         JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
-        hscroll.setValue(hexPoint.x-dispPoint.x+(int)(ihdx*scale*HEX_W));
+        hscroll.setValue(hexPoint.x - dispPoint.x + (int) (ihdx * scale * HEX_W));
         JScrollBar vscroll = scrollpane.getVerticalScrollBar();
-        vscroll.setValue(hexPoint.y-dispPoint.y+(int)(ihdy*scale*HEX_H));
+        vscroll.setValue(hexPoint.y - dispPoint.y + (int) (ihdy * scale * HEX_H));
         pingMinimap();
         repaint();
     }
@@ -3773,8 +3763,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         yrel = Math.max(0,yrel);
         yrel = Math.min(1,yrel);
         Point p = new Point(
-                (int)((double)boardSize.getWidth()*xrel)+HEX_W,
-                (int)((double)boardSize.getHeight()*yrel)+HEX_H);
+                (int) (boardSize.getWidth() * xrel) + HEX_W,
+                (int) (boardSize.getHeight() * yrel) + HEX_H);
         JScrollBar vscroll = scrollpane.getVerticalScrollBar();
         vscroll.setValue(p.y - (vscroll.getVisibleAmount() / 2));
         JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
@@ -4079,10 +4069,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         double scX = g2D.getTransform().getScaleX();
         double scY = g2D.getTransform().getScaleY();
 
-        drawCenteredText(g2D, text, (float)pos.x+(1.0f)/(float)scX,(float)pos.y, Color.BLACK, false);
-        drawCenteredText(g2D, text, (float)pos.x-(1.0f)/(float)scX,(float)pos.y, Color.BLACK, false);
-        drawCenteredText(g2D, text, (float)pos.x,(float)pos.y+(1.0f)/(float)scY, Color.BLACK, false);
-        drawCenteredText(g2D, text, (float)pos.x,(float)pos.y-(1.0f)/(float)scY, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float) pos.x + (1.0f) / (float) scX, (float) pos.y, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float) pos.x - (1.0f) / (float) scX, (float) pos.y, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float) pos.x, (float) pos.y + (1.0f) / (float) scY, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float) pos.x, (float) pos.y - (1.0f) / (float) scY, Color.BLACK, false);
     }
 
     public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
@@ -4740,7 +4730,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent me) {
+
     }
 
     private class MovingUnit {
@@ -4750,7 +4742,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         MovingUnit(Entity entity, Vector<UnitLocation> path) {
             this.entity = entity;
-            this.path = new ArrayList<UnitLocation>(path);
+            this.path = new ArrayList<>(path);
         }
     }
 
@@ -4912,8 +4904,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public void cursor(Coords coords) {
         if ((coords == null) || game.getBoard().contains(coords)) {
-            if ((getLastCursor() == null) || (coords == null)
-                || !coords.equals(getLastCursor())) {
+            if ((getLastCursor() == null) || (coords == null) || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
                 moveCursor(firstLOSSprite, null);
@@ -4942,11 +4933,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 setFirstLOS(c);
                 firstLOSHex(c);
                 processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                                         BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
+                        BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {
                 secondLOSHex(c, getFirstLOS());
                 processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                                         BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
+                        BoardViewEvent.BOARD_SECOND_LOS_HEX, 0));
                 setFirstLOS(null);
             }
         }
@@ -5076,7 +5067,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             
             // for units that have been blown up, damaged or ejected, force a reload
-            if((e.getOldEntity() != null) &&
+            if ((e.getOldEntity() != null) &&
                     ((en.getDamageLevel() != e.getOldEntity().getDamageLevel()) ||
                     (en.isDestroyed() != e.getOldEntity().isDestroyed()) ||
                     (en.getCrew().isEjected() != e.getOldEntity().getCrew().isEjected()))) {
@@ -5290,10 +5281,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      *  is expensive, so precalculate only when entity changes occur
      **/
     public void updateEcmList() {
-        Map<Coords, Color> newECMHexes = new HashMap<Coords, Color>();
-        Map<Coords, Color> newECMCenters = new HashMap<Coords, Color>();
-        Map<Coords, Color> newECCMHexes = new HashMap<Coords, Color>();
-        Map<Coords, Color> newECCMCenters = new HashMap<Coords, Color>();
+        Map<Coords, Color> newECMHexes = new HashMap<>();
+        Map<Coords, Color> newECMCenters = new HashMap<>();
+        Map<Coords, Color> newECCMHexes = new HashMap<>();
+        Map<Coords, Color> newECCMCenters = new HashMap<>();
 
         // Compute info about all E(C)CM on the board
         final List<ECMInfo> allEcmInfo = ComputeECM
@@ -5336,8 +5327,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             if (e.getSecondaryPositions().size() > 0) {
                 secondaryIdx = 0;
             }
-            EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(e.getId(),
-                    secondaryIdx));
+            EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(e.getId(), secondaryIdx));
             if (eSprite != null) {
                 Coords pos = e.getPosition();
                 eSprite.setAffectedByECM(ComputeECM.isAffectedByECM(e, pos,
@@ -5346,11 +5336,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // Keep track of allied ECM and enemy ECCM
-        Map<Coords, ECMEffects> ecmAffectedCoords =
-                new HashMap<Coords, ECMEffects>();
+        Map<Coords, ECMEffects> ecmAffectedCoords = new HashMap<>();
         // Keep track of allied ECCM and enemy ECM
-        Map<Coords, ECMEffects> eccmAffectedCoords =
-                new HashMap<Coords, ECMEffects>();
+        Map<Coords, ECMEffects> eccmAffectedCoords = new HashMap<>();
         for (ECMInfo ecmInfo : allEcmInfo) {
             // Can't see ECM field of unspotted unit
             if ((ecmInfo.getEntity() != null) && (localPlayer != null)
@@ -5378,8 +5366,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     int dir = ecmInfo.getDirection();
                     // Direction is the facing of the owning Entity
                     boolean inArc = (dir == -1)
-                            || Compute
-                                    .isInArc(ecmPos, dir, c, Compute.ARC_NOSE);
+                            || Compute.isInArc(ecmPos, dir, c, Compute.ARC_NOSE);
                     if ((dist > range) || !inArc) {
                         continue;
                     }
@@ -6590,7 +6577,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         themes.add("(Original Theme)");
 
         setShouldIgnoreKeys(true);
-        selectedTheme = (String)JOptionPane.showInputDialog(
+        selectedTheme = (String) JOptionPane.showInputDialog(
                 null,
                 "Choose the desired theme:",
                 "Theme Selection",
@@ -6620,8 +6607,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return null;
         }
         // Determine what sub-board the hex came from
-        int boardX = (int)((c.getX() + 0.0) / board.getSubBoardWidth());
-        int boardY = (int)((c.getY() + 0.0) / board.getSubBoardHeight());
+        int boardX = (int) ((c.getX() + 0.0) / board.getSubBoardWidth());
+        int boardY = (int) ((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
         if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
             MegaMek.getLogger().error("Error computing linear index or missing background images in BoardView1.getBoardBackgroundHexImage!");
@@ -6643,7 +6630,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         Image hexImage = new BufferedImage(HEX_W,  HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D)hexImage.getGraphics();
+        Graphics2D g = (Graphics2D) hexImage.getGraphics();
 
         // hex mask to limit drawing to the hex shape
         // TODO: this is not ideal yet but at least it draws

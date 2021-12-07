@@ -138,7 +138,7 @@ public class RamAttackAction extends AbstractAttackAction {
         
         toHit = new ToHitData(base, "base");
 
-        IAero a = (IAero)ae;
+        IAero a = (IAero) ae;
         
         //target type
         if(target instanceof SpaceStation) {
@@ -240,9 +240,9 @@ public class RamAttackAction extends AbstractAttackAction {
        int avel = attacker.getCurrentVelocity();
        int tvel = 0;
        if (target.isAero()) {
-           tvel = ((IAero)target).getCurrentVelocity();
+           tvel = ((IAero) target).getCurrentVelocity();
        }
-       return getDamageFor(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
+       return getDamageFor(attacker, target, ((Entity) attacker).getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageFor(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {

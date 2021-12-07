@@ -41,7 +41,7 @@ public class PMMultiLineLabel extends PMSimpleLabel {
         labels.add(s);
         
         int newWidth = fm.stringWidth(s);
-        if(newWidth > width) {
+        if (newWidth > width) {
             width = newWidth;
         }
         

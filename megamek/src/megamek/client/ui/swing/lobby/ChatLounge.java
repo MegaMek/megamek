@@ -417,7 +417,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             int i = panTabs.indexOfTab("Team Overview");
             Component cp = panTabs.getComponentAt(i);
             if (cp instanceof JPanel) {
-                ((JPanel)cp).add(panTeamOverview);
+                ((JPanel) cp).add(panTeamOverview);
             }
             panTeamOverview.setDetached(false);
             butDetach.setEnabled(true);
@@ -1139,7 +1139,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
                 if (name.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boardList = extractSurpriseMaps(name);
-                    int rnd = (int)(Math.random() * boardList.size());
+                    int rnd = (int) (Math.random() * boardList.size());
                     name = boardList.get(rnd);
                 } else if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
                     // only rotate boards with an even width
@@ -1241,7 +1241,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void toggleCompact() {
         setTableRowHeights();
         mekModel.refreshCells();
-        mekForceTreeModel.nodeChanged((TreeNode)mekForceTreeModel.getRoot());
+        mekForceTreeModel.nodeChanged((TreeNode) mekForceTreeModel.getRoot());
         
     }
 
@@ -1327,7 +1327,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 numLoadedBombs += bombChoice[i];
             }
             // We can't load all of the squadrons bombs
-            if (numLoadedBombs > ((IBomber)carried).getMaxBombPoints()) {
+            if (numLoadedBombs > ((IBomber) carried).getMaxBombPoints()) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
                         Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE);
                 return;
@@ -2442,47 +2442,48 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             StringTokenizer st = new StringTokenizer(e.getActionCommand(), "|");
             String command = st.nextToken();
             switch (command) {
-            case PlayerTablePopup.PTP_CONFIG:
-                configPlayer();
-                break;
+                case PlayerTablePopup.PTP_CONFIG:
+                    configPlayer();
+                    break;
 
-            case PlayerTablePopup.PTP_TEAM:
-                int newTeam = Integer.parseInt(st.nextToken());
-                lobbyActions.changeTeam(getselectedPlayers(), newTeam);
-                break;
+                case PlayerTablePopup.PTP_TEAM:
+                    int newTeam = Integer.parseInt(st.nextToken());
+                    lobbyActions.changeTeam(getselectedPlayers(), newTeam);
+                    break;
 
-            case PlayerTablePopup.PTP_BOTREMOVE:
-                removeBot();
-                break;
+                case PlayerTablePopup.PTP_BOTREMOVE:
+                    removeBot();
+                    break;
 
-            case PlayerTablePopup.PTP_BOTSETTINGS:
-                doBotSettings();
-                break;
-                
-            case PlayerTablePopup.PTP_DEPLOY:
-                int startPos = Integer.parseInt(st.nextToken());
-                if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
-                        && (startPos >= 1) && (startPos <= 9)) {
-                    startPos += 10;
-                }
+                case PlayerTablePopup.PTP_BOTSETTINGS:
+                    doBotSettings();
+                    break;
 
-                for (Player player: getselectedPlayers()) {
-                    if (lobbyActions.isSelfOrLocalBot(player)) {
-                        if (client().isLocalBot(player)) {
-                            // must use the bot's own player object:
-                            client().getBotClient(player).getLocalPlayer().setStartingPos(startPos);
-                            client().getBotClient(player).sendPlayerInfo();
-                        } else {
-                            player.setStartingPos(startPos);
-                            client().sendPlayerInfo();
+                case PlayerTablePopup.PTP_DEPLOY:
+                    int startPos = Integer.parseInt(st.nextToken());
+                    if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
+                            && (startPos >= 1) && (startPos <= 9)) {
+                        startPos += 10;
+                    }
+
+                    for (Player player: getselectedPlayers()) {
+                        if (lobbyActions.isSelfOrLocalBot(player)) {
+                            if (client().isLocalBot(player)) {
+                                // must use the bot's own player object:
+                                client().getBotClient(player).getLocalPlayer().setStartingPos(startPos);
+                                client().getBotClient(player).sendPlayerInfo();
+                            } else {
+                                player.setStartingPos(startPos);
+                                client().sendPlayerInfo();
+                            }
                         }
                     }
-                }
-                break;
-                
-            case PlayerTablePopup.PTP_REPLACE:
-                Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
-                configAndCreateBot(player);
+                    break;
+
+                case PlayerTablePopup.PTP_REPLACE:
+                    Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+                    configAndCreateBot(player);
+                    break;
             }
         }
     };
@@ -2542,7 +2543,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         List<Entity> newEntities = new ArrayList<>();
         if (hasTransferableText) {
             try {
-                String result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+                String result = (String) contents.getTransferData(DataFlavor.stringFlavor);
                 StringTokenizer lines = new StringTokenizer(result, "\n");
                 while (lines.hasMoreTokens()) {
                     String line = lines.nextToken();
@@ -2683,16 +2684,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String[] command = action.getActionCommand().split(":");
 
             switch (command[0]) {
-            case MapListPopup.MLP_BOARD:
-                boolean rotate = (command.length > 3) && Boolean.valueOf(command[3]);
-                String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
-                
-                changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));
-                break;
+                case MapListPopup.MLP_BOARD:
+                    boolean rotate = (command.length > 3) && Boolean.valueOf(command[3]);
+                    String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
 
-            case MapListPopup.MLP_SURPRISE:
-                changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
-                break;
+                    changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));
+                    break;
+
+                case MapListPopup.MLP_SURPRISE:
+                    changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
+                    break;
             }
         }
 
@@ -2844,11 +2845,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (mekForceTree.isExpanded(currPath)) {
                 Object entry = currPath.getLastPathComponent();
                 if (entry instanceof Force) {
-                    expandedForces.add(((Force)entry).getId());
+                    expandedForces.add(((Force) entry).getId());
                 }
-            }
-            if (selections.contains(currPath)) {
-                
             }
         }
         
@@ -3093,8 +3091,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         searchTip += autoTagHTMLTable();
         fldSearch.setToolTipText(UIUtil.scaleStringForGUI(searchTip));
         
-        ((TitledBorder)panUnitInfo.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder)panPlayerInfo.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder) panUnitInfo.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder) panPlayerInfo.getBorder()).setTitleFont(scaledFont);
         
         int scaledBorder = UIUtil.scaleForGUI(TEAMOVERVIEW_BORDER);
         panTeam.setBorder(new EmptyBorder(scaledBorder, scaledBorder, scaledBorder, scaledBorder));
@@ -3327,7 +3325,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 zoom = Math.max(zoom, 3);
             }
             float scale = GUIPreferences.getInstance().getGUIScale();
-            zoom = (int)(scale*zoom);
+            zoom = (int) (scale*zoom);
             if (zoom > 6) {
                 zoom = 6;
             }
@@ -3384,7 +3382,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public Component getListCellRendererComponent(JList<?> list, Object value, 
                 int index, boolean isSelected, boolean cellHasFocus) {
 
-            String board = (String)value;
+            String board = (String) value;
             // For generated boards, add the size to have different images for different sizes
             if (board.startsWith(MapSettings.BOARD_GENERATED)) {
                 board += mapSettings.getBoardSize().toString();
@@ -3498,18 +3496,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     Dimension maxMapButtonSize() {
         // minus 1 to ensure that the images actually fit in the frame
-        double pw = (double)panMapButtons.getWidth() / mapSettings.getMapWidth() - 1;
-        double ph = (double)panMapButtons.getHeight() / mapSettings.getMapHeight() - 1;
-        return new Dimension((int)pw, (int)ph);
+        double pw = (double) panMapButtons.getWidth() / mapSettings.getMapWidth() - 1;
+        double ph = (double) panMapButtons.getHeight() / mapSettings.getMapHeight() - 1;
+        return new Dimension((int) pw, (int) ph);
     }
 
     Dimension optMapButtonSize(Image image) {
         Dimension optSize = maxMapButtonSize();
-        double factorX = (double)optSize.width / image.getWidth(null);                    
-        double factorY = (double)optSize.height / image.getHeight(null);
+        double factorX = (double) optSize.width / image.getWidth(null);
+        double factorY = (double) optSize.height / image.getHeight(null);
         double factor = Math.min(factorX, factorY);
-        int w = (int)(factor * image.getWidth(null));
-        int h = (int)(factor * image.getHeight(null));
+        int w = (int) (factor * image.getWidth(null));
+        int h = (int) (factor * image.getHeight(null));
         return new Dimension(w, h);
     }
     
@@ -3601,7 +3599,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
     public boolean isModalDialogShowing() {
         return Stream.of(Window.getWindows())
-                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog)w).isModal());
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
     }
 
     public void killPreviewBV() {

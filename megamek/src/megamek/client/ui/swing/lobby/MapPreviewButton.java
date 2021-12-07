@@ -150,11 +150,11 @@ public class MapPreviewButton extends JButton {
         Dimension optSize = lobby.maxMapButtonSize();
         if (optSize.width > 1 && optSize.height > 1 && baseImage != null) {
             // Scale to the maximum size keeping aspect ratio
-            double factorX = (double)optSize.width / baseImage.getWidth(null);                    
-            double factorY = (double)optSize.height / baseImage.getHeight(null);
+            double factorX = (double) optSize.width / baseImage.getWidth(null);
+            double factorY = (double) optSize.height / baseImage.getHeight(null);
             double factor = Math.min(factorX, factorY);
-            int w = (int)(factor * baseImage.getWidth(null));
-            int h = (int)(factor * baseImage.getHeight(null));
+            int w = (int) (factor * baseImage.getWidth(null));
+            int h = (int) (factor * baseImage.getHeight(null));
             scaledImage = baseImage.getScaledInstance(w, h, Image.SCALE_SMOOTH);
             // Add the labels (index, name, example)
             BufferedImage drawableImage = ImageUtil.createAcceleratedImage(scaledImage);
@@ -258,7 +258,7 @@ public class MapPreviewButton extends JButton {
                     Component component = support.getComponent();
                     Object value = support.getTransferable().getTransferData(flavor);
                     if ((value instanceof String) && (component instanceof MapPreviewButton)) {
-                        lobby.changeMapDnD((String)value, button);
+                        lobby.changeMapDnD((String) value, button);
                         return true;
                     } else {
                         return false;

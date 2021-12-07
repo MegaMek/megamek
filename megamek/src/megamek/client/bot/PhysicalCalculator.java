@@ -325,7 +325,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         
@@ -612,7 +612,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         

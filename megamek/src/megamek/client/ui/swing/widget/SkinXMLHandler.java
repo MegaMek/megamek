@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
@@ -211,8 +212,7 @@ public class SkinXMLHandler {
             // Get the list of units.
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
             int totalComponents = listOfComponents.getLength();
-            skinSpecs = new HashMap<String, SkinSpecification>(
-                    (int)(totalComponents * 1.25));
+            skinSpecs = new HashMap<>((int) (totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
                 Element borderList = (Element) listOfComponents.item(comp);
 
@@ -258,10 +258,9 @@ public class SkinXMLHandler {
                 if (plainTag == null) {
                     NodeList backgrounds =
                             borderList.getElementsByTagName(BACKGROUND_IMAGE);
-                    if (backgrounds != null){
-                        for (int bg = 0; bg < backgrounds.getLength(); bg++){
-                            skinSpec.backgrounds.add(
-                                    backgrounds.item(bg).getTextContent());
+                    if (backgrounds != null) {
+                        for (int bg = 0; bg < backgrounds.getLength(); bg++) {
+                            skinSpec.backgrounds.add(backgrounds.item(bg).getTextContent());
                         }
                     }
                 }
@@ -270,56 +269,45 @@ public class SkinXMLHandler {
                 Element showScrollEle = (Element) borderList
                         .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
                 if (showScrollEle != null) {
-                    skinSpec.showScrollBars = Boolean
-                            .parseBoolean(showScrollEle.getTextContent());
+                    skinSpec.showScrollBars = Boolean.parseBoolean(showScrollEle.getTextContent());
                 }
 
                 // Parse show should bold
-                Element shouldBoldEle = (Element) borderList
-                        .getElementsByTagName(SHOULD_BOLD).item(0);
+                Element shouldBoldEle = (Element) borderList.getElementsByTagName(SHOULD_BOLD).item(0);
                 if (shouldBoldEle != null) {
-                    skinSpec.shouldBoldMouseOver = Boolean
-                            .parseBoolean(shouldBoldEle.getTextContent());
+                    skinSpec.shouldBoldMouseOver = Boolean.parseBoolean(shouldBoldEle.getTextContent());
                 }
 
                 // Parse font name
-                Element fontNameEle = (Element) borderList
-                        .getElementsByTagName(FONT_NAME).item(0);
+                Element fontNameEle = (Element) borderList.getElementsByTagName(FONT_NAME).item(0);
                 if (fontNameEle != null) {
                     skinSpec.fontName = fontNameEle.getTextContent();
                 }
 
                 // Parse font size
-                Element fontSizeEle = (Element) borderList
-                        .getElementsByTagName(FONT_SIZE).item(0);
+                Element fontSizeEle = (Element) borderList.getElementsByTagName(FONT_SIZE).item(0);
                 if (fontSizeEle != null) {
                     skinSpec.fontSize = Integer.parseInt(fontSizeEle.getTextContent());
                 }
 
                 // Parse font colors
-                NodeList fontColors = borderList
-                        .getElementsByTagName(FONT_COLOR);
+                NodeList fontColors = borderList.getElementsByTagName(FONT_COLOR);
                 if (fontColors.getLength() > 0) {
                     skinSpec.fontColors.clear();
                     for (int fc = 0; fc < fontColors.getLength(); fc++) {
-                        String fontColorContent = fontColors.item(fc)
-                                .getTextContent();
+                        String fontColorContent = fontColors.item(fc).getTextContent();
                         skinSpec.fontColors.add(Color.decode(fontColorContent));
                     }
                 }
 
                 // Parse tile background
-                Element tileBGEle = (Element) borderList
-                        .getElementsByTagName(TILE_BACKGROUND).item(0);
+                Element tileBGEle = (Element) borderList.getElementsByTagName(TILE_BACKGROUND).item(0);
                 if (tileBGEle != null) {
-                    skinSpec.tileBackground = Boolean
-                            .parseBoolean(tileBGEle.getTextContent());
+                    skinSpec.tileBackground = Boolean.parseBoolean(tileBGEle.getTextContent());
                 }
 
                 if (SkinSpecification.UIComponents.getUIComponent(name) == null) {
-                    System.out.println("SKIN ERROR: "
-                            + "Unable to add unrecognized UI component: "
-                            + name + "!");
+                    MegaMek.getLogger().error("Unable to add unrecognized UI component: " + name + "!");
                 } else {
                     skinSpecs.put(name, skinSpec);
                 }
@@ -351,7 +339,7 @@ public class SkinXMLHandler {
      * @param border
      * @return
      */
-    private static SkinSpecification parseBorderTag(String compName, Element border){
+    private static SkinSpecification parseBorderTag(String compName, Element border) {
         SkinSpecification skinSpec = new SkinSpecification(compName);
 
         // Parse Corner Icons
@@ -366,26 +354,26 @@ public class SkinXMLHandler {
 
         // Parse Edge Icons from Edge tag
         NodeList edgeNodes = border.getElementsByTagName(EDGE);
-        for (int i = 0; i < edgeNodes.getLength(); i++){
+        for (int i = 0; i < edgeNodes.getLength(); i++) {
             // An edge tag will have some number of icons
-            ArrayList<String> icons = new ArrayList<String>();
+            ArrayList<String> icons = new ArrayList<>();
             // And icon can be tiled or static
-            ArrayList<Boolean> shouldTile = new ArrayList<Boolean>();
-            NodeList edgeIcons = ((Element) edgeNodes.item(i))
-                    .getElementsByTagName(EDGE_ICON);
+            ArrayList<Boolean> shouldTile = new ArrayList<>();
+            NodeList edgeIcons = ((Element) edgeNodes.item(i)).getElementsByTagName(EDGE_ICON);
             // Iterate through each icon/tiled pair
-            for (int j = 0; j < edgeIcons.getLength(); j++){
+            for (int j = 0; j < edgeIcons.getLength(); j++) {
                 String icon = ((Element) edgeIcons.item(j))
                         .getElementsByTagName(ICON).item(0).getTextContent();
                 String tiled = ((Element) edgeIcons.item(j))
                         .getElementsByTagName(TILED).item(0).getTextContent();
 
-                if (icon == null){
-                    System.err.println("Missing <" + ICON + "> tag");
+                if (icon == null) {
+                    MegaMek.getLogger().error("Missing <" + ICON + "> tag");
                     continue;
                 }
-                if (tiled == null){
-                    System.err.println("Missing <" + TILED + "> tag");
+
+                if (tiled == null) {
+                    MegaMek.getLogger().error("Missing <" + TILED + "> tag");
                     continue;
                 }
                 icons.add(icon);
@@ -395,23 +383,28 @@ public class SkinXMLHandler {
             String edgeName = ((Element) edgeNodes.item(i))
                     .getElementsByTagName(EDGE_NAME).item(0).getTextContent();
 
-            if (edgeName == null){
-                System.err.println("Missing <" + EDGE_NAME + "> tag");
+            if (edgeName == null) {
+                MegaMek.getLogger().error("Missing <" + EDGE_NAME + "> tag");
                 continue;
             }
 
-            if (edgeName.equals("top")){
-                skinSpec.topEdge = icons;
-                skinSpec.topShouldTile = shouldTile;
-            } else if (edgeName.equals("bottom")){
-                skinSpec.bottomEdge = icons;
-                skinSpec.bottomShouldTile = shouldTile;
-            } else if (edgeName.equals("left")){
-                skinSpec.leftEdge = icons;
-                skinSpec.leftShouldTile = shouldTile;
-            } else if (edgeName.equals("right")){
-                skinSpec.rightEdge = icons;
-                skinSpec.rightShouldTile = shouldTile;
+            switch (edgeName) {
+                case "top":
+                    skinSpec.topEdge = icons;
+                    skinSpec.topShouldTile = shouldTile;
+                    break;
+                case "bottom":
+                    skinSpec.bottomEdge = icons;
+                    skinSpec.bottomShouldTile = shouldTile;
+                    break;
+                case "left":
+                    skinSpec.leftEdge = icons;
+                    skinSpec.leftShouldTile = shouldTile;
+                    break;
+                case "right":
+                    skinSpec.rightEdge = icons;
+                    skinSpec.rightShouldTile = shouldTile;
+                    break;
             }
         }
         return skinSpec;
@@ -549,20 +542,19 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        File filePath = new MegaMekFile(Configuration.skinsDir(),
-                filename).getFile();
+        File filePath = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
 
         try (Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(filePath)));){
+                new FileOutputStream(filePath)))) {
             output.write(SKIN_HEADER);
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);
             }
+
             if (udSpec != null) {
                 writeUnitDisplaySkinSpec(output);
             }
             output.write(SKIN_FOOTER);
-            output.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -708,7 +700,7 @@ public class SkinXMLHandler {
 
         // Write Border
         out.write("\t\t<" + NO_BORDER + ">");
-        out.write(((Boolean)skinSpec.noBorder).toString());
+        out.write(((Boolean) skinSpec.noBorder).toString());
         out.write("</" + NO_BORDER + ">\n");
         writeBorder(skinSpec, out);
 
@@ -719,7 +711,7 @@ public class SkinXMLHandler {
             out.write("</" + BACKGROUND_IMAGE + ">\n");
         }
         out.write("\t\t<" + TILE_BACKGROUND + ">");
-        out.write(((Boolean)skinSpec.tileBackground).toString());
+        out.write(((Boolean) skinSpec.tileBackground).toString());
         out.write("</" + TILE_BACKGROUND + ">\n");
 
         // Write colors
@@ -732,12 +724,12 @@ public class SkinXMLHandler {
 
         // Write show scroll bars
         out.write("\t\t<" + SHOW_SCROLL_BARS + ">");
-        out.write(((Boolean)skinSpec.showScrollBars).toString());
+        out.write(((Boolean) skinSpec.showScrollBars).toString());
         out.write("</" + SHOW_SCROLL_BARS + ">\n");
 
         // Write should bold mouseover
         out.write("\t\t<" + SHOULD_BOLD + ">");
-        out.write(((Boolean)skinSpec.shouldBoldMouseOver).toString());
+        out.write(((Boolean) skinSpec.shouldBoldMouseOver).toString());
         out.write("</" + SHOULD_BOLD + ">\n");
 
         // Write font name
@@ -800,7 +792,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.topShouldTile.get(i)).toString());
+            out.write(skinSpec.topShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -821,7 +813,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.bottomShouldTile.get(i)).toString());
+            out.write(skinSpec.bottomShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -841,7 +833,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.leftShouldTile.get(i)).toString());
+            out.write(skinSpec.leftShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -861,7 +853,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.rightShouldTile.get(i)).toString());
+            out.write(skinSpec.rightShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -874,11 +866,11 @@ public class SkinXMLHandler {
         out.write("\t\t</" + BORDER + ">\n");
     }
 
-    public static SkinSpecification getSkin(String component){
+    public static SkinSpecification getSkin(String component) {
         return getSkin(component,false, false);
     }
 
-    public static SkinSpecification getSkin(String component, boolean defaultToPlain){
+    public static SkinSpecification getSkin(String component, boolean defaultToPlain) {
         return getSkin(component, defaultToPlain, false);
     }
 
@@ -901,8 +893,8 @@ public class SkinXMLHandler {
      * @return
      */
     public synchronized static SkinSpecification getSkin(String component,
-            boolean defaultToPlain, boolean isBtn){
-        if (skinSpecs == null ){
+            boolean defaultToPlain, boolean isBtn) {
+        if (skinSpecs == null ) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 // This will return a blank skin spec file, which will act like
@@ -912,10 +904,10 @@ public class SkinXMLHandler {
         }
 
         SkinSpecification spec = skinSpecs.get(component);
-        if (spec == null){
+        if (spec == null) {
             if (defaultToPlain) {
                 spec = new SkinSpecification("Plain"); //$NON-NLS-1$
-            } else if (isBtn){
+            } else if (isBtn) {
                 spec = skinSpecs.get(UIComponents.DefaultButton.getComp());
             } else {
                 spec = skinSpecs.get(UIComponents.DefaultUIElement.getComp());
@@ -942,7 +934,7 @@ public class SkinXMLHandler {
      * @param component
      */
     public synchronized static void addNewComp(String component) {
-        if (skinSpecs == null ){
+        if (skinSpecs == null ) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 return ;

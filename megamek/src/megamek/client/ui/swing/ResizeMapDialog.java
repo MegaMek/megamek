@@ -453,9 +453,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Get the general settings from this panel.
-        newMapSettings.setBoardSize(mapWestField.getAsInt()+mapEastField.getAsInt()+mapSettings.getBoardWidth(),
-                mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
-        newMapSettings.setTheme((String)choTheme.getSelectedItem());
+        newMapSettings.setBoardSize(mapWestField.getAsInt() + mapEastField.getAsInt() + mapSettings.getBoardWidth(),
+                mapNorthField.getAsInt() + mapSouthField.getAsInt() + mapSettings.getBoardHeight());
+        newMapSettings.setTheme((String) choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.

@@ -181,7 +181,7 @@ public class HexSetTest {
             // Create the default hexset, so we can validate it as well
             testFile(hexesDir, TilesetManager.FILENAME_DEFAULT_HEX_SET, 0);
 
-        }catch (IOException e){
+        }catch (IOException e) {
             System.out.println("IOException!");
             e.printStackTrace();
         }

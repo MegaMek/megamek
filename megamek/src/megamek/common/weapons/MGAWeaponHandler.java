@@ -208,7 +208,7 @@ public class MGAWeaponHandler extends MGHandler {
                 hit.makeGlancingBlow();
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport

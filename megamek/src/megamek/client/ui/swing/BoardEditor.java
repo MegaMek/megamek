@@ -1866,7 +1866,7 @@ public class BoardEditor extends JPanel
                 choTheme.setSelectedItem(newTheme);
             }
         } else if (ae.getSource().equals(choTheme) ) { 
-            curHex.setTheme((String)choTheme.getSelectedItem());
+            curHex.setTheme((String) choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
             setConvenientTerrain(ae, new Terrain(Terrains.WOODS, 1), new Terrain(Terrains.FOLIAGE_ELEV, 2));

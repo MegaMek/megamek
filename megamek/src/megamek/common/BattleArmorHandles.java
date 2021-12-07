@@ -178,7 +178,7 @@ import megamek.common.annotations.Nullable;
     @Override
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
-        Vector<Entity> units = new Vector<Entity>(1);
+        Vector<Entity> units = new Vector<>(1);
         if (troopers != Entity.NONE) {
             Entity entity = game.getEntity(troopers);
             
@@ -225,8 +225,8 @@ import megamek.common.annotations.Nullable;
     }
 
     @Override
-    public double getUnused(){
-        if (troopers == Entity.NONE){
+    public double getUnused() {
+        if (troopers == Entity.NONE) {
             return 1;
         } else {
             return 0;
@@ -304,8 +304,7 @@ import megamek.common.annotations.Nullable;
      */
     @Override
     public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
-        return isWeaponBlockedAt(loc, isRear)?
-                game.getEntity(troopers) : null;
+        return isWeaponBlockedAt(loc, isRear) ? game.getEntity(troopers) : null;
     }
 
     @Override
@@ -332,4 +331,4 @@ import megamek.common.annotations.Nullable;
     public void setGame(Game game) {
         this.game = game;
     }
-} // End package class BattleArmorHandles implements Transporter
+}

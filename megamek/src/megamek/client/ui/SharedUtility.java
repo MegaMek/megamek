@@ -57,7 +57,7 @@ public class SharedUtility {
     public static List<TargetRoll> getPSRList(MovePath md) {
         // certain types of entities, such as airborne aero units, do not require many of the checks
         // carried out in the full PSR Check. So, we call a method that skips most of those.
-        if(md.getEntity().isAirborne() && md.getEntity().isAero()) {
+        if (md.getEntity().isAirborne() && md.getEntity().isAero()) {
             return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
         } else {
             return (List<TargetRoll>) doPSRCheck(md, false);
@@ -72,7 +72,7 @@ public class SharedUtility {
      */
     private static Object getAeroSpecificPSRList(MovePath md, boolean stringResult) {
         StringBuffer nagReport = new StringBuffer();
-        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
+        List<TargetRoll> psrList = new ArrayList<>();
 
         final Entity entity = md.getEntity();
         final Game game = entity.getGame();
@@ -115,7 +115,7 @@ public class SharedUtility {
 
             //check for vertical takeoff
             if (step.getType() == MoveStepType.VTAKEOFF) {
-                rollTarget = ((IAero)entity).checkVerticalTakeOff();
+                rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -249,7 +249,7 @@ public class SharedUtility {
             //check for vertical takeoff
             if ((step.getType() == MoveStepType.VTAKEOFF)
                     && entity.isAero()) {
-                rollTarget = ((IAero)entity).checkVerticalTakeOff();
+                rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -424,7 +424,7 @@ public class SharedUtility {
             boolean vehicleAffectedByCliff = entity instanceof Tank 
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
-                    && ((QuadVee)entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+                    && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
             boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
@@ -519,7 +519,7 @@ public class SharedUtility {
                         && (entity instanceof VTOL)
                         && (md.getFinalElevation() > 0)
                         && (targ instanceof Infantry)
-                        && (((Entity)targ).getJumpMP() < 1)
+                        && (((Entity) targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
                     rollTarget = Server.getEjectModifiers(game, (Entity) targ, 0,
                             false, entity.getPosition(), "zip lining");
@@ -591,7 +591,7 @@ public class SharedUtility {
             }
             int waterLevel = hex.terrainLevel(Terrains.WATER);
             if (hex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
-                if(!(entity instanceof Infantry)) {
+                if (!(entity instanceof Infantry)) {
                     nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
                 }
             } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
@@ -669,16 +669,15 @@ public class SharedUtility {
      * thrust.
      */
     public static String doThrustCheck(MovePath md, Client client) {
-
         StringBuffer nagReport = new StringBuffer();
-        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
+        List<TargetRoll> psrList = new ArrayList<>();
 
-        if(client.getGame().useVectorMove()) {
+        if (client.getGame().useVectorMove()) {
             return nagReport.toString();
         }
 
         final Entity entity = md.getEntity();
-        if(!entity.isAero()) {
+        if (!entity.isAero()) {
             return nagReport.toString();
         }
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
@@ -772,7 +771,7 @@ public class SharedUtility {
             while (vel > 0) {
                 int steps = 1;
                 //if moving on the ground map, then 16 hexes forward
-                if(game.getBoard().onGround()) {
+                if (game.getBoard().onGround()) {
                     steps = 16;
                 }
                 while(steps > 0 &&
@@ -782,7 +781,7 @@ public class SharedUtility {
                 }
                 if (!game.getBoard().contains(md.getFinalCoords())) {
                     md.removeLastStep();
-                    if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
                         //Telemissiles shouldn't get a return option
                         if (entity instanceof TeleMissile) {
                             md.addStep(MoveStepType.OFF);
@@ -797,20 +796,20 @@ public class SharedUtility {
                 if (a.isRandomMove()) {
                     int roll = Compute.d6(1);
                     switch (roll) {
-                    case 1:
-                        md.addStep(MoveStepType.TURN_LEFT);
-                        md.addStep(MoveStepType.TURN_LEFT);
-                        break;
-                    case 2:
-                        md.addStep(MoveStepType.TURN_LEFT);
-                        break;
-                    case 5:
-                        md.addStep(MoveStepType.TURN_RIGHT);
-                        break;
-                    case 6:
-                        md.addStep(MoveStepType.TURN_RIGHT);
-                        md.addStep(MoveStepType.TURN_RIGHT);
-                        break;
+                        case 1:
+                            md.addStep(MoveStepType.TURN_LEFT);
+                            md.addStep(MoveStepType.TURN_LEFT);
+                            break;
+                        case 2:
+                            md.addStep(MoveStepType.TURN_LEFT);
+                            break;
+                        case 5:
+                            md.addStep(MoveStepType.TURN_RIGHT);
+                            break;
+                        case 6:
+                            md.addStep(MoveStepType.TURN_RIGHT);
+                            md.addStep(MoveStepType.TURN_RIGHT);
+                            break;
                     }
                 }
                 vel--;
@@ -898,7 +897,7 @@ public class SharedUtility {
                 // for purposes of bombing
                 en.addPassedThrough(right);
                 en.addPassedThrough(left);
-                if(client !=  null) {
+                if (client !=  null) {
                     client.sendUpdateEntity(en);
                 }
 
@@ -911,8 +910,8 @@ public class SharedUtility {
                 }
             }
 
-            if(!game.getBoard().contains(c)) {
-                if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
+            if (!game.getBoard().contains(c)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
                     //Telemissiles shouldn't get a return option
                     if (en instanceof TeleMissile) {
                         md.addStep(MoveStepType.OFF);

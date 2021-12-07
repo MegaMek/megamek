@@ -2089,8 +2089,7 @@ public class Compute {
     private static boolean isFiringFromArmAlready(Game game, int weaponId,
                                                   final Entity attacker, int armLoc) {
         int torsoLoc = Mech.getInnerLocation(armLoc);
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             if (!(ea instanceof WeaponAttackAction)) {
                 continue;
@@ -2272,8 +2271,7 @@ public class Compute {
         boolean primaryInFrontArc = false;
         // Track # of targets, for secondary modifiers w/ multi-crew vehicles
         Set<Integer> targIds = new HashSet<>();
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
@@ -5542,8 +5540,7 @@ public class Compute {
         String reason = "Non Infantry not allowed to do AM attacks.";
         ToHitData toReturn = null;
         boolean alreadyPerformingOther = false;
-        for (Enumeration<EntityAction> actions = game.getActions(); actions
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
@@ -5640,8 +5637,7 @@ public class Compute {
         String reason = "Non Infantry not allowed to do AM attacks.";
 
         boolean alreadyPerformingOther = false;
-        for (Enumeration<EntityAction> actions = game.getActions(); actions
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;

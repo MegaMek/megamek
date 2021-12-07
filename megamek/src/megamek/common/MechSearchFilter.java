@@ -65,26 +65,21 @@ public class MechSearchFilter {
     }
 
     /**
-     * Deep copy constructor.  New instantiations of all state variables are
+     * Deep copy constructor. New instantiations of all state variables are
      * created.
      *
-     * @param sf  The <code>MechSearchFilter</code> to create a copy of.
+     * @param sf The <code>MechSearchFilter</code> to create a copy of.
      */
-    public MechSearchFilter(MechSearchFilter sf)
-    {
-
-        if (sf != null)
-        {
+    public MechSearchFilter(MechSearchFilter sf) {
+        if (sf != null) {
             isDisabled = sf.isDisabled;
             checkEquipment = sf.checkEquipment;
             equipmentCriteria = new ExpressionTree(sf.equipmentCriteria);
-        }
-        else{
+        } else {
             isDisabled = true;
             checkEquipment = false;
             equipmentCriteria = new ExpressionTree();
         }
-
     }
 
     /**

@@ -399,7 +399,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Load the file.  If there is an error, log it and return.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (IOException e) {
             e.printStackTrace();
@@ -428,7 +428,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Load the changed settings into the existing map settings object.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -1032,7 +1032,7 @@ public class TestBattleArmor extends TestEntity {
                 // Ammo mounted in a DWP doesn't get assigned a location
                 if ((m.getType() instanceof AmmoType) 
                         && (m.getLinkedBy() != null) 
-                        && m.getLinkedBy().isDWPMounted() ) {
+                        && m.getLinkedBy().isDWPMounted()) {
                     continue;
                 }
 

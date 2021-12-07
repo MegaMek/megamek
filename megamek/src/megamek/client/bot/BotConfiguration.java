@@ -23,7 +23,7 @@ public class BotConfiguration {
     static Properties BotProperties = new Properties();
 
     static {
-        try(InputStream is = new FileInputStream("mmconf/bot.properties")) { //$NON-NLS-1$
+        try (InputStream is = new FileInputStream("mmconf/bot.properties")) { //$NON-NLS-1$
             BotProperties.load(is);
         } catch (Exception e) {
             System.out

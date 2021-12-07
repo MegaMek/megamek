@@ -380,7 +380,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Cache the selected boards, so we can restore them
         ArrayList<String> selectedBoards = mapSettings.getBoardsSelectedVector();
         // Load the file.  If there is an error, log it and return.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (IOException e) {
             e.printStackTrace();
@@ -412,7 +412,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
 
         // Load the changed settings into the existing map settings object.
-        try(OutputStream os = new FileOutputStream(selectedFile)) {
+        try (OutputStream os = new FileOutputStream(selectedFile)) {
             mapSettings.save(os);
         } catch (Exception ex) {
             ex.printStackTrace();

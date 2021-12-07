@@ -102,7 +102,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         double talonMultiplier = 1;
-        if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ) {
+        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
             talonMultiplier += 0.5;
         }
 
@@ -244,7 +244,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        if ( ae.isHullDown() ) {
+        if (ae.isHullDown()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
 
@@ -287,7 +287,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
-        if ( ae.hasFunctionalLegAES() ) {
+        if (ae.hasFunctionalLegAES()) {
             toHit.addModifier(-1, "AES bonus");
         }
 

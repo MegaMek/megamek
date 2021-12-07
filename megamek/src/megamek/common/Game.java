@@ -3026,8 +3026,7 @@ public class Game implements Serializable {
         if (gameListeners == null) {
             gameListeners = new Vector<>();
         }
-        for (Enumeration<GameListener> e = gameListeners.elements(); e
-                .hasMoreElements(); ) {
+        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
             event.fireEvent(e.nextElement());
         }
     }

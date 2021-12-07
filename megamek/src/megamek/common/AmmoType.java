@@ -3360,8 +3360,7 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
 
         // cache types that share a launcher for loadout purposes
-        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
-                .hasMoreElements(); ) {
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
             EquipmentType et = e.nextElement();
             if (!(et instanceof AmmoType)) {
                 continue;
@@ -3369,7 +3368,7 @@ public class AmmoType extends EquipmentType {
             AmmoType at = (AmmoType) et;
             int nType = at.getAmmoType();
             if (m_vaMunitions[nType] == null) {
-                m_vaMunitions[nType] = new Vector<AmmoType>();
+                m_vaMunitions[nType] = new Vector<>();
             }
 
             m_vaMunitions[nType].addElement(at);

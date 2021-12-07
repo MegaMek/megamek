@@ -327,8 +327,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 EquipmentTableModel.COL_QTY);
         eqCol.setCellEditor(new DefaultCellEditor(cboQty));
         tblEquipment.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        equipmentSorter =
-                new TableRowSorter<>(equipmentModel);
+        equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
         column = null;
@@ -588,7 +587,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             } else if (tblWeapons.getSelectedRow() >= 0) {
                 tblEquipment.clearSelection();
             }
-        }else if (evt.getSource().equals(tblEquipment.getSelectionModel())) {
+        } else if (evt.getSource().equals(tblEquipment.getSelectionModel())) {
             if ((tblEquipment.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblWeapons.clearSelection();
                 btnAdd.setEnabled(true);
@@ -658,7 +657,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         } else if (ev.getSource().equals(btnCancel)) {
             isCanceled = true;
             setVisible(false);
-         }else if (ev.getSource().equals(cboUnitType)
+         } else if (ev.getSource().equals(cboUnitType)
                 || ev.getSource().equals(cboTechLevel)
                 || ev.getSource().equals(cboTechClass)) {
             filterTables();
@@ -1263,7 +1262,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             return;
         }
 
-        if  (evt.getComponent().equals(tblWeapons)) {
+        if (evt.getComponent().equals(tblWeapons)) {
             tblWeapons.keyTyped(evt);
         } else if (evt.getComponent().equals(tblEquipment)) {
             tblEquipment.keyTyped(evt);

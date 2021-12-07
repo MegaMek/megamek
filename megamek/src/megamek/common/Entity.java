@@ -2158,7 +2158,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 int minElev = 0;
                 // When over a bridge, limit downward movement. Can land on a bridge.
                 if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
-                        && (assumedElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) ) {
+                        && (assumedElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
                     minElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
                 }
                 // Cannot land on woods or water
@@ -6262,8 +6262,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return true;
         }
         for (Mounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_CASE)||(mounted.getType().hasFlag(MiscType.F_CASEP))
-                    ) {
+            if (mounted.getType().hasFlag(MiscType.F_CASE)||(mounted.getType().hasFlag(MiscType.F_CASEP))) {
                 return true;
             }
         }
@@ -6514,29 +6513,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 setArmor(IArmorState.ARMOR_DESTROYED, i, true);
                 setInternal(IArmorState.ARMOR_DESTROYED, i);
                 // destroy any Narc beacons
-                for (Iterator<NarcPod> iter = narcPods.iterator(); iter
-                        .hasNext(); ) {
+                for (Iterator<NarcPod> iter = narcPods.iterator(); iter.hasNext(); ) {
                     NarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
                 }
-                for (Iterator<INarcPod> iter = iNarcPods.iterator(); iter
-                        .hasNext(); ) {
+                for (Iterator<INarcPod> iter = iNarcPods.iterator(); iter.hasNext(); ) {
                     INarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
                 }
-                for (Iterator<NarcPod> iter = pendingNarcPods.iterator(); iter
-                        .hasNext(); ) {
+                for (Iterator<NarcPod> iter = pendingNarcPods.iterator(); iter.hasNext(); ) {
                     NarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
                 }
-                for (Iterator<INarcPod> iter = pendingINarcPods.iterator(); iter
-                        .hasNext(); ) {
+                for (Iterator<INarcPod> iter = pendingINarcPods.iterator(); iter.hasNext(); ) {
                     INarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
@@ -8191,7 +8186,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     return;
                 }
             }
-        }else if (choice == 2) {
+        } else if (choice == 2) {
             for (Bay nextbay : getTransportBays()) {
                 while (nextbay instanceof ASFBay) {
                     ((ASFBay) nextbay).recover(unit);
@@ -9378,7 +9373,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         str += " MP: " + getWalkMP();
-        if (getOriginalJumpMP() > 0 ) {
+        if (getOriginalJumpMP() > 0) {
             str += " Jump: " + getJumpMP();
         }
         str += " Owner: " + owner.getName() + " Armor: " + getTotalArmor()
@@ -10150,7 +10145,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
             //Surface to surface capital missiles count as artillery
-            if  (this.getAltitude() == 0
+            if (this.getAltitude() == 0
                     && wtype instanceof CapitalMissileWeapon) {
                 return true;
             }
@@ -13066,11 +13061,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void clearPartialRepairs() {
-        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements(); ) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
                 option.clearValue();
             }
@@ -13083,7 +13076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int countQuirks() {
         if ((null == game)
-            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
         }
 
@@ -13094,7 +13087,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 

@@ -139,7 +139,7 @@ public class QuadMech extends Mech {
             }
         }
 
-        if (!ignoremodulararmor && hasModularArmor() ) {
+        if (!ignoremodulararmor && hasModularArmor()) {
             wmp--;
         }
 
@@ -918,9 +918,9 @@ public class QuadMech extends Mech {
             return false;
         }
         //check the locations
-        int locations[] = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
+        int[] locations = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
         int badLocs = 0;
-        for ( int loc = locations.length -1; loc >= 0; loc-- ) {
+        for ( int loc = locations.length -1; loc >= 0; loc--) {
             if ( isLocationBad(locations[loc]) || isLocationDoomed(locations[loc])) {
                 badLocs++;
             }

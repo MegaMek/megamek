@@ -521,7 +521,7 @@ public class Princess extends BotClient {
      * @return The first valid deployment coordinates.
      */
     private Coords calculateAdvancedAerospaceDeploymentCoords(final Entity deployedUnit,
-                                                                    final List<Coords> possibleDeployCoords) {
+                                                              final List<Coords> possibleDeployCoords) {
         for (Coords coords : possibleDeployCoords) {
             if (!NewtonianAerospacePathRanker.willFlyOffBoard(deployedUnit, coords)) {
                 return coords;
@@ -661,7 +661,7 @@ public class Princess extends BotClient {
                         damageMap.put(targetId, newDamage);
                         
                         if (shot.getUpdatedFiringMode() != null) {
-                        	super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
+                            super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
                         }
                     }
     
@@ -677,9 +677,9 @@ public class Princess extends BotClient {
                     actions.addAll(plan.getEntityActionVector());
                     
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
-                	if (spotAction != null) {
-                		actions.add(spotAction);
-                	}
+                    if (spotAction != null) {
+                        actions.add(spotAction);
+                    }
                     
                     sendAttackData(shooter.getId(), actions);
                     return;
@@ -696,12 +696,12 @@ public class Princess extends BotClient {
                 // if we didn't produce an "unjam weapon" plan, consider spotting and lighting
                 // things up with a searchlight
                 if (miscPlan.size() == 0) {
-                	EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
-                	if (spotAction != null) {
-                	    miscPlan.add(spotAction);
-                	}
-                	
-                	SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
+                    EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
+                    if (spotAction != null) {
+                        miscPlan.add(spotAction);
+                    }
+
+                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
                     if (searchLightAction != null) {
                         miscPlan.add(searchLightAction);
                     }
@@ -949,19 +949,19 @@ public class Princess extends BotClient {
      * Gets an entity eligible to fire from a list contained in the fire control state.
      */
     Entity getEntityToFire(FireControlState fireControlState) {
-    	if (fireControlState.getOrderedFiringEntities().size() == 0) {
-    		initFiringEntities(fireControlState);
-    	}
-    	
-    	//if, even after initializing entities, we have no valid entities
-    	//we'll let the game determine 
-    	if (fireControlState.getOrderedFiringEntities().size() == 0) {
-    	    return game.getFirstEntity(getMyTurn());
-    	}
-    	
-    	Entity entityToReturn = fireControlState.getOrderedFiringEntities().getFirst();
-    	fireControlState.getOrderedFiringEntities().removeFirst();
-    	return entityToReturn;
+        if (fireControlState.getOrderedFiringEntities().size() == 0) {
+            initFiringEntities(fireControlState);
+        }
+
+        //if, even after initializing entities, we have no valid entities
+        //we'll let the game determine
+        if (fireControlState.getOrderedFiringEntities().size() == 0) {
+            return game.getFirstEntity(getMyTurn());
+        }
+
+        Entity entityToReturn = fireControlState.getOrderedFiringEntities().getFirst();
+        fireControlState.getOrderedFiringEntities().removeFirst();
+        return entityToReturn;
     }
     
     /**
@@ -969,21 +969,21 @@ public class Princess extends BotClient {
      * entities that cannot, so that IDF units go after spotting units.
      */
     private void initFiringEntities(FireControlState fireControlState) {
-    	List<Entity> myEntities = game.getPlayerEntities(this.getLocalPlayer(), true);
-    	fireControlState.clearOrderedFiringEntities();
-    	
-    	for (Entity entity : myEntities) {
-    	    // if you can't fire, you can't fire.
-    		if (!getMyTurn().isValidEntity(entity, game)) {
-    			continue;
-    		}
-    		
-    		if (getFireControl(entity).entityCanIndirectFireMissile(fireControlState, entity)) {
-    			fireControlState.getOrderedFiringEntities().addLast(entity);
-    		} else {
-    			fireControlState.getOrderedFiringEntities().addFirst(entity);
-    		}
-    	}
+        List<Entity> myEntities = game.getPlayerEntities(this.getLocalPlayer(), true);
+        fireControlState.clearOrderedFiringEntities();
+
+        for (Entity entity : myEntities) {
+            // if you can't fire, you can't fire.
+            if (!getMyTurn().isValidEntity(entity, game)) {
+                continue;
+            }
+
+            if (getFireControl(entity).entityCanIndirectFireMissile(fireControlState, entity)) {
+                fireControlState.getOrderedFiringEntities().addLast(entity);
+            } else {
+                fireControlState.getOrderedFiringEntities().addFirst(entity);
+            }
+        }
     }
     
     /**
@@ -1877,16 +1877,16 @@ public class Princess extends BotClient {
      */
     public int getSpinupThreshold() {
         if (spinupThreshold == null) {
-    	// we start spinning up the cannon at 11+ TN at highest aggression levels
+        // we start spinning up the cannon at 11+ TN at highest aggression levels
         // dropping it down to 6+ TN at the lower aggression levels
-        	spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+            spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
         }
         
         return spinupThreshold;
     }
     
     public void resetSpinupThreshold() {
-    	spinupThreshold = null;
+        spinupThreshold = null;
     }
 
     @Override

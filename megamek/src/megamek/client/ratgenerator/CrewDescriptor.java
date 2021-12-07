@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
@@ -196,19 +196,19 @@ public class CrewDescriptor {
     }
 
     /*
-	public void assignBloodname() {
-		final int[] ratingMods = {-3, -2, -1, 1, 4};
-		int mod = 0;
-		if (assignment.getRatingLevel() >= 0) {
-			mod = ratingMods[assignment.getRatingLevel()];
-		}
-		if (assignment.getFaction().equals("BAN")) {
-			mod -= 2;
-		}
+    public void assignBloodname() {
+        final int[] ratingMods = {-3, -2, -1, 1, 4};
+        int mod = 0;
+        if (assignment.getRatingLevel() >= 0) {
+            mod = ratingMods[assignment.getRatingLevel()];
+        }
+        if (assignment.getFaction().equals("BAN")) {
+            mod -= 2;
+        }
 
-		int type = Bloodname.P_GENERAL;
-		if (assignment.isElement()) {
-			switch (assignment.getUnitType()) {
+        int type = Bloodname.P_GENERAL;
+        if (assignment.isElement()) {
+            switch (assignment.getUnitType()) {
                 case "Mek":
                     type = Bloodname.P_MECHWARRIOR;
                     break;
@@ -241,23 +241,23 @@ public class CrewDescriptor {
                 case "VTOL":
                 case "Jumpship":
                     return;
-			}
-		}
-		int roll = Compute.d6(2) + mod -
-				getGunnery() -
-				getPiloting();
-		if (assignment.getYear() <= 2950) roll++;
-		if (assignment.getYear() > 3055) roll--;
-		if (assignment.getYear() > 3065) roll--;
-		if (assignment.getYear() > 3080) roll--;
-		if (getRank() >= 30) {
-			roll += getRank() - 30;
-		}
-		if (roll >= 6) {
-			setBloodname(Bloodname.randomBloodname(assignment.getFaction().split("\\.")[0],
-					type, assignment.getYear()));
-		}
-	}
+            }
+        }
+        int roll = Compute.d6(2) + mod -
+                getGunnery() -
+                getPiloting();
+        if (assignment.getYear() <= 2950) roll++;
+        if (assignment.getYear() > 3055) roll--;
+        if (assignment.getYear() > 3065) roll--;
+        if (assignment.getYear() > 3080) roll--;
+        if (getRank() >= 30) {
+            roll += getRank() - 30;
+        }
+        if (roll >= 6) {
+            setBloodname(Bloodname.randomBloodname(assignment.getFaction().split("\\.")[0],
+                    type, assignment.getYear()));
+        }
+    }
      */
     public String getName() {
         return name;

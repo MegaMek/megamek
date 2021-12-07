@@ -225,13 +225,11 @@ public class TeamOverviewPanel extends JPanel {
                                 || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
                                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                                || (!entity.isDesignValid())
-                                ) {
+                                || (!entity.isDesignValid())) {
                             unitCritical[classIndex(entity)] = true;
                         }
                         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                                || ((entity.getC3Master() == null) && entity.hasC3S())
-                                ) {
+                                || ((entity.getC3Master() == null) && entity.hasC3S())) {
                             unitWarnings[classIndex(entity)] = true;
                         }
                         if (entity.isHidden()) {

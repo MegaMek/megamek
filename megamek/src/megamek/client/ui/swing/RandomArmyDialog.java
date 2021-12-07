@@ -2,15 +2,15 @@
  * MegaMek -
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -64,8 +64,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private MechSearchFilter searchFilter;
 
-    private JLabel m_labelPlayer = new JLabel(Messages
-            .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT);
+    private JLabel m_labelPlayer = new JLabel(Messages.getString("RandomArmyDialog.Player"), SwingConstants.RIGHT);
 
     private JComboBox<String> m_chPlayer = new JComboBox<>();
     private JComboBox<String> m_chType = new JComboBox<>();
@@ -397,11 +396,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_lRAT.setIntercellSpacing(new Dimension(5, 0));
         m_lRAT.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         for (int i = 0; i < ratModel.getColumnCount(); i++) {
-        	m_lRAT.getColumnModel().getColumn(i).setPreferredWidth(ratModel.getPreferredWidth(i));
+            m_lRAT.getColumnModel().getColumn(i).setPreferredWidth(ratModel.getPreferredWidth(i));
         }
-		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
-		m_lRAT.getColumnModel().getColumn(RATTableModel.COL_BV).setCellRenderer(rightRenderer);
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        m_lRAT.getColumnModel().getColumn(RATTableModel.COL_BV).setCellRenderer(rightRenderer);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
@@ -621,12 +620,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else if (m_pMain.getSelectedIndex() == TAB_RAT_GENERATOR) {
-                	int units = m_pRATGenOptions.getNumUnits();
-                	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
-                		unitsModel.setData(generatedRAT.generateUnits(units));
-                	}
-                	//generateUnits removes salvage entries that have no units meeting criteria
-                	ratModel.refreshData();
+                    int units = m_pRATGenOptions.getNumUnits();
+                    if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
+                        unitsModel.setData(generatedRAT.generateUnits(units));
+                    }
+                    //generateUnits removes salvage entries that have no units meeting criteria
+                    ratModel.refreshData();
                 } else if (m_pMain.getSelectedIndex() == TAB_FORMATION_BUILDER) {
                     ArrayList<MechSummary> unitList = new ArrayList<>();
                     FactionRecord fRec = m_pFormationOptions.getFaction();
@@ -728,12 +727,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         } else if (ev.getSource().equals(m_bGenerate)) {
-        	generateRAT();
+            generateRAT();
         } else if (ev.getSource().equals(m_bAddToForce)) {
             for (int sel : m_lRAT.getSelectedRows()) {
                 MechSummary ms = generatedRAT.getMechSummary(sel);
                 if (ms != null) {
-                	armyModel.addUnit(ms);
+                    armyModel.addUnit(ms);
                 }
             }
         } else if (ev.getSource().equals(rug)) {
@@ -761,7 +760,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     };
     
-	private void updatePlayerChoice() {
+    private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
         String clientName = m_clientgui.getClient().getName();
         m_chPlayer.removeAllItems();
@@ -866,7 +865,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         // If equal, go down the branch
         if (currNode.equals(nodes[depth].trim())) {
             // If at end, return match
-            if (depth == nodes.length-1) {
+            if (depth == nodes.length - 1) {
                 return parent;
             }
 
@@ -889,17 +888,17 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     
     @SuppressWarnings("unchecked")
     private void generateRAT() {
-    	FactionRecord fRec = m_pRATGenOptions.getFaction();
-    	if (fRec != null) {
-			generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
-			        m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
-			        (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
-					m_pRATGenOptions.getIntegerOption("networkMask"),
-					(List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
-					(List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
-					m_pRATGenOptions.getIntegerOption("roleStrictness"));
-			ratModel.refreshData();
-    	}
+        FactionRecord fRec = m_pRATGenOptions.getFaction();
+        if (fRec != null) {
+            generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
+                    m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
+                    (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
+                    m_pRATGenOptions.getIntegerOption("networkMask"),
+                    (List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
+                    (List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
+                    m_pRATGenOptions.getIntegerOption("roleStrictness"));
+            ratModel.refreshData();
+        }
     }
 
     @Override
@@ -1033,19 +1032,19 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     public class RATTableModel extends AbstractTableModel {
 
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 7807207311532173654L;
-		
-		private static final int COL_WEIGHT = 0;
+         *
+         */
+        private static final long serialVersionUID = 7807207311532173654L;
+
+        private static final int COL_WEIGHT = 0;
         private static final int COL_UNIT = 1;
         private static final int COL_BV = 2;
         private static final int N_COL = 3;
 
         public int getRowCount() {
-        	if (generatedRAT == null) {
-        		return 0;
-        	}
+            if (generatedRAT == null) {
+                return 0;
+            }
             return generatedRAT.getNumEntries();
         }
 
@@ -1058,7 +1057,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
         
         public int getPreferredWidth(int col) {
-        	switch (col) {
+            switch (col) {
                 case COL_WEIGHT:
                     return 12;
                 case COL_UNIT:
@@ -1067,7 +1066,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     return 18;
                 default:
                     return 0;
-        	}
+            }
         }
         
         @Override
@@ -1094,8 +1093,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
 
         public Object getValueAt(int row, int col) {
-        	if (generatedRAT != null) {
-		    	switch (col) {
+            if (generatedRAT != null) {
+                switch (col) {
                     case COL_WEIGHT:
                         return generatedRAT.getEntryWeight(row);
                     case COL_UNIT:
@@ -1105,9 +1104,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         if (bv > 0) {
                             return String.valueOf(bv);
                         }
-		    	}
-        	}
-		   	return "";
+                }
+            }
+            return "";
         }
     }
 }

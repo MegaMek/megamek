@@ -289,7 +289,7 @@ class FovHighlightingAndDarkening {
             }
         }
 
-        for (String rcr: dRingsColorsRaw ) {
+        for (String rcr: dRingsColorsRaw) {
             try {
                 String[] hsbr = rcr.trim().split("\\s+");
                 float h = Float.parseFloat( hsbr[0] );

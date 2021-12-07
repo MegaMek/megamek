@@ -2,17 +2,16 @@
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
@@ -134,9 +133,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
-                    addChatMessage("Megamek: " + e.toString());
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                    addChatMessage("MegaMek: " + e.toString());
                 }
             }
         });
@@ -717,15 +715,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             if (hasTransferableText) {
                 try {
                     addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
-                  }
-                  catch (UnsupportedFlavorException ex) {
-                    //highly unlikely since we are using a standard DataFlavor
+                  } catch (UnsupportedFlavorException | IOException ex) {
                     System.out.println(ex);
                     ex.printStackTrace();
-                  }
-                  catch (IOException ex) {
-                      System.out.println(ex);
-                      ex.printStackTrace();
                   }
             }            
             return;

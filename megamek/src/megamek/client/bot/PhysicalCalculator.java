@@ -184,8 +184,7 @@ public final class PhysicalCalculator {
                 pod_ranking = 0.0;
                 Iterator<INarcPod> pod_list = entity.getINarcPodsAttached();
                 best_pod = pod_list.next();
-                for (pod_list = entity.getINarcPodsAttached(); pod_list
-                        .hasNext(); ) {
+                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasNext(); ) {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM

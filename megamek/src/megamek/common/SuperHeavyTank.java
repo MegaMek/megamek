@@ -482,7 +482,7 @@ public class SuperHeavyTank extends Tank {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 4;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 5;
         } else {
             return 6;

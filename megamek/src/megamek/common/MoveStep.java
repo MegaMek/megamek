@@ -16,10 +16,6 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
-/*
- * Created on Aug 28, 2003
- */
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
@@ -38,11 +34,9 @@ import java.util.Vector;
  * A single step in the entity's movement.  Since the path planner uses shallow
  * copies of MovePaths, multiple paths may share the same MoveStep, so this
  * class needs to be agnostic of what path it belongs to.
+ * @since Aug 28, 2003
  */
 public class MoveStep implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -6075640793056182285L;
     private MoveStepType type = MoveStepType.NONE;
     private int targetId = Entity.NONE;
@@ -2033,7 +2027,7 @@ public class MoveStep implements Serializable {
 
             /*
              * TODO: better to disable this in movement display //don't let them
-             * evade more than once if (type == MoveStepType.EVADE ) {
+             * evade more than once if (type == MoveStepType.EVADE) {
              * if (isEvading) { return; } else { setEvading(true); } }
              */
 

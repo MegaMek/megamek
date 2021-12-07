@@ -894,7 +894,7 @@ public class SkinXMLHandler {
      */
     public synchronized static SkinSpecification getSkin(String component,
             boolean defaultToPlain, boolean isBtn) {
-        if (skinSpecs == null ) {
+        if (skinSpecs == null) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 // This will return a blank skin spec file, which will act like
@@ -934,7 +934,7 @@ public class SkinXMLHandler {
      * @param component
      */
     public synchronized static void addNewComp(String component) {
-        if (skinSpecs == null ) {
+        if (skinSpecs == null) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 return ;
@@ -945,7 +945,7 @@ public class SkinXMLHandler {
     }
 
     /**
-     * Remove the specified componenet from the SkinSpecs map.
+     * Remove the specified component from the SkinSpecs map.
      *
      * @param component
      */

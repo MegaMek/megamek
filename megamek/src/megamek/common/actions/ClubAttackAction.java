@@ -180,8 +180,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                  || mType.hasSubType(MiscType.S_ROCK_CUTTER)
                  || mType.hasSubType(MiscType.S_SPOT_WELDER)
                  || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType
-                .hasSubType(MiscType.S_COMBINE))
-            ) {
+                .hasSubType(MiscType.S_COMBINE))) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();

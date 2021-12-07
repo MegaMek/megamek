@@ -514,8 +514,7 @@ class LobbyMekPopup {
                         || (entity.hasC3i() != other.hasC3i())
                         || (entity.hasNavalC3() != other.hasNavalC3())
                         || (entity.hasNovaCEWS() != other.hasNovaCEWS())
-                        || !other.hasAnyC3System() || other.hasC3S()
-                        ) {
+                        || !other.hasAnyC3System() || other.hasC3S()) {
                     continue;
                 }
                 // maximum depth of a c3 network is 2 levels.

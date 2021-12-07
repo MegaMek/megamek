@@ -1,23 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * LosEffects.java
- *
- * Created on October 14, 2002, 11:19 PM
- */
-
 package megamek.common;
 
 import megamek.client.ui.Messages;
@@ -32,6 +25,7 @@ import java.util.List;
  * Keeps track of the cumulative effects of intervening terrain on LOS
  *
  * @author Ben
+ * @since October 14, 2002, 11:19 PM
  */
 public class LosEffects {
 
@@ -119,31 +113,31 @@ public class LosEffects {
     Building thruBldg = null;
     Coords targetLoc;
     /**
-     * Indicates if the primary cover is damagable.
+     * Indicates if the primary cover is damageable.
      */
     int damagableCoverTypePrimary   = DAMAGABLE_COVER_NONE;
     /**
-     * Indicates if the secondary cover is damagable
+     * Indicates if the secondary cover is damageable
      */   
     int damagableCoverTypeSecondary = DAMAGABLE_COVER_NONE;
     /**
-     * Keeps track of the building that provides cover.  This is used
-     * to assign damage for shots that hit cover.  The primary cover is used 
+     * Keeps track of the building that provides cover. This is used
+     * to assign damage for shots that hit cover. The primary cover is used
      * if there is a sole piece of cover (horizontal cover, 25% cover).
      * In the case of a primary and secondary, the primary cover protects the 
      * right side.
      */
     Building coverBuildingPrimary = null;
     /**
-     * Keeps track of the building that provides cover.  This is used
-     * to assign damage for shots that hit cover.  The secondary cover is used
+     * Keeps track of the building that provides cover. This is used
+     * to assign damage for shots that hit cover. The secondary cover is used
      * if there are two buildings that provide cover, like in the case of 75%
      * cover or two buildings providing 25% cover for a total of horizontal 
      * cover.  The secondary cover protects the left side.
      */
     Building coverBuildingSecondary = null;
     /**
-     * Keeps track of the grounded Dropship that provides cover.  This is
+     * Keeps track of the grounded DropShip that provides cover. This is
      * used to assign damage for shots that hit cover. The primary cover is used 
      * if there is a sole piece of cover (horizontal cover, 25% cover).
      * In the case of a primary and secondary, the primary cover protects the 
@@ -151,11 +145,11 @@ public class LosEffects {
      */
     Entity coverDropshipPrimary = null;
     /**
-     * Keeps track of the grounded Dropship that provides cover.  This is
+     * Keeps track of the grounded DropShip that provides cover. This is
      * used to assign damage for shots that hit cover. The secondary cover is used
      * if there are two buildings that provide cover, like in the case of 75%
      * cover or two buildings providing 25% cover for a total of horizontal 
-     * cover.  The secondary cover protects the left side.
+     * cover. The secondary cover protects the left side.
      */
     Entity coverDropshipSecondary = null;    
     /**
@@ -183,7 +177,7 @@ public class LosEffects {
     }
 
     public void add(LosEffects other) {
-        // We need to check if we should update damagable cover
+        // We need to check if we should update damageable cover
         //  We need to update cover if it's present, but we don't want to
         //  remove cover if no new cover is present
         //  this assumes that LoS is being drawn from attacker to target
@@ -598,7 +592,7 @@ public class LosEffects {
     public ToHitData losModifiers(Game game, int eistatus, boolean underwaterWeapon) {
         ToHitData modifiers = new ToHitData();
 
-        if ( arcedShot ) {
+        if (arcedShot) {
             return modifiers;
         }
 
@@ -1285,7 +1279,7 @@ public class LosEffects {
             if (los.blocked && partialCover) {
                 los.targetCover = COVER_FULL; 
                 potentialCover = true;
-            } else if  ((totalEl == ai.targetAbsHeight)
+            } else if ((totalEl == ai.targetAbsHeight)
                     && (ai.attackAbsHeight <= ai.targetAbsHeight)
                     && (ai.targetHeight > 0)) {
                 los.targetCover |= COVER_HORIZONTAL; 
@@ -1297,7 +1291,7 @@ public class LosEffects {
             if (los.blocked && partialCover) {
                 los.attackerCover = COVER_FULL; 
                 potentialCover = true;
-            } else if  ((totalEl == ai.attackAbsHeight)
+            } else if ((totalEl == ai.attackAbsHeight)
                     && (ai.attackAbsHeight >= ai.targetAbsHeight)
                     && (ai.attackHeight > 0)) {
                 los.attackerCover |= COVER_HORIZONTAL; 
@@ -1305,18 +1299,17 @@ public class LosEffects {
             }
         }    
         
-        //If there's a partial cover situation, we may need to keep track of 
-        // damagable assets that are providing cover, so we can damage them if
+        // If there's a partial cover situation, we may need to keep track of
+        // damageable assets that are providing cover, so we can damage them if
         // they block a shot.
         if (potentialCover) {
             if (coveredByDropship) {
                 los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_DROPSHIP);
                 los.coverDropshipPrimary = coveringDropship;
-            }else if (bldg != null) {
+            } else if (bldg != null) {
                 los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_BUILDING);
                 los.coverBuildingPrimary = bldg;                    
-            }
-            else {
+            } else {
                 los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_NONE);
             }
             los.coverLocPrimary = coords;
@@ -1326,14 +1319,14 @@ public class LosEffects {
     }
 
     public static boolean hasFireBetween(Coords start, Coords end, Game game) {
-
         ArrayList<Coords> in = Coords.intervening(start, end);
-        for ( Coords hex : in ) {
+        for (Coords hex : in) {
             // ignore off-board hexes
             if (!game.getBoard().contains(hex)) {
                 continue;
             }
-            if ( game.getBoard().getHex(hex).containsTerrain(Terrains.FIRE) ) {
+
+            if (game.getBoard().getHex(hex).containsTerrain(Terrains.FIRE)) {
                 return true;
             }
         }
@@ -1346,13 +1339,13 @@ public class LosEffects {
 
     /**
      * Build line of sight effects between coordinates c1 and c2 at height h1
-     * and h2 respectivly.
+     * and h2 respectively.
      *
-     * @param c1 the source coordiantes.
+     * @param c1 the source coordinates.
      * @param c2 the target coordinates.
      * @param h1 the height in the source tile that is being shot from.
      * @param h2 the height of the target tile to shoot for.
-     * @return an attackInfo object that describes the apliable modifiers.
+     * @return an attackInfo object that describes the applicable modifiers.
      */
     public static LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
             int h2, int h1Floor, int h2Floor) {
@@ -1500,19 +1493,19 @@ public class LosEffects {
             case COVER_LOWLEFT:
                 if (switchSides) {
                     return Messages.getString("LosEffects.name_cover_lowright");
-                } else{
+                } else {
                     return Messages.getString("LosEffects.name_cover_lowleft");
                 }
             case COVER_LOWRIGHT:
                 if (switchSides) {
                     return Messages.getString("LosEffects.name_cover_lowleft");
-                } else{
+                } else {
                     return Messages.getString("LosEffects.name_cover_lowright");
                 }
             case COVER_LEFT:
                 if (switchSides) {
                     return Messages.getString("LosEffects.name_cover_right");
-                } else{
+                } else {
                     return Messages.getString("LosEffects.name_cover_left");
                 }
             case COVER_RIGHT:

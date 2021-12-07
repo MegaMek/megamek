@@ -443,7 +443,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() ) {
+        if (GUIPreferences.getInstance().getFocus()) {
             curPanel.requestFocus();
         }
     }

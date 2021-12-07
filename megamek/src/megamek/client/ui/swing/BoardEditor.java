@@ -1865,7 +1865,7 @@ public class BoardEditor extends JPanel
             if (newTheme != null) {
                 choTheme.setSelectedItem(newTheme);
             }
-        } else if (ae.getSource().equals(choTheme) ) { 
+        } else if (ae.getSource().equals(choTheme)) {
             curHex.setTheme((String) choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {

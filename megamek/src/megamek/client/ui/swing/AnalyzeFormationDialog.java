@@ -1,6 +1,3 @@
-/**
- * 
- */
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -46,7 +43,6 @@ import megamek.common.UnitRoleHandler;
  * as well.  
  * 
  * @author Neoancient
- *
  */
 public class AnalyzeFormationDialog extends JDialog {
 

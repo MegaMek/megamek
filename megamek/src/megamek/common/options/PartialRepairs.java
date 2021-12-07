@@ -90,8 +90,7 @@ public class PartialRepairs extends AbstractOptions {
                      || quirk.getName().equals("mech_sensors_2_crit") 
                      || quirk.getName().equals("mech_engine_replace") 
                      || quirk.getName().equals("mech_gyro_replace") 
-                     || quirk.getName().equals("sensors_1_crit") 
-                      ) { 
+                     || quirk.getName().equals("sensors_1_crit")) {
                  return true; 
             } 
             return false; 

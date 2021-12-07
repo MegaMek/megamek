@@ -1608,9 +1608,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 AmmoType ammoType = (AmmoType) getLinked().getType();
                 if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                     return 10;
-                }else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                     return 15;
-                } else { // AmmoType.F_AR10_KILLER_WHALTE
+                } else { // AmmoType.F_AR10_KILLER_WHALE
                     return 20;
                 }
             }

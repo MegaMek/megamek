@@ -1067,11 +1067,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOV_HIGHLIGHT_ALPHA,i);
     }
 
-    public void setFovHighlightRingsRadii( String s ) {
+    public void setFovHighlightRingsRadii(String s) {
         store.setValue(FOV_HIGHLIGHT_RINGS_RADII, s);
     }
 
-    public void setFovHighlightRingsColorsHsb( String s ) {
+    public void setFovHighlightRingsColorsHsb(String s) {
         store.setValue(FOV_HIGHLIGHT_RINGS_COLORS_HSB, s);
     }
 

@@ -2553,8 +2553,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // AO Hex Shadow in this hex when a higher one is adjacent
-        if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS)
-               ) {
+        if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS)) {
             for (int dir : allDirections) {
                 Shape ShadowShape = getElevationShadowArea(c, dir);
                 GradientPaint gpl = getElevationShadowGP(c, dir);
@@ -4334,15 +4333,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public void refreshAttacks() {
         clearAllAttacks();
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             if (ea instanceof AttackAction) {
                 addAttack((AttackAction) ea);
             }
         }
-        for (Enumeration<AttackAction> i = game.getCharges(); i
-                .hasMoreElements(); ) {
+
+        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             if (ea instanceof PhysicalAttackAction) {
                 addAttack((AttackAction) ea);
@@ -4356,7 +4354,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (Entity e : game.getEntitiesVector()) {
             if (e.getPosition() != null) {
                 movementSprites.add(new MovementSprite(this, e, e.getVectors(),
-                                                       Color.gray, false));
+                        Color.gray, false));
             }
         }
     }
@@ -4372,7 +4370,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             .getFinalVectors(), col, true));
                 } else {
                     movementSprites.add(new MovementSprite(this, e, e.getVectors(),
-                                                           col, false));
+                            col, false));
                 }
             }
         }
@@ -5967,10 +5965,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
-        ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
+        ArrayList<ArtilleryAttackAction> v = new ArrayList<>();
         
-        for (Enumeration<ArtilleryAttackAction> attacks = game
-                .getArtilleryAttacks(); attacks.hasMoreElements(); ) {
+        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
             Targetable target = a.getTarget(game);
 

@@ -1013,7 +1013,7 @@ public class PlanetaryConditions implements Serializable {
         }
         if ((oldWeatherConditions == WE_SLEET)
                 && (windStrength == WI_MOD_GALE)
-                && !isSleeting() ) {
+                && !isSleeting()) {
             setSleet(true);
             temperature = oldTemperature;
             oldWeatherConditions = WE_NONE;

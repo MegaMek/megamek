@@ -53,7 +53,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        if ( ae.getGrappled() != Entity.NONE ) {
+        if (ae.getGrappled() != Entity.NONE) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
@@ -153,9 +153,7 @@ public class TripAttackAction extends PhysicalAttackAction {
                 }
                 limb1 = Mech.LOC_LARM;
             }
-        }
-        // normal attack uses both legs
-        else if (usedWeapons[Mech.LOC_RLEG]) {
+        } else if (usedWeapons[Mech.LOC_RLEG]) { // normal attack uses both legs
             if (usedWeapons[Mech.LOC_LLEG]) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
             }
@@ -171,7 +169,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // Get best leg
-        if ( ae instanceof QuadMech ) {
+        if (ae instanceof QuadMech) {
             if (limb1 == Entity.LOC_NONE) {
                 ToHitData left = TripAttackAction.getLimbModifier(Mech.LOC_LARM, ae);
                 ToHitData right = TripAttackAction.getLimbModifier(Mech.LOC_RARM, ae);
@@ -183,8 +181,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             } else {
                 toHit.append(TripAttackAction.getLimbModifier(limb1, ae));
             }
-        }
-        else if (limb1 == Entity.LOC_NONE) {
+        } else if (limb1 == Entity.LOC_NONE) {
             ToHitData left = TripAttackAction.getLimbModifier(Mech.LOC_LLEG, ae);
             ToHitData right = TripAttackAction.getLimbModifier(Mech.LOC_RLEG, ae);
             if (left.getValue() < right.getValue()) {

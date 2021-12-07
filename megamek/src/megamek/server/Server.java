@@ -479,8 +479,7 @@ public class Server implements Runnable {
         }
         // might need to restore weapon type for some attacks that take multiple
         // turns (like artillery)
-        for (Enumeration<AttackHandler> a = game.getAttacks(); a
-                .hasMoreElements(); ) {
+        for (Enumeration<AttackHandler> a = game.getAttacks(); a.hasMoreElements(); ) {
             AttackHandler handler = a.nextElement();
             if (handler instanceof WeaponHandler) {
                 ((WeaponHandler) handler).restore();
@@ -9506,7 +9505,7 @@ public class Server implements Runnable {
                 trainCoords.add(position);
             }
         }
-        for (Coords c : tractor.getPassedThrough() ) {
+        for (Coords c : tractor.getPassedThrough()) {
             if (!trainCoords.contains(c)) {
                 trainCoords.add(c);
             }
@@ -14266,8 +14265,7 @@ public class Server implements Runnable {
      */
     private void resolveOnlyWeaponAttacks() {
         // loop through received attack actions, getting attack handlers
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
@@ -14913,8 +14911,7 @@ public class Server implements Runnable {
         game.resetRams();
 
         // add any pending Tele Missile Attacks
-        for (Enumeration<AttackAction> i = game.getTeleMissileAttacks(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getTeleMissileAttacks(); i.hasMoreElements(); ) {
             game.addAction(i.nextElement());
         }
         game.resetTeleMissileAttacks();
@@ -14923,8 +14920,7 @@ public class Server implements Runnable {
         cleanupPhysicalAttacks();
 
         // loop thru received attack actions
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             Object o = i.nextElement();
             // verify that the attacker is still active
             AttackAction aa = (AttackAction) o;

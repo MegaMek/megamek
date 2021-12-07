@@ -1955,7 +1955,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
         }
-        try(OutputStream os = new FileOutputStream(selectedFile)) {
+        try (OutputStream os = new FileOutputStream(selectedFile)) {
             MapSetup.save(os, mapSettings);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
@@ -1984,7 +1984,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             JOptionPane.showMessageDialog(clientgui.frame, "File not found.");
             return;
         }
-        try(InputStream os = new FileInputStream(fc.getSelectedFile())) {
+        try (InputStream os = new FileInputStream(fc.getSelectedFile())) {
             MapSetup setup = MapSetup.load(os);
             mapSettings.setMapSize(setup.getMapWidth(), setup.getMapHeight());
             mapSettings.setBoardSize(setup.getBoardWidth(), setup.getBoardHeight());

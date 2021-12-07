@@ -3882,7 +3882,7 @@ public class Tank extends Entity {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 2;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 3;
         } else {
             return 4;

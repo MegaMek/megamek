@@ -371,7 +371,7 @@ class EntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
-        final IBoard board = bv.game.getBoard();
+        final Board board = bv.game.getBoard();
         final GUIPreferences guip = GUIPreferences.getInstance();
         // recalculate bounds & label
         getBounds();

@@ -3191,11 +3191,9 @@ public class Server implements Runnable {
      */
     public void applyBoardSettings() {
         mapSettings.chooseSurpriseBoards();
-        IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth()
-                * mapSettings.getMapHeight()];
+        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
-        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings
-                .getMapHeight()); i++) {
+        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
@@ -3210,13 +3208,12 @@ public class Server implements Runnable {
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
-                        + ".board").getFile());
+                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
             rotateBoard.add(isRotated);
         }
-        IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
+        Board newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
                 mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
                 mapSettings.getMapHeight(), sheetBoards, rotateBoard,
                 mapSettings.getMedium());

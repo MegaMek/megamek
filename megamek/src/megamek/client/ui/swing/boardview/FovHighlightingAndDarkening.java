@@ -337,7 +337,7 @@ class FovHighlightingAndDarkening {
          * change the getCachedLos method accordingly.
          */
         GUIPreferences guip = GUIPreferences.getInstance();
-        IBoard board = this.boardView1.game.getBoard();
+        Board board = this.boardView1.game.getBoard();
         Hex srcHex = board.getHex(src);
         if (srcHex == null) {
             MegaMek.getLogger().error("Cannot process line of sight effects with a null source hex.");

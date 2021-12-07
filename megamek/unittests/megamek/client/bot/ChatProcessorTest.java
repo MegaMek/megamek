@@ -191,7 +191,7 @@ public class ChatProcessorTest {
     public void testAdditionalPrincessCommands() {
         final ChatProcessor testChatProcessor = new ChatProcessor();
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
         Mockito.when(MOCK_GAME.getBoard()).thenReturn(mockBoard);
 

@@ -449,7 +449,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      */
     public void loadNeededImages(Game game) {
         loaded = false;
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         // pre-match all hexes with images, load hex images
         int width = board.getWidth();
         int height = board.getHeight();

@@ -391,7 +391,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Shortcut to game.board
      */
-    public IBoard getBoard() {
+    public Board getBoard() {
         return game.getBoard();
     }
 

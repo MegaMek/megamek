@@ -47,7 +47,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
     private final DefaultListModel<Coords> coordsListModel = new DefaultListModel<>();
     private final TipList<Coords> coordsList = new TipList<>(coordsListModel);
     private final ClientGUI clientGui;
-    private final IBoard board;
+    private final Board board;
 
     protected BotConfigTargetHexDialog(JFrame frame, @Nullable ClientGUI cg) {
         super(frame, "BotConfigTargetUnitDialog", "BotConfigDialog.bcthdTitle");

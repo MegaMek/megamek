@@ -12,7 +12,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -24,14 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.common.Building;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBoard;
-import megamek.common.Hex;
-import megamek.common.MiscType;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.util.BoardUtilities;
 
 /**
@@ -68,7 +60,7 @@ public class BoardClusterTracker {
          * of the entity. Mostly just movement mode, but some complications exist for tracked/wheeled vehicles.
          */
         public static MovementType getMovementType(Entity entity) {
-            switch(entity.getMovementMode()) {
+            switch (entity.getMovementMode()) {
                 case BIPED:
                 case TRIPOD:
                 case QUAD:
@@ -256,7 +248,7 @@ public class BoardClusterTracker {
             return clusters;
         }
         
-        IBoard board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard();
         int clusterID = 0;
         
         MovementType movementType = MovementType.getMovementType(entity);
@@ -362,7 +354,7 @@ public class BoardClusterTracker {
         // mechs can climb over buildings that won't collapse under them
         // the relative height comparison is handled elsewhere
         
-        IBoard board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard();
         Hex hex = board.getHex(coords);
         
         if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {
@@ -409,35 +401,35 @@ public class BoardClusterTracker {
         /**
          * Returns a set of coords in the current cluster that intersect the given board edge.
          */
-        public Set<Coords> getIntersectingHexes(CardinalEdge edge, IBoard board) {
+        public Set<Coords> getIntersectingHexes(CardinalEdge edge, Board board) {
             int xStart, xEnd, yStart, yEnd;
-            switch(edge) {
-            case NORTH:
-                xStart = 0;
-                xEnd = board.getWidth();
-                yStart = 0;
-                yEnd = 1;
-                break;
-            case SOUTH:
-                xStart = 0;
-                xEnd = board.getWidth();
-                yStart = board.getHeight() - 1;
-                yEnd = board.getHeight();
-                break;
-            case EAST:
-                xStart = board.getWidth() - 1;
-                xEnd = board.getWidth();
-                yStart = 0;
-                yEnd = board.getHeight();
-                break;
-            case WEST:
-                xStart = 0;
-                xEnd = 1;
-                yStart = 0;
-                yEnd = board.getHeight();
-                break;
-            default:
-                return null;
+            switch (edge) {
+                case NORTH:
+                    xStart = 0;
+                    xEnd = board.getWidth();
+                    yStart = 0;
+                    yEnd = 1;
+                    break;
+                case SOUTH:
+                    xStart = 0;
+                    xEnd = board.getWidth();
+                    yStart = board.getHeight() - 1;
+                    yEnd = board.getHeight();
+                    break;
+                case EAST:
+                    xStart = board.getWidth() - 1;
+                    xEnd = board.getWidth();
+                    yStart = 0;
+                    yEnd = board.getHeight();
+                    break;
+                case WEST:
+                    xStart = 0;
+                    xEnd = 1;
+                    yStart = 0;
+                    yEnd = board.getHeight();
+                    break;
+                default:
+                    return null;
             }
             
             return getIntersectingHexes(xStart, xEnd, yStart, yEnd);

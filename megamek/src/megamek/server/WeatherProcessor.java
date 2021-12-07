@@ -77,7 +77,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     }
 
     private void resolveWeather() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         PlanetaryConditions conditions = game.getPlanetaryConditions();

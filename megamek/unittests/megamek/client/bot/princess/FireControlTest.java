@@ -14,39 +14,7 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.BuildingTarget;
-import megamek.common.ConvFighter;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Terrain;
-import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
-import megamek.common.TargetRollModifier;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
@@ -159,7 +127,7 @@ public class FireControlTest {
 
     private GameOptions mockGameOptions;
     private Hex mockHex;
-    private IBoard mockBoard;
+    private Board mockBoard;
     private Game mockGame;
 
     private Princess mockPrincess;
@@ -223,7 +191,7 @@ public class FireControlTest {
 
         mockHex = Mockito.mock(Hex.class);
 
-        mockBoard = Mockito.mock(IBoard.class);
+        mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
 

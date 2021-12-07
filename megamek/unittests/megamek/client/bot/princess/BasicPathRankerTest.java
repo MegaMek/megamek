@@ -380,7 +380,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
         Mockito.when(mockPath.getStepVector()).thenReturn(new Vector<MoveStep>());
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
         final Coords boardCenter = Mockito.spy(new Coords(8, 8));
         Mockito.when(mockBoard.getCenter()).thenReturn(boardCenter);
@@ -1041,7 +1041,7 @@ public class BasicPathRankerTest {
 
         final List<Entity> friends = new ArrayList<>();
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
 
         final Game mockGame = Mockito.mock(Game.class);
@@ -1125,7 +1125,7 @@ public class BasicPathRankerTest {
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
         Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
 
-        final IBoard mockBoard = generateMockBoard();
+        final Board mockBoard = generateMockBoard();
         final Entity mockEnemy = generateMockEntity(10, 5);
         final MovePath mockPath = generateMockPath(10, 5, mockEnemy);
         final List<Entity> entities = new ArrayList<>();
@@ -1179,7 +1179,7 @@ public class BasicPathRankerTest {
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
         Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
        
-        final IBoard mockBoard = generateMockBoard();
+        final Board mockBoard = generateMockBoard();
         final MovePath mockPath = generateMockPath(10, 10, mockMe);
         final Entity mockEnemy = generateMockEntity(10, 15);
         final List<Entity> entities = new ArrayList<>();
@@ -1215,9 +1215,9 @@ public class BasicPathRankerTest {
         Assert.assertEquals(expected, actual, TOLERANCE);
     }
 
-    private IBoard generateMockBoard() {
+    private Board generateMockBoard() {
         // we'll be on a nice, empty, 20x20 board, not in space.
-        final IBoard mockBoard = Mockito.mock(Board.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         final Hex mockHex = new Hex();
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
@@ -1275,7 +1275,7 @@ public class BasicPathRankerTest {
      * @param entities
      * @return
      */ 
-    private Game generateMockGame(List<Entity> entities, IBoard mockBoard) {
+    private Game generateMockGame(List<Entity> entities, Board mockBoard) {
        
         final Game mockGame = Mockito.mock(Game.class);
         
@@ -1340,7 +1340,7 @@ public class BasicPathRankerTest {
 
         final Game mockGame = Mockito.mock(Game.class);
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockBoard.getHex(Mockito.eq(testFinalCoords))).thenReturn(mockFinalHex);
         Mockito.when(mockBoard.getHex(Mockito.eq(testCoordsOne))).thenReturn(mockHexOne);

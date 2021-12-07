@@ -24,18 +24,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Building;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Terrains;
 
 /**
  * Handles the generation of ground-based move paths that contain information relating to the destruction 
@@ -326,7 +316,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          */
         @Override
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
-            IBoard board = first.getGame().getBoard();
+            Board board = first.getGame().getBoard();
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
                     + ShortestPathFinder.getLevelDiff(first, destination, board, false)

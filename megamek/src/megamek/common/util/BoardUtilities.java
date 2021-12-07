@@ -45,9 +45,8 @@ public class BoardUtilities {
      * @param isRotated Flag that determines if any of the maps are rotated
      * @param medium Sets the medium the map is in (ie., ground, atmo, space)
      */
-    public static IBoard combine(int width, int height, int sheetWidth,
-            int sheetHeight, IBoard[] boards, List<Boolean> isRotated,
-            int medium) {
+    public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
+                                Board[] boards, List<Boolean> isRotated, int medium) {
 
         int resultWidth = width * sheetWidth;
         int resultHeight = height * sheetHeight;
@@ -58,7 +57,7 @@ public class BoardUtilities {
         // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
-                IBoard b = boards[i * sheetWidth + j];
+                Board b = boards[i * sheetWidth + j];
                 if ((b.getWidth() != width) || (b.getHeight() != height)) {
                     throw new IllegalArgumentException(
                             "board is the wrong size, expected " + width + "x"
@@ -75,7 +74,7 @@ public class BoardUtilities {
             }
         }
 
-        IBoard result = new Board();
+        Board result = new Board();
         result.setRoadsAutoExit(roadsAutoExit);
         // Initialize all hexes - buildings, exits, etc
         result.newData(resultWidth, resultHeight, resultData, null);
@@ -85,7 +84,7 @@ public class BoardUtilities {
             result.setSubBoardHeight(height);
             result.setSubBoardWidth(width);
             ListIterator<Boolean> flipIt = isRotated.listIterator();
-            for (IBoard b : boards) {
+            for (Board b : boards) {
                 boolean flip = flipIt.next();
                 result.addBackgroundPath(b.getBackgroundPath(), flip, flip);
             }
@@ -101,7 +100,7 @@ public class BoardUtilities {
      * Copies the data of another board into given array of Hexes, offset by the
      * specified x and y.
      */
-    protected static void copyBoardInto(Hex[] dest, int destWidth, int x, int y, IBoard copied) {
+    protected static void copyBoardInto(Hex[] dest, int destWidth, int x, int y, Board copied) {
         for (int i = 0; i < copied.getHeight(); i++) {
             for (int j = 0; j < copied.getWidth(); j++) {
                 dest[(i + y) * destWidth + j + x] = copied.getHex(j, i);
@@ -114,7 +113,7 @@ public class BoardUtilities {
      *
      * @param mapSettings The parameters for random board creation.
      */
-    public static IBoard generateRandom(MapSettings mapSettings) {
+    public static Board generateRandom(MapSettings mapSettings) {
         int[][] elevationMap = new int[mapSettings.getBoardWidth()][mapSettings.getBoardHeight()];
         double sizeScale = (double) (mapSettings.getBoardWidth() * mapSettings.getBoardHeight())
                 / ((double) (16 * 17));
@@ -137,7 +136,7 @@ public class BoardUtilities {
             }
         }
 
-        IBoard result = new Board(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(), nb);
+        Board result = new Board(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(), nb);
 
         if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             result.setType(Board.T_SPACE);
@@ -288,9 +287,8 @@ public class BoardUtilities {
         }
         count *= sizeScale;
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.PAVEMENT, 0, mapSettings
-                    .getMinPavementSize(), mapSettings.getMaxPavementSize(),
-                    reverseHex, true);
+            placeSomeTerrain(result, Terrains.PAVEMENT, 0, mapSettings.getMinPavementSize(),
+                    mapSettings.getMaxPavementSize(), reverseHex, true);
         }
 
         /* Add the ice */
@@ -300,9 +298,8 @@ public class BoardUtilities {
         }
         count *= sizeScale;
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.ICE, 0, mapSettings
-                    .getMinIceSize(), mapSettings.getMaxIceSize(), reverseHex,
-                    true);
+            placeSomeTerrain(result, Terrains.ICE, 0, mapSettings.getMinIceSize(),
+                    mapSettings.getMaxIceSize(), reverseHex, true);
         }
 
         /* Add the craters */
@@ -347,7 +344,7 @@ public class BoardUtilities {
         return result;
     }
 
-    private static void placeBuilding(IBoard board, BuildingTemplate building) {
+    private static void placeBuilding(Board board, BuildingTemplate building) {
         int type = building.getType();
         int cf = building.getCF();
         int height = building.getHeight();
@@ -389,9 +386,8 @@ public class BoardUtilities {
      * @param reverseHex
      * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
      */
-    protected static void placeSomeTerrain(IBoard board, int terrainType, int probMore,
-                                           int minHexes, int maxHexes, Map<Hex, Point> reverseHex,
-                                           boolean exclusive) {
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+                                           int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
@@ -405,8 +401,7 @@ public class BoardUtilities {
         if (!field.containsTerrain(terrainType)) {
             unUsed.add(field);
         } else {
-            findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
-                    reverseHex);
+            findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
 
         for (int i = 0; i < count; i++) {
@@ -464,7 +459,7 @@ public class BoardUtilities {
      * @param reverseHex
      * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
      */
-    protected static void placeFoliage(IBoard board, int terrainType, int probMore, int minHexes,
+    protected static void placeFoliage(Board board, int terrainType, int probMore, int minHexes,
                                        int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
@@ -518,7 +513,7 @@ public class BoardUtilities {
      *            in addition to all previously stored.
      * @param searchFrom The Hex where to start
      */
-    private static void findAllUnused(IBoard board, int terrainType, Set<Hex> alreadyUsed,
+    private static void findAllUnused(Board board, int terrainType, Set<Hex> alreadyUsed,
                                       Set<Hex> unUsed, Hex searchFrom, Map<Hex, Point> reverseHex) {
         Hex field;
         Set<Hex> notYetUsed = new HashSet<>();
@@ -536,8 +531,7 @@ public class BoardUtilities {
                 if ((newHex != null) && (!alreadyUsed.contains(newHex))
                         && (!notYetUsed.contains(newHex))
                         && (!unUsed.contains(newHex))) {
-                    ((newHex.containsTerrain(terrainType)) ? notYetUsed
-                            : unUsed).add(newHex);
+                    ((newHex.containsTerrain(terrainType)) ? notYetUsed : unUsed).add(newHex);
                 }
             }
             notYetUsed.remove(field);
@@ -548,9 +542,8 @@ public class BoardUtilities {
     /**
      * add a crater to the board
      */
-    public static void addCraters(IBoard board, int minRadius, int maxRadius, int minCraters,
+    public static void addCraters(Board board, int minRadius, int maxRadius, int minCraters,
                                   int maxCraters) {
-
         // Calculate number of craters to generate.
         int numberCraters = minCraters;
         if (maxCraters > minCraters) {
@@ -679,7 +672,7 @@ public class BoardUtilities {
      * river has an width of 1-3 hexes (everything else is no more a river). The
      * river goes from one border to another. Nor Params, no results.
      */
-    public static void addRiver(IBoard board, Map<Hex, Point> reverseHex) {
+    public static void addRiver(Board board, Map<Hex, Point> reverseHex) {
         int minElevation = Integer.MAX_VALUE;
         HashSet<Hex> riverHexes = new HashSet<>();
         Hex field;
@@ -782,8 +775,8 @@ public class BoardUtilities {
      * @param direction Direction to which the river hexes should be extended.
      * @return Hashset with the hexes from the side.
      */
-    private static Set<Hex> extendRiverToSide(IBoard board, Point hexloc, int width,
-                                                  int direction, Map<Hex, Point> reverseHex) {
+    private static Set<Hex> extendRiverToSide(Board board, Point hexloc, int width, int direction,
+                                              Map<Hex, Point> reverseHex) {
         Point current = new Point(hexloc);
         Set<Hex> result = new HashSet<>();
         Hex hex;
@@ -931,7 +924,7 @@ public class BoardUtilities {
         }
     }
 
-    private static boolean hexCouldBeCliff(IBoard board, Coords c) {
+    private static boolean hexCouldBeCliff(Board board, Coords c) {
         int elevation = board.getHex(c).getLevel();
         boolean higher = false;
         boolean lower = false;
@@ -953,7 +946,7 @@ public class BoardUtilities {
         return higher && lower && (count <= 3) && (count > 0);
     }
 
-    private static void findCliffNeighbours(IBoard board, Coords c, List<Coords> candidate,
+    private static void findCliffNeighbours(Board board, Coords c, List<Coords> candidate,
                                             Set<Coords> ignore) {
         candidate.add(c);
         ignore.add(c);
@@ -974,7 +967,7 @@ public class BoardUtilities {
         }
     }
 
-    protected static void addCliffs(IBoard board, int modifier) {
+    protected static void addCliffs(Board board, int modifier) {
         HashSet<Coords> ignore = new HashSet<>(); // previously considered hexes
         ArrayList<Coords> candidate = new ArrayList<>();
         for (int x = 0; x < board.getWidth(); x++) {
@@ -1012,7 +1005,7 @@ public class BoardUtilities {
     /*
      * adjust the board based on weather conditions
      */
-    public static void addWeatherConditions(IBoard board, int weatherCond, int windCond) {
+    public static void addWeatherConditions(Board board, int weatherCond, int windCond) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
@@ -1169,8 +1162,8 @@ public class BoardUtilities {
         }
     }
 
-    public static void generateMountain(IBoard board, int width, Coords centre,
-            int height, int capStyle) {
+    public static void generateMountain(Board board, int width, Coords centre, int height,
+                                        int capStyle) {
         final int mapW = board.getWidth();
         final int mapH = board.getHeight();
 
@@ -1243,7 +1236,7 @@ public class BoardUtilities {
      * @param vert - a <code>boolean</code> value that, if <code>true</code>,
      *            indicates that the board is being flipped East-for-West.
      */
-    public static void flip(IBoard board, boolean horiz, boolean vert) {
+    public static void flip(Board board, boolean horiz, boolean vert) {
         // If we're not flipping around *some* axis, do nothing.
         if (!vert && !horiz) {
             return;
@@ -1459,8 +1452,7 @@ public class BoardUtilities {
             }
         }
         for (int i = steps; i > 0; i--) {
-            midPointStep((double) hilliness / 100, size, 100, tmpElevation, i,
-                    true);
+            midPointStep((double) hilliness / 100, size, 100, tmpElevation, i, true);
         }
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
@@ -1606,7 +1598,7 @@ public class BoardUtilities {
      * @return the Board.START_ constant representing the "opposite" edge
      */
     public static CardinalEdge determineOppositeEdge(Entity entity) {
-        IBoard board = entity.getGame().getBoard();
+        Board board = entity.getGame().getBoard();
 
         // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
         int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());
@@ -1621,7 +1613,6 @@ public class BoardUtilities {
     }
 
     protected static class Point {
-
         public int x;
         public int y;
 

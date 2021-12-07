@@ -86,7 +86,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
     }
 
     private void findGeysers() {
-        IBoard b = server.getGame().getBoard();
+        Board b = server.getGame().getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
         for (int x = 0; x < width; x++) {

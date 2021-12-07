@@ -52,7 +52,7 @@ public class MapMenu extends JPopupMenu {
     private Coords coords;
     Game game;
     Component currentPanel;
-    private IBoard board;
+    private Board board;
     Client client;
     ClientGUI gui;
     Entity selectedEntity;
@@ -1289,7 +1289,7 @@ public class MapMenu extends JPopupMenu {
         // Check for Mine Clearance
         if (isFiringDisplay || isTargetingDisplay) {
             if (client.getGame().containsMinefield(coords)) {
-                menu.add(TargetMenuItem(new MinefieldTarget(coords, board)));
+                menu.add(TargetMenuItem(new MinefieldTarget(coords)));
             }
         }
 
@@ -1345,7 +1345,7 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (type.equals("M")) {
-            return new MinefieldTarget(targetCoords, board);
+            return new MinefieldTarget(targetCoords);
         }
 
         return new HexTarget(targetCoords, Integer.parseInt(target.nextToken()));

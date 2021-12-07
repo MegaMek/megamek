@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
@@ -28,31 +28,7 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.MiscType;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.TripodMech;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -838,10 +814,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
     }
 
-    private double checkHexForHazards(Hex hex, Entity movingUnit,
-                                      boolean endHex, MoveStep step,
-                                      boolean jumpLanding,
-                                      MovePath movePath, IBoard board,
+    private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step,
+                                      boolean jumpLanding, MovePath movePath, Board board,
                                       StringBuilder logMsg) {
         logMsg.append("\n\tHex ").append(hex.getCoords().toFriendlyString());
 
@@ -904,9 +878,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
     
     // Building collapse and basements are handled in PathRanker.validatePaths.
-    private double calcBuildingHazard(MoveStep step, Entity movingUnit,
-                                      boolean jumpLanding, IBoard board,
-                                      StringBuilder logMsg) {
+    private double calcBuildingHazard(MoveStep step, Entity movingUnit, boolean jumpLanding,
+                                      Board board, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating building hazard:  ");
 
         // Protos, BA and Infantry move through buildings freely.
@@ -938,7 +911,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazard;
     }
     
-    private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding, IBoard board, StringBuilder logMsg) {
+    private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding,
+                                    Board board, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating bridge hazard:  ");
         
         // if we are going to BWONGGG into a bridge from below, then it's treated as a building.
@@ -952,8 +926,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return 0;
     }
 
-    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step,
-                                 boolean jumpLanding,
+    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding,
                                  StringBuilder logMsg) {
         logMsg.append("\n\tCalculating ice hazard:  ");
 

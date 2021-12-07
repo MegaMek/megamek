@@ -774,7 +774,7 @@ public class SharedUtility {
                 if (game.getBoard().onGround()) {
                     steps = 16;
                 }
-                while(steps > 0 &&
+                while (steps > 0 &&
                         game.getBoard().contains(md.getFinalCoords())) {
                     md.addStep(MoveStepType.FORWARDS);
                     steps--;

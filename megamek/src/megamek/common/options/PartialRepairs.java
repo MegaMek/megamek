@@ -81,8 +81,8 @@ public class PartialRepairs extends AbstractOptions {
 
     public static boolean isPartRepLegalFor(IOption quirk, Entity en) {
 
-        if(en instanceof Mech) { 
-             if(quirk.getName().equals("mech_reactor_3_crit") 
+        if (en instanceof Mech) { 
+             if (quirk.getName().equals("mech_reactor_3_crit") 
                      || quirk.getName().equals("mech_reactor_2_crit") 
                      || quirk.getName().equals("mech_reactor_1_crit") 
                      || quirk.getName().equals("mech_gyro_2_crit") 
@@ -97,12 +97,12 @@ public class PartialRepairs extends AbstractOptions {
             return false; 
         } 
 
-        if(en instanceof GunEmplacement) {
+        if (en instanceof GunEmplacement) {
             return false;
         }
 
-        if(en instanceof Tank) {
-            if(quirk.getName().equals("veh_locked_turret")
+        if (en instanceof Tank) {
+            if (quirk.getName().equals("veh_locked_turret")
                     || quirk.getName().equals("veh_stabilizer_crit")
                     || quirk.getName().equals("sensors_1_crit")) {
                 return true;
@@ -110,12 +110,12 @@ public class PartialRepairs extends AbstractOptions {
             return false;
         }
 
-        if(en instanceof BattleArmor) {
+        if (en instanceof BattleArmor) {
                 return false;
         }
         
-        if(en instanceof Warship) { 
-        	if(quirk.getName().equals("aero_avionics_replace") 
+        if (en instanceof Warship) { 
+        	if (quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
                     || quirk.getName().equals("aero_sensor_replace")                   
                     || quirk.getName().equals("aero_avionics_crit") 
@@ -131,7 +131,7 @@ public class PartialRepairs extends AbstractOptions {
         } 
 
         if ((en instanceof Jumpship) || (en instanceof SpaceStation)) { 
-        	if(quirk.getName().equals("aero_avionics_replace") 
+        	if (quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
                     || quirk.getName().equals("aero_sensor_replace")                     
                     || quirk.getName().equals("aero_avionics_crit") 
@@ -145,7 +145,7 @@ public class PartialRepairs extends AbstractOptions {
         	return false; 
         } 
         if (en instanceof Dropship) { 
-        	if(quirk.getName().equals("aero_avionics_replace") 
+        	if (quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
                     || quirk.getName().equals("aero_gear_replace") 
                     || quirk.getName().equals("aero_sensor_replace")                     
@@ -162,7 +162,7 @@ public class PartialRepairs extends AbstractOptions {
         	return false; 
         } 
         if (en instanceof Aero) {
-        	if(quirk.getName().equals("aero_avionics_replace") 
+        	if (quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
                     || quirk.getName().equals("aero_gear_replace") 
                     || quirk.getName().equals("aero_sensor_replace")                    

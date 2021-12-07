@@ -364,7 +364,7 @@ public class EquipChoicePanel extends JPanel {
                 ((SmallSVMunitionsChoicePanel) panMunitions).apply();
             }
             // update ammo names for weapon ammo choice selectors
-            for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
+            for (WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
                 wacPanel.applyChoice();
             }
         }
@@ -731,7 +731,7 @@ public class EquipChoicePanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         panWeaponAmmoSelector.setLayout(gbl);
         
-        for(Mounted weapon : entity.getWeaponList()) {
+        for (Mounted weapon : entity.getWeaponList()) {
             WeaponType weaponType = weapon.getType() instanceof WeaponType ? (WeaponType) weapon.getType() : null;
             
             // don't deal with bay or grouped weapons for now 
@@ -746,9 +746,6 @@ public class EquipChoicePanel extends JPanel {
     }
     
         class MineChoicePanel extends JPanel {
-            /**
-             *
-             */
             private static final long serialVersionUID = -1868675102440527538L;
 
             private JComboBox<String> m_choice;
@@ -757,7 +754,7 @@ public class EquipChoicePanel extends JPanel {
 
             MineChoicePanel(Mounted m) {
                 m_mounted = m;
-                m_choice = new JComboBox<String>();
+                m_choice = new JComboBox<>();
                 m_choice.addItem(Messages
                         .getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
                 m_choice.addItem(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
@@ -789,13 +786,8 @@ public class EquipChoicePanel extends JPanel {
          * which anti-personnel weapon is mounted in an AP mount.
          * 
          * @author arlith
-         *
          */
         class APWeaponChoicePanel extends JPanel {
-            
-            /**
-             * 
-             */
             private static final long serialVersionUID = 6189888202192403704L;
 
             private Entity entity;
@@ -882,7 +874,7 @@ public class EquipChoicePanel extends JPanel {
                 }
                     
                 // Add the newly mounted weapon
-                try{
+                try {
                     Mounted newWeap =  entity.addEquipment(apType, 
                             m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
@@ -904,16 +896,11 @@ public class EquipChoicePanel extends JPanel {
         
         /**
          * A panel that houses a label and a combo box that allows for selecting
-         * which maniulator is mounted in a modular equipment adaptor.
+         * which manipulator is mounted in a modular equipment adaptor.
          * 
          * @author arlith
-         *
          */
         class MEAChoicePanel extends JPanel {
-            
-            /**
-             * 
-             */
             private static final long serialVersionUID = 6189888202192403704L;
 
             private Entity entity;
@@ -998,7 +985,7 @@ public class EquipChoicePanel extends JPanel {
                 }
                     
                 // Add the newly mounted maniplator
-                try{
+                try {
                     m_Manipmounted = entity.addEquipment(manipType, 
                             m_Manipmounted.getLocation());
                     m_Manipmounted.setBaMountLoc(baMountLoc);
@@ -1017,9 +1004,6 @@ public class EquipChoicePanel extends JPanel {
         }
 
         class MunitionChoicePanel extends JPanel {
-            /**
-             *
-             */
             private static final long serialVersionUID = 3401106035583965326L;
 
             private List<AmmoType> m_vTypes;
@@ -1034,13 +1018,11 @@ public class EquipChoicePanel extends JPanel {
 
             private Mounted m_mounted;
 
-            JLabel labDump = new JLabel(
-                    Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
+            JLabel labDump = new JLabel(Messages.getString("CustomMechDialog.labDump"));
 
             JCheckBox chDump = new JCheckBox();
 
-            JLabel labHotLoad = new JLabel(
-                    Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
+            JLabel labHotLoad = new JLabel(Messages.getString("CustomMechDialog.switchToHotLoading"));
 
             JCheckBox chHotLoad = new JCheckBox();
             
@@ -1050,7 +1032,7 @@ public class EquipChoicePanel extends JPanel {
                 m_mounted = m;
                 
                 AmmoType curType = (AmmoType) m.getType();
-                m_choice = new JComboBox<AmmoType>();
+                m_choice = new JComboBox<>();
                 Iterator<AmmoType> e = m_vTypes.iterator();
                 for (int x = 0; e.hasNext(); x++) {
                     AmmoType at = e.next();
@@ -1060,12 +1042,7 @@ public class EquipChoicePanel extends JPanel {
                     }
                 }
 
-                numShotsListener = new ItemListener() {
-                    @Override
-                    public void itemStateChanged(ItemEvent evt) {
-                        numShotsChanged = true;
-                    }
-                };
+                numShotsListener = evt -> numShotsChanged = true;
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = curType.getShots();
                 // BattleArmor always have a certain number of shots per slot
@@ -1211,63 +1188,12 @@ public class EquipChoicePanel extends JPanel {
                 m_mounted.setShotsLeft(shots);
             }
         }
-
-        /**
-     * When a Protomech selects ammo, you need to adjust the shots on the unit
-     * for the weight of the selected munition.
-     * 
-     * @deprecated I don't see any purpose for this anymore, but I can't tell
-     *             why it was originally added. Using this for Protomechs ends
-     *             up adjusting the ammo incorrectly. It is true that Protos use
-     *             ammo as kg/shot, and they aren't restricted to the max per
-     *             shots per slot, but this really doesn't handle that.  Really,
-     *             we need a ProtomechVerifier to ensure users don't add more 
-     *             ammo than the Proto can support.
-     */
-        @Deprecated
-        class ProtomechMunitionChoicePanel extends MunitionChoicePanel {
-            /**
-             *
-             */
-            private static final long serialVersionUID = -8170286698673268120L;
-
-            private final float m_origShotsLeft;
-
-            private final AmmoType m_origAmmo;
-
-            ProtomechMunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
-                super(m, vTypes, null);
-                m_origAmmo = (AmmoType) m.getType();
-                m_origShotsLeft = m.getBaseShotsLeft();
-            }
-
-            /**
-             * All ammo must be applied in ratios to the starting load.
-             */
-            @Override
-            public void applyChoice() {
-                super.applyChoice();
-
-                // Calculate the number of shots for the new ammo.
-                // N.B. Some special ammos are twice as heavy as normal
-                // so they have half the number of shots (rounded down).
-                setShotsLeft(Math.round((getShotsLeft() * m_origShotsLeft)
-                        / m_origAmmo.getShots()));
-                if (chDump.isSelected()) {
-                    setShotsLeft(0);
-                }
-            }
-        }
         
         /**
          * A panel representing the option to choose a particular ammo bin for an individual weapon.
          * @author NickAragua
-         *
          */
         class WeaponAmmoChoicePanel extends JPanel {
-            /**
-             * 
-             */
             private static final long serialVersionUID = 604670659251519188L;
             // the weapon being displayed in this row
             private Mounted m_mounted;

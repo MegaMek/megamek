@@ -546,7 +546,7 @@ public class EquipmentType implements ITechnology {
     		return false;
     	}
     	
-    	for(EquipmentMode mode : modes) {
+    	for (EquipmentMode mode : modes) {
     		if (mode.getName().equals(modeType)) {
     			return true;
     		}

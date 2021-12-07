@@ -7053,7 +7053,7 @@ public class Compute {
                     //we have no mechanism in MM to handle BA where some suits have the equipment
                     //and others do not
                     boolean useSuit = true;
-                    for(Mounted m : entity.getEquipment()) {
+                    for (Mounted m : entity.getEquipment()) {
                         if (m.isMissingForTrooper(trooper)) {
                             useSuit = false;
                             break;

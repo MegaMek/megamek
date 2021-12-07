@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -159,10 +160,10 @@ public class RandomUnitGenerator implements Serializable {
         // Give the MSC some time to initialize
         MechSummaryCache msc = MechSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
-        while( !interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis() ) {
+        while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
                 Thread.sleep(50);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 // Ignore
             }
         }
@@ -207,9 +208,7 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try(
-        BufferedReader reader
-                = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) { //$NON-NLS-1$
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             int lineNumber = 0;
             String key = "Huh"; //$NON-NLS-1$
             float totalWeight = 0.0f;
@@ -409,10 +408,10 @@ public class RandomUnitGenerator implements Serializable {
             int retryCount = 0;
             
             // give the RATs a few seconds to load
-            while(!initialized && retryCount < 5) {
+            while (!initialized && retryCount < 5) {
                 try {
                     Thread.sleep(1000);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     
                 }
                 

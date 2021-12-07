@@ -623,7 +623,7 @@ public class BLKFile {
                 }
                 blk.writeBlockData("fuel", ((Aero) t).getFuel());
             }
-            if(t.hasEngine()) {
+            if (t.hasEngine()) {
                 int engineCode = BLKFile.FUSION;
                 switch (t.getEngine().getEngineType()) {
                     case Engine.COMBUSTION_ENGINE:
@@ -1258,16 +1258,16 @@ public class BLKFile {
             String potentialBayTypeIndicator = "";
             boolean bayNumberPresent = false;
             
-            if(temp.length == 3) {
+            if (temp.length == 3) {
                 potentialBayTypeIndicator = temp[2];
             } else if (temp.length == 4) {
                 potentialBayTypeIndicator = temp[3];
                 bayNumberPresent = true; // a 4-length array indicates that the bay number is in the third element
             }
                         
-            if(!potentialBayTypeIndicator.isEmpty()) {
+            if (!potentialBayTypeIndicator.isEmpty()) {
                 // normally a great time for a switch statement, but we're using equalsignorecase for the comparator
-                if(potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
+                if (potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
                     isComstarBay = true;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("jump")) {
                     platoonType = InfantryBay.PlatoonType.JUMP;
@@ -1287,15 +1287,15 @@ public class BLKFile {
             
             // if we are looking for a bay number
             // and a bay number is present, parse it
-            if(usedBayNumbers != null && bayNumberPresent) {
+            if (usedBayNumbers != null && bayNumberPresent) {
                 bayNumber = Integer.parseInt(temp[2]);
             }
 
             // if a bay number was not specified, assign one
             // if a bay number was specified but is a duplicate, assign a different one
             int newBay = 1;
-            if(bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
-                while(usedBayNumbers.contains(newBay)) {
+            if (bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
+                while (usedBayNumbers.contains(newBay)) {
                     newBay++;
                 }
                 

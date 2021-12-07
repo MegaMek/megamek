@@ -162,11 +162,11 @@ public class MovePath implements Cloneable, Serializable {
             sb.append(' ');
         }
         
-        if(!getGame().getBoard().contains(this.getFinalCoords())) {
+        if (!getGame().getBoard().contains(this.getFinalCoords())) {
             sb.append("OUT!");
         }
         
-        if(this.getFliesOverEnemy()) {
+        if (this.getFliesOverEnemy()) {
             sb.append("E! ");
         }
         
@@ -514,7 +514,7 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
         
-        if(step.useAeroAtmosphere(game, entity) 
+        if (step.useAeroAtmosphere(game, entity)
         		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
         		&& step.getPosition() != null  											//null
         		&& game.getFirstEnemyEntity(step.getPosition(), entity) != null) {
@@ -641,7 +641,7 @@ public class MovePath implements Cloneable, Serializable {
             }
             
             // if this step is part of a manuever, undo the whole manuever, all the way to the beginning.
-            if(step1.isManeuver()) {
+            if (step1.isManeuver()) {
                 int stepIndex = steps.size() - 1;
                 
                 while (steps.size() > 0 && steps.get(stepIndex).isManeuver()) {
@@ -686,7 +686,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     private void regenerateStepTypes() {
         containedStepTypes.clear();
-        for(MoveStep step : steps) {
+        for (MoveStep step : steps) {
             containedStepTypes.add(step.getType());
         }
     }
@@ -733,28 +733,14 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean goesThroughCoords(int x, int y) {
         Enumeration<MoveStep> steps = getSteps();
-        while(steps.hasMoreElements()) {
+        while (steps.hasMoreElements()) {
             MoveStep step = steps.nextElement();
-            if(step.getPosition().getX() == x && step.getPosition().getY() == y) {
+            if (step.getPosition().getX() == x && step.getPosition().getY() == y) {
                 return true;
             }
         }
         
         return false;
-    }
-    
-    /**
-     * Check for the presence of any step type that's not the specified step type in the move path
-     * @param type The step type to check for
-     * @return Whether or not there are any other step types 
-     */
-    public boolean containsAnyOther(final MoveStepType type) {
-    	for(Iterator<MoveStepType> iter = containedStepTypes.iterator(); iter.hasNext();) {
-    		if(iter.next() != type)
-				return true;
-    	}
-    	
-    	return false;
     }
 
     /**
@@ -775,7 +761,7 @@ public class MovePath implements Cloneable, Serializable {
      * this path.
      */
     public Coords getFinalCoords() {
-        if(getGame().useVectorMove()) {
+        if (getGame().useVectorMove()) {
             return Compute.getFinalPosition(getEntity().getPosition(), getFinalVectors());
         }
         

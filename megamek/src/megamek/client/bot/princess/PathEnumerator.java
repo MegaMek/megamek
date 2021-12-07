@@ -154,7 +154,7 @@ public class PathEnumerator {
         int retryCount = 0;
         boolean success = false;
         
-        while((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
+        while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
             success = recalculateMovesForWorker(mover);
             
             if (!success) {
@@ -299,7 +299,7 @@ public class PathEnumerator {
 
                 // calling .debug is expensive even if we don't actually log anything
                 // so let's not do this unless we're debugging
-                /* for(MovePath path : paths) {
+                /* for (MovePath path : paths) {
 	                    getOwner().getLogger().debug(path.toString());
                 }*/
                 
@@ -334,7 +334,7 @@ public class PathEnumerator {
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             MegaMek.getLogger().error(e.toString());
             return false;
         }
@@ -368,7 +368,7 @@ public class PathEnumerator {
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
                 break;
             default:
-                for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
+                for (Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
                     // don't consider crippled units as valid long-range pathfinding targets 
                     if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
                         continue;
@@ -538,7 +538,7 @@ public class PathEnumerator {
      */
     private void logAllPaths(List<MovePath> paths) {
         HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
-        for(MovePath path : paths) {
+        for (MovePath path : paths) {
             if (!pathLengths.containsKey(path.length())) {
                 pathLengths.put(path.length(), 0);
             }
@@ -548,7 +548,7 @@ public class PathEnumerator {
             this.owner.getLogger().debug(path.toString());
         }
         
-        for(Integer length : pathLengths.keySet()) {
+        for (Integer length : pathLengths.keySet()) {
             this.owner.getLogger().debug("Paths of length " + length + ": " + pathLengths.get(length));
         }
     }

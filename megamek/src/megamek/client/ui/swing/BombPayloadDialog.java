@@ -121,7 +121,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         b_choices = new JComboBox[bombs.length];
         b_labels = new JLabel[bombs.length];
         //initialize the bomb choices
-        for(int i = 0; i< bombs.length; i++) {
+        for (int i = 0; i< bombs.length; i++) {
             b_choices[i] = new JComboBox<String>();
             b_labels[i] = new JLabel(BombType.getBombName(i));
             int max = bombs[i];

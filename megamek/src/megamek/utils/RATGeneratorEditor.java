@@ -896,7 +896,7 @@ public class RATGeneratorEditor extends JFrame {
             
             if (mode == MODE_MODEL) {
                 boolean chassisRecordFound = false;
-                for(int era : ERAS) {
+                for (int era : ERAS) {
                     if (rg.getChassisFactionRatings(era, unitRecord.getChassisKey()) != null) {
                         chassisRecordFound = true;
                         break;

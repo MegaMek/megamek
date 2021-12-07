@@ -475,7 +475,7 @@ public class FighterSquadron extends Aero {
         int gunneryLTotal = 0;
         int gunneryMTotal = 0;
         int gunneryBTotal = 0;
-        for(Entity fighter : activeFighters) {
+        for (Entity fighter : activeFighters) {
             pilotingTotal += fighter.getCrew().getPiloting();
             gunneryTotal += fighter.getCrew().getGunnery();
             if (fighter.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {

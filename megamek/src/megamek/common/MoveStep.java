@@ -474,7 +474,7 @@ public class MoveStep implements Serializable {
     }
 
     public TreeMap<Integer, Vector<Integer>> getLaunched() {
-        if(launched == null) {
+        if (launched == null) {
             launched = new TreeMap<>();
         }
         
@@ -2015,7 +2015,7 @@ public class MoveStep implements Serializable {
             // spheroids in atmosphere can move a max of 1 hex on the low atmo map
             // and 8 hexes on the ground map, regardless of any other considerations
             // unless they're out of control, in which case, well...
-            if(useSpheroidAtmosphere(game, entity) && 
+            if (useSpheroidAtmosphere(game, entity) && 
             		(((IAero) entity).isOutControlTotal() ||
                     (!game.getBoard().onGround() && (this.getDistance() > 1) || 
                             (game.getBoard().onGround() && (getDistance() > 8))))) {
@@ -2995,7 +2995,7 @@ public class MoveStep implements Serializable {
             }
 
             // if this is an amphibious unit crossing water, increment movement cost by 1
-            if(isAmphibious && !destHex.containsTerrain(Terrains.ICE) && (destHex.terrainLevel(Terrains.WATER) > 0)) {
+            if (isAmphibious && !destHex.containsTerrain(Terrains.ICE) && (destHex.terrainLevel(Terrains.WATER) > 0)) {
                 mp++;
                 
                 // this is kind of a hack, but only occurs when an amphibious unit passes over mud at the bottom
@@ -3870,7 +3870,7 @@ public class MoveStep implements Serializable {
         }
         
         // spheroids in atmo can spin around like a centrifuge all they want
-        if(useSpheroidAtmosphere(game, en)) {
+        if (useSpheroidAtmosphere(game, en)) {
             return true;
         }
 
@@ -4032,7 +4032,7 @@ public class MoveStep implements Serializable {
      * @return An {@link ArrayList} of {@link Coords} containing buildings within a dropship's landing zone.
      */
     public ArrayList<Coords> getCrushedBuildingLocs() {
-        if(crushedBuildingLocs == null) {
+        if (crushedBuildingLocs == null) {
             crushedBuildingLocs = new ArrayList<>();
         }
         

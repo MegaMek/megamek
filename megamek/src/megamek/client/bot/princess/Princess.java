@@ -224,7 +224,7 @@ public class Princess extends BotClient {
         Coords maxDamageHex = null;
         
         // invoke ArtilleryTargetingControl.calculateDamageValue
-        for(Coords targetHex : tagTargetHexes.keySet()) {
+        for (Coords targetHex : tagTargetHexes.keySet()) {
             // a note on parameters:
             // we don't care about exact damage value since we're just comparing them relative to one another
             //  note: technically we should, 
@@ -522,7 +522,7 @@ public class Princess extends BotClient {
      */
     private Coords calculateAdvancedAerospaceDeploymentCoords(final Entity deployedUnit,
                                                                     final List<Coords> possibleDeployCoords) {
-        for(Coords coords : possibleDeployCoords) {
+        for (Coords coords : possibleDeployCoords) {
             if (!NewtonianAerospacePathRanker.willFlyOffBoard(deployedUnit, coords)) {
                 return coords;
             }
@@ -654,7 +654,7 @@ public class Princess extends BotClient {
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
                     // while we're looping through all the shots anyway, send any firing mode changes
-                    for(WeaponFireInfo shot : plan) {
+                    for (WeaponFireInfo shot : plan) {
                         Integer targetId = shot.getTarget().getTargetId();
                         double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
@@ -972,7 +972,7 @@ public class Princess extends BotClient {
     	List<Entity> myEntities = game.getPlayerEntities(this.getLocalPlayer(), true);
     	fireControlState.clearOrderedFiringEntities();
     	
-    	for(Entity entity : myEntities) {
+    	for (Entity entity : myEntities) {
     	    // if you can't fire, you can't fire.
     		if (!getMyTurn().isValidEntity(entity, game)) {
     			continue;
@@ -1779,7 +1779,7 @@ public class Princess extends BotClient {
         // of princess owned units, so it shouldn't be a big deal. 
         crippledUnits.clear();
         
-        for(Entity e : this.getEntitiesOwned()) {
+        for (Entity e : this.getEntitiesOwned()) {
             if (e.isCrippled(true)) {
                 crippledUnits.add(e.getId());
             }

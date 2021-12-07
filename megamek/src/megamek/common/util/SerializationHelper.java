@@ -52,7 +52,7 @@ public class SerializationHelper {
             public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
                 int x = 0, y = 0;
                 boolean foundX = false, foundY = false;
-                while(reader.hasMoreChildren()) {
+                while (reader.hasMoreChildren()) {
                     reader.moveDown();
                     switch (reader.getNodeName()) {
                         case "x":

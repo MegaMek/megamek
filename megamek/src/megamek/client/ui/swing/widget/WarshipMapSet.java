@@ -100,7 +100,7 @@ public class WarshipMapSet implements DisplayMapSet {
         int a = 1;
         int a0 = 1;
         //TODO: change this back to locations
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             a = t.getArmor(i);
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
@@ -332,7 +332,7 @@ public class WarshipMapSet implements DisplayMapSet {
             return marks;
         }
 
-        while(tally > 0) {
+        while (tally > 0) {
             marks = marks + "X";
             tally--;
         }

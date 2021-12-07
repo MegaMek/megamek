@@ -88,11 +88,11 @@ public class ArtilleryTargetingControl {
         double totalDamage = calculateDamageValueForHex(damage, coords, shooter, game, owner);
         
         // loop around each concentric hex centered on the given coords
-        for(int distanceFromCenter = 1; distanceFromCenter <= blastRadius; distanceFromCenter++) {
+        for (int distanceFromCenter = 1; distanceFromCenter <= blastRadius; distanceFromCenter++) {
             // the damage done is actual damage - 10 * # hexes from center
             int currentDamage = damage - distanceFromCenter * 10;
 
-            for(Coords currentCoords : coords.allAtDistance(distanceFromCenter)) {
+            for (Coords currentCoords : coords.allAtDistance(distanceFromCenter)) {
                 totalDamage += calculateDamageValueForHex(currentDamage, currentCoords, shooter, game, owner);
             }
         }
@@ -113,7 +113,7 @@ public class ArtilleryTargetingControl {
     private double calculateDamageValueForHex(int damage, Coords coords, Entity shooter, Game game, Princess owner) {
         double value = 0;
         
-        for(Entity entity : game.getEntitiesVector(coords, true)) {
+        for (Entity entity : game.getEntitiesVector(coords, true)) {
             // ignore aircraft for now, and also transported entities
             if (entity.isAirborne() || entity.isAirborneVTOLorWIGE() || entity.getTransportId() != Entity.NONE) {
                 continue;
@@ -191,7 +191,7 @@ public class ArtilleryTargetingControl {
     private void buildTargetList(Entity shooter, Game game, Princess owner) {
         targetSet = new HashSet<>();
         
-        for(Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
             
             // skip airborne entities, and those off board - we'll handle them later
@@ -204,13 +204,13 @@ public class ArtilleryTargetingControl {
             }
         }
         
-        for(Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
+        for (Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
             if (enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
                 targetSet.add(enemy);
             }
         }
         
-        for(Coords coords : owner.getStrategicBuildingTargets()) {
+        for (Coords coords : owner.getStrategicBuildingTargets()) {
             targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
             
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
@@ -229,8 +229,8 @@ public class ArtilleryTargetingControl {
     private void addHexDonuts(Coords coords, Set<Targetable> targetList, Game game) {
         // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
         // of the designated coordinates 
-        for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
-            for(Coords donutHex : coords.allAtDistance(radius)) {
+        for (int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
+            for (Coords donutHex : coords.allAtDistance(radius)) {
                 // don't bother adding off-board donuts.
                 if (game.getBoard().contains(donutHex)) {
                     targetList.add(new HexTarget(donutHex, Targetable.TYPE_HEX_ARTILLERY));
@@ -284,7 +284,7 @@ public class ArtilleryTargetingControl {
         // each indirect artillery piece randomly picks a target from the priority list
         // by the end of this loop, we either have 0 max damage/0 top valued coordinates, which indicates there's nothing worth shooting at
         // or we have a 1+ top valued coordinates.
-        for(Mounted currentWeapon : shooter.getWeaponList()) {
+        for (Mounted currentWeapon : shooter.getWeaponList()) {
             if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 WeaponType wType = (WeaponType) currentWeapon.getType();
                 int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values for arty pieces in tacops
@@ -294,7 +294,7 @@ public class ArtilleryTargetingControl {
                 
                 // for each enemy unit, evaluate damage value of firing at its hex.
                 // keep track of top target hexes with the same value and fire at them
-                for(Targetable hexTarget : targetSet) {
+                for (Targetable hexTarget : targetSet) {
                     double damageValue = 0.0;
                     if (hexTarget.getTargetType() == Targetable.TYPE_ENTITY) {
                         damageValue = damage;
@@ -366,7 +366,7 @@ public class ArtilleryTargetingControl {
         double hitOdds = 0.0;
         
         // pretty simple logic here: take the best shot that you have
-        for(Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game, owner.getFireControlState())) {
+        for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game, owner.getFireControlState())) {
             WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
             if (wfi.getProbabilityToHit() > hitOdds) {
                 hitOdds = wfi.getProbabilityToHit();
@@ -388,7 +388,7 @@ public class ArtilleryTargetingControl {
         int ammoEquipmentNum = NO_AMMO;
         
         // simply grab the first valid ammo and let 'er rip.
-        for(Mounted ammo : shooter.getAmmo()) {
+        for (Mounted ammo : shooter.getAmmo()) {
             if (!ammo.isAmmoUsable() || !AmmoType.isAmmoValid(ammo, (WeaponType) currentWeapon.getType())) {
                 continue;
             }
@@ -413,7 +413,7 @@ public class ArtilleryTargetingControl {
     public static double evaluateIncomingArtilleryDamage(Coords coords, Princess operator) {
         double sum = 0;
         
-        for(Enumeration<ArtilleryAttackAction> attackEnum = operator.getGame().getArtilleryAttacks(); attackEnum.hasMoreElements();) {
+        for (Enumeration<ArtilleryAttackAction> attackEnum = operator.getGame().getArtilleryAttacks(); attackEnum.hasMoreElements();) {
             ArtilleryAttackAction aaa = attackEnum.nextElement();
             
             // calculate damage: damage - (10 * distance to me), floored at 0

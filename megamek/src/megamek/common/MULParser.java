@@ -335,7 +335,7 @@ public class MULParser {
         }
 
         String nodeName = element.getNodeName();
-        if(nodeName.equalsIgnoreCase(RECORD)) {
+        if (nodeName.equalsIgnoreCase(RECORD)) {
             parseRecord(element);
         } else if (nodeName.equalsIgnoreCase(UNIT)) {
             parseUnit(element, entities);
@@ -438,7 +438,7 @@ public class MULParser {
                 if (nodeName.equalsIgnoreCase(KILL)) {
                     String killed =  ((Element) currNode).getAttribute(KILLED);
                     String killer = ((Element) currNode).getAttribute(KILLER);
-                    if(null != killed && null != killer && !killed.isEmpty() && !killer.isEmpty()) {
+                    if (null != killed && null != killer && !killed.isEmpty() && !killer.isEmpty()) {
                         kills.put(killed, killer);
                     }
                 }
@@ -672,7 +672,7 @@ public class MULParser {
             String ndeploy = entityTag.getAttribute(NEVER_DEPLOYED);
             boolean wasNeverDeployed =
                     Boolean.parseBoolean(entityTag.getAttribute(NEVER_DEPLOYED));
-            if(null == ndeploy || ndeploy.isEmpty()) {
+            if (null == ndeploy || ndeploy.isEmpty()) {
                 //this will default to false above, but we want it to default to true
                 wasNeverDeployed = true;
             }
@@ -1579,7 +1579,7 @@ public class MULParser {
             // it's possible that this is "extra" ammo in a weapons bay, so we may attempt
             // to shove it in there
             if (slot == null) {
-                if((entity.usesWeaponBays() 
+                if ((entity.usesWeaponBays()
                         || entity instanceof Dropship) 
                         && !bayIndex.isEmpty()) {
                     addExtraAmmoToBay(entity, loc, type, bayIndex);
@@ -2134,7 +2134,7 @@ public class MULParser {
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0) {
                         int bombType = BombType.getBombTypeFromInternalName(type);
-                        if(bombType <= BombType.B_NONE || bombType >= BombType.B_NUM) {
+                        if (bombType <= BombType.B_NONE || bombType >= BombType.B_NUM) {
                             continue;
                         }
 
@@ -2437,7 +2437,7 @@ public class MULParser {
         }
 
         // Add the newly mounted maniplator
-        try{
+        try {
             int baMountLoc = mountedManip.getBaMountLoc();
             mountedManip = entity.addEquipment(manipType,
                     mountedManip.getLocation());
@@ -2449,7 +2449,7 @@ public class MULParser {
     }
 
     /**
-     * Parase a antiPersonnelMount tag for the supplied <code>Entity</code>.
+     * Parse a antiPersonnelMount tag for the supplied <code>Entity</code>.
      *
      * @param apmTag
      * @param entity
@@ -2507,9 +2507,8 @@ public class MULParser {
         }
 
         // Add the newly mounted weapon
-        try{
-            Mounted newWeap =  entity.addEquipment(apType,
-                    apMount.getLocation());
+        try {
+            Mounted newWeap =  entity.addEquipment(apType, apMount.getLocation());
             apMount.setLinked(newWeap);
             newWeap.setLinked(apMount);
             newWeap.setAPMMounted(true);
@@ -2541,7 +2540,7 @@ public class MULParser {
 
         try {
             entity.addEquipment(ammo, loc, bay.isRearMounted());
-        } catch(LocationFullException lfe) {
+        } catch (LocationFullException lfe) {
             // silently swallow it, since dropship locations have about a hundred crit slots
         }
 
@@ -2579,8 +2578,8 @@ public class MULParser {
      */
     public Vector<Entity> getEntities() {
         Vector<Entity> toReturn = entities;
-        for(Entity e : survivors) {
-            if(e instanceof EjectedCrew) {
+        for (Entity e : survivors) {
+            if (e instanceof EjectedCrew) {
                 continue;
             }
             toReturn.add(e);

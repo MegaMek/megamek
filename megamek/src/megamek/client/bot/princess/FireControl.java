@@ -2224,7 +2224,7 @@ public class FireControl {
     	    return false;
     	}
     	
-        for(Mounted weapon : shooter.getWeaponList()) {
+        for (Mounted weapon : shooter.getWeaponList()) {
         	if (weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
         		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
         		return true;
@@ -2259,7 +2259,7 @@ public class FireControl {
     	
     	// loop through all enemy targets, pick a random one out of the closest.
     	// future revision: pick one that's the least evasive
-    	for(Targetable target : enemyTargets) {
+    	for (Targetable target : enemyTargets) {
     		LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
             
             // if we're in LOS

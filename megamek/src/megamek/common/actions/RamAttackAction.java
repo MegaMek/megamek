@@ -141,26 +141,26 @@ public class RamAttackAction extends AbstractAttackAction {
         IAero a = (IAero) ae;
         
         //target type
-        if(target instanceof SpaceStation) {
+        if (target instanceof SpaceStation) {
             toHit.addModifier(-1,"target is a space station");
-        } else if(target instanceof Warship) {
+        } else if (target instanceof Warship) {
             toHit.addModifier(+1,"target is a warship");
-        } else if(target instanceof Jumpship) {
+        } else if (target instanceof Jumpship) {
             toHit.addModifier(+0,"target is a jumpship");
-        } else if(target instanceof Dropship) {
+        } else if (target instanceof Dropship) {
             toHit.addModifier(+2,"target is a dropship");
         } else {
             toHit.addModifier(+4,"target is a fighter/small craft");
         }
         
         //attacker type
-        if(a instanceof SpaceStation) {
+        if (a instanceof SpaceStation) {
             toHit.addModifier(+0,"attacker is a space station");
-        } else if(a instanceof Warship) {
+        } else if (a instanceof Warship) {
             toHit.addModifier(+1,"attacker is a warship");
-        } else if(a instanceof Jumpship) {
+        } else if (a instanceof Jumpship) {
             toHit.addModifier(+0,"attacker is a jumpship");
-        } else if(a instanceof Dropship) {
+        } else if (a instanceof Dropship) {
             toHit.addModifier(-1,"attacker is a dropship");
         } else {
             toHit.addModifier(-2,"attacker is a fighter/small craft");

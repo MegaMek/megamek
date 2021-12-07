@@ -290,7 +290,7 @@ public abstract class PathRanker implements IPathRanker {
         
         // if specified, we also consider strategic targets
         if (includeStrategicTargets) {
-            for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+            for (Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
                 int distance = position.distance(t.getPosition());
                 if (distance < range) {
                     range = distance;

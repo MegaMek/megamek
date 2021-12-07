@@ -185,7 +185,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
                 network = listNetwork(ent, planned);
                 if (network.size() > 1) {// we actually have more than one member in this network
                     rval.append("Network ID '").append(ent.getC3NetId()).append("' contains:\n");
-                    for(Entity re : network)
+                    for (Entity re : network)
                     {
                         rval.append("+ ").append(re.getId()).append(" ").append(re.getDisplayName()).append("\n");
                         allreadyReported.add(re.getId());

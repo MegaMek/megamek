@@ -1439,7 +1439,7 @@ public class LosEffects {
         ArrayList<Coords> in = Coords.intervening(lowPos, highPos, true);
         int IntElev = lowElev;
         Coords IntPos = lowPos;
-        for(Coords c : in) {
+        for (Coords c : in) {
             // ignore off-board coords
             if (!game.getBoard().contains(c)) {
                 continue;

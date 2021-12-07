@@ -2658,7 +2658,7 @@ public class Tank extends Entity {
 
         // Engine Costs
         double engineCost = 0.0;
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isSupportVehicle()) {
                 engineCost = 5000 * getEngine().getWeightEngine(this)
                         * Engine.getSVCostMultiplier(getEngine().getEngineType());
@@ -3172,7 +3172,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3266,7 +3266,7 @@ public class Tank extends Entity {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {

@@ -1502,7 +1502,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // but it's not actually possible for a unit to occupy the same hex as a grounded spheroid so
             // we simplify the calculation a bit
             if (weapon.getLocation() == Aero.LOC_AFT) {
-                if(altDif > -1) {
+                if (altDif > -1) {
                     return Messages.getString("WeaponAttackAction.TooHighForAft");
                 } 
                 

@@ -9417,7 +9417,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                + "): Armor: " + getArmorString(loc) + "/" + getOArmor(loc)
                + " Structure: " + getInternalString(loc) + "/"
                + getOInternal(loc) + "\n ";
-        for(CriticalSlot cs : crits[loc]) {
+        for (CriticalSlot cs : crits[loc]) {
             if (cs != null) {
                 Mounted mount = cs.getMount();
                 if (mount != null) {

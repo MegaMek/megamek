@@ -245,7 +245,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             comWindFrom.addItem(PlanetaryConditions.getWindDisplayableName(i));
             comWindTo.addItem(PlanetaryConditions.getWindDisplayableName(i));
         }
-        for(int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
+        for (int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
             comWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
         }
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {

@@ -53,7 +53,7 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
         
         
         choDepth.removeAllItems();
-        for(int i =0; i < (totalDepth + 1); i++) {
+        for (int i =0; i < (totalDepth + 1); i++) {
             choDepth.addItem(Integer.toString(i));
         }
         choDepth.setSelectedIndex(0);

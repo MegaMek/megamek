@@ -1107,7 +1107,7 @@ public class BoardUtilities {
                 break;
             default:
                 // Non-hardcoded generators, if we have any
-                if((algorithm > 2) && (algorithm - 3 < elevationGenerators.size())) {
+                if ((algorithm > 2) && (algorithm - 3 < elevationGenerators.size())) {
                     elevationGenerators.get(algorithm - 3).generate(hilliness, width, height, elevationMap);
                 }
         }
@@ -1585,7 +1585,7 @@ public class BoardUtilities {
         int horizontalDistance = Math.min(distanceToWest, distanceToEast);
         int verticalDistance = Math.min(distanceToNorth, distanceToSouth);
 
-        if(horizontalDistance < verticalDistance) {
+        if (horizontalDistance < verticalDistance) {
             return closerWestThanEast ? CardinalEdge.WEST : CardinalEdge.EAST;
         } else {
             return closerNorthThanSouth ? CardinalEdge.NORTH : CardinalEdge.SOUTH;

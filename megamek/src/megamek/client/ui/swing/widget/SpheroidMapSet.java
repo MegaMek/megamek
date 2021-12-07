@@ -97,7 +97,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         Aero t = (Aero) e;
         int a = 1;
         int a0 = 1;
-        for(int i = 0; i < t.locations(); i++) {
+        for (int i = 0; i < t.locations(); i++) {
             a = t.getArmor(i);
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
@@ -317,7 +317,7 @@ public class SpheroidMapSet implements DisplayMapSet{
             return marks;
         }
 
-        while(tally > 0) {
+        while (tally > 0) {
             marks = marks + "X";
             tally--;
         }

@@ -91,7 +91,7 @@ public abstract class MMRandom {
             throw new IllegalArgumentException(
                     "Must ask for a positive number of rolls, not " + nDice);
         }
-        if(keep >= nDice) {
+        if (keep >= nDice) {
             throw new IllegalArgumentException(
                     "the number of dice to keep must be less than the number rolled");
         }

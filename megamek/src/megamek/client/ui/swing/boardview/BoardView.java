@@ -1283,8 +1283,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             pathEnum.recalculateMovesFor(this.selectedEntity);
 
             ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.selectedEntity.getId());
-            for(int x = 0; x < game.getBoard().getWidth(); x++) {
-                for(int y = 0; y < game.getBoard().getHeight(); y++) {
+            for (int x = 0; x < game.getBoard().getWidth(); x++) {
+                for (int y = 0; y < game.getBoard().getHeight(); y++) {
                     Point p = getCentreHexLocation(x, y, true);
                     p.translate(HEX_W  / 2, HEX_H  / 2);
                     Coords c = new Coords(x, y);
@@ -1296,7 +1296,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            for(Integer x = 0; x < 6; x++) {
+            for (Integer x = 0; x < 6; x++) {
                 Coords c = cba.getVertexNum(x);
                 if (c == null) {
                     continue;
@@ -1320,7 +1320,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
         List<Coords> donut = coords.allAtDistance(radius);
 
-        for(Coords donutCoords : donut) {
+        for (Coords donutCoords : donut) {
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
             p.translate(HEX_W  / 2, HEX_H  / 2);
             drawHexBorder(g, p, Color.PINK, 0, 6);
@@ -1336,7 +1336,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         BoardClusterTracker bct = new BoardClusterTracker();
         Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
         
-        for(BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
+        for (BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
             for (Coords coords : cluster.contents.keySet()) {
                 Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
                 p.translate(HEX_W  / 2, HEX_H  / 2);

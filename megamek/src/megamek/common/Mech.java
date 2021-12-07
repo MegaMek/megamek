@@ -1049,7 +1049,7 @@ public abstract class Mech extends Entity {
      *         and weight
      */
     protected int calculateWalk() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         if (isPrimitive()) {
@@ -1603,7 +1603,7 @@ public abstract class Mech extends Entity {
      *            add. must be a lookupname of a heatsinktype
      */
     public void addEngineSinks(int totalSinks, String sinkName) {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return;
         }
         EquipmentType sinkType = EquipmentType.get(sinkName);
@@ -1651,7 +1651,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getEngineCritHeat() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         int engineCritHeat = 0;
@@ -3850,7 +3850,7 @@ public abstract class Mech extends Entity {
                     }
                 } else {
                     // inner sphere with XL or XXL counts everywhere
-                    if(hasEngine() && (getEngine().getSideTorsoCriticalSlots().length <= 2)) {
+                    if (hasEngine() && (getEngine().getSideTorsoCriticalSlots().length <= 2)) {
                         // without XL or XXL, only count torsos if not CASEed,
                         // and arms if arm & torso not CASEed
                         if (((loc == LOC_RT) || (loc == LOC_LT))
@@ -4833,7 +4833,7 @@ public abstract class Mech extends Entity {
                     
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
-                    if(obj1BV.equals(obj2BV)) {
+                    if (obj1BV.equals(obj2BV)) {
                         Double obj1Heat = (Double) obj1.get(1);
                         Double obj2Heat = (Double) obj2.get(1);
                         
@@ -5409,7 +5409,7 @@ public abstract class Mech extends Entity {
         double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = structureCost;
         costs[i++] = getActuatorCost();// arm and/or leg actuators
-        if(hasEngine()) {
+        if (hasEngine()) {
             costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
         }
         if (getGyroType() == Mech.GYRO_XL) {
@@ -6683,7 +6683,7 @@ public abstract class Mech extends Entity {
 
         sb.append(MtfFile.MASS).append((int) weight).append(newLine);
         sb.append(MtfFile.ENGINE);
-        if(hasEngine()) {
+        if (hasEngine()) {
                 sb.append(getEngine().getEngineName())
                 .append(" Engine")
                 .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
@@ -7475,7 +7475,7 @@ public abstract class Mech extends Entity {
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return true;
         }
         boolean success = true;
@@ -7932,7 +7932,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
-        if(hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+        if (hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             Report r = new Report(2280);
             r.addDesc(this);
             r.subject = getId();
@@ -8250,7 +8250,7 @@ public abstract class Mech extends Entity {
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3,
                     3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5 } };
 
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isClan()) {
                 if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
                     switch (getEngine().getEngineType()) {
@@ -8745,11 +8745,11 @@ public abstract class Mech extends Entity {
                 }
             }
         }
-        //there is room for debate here but I think most people would agree that a
-        //legged biped mech (and a double legged quad mech) or a hipped mech are not
-        //escapable, although technically they still have as much MP as foot infantry which
-        //can escape. We could also consider creating options to control this.
-        if(((this instanceof BipedMech) && (legsDestroyed > 0))
+        // there is room for debate here but I think most people would agree that a
+        // legged biped mech (and a double legged quad mech) or a hipped mech are not
+        // escapable, although technically they still have as much MP as foot infantry which
+        // can escape. We could also consider creating options to control this.
+        if (((this instanceof BipedMech) && (legsDestroyed > 0))
                 || (legsDestroyed > 1) || (hipHits > 0)) {
             return false;
         }
@@ -8774,10 +8774,7 @@ public abstract class Mech extends Entity {
         // as being immobilized as well, which makes sense because the 'Mech
         // certainly isn't leaving that hex under its own power anymore.
         int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
-        if (getGyroHits() >= hitsToDestroyGyro) {
-            return true;
-        }
-        return false;
+        return getGyroHits() >= hitsToDestroyGyro;
     }
 
     @Override

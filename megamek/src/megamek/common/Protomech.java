@@ -2143,7 +2143,7 @@ public class Protomech extends Entity {
     
     @Override
     public int getEngineHits() {
-        if(this.isEngineHit()) {
+        if (this.isEngineHit()) {
             return 1;
         }
         return 0;

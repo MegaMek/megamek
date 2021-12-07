@@ -563,7 +563,7 @@ public class Terrain implements Serializable {
                 if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
                     return TargetRoll.AUTOMATIC_SUCCESS;
                     // any kind of infantry just gets a flat roll
-                } else if(moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
+                } else if (moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
                         moveMode == EntityMovementMode.INF_JUMP || moveMode == EntityMovementMode.INF_UMU) {
                     return 0;
                 }

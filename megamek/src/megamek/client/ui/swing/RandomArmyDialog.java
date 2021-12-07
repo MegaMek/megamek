@@ -602,7 +602,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 armyModel.addUnit(m);
             }
         } else if (ev.getSource().equals(m_bAdd)) {
-            for(int sel : m_lUnits.getSelectedRows()) {
+            for (int sel : m_lUnits.getSelectedRows()) {
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }

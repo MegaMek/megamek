@@ -62,7 +62,7 @@ public class PMMultiLineLabel extends PMSimpleLabel {
         
         int currentY = y;
 
-        for(String s : labels) {
+        for (String s : labels) {
             g.drawString(s, x, currentY);
             currentY += fm.getHeight();
         }

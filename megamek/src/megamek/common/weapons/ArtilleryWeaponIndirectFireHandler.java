@@ -550,7 +550,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (game.getBoard().contains(targetPos)) {
             HexTarget hexTarget = new HexTarget(targetPos, Targetable.TYPE_HEX_ARTILLERY);
             
-            for(Entity entity : game.getEntitiesVector()) {
+            for (Entity entity : game.getEntitiesVector()) {
                 
                 // if the entity is hostile and the attacker has not been designated
                 // as observed already by the entity's team

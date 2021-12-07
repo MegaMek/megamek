@@ -122,7 +122,7 @@ public class AreaEffectHelper {
     private static void addFuelAirBlastRadiusIndex(int ammoType, int blastRadius) {
         // this is relatively inefficient, but probably the least inefficient of the options
         // to acquire a list of the ammo types
-        for(AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
+        for (AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
             if (at.getMunitionType() == AmmoType.M_FAE) {
                 fuelAirBlastRadiusIndex.put(at.getInternalName(), blastRadius);
             }
@@ -235,9 +235,9 @@ public class AreaEffectHelper {
         //      not here, but in artilleryDamageHex, make sure to 1.5x damage for light building or unit with armor BAR < 10
         //      not here, but in artilleryDamageHex, make sure to .5x damage for "castle brian" or "armored" building
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
-        for(int damageBracket = blastRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
+        for (int damageBracket = blastRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
             List<Coords> donut = center.allAtDistance(distFromCenter);
-            for(Coords coords : donut) {
+            for (Coords coords : donut) {
                 int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
                 if (thinAtmo) {
                     damage = (int) Math.ceil(damage / 2.0);
@@ -262,7 +262,7 @@ public class AreaEffectHelper {
      */
     public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
             Vector<Report> vPhaseReport, Game game, Server server) {
-        for(Entity entity : game.getEntitiesVector(coords)) {
+        for (Entity entity : game.getEntitiesVector(coords)) {
             checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
         }
     }

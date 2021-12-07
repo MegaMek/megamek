@@ -233,25 +233,20 @@ public class PlanetaryConditions implements Serializable {
      */
     public int getLightHitPenalty(boolean isWeapon) {
         int penalty = 0;
-        if(isWeapon) {
-            if(lightConditions == L_DUSK) {
+        if (isWeapon) {
+            if (lightConditions == L_DUSK) {
                 penalty = 1;
-            }
-            else if(lightConditions == L_FULL_MOON) {
+            } else if (lightConditions == L_FULL_MOON) {
                 penalty = 2;
-            }
-            else if(lightConditions == L_MOONLESS) {
+            } else if (lightConditions == L_MOONLESS) {
                 penalty = 3;
-            }
-            else if(lightConditions == L_PITCH_BLACK) {
+            } else if (lightConditions == L_PITCH_BLACK) {
                 penalty = 4;
             }
-        }
-        else {
-            if(lightConditions == L_MOONLESS) {
+        } else {
+            if (lightConditions == L_MOONLESS) {
                 penalty = 1;
-            }
-            else if(lightConditions == L_PITCH_BLACK) {
+            } else if (lightConditions == L_PITCH_BLACK) {
                 penalty = 2;
             }
         }
@@ -635,7 +630,7 @@ public class PlanetaryConditions implements Serializable {
             || (en.getMovementMode() == EntityMovementMode.VTOL)))) {
             return "tornado";
         }
-        if((windStrength == WI_STORM) && en.isConventionalInfantry()) {
+        if ((windStrength == WI_STORM) && en.isConventionalInfantry()) {
             return "storm";
         }
         if (isExtremeTemperature() && en.doomedInExtremeTemp() && !Compute.isInBuilding(game, en)) {
@@ -697,7 +692,7 @@ public class PlanetaryConditions implements Serializable {
             return 1;
         } else if ((lightConditions == L_MOONLESS)
                 || (fog == FOG_HEAVY)) {
-            if(isMechVee || (isAero && (en.getAltitude() < 2))) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 5;
             }
             if (isAero) {

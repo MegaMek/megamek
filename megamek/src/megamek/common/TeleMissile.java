@@ -132,7 +132,7 @@ public class TeleMissile extends Aero {
     @Override
     public void autoSetThresh()
     {
-        for(int x = 0; x < locations(); x++)
+        for (int x = 0; x < locations(); x++)
         {
             initializeThresh(x);
         }

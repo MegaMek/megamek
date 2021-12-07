@@ -494,8 +494,8 @@ public class Coords implements Serializable {
             // until we circle around. The length of a hex side is equivalent to the radius
             Coords currentHex = translated(4, dist);
 
-            for(int direction = 0; direction < 6; direction++) {
-                for(int translation = 0; translation < dist; translation++) {
+            for (int direction = 0; direction < 6; direction++) {
+                for (int translation = 0; translation < dist; translation++) {
                     currentHex = currentHex.translated(direction);
                     retval.add(currentHex);
                 }

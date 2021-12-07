@@ -259,7 +259,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
         
-        if(zweihandering) {
+        if (zweihandering) {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
@@ -356,7 +356,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         
         //CamOps, pg. 82
-        if(zweihandering) {
+        if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 

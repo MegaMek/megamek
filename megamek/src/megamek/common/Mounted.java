@@ -767,9 +767,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // sets number of shots for MG arrays
         if (wtype.hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
-            for(int eqn : getBayWeapons()) {
+            for (int eqn : getBayWeapons()) {
                 Mounted m = entity.getEquipment(eqn);
-                if(null == m) {
+                if (null == m) {
                     continue;
                 }
                 if ((m.getLocation() == getLocation())
@@ -1979,7 +1979,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setMissingForTrooper(int trooper, boolean b) {
         trooper = trooper-BattleArmor.LOC_TROOPER_1;
-        if((trooper < 0) || (trooper >= missingForTrooper.length)) {
+        if ((trooper < 0) || (trooper >= missingForTrooper.length)) {
             return;
         }
         missingForTrooper[trooper] = b;
@@ -1987,15 +1987,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public boolean isMissingForTrooper(int trooper) {
         trooper = trooper-BattleArmor.LOC_TROOPER_1;
-        if((trooper < 0) || (trooper >= missingForTrooper.length)) {
+        if ((trooper < 0) || (trooper >= missingForTrooper.length)) {
             return false;
         }
         return missingForTrooper[trooper];
     }
 
     public boolean isAnyMissingTroopers() {
-        for(int i = 0; i < missingForTrooper.length; i++) {
-            if(missingForTrooper[i]) {
+        for (int i = 0; i < missingForTrooper.length; i++) {
+            if (missingForTrooper[i]) {
                 return true;
             }
         }
@@ -2004,7 +2004,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public String getMissingTrooperString() {
         StringBuffer missings = new StringBuffer();
-        for(int i = 0; i < missingForTrooper.length; i++) {
+        for (int i = 0; i < missingForTrooper.length; i++) {
             missings.append(missingForTrooper[i]).append("::");
         }
         return missings.toString();
@@ -2061,7 +2061,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * Returns true if this Mounted is ammunition in homing mode.
      */
     public boolean isHomingAmmoInHomingMode() {
-        if(!(getType() instanceof AmmoType)) {
+        if (!(getType() instanceof AmmoType)) {
             return false;
         }
         

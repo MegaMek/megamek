@@ -999,12 +999,12 @@ public class Client implements IClientCommandHandler {
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
-            for(Entity e: newOutOfGame) {
+            for (Entity e: newOutOfGame) {
                 cacheImgTag(e);
             }
         }
         //cache the image data for the entities
-        for(Entity e: newEntities) {
+        for (Entity e: newEntities) {
             cacheImgTag(e);
         }
     }
@@ -1092,7 +1092,7 @@ public class Client implements IClientCommandHandler {
         @SuppressWarnings("unchecked")
         List<Force> forces = (List<Force>) packet.getObject(2);
         //create a final image for the entity
-        for(int id: entityIds) {
+        for (int id: entityIds) {
             cacheImgTag(game.getEntity(id));
         }
         for (Force force: forces) {

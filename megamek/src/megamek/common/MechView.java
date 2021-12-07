@@ -255,7 +255,7 @@ public class MechView {
         sHead.add(new LabeledElement(Messages.getString("MechView.BV"),
                 dFormatter.format(entity.calculateBattleValue(false, ignorePilotBV))));
         double cost = entity.getCost(false);
-        if(useAlternateCost && entity.getAlternateCost() > 0) {
+        if (useAlternateCost && entity.getAlternateCost() > 0) {
             cost = entity.getAlternateCost();
         }
         sHead.add(new LabeledElement(Messages.getString("MechView.Cost"), //$NON-NLS-1$//
@@ -805,7 +805,7 @@ public class MechView {
                         continue;
                     }
                     heat = heat + m.getType().getHeat();
-                    if(m.isDestroyed()) {
+                    if (m.isDestroyed()) {
                         bWeapDamaged++;
                     }
                 }
@@ -814,7 +814,7 @@ public class MechView {
             
             if (entity.isOmni()) {
                 row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MechView.Pod" : "MechView.Fixed");
-            } else if(wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
+            } else if (wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
                 row[3] = warningStart() + Messages.getString("MechView.WeaponDamage")
                     + ")" + warningEnd();
             }
@@ -829,10 +829,10 @@ public class MechView {
             }
 
             // if this is a weapon bay, then cycle through weapons and ammo           
-            if((wtype instanceof BayWeapon) && showDetail) { 
-                for(int wId : mounted.getBayWeapons()) { 
+            if ((wtype instanceof BayWeapon) && showDetail) {
+                for (int wId : mounted.getBayWeapons()) { 
                     Mounted m = entity.getEquipment(wId);
-                    if(null == m) { 
+                    if (null == m) { 
                         continue; 
                     }
                     
@@ -856,9 +856,9 @@ public class MechView {
                         wpnTable.addRow(row);
                     }
                 }
-                for(int aId : mounted.getBayAmmo()) {
+                for (int aId : mounted.getBayAmmo()) {
                     Mounted m = entity.getEquipment(aId);
-                    if(null == m) { 
+                    if (null == m) { 
                         continue; 
                     }
                     // Ignore ammo for one-shot launchers

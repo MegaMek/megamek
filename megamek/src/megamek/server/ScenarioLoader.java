@@ -739,7 +739,7 @@ public class ScenarioLoader {
             if ((team != null) && !team.isEmpty()) {
                 try {
                     teamId = Integer.parseInt(team);
-                } catch(NumberFormatException ignored) {
+                } catch (NumberFormatException ignored) {
                     teamId++;
                 }
             } else {

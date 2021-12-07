@@ -241,7 +241,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (!wreckageDecals.containsKey(imageKey)) {
             Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
 
-            for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
+            for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                 RotateFilter rf = new RotateFilter(x * 90);
                 String newImageKey = String.format("%s%s", filename, (int) x);
 
@@ -274,7 +274,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             if (!wreckageDecals.containsKey(imageKey)) {
                 Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
 
-                for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
+                for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                     RotateFilter rf = new RotateFilter(x * 90);
                     String newImageKey = String.format("%s%s", filename, (int) x);
 

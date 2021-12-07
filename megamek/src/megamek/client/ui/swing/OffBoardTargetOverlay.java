@@ -96,7 +96,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         }
         
         // only show these if there are any actual enemy units eligible for off board targeting
-        for(OffBoardDirection direction : OffBoardDirection.values()) {
+        for (OffBoardDirection direction : OffBoardDirection.values()) {
             if (showDirectionalElement(direction, selectedArtilleryWeapon)) {
                 return true; 
             }
@@ -109,7 +109,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
      * Logic that determines whether to show a specific directional indicator
      */
     private boolean showDirectionalElement(OffBoardDirection direction, Mounted selectedArtilleryWeapon) {
-        for(Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
+        for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
                     (entity.getOffBoardDirection() == direction) &&
                         (targetingPhaseDisplay.ce().isOffBoard() ||

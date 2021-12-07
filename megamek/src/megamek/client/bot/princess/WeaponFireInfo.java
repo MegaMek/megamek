@@ -373,7 +373,7 @@ public class WeaponFireInfo {
         // varies with distance to target.
         if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
             int bayDamage = 0;
-            for(int weaponID : weapon.getBayWeapons()) {
+            for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
@@ -436,7 +436,7 @@ public class WeaponFireInfo {
         // varies with distance to target.
         if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
             int bayHeat = 0;
-            for(int weaponID : weapon.getBayWeapons()) {
+            for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 bayHeat += weaponType.getHeat();

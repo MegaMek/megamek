@@ -127,7 +127,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             int inArcVertexCount = 0;
             ConvexBoardArea movableArea = getPathEnumerator().getUnitMovableAreas().get(enemy.getId());
 
-            for(int vertexNum = 0; vertexNum < 6; vertexNum++) {
+            for (int vertexNum = 0; vertexNum < 6; vertexNum++) {
                 Coords vertex = movableArea.getVertexNum(vertexNum);
 
                 if (vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
@@ -176,11 +176,11 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         int sensorShadowMod = 0;
         List<Coords> coordsToCheck = path.getFinalCoords().allAdjacent();
         coordsToCheck.add(path.getFinalCoords());
-        for(Coords coords : coordsToCheck) {
+        for (Coords coords : coordsToCheck) {
             // if the coordinate contains a large craft within a certain mass of me, it will generate a sensor shadow
             Iterator<Entity> potentialShadowIter = path.getGame().getFriendlyEntities(coords, path.getEntity());
 
-            while(potentialShadowIter.hasNext() && sensorShadowMod == 0) {
+            while (potentialShadowIter.hasNext() && sensorShadowMod == 0) {
                 Entity potentialShadow = potentialShadowIter.next();
                 if (potentialShadow.isDone() &&
                         potentialShadow.isLargeCraft() &&

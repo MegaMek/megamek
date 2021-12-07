@@ -72,7 +72,7 @@ public class MultiTargetFireControl extends FireControl {
         List<Integer> facingChanges = getValidFacingChanges(shooter);
         facingChanges.add(0); // "no facing change"
         
-        for(int currentTwist : facingChanges) {
+        for (int currentTwist : facingChanges) {
             shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist), false);
             
             FiringPlan currentPlan = calculateFiringPlan(shooter, weaponList);
@@ -112,7 +112,7 @@ public class MultiTargetFireControl extends FireControl {
     WeaponFireInfo getBestShot(Mounted weapon) {
         WeaponFireInfo bestShot = null;
         
-        for(Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {
+        for (Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
             if (owner.getHonorUtil().isEnemyBroken(target.getTargetId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
                 owner.getLogger().info(target.getDisplayName() + " is broken - ignoring");
@@ -171,7 +171,7 @@ public class MultiTargetFireControl extends FireControl {
         FiringPlan retVal = new FiringPlan();
         
         List<WeaponFireInfo> shotList = new ArrayList<>();
-        for(Mounted weapon : weaponList) {
+        for (Mounted weapon : weaponList) {
             WeaponFireInfo shot = getBestShot(weapon);
             if (shot != null) {
                 shotList.add(shot);
@@ -213,7 +213,7 @@ public class MultiTargetFireControl extends FireControl {
         Map<Integer, Double> arcDamage = new HashMap<>();
         
         // assemble the data we'll need to solve the backpack problem
-        for(WeaponFireInfo shot : shotList) {
+        for (WeaponFireInfo shot : shotList) {
             int arc = shooter.getWeaponArc(shooter.getEquipmentNum(shot.getWeapon()));
             // flip the # if it's a rear-mounted weapon
             if (shot.getWeapon().isRearMounted()) {
@@ -232,10 +232,10 @@ public class MultiTargetFireControl extends FireControl {
         
         // initialize the backpack
         Map<Integer, Map<Integer, List<Integer>>> arcBackpack = new HashMap<>();
-        for(int x = 0; x < arcShots.keySet().size(); x++) {
+        for (int x = 0; x < arcShots.keySet().size(); x++) {
             arcBackpack.put(x, new HashMap<>());
             
-            for(int y = 0; y < shooter.getHeatCapacity(); y++) {
+            for (int y = 0; y < shooter.getHeatCapacity(); y++) {
                 arcBackpack.get(x).put(y, new ArrayList<>());
             }
         }
@@ -247,8 +247,8 @@ public class MultiTargetFireControl extends FireControl {
         // now, we essentially solve the backpack problem, where the arcs are the items:
         // arc expected damage is the "value", and arc heat is the "weight", while the backpack capacity is the unit's heat capacity.
         // while we're at it, we assemble the list of arcs fired for each cell
-        for(int arcIndex = 0; arcIndex < arcHeatKeyArray.length; arcIndex++) {
-            for(int heatIndex = 0; heatIndex < shooter.getHeatCapacity(); heatIndex++) {
+        for (int arcIndex = 0; arcIndex < arcHeatKeyArray.length; arcIndex++) {
+            for (int heatIndex = 0; heatIndex < shooter.getHeatCapacity(); heatIndex++) {
                 int previousArc = arcIndex > 0 ? arcHeatKeyArray[arcIndex - 1] : 0;
                 
                 if (arcIndex == 0 || heatIndex == 0) {
@@ -284,7 +284,7 @@ public class MultiTargetFireControl extends FireControl {
         // now, we look at the bottom right cell, which contains our optimal firing solution
         // unless there is no firing solution at all, in which case we skip this part
         if (arcBackpack.size() > 0) {
-            for(int arc : arcBackpack.get(arcBackpack.size() - 1).get(shooter.getHeatCapacity() - 1)) {
+            for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(shooter.getHeatCapacity() - 1)) {
                 retVal.addAll(arcShots.get(arc));
             }
         }
@@ -312,12 +312,12 @@ public class MultiTargetFireControl extends FireControl {
         // if firing every gun won't bring heat above the shooter's heat capacity (this includes non-heat-tracking units)
         // then we just return every shot to save ourselves a backpack problem
         int alphaStrikeHeat = 0;
-        for(WeaponFireInfo shot : shotList) {
+        for (WeaponFireInfo shot : shotList) {
             alphaStrikeHeat += shot.getHeat();
         }
         
         if (alphaStrikeHeat < shooter.getHeatCapacity() - shooter.getHeat() + heatCapacityModifier) {
-            for(WeaponFireInfo shot : shotList) {
+            for (WeaponFireInfo shot : shotList) {
                 retVal.add(shot);
             }
             
@@ -334,10 +334,10 @@ public class MultiTargetFireControl extends FireControl {
         
         // initialize the backpack
         Map<Integer, Map<Integer, List<Integer>>> shotBackpack = new HashMap<>();
-        for(int x = 0; x <= shotList.size(); x++) {
+        for (int x = 0; x <= shotList.size(); x++) {
             shotBackpack.put(x, new HashMap<>());
             
-            for(int y = 0; y < actualHeatCapacity; y++) {
+            for (int y = 0; y < actualHeatCapacity; y++) {
                 shotBackpack.get(x).put(y, new ArrayList<>());
             }
         }
@@ -348,8 +348,8 @@ public class MultiTargetFireControl extends FireControl {
         // WeaponFireInfo are the items
         // expected damage is the "value", heat is the "weight", backpack capacity is the unit's heat capacity
         // while we're at it, we assemble the list of shots fired for each cell
-        for(int shotIndex = 0; shotIndex <= shotList.size(); shotIndex++) {
-            for(int heatIndex = 0; heatIndex < actualHeatCapacity; heatIndex++) {
+        for (int shotIndex = 0; shotIndex <= shotList.size(); shotIndex++) {
+            for (int heatIndex = 0; heatIndex < actualHeatCapacity; heatIndex++) {
                 if (shotIndex == 0 || heatIndex == 0) {
                     damageBackpack[shotIndex][heatIndex] = 0;
                 } else if (shotList.get(shotIndex - 1).getHeat() <= heatIndex) {
@@ -382,7 +382,7 @@ public class MultiTargetFireControl extends FireControl {
         }
         
         // now, we look at the bottom right cell, which contains our optimal firing solution
-        for(int shotIndex : shotBackpack.get(shotBackpack.size() - 1).get(actualHeatCapacity - 1)) {
+        for (int shotIndex : shotBackpack.get(shotBackpack.size() - 1).get(actualHeatCapacity - 1)) {
             retVal.add(shotList.get(shotIndex));
         }
         

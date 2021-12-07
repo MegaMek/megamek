@@ -304,8 +304,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         //until then, we will assume that if the attacker height is less than half
         //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
         //See Dropship.rollHitLocation to see how HIT_KICK is handled
-        if(target instanceof Dropship) {
-            if((attackerElevation - targetElevation) > (target.getHeight()/2)) {
+        if (target instanceof Dropship) {
+            if ((attackerElevation - targetElevation) > (target.getHeight()/2)) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);

@@ -161,7 +161,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
         
         //SMASH! CamOps, pg. 82
-        if(zweihandering) {
+        if (zweihandering) {
             nDamage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 

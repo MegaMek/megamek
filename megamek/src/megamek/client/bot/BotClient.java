@@ -160,7 +160,7 @@ public abstract class BotClient extends Client {
                                 sendHiddenPBSCFRResponse(new Vector<>());
                                 sendHiddenPBSCFRResponse(pointBlankShots);
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             // if we screw up, don't keep everyone else waiting
                             sendHiddenPBSCFRResponse(null);
                             throw e;
@@ -259,7 +259,7 @@ public abstract class BotClient extends Client {
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
         // unless doing so would kill it or be illegal due to stacking violation
-        for(Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
+        for (Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
             
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
@@ -274,7 +274,7 @@ public abstract class BotClient extends Client {
         }
         
         int[] entityIDs = new int[entitiesToUnload.size()];
-        for(int x = 0; x < entitiesToUnload.size(); x++) {
+        for (int x = 0; x < entitiesToUnload.size(); x++) {
             entityIDs[x] = entitiesToUnload.get(x);
         }
         
@@ -469,7 +469,7 @@ public abstract class BotClient extends Client {
     	int retryCount = 0;
         boolean success = false;
         
-        while((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
+        while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
         	success = calculateMyTurnWorker();
         	
         	if (!success) {
@@ -889,7 +889,7 @@ public abstract class BotClient extends Client {
         // even when considering terrain destruction
         // attempt to deploy in the biggest area this unit can access instead
         if (highestFitness < -10) {
-            for(RankedCoords rc : validCoords) {
+            for (RankedCoords rc : validCoords) {
                 rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
         }

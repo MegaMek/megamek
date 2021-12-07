@@ -165,7 +165,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
     public void updateTurnsTilHit(Game game) {
         int distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
         // adjust distance for gravity
-        distance = (int) Math.floor((double) distance/game.getPlanetaryConditions().getGravity());
+        distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
         this.turnsTilHit = distance / launchVelocity;
     }
     

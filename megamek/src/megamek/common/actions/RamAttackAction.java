@@ -142,33 +142,33 @@ public class RamAttackAction extends AbstractAttackAction {
         
         //target type
         if (target instanceof SpaceStation) {
-            toHit.addModifier(-1,"target is a space station");
+            toHit.addModifier(-1, "target is a space station");
         } else if (target instanceof Warship) {
-            toHit.addModifier(+1,"target is a warship");
+            toHit.addModifier(+1, "target is a WarShip");
         } else if (target instanceof Jumpship) {
-            toHit.addModifier(+0,"target is a jumpship");
+            toHit.addModifier(+0, "target is a JumpShip");
         } else if (target instanceof Dropship) {
-            toHit.addModifier(+2,"target is a dropship");
+            toHit.addModifier(+2, "target is a DropShip");
         } else {
-            toHit.addModifier(+4,"target is a fighter/small craft");
+            toHit.addModifier(+4, "target is a fighter/small craft");
         }
         
         //attacker type
         if (a instanceof SpaceStation) {
-            toHit.addModifier(+0,"attacker is a space station");
+            toHit.addModifier(+0, "attacker is a space station");
         } else if (a instanceof Warship) {
-            toHit.addModifier(+1,"attacker is a warship");
+            toHit.addModifier(+1, "attacker is a WarShip");
         } else if (a instanceof Jumpship) {
-            toHit.addModifier(+0,"attacker is a jumpship");
+            toHit.addModifier(+0, "attacker is a JumpShip");
         } else if (a instanceof Dropship) {
-            toHit.addModifier(-1,"attacker is a dropship");
+            toHit.addModifier(-1, "attacker is a DropShip");
         } else {
-            toHit.addModifier(-2,"attacker is a fighter/small craft");
+            toHit.addModifier(-2, "attacker is a fighter/small craft");
         }
         
         //can the target unit move
         if (target.isImmobile() || te.getWalkMP() == 0)
-            toHit.addModifier(-2,"target cannot spend thrust");
+            toHit.addModifier(-2, "target cannot spend thrust");
             
         //sensor damage
         if (a.getSensorHits() > 0)

@@ -13486,36 +13486,20 @@ public class Server implements Runnable {
     }
 
     /**
-     * Determine which telemissile attack actions could be affected by AMS, and
-     * assign AMS to those attacks.
+     * Determine which telemissile attack actions could be affected by AMS, and assign AMS to those
+     * attacks.
      */
-    public void assignTeleMissileAMS(TeleMissileAttackAction taa) {
-        // Map target to a list of telemissile attacks directed at entities
-        Hashtable<Entity, Vector<AttackAction>> htTMAttacks = new Hashtable<>();
-
-        //This should be impossible but just in case...
-        if (taa == null) {
-            MegaMek.getLogger().error("Null TeleMissileAttackAction!");
-        }
-
-        Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY)
+    public void assignTeleMissileAMS(final TeleMissileAttackAction taa) {
+        final Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY)
                 ? (Entity) taa.getTarget(game) : null;
 
-        //If a telemissile is still on the board and its original target is not....
+        // If a telemissile is still on the board and its original target is not, just return.
         if (target == null) {
             MegaMek.getLogger().info("Telemissile has no target. AMS not assigned.");
             return;
         }
 
-        Vector<AttackAction> v = htTMAttacks.computeIfAbsent(target, k -> new Vector<>());
-        v.addElement(taa);
-        // Let each target assign its AMS
-        for (Entity e : htTMAttacks.keySet()) {
-            Vector<AttackAction> vTMAttacks = htTMAttacks.get(e);
-            // Allow MM to automatically assign AMS targets
-            // AMS bays can fire multiple times, so manual target assignment is kind of pointless
-            e.assignTMAMS(vTMAttacks);
-        }
+        target.assignTMAMS(taa);
     }
 
     /**

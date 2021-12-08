@@ -6679,6 +6679,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             });
 
+            if (vAttacksInArc.isEmpty()) {
+                return;
+            }
+
             // AMS Bays can fire at all incoming attacks each round
             // So can standard AMS if the unofficial option is turned on
             if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))

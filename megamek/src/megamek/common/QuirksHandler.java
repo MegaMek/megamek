@@ -490,7 +490,7 @@ public class QuirksHandler {
             }
 
             // Check for a model-specific entry.
-            if (canonQuirkMap.containsKey(unitId)) {
+            if (canonQuirkMap.containsKey(unitId) && !canonQuirkMap.get(unitId).isEmpty()) {
                 // If this specific model, has no quirks, return null.
                 if (NO_QUIRKS.equalsIgnoreCase(canonQuirkMap.get(unitId).get(0).getQuirk())) {
                     return null;

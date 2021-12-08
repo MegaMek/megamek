@@ -6664,15 +6664,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             attacks.stream()
                     .filter(weaponHandler -> (weaponHandler.waa != null)
                             && !targets.contains(weaponHandler.waa))
-                    .forEach(wr -> {
-                if (wr instanceof CapitalMissileBearingsOnlyHandler) {
+                    .forEach(weaponHandler -> {
+                if (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) {
                     if (Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                            game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
-                        vAttacksInArc.add(wr.waa);
+                            game.getTarget(weaponHandler.waa.getOriginalTargetType(),
+                                    weaponHandler.waa.getOriginalTargetId()))) {
+                        vAttacksInArc.add(weaponHandler.waa);
                     }
                 } else {
-                    if (Compute.isInArc(game, getId(), getEquipmentNum(ams), game.getEntity(wr.waa.getEntityId()))) {
-                        vAttacksInArc.add(wr.waa);
+                    if (Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                            game.getEntity(weaponHandler.waa.getEntityId()))) {
+                        vAttacksInArc.add(weaponHandler.waa);
                     }
                 }
             });

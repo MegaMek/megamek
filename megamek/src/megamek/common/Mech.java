@@ -1808,7 +1808,7 @@ public abstract class Mech extends Entity {
         }
         if (includeRadicalHeatSink
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
-            capacity += Math.ceil(getActiveSinks() * 0.4);
+            capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
 
         return capacity;
@@ -4158,8 +4158,7 @@ public abstract class Mech extends Entity {
 
         // account for coolant pods
         if (coolantPods > 0) {
-            mechHeatEfficiency += Math
-                    .ceil((getNumberOfSinks() * coolantPods) / 5);
+            mechHeatEfficiency += (int) Math.ceil((getNumberOfSinks() * coolantPods) / 5d);
             bvText.append(" + Coolant Pods ");
         }
         if (hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
@@ -4169,7 +4168,7 @@ public abstract class Mech extends Entity {
 
         int moveHeat;
         if ((this instanceof LandAirMech) && (((LandAirMech) this).getLAMType()  == LandAirMech.LAM_STANDARD)) {
-            moveHeat = (int) Math.round(((LandAirMech) this).getAirMechFlankMP(false, true) / 3.0);
+            moveHeat = (int) Math.round(((LandAirMech) this).getAirMechFlankMP(false, true) / 3d);
         } else if ((getJumpMP(false, true) > 0)
                 && (getJumpHeat(getJumpMP(false, true)) > getRunHeat())) {
             moveHeat = getJumpHeat(getJumpMP(false, true));

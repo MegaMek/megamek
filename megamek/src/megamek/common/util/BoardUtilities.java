@@ -116,7 +116,7 @@ public class BoardUtilities {
     public static Board generateRandom(MapSettings mapSettings) {
         int[][] elevationMap = new int[mapSettings.getBoardWidth()][mapSettings.getBoardHeight()];
         double sizeScale = (double) (mapSettings.getBoardWidth() * mapSettings.getBoardHeight())
-                / ((double) (16 * 17));
+                / (16d * 17d);
 
         generateElevation(mapSettings.getHilliness(), mapSettings
                 .getBoardWidth(), mapSettings.getBoardHeight(), mapSettings
@@ -143,7 +143,7 @@ public class BoardUtilities {
             return result;
         }
 
-        /* initialize reverseHex */
+        // initialize reverseHex
         HashMap<Hex, Point> reverseHex = new HashMap<>(2
                 * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());
         for (int y = 0; y < mapSettings.getBoardHeight(); y++) {
@@ -177,69 +177,72 @@ public class BoardUtilities {
             addCliffs(result, mapSettings.getCliffs());
         }
 
-        /* Add the woods */
+        // Add the woods
         int count = mapSettings.getMinForestSpots();
         if (mapSettings.getMaxForestSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxForestSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WOODS,
                     mapSettings.getProbHeavy(), mapSettings.getMinForestSize(),
                     mapSettings.getMaxForestSize(), reverseHex, true);
         }
         
-        /* Add foliage (1 elevation high woods) */
+        // Add foliage (1 elevation high woods)
         count = mapSettings.getMinFoliageSpots();
         if (mapSettings.getMaxFoliageSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxFoliageSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeFoliage(result, Terrains.WOODS,
                     mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
                     mapSettings.getMaxFoliageSize(), reverseHex, true);
         }
         
-        /* Add the rough */
+        // Add the rough
         count = mapSettings.getMinRoughSpots();
         if (mapSettings.getMaxRoughSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxRoughSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.ROUGH, 0, mapSettings
                     .getMinRoughSize(), mapSettings.getMaxRoughSize(),
                     reverseHex, true);
         }
-        /* Add the sand */
+
+        // Add the sand
         count = mapSettings.getMinSandSpots();
         if (mapSettings.getMaxSandSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxSandSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.SAND, 0, mapSettings
                     .getMinSandSize(), mapSettings.getMaxSandSize(),
                     reverseHex, true);
         }
-        /* Add the planted field */
+
+        // Add the planted field
         count = mapSettings.getMinPlantedFieldSpots();
         if (mapSettings.getMaxPlantedFieldSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxPlantedFieldSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.FIELDS, 0, mapSettings
                     .getMinPlantedFieldSize(), mapSettings.getMaxPlantedFieldSize(),
                     reverseHex, true);
         }
-        /* Add the swamp */
+
+        // Add the swamp
         count = mapSettings.getMinSwampSpots();
         if (mapSettings.getMaxSwampSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxSwampSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.SWAMP, 0, mapSettings
                     .getMinSwampSize(), mapSettings.getMaxSwampSize(),
@@ -251,7 +254,7 @@ public class BoardUtilities {
         if (mapSettings.getMaxFortifiedSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxFortifiedSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.FORTIFIED, 0, mapSettings
                     .getMinFortifiedSize(), mapSettings.getMaxFortifiedSize(),
@@ -263,72 +266,76 @@ public class BoardUtilities {
         if (mapSettings.getMaxRubbleSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxRubbleSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.RUBBLE, 0, mapSettings
                     .getMinRubbleSize(), mapSettings.getMaxRubbleSize(),
                     reverseHex, true);
         }
 
-        /* Add the water */
+        // Add the water
         count = mapSettings.getMinWaterSpots();
         if (mapSettings.getMaxWaterSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxWaterSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WATER, mapSettings.getProbDeep(),
                     mapSettings.getMinWaterSize(), mapSettings.getMaxWaterSize(), reverseHex, true);
         }
-        /* Add the pavements */
+
+        // Add the pavements
         count = mapSettings.getMinPavementSpots();
         if (mapSettings.getMaxPavementSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxPavementSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.PAVEMENT, 0, mapSettings.getMinPavementSize(),
                     mapSettings.getMaxPavementSize(), reverseHex, true);
         }
 
-        /* Add the ice */
+        // Add the ice
         count = mapSettings.getMinIceSpots();
         if (mapSettings.getMaxIceSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxIceSpots());
         }
-        count *= sizeScale;
+        count *= (int) Math.round(sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.ICE, 0, mapSettings.getMinIceSize(),
                     mapSettings.getMaxIceSize(), reverseHex, true);
         }
 
-        /* Add the craters */
+        // Add the craters
         if (Compute.randomInt(100) < mapSettings.getProbCrater()) {
             addCraters(result, mapSettings.getMinRadius(), mapSettings.getMaxRadius(),
                     (int) (mapSettings.getMinCraters() * sizeScale),
                     (int) (mapSettings.getMaxCraters() * sizeScale));
         }
 
-        /* Add the river */
+        // Add the river
         if (Compute.randomInt(100) < mapSettings.getProbRiver()) {
             addRiver(result, reverseHex);
         }
 
-        /* Add special effects */
+        // Add special effects
         if (Compute.randomInt(100) < mapSettings.getProbFlood()) {
             postProcessFlood(nb, mapSettings.getFxMod());
         }
+
         if (Compute.randomInt(100) < mapSettings.getProbDrought()) {
             postProcessDrought(nb, mapSettings.getFxMod());
         }
+
         if (Compute.randomInt(100) < mapSettings.getProbFreeze()) {
             postProcessDeepFreeze(nb, mapSettings.getFxMod());
         }
+
         if (Compute.randomInt(100) < mapSettings.getProbForestFire()) {
             postProcessForestFire(nb, mapSettings.getFxMod());
         }
 
-        /* Add the road */
+        // Add the road
         boolean roadNeeded = Compute.randomInt(100) < mapSettings.getProbRoad();
 
         // add buildings
@@ -1131,7 +1138,7 @@ public class BoardUtilities {
         int[] elevationCount = new int[range + 1];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
-                elevationMap[w][h] *= scale;
+                elevationMap[w][h] *= (int) Math.round(scale);
                 elevationMap[w][h] += inc;
                 elevationCount[elevationMap[w][h]]++;
             }
@@ -1142,6 +1149,7 @@ public class BoardUtilities {
                 mostElevation = lvl;
             }
         }
+
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 elevationMap[w][h] -= mostElevation;

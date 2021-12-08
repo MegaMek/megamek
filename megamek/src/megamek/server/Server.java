@@ -22637,21 +22637,17 @@ public class Server implements Runnable {
                     }
 
                     // check for overpenetration
-                    if (game.getOptions().booleanOption(
-                            OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
                         int opRoll = Compute.d6(1);
-                        if ((((te instanceof Jumpship) || (te instanceof SpaceStation))
-                             && !(te instanceof Warship) && (opRoll > 3))
-                            || ((te instanceof Dropship) && (opRoll > 4))
-                            || ((te instanceof Warship)
-                                && (a.get0SI() <= 30) && (opRoll > 5))) {
+                        if (((te instanceof Jumpship) && !(te instanceof Warship) && (opRoll > 3))
+                                || ((te instanceof Dropship) && (opRoll > 4))
+                                || ((te instanceof Warship) && (a.get0SI() <= 30) && (opRoll > 5))) {
                             // over-penetration happened
                             r = new Report(9090);
                             r.subject = te_n;
                             r.newlines = 0;
                             vDesc.addElement(r);
-                            int new_loc = a.getOppositeLocation(hit
-                                                                        .getLocation());
+                            int new_loc = a.getOppositeLocation(hit.getLocation());
                             damage = Math.min(damage, te.getArmor(new_loc));
                             // We don't want to deal negative damage
                             damage = Math.max(damage, 0);
@@ -22664,8 +22660,7 @@ public class Server implements Runnable {
                             r.add(te.getLocationAbbr(new_loc));
                             vDesc.addElement(r);
                             te.setArmor(te.getArmor(new_loc) - damage, new_loc);
-                            if ((te instanceof Warship)
-                                || (te instanceof Dropship)) {
+                            if ((te instanceof Warship) || (te instanceof Dropship)) {
                                 damage = 2;
                             } else {
                                 damage = 0;
@@ -22674,7 +22669,7 @@ public class Server implements Runnable {
                     }
 
                     // divide damage in half
-                    // do not divide by half if it is an ammo exposion
+                    // do not divide by half if it is an ammo explosion
                     if (!ammoExplosion && !nukeS2S
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                         damage /= 2;

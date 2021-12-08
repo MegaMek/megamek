@@ -6684,9 +6684,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
                     || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
                             && ams.getType().hasFlag(WeaponType.F_AMS))) {
-                for (WeaponAttackAction waa : vAttacksInArc) {
-                    waa.addCounterEquipment(ams);
-                }
+                vAttacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat
                 // Unlike single AMS, PD bays can gang up on 1 attack

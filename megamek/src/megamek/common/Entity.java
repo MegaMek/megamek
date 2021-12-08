@@ -6661,11 +6661,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 .forEach(ams -> {
             // make a new vector of only incoming attacks in arc
             final List<WeaponAttackAction> vAttacksInArc = new ArrayList<>();
-            for (WeaponHandler wr : attacks) {
-                if ((wr.waa == null) || (targets.contains(wr.waa))) {
-                    continue;
-                }
-
+            attacks.stream()
+                    .filter(weaponHandler -> (weaponHandler.waa != null)
+                            && !targets.contains(weaponHandler.waa))
+                    .forEach(wr -> {
                 if (wr instanceof CapitalMissileBearingsOnlyHandler) {
                     if (Compute.isInArc(game, getId(), getEquipmentNum(ams),
                             game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
@@ -6676,7 +6675,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         vAttacksInArc.add(wr.waa);
                     }
                 }
-            }
+            });
 
             // AMS Bays can fire at all incoming attacks each round
             // So can standard AMS if the unofficial option is turned on

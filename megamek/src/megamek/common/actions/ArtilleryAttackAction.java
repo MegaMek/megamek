@@ -46,9 +46,8 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         super(entityId, targetType, targetId, weaponId);
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
-        int distance = Compute.effectiveDistance(game, getEntity(game),
-                getTarget(game));
-        //adjust distance for gravity
+        int distance = Compute.effectiveDistance(game, getEntity(game), getTarget(game));
+        // adjust distance for gravity
         distance = (int) Math.floor((double) distance / game.getPlanetaryConditions().getGravity());
         EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
@@ -58,7 +57,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
                 Mounted bayW = game.getEntity(entityId).getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-                    //See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
+                    // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
                     turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
                     break;
                 } else if (getEntity(game).isAirborne() && !getEntity(game).isSpaceborne()) {
@@ -86,8 +85,8 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
             }
             return;
         }
-        //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
-        //An aaa will only be returned if the weapon is set to the correct mode
+        // Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
+        // An aaa will only be returned if the weapon is set to the correct mode
         if (mounted.isInBearingsOnlyMode()
                 && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             this.launchVelocity = game.getOptions().intOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY);
@@ -108,10 +107,10 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
                 turnsTilHit = 2;
             }
         } else if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-            //See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
+            // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
             turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
         } else {
-            //See indirect flight times table, TO p181
+            // See indirect flight times table, TO p181
             if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
                 turnsTilHit = 0;
             } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {

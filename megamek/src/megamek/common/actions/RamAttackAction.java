@@ -14,6 +14,7 @@
 package megamek.common.actions;
 
 import java.util.Enumeration;
+import java.util.Objects;
 
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
@@ -56,9 +57,7 @@ public class RamAttackAction extends AbstractAttackAction {
         final Entity ae = getEntity(game);
 
         // arguments legal?
-        if (ae == null) {
-            throw new IllegalStateException("Attacker is null");
-        }
+        Objects.requireNonNull(ae, "Attacker is null");
 
         // Do to pretreatment of physical attacks, the target may be null.
         if (target == null) {
@@ -77,7 +76,7 @@ public class RamAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attack.");
         }
 
-        Entity te = null;
+        Entity te;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         } else {
@@ -126,21 +125,21 @@ public class RamAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already making a ramming attack");
         }
 
-        //attacker 
+        // attacker
         
         // target must have moved already
         if (!te.isDone()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be done with movement");
         }
         
-        //Set the base BTH       
+        // Set the base BTH
         int base = 6 + te.getCrew().getPiloting() - ae.getCrew().getPiloting(); 
         
         toHit = new ToHitData(base, "base");
 
         IAero a = (IAero) ae;
         
-        //target type
+        // target type
         if (target instanceof SpaceStation) {
             toHit.addModifier(-1, "target is a space station");
         } else if (target instanceof Warship) {
@@ -153,7 +152,7 @@ public class RamAttackAction extends AbstractAttackAction {
             toHit.addModifier(+4, "target is a fighter/small craft");
         }
         
-        //attacker type
+        // attacker type
         if (a instanceof SpaceStation) {
             toHit.addModifier(+0, "attacker is a space station");
         } else if (a instanceof Warship) {
@@ -166,27 +165,28 @@ public class RamAttackAction extends AbstractAttackAction {
             toHit.addModifier(-2, "attacker is a fighter/small craft");
         }
         
-        //can the target unit move
-        if (target.isImmobile() || te.getWalkMP() == 0)
+        // can the target unit move
+        if (target.isImmobile() || (te.getWalkMP() == 0)) {
             toHit.addModifier(-2, "target cannot spend thrust");
-            
-        //sensor damage
-        if (a.getSensorHits() > 0)
+        }
+
+        // sensor damage
+        if (a.getSensorHits() > 0) {
             toHit.addModifier(+1, "sensor damage");
-            
-        //avionics damage
-        int avionics = a.getAvionicsHits();
-        if (avionics > 3)
-            avionics = 3;
-        if (avionics > 0)
+        }
+
+        // avionics damage
+        int avionics = Math.min(a.getAvionicsHits(), 3);
+        if (avionics > 0) {
             toHit.addModifier(avionics, "avionics damage");
+        }
         
-        //evading bonuses
+        // evading bonuses
         if (target.getTargetType() == Targetable.TYPE_ENTITY && te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
         
-        //determine hit direction
+        // determine hit direction
         toHit.setSideTable(te.sideTable(priorSrc));
         
         toHit.setHitTable(ToHitData.HIT_NORMAL);

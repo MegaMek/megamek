@@ -6654,62 +6654,50 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Assign AMS systems to the most dangerous incoming missile attacks. This
      * should only be called once per turn, or AMS will get extra attacks
      */
-    public void assignAMS(Vector<WeaponHandler> vAttacks) {
-
-        HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
-        for (Mounted ams : getActiveAMS()) {
-            // Ignore APDS, it gets assigned elsewhere
-            if (ams.isAPDS()) {
-                continue;
-            }
-
+    public void assignAMS(final List<WeaponHandler> attacks) {
+        final Set<WeaponAttackAction> targets = new HashSet<>();
+        getActiveAMS().stream()
+                .filter(ams -> !ams.isAPDS())
+                .forEach(ams -> {
             // make a new vector of only incoming attacks in arc
-            Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
-                    vAttacks.size());
-            for (WeaponHandler wr : vAttacks) {
+            final List<WeaponAttackAction> vAttacksInArc = new ArrayList<>();
+            for (WeaponHandler wr : attacks) {
+                if ((wr.waa == null) || (targets.contains(wr.waa))) {
+                    continue;
+                }
+
                 if (wr instanceof CapitalMissileBearingsOnlyHandler) {
-                    if (!targets.contains(wr.waa)
-                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                    game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
-                        vAttacksInArc.addElement(wr.waa);
+                    if (Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                            game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
+                        vAttacksInArc.add(wr.waa);
                     }
                 } else {
-                    if (!targets.contains(wr.waa)
-                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                    game.getEntity(wr.waa.getEntityId()))) {
-                        vAttacksInArc.addElement(wr.waa);
+                    if (Compute.isInArc(game, getId(), getEquipmentNum(ams), game.getEntity(wr.waa.getEntityId()))) {
+                        vAttacksInArc.add(wr.waa);
                     }
                 }
             }
-            //AMS Bays can fire at all incoming attacks each round
-            //So can standard AMS if the unofficial option is turned on
+
+            // AMS Bays can fire at all incoming attacks each round
+            // So can standard AMS if the unofficial option is turned on
             if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
                     || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
                             && ams.getType().hasFlag(WeaponType.F_AMS))) {
                 for (WeaponAttackAction waa : vAttacksInArc) {
-                    if (waa != null) {
-                        waa.addCounterEquipment(ams);
-                    }
+                    waa.addCounterEquipment(ams);
                 }
             } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
-                //Point defense bays are assigned to the attack with the greatest threat
-                //Unlike single AMS, PD bays can gang up on 1 attack
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                        vAttacksInArc, true);
-                    if (waa != null) {
-                        waa.addCounterEquipment(ams);
-                    }
+                // Point defense bays are assigned to the attack with the greatest threat
+                // Unlike single AMS, PD bays can gang up on 1 attack
+                Compute.getHighestExpectedDamage(game, vAttacksInArc, true).addCounterEquipment(ams);
             } else {
-            //Otherwise, find the most dangerous salvo by expected damage and target it
-            // this ensures that only 1 AMS targets the strike. Use for non-bays.
-            WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                    vAttacksInArc, true);
-                if (waa != null) {
+                // Otherwise, find the most dangerous salvo by expected damage and target it
+                // this ensures that only 1 AMS targets the strike. Use for non-bays.
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
-                }
             }
-        }
+        });
     }
 
     /**

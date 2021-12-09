@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -1669,7 +1670,8 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(Game game, Entity attacker, Targetable target) {
+    public static int effectiveDistance(final Game game, final Entity attacker,
+                                        final @Nullable Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
     }
 
@@ -1680,9 +1682,13 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(Game game, Entity attacker, Targetable target,
-                                        boolean useGroundDistance) {
-        if (Compute.isAirToGround(attacker, target)
+    public static int effectiveDistance(final Game game, final Entity attacker,
+                                        final @Nullable Targetable target,
+                                        final boolean useGroundDistance) {
+        if (target == null) {
+            MegaMek.getLogger().error("Attempted to determine the effective distance to a null target");
+            return 0;
+        } else if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;

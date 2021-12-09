@@ -25594,6 +25594,9 @@ public class Server implements Runnable {
             case Aero.CRIT_GRAV_DECK:
                 if (js == null) {
                     break;
+                } else if (js.getTotalGravDeck() <= 0) {
+                    MegaMek.getLogger().error("Cannot handle a grav deck crit for a JumpShip with no grav decks");
+                    break;
                 }
                 int choice = Compute.randomInt(js.getTotalGravDeck());
                 // Grav Deck hit

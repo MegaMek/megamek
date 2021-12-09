@@ -162,7 +162,7 @@ public class QuirksHandler {
 
     public static String getChassis(final String unitId) {
         final int splitIdx = unitId.indexOf("~");
-        return  (splitIdx == -1) ? unitId : unitId.substring(0, splitIdx);
+        return (splitIdx == -1) ? unitId : unitId.substring(0, splitIdx);
     }
 
     public static @Nullable String getModel(final String unitId) {

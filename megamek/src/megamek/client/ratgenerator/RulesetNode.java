@@ -162,7 +162,7 @@ public class RulesetNode {
         if (property.startsWith("!")) {
             return !matches(val, property.replaceFirst("!", ""));
         }
-        String [] ands = property.split(",");
+        String[] ands = property.split(",");
         for (String and : ands) {
             String[] ors = and.split("\\|");
             boolean result = false;
@@ -180,7 +180,7 @@ public class RulesetNode {
     }
 
     public boolean matchesDate(Integer year, String property) {
-        String [] ands = property.split("\\+");
+        String[] ands = property.split("\\+");
         for (String and : ands) {
             String[] ors = and.split("\\|");
             boolean result = false;
@@ -215,7 +215,7 @@ public class RulesetNode {
         if (property.startsWith("!")) {
             return !collectionMatchesProperty(list, property.replaceFirst("!", ""));
         }
-        String [] ands = property.split(",");
+        String[] ands = property.split(",");
         for (String and : ands) {
             String[] ors = and.split("\\|");
             boolean result = false;

@@ -298,7 +298,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	}
 	
 	public void setRequiredUnits(String str) {
-		String [] subfields = str.split(",");
+		String[] subfields = str.split(",");
 		for (String unit : subfields) {
 			if (unit.startsWith("req:")) {
 				requiredUnits.add(unit.replace("req:", ""));

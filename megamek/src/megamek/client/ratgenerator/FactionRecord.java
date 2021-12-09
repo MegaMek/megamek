@@ -559,7 +559,7 @@ public class FactionRecord {
                     pctSalvage.put(era,
                             Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
                     salvage.put(era, new HashMap<>());
-                    String [] fields = wn.getTextContent().trim().split(",");
+                    String[] fields = wn.getTextContent().trim().split(",");
                     for (String field : fields) {
                         if (field.length() > 0) {
                             String[] subfields = field.split(":");

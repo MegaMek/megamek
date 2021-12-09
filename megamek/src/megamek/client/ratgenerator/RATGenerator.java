@@ -1040,7 +1040,7 @@ public class RATGenerator {
             if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 chassisIndex.get(era).put(chassisKey,
                         new HashMap<>());
-                String [] codes = wn2.getTextContent().trim().split(",");
+                String[] codes = wn2.getTextContent().trim().split(",");
                 for (String code : codes) {
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
                     cr.getIncludedFactions().add(code.split(":")[0]);
@@ -1083,7 +1083,7 @@ public class RATGenerator {
                 mr.setRequiredUnits(wn2.getTextContent().trim());                                        
             } else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 modelIndex.get(era).put(mr.getKey(), new HashMap<>());
-                String [] codes = wn2.getTextContent().trim().split(",");
+                String[] codes = wn2.getTextContent().trim().split(",");
                 for (String code : codes) {
                     AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
                     mr.getIncludedFactions().add(code.split(":")[0]);

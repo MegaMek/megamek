@@ -310,7 +310,7 @@ class LobbyMekPopup {
     private static JMenu protoMenu(ClientGUI cg, boolean enabled, ActionListener listener,
             Collection<Entity> entities) {
 
-        JMenu menu = new JMenu("Load ProtoNek");
+        JMenu menu = new JMenu("Load ProtoMek");
         if (enabled && entities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH))) {
             Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)).findAny().get();
             for (Entity loader: cg.getClient().getGame().getEntitiesVector()) {

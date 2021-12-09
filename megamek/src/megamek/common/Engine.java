@@ -2,32 +2,25 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * Author: Reinhard Vicinus
- */
-
 package megamek.common;
 
 import java.io.Serializable;
 
 /**
- * This class represents an engine, such as those driving mechs.
+ * This class represents an engine, such as those driving 'Meks.
+ * @author Reinhard Vicinus
  */
 public class Engine implements Serializable, ITechnology {
-    /**
-     *
-     */
     private static final long serialVersionUID = -246032529363109609L;
 
     public static final double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
@@ -970,6 +963,201 @@ public class Engine implements Serializable, ITechnology {
                 return SUPPORT_EXTERNAL_TA;
             default:
                 return new TechAdvancement();
+        }
+    }
+
+    /**
+     * @param year The game year
+     * @return the tech type (tech level + tech base) for the current engine.
+     */
+    public int getTechType(int year) {
+        boolean isLarge = hasFlag(LARGE_ENGINE);
+        boolean isClan = hasFlag(CLAN_ENGINE);
+        boolean isSV = hasFlag(SUPPORT_VEE_ENGINE);
+        switch (engineType) {
+            case NORMAL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 2630) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else if (year <= 3120) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                } else if (isClan) {
+                    return TechConstants.T_CLAN_TW;
+                } else if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                } else if (year <= 2285) {
+                    return TechConstants.T_IS_UNOFFICIAL;
+                } else {
+                    return TechConstants.T_INTRO_BOXSET;
+                }
+            case XL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 2845) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3075) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                } else if (isClan) {
+                    if (year <= 2819) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 2827) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else if (year <= 2829) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                } else if (isLarge) {
+                    if (year <= 2630) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 2822) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else if (year <= 3053) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_ADVANCED;
+                    }
+                } else {
+                    if (year <= 2556) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 2579) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 2865) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else if (year <= 3035) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3045) {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            case XXL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 3055) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3125) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                } else if (isClan) {
+                    if (year <= 2949) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3079) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                } else if (isLarge) {
+                    if (year <= 3058) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3130) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_ADVANCED;
+                    }
+                }
+            case FISSION:
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                } else if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                } else if (isLarge) {
+                    return TechConstants.T_IS_UNOFFICIAL;
+                } else {
+                    if (year <= 2470) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 2882) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else if (year <= 3079) {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            case FUEL_CELL:
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                } else if (isClan) {
+                    return (year > 3078) ? TechConstants.T_CLAN_TW : TechConstants.T_CLAN_ADVANCED;
+                } else {
+                    if (year <= 2285) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 2470) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3078) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            case LIGHT_ENGINE:
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                } else if (isLarge) {
+                    if (year < 3064) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year < 3065) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_ADVANCED;
+                    }
+                } else {
+                    if (year < 3055) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year < 3062) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year < 3067) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            case COMBUSTION_ENGINE:
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                } else if (isClan) {
+                    return (year > 2807) ? TechConstants.T_CLAN_TW : TechConstants.T_CLAN_UNOFFICIAL;
+                } else if (isLarge) {
+                    if (year <= 2630) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                } else {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+            case MAGLEV:
+            case STEAM:
+            case BATTERY:
+            case SOLAR:
+            case NONE:
+            case EXTERNAL:
+                return TechConstants.T_ALLOWED_ALL;
+            case COMPACT_ENGINE:
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                } else {
+                    if (year <= 3060) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3068) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3072) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            default:
+                return TechConstants.T_TECH_UNKNOWN;
         }
     }
 

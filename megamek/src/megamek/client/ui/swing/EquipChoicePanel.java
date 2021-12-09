@@ -1047,7 +1047,7 @@ public class EquipChoicePanel extends JPanel {
                 int shotsPerTon = curType.getShots();
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
-                // Protomechs and BattleArmor are limited to the number of shots allocated in construction
+                // ProtoMeks and BattleArmor are limited to the number of shots allocated in construction
                 if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
                     shotsPerTon = m.getOriginalShots();
                     // BA tube artillery always comes in pairs
@@ -1065,20 +1065,20 @@ public class EquipChoicePanel extends JPanel {
                     m_num_shots.removeItemListener(numShotsListener);
                     int currShots = (Integer) m_num_shots.getSelectedItem();
                     m_num_shots.removeAllItems();
-                    int shotsPerTon1 = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
+                    int numberOfShotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
                     
-                    // ProtomMeks are limited to number of shots added during construction
+                    // ProtoMeks are limited to number of shots added during construction
                     if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
-                        shotsPerTon1 = m.getOriginalShots();
+                        numberOfShotsPerTon = m.getOriginalShots();
                     }
-                    for (int i = 0; i <= shotsPerTon1; i++) {
+                    for (int i = 0; i <= numberOfShotsPerTon; i++) {
                         m_num_shots.addItem(i);
                     }
                     // If the shots selection was changed, try to set that value, unless it's too large
-                    if (numShotsChanged && currShots <= shotsPerTon1) {
+                    if (numShotsChanged && currShots <= numberOfShotsPerTon) {
                         m_num_shots.setSelectedItem(currShots);
                     } else {
-                        m_num_shots.setSelectedItem(shotsPerTon1);
+                        m_num_shots.setSelectedItem(numberOfShotsPerTon);
                     }
                     
                     for (WeaponAmmoChoicePanel weaponAmmoChoicePanel : weaponAmmoChoicePanels) {

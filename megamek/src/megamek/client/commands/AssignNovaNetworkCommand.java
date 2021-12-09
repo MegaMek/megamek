@@ -54,41 +54,42 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
 
         try {
-            // we have a command!
-            String cmd = args[1];
-            if (Objects.equals(cmd, "print")) {
-                if (args.length > 2) {
-                    // do /nova print ID
-                    int id = Integer.parseInt(args[2]);
-                    return strListNetwork(id, true);
-                } else {
-                    // do /nova print
-                    return strListNetworks(true);
-                }
-            } else if (Objects.equals(cmd, "link")) {
-                if (args.length > 4) {
-                    int id1 = Integer.parseInt(args[2]);
-                    int id2 = Integer.parseInt(args[3]);
-                    int id3 = Integer.parseInt(args[4]);
-                    // do /nova link ID ID ID
-                    return strLink3(id1, id2, id3);
-                } else if (args.length > 3) {
-                    // do /nova link ID ID
-                    int id1 = Integer.parseInt(args[2]);
-                    int id2 = Integer.parseInt(args[3]);
-                    return strLink2(id1, id2);
-                }
-            } else if (Objects.equals(cmd, "unlink")) {
-                if (args.length > 2) {
-                    // do /nova unlink ID
-                    int id = Integer.parseInt(args[2]);
-                    return strUnlinkID(id);
-                } else {
-                    // do /nova unlink
-                    return strUnlinkAll();
-                }
+            switch (args[1]) {
+                case "print":
+                    if (args.length > 2) {
+                        // do /nova print ID
+                        int id = Integer.parseInt(args[2]);
+                        return strListNetwork(id, true);
+                    } else {
+                        // do /nova print
+                        return strListNetworks(true);
+                    }
+                case "link":
+                    if (args.length > 4) {
+                        int id1 = Integer.parseInt(args[2]);
+                        int id2 = Integer.parseInt(args[3]);
+                        int id3 = Integer.parseInt(args[4]);
+                        // do /nova link ID ID ID
+                        return strLink3(id1, id2, id3);
+                    } else if (args.length > 3) {
+                        // do /nova link ID ID
+                        int id1 = Integer.parseInt(args[2]);
+                        int id2 = Integer.parseInt(args[3]);
+                        return strLink2(id1, id2);
+                    }
+                    break;
+                case "unlink":
+                    if (args.length > 2) {
+                        // do /nova unlink ID
+                        int id = Integer.parseInt(args[2]);
+                        return strUnlinkID(id);
+                    } else {
+                        // do /nova unlink
+                        return strUnlinkAll();
+                    }
+                default:
+                    return "Unknown command. #nova for help.\n";
             }
-            return "Unknown command. #nova for help.\n";
         } catch (NumberFormatException | IndexOutOfBoundsException | NullPointerException ignored) {
 
         }

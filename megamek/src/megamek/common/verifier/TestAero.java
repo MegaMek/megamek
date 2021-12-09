@@ -373,17 +373,38 @@ public class TestAero extends TestEntity {
         }
         return rating;
     }
-    
+
+    /**
+     * @return the maximum number of turns the given unit could fly at safe thrust given its fuel
+     * payload. Aerospace fighters consume 1 fuel point per thrust point spent up the the maximum
+     * safe thrust, whereas conventional fighters with turbine engines consume 0.5 fuel points per
+     * thrust point spent up to the maximum safe thrust.
+     * See Strategic Operations pg 34.
+     */
+    public static float calculateMaxTurnsAtSafe(final Aero aero) {
+        float fuelPerTurn;
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && aero.hasEngine()
+                && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            fuelPerTurn = aero.getWalkMP() * 0.5f;
+        } else if (aero.getWalkMP() == 0) {
+            fuelPerTurn = 0.2f;
+        } else {
+            fuelPerTurn = aero.getWalkMP();
+        }
+
+        return aero.getFuel() / fuelPerTurn;
+    }
+
     /**
      * Computes and returns the maximum number of turns the given unit could
-     * fly at max thrust given its fuel payload.  Aerospace fighters consume
+     * fly at max thrust given its fuel payload. Aerospace fighters consume
      * 1 fuel point per thrust point spent up the the maximum safe thrust and
      * 2 fuel points per thrust point afterwards, whereas conventional fighters 
      * with ICE engines consume 0.5 fuel points per thrust point spent up to 
      * the maximum safe thrust and 1 fuel point per thrust up to the maximum 
-     * thrust.  Conventional fighters with Fusion engines spend 0.5 fuel points
+     * thrust. Conventional fighters with Fusion engines spend 0.5 fuel points
      * per thrust up to the safe thrust and then 2 fuel points per thrust 
-     * afterwards.  See Strategic Operations pg 34.
+     * afterwards. See Strategic Operations pg 34.
      * 
      * @param aero
      * @return
@@ -395,7 +416,7 @@ public class TestAero extends TestEntity {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
             if (aero.hasEngine()) {
                 if (aero.getEngine().isFusion()) {
-                    fuelPerTurn += (aero.getRunMP() - aero.getWalkMP()) * 2;
+                    fuelPerTurn += (aero.getRunMP() - aero.getWalkMP()) * 2f;
                 } else {
                     fuelPerTurn += (aero.getRunMP() - aero.getWalkMP());
                 }
@@ -403,11 +424,47 @@ public class TestAero extends TestEntity {
         } else if (aero.getWalkMP() == 0) {
             fuelPerTurn = 0.2f;
         } else {
-            fuelPerTurn = aero.getWalkMP() + (aero.getRunMP() - aero.getWalkMP()) * 2;
+            fuelPerTurn = aero.getWalkMP() + (aero.getRunMP() - aero.getWalkMP()) * 2f;
         }
         return fuelPoints / fuelPerTurn;       
     }
-    
+
+    public static int weightFreeHeatSinks(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return TestSmallCraft.weightFreeHeatSinks((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.weightFreeHeatSinks((Jumpship) aero);
+        } else if (aero.hasEngine()) {
+            return aero.getEngine().getWeightFreeEngineHeatSinks();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @return the number of days the unit can spend accelerating at 1G
+     */
+    public static double calculateDaysAt1G(Aero aero) {
+        final double strategicFuelUse = aero.getStrategicFuelUse();
+        return (strategicFuelUse > 0) ? aero.getFuelTonnage() / aero.getStrategicFuelUse() : 0d;
+    }
+
+    /**
+     * @return the number of days the unit can spend accelerating at maximum thrust.
+     */
+    public static double calculateDaysAtMax(Aero aero) {
+        if (aero.getStrategicFuelUse() > 0) {
+            double maxMP = aero.getRunMP();
+            // check for station-keeping drive
+            if (maxMP == 0) {
+                maxMP = 0.2;
+            }
+            return aero.getFuelTonnage() / (aero.getStrategicFuelUse() * maxMP / 2.0);
+        } else {
+            return 0.0;
+        }
+    }
+
     public TestAero(Aero a, TestEntityOption option, String fs) {
         super(option, a.getEngine(), getArmor(a), getStructure(a));
         aero = a;

@@ -207,7 +207,7 @@ public class BoardEditor extends JPanel
     private Game game = new Game();
     private Board board = game.getBoard();
     private BoardView bv;
-    public static final int [] allDirections = {0,1,2,3,4,5};
+    public static final int[] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
     private Component bvc;
     private CommonMenuBar menuBar = new CommonMenuBar(this);

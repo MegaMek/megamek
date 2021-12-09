@@ -113,7 +113,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC };
 
-    public static final int [] allDirections = {0,1,2,3,4,5};
+    public static final int[] allDirections = {0,1,2,3,4,5};
 
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance().getIsometricEnabled();

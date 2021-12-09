@@ -7,13 +7,6 @@
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
  * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  */
-
-/*
- * EquipmentType.java
- *
- * Created on April 1, 2002, 1:35 PM
- */
-
 package megamek.common;
 
 import java.io.BufferedWriter;
@@ -39,11 +32,11 @@ import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
 
 /**
- * Represents any type of equipment mounted on a mechs, excluding systems and
+ * Represents any type of equipment mounted on a 'Mek, excluding systems and
  * actuators.
  *
  * @author Ben
- * @version
+ * @since April 1, 2002, 1:35 PM
  */
 public class EquipmentType implements ITechnology {
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;

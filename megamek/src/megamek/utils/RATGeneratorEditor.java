@@ -1114,7 +1114,7 @@ public class RATGeneratorEditor extends JFrame {
         private static final int CAT_SL_AERO_PCT = 5;
         private static final int CAT_CLAN_VEE_PCT = 6;
         private static final int CAT_SL_VEE_PCT = 7;
-        private static final String [] CATEGORIES = {
+        private static final String[] CATEGORIES = {
             "Omni %", "Clan %", "SL %",
             "Omni % (Aero)", "Clan % (Aero)", "SL % (Aero)",
             "Clan % (Vee)", "SL % (Vee)"

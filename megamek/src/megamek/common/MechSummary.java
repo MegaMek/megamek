@@ -481,19 +481,19 @@ public class MechSummary implements Serializable {
         return armorTypeSet;
     }
     
-    public int [] getArmorTypes() {
+    public int[] getArmorTypes() {
         return armorLoc;
     }
     
-    public void setArmorTypes(int [] al) {
+    public void setArmorTypes(int[] al) {
         armorLoc = al;
     }
     
-    public int [] getArmorTechTypes() {
+    public int[] getArmorTechTypes() {
         return armorLocTech;
     }
     
-    public void setArmorTechTypes(int [] att) {
+    public void setArmorTechTypes(int[] att) {
         armorLocTech = att;
     }
 

@@ -899,7 +899,7 @@ public class ForceDescriptor {
                 xoPos = (xoNode.getPosition() == null) ? coPos + 1 : Math.max(coPos, xoNode.getPosition());
             }
             if (coPos + xoPos > 0) {
-                ForceDescriptor [] forces = subforces.toArray(new ForceDescriptor[0]);
+                ForceDescriptor[] forces = subforces.toArray(new ForceDescriptor[0]);
                 Arrays.sort(forces, forceSorter);
                 if (coPos != 0) {
                     ForceDescriptor coFound = null;
@@ -1179,14 +1179,15 @@ public class ForceDescriptor {
             case "A":
                 return EntityWeightClass.WEIGHT_ASSAULT;
             case "SH":
-                case "C":
+            case "C":
                 return EntityWeightClass.WEIGHT_COLOSSAL;
+            default:
+                return -1;
         }
-        return -1;
     }
 
     public String getWeightClassCode() {
-        final String[] codes = {"UL", "L", "M", "H", "A", "SH"};
+        final String[] codes = { "UL", "L", "M", "H", "A", "SH" };
         if (weightClass == null || weightClass == -1) {
             return "";
         }

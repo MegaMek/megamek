@@ -159,7 +159,7 @@ public class MechCacheCSVTool {
                 // Armor type - prints different armor types on the unit
                 Vector<Integer> armorType = new Vector<>();
                 Vector<Integer> armorTech = new Vector<>();
-                int [] at, att;
+                int[] at, att;
                 at = mech.getArmorTypes();
                 att = mech.getArmorTechTypes();
                 for (int i = 0; i < at.length; i++) {

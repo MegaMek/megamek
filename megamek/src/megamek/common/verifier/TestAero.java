@@ -382,7 +382,7 @@ public class TestAero extends TestEntity {
      * See Strategic Operations pg 34.
      */
     public static float calculateMaxTurnsAtSafe(final Aero aero) {
-        float fuelPerTurn;
+        final float fuelPerTurn;
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && aero.hasEngine()
                 && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
@@ -429,7 +429,7 @@ public class TestAero extends TestEntity {
         return fuelPoints / fuelPerTurn;       
     }
 
-    public static int weightFreeHeatSinks(Aero aero) {
+    public static int weightFreeHeatSinks(final Aero aero) {
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             return TestSmallCraft.weightFreeHeatSinks((SmallCraft) aero);
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
@@ -444,7 +444,7 @@ public class TestAero extends TestEntity {
     /**
      * @return the number of days the unit can spend accelerating at 1G
      */
-    public static double calculateDaysAt1G(Aero aero) {
+    public static double calculateDaysAt1G(final Aero aero) {
         final double strategicFuelUse = aero.getStrategicFuelUse();
         return (strategicFuelUse > 0) ? aero.getFuelTonnage() / aero.getStrategicFuelUse() : 0d;
     }
@@ -452,7 +452,7 @@ public class TestAero extends TestEntity {
     /**
      * @return the number of days the unit can spend accelerating at maximum thrust.
      */
-    public static double calculateDaysAtMax(Aero aero) {
+    public static double calculateDaysAtMax(final Aero aero) {
         if (aero.getStrategicFuelUse() > 0) {
             double maxMP = aero.getRunMP();
             // check for station-keeping drive

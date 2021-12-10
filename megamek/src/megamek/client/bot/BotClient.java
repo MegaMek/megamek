@@ -97,7 +97,7 @@ public abstract class BotClient extends Client {
                 }
 
                 // unloading "stranded" units happens as part of a game turn change, so that's where we do it.
-                if(canUnloadStranded()) {
+                if (canUnloadStranded()) {
                     sendUnloadStranded(getStrandedEntities());
                 }
             }
@@ -160,7 +160,7 @@ public abstract class BotClient extends Client {
                                 sendHiddenPBSCFRResponse(new Vector<>());
                                 sendHiddenPBSCFRResponse(pointBlankShots);
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             // if we screw up, don't keep everyone else waiting
                             sendHiddenPBSCFRResponse(null);
                             throw e;
@@ -259,22 +259,22 @@ public abstract class BotClient extends Client {
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
         // unless doing so would kill it or be illegal due to stacking violation
-        for(Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
+        for (Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
             
-            if(transport != null && transport.isPermanentlyImmobilized(true)) {
+            if (transport != null && transport.isPermanentlyImmobilized(true)) {
                 boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(), transport.getPosition());
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
                         currentEntity.isLocationProhibited(transport.getPosition());
                         
-                if(!stackingViolation && !unloadFatal) {
+                if (!stackingViolation && !unloadFatal) {
                     entitiesToUnload.add(currentEntity.getId());
                 }
             }
         }
         
         int[] entityIDs = new int[entitiesToUnload.size()];
-        for(int x = 0; x < entitiesToUnload.size(); x++) {
+        for (int x = 0; x < entitiesToUnload.size(); x++) {
             entityIDs[x] = entitiesToUnload.get(x);
         }
         
@@ -307,7 +307,7 @@ public abstract class BotClient extends Client {
      * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
      */
     public List<Entity> getEnemyEntities() {
-        if(currentTurnEnemyEntities == null) {
+        if (currentTurnEnemyEntities == null) {
             currentTurnEnemyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
@@ -327,7 +327,7 @@ public abstract class BotClient extends Client {
      * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
      */
     public List<Entity> getFriendEntities() {
-        if(currentTurnFriendlyEntities == null) {
+        if (currentTurnFriendlyEntities == null) {
             currentTurnFriendlyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
@@ -469,10 +469,10 @@ public abstract class BotClient extends Client {
     	int retryCount = 0;
         boolean success = false;
         
-        while((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
+        while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
         	success = calculateMyTurnWorker();
         	
-        	if(!success) {
+        	if (!success) {
 	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
 	            // as it may be due to some kind of thread-related issue
         		// limit number of retries so we're not endlessly spinning
@@ -879,7 +879,7 @@ public abstract class BotClient extends Client {
             // Make sure I'm not stuck in a dead-end.
             coord.fitness += calculateEdgeAccessFitness(deployed_ent, board);
             
-            if(coord.fitness > highestFitness) {
+            if (coord.fitness > highestFitness) {
                 highestFitness = coord.fitness;
             }
         }
@@ -888,8 +888,8 @@ public abstract class BotClient extends Client {
         // This indicates that we do not have a way of getting to the opposite board edge,
         // even when considering terrain destruction
         // attempt to deploy in the biggest area this unit can access instead
-        if(highestFitness < -10) {
-            for(RankedCoords rc : validCoords) {
+        if (highestFitness < -10) {
+            for (RankedCoords rc : validCoords) {
                 rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
         }

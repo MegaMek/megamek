@@ -89,7 +89,7 @@ public final class TipUtil {
     }
 
     static String scaledHTMLSpacer(final int unscaledSize) {
-        int scaledSize = (int)(GUIPreferences.getInstance().getGUIScale() * unscaledSize);  
+        int scaledSize = (int) (GUIPreferences.getInstance().getGUIScale() * unscaledSize);  
         return "<P><IMG SRC=FILE:" + Configuration.widgetsDir() + "/Tooltip/TT_Spacer.png "
                 + "WIDTH=" + scaledSize + " HEIGHT=" + scaledSize + "></P>";
     }

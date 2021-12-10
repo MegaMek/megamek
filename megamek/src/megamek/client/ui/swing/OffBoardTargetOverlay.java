@@ -85,19 +85,19 @@ public class OffBoardTargetOverlay implements IDisplayable {
         Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
         
         // only relevant if we've got an artillery weapon selected for one of our own units
-        if(selectedArtilleryWeapon == null) {
+        if (selectedArtilleryWeapon == null) {
             return false;
         }
         
         // the artillery weapon needs to be using non-homing ammo
         Mounted ammo = selectedArtilleryWeapon.getLinked();
-        if(ammo.isHomingAmmoInHomingMode()) {
+        if (ammo.isHomingAmmoInHomingMode()) {
             return false;
         }
         
         // only show these if there are any actual enemy units eligible for off board targeting
-        for(OffBoardDirection direction : OffBoardDirection.values()) {
-            if(showDirectionalElement(direction, selectedArtilleryWeapon)) {
+        for (OffBoardDirection direction : OffBoardDirection.values()) {
+            if (showDirectionalElement(direction, selectedArtilleryWeapon)) {
                 return true; 
             }
         }
@@ -109,8 +109,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
      * Logic that determines whether to show a specific directional indicator
      */
     private boolean showDirectionalElement(OffBoardDirection direction, Mounted selectedArtilleryWeapon) {
-        for(Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
-            if(entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
+        for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
+            if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
                     (entity.getOffBoardDirection() == direction) &&
                         (targetingPhaseDisplay.ce().isOffBoard() ||
                         weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
@@ -130,23 +130,23 @@ public class OffBoardTargetOverlay implements IDisplayable {
         
         // little hack: we project a point 10 hexes off board to the north/south/east/west and declare a hex target with it
         // then use Compute.isInArc, as that takes into account all the logic including torso/turret twists.
-        switch(direction) {
-        case NORTH:
-            checkCoords = checkCoords.translated(0, checkCoords.getY() + 10);
-            break;
-        case SOUTH:
-            checkCoords = checkCoords.translated(3, getCurrentGame().getBoard().getHeight() - checkCoords.getY() + 10);
-            break;
-        case EAST:
-            translationDistance = ((getCurrentGame().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
-            checkCoords = checkCoords.translated(1, translationDistance).translated(2, translationDistance);
-            break;
-        case WEST:
-            translationDistance = checkCoords.getX() + 5;
-            checkCoords = checkCoords.translated(4, translationDistance).translated(5, translationDistance);
-            break;
-        default:
-            return false;
+        switch (direction) {
+            case NORTH:
+                checkCoords = checkCoords.translated(0, checkCoords.getY() + 10);
+                break;
+            case SOUTH:
+                checkCoords = checkCoords.translated(3, getCurrentGame().getBoard().getHeight() - checkCoords.getY() + 10);
+                break;
+            case EAST:
+                translationDistance = ((getCurrentGame().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
+                checkCoords = checkCoords.translated(1, translationDistance).translated(2, translationDistance);
+                break;
+            case WEST:
+                translationDistance = checkCoords.getX() + 5;
+                checkCoords = checkCoords.translated(4, translationDistance).translated(5, translationDistance);
+                break;
+            default:
+                return false;
         }
         
         Targetable checkTarget = new HexTarget(checkCoords, Targetable.TYPE_HEX_ARTILLERY);

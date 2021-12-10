@@ -428,7 +428,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             
             boolean zweihandering = false;
             int armChosenZwei = PunchAttackAction.RIGHT;
-            if(canZweihander) {
+            if (canZweihander) {
                 
                 //need to choose a primary arm. Do it based on highest predicted damage     		
                 ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient().getGame(),
@@ -942,7 +942,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         
         if (clientgui.doYesNoDialog(title, message)) {
             boolean zweihandering = false;
-            if(canZweihander) {
+            if (canZweihander) {
                 ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient().getGame(), cen,
                         target, club, ash.getAimTable(), true);
                 zweihandering = clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
@@ -1131,27 +1131,25 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if (index != -1) {
                 disableButtons();
                 switch (index) {
-                case 0:
-                    attacks.addElement(new BrushOffAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
-                            BrushOffAttackAction.LEFT));
-                    break;
-                case 1:
-                    attacks.addElement(new BrushOffAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
-                            BrushOffAttackAction.RIGHT));
-                    break;
-                case 2:
-                    attacks.addElement(new BrushOffAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
-                            BrushOffAttackAction.BOTH));
-                    break;
+                    case 0:
+                        attacks.addElement(new BrushOffAttackAction(cen, target
+                                .getTargetType(), target.getTargetId(),
+                                BrushOffAttackAction.LEFT));
+                        break;
+                    case 1:
+                        attacks.addElement(new BrushOffAttackAction(cen, target
+                                .getTargetType(), target.getTargetId(),
+                                BrushOffAttackAction.RIGHT));
+                        break;
+                    case 2:
+                        attacks.addElement(new BrushOffAttackAction(cen, target
+                                .getTargetType(), target.getTargetId(),
+                                BrushOffAttackAction.BOTH));
+                        break;
                 }
                 ready();
-
-            } // End not-cancel
-
-        } // End choose-attack(s)
+            }
+        }
 
         // If only the left arm is available, confirm that choice.
         else if (canHitLeft) {
@@ -1483,7 +1481,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 targets.add(choice);
             }
         }
-        targets.sort(new Comparator<Targetable>(){
+        targets.sort(new Comparator<Targetable>() {
 
             @Override
             public int compare(Targetable o1, Targetable o2) {

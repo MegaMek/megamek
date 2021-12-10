@@ -87,7 +87,7 @@ class FiringSolutionSprite extends HexSprite {
         
         // create image for buffer
         image = createNewHexImage();
-        Graphics2D graph = (Graphics2D)image.getGraphics();
+        Graphics2D graph = (Graphics2D) image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
         
         // scale the following draws according to board zoom
@@ -101,7 +101,7 @@ class FiringSolutionSprite extends HexSprite {
         
         if (noHitPossible) {  
             // write big red X
-            graph.setFont(new Font(fontName, fontStyle, (int)(fontSizeLarge)));
+            graph.setFont(new Font(fontName, fontStyle, fontSizeLarge));
             if (bv.scale > 0.7) {
                 // better translucent, the X is so big
                 bv.drawOutlineText(graph, "X", centerHex, 

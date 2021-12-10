@@ -313,7 +313,7 @@ public class GunEmplacement extends Tank {
         }
         double xbv = 0.0;
         if (!ignoreC3 && (game != null)) {
-            xbv += getExtraC3BV((int)Math.round(finalBV));
+            xbv += getExtraC3BV((int) Math.round(finalBV));
         }
 
         finalBV += xbv;

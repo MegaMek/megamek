@@ -601,10 +601,10 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             relSize[i] = Math.min(1, Math.max(0, relSize[i]));
         }
         
-        int x1 = (int)(relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
-        int y1 = (int)(relSize[1] * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()) + topMargin;
-        int x2 = (int)((relSize[2]-relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
-        int y2 = (int)((relSize[3]-relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
+        int x1 = (int) (relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
+        int y1 = (int) (relSize[1] * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()) + topMargin;
+        int x2 = (int) ((relSize[2]-relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
+        int y2 = (int) ((relSize[3]-relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
         
         // thicker but translucent rectangle
         g.setColor(new Color(100, 100, 160, 80));
@@ -785,14 +785,14 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         g.setColor(new Color(20,20,60));
         g.drawPolygon(xPoints, yPoints, 6);
         // Drop in a star
-        int dx = (int)(Math.random() * HEX_SIDE[zoom]);
-        int dy = (int)((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
-        int c = (int)(Math.random() * 180);
+        int dx = (int) (Math.random() * HEX_SIDE[zoom]);
+        int dy = (int) ((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
+        int c = (int) (Math.random() * 180);
         g.setColor(new Color(c, c, c));
         if (Math.random() < 0.1) {
             g.setColor(new Color(c, c / 10, c / 10)); // red star
         } else if (Math.random() < 0.1) {
-            int factor = (int)(Math.random()*10) + 1;
+            int factor = (int) (Math.random()*10) + 1;
             g.setColor(new Color(c / factor, c / factor,c)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
@@ -907,7 +907,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             return;
         }  
 
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
         boolean stratOpsSymbols = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
@@ -969,7 +969,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 String s = "";
                 if (entity instanceof Protomech) {
                     s = "P";
-                } else if ((entity instanceof Mech) && ((Mech)entity).isIndustrial()) {
+                } else if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()) {
                     s = "I";
                 } else if (entity.getWeightClass() < 6) {
                     s = STRAT_WEIGHTS[entity.getWeightClass()];

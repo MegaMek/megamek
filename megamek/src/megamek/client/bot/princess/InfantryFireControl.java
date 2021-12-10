@@ -192,7 +192,7 @@ public class InfantryFireControl extends FireControl {
         }
         
         // if it's not infantry, then we shouldn't be here, let's redirect to the base method.
-        if(!(shooter instanceof Infantry)) {
+        if (!(shooter instanceof Infantry)) {
             return super.guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
         }
         
@@ -262,7 +262,7 @@ public class InfantryFireControl extends FireControl {
 
         // cycle through my field guns
         for (final Mounted weapon : shooter.getWeaponList()) {
-            if(weaponIsAppropriate(weapon, firingPlanType)) {
+            if (weaponIsAppropriate(weapon, firingPlanType)) {
                 final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
                         game, true);
 
@@ -287,17 +287,17 @@ public class InfantryFireControl extends FireControl {
         boolean weaponIsLegAttack = (weapon.getType()).getInternalName().equals(Infantry.LEG_ATTACK);
         boolean weaponIsFieldGuns = weapon.getLocation() == Infantry.LOC_FIELD_GUNS;
         
-        switch(firingPlanType) {
-        case FieldGuns:
-            return weaponIsFieldGuns;
-        case Swarm:
-            return weaponIsSwarm;
-        case Leg:
-            return weaponIsLegAttack;
-        case Standard:
-            return !weaponIsFieldGuns && !weaponIsSwarm && !weaponIsLegAttack;
-        default:
-            return false;
+        switch (firingPlanType) {
+            case FieldGuns:
+                return weaponIsFieldGuns;
+            case Swarm:
+                return weaponIsSwarm;
+            case Leg:
+                return weaponIsLegAttack;
+            case Standard:
+                return !weaponIsFieldGuns && !weaponIsSwarm && !weaponIsLegAttack;
+            default:
+                return false;
         }
     }
 }

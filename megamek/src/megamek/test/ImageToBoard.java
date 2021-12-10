@@ -112,7 +112,7 @@ public class ImageToBoard {
         int height = src.getHeight() - rowOffset;
         int mapHexHeight = height / hexRows;
         double tmp = Math.sin(Math.PI/6) * (mapHexHeight);
-        int mapHexWidth = (int)(width / (mapHexHeight + tmp));
+        int mapHexWidth = (int) (width / (mapHexHeight + tmp));
         int mapHexSpacing = width / hexCols;
         for (int col = 0; col < hexCols; col++) {
             for (int row = 0; row < hexRows; row++) {

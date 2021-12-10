@@ -467,16 +467,16 @@ public class EntityImage {
     private Image getDamageDecal(Entity entity, int pos) {
         try {
             switch (dmgLevel) {
-            case Entity.DMG_LIGHT:
-                return getIM(PATH_LIGHT, entity.getShortName(), pos);
-            case Entity.DMG_MODERATE:
-                return getIM(PATH_MODERATE, entity.getShortName(), pos);
-            case Entity.DMG_HEAVY:
-                return getIM(PATH_HEAVY, entity.getShortName(), pos);
-            case Entity.DMG_CRIPPLED:
-                return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
-            default: // DMG_NONE:
-                return null;
+                case Entity.DMG_LIGHT:
+                    return getIM(PATH_LIGHT, entity.getShortName(), pos);
+                case Entity.DMG_MODERATE:
+                    return getIM(PATH_MODERATE, entity.getShortName(), pos);
+                case Entity.DMG_HEAVY:
+                    return getIM(PATH_HEAVY, entity.getShortName(), pos);
+                case Entity.DMG_CRIPPLED:
+                    return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
+                default: // DMG_NONE:
+                    return null;
             }
         } catch (Exception e) {
             MegaMek.getLogger().error("Could not load decal image.", e);

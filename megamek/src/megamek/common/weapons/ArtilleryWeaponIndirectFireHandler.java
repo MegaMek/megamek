@@ -74,7 +74,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         if (w.getEntity(g) instanceof BattleArmor) {
-            shootingBA = ((BattleArmor)w.getEntity(g)).getNumberActiverTroopers();
+            shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiverTroopers();
         }
     }
 
@@ -318,7 +318,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         
         targetPos = handleReportsAndDirectScatter(isFlak, targetPos, vPhaseReport, aaa);
         
-        if(targetPos == null) {
+        if (targetPos == null) {
             return false;
         }
         
@@ -356,7 +356,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
-            if(target.isOffBoard()) {
+            if (target.isOffBoard()) {
                 AreaEffectHelper.doNuclearExplosion((Entity) aaa.getTarget(game), targetPos, 1, vPhaseReport, server);
             } else {
                 server.doNuclearExplosion(targetPos, 1, vPhaseReport);
@@ -417,11 +417,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             int actualDamage = df.damage - (df.falloff * targetPos.distance(target.getPosition()));
             Coords effectiveTargetPos = aaa.getCoords();
             
-            if(df.clusterMunitionsFlag) {
+            if (df.clusterMunitionsFlag) {
                 effectiveTargetPos = targetPos;
             }
             
-            if(actualDamage > 0) {
+            if (actualDamage > 0) {
                 AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
                     effectiveTargetPos, atype, targetPos, false, ae, null, altitude, vPhaseReport, server);
             }
@@ -516,14 +516,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());
                 vPhaseReport.addElement(r);
-            } else if(target.isOffBoard()) {
+            } else if (target.isOffBoard()) {
                 // off-board targets should report scatter distance
                 r = new Report(9995);
                 r.add(originalTargetPos.distance(targetPos));
                 r.subject = subjectId;
                 r.indent();
                 vPhaseReport.addElement(r);
-            } else if(!target.isOffBoard()) {
+            } else if (!target.isOffBoard()) {
                 // misses and scatters off-board
                 if (isFlak) {
                     r = new Report(3193);
@@ -550,15 +550,15 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (game.getBoard().contains(targetPos)) {
             HexTarget hexTarget = new HexTarget(targetPos, Targetable.TYPE_HEX_ARTILLERY);
             
-            for(Entity entity : game.getEntitiesVector()) {
+            for (Entity entity : game.getEntitiesVector()) {
                 
                 // if the entity is hostile and the attacker has not been designated
                 // as observed already by the entity's team
-                if(entity.isEnemyOf(aaa.getEntity(game)) &&
+                if (entity.isEnemyOf(aaa.getEntity(game)) &&
                         !aaa.getEntity(game).isOffBoardObserved(entity.getOwner().getTeam())) {
                     boolean hasLoS = LosEffects.calculateLOS(game, entity, hexTarget).canSee();
                     
-                    if(hasLoS) {
+                    if (hasLoS) {
                         aaa.getEntity(game).addOffBoardObserver(entity.getOwner().getTeam());
                         Report r = new Report(9997);
                         r.add(entity.getDisplayName());
@@ -572,7 +572,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             Entity attacker = aaa.getEntity(game);
             int targetTeam = ((Entity) target).getOwner().getTeam();
             
-            if(attacker.isOffBoard() && !attacker.isOffBoardObserved(targetTeam)) {
+            if (attacker.isOffBoard() && !attacker.isOffBoardObserved(targetTeam)) {
                 attacker.addOffBoardObserver(targetTeam);
                 
                 Report r = new Report(9997);
@@ -597,7 +597,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // BA Tube artillery is the only artillery that can be mounted by BA
         // so we do the multiplication here
         if (ae instanceof BattleArmor) {
-            BattleArmor ba = (BattleArmor)ae;
+            BattleArmor ba = (BattleArmor) ae;
             toReturn *= ba.getNumberActiverTroopers();
         }
         // area effect damage is double

@@ -1027,7 +1027,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             frame.repaint();
         } else if (e.getName().equals(GUIPreferences.UI_THEME)) {
             try {
-                UIManager.setLookAndFeel((String)e.getNewValue());
+                UIManager.setLookAndFeel((String) e.getNewValue());
                 // We went all Oprah and gave everybody frames...
                 // so now we have to let everybody who got a frame
                 // under their chair know that we updated our look

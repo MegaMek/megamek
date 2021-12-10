@@ -132,134 +132,134 @@ public class SuperHeavyTank extends Tank {
         }
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
-            case 2:
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                    setPotCrit(HitData.EFFECT_CRITICAL);
-                } else {
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
-                }
-                break;
-            case 3:
-                if (bSide) {
-                    rv = new HitData(LOC_FRONT, false);
+                case 2:
                     if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    }
-                } else if (bRear) {
-                    rv = new HitData(LOC_REARLEFT, false);
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    }
-                } else if (bRearSide) {
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    }
-                } else {
-                    rv = new HitData(LOC_FRONTRIGHT, false);
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    }
-                }
-                rv.setMotiveMod(motiveMod);
-                break;
-            case 4:
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                    setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                } else {
-                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                }
-                rv.setMotiveMod(motiveMod);
-                break;
-            case 5:
-                if (bRear || !(bSide || bRearSide)) {
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    } else {
-                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    }
-                    rv.setMotiveMod(motiveMod);
-                }
-                break;
-            case 6:
-            case 7:
-                break;
-            case 8:
-                if ((bSide || bRearSide)
-                        && !game.getOptions().booleanOption(
-                                OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
-                    if (game.getOptions().booleanOption(
-                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
-                }
-                break;
-            case 9:
-                if (!game.getOptions()
-                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
-                    if (game.getOptions().booleanOption(
-                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                    break;
+                case 3:
+                    if (bSide) {
+                        rv = new HitData(LOC_FRONT, false);
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
+                    } else if (bRear) {
+                        rv = new HitData(LOC_REARLEFT, false);
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
+                    } else if (bRearSide) {
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
+                    } else {
+                        rv = new HitData(LOC_FRONTRIGHT, false);
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
+                    }
+                    rv.setMotiveMod(motiveMod);
+                    break;
+                case 4:
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                     rv.setMotiveMod(motiveMod);
-                }
-                break;
-            case 10:
-            case 11:
-                if (!m_bHasNoTurret) {
-                    if (!hasNoDualTurret()) {
-                        int roll = Compute.d6();
-                        if (side == ToHitData.SIDE_FRONT) {
-                            roll -= 2;
-                        } else if (side == ToHitData.SIDE_REAR) {
-                            roll += 2;
+                    break;
+                case 5:
+                    if (bRear || !(bSide || bRearSide)) {
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         }
-                        if (roll <= 3) {
-                            rv = new HitData(LOC_TURRET_2);
+                        rv.setMotiveMod(motiveMod);
+                    }
+                    break;
+                case 6:
+                case 7:
+                    break;
+                case 8:
+                    if ((bSide || bRearSide)
+                            && !game.getOptions().booleanOption(
+                                    OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                        if (game.getOptions().booleanOption(
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_CRITICAL);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_CRITICAL);
+                        }
+                    }
+                    break;
+                case 9:
+                    if (!game.getOptions()
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+                        if (game.getOptions().booleanOption(
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        } else {
+                            rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
+                        rv.setMotiveMod(motiveMod);
+                    }
+                    break;
+                case 10:
+                case 11:
+                    if (!m_bHasNoTurret) {
+                        if (!hasNoDualTurret()) {
+                            int roll = Compute.d6();
+                            if (side == ToHitData.SIDE_FRONT) {
+                                roll -= 2;
+                            } else if (side == ToHitData.SIDE_REAR) {
+                                roll += 2;
+                            }
+                            if (roll <= 3) {
+                                rv = new HitData(LOC_TURRET_2);
+                            } else {
+                                rv = new HitData(LOC_TURRET);
+                            }
                         } else {
                             rv = new HitData(LOC_TURRET);
                         }
-                    } else {
-                        rv = new HitData(LOC_TURRET);
                     }
-                }
-                break;
-            case 12:
-                if (!m_bHasNoTurret) {
-                    if (!hasNoDualTurret()) {
-                        int roll = Compute.d6();
-                        if (side == ToHitData.SIDE_FRONT) {
-                            roll -= 2;
-                        } else if (side == ToHitData.SIDE_REAR) {
-                            roll += 2;
-                        }
-                        if (roll <= 3) {
-                            rv = new HitData(LOC_TURRET_2);
+                    break;
+                case 12:
+                    if (!m_bHasNoTurret) {
+                        if (!hasNoDualTurret()) {
+                            int roll = Compute.d6();
+                            if (side == ToHitData.SIDE_FRONT) {
+                                roll -= 2;
+                            } else if (side == ToHitData.SIDE_REAR) {
+                                roll += 2;
+                            }
+                            if (roll <= 3) {
+                                rv = new HitData(LOC_TURRET_2);
+                            } else {
+                                rv = new HitData(LOC_TURRET);
+                            }
                         } else {
-                            rv = new HitData(LOC_TURRET);
+                            rv = new HitData(LOC_TURRET, false);
                         }
-                    } else {
-                        rv = new HitData(LOC_TURRET, false);
                     }
-                }
 
-                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-                    setPotCrit(HitData.EFFECT_CRITICAL);
-                } else {
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
-                }
-                break;
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+                        setPotCrit(HitData.EFFECT_CRITICAL);
+                    } else {
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
+                    break;
             }
         }
 
@@ -474,7 +474,7 @@ public class SuperHeavyTank extends Tank {
     }
 
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
     }
 
@@ -482,7 +482,7 @@ public class SuperHeavyTank extends Tank {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 4;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 5;
         } else {
             return 6;
@@ -505,19 +505,20 @@ public class SuperHeavyTank extends Tank {
     @Override
     public String getBattleForceLocationName(int index) {
         switch (index) {
-        case 0:
-            return LOCATION_ABBRS[LOC_FRONT];
-        case 1:
-            return "LS";
-        case 2:
-            return "RS";
-        case 3:
-            return LOCATION_ABBRS[LOC_REAR];
-        case 4:
-            return LOCATION_ABBRS[LOC_TURRET];
-        case 5:
-            return LOCATION_ABBRS[LOC_TURRET_2];
+            case 0:
+                return LOCATION_ABBRS[LOC_FRONT];
+            case 1:
+                return "LS";
+            case 2:
+                return "RS";
+            case 3:
+                return LOCATION_ABBRS[LOC_REAR];
+            case 4:
+                return LOCATION_ABBRS[LOC_TURRET];
+            case 5:
+                return LOCATION_ABBRS[LOC_TURRET_2];
+            default:
+                return "?";
         }
-        return "?";
     }
 }

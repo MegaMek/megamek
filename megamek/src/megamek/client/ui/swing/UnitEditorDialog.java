@@ -1179,7 +1179,7 @@ public class UnitEditorDialog extends JDialog {
         		        + "</b><br></html>"), gridBagConstraints);
     		
         		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
-                        0, nextbay.getCapacity(), nextbay.isCargo()? 0.5: 1.0));
+                        0, nextbay.getCapacity(), nextbay.isCargo() ? 0.5: 1.0));
         		bayDamage[b] = bayCrit;
         		gridBagConstraints.gridx = 1;
         		gridBagConstraints.weightx = 1.0;

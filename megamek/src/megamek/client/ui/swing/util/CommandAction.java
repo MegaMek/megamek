@@ -33,7 +33,7 @@ public abstract class CommandAction {
      * consume the <code>KeyEvent</code>
      * @return
      */
-    public boolean shouldPerformAction(){
+    public boolean shouldPerformAction() {
         return true;
     }
     
@@ -44,7 +44,7 @@ public abstract class CommandAction {
      * bound key is released, else false.
      * @return
      */
-    public boolean hasReleaseAction(){
+    public boolean hasReleaseAction() {
         return false;
     }
     
@@ -52,7 +52,7 @@ public abstract class CommandAction {
      * Method that gets called when the bound key is released.  Defaults is to
      * do nothing.
      */
-    public void releaseAction(){
+    public void releaseAction() {
         
     }
     

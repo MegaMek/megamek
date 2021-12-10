@@ -50,7 +50,7 @@ public class ServerHelper {
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
         	
-        	if(te_hex == null) {
+        	if (te_hex == null) {
         		te_hex = game.getBoard().getHex(te.getPosition());
         	}
         	
@@ -407,7 +407,7 @@ public class ServerHelper {
      * hex it's currently in.
      */
     public static void sinkToBottom(Entity entity) {
-        if((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
+        if ((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
             return;
         }
         

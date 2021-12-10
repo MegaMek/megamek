@@ -486,24 +486,24 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // Append the facing for VGLs
         if (getType().hasFlag(WeaponType.F_VGL)) {
             switch (facing) {
-            case 0:
-                desc.append(" (F)");
-                break;
-            case 1:
-                desc.append(" (FR)");
-                break;
-            case 2:
-                desc.append(" (RR)");
-                break;
-            case 3:
-                desc.append(" (R)");
-                break;
-            case 4:
-                desc.append(" (RL)");
-                break;
-            case 5:
-                desc.append(" (FL)");
-                break;
+                case 0:
+                    desc.append(" (F)");
+                    break;
+                case 1:
+                    desc.append(" (FR)");
+                    break;
+                case 2:
+                    desc.append(" (RR)");
+                    break;
+                case 3:
+                    desc.append(" (R)");
+                    break;
+                case 4:
+                    desc.append(" (RL)");
+                    break;
+                case 5:
+                    desc.append(" (FL)");
+                    break;
             }
         }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
@@ -539,7 +539,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             desc.append(" (dumping)");
         }
 
-        if (isArmored()){
+        if (isArmored()) {
             desc.append(" (armored)");
         }
         return desc.toString();
@@ -639,8 +639,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
         if ((destroyed == true)
-                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
-            if (entity != null){
+                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+            if (entity != null) {
                 entity.setHasDamagedRHS(true);
             }
         }
@@ -665,8 +665,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setHit(boolean hit) {
         this.hit = hit;
         if ((hit == true)
-                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)){
-            if (entity != null){
+                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+            if (entity != null) {
                 entity.setHasDamagedRHS(true);
             }
         }
@@ -767,9 +767,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // sets number of shots for MG arrays
         if (wtype.hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
-            for(int eqn : getBayWeapons()) {
+            for (int eqn : getBayWeapons()) {
                 Mounted m = entity.getEquipment(eqn);
-                if(null == m) {
+                if (null == m) {
                     continue;
                 }
                 if ((m.getLocation() == getLocation())
@@ -1157,7 +1157,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isSplitable() {
-        return (((getType() instanceof WeaponType) && ((WeaponType)getType()).isSplitable()) || ((getType() instanceof MiscType) && getType()
+        return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplitable()) || ((getType() instanceof MiscType) && getType()
                 .hasFlag(MiscType.F_SPLITABLE)));
     }
 
@@ -1172,7 +1172,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             int damagePerShot = atype.getDamagePerShot();
             // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
             if ((type instanceof BombType)
-                    && (((BombType)type).getBombType() == BombType.B_ASEW)) {
+                    && (((BombType) type).getBombType() == BombType.B_ASEW)) {
                 damagePerShot = 5;
             }
             
@@ -1604,13 +1604,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             int heat = wtype.getHeat();
 
             // AR10's have heat based upon the loaded missile
-            if (wtype.getName().equals("AR10")){
-                AmmoType ammoType = (AmmoType)getLinked().getType();
-                if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)){
+            if (wtype.getName().equals("AR10")) {
+                AmmoType ammoType = (AmmoType) getLinked().getType();
+                if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                     return 10;
-                }else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)){
+                } else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                     return 15;
-                } else { // AmmoType.F_AR10_KILLER_WHALTE
+                } else { // AmmoType.F_AR10_KILLER_WHALE
                     return 20;
                 }
             }
@@ -1930,7 +1930,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * Checks whether this mount is either one a one-shot weapon or ammo for a one-shot weapon.
      * @return
      */
-    public boolean isOneShot(){
+    public boolean isOneShot() {
         if (isOneShotWeapon()) {
             return true;
         } else if ((getType() instanceof AmmoType) && getLinkedBy() != null) {
@@ -1979,7 +1979,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setMissingForTrooper(int trooper, boolean b) {
         trooper = trooper-BattleArmor.LOC_TROOPER_1;
-        if((trooper < 0) || (trooper >= missingForTrooper.length)) {
+        if ((trooper < 0) || (trooper >= missingForTrooper.length)) {
             return;
         }
         missingForTrooper[trooper] = b;
@@ -1987,15 +1987,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public boolean isMissingForTrooper(int trooper) {
         trooper = trooper-BattleArmor.LOC_TROOPER_1;
-        if((trooper < 0) || (trooper >= missingForTrooper.length)) {
+        if ((trooper < 0) || (trooper >= missingForTrooper.length)) {
             return false;
         }
         return missingForTrooper[trooper];
     }
 
     public boolean isAnyMissingTroopers() {
-        for(int i = 0; i < missingForTrooper.length; i++) {
-            if(missingForTrooper[i]) {
+        for (int i = 0; i < missingForTrooper.length; i++) {
+            if (missingForTrooper[i]) {
                 return true;
             }
         }
@@ -2004,7 +2004,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public String getMissingTrooperString() {
         StringBuffer missings = new StringBuffer();
-        for(int i = 0; i < missingForTrooper.length; i++) {
+        for (int i = 0; i < missingForTrooper.length; i++) {
             missings.append(missingForTrooper[i]).append("::");
         }
         return missings.toString();
@@ -2051,7 +2051,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 && getType().getInternalName().equals("ISBAAPDS")) {
             return true;
         } else if (getType() instanceof WeaponType) {
-            return ((WeaponType)getType()).getAmmoType() == AmmoType.T_APDS;
+            return ((WeaponType) getType()).getAmmoType() == AmmoType.T_APDS;
         } else {
             return false;
         }
@@ -2061,7 +2061,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * Returns true if this Mounted is ammunition in homing mode.
      */
     public boolean isHomingAmmoInHomingMode() {
-        if(!(getType() instanceof AmmoType)) {
+        if (!(getType() instanceof AmmoType)) {
             return false;
         }
         

@@ -167,7 +167,7 @@ public class BoardClusterTracker {
         MovementType movementType = MovementType.getMovementType(entity);
         BoardCluster entityCluster = null;
         
-        if(terrainReduction) {
+        if (terrainReduction) {
             entityCluster = movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
         } else {
             entityCluster = movableAreas.get(movementType).get(entity.getPosition());
@@ -175,7 +175,7 @@ public class BoardClusterTracker {
         
         Set<Coords> retVal = Collections.emptySet();
         
-        if(entityCluster != null) {
+        if (entityCluster != null) {
             retVal = entityCluster.getIntersectingHexes(actualEdge, entity.getGame().getBoard());
         }
         
@@ -258,8 +258,8 @@ public class BoardClusterTracker {
         
         boolean canUseBridge = MovementType.canUseBridge(movementType);
         
-        for(int x = 0; x < board.getWidth(); x++) {
-            for(int y = 0; y < board.getHeight(); y++) {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 
                 // hex is either inaccessible
@@ -282,10 +282,10 @@ public class BoardClusterTracker {
                 BoardCluster biggestNeighbor = null; 
                 
                 // hex is accessible one way or another
-                for(int direction = 0; direction < 6; direction++) {
+                for (int direction = 0; direction < 6; direction++) {
                     Coords neighbor = c.translated(direction);
                     
-                    if(clusters.containsKey(neighbor)) {
+                    if (clusters.containsKey(neighbor)) {
                         int neighborElevation = 0;
                         
                         if (useBridgeTop && board.getHex(neighbor).containsTerrain(Terrains.BRIDGE) &&
@@ -307,7 +307,7 @@ public class BoardClusterTracker {
                         // we can "freely" go back and forth between ourselves and the neighbor, so let's join that cluster 
                         neighborsToJoin.add(neighbor);
                         
-                        if((biggestNeighbor == null) || 
+                        if ((biggestNeighbor == null) ||
                                 (clusters.get(neighbor).contents.size() > biggestNeighbor.contents.size())) {
                             biggestNeighbor = clusters.get(neighbor);
                         }
@@ -315,7 +315,7 @@ public class BoardClusterTracker {
                 }
                 
                 // start up a new cluster if we have no mutually accessible neighbors
-                if(neighborsToJoin.isEmpty() || biggestNeighbor == null) {
+                if (neighborsToJoin.isEmpty() || biggestNeighbor == null) {
                     BoardCluster newCluster = new BoardCluster(clusterID++);
                     newCluster.contents.put(c, myElevation);
                     clusters.put(c, newCluster);
@@ -326,13 +326,13 @@ public class BoardClusterTracker {
                     clusters.put(c, biggestNeighbor);
                     
                     // merge any other clusters belonging to joined neighbors to this cluster
-                    for(int neighborIndex = 0; neighborIndex < neighborsToJoin.size(); neighborIndex++) {
+                    for (int neighborIndex = 0; neighborIndex < neighborsToJoin.size(); neighborIndex++) {
                         BoardCluster oldCluster = clusters.get(neighborsToJoin.get(neighborIndex));
-                        if(oldCluster == biggestNeighbor) {
+                        if (oldCluster == biggestNeighbor) {
                             continue;
                         }
                         
-                        for(Coords member : oldCluster.contents.keySet()) {
+                        for (Coords member : oldCluster.contents.keySet()) {
                             biggestNeighbor.contents.put(member, oldCluster.contents.get(member));
                             clusters.put(member, biggestNeighbor);
                         }
@@ -442,8 +442,8 @@ public class BoardClusterTracker {
         public Set<Coords> getIntersectingHexes(int xStart, int xEnd, int yStart, int yEnd) {
             Set<Coords> retVal = new HashSet<>();
             
-            for(int x = xStart; x < xEnd; x++) {
-                for(int y = yStart; y < yEnd; y++) {
+            for (int x = xStart; x < xEnd; x++) {
+                for (int y = yStart; y < yEnd; y++) {
                     Coords coords = new Coords(x, y);
                     if (contents.containsKey(coords)) {
                         retVal.add(coords);

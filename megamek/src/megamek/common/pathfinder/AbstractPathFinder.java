@@ -308,7 +308,7 @@ public class AbstractPathFinder<N, C, E> {
                     + "increase java memory limit.";
             
             MegaMek.getLogger().error(memoryMessage, e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }

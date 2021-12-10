@@ -220,24 +220,23 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             int extraHeat = Compute.d6(2);
             if (entityTarget.getArmor(hit) > 0 &&                        
                     (entityTarget.getArmorType(hit.getLocation()) == 
-                       EquipmentType.T_ARMOR_REFLECTIVE)){
-               entityTarget.heatFromExternal += Math.max(1, extraHeat/2);
-               r.add(Math.max(1, extraHeat/2));
+                       EquipmentType.T_ARMOR_REFLECTIVE)) {
+               entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
+               r.add(Math.max(1, extraHeat / 2));
                r.choose(true);
-               r.messageId=3406;
+               r.messageId = 3406;
                r.add(extraHeat);
                r.add(EquipmentType.armorNames
                        [entityTarget.getArmorType(hit.getLocation())]);
             } else if (entityTarget.getArmor(hit) > 0 &&  
                    (entityTarget.getArmorType(hit.getLocation()) == 
-                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
-               entityTarget.heatFromExternal += extraHeat/2;
-               r.add(extraHeat/2);
+                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+               entityTarget.heatFromExternal += extraHeat / 2;
+               r.add(extraHeat / 2);
                r.choose(true);
-               r.messageId=3406;
+               r.messageId = 3406;
                r.add(extraHeat);
-               r.add(EquipmentType.armorNames
-                       [entityTarget.getArmorType(hit.getLocation())]);
+               r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
             } else {
                entityTarget.heatFromExternal += extraHeat;
                r.add(extraHeat);
@@ -245,8 +244,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addElement(r);            
         } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
     }
 

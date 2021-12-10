@@ -79,7 +79,7 @@ public class NoteDialog extends JDialog implements ActionListener {
         visibility.addItem(Messages.getString("NoteDialog.all"));
         visibility.setSelectedIndex(0);
         
-        if (note != null){
+        if (note != null) {
             noteText.setText(note.getInfo());
             visibility.setSelectedIndex(note.getObscuredLevel());
         }
@@ -105,12 +105,12 @@ public class NoteDialog extends JDialog implements ActionListener {
                 + frame.getSize().height / 2 - getSize().height / 2);
     }
 
-    public boolean isAccepted(){
+    public boolean isAccepted() {
         return accepted;
     }
   
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(butDone)){
+        if (actionEvent.getSource().equals(butDone)) {
             note.setInfo(noteText.getText());
             note.setObscuredLevel(visibility.getSelectedIndex());
             accepted = true;

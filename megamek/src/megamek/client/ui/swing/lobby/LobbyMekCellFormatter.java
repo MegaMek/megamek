@@ -95,8 +95,7 @@ class LobbyMekCellFormatter {
                 || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                || (!entity.isDesignValid())
-                ) {
+                || (!entity.isDesignValid())) {
             result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
@@ -452,8 +451,7 @@ class LobbyMekCellFormatter {
                 || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                || (!entity.isDesignValid())
-                ) {
+                || (!entity.isDesignValid())) {
             result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
             result.append(WARNING_SIGN + "</FONT>");
         }

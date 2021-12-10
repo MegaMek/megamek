@@ -52,7 +52,7 @@ public final class PilotToolTip {
         
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)) {
             // Add a spacer cell
-            int dist = (int)(GUIPreferences.getInstance().getGUIScale() * 10);
+            int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
             result.append("<TD WIDTH=" + dist + "></TD>");
             result.append(crewPortraits(entity));
         }

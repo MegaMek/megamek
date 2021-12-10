@@ -70,7 +70,7 @@ class MovementSprite extends Sprite {
         // TODO: Its not going transparent. Oh well, it is a minor issue at
         // the moment
         /*
-         * if(isCurrent) { int colour = col.getRGB(); int transparency =
+         * if (isCurrent) { int colour = col.getRGB(); int transparency =
          * GUIPreferences.getInstance().getInt(GUIPreferences.
          * ADVANCED_ATTACK_ARROW_TRANSPARENCY); moveColor = new Color(colour
          * | (transparency << 24), true); }

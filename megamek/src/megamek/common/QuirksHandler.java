@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.BufferedWriter;
@@ -621,7 +620,7 @@ public class QuirksHandler {
         // Need to keep track of processed mounts, for multi-crit equipment
         List<Mounted> addedEquipment = new ArrayList<>();
         // Need to know loc and slot, so can't iterate over Entity.getEquipment
-        for  (int loc = 0; loc < entity.locations(); loc++) {
+        for (int loc = 0; loc < entity.locations(); loc++) {
             int numCrits = entity.getNumberOfCriticals(loc);
             for (int slot = 0; slot < numCrits; slot++) {
                 CriticalSlot crit = entity.getCritical(loc, slot);

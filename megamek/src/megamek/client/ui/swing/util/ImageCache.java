@@ -73,7 +73,7 @@ public class ImageCache<K, V> {
         cache.remove(key);
     }
     
-    public int size(){
+    public int size() {
         return cache.size();
     }
     

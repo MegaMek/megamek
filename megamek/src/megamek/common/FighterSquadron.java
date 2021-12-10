@@ -129,8 +129,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return getActiveSubEntities().stream()
                 .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat)).min()
                 .orElse(0);
@@ -174,8 +173,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions()
-                .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
                 || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
@@ -217,7 +215,7 @@ public class FighterSquadron extends Aero {
         // according to personal communication with Welshman, the normal crit
         // penalties are added up across the fighter squadron
         fighters.stream().map(fid -> game.getEntity(fid))
-            .filter(ACTIVE_CHECK).map(ent -> (IAero)ent).forEachOrdered(
+            .filter(ACTIVE_CHECK).map(ent -> (IAero) ent).forEachOrdered(
             ent -> {
                 int avihits = ent.getAvionicsHits();
                 if ((avihits > 0) && (avihits < 3)) {
@@ -228,11 +226,11 @@ public class FighterSquadron extends Aero {
                 }
 
                 // life support (only applicable to non-ASFs)
-                if(!ent.hasLifeSupport()) {
+                if (!ent.hasLifeSupport()) {
                     prd.addModifier(2, "No life support");
                 }
 
-                if(((Entity)ent).hasModularArmor()) {
+                if (((Entity) ent).hasModularArmor()) {
                     prd.addModifier(1, "Modular Armor");
                 }
             });
@@ -281,8 +279,8 @@ public class FighterSquadron extends Aero {
     }
     
     @Override
-    public int getHeatCapacity(boolean includeRadicalHeatSink){
-        if (includeRadicalHeatSink){
+    public int getHeatCapacity(boolean includeRadicalHeatSink) {
+        if (includeRadicalHeatSink) {
             return heatcap;
         } else {
             return heatcapNoRHS;
@@ -469,7 +467,7 @@ public class FighterSquadron extends Aero {
      */
     public void updateSkills() {
         List<Entity> activeFighters = getActiveSubEntities();
-        if(activeFighters.isEmpty()) {
+        if (activeFighters.isEmpty()) {
             return;
         }
         int pilotingTotal = 0;
@@ -477,7 +475,7 @@ public class FighterSquadron extends Aero {
         int gunneryLTotal = 0;
         int gunneryMTotal = 0;
         int gunneryBTotal = 0;
-        for(Entity fighter : activeFighters) {
+        for (Entity fighter : activeFighters) {
             pilotingTotal += fighter.getCrew().getPiloting();
             gunneryTotal += fighter.getCrew().getGunnery();
             if (fighter.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -685,7 +683,7 @@ public class FighterSquadron extends Aero {
     @Override
     public boolean canLoad(Entity unit, boolean checkFalse) {
         // We must have enough space for the new fighter.
-        if(!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < getMaxSize())) {
+        if (!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < getMaxSize())) {
             return true;
         }
         // fighter squadrons can also load other fighter squadrons provided

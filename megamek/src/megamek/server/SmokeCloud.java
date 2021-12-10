@@ -53,7 +53,7 @@ public class SmokeCloud implements Serializable {
         this.smokeHexList.addAll(coords);
     }
     
-    public void setSmokeLevel(int level){
+    public void setSmokeLevel(int level) {
         this.smokeLevel = Math.min(6, level);
     }
     
@@ -84,35 +84,35 @@ public class SmokeCloud implements Serializable {
      *
      * @return The smoke level
      */
-    public int getSmokeLevel(){
+    public int getSmokeLevel() {
         return smokeLevel;
     }
     
-    public void addCoords(Coords coords){
+    public void addCoords(Coords coords) {
         this.smokeHexList.add(coords);
     }
     
-    public void removeCoords(Coords coords){
+    public void removeCoords(Coords coords) {
         this.smokeHexList.remove(coords);
     }
     
-    public List<Coords> getCoordsList(){
+    public List<Coords> getCoordsList() {
         return this.smokeHexList;
     }
     
-    public void setDuration(int duration){
+    public void setDuration(int duration) {
         this.smokeDuration = duration;
     }
     
-    public int getDuration(){
+    public int getDuration() {
         return this.smokeDuration;
     }
     
-    public void setDrift(boolean drift){
+    public void setDrift(boolean drift) {
         this.didDrift = drift;
     }
     
-    public boolean didDrift(){
+    public boolean didDrift() {
         return this.didDrift;
     }
 }

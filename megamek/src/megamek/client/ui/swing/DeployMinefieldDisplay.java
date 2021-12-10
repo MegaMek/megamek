@@ -45,16 +45,16 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         REMOVE_MINES("removeMines");
     
         String cmd;
-        Command(String c){
+        Command(String c) {
             cmd = c;
         }
         
-        public String getCmd(){
+        public String getCmd() {
             return cmd;
         }
         
         @Override
-        public String toString(){
+        public String toString() {
             return cmd;
         }
     }
@@ -109,9 +109,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList(){
+    protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
-        for (Command cmd : Command.values()){
+        for (Command cmd : Command.values()) {
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;

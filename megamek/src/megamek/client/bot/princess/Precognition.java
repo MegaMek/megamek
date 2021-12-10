@@ -340,7 +340,7 @@ public class Precognition implements Runnable {
                      || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
                                              .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
                     // System.err.println("entity "+entity.getDisplayName()+" not where I left it");
-                    // if(pathEnumerator.last_known_location.containsKey(entity.getId()))
+                    // if (pathEnumerator.last_known_location.containsKey(entity.getId()))
                     // System.err.println("  I thought it was at "+pathEnumerator.last_known_location.get(entity
                     // .getId()).coords+" but its actually at "+entity.getPosition());
                     // else

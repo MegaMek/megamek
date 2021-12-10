@@ -274,7 +274,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
         //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
         //when Advanced Point Defense is on, but they work correctly.
-        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+        if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
     
             if (bDirect) {
@@ -330,10 +330,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 Mounted m = ae.getEquipment(wId);
                 if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                     WeaponType bayWType = ((WeaponType) m.getType());
-                    if(bayWType instanceof Weapon) {
+                    if (bayWType instanceof Weapon) {
                         replaceReport = vPhaseReport.size();
                         WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                        AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                        AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                         bayWHandler.setAnnouncedEntityFiring(false);
                         // This should always be true. Maybe there's a better way to write this?
                         if (bayWHandler instanceof WeaponHandler) {
@@ -341,31 +341,29 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                             wHandler.setParentBayHandler(this);
                         }
                         bayWHandler.handle(phase, vPhaseReport);
-                        if(vPhaseReport.size() > replaceReport) {
+                        if (vPhaseReport.size() > replaceReport) {
                             //fix the reporting - is there a better way to do this
-                            if(vPhaseReport.size() > replaceReport) {
-                                Report currentReport = vPhaseReport.get(replaceReport);
-                                while(null != currentReport) {
-                                    vPhaseReport.remove(replaceReport);
-                                    if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
-                                        currentReport = null;
-                                    } else {
-                                        currentReport = vPhaseReport.get(replaceReport);
-                                    }
-                                }
-                                r = new Report(3115);
-                                r.indent(2);
-                                r.newlines = 1;
-                                r.subject = subjectId;
-                                r.add(bayWType.getName());
-                                if (entityTarget != null) {
-                                    r.addDesc(entityTarget);
+                            Report currentReport = vPhaseReport.get(replaceReport);
+                            while (null != currentReport) {
+                                vPhaseReport.remove(replaceReport);
+                                if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
+                                    currentReport = null;
                                 } else {
-                                    r.messageId = 3120;
-                                    r.add(target.getDisplayName(), true);
+                                    currentReport = vPhaseReport.get(replaceReport);
                                 }
-                                vPhaseReport.add(replaceReport, r);
                             }
+                            r = new Report(3115);
+                            r.indent(2);
+                            r.newlines = 1;
+                            r.subject = subjectId;
+                            r.add(bayWType.getName());
+                            if (entityTarget != null) {
+                                r.addDesc(entityTarget);
+                            } else {
+                                r.messageId = 3120;
+                                r.add(target.getDisplayName(), true);
+                            }
+                            vPhaseReport.add(replaceReport, r);
                         }
                     }
                 }
@@ -422,7 +420,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } else if (!bMissed){ // Hex is targeted, need to report a hit
+        } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -451,7 +449,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         Vector<Aero> targets = new Vector<Aero>();
         
         // get all entities on the opposing side
-        for(Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
             Entity e = enemies.next();
             //Narrow the list to small craft and larger
             if (((e.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != 0)) {

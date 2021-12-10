@@ -187,7 +187,7 @@ public class Jumpship extends Aero {
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
+        return isPrimitive() ? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
     
     /**
@@ -895,50 +895,51 @@ public class Jumpship extends Aero {
 
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
-        case LOC_NOSE:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_NOSE_WPL;
+            case LOC_NOSE:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_NOSE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_NOSE;
                 break;
-            }
-            arc = Compute.ARC_NOSE;
-            break;
-        case LOC_FRS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+            case LOC_FRS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_RIGHTSIDE_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_RIGHTSIDE_SPHERE;
-            break;
-        case LOC_FLS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+            case LOC_FLS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_LEFTSIDE_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_LEFTSIDE_SPHERE;
-            break;
-        case LOC_ARS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+            case LOC_ARS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_RIGHTSIDEA_SPHERE;
-            break;
-        case LOC_ALS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+            case LOC_ALS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_LEFTSIDEA_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_LEFTSIDEA_SPHERE;
-            break;
-        case LOC_AFT:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_AFT_WPL;
+            case LOC_AFT:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_AFT_WPL;
+                    break;
+                }
+                arc = Compute.ARC_AFT;
                 break;
-            }
-            arc = Compute.ARC_AFT;
-            break;
-        default:
-            arc = Compute.ARC_360;
+            default:
+                arc = Compute.ARC_360;
+                break;
         }
         return rollArcs(arc);
     }
@@ -957,150 +958,150 @@ public class Jumpship extends Aero {
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_LIFE_SUPPORT);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_RIGHT_THRUSTER);
-                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_CIC);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_LEFT_THRUSTER);
-                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_KF_DRIVE);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_LIFE_SUPPORT);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_RIGHT_THRUSTER);
+                    return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_CIC);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_LEFT_THRUSTER);
+                    return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_KF_DRIVE);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_DOCK_COLLAR);
-                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_KF_DRIVE);
-                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_WEAPON_BROAD);
-                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_GRAV_DECK);
-                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_DOOR);
-                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_CARGO);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_DOCK_COLLAR);
+                    return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_KF_DRIVE);
+                    return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_WEAPON_BROAD);
+                    return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_GRAV_DECK);
+                    return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_DOOR);
+                    return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_CARGO);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
             // normal left-side hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_DOCK_COLLAR);
-                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_KF_DRIVE);
-                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_WEAPON_BROAD);
-                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_GRAV_DECK);
-                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_DOOR);
-                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_CARGO);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_DOCK_COLLAR);
+                    return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_KF_DRIVE);
+                    return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_WEAPON_BROAD);
+                    return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_GRAV_DECK);
+                    return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_DOOR);
+                    return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_CARGO);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_REAR) {
             // normal aft hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_RIGHT_THRUSTER);
-                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_LEFT_THRUSTER);
-                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_KF_DRIVE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_RIGHT_THRUSTER);
+                    return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_LEFT_THRUSTER);
+                    return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_KF_DRIVE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -2296,20 +2297,19 @@ public class Jumpship extends Aero {
     @Override
     public int getOppositeLocation(int loc) {
         switch (loc) {
-        case LOC_NOSE:
-            return LOC_AFT;
-        case LOC_FLS:
-            return LOC_ARS;
-        case LOC_FRS:
-            return LOC_ALS;
-        case LOC_ALS:
-            return LOC_FRS;
-        case LOC_ARS:
-            return LOC_FLS;
-        case LOC_AFT:
-            return LOC_NOSE;
-        default:
-            return LOC_NOSE;
+            case LOC_NOSE:
+                return LOC_AFT;
+            case LOC_FLS:
+                return LOC_ARS;
+            case LOC_FRS:
+                return LOC_ALS;
+            case LOC_ALS:
+                return LOC_FRS;
+            case LOC_ARS:
+                return LOC_FLS;
+            case LOC_AFT:
+            default:
+                return LOC_NOSE;
         }
     }
 
@@ -2408,20 +2408,20 @@ public class Jumpship extends Aero {
      */
     public int getAdjacentArcCW(int arc) {
         switch (arc) {
-        case Compute.ARC_NOSE:
-            return Compute.ARC_RIGHTSIDE_SPHERE;
-        case Compute.ARC_LEFTSIDE_SPHERE:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_RIGHTSIDE_SPHERE:
-            return Compute.ARC_RIGHTSIDEA_SPHERE;
-        case Compute.ARC_LEFTSIDEA_SPHERE:
-            return Compute.ARC_LEFTSIDE_SPHERE;
-        case Compute.ARC_RIGHTSIDEA_SPHERE:
-            return Compute.ARC_AFT;
-        case Compute.ARC_AFT:
-            return Compute.ARC_LEFTSIDEA_SPHERE;
-        default:
-            return Integer.MIN_VALUE;
+            case Compute.ARC_NOSE:
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            case Compute.ARC_LEFTSIDE_SPHERE:
+                return Compute.ARC_NOSE;
+            case Compute.ARC_RIGHTSIDE_SPHERE:
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            case Compute.ARC_LEFTSIDEA_SPHERE:
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            case Compute.ARC_RIGHTSIDEA_SPHERE:
+                return Compute.ARC_AFT;
+            case Compute.ARC_AFT:
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -2430,20 +2430,20 @@ public class Jumpship extends Aero {
      */
     public int getAdjacentArcCCW(int arc) {
         switch (arc) {
-        case Compute.ARC_NOSE:
-            return Compute.ARC_LEFTSIDE_SPHERE;
-        case Compute.ARC_RIGHTSIDE_SPHERE:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_LEFTSIDE_SPHERE:
-            return Compute.ARC_LEFTSIDEA_SPHERE;
-        case Compute.ARC_LEFTSIDEA_SPHERE:
-            return Compute.ARC_AFT;
-        case Compute.ARC_RIGHTSIDEA_SPHERE:
-            return Compute.ARC_RIGHTSIDE_SPHERE;
-        case Compute.ARC_AFT:
-            return Compute.ARC_RIGHTSIDEA_SPHERE;
-        default:
-            return Integer.MIN_VALUE;
+            case Compute.ARC_NOSE:
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            case Compute.ARC_RIGHTSIDE_SPHERE:
+                return Compute.ARC_NOSE;
+            case Compute.ARC_LEFTSIDE_SPHERE:
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            case Compute.ARC_LEFTSIDEA_SPHERE:
+                return Compute.ARC_AFT;
+            case Compute.ARC_RIGHTSIDEA_SPHERE:
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            case Compute.ARC_AFT:
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -2488,7 +2488,7 @@ public class Jumpship extends Aero {
     
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        moves.put("k", (int)(getStationKeepingThrust() * 10));
+        moves.put("k", (int) (getStationKeepingThrust() * 10));
     }
 
     @Override
@@ -2526,33 +2526,33 @@ public class Jumpship extends Aero {
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
-        case LOC_NOSE:
-            if (location == LOC_NOSE) {
-                return 1.0;
-            }
-            if (isSpheroid() && (location == LOC_FLS || location == LOC_FRS)
-                    && !rearMounted) {
-                return 0.5;
-            }
-            break;
-        case LOC_FRS:
-            if (location == LOC_FRS || location == LOC_ARS) {
-                return 0.5;
-            }
-            break;
-        case LOC_FLS:
-            if (location == LOC_FLS || location == LOC_ALS) {
-                return 0.5;
-            }
-            break;
-        case LOC_AFT:
-            if (location == LOC_AFT) {
-                return 1.0;
-            }
-            if (location == LOC_ALS || location == LOC_ARS) {
-                return 0.5;
-            }
-            break;
+            case LOC_NOSE:
+                if (location == LOC_NOSE) {
+                    return 1.0;
+                }
+                if (isSpheroid() && (location == LOC_FLS || location == LOC_FRS)
+                        && !rearMounted) {
+                    return 0.5;
+                }
+                break;
+            case LOC_FRS:
+                if (location == LOC_FRS || location == LOC_ARS) {
+                    return 0.5;
+                }
+                break;
+            case LOC_FLS:
+                if (location == LOC_FLS || location == LOC_ALS) {
+                    return 0.5;
+                }
+                break;
+            case LOC_AFT:
+                if (location == LOC_AFT) {
+                    return 1.0;
+                }
+                if (location == LOC_ALS || location == LOC_ARS) {
+                    return 0.5;
+                }
+                break;
         }
         return 0;
     }
@@ -2565,7 +2565,7 @@ public class Jumpship extends Aero {
             specialAbilities.put(BattleForceSPA.LF, null);
         }        
         if (getNCrew() >= 60) {
-            specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 120.0));
+            specialAbilities.put(BattleForceSPA.CRW, (int) Math.round(getNCrew() / 120.0));
         }
     }
     

@@ -565,11 +565,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         // if we're not in the air, we may get hit by friendly artillery
-        if(!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
+        if (!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
             double friendlyArtilleryDamage = 0;
             Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
             
-            if(!artyDamage.containsKey(path.getFinalCoords())) {
+            if (!artyDamage.containsKey(path.getFinalCoords())) {
                 friendlyArtilleryDamage = ArtilleryTargetingControl.evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
                 artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
             } else {
@@ -984,9 +984,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // if we are crossing a bridge, then we'll be fine. Trust me.
         // 1. Determine bridge elevation
         // 2. If unit elevation is equal to bridge elevation, skip.
-        if(hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+        if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
             int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-            if(bridgeElevation == step.getElevation()) {
+            if (bridgeElevation == step.getElevation()) {
                 logMsg.append("Unit (0) crossing bridge.");
                 return 0;
             }

@@ -399,7 +399,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Load the file.  If there is an error, log it and return.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (IOException e) {
             e.printStackTrace();
@@ -428,7 +428,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Load the changed settings into the existing map settings object.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -453,9 +453,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Get the general settings from this panel.
-        newMapSettings.setBoardSize(mapWestField.getAsInt()+mapEastField.getAsInt()+mapSettings.getBoardWidth(),
-                mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
-        newMapSettings.setTheme((String)choTheme.getSelectedItem());
+        newMapSettings.setBoardSize(mapWestField.getAsInt() + mapEastField.getAsInt() + mapSettings.getBoardWidth(),
+                mapNorthField.getAsInt() + mapSouthField.getAsInt() + mapSettings.getBoardHeight());
+        newMapSettings.setTheme((String) choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.

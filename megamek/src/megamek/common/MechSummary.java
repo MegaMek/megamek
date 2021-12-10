@@ -97,7 +97,7 @@ public class MechSummary implements Serializable {
     private int[] armorLocTech;
     
     
-    public MechSummary(){
+    public MechSummary() {
         armorTypeSet = new HashSet<>();
     }
     
@@ -367,7 +367,7 @@ public class MechSummary implements Serializable {
 
     public int getWeightClass() {
         double tons;
-        if (getUnitType().equals("BattleArmor")){
+        if (getUnitType().equals("BattleArmor")) {
             tons = getSuitWeight();
         } else {
             tons = getTons();
@@ -481,19 +481,19 @@ public class MechSummary implements Serializable {
         return armorTypeSet;
     }
     
-    public int [] getArmorTypes(){
+    public int[] getArmorTypes() {
         return armorLoc;
     }
     
-    public void setArmorTypes(int [] al){
+    public void setArmorTypes(int[] al) {
         armorLoc = al;
     }
     
-    public int [] getArmorTechTypes(){
+    public int[] getArmorTechTypes() {
         return armorLocTech;
     }
     
-    public void setArmorTechTypes(int [] att){
+    public void setArmorTechTypes(int[] att) {
         armorLocTech = att;
     }
 
@@ -564,10 +564,10 @@ public class MechSummary implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final MechSummary other = (MechSummary) obj;

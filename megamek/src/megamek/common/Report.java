@@ -346,7 +346,7 @@ public class Report implements Serializable {
     /**
      * Manually Toggle if the report should show an image of the entity
     */
-    public void setShowImage(boolean showImage){
+    public void setShowImage(boolean showImage) {
         this.showImage = showImage;
     }
 

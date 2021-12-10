@@ -27,14 +27,14 @@ public class ConnectionHandler implements Runnable {
     
     boolean shouldStop = false;
     
-    ConnectionHandler(AbstractConnection c){
+    ConnectionHandler(AbstractConnection c) {
         connection = c;
     }
     
     /**
      * Called when the AbstractConnection disconnects and signals the thread to stop.
      */
-    public void signalStop(){
+    public void signalStop() {
         shouldStop = true;
     }
     

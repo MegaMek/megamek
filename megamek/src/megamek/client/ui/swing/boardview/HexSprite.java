@@ -30,8 +30,8 @@ public abstract class HexSprite extends Sprite {
 
     protected void updateBounds() {
         bounds = new Rectangle(
-                (int)(BoardView.HEX_W*bv.scale),
-                (int)(BoardView.HEX_H*bv.scale));
+                (int) (BoardView.HEX_W * bv.scale),
+                (int) (BoardView.HEX_H * bv.scale));
         bounds.setLocation(bv.getHexLocation(loc));
     }
     

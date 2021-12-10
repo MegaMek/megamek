@@ -74,7 +74,7 @@ public abstract class BayWeapon extends Weapon {
     public int getMaxRange(Mounted weapon) {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
-        if(null != ae) {
+        if (null != ae) {
             for (int wId : weapon.getBayWeapons()) {
                 Mounted bayW = ae.getEquipment(wId);
                 WeaponType bayWType = (WeaponType) bayW.getType();

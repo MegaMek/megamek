@@ -136,7 +136,7 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        if (en instanceof Tank || en instanceof BattleArmor || en instanceof Protomech ) {
+        if (en instanceof Tank || en instanceof BattleArmor || en instanceof Protomech) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {

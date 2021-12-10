@@ -125,7 +125,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         } catch (Exception FileNotFoundException) {
             MegaMek.getLogger().error("Error loading tileset "
                     + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
-            if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
+            if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()) {
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
                 MegaMek.getLogger().fatal("Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
@@ -188,7 +188,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
         File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
 
-        if(wreckageDecals.containsKey(filename)) {
+        if (wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
             marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
@@ -207,7 +207,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         String suffix = EntityWreckHelper.getWeightSuffix(entity);
 
         // defensive coding in case data is missing
-        if(wreckageDecalCount.get(suffix) == 0) {
+        if (wreckageDecalCount.get(suffix) == 0) {
             return null;
         }
 
@@ -216,7 +216,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
         File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
 
-        if(wreckageDecals.containsKey(filename)) {
+        if (wreckageDecals.containsKey(filename)) {
             marker = wreckageDecals.get(filename);
         } else {
             marker = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
@@ -238,10 +238,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
         String imageKey = String.format("%s%s", filename, rotationKey);
 
-        if(!wreckageDecals.containsKey(imageKey)) {
+        if (!wreckageDecals.containsKey(imageKey)) {
             Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
 
-            for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
+            for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                 RotateFilter rf = new RotateFilter(x * 90);
                 String newImageKey = String.format("%s%s", filename, (int) x);
 
@@ -263,7 +263,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         String weightSuffix = EntityWreckHelper.getWeightSuffix(entity);
         String motivePrefix = EntityWreckHelper.getMotivePrefix(entity);
 
-        if(motivePrefix != null) {
+        if (motivePrefix != null) {
             String filename = String.format("%s_decal_%s.png", motivePrefix, weightSuffix);
             File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
             File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
@@ -271,10 +271,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             int rotationKey = entity.getId() % NUM_DECAL_ROTATIONS;
             String imageKey = String.format("%s%s", filename, rotationKey);
 
-            if(!wreckageDecals.containsKey(imageKey)) {
+            if (!wreckageDecals.containsKey(imageKey)) {
                 Image baseImage = TilesetManager.LoadSpecificImage(wreckDecalDir, filename);
 
-                for(double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
+                for (double x = 0; x < NUM_DECAL_ROTATIONS; x++) {
                     RotateFilter rf = new RotateFilter(x * 90);
                     String newImageKey = String.format("%s%s", filename, (int) x);
 
@@ -404,9 +404,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             // Draw ~200 small "ovals" at random locations within a a hex
             // A 3x3 oval ends up looking more like a cross
             for (int i = 0; i < 200; i++) {
-                int x = (int)(Math.random() * HexTileset.HEX_W);
-                int y = (int)(Math.random() * HexTileset.HEX_H);
-                if (hexPoly.contains(x,y)) {
+                int x = (int) (Math.random() * HexTileset.HEX_W);
+                int y = (int) (Math.random() * HexTileset.HEX_H);
+                if (hexPoly.contains(x, y)) {
                     g.fillOval(x, y, 3, 3);
                 }
             }
@@ -455,13 +455,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         int height = board.getHeight();
         // We want to cache as many of the images as we can, but if we have
         // more images than cache size, lets not waste time
-        if ((width*height) > ImageCache.MAX_SIZE){
+        if ((width * height) > ImageCache.MAX_SIZE) {
             // Find the largest size by size square we can fit in the cache
-            int max_dim = (int)Math.sqrt(ImageCache.MAX_SIZE);
+            int max_dim = (int) Math.sqrt(ImageCache.MAX_SIZE);
             if (width < max_dim) {
-                    height = (int)(ImageCache.MAX_SIZE / width);
+                    height = ImageCache.MAX_SIZE / width;
             } else if (height < max_dim) {
-                    width = (int)(ImageCache.MAX_SIZE / height);
+                    width = ImageCache.MAX_SIZE / height;
             } else {
                 width = height = max_dim;
             }

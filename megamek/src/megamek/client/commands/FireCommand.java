@@ -311,9 +311,8 @@ public class FireCommand extends ClientCommand {
     private void commit() {
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector<EntityAction> newAttacks = new Vector<EntityAction>();
-        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-                .hasMoreElements(); ) {
+        Vector<EntityAction> newAttacks = new Vector<>();
+        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements(); ) {
             AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
@@ -335,8 +334,7 @@ public class FireCommand extends ClientCommand {
                 newAttacks.addElement(o);
             }
         }
-        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-                .hasMoreElements(); ) {
+        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements(); ) {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;

@@ -72,7 +72,7 @@ public class SpheroidPathFinder {
             spheroidPaths = new ArrayList<MovePath>();
 
             // can't do anything if the unit is out of control.
-            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
+            if (((IAero) startingEdge.getEntity()).isOutControlTotal()) {
                 return;
             }
             
@@ -80,14 +80,14 @@ public class SpheroidPathFinder {
             // where n is the number of possible altitude changes
             List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(startingEdge);
             MovePath hoverPath = generateHoverPath(startingEdge);
-            for(MovePath altitudePath : altitudePaths) {
+            for (MovePath altitudePath : altitudePaths) {
                 // since we are considering paths across multiple altitudes that cross the same coordinates
                 // we want to clear this out before every altitude to avoid discarding altitude changing paths
                 // so that our dropships can maneuver vertically if necessary.
                 visitedCoords.clear();
                 
                 // we don't really want to consider a non-hovering path, we will add it as a special case
-                if(altitudePath.length() != 0) {
+                if (altitudePath.length() != 0) {
                     spheroidPaths.addAll(generateChildren(altitudePath));
                 } else {
                     spheroidPaths.addAll(generateChildren(hoverPath));
@@ -100,7 +100,7 @@ public class SpheroidPathFinder {
             List<MovePath> validRotations = new ArrayList<>();
             // now that we've got all our possible destinations, make sure to try every possible rotation
             // at the end of the path
-            for(MovePath path : spheroidPaths) {
+            for (MovePath path : spheroidPaths) {
                 validRotations.addAll(AeroPathUtil.generateValidRotations(path));
             }
             
@@ -109,7 +109,7 @@ public class SpheroidPathFinder {
             visitedCoords.clear();
             
             // add "flee" option if we haven't done anything else
-            if(game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
+            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
@@ -127,7 +127,7 @@ public class SpheroidPathFinder {
                     + "increase java memory limit.";
             
             getLogger().error(memoryMessage, e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
@@ -143,7 +143,7 @@ public class SpheroidPathFinder {
         hoverPath.addStep(MoveStepType.HOVER);
         
         // if we can hover, then hover. If not (due to battle damage or whatever), then we fall down.
-        if(hoverPath.isMoveLegal()) {
+        if (hoverPath.isMoveLegal()) {
             return hoverPath;
         } else {
             hoverPath.removeLastStep();
@@ -165,7 +165,7 @@ public class SpheroidPathFinder {
         // we've visited this hex already
         // we've moved further than 1 hex on a low-atmo map
         // we've moved further than 8 hexes on a ground map
-        if(visitedCoords.contains(startingPath.getFinalCoords()) ||
+        if (visitedCoords.contains(startingPath.getFinalCoords()) ||
                 (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
             return retval;
         }
@@ -177,11 +177,11 @@ public class SpheroidPathFinder {
         // forward, left-forward, left-left-forward, right-forward, right-right-forward, right-right-right-forward
         // there is never a reason to "back up"
         // there are also very little built-in error control, since these things are flying
-        for(int direction = 0; direction <= 5; direction++) {
+        for (int direction = 0; direction <= 5; direction++) {
             MovePath childPath = startingPath.clone();
             
             // for each child, we first turn in the appropriate direction
-            for(MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
+            for (MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
                 childPath.addStep(stepType);
             }
             
@@ -190,7 +190,7 @@ public class SpheroidPathFinder {
             
             // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
             // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on
-            if(!childPath.isMoveLegal()) {
+            if (!childPath.isMoveLegal()) {
                 continue;
             }
             

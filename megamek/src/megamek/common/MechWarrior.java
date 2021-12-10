@@ -115,11 +115,11 @@ public class MechWarrior extends EjectedCrew {
      * so that means they are still up in the air and do not land until the end of the turn.
      * @param landed
      */
-    public void setLanded(boolean landed){
+    public void setLanded(boolean landed) {
         this.landed = landed;
     }
 
-    public boolean hasLanded(){
+    public boolean hasLanded() {
         return landed;
     }
 
@@ -134,7 +134,7 @@ public class MechWarrior extends EjectedCrew {
         return (game.getEntity(getOriginalRideId()) != null && !game.getEntity(getOriginalRideId()).isAero());
     }
 
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
     }
     

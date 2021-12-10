@@ -145,7 +145,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // Cycle through all hexes, checking for the appropriate weather changes
-        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
+        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);

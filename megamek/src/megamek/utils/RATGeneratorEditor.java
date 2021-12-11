@@ -1,71 +1,38 @@
 /*
  * MegaMek - Copyright (C) 2018 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.utils;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import megamek.client.ratgenerator.*;
+import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementMode;
+import megamek.common.UnitType;
+import org.apache.logging.log4j.LogManager;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import megamek.MegaMek;
-import megamek.client.ratgenerator.AbstractUnitRecord;
-import megamek.client.ratgenerator.AvailabilityRating;
-import megamek.client.ratgenerator.FactionRecord;
-import megamek.client.ratgenerator.FactionRecord.TechCategory;
-import megamek.client.ratgenerator.ModelRecord;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.common.Configuration;
-import megamek.common.EntityMovementMode;
-import megamek.common.UnitType;
+import java.awt.*;
+import java.io.File;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author neoancient
- *
  */
 public class RATGeneratorEditor extends JFrame {
 
@@ -1436,7 +1403,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (dir.exists() && dir.isDirectory()) {
                     ui = new RATGeneratorEditor(dir);
                 } else {
-                    MegaMek.getLogger().info(args[0] + " is not a valid directory name");
+                    LogManager.getLogger().info(args[0] + " is not a valid directory name");
                     ui = new RATGeneratorEditor();
                 }
             } else {

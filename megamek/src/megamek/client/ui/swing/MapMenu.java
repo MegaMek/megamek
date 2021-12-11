@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -33,6 +32,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -207,7 +207,7 @@ public class MapMenu extends JPopupMenu {
                         ((MovementDisplay) currentPanel).actionPerformed(e);
                     }
                 } catch (Exception ex) {
-                    MegaMek.getLogger().error(ex);
+                    LogManager.getLogger().error(ex);
                 }
             });
             if (game.getPhase() == GamePhase.MOVEMENT) {

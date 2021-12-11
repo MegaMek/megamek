@@ -14,7 +14,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
@@ -51,6 +50,7 @@ import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -314,12 +314,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
-                MegaMek.getLogger().error("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename());
+                LogManager.getLogger().error("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename());
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -409,7 +409,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.addBoardViewListener(this);
             client.setBoardView(bv);
         } catch (Exception e) {
-            MegaMek.getLogger().fatal(e);
+            LogManager.getLogger().fatal(e);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + e);
             die();
@@ -553,7 +553,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR",
                     JOptionPane.ERROR_MESSAGE);
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -845,7 +845,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // Save the destroyed entities to the file.
                 EntityListFile.saveTo(unitFile, destroyed);
             } catch (IOException e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error(e);
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
             }
         }
@@ -1823,7 +1823,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     // Save the destroyed entities to the file.
                     EntityListFile.saveTo(unitFile, destroyed);
                 } catch (IOException ex) {
-                    MegaMek.getLogger().error(ex);
+                    LogManager.getLogger().error(ex);
                     doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
                 }
             }
@@ -2134,7 +2134,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
         } catch (IOException e) {
-            MegaMek.getLogger().error("Error opening file to save!", e);
+            LogManager.getLogger().error("Error opening file to save!", e);
         }
     }
 

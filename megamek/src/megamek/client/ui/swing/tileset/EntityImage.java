@@ -15,26 +15,23 @@
 */
 package megamek.client.ui.swing.tileset;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Image;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.*;
+import megamek.common.icons.Camouflage;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.AbstractDirectory;
+import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.ImageFileFactory;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.util.Iterator;
 import java.util.Objects;
-
-import javax.swing.ImageIcon;
-
-import megamek.MegaMek;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.icons.Camouflage;
-import megamek.common.util.fileUtils.AbstractDirectory;
-import megamek.common.util.fileUtils.ImageFileFactory;
-import megamek.common.*;
-import megamek.common.util.fileUtils.DirectoryItems;
-import megamek.common.util.ImageUtil;
 
 /** Handles the rotated and damaged and preview images for a unit. */
 public class EntityImage {
@@ -82,7 +79,7 @@ public class EntityImage {
                 grabImagePixels(overlay.getImage(), pOverlays[i]);
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to grab pixels for the camo overlay." + e.getMessage());
+            LogManager.getLogger().error("Failed to grab pixels for the camo overlay." + e.getMessage());
         }
     }
     
@@ -94,7 +91,7 @@ public class EntityImage {
             DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
-            MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());
+            LogManager.getLogger().warn("Failed to find the damage decal images." + e.getMessage());
         }
         dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
@@ -322,7 +319,7 @@ public class EntityImage {
                 grabImagePixels(camouflage.getImage(), pCamo);
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
+            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
             return image;
         }
 
@@ -394,7 +391,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
+            LogManager.getLogger().error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
 
@@ -435,7 +432,7 @@ public class EntityImage {
         
         // Get the smoke image for heavier damage; is transparent for lighter damage
         if (smoke == null) {
-            MegaMek.getLogger().error("Smoke decal image is null.");
+            LogManager.getLogger().error("Smoke decal image is null.");
             return image;
         }
         
@@ -479,7 +476,7 @@ public class EntityImage {
                     return null;
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Could not load decal image.", e);
+            LogManager.getLogger().error("Could not load decal image.", e);
         }
 
         return null;
@@ -514,7 +511,7 @@ public class EntityImage {
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0); 
         } catch (Exception e) {
-            MegaMek.getLogger().error("Could not load smoke/fire image.", e);
+            LogManager.getLogger().error("Could not load smoke/fire image.", e);
         }
         return null;
     }

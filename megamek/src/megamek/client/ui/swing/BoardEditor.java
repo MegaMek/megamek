@@ -19,32 +19,8 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
-
-import megamek.MegaMek;
-import megamek.client.event.*;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
@@ -63,6 +39,22 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+
 import static megamek.common.Terrains.*;
 
 // TODO: center map
@@ -1460,7 +1452,7 @@ public class BoardEditor extends JPanel
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
         }
     }
     
@@ -1499,7 +1491,7 @@ public class BoardEditor extends JPanel
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileImage);
         } catch (IOException e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());
@@ -1535,7 +1527,7 @@ public class BoardEditor extends JPanel
             setFrameTitle();
             return true;
         } catch (IOException e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return false;
         }
     }
@@ -1786,7 +1778,7 @@ public class BoardEditor extends JPanel
                     JOptionPane.showMessageDialog(frame,
                             Messages.getString("BoardEditor.OpenFileError", curBoardFile.toString())
                             + e.getMessage());
-                    MegaMek.getLogger().error(e);
+                    LogManager.getLogger().error(e);
                     ignoreHotKeys = false;
                 }
             }

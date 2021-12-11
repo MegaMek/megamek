@@ -2,40 +2,33 @@
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
-import java.awt.event.KeyEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilder;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
-
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import java.awt.event.KeyEvent;
+import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This class provides a static method to read in the defaultKeybinds.xml and
@@ -43,7 +36,6 @@ import org.w3c.dom.NodeList;
  * the XML file.
  *
  * @author arlith
- *
  */
 public class KeyBindParser {
 
@@ -125,7 +117,7 @@ public class KeyBindParser {
                 // Get the isRepeatable
                 elem = (Element) bindingList.getElementsByTagName(IS_REPEATABLE).item(0);
                 if (elem == null) {
-                    MegaMek.getLogger().error("Missing " + IS_REPEATABLE + " element #" + bindCount);
+                    LogManager.getLogger().error("Missing " + IS_REPEATABLE + " element #" + bindCount);
                     continue;
                 }
                 boolean isRepeatable =
@@ -134,7 +126,7 @@ public class KeyBindParser {
                 KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
 
                 if (keyBind == null) {
-                    MegaMek.getLogger().error("Unknown command: " + command + ", element #" + bindCount);
+                    LogManager.getLogger().error("Unknown command: " + command + ", element #" + bindCount);
                 } else {
                     keyBind.key = keyCode;
                     keyBind.modifiers = modifiers;

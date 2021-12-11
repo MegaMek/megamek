@@ -15,28 +15,21 @@
 */
 package megamek.common;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.xml.parsers.DocumentBuilder;
-
-import megamek.MegaMek;
 import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
-
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class loads the custom weapon orders lists from the
@@ -96,7 +89,7 @@ public class WeaponOrderHandler {
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new MegaMekFile(Configuration.configDir(), path).getFile();
         if (file.exists() && !file.canWrite()) {
-            MegaMek.getLogger().error("Could not save custom weapon orders from " + path);
+            LogManager.getLogger().error("Could not save custom weapon orders from " + path);
             return;
         }
 

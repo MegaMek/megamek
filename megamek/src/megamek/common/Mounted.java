@@ -20,7 +20,6 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -30,6 +29,7 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
@@ -562,7 +562,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (bay != null) {
                 return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
             }
-            MegaMek.getLogger().warning("Found dumper not linked to a cargo bay. Using zero for the weight.");
+            LogManager.getLogger().warn("Found dumper not linked to a cargo bay. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -1281,7 +1281,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return 0;
         }
         // um, otherwise, I'm not sure
-        MegaMek.getLogger().error("mounted: unable to determine explosion damage for " + typeName);
+        LogManager.getLogger().error("mounted: unable to determine explosion damage for " + typeName);
         return 0;
     }
 

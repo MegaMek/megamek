@@ -1,64 +1,38 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.common.Aero;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
-import megamek.common.pathfinder.AeroGroundPathFinder;
+import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
-import megamek.common.pathfinder.AeroLowAltitudePathFinder;
-import megamek.common.pathfinder.AeroSpacePathFinder;
-import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
-import megamek.common.pathfinder.InfantryPathFinder;
-import megamek.common.pathfinder.LongestPathFinder;
-import megamek.common.pathfinder.NewtonianAerospacePathFinder;
-import megamek.common.pathfinder.PronePathFinder;
-import megamek.common.pathfinder.ShortestPathFinder;
-import megamek.common.pathfinder.SpheroidPathFinder;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class contains logic that calculates and stores 
  * a) possible paths that units in play can take, and
  * b) their possible locations
- *
  */
 public class PathEnumerator {
 
@@ -166,7 +140,7 @@ public class PathEnumerator {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    MegaMek.getLogger().error(e.toString());
+                    LogManager.getLogger().error(e.toString());
                 }
             }
         }
@@ -335,7 +309,7 @@ public class PathEnumerator {
 
             return true;
         } catch (Exception e) {
-            MegaMek.getLogger().error(e.toString());
+            LogManager.getLogger().error(e.toString());
             return false;
         }
     }

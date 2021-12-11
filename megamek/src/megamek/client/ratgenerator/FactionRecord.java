@@ -1,28 +1,27 @@
 /*
  *  MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
+
+import megamek.common.UnitType;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
 
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.w3c.dom.Node;
-import org.apache.commons.text.StringEscapeUtils;
-
-import megamek.MegaMek;
-import megamek.common.UnitType;
 
 /**
  * Stores data about factions used for building RATs, including
@@ -294,7 +293,7 @@ public class FactionRecord {
                         retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
                     }
                 } else {
-                    MegaMek.getLogger().debug("RATGenerator: could not locate salvage faction " + pKey
+                    LogManager.getLogger().debug("RATGenerator: could not locate salvage faction " + pKey
                             + " for " + key);
                 }
             }
@@ -373,7 +372,7 @@ public class FactionRecord {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
-                    MegaMek.getLogger().error("While loading faction data for " + key);
+                    LogManager.getLogger().error("While loading faction data for " + key);
                 }
             }
         }
@@ -501,7 +500,7 @@ public class FactionRecord {
                 try {
                     retVal.setYears(wn.getTextContent());
                 } catch (ParseException ex) {
-                    MegaMek.getLogger().error(ex);
+                    LogManager.getLogger().error(ex);
                 }
             } else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
                 retVal.setRatings(wn.getTextContent());
@@ -574,7 +573,7 @@ public class FactionRecord {
                         int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
                         setWeightDistribution(era, unitType, wn.getTextContent());
                     } catch (Exception ex) {
-                        MegaMek.getLogger().error("RATGenerator: error parsing weight distributions for " + key
+                        LogManager.getLogger().error("RATGenerator: error parsing weight distributions for " + key
                                 + ", " + era);
                     }
                     break;

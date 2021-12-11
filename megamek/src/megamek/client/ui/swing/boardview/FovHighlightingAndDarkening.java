@@ -1,6 +1,5 @@
 package megamek.client.ui.swing.boardview;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -11,6 +10,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.util.List;
@@ -329,12 +329,12 @@ class FovHighlightingAndDarkening {
         Board board = this.boardView1.game.getBoard();
         Hex srcHex = board.getHex(src);
         if (srcHex == null) {
-            MegaMek.getLogger().error("Cannot process line of sight effects with a null source hex.");
+            LogManager.getLogger().error("Cannot process line of sight effects with a null source hex.");
             return null;
         }
         Hex dstHex = board.getHex(dest);
         if (dstHex == null) {
-            MegaMek.getLogger().error("Cannot process line of sight effects with a null destination hex.");
+            LogManager.getLogger().error("Cannot process line of sight effects with a null destination hex.");
             return null;
         }
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();

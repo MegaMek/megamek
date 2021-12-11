@@ -18,13 +18,13 @@
  */
 package megamek.client.ui.swing.tileset;
 
-import megamek.MegaMek;
-import megamek.common.util.fileUtils.AbstractDirectory;
-import megamek.common.util.fileUtils.ImageFileFactory;
-import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.ImageFileFactory;
+import megamek.common.util.fileUtils.ScaledImageFileFactory;
+import org.apache.logging.log4j.LogManager;
 
 public class MMStaticDirectoryManager {
     //region Variable Declarations
@@ -71,7 +71,7 @@ public class MMStaticDirectoryManager {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
                         new ImageFileFactory());
             } catch (Exception e) {
-                MegaMek.getLogger().error("Could not parse the portraits directory!", e);
+                LogManager.getLogger().error("Could not parse the portraits directory!", e);
             }
         }
     }
@@ -90,7 +90,7 @@ public class MMStaticDirectoryManager {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
                         new ScaledImageFileFactory());
             } catch (Exception e) {
-                MegaMek.getLogger().error("Could not parse the camo directory!", e);
+                LogManager.getLogger().error("Could not parse the camo directory!", e);
             }
         }
     }
@@ -108,7 +108,7 @@ public class MMStaticDirectoryManager {
             try {
                 mechTileset.loadFromFile("mechset.txt");
             } catch (Exception e) {
-                MegaMek.getLogger().error("Unable to load mech tileset", e);
+                LogManager.getLogger().error("Unable to load mech tileset", e);
             }
         }
     }

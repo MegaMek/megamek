@@ -13,15 +13,10 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 public class LandAirMech extends BipedMech implements IAero, IBomber {
     private static final long serialVersionUID = -8118673802295814548L;
@@ -1994,7 +1989,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     protected void addBomb(Mounted mounted, int loc) throws LocationFullException {
         if ((loc < 0) || (loc >= crits.length)) {
-            MegaMek.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
+            LogManager.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
             return;
         }
 

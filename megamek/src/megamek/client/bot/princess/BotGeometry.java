@@ -1,23 +1,26 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
+import megamek.common.Board;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.MovePath;
+import org.apache.logging.log4j.LogManager;
+
 import java.util.Arrays;
 import java.util.Iterator;
-
-import megamek.MegaMek;
-import megamek.common.*;
 
 /**
  * This contains useful classes and functions for geometric questions
@@ -155,7 +158,7 @@ public class BotGeometry {
             boolean flip = getDirection() > 2;
             HexLine[] edges = a.getEdges();
             if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
-                MegaMek.getLogger().error(new IllegalStateException("Detection of NULL edges in ConvexBoardArea: " + a));
+                LogManager.getLogger().error(new IllegalStateException("Detection of NULL edges in ConvexBoardArea: " + a));
                 return 0;
             }
             if (edges[getDirection()].getIntercept() == getIntercept()) {
@@ -385,7 +388,7 @@ public class BotGeometry {
             
             HexLine[] edges = getEdges();
             if (edges[i] == null || edges[(i + 1) % 6] == null) {
-                MegaMek.getLogger().error("Edge[" + i + "] is NULL.");
+                LogManager.getLogger().error("Edge[" + i + "] is NULL.");
                 return null;
             }
             

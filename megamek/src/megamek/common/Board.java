@@ -14,12 +14,12 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
@@ -317,7 +317,7 @@ public class Board implements Serializable {
                             // Log the error and remove the
                             // building from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error("Unable to create building.", excep);
+                                LogManager.getLogger().error("Unable to create building.", excep);
                             } else {
                                 errBuff.append("Unable to create building at ").append(coords)
                                         .append("!\n").append(excep.getMessage()).append("\n");
@@ -345,7 +345,7 @@ public class Board implements Serializable {
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the fuel tank from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error("Unable to create fuel tank.", excep);
+                                LogManager.getLogger().error("Unable to create fuel tank.", excep);
                             } else {
                                 errBuff.append("Unable to create fuel tank at ").append(coords)
                                         .append("!\n").append(excep.getMessage()).append("\n");
@@ -372,7 +372,7 @@ public class Board implements Serializable {
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the bridge from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error("Unable to create bridge.", excep);
+                                LogManager.getLogger().error("Unable to create bridge.", excep);
                             } else {
                                 errBuff.append("Unable to create bridge at ").append(coords)
                                         .append("!\n").append(excep.getMessage()).append("\n");
@@ -911,7 +911,7 @@ public class Board implements Serializable {
         try (InputStream is = new FileInputStream(filepath)) {
             load(is);
         } catch (IOException ex) {
-            MegaMek.getLogger().error("IO Error opening file to load board! " + ex);
+            LogManager.getLogger().error("IO Error opening file to load board! " + ex);
         }
     }
 
@@ -977,7 +977,7 @@ public class Board implements Serializable {
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());
                     } else {
-                        MegaMek.getLogger().error("Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
+                        LogManager.getLogger().error("Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();
@@ -1018,7 +1018,7 @@ public class Board implements Serializable {
                 }
             }
         } catch (IOException ex) {
-            MegaMek.getLogger().error("I/O Error: " + ex);
+            LogManager.getLogger().error("I/O Error: " + ex);
         }
 
         // fill nulls with blank hexes
@@ -1032,10 +1032,10 @@ public class Board implements Serializable {
         if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errBuff);
         } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
-            MegaMek.getLogger().error("Invalid board data!");
+            LogManager.getLogger().error("Invalid board data!");
             newData(nw, nh, nd, errBuff);
         } else if (errBuff == null) {
-            MegaMek.getLogger().error("Invalid board data!");
+            LogManager.getLogger().error("Invalid board data!");
         }
 
     }
@@ -1158,7 +1158,7 @@ public class Board implements Serializable {
             // make sure it's written
             w.flush();
         } catch (IOException ex) {
-            MegaMek.getLogger().error("I/O Error: " + ex);
+            LogManager.getLogger().error("I/O Error: " + ex);
         }
     }
 
@@ -1416,7 +1416,7 @@ public class Board implements Serializable {
 
             // Handle garbage input.
             if (bldg == null) {
-                MegaMek.getLogger().error("Could not find a match for " + other + " to update.");
+                LogManager.getLogger().error("Could not find a match for " + other + " to update.");
                 continue;
             }
             Enumeration<Coords> coordsEnum = bldg.getCoords();

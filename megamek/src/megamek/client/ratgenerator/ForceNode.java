@@ -1,34 +1,31 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
+
+import megamek.common.EntityMovementMode;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import megamek.MegaMek;
-import megamek.common.EntityMovementMode;
-
 /**
- * 
  * A force node contains the rules for generating a force when the ForceDescriptor matches the
  * characteristics defined by the force node.
  *
  * @author Neoancient
- *
  */
 public class ForceNode extends RulesetNode {
     protected Integer eschelon;
@@ -136,7 +133,7 @@ public class ForceNode extends RulesetNode {
                             if (content != null) {
                                 FormationType ft = FormationType.getFormationType(content);
                                 if (null == ft) {
-                                    MegaMek.getLogger().error("Could not parse formation type " + content);
+                                    LogManager.getLogger().error("Could not parse formation type " + content);
                                 }
                                 fd.setFormationType(ft);
                             }
@@ -167,7 +164,7 @@ public class ForceNode extends RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                MegaMek.getLogger().error("Force generator could not parse mission role " + p);
+                                LogManager.getLogger().error("Force generator could not parse mission role " + p);
                             }
                         }
                         break;

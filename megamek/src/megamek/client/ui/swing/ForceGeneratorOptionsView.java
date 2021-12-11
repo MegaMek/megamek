@@ -1,13 +1,17 @@
-/**
- * 
- */
 package megamek.client.ui.swing;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import megamek.client.ratgenerator.*;
+import megamek.client.ui.Messages;
+import megamek.common.*;
+import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -21,53 +25,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.ProgressMonitor;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-
-import megamek.MegaMek;
-import megamek.client.ratgenerator.AbstractUnitRecord;
-import megamek.client.ratgenerator.CrewDescriptor;
-import megamek.client.ratgenerator.FactionRecord;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.ForceNode;
-import megamek.client.ratgenerator.MissionRole;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.client.ratgenerator.TOCNode;
-import megamek.client.ratgenerator.ValueNode;
-import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.UnitType;
-import megamek.common.options.OptionsConstants;
-
 /**
  * Controls to set options for force generator.
  * 
  * @author Neoancient
- *
  */
-
-
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
-
     private static final long serialVersionUID = 5269823128861856001L;
 
     private int currentYear;
@@ -677,7 +640,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                MegaMek.getLogger().warning("No unit type node found.");
+                LogManager.getLogger().warn("No unit type node found.");
                 cbUnitType.addItem(null);
             }
         } else {
@@ -752,7 +715,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            MegaMek.getLogger().warning("No eschelon node found.");
+            LogManager.getLogger().warn("No eschelon node found.");
         }
 
         if (hasCurrent) {
@@ -796,7 +759,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                MegaMek.getLogger().warning("No rating found.");
+                LogManager.getLogger().warn("No rating found.");
             }
         }
 

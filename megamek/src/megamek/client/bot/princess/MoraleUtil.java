@@ -16,7 +16,7 @@
 package megamek.client.bot.princess;
 
 import megamek.common.*;
-import megamek.common.logging.MMLogger;
+import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -35,10 +35,8 @@ public class MoraleUtil {
 
     private final Set<Integer> BROKEN_UNITS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    private final MMLogger logger;
+    public MoraleUtil() {
 
-    public MoraleUtil(MMLogger logger) {
-        this.logger = logger;
     }
 
     /**
@@ -136,7 +134,7 @@ public class MoraleUtil {
                 }
             }
         } finally {
-            logger.info(logMsg.toString());
+            LogManager.getLogger().info(logMsg.toString());
         }
     }
 

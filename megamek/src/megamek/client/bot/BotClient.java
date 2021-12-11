@@ -13,7 +13,6 @@
  */
 package megamek.client.bot;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
@@ -30,6 +29,7 @@ import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.io.*;
@@ -481,7 +481,7 @@ public abstract class BotClient extends Client {
 	            try {
 					Thread.sleep(Compute.randomInt(1000) + 500);
 				} catch (InterruptedException e) {
-					MegaMek.getLogger().error(e.toString());
+					LogManager.getLogger().error(e.toString());
 				}
 	        }
         }
@@ -545,7 +545,7 @@ public abstract class BotClient extends Client {
             
             return true;
         } catch (Throwable t) {
-            MegaMek.getLogger().error(t);            
+            LogManager.getLogger().error(t);            
             return false;
         }
     }

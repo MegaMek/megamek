@@ -13,7 +13,6 @@
  */
 package megamek.common.actions;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -38,6 +37,7 @@ import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -280,12 +280,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // No need to process anything further if we're not using a weapon somehow
         if (!(type instanceof WeaponType)) {
-            MegaMek.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
+            LogManager.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
         }
         
         if (target == null) {
-            MegaMek.getLogger().error(attackerId + "Attempting to attack null target");
+            LogManager.getLogger().error(attackerId + "Attempting to attack null target");
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
         }
 

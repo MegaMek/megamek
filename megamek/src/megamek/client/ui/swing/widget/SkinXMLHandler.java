@@ -14,41 +14,30 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
-
-
-import javax.xml.parsers.DocumentBuilder;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
-
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * This class reads in an XML file that specifies different aspects of the
- * visual skin for Megamek.
+ * This class reads in an XML file that specifies different aspects of the visual skin for MegaMek.
  *
  * @author arlith
- *
  */
 public class SkinXMLHandler {
 
@@ -307,7 +296,7 @@ public class SkinXMLHandler {
                 }
 
                 if (SkinSpecification.UIComponents.getUIComponent(name) == null) {
-                    MegaMek.getLogger().error("Unable to add unrecognized UI component: " + name + "!");
+                    LogManager.getLogger().error("Unable to add unrecognized UI component: " + name + "!");
                 } else {
                     skinSpecs.put(name, skinSpec);
                 }
@@ -368,12 +357,12 @@ public class SkinXMLHandler {
                         .getElementsByTagName(TILED).item(0).getTextContent();
 
                 if (icon == null) {
-                    MegaMek.getLogger().error("Missing <" + ICON + "> tag");
+                    LogManager.getLogger().error("Missing <" + ICON + "> tag");
                     continue;
                 }
 
                 if (tiled == null) {
-                    MegaMek.getLogger().error("Missing <" + TILED + "> tag");
+                    LogManager.getLogger().error("Missing <" + TILED + "> tag");
                     continue;
                 }
                 icons.add(icon);
@@ -384,7 +373,7 @@ public class SkinXMLHandler {
                     .getElementsByTagName(EDGE_NAME).item(0).getTextContent();
 
             if (edgeName == null) {
-                MegaMek.getLogger().error("Missing <" + EDGE_NAME + "> tag");
+                LogManager.getLogger().error("Missing <" + EDGE_NAME + "> tag");
                 continue;
             }
 

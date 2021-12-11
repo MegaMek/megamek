@@ -18,10 +18,10 @@
  */
 package megamek.common.icons;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 
 import java.awt.*;
@@ -70,7 +70,7 @@ public class Camouflage extends AbstractIcon {
         try {
             return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
 
         return null;
@@ -78,7 +78,7 @@ public class Camouflage extends AbstractIcon {
 
     private @Nullable Image getColourCamouflageImage(final @Nullable Color colour) {
         if (colour == null) {
-            MegaMek.getLogger().error("A null colour was passed.");
+            LogManager.getLogger().error("A null colour was passed.");
             return null;
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
@@ -99,7 +99,7 @@ public class Camouflage extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return new Camouflage();
         }
         return icon;

@@ -1,33 +1,30 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ratgenerator;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-
-import megamek.MegaMek;
 
 /**
  * The ChassisRecord tracks all available variants and determines how much total weight
  * is to be distributed among the various models.
  * 
  * @author Neoancient
- * 
  */
 public class ChassisRecord extends AbstractUnitRecord {
 
@@ -35,7 +32,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     
     public ChassisRecord(String chassis) {
         super(chassis);
-        models = new HashSet<ModelRecord>();
+        models = new HashSet<>();
     }
     
     public void addModel(ModelRecord model) {
@@ -59,7 +56,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     public int totalModelWeight(int era, String fKey) {
         FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
         if (fRec == null) {
-            MegaMek.getLogger().warning("Attempt to find totalModelWeight for non-existent faction " + fKey);
+            LogManager.getLogger().warn("Attempt to find totalModelWeight for non-existent faction " + fKey);
             return 0;
         }
         return totalModelWeight(era, fRec);

@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -31,6 +30,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -138,7 +138,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getEntity(en) == null) {
             disableButtons();
             setNextEnabled(true);
-            MegaMek.getLogger().error("DeploymentDisplay: Tried to select non-existent entity: " + en); 
+            LogManager.getLogger().error("DeploymentDisplay: Tried to select non-existent entity: " + en);
             return;
         }
         
@@ -747,7 +747,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         }
                         setLoadEnabled(getLoadableEntities().size() > 0);
                     } else {
-                        MegaMek.getLogger().error("Could not unload " + loaded.getShortName() + " from " + ce().getShortName()); 
+                        LogManager.getLogger().error("Could not unload " + loaded.getShortName() + " from " + ce().getShortName()); 
                     }
                 }
             } // End have-choices

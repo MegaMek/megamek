@@ -15,7 +15,6 @@
 */
 package megamek.client.ui.swing.boardview;
 
-import megamek.MegaMek;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
@@ -61,6 +60,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -864,7 +864,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     SwingUtilities.invokeLater(redrawWorker);
                 } catch (Exception ie) {
-                    MegaMek.getLogger().error("Ignoring error: " + ie.getMessage());
+                    LogManager.getLogger().error("Ignoring error: " + ie.getMessage());
                 }
             }
         };
@@ -876,7 +876,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         try {
             SwingUtilities.invokeLater(redrawWorker);
         } catch (Exception ie) {
-            MegaMek.getLogger().error("Ignoring error: " + ie.getMessage());
+            LogManager.getLogger().error("Ignoring error: " + ie.getMessage());
         }
     }
 
@@ -1044,7 +1044,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (!isTileImagesLoaded()) {
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
             if (!tileManager.isStarted()) {
-                MegaMek.getLogger().info("Loading images for board");
+                LogManager.getLogger().info("Loading images for board");
                 tileManager.loadNeededImages(game);
             }
             // wait 1 second, then repaint
@@ -1081,7 +1081,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
                                     rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
                                     xRem, yRem, w - xRem, h - yRem);
-                            MegaMek.getLogger().error(errorData);
+                            LogManager.getLogger().error(errorData);
                         }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
@@ -1649,7 +1649,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         long tT5 = System.nanoTime() - stT;
-        MegaMek.getLogger().info("Time to prepare the shadow map: " + tT5 / 1e6 + " ms");
+        LogManager.getLogger().info("Time to prepare the shadow map: " + tT5 / 1e6 + " ms");
     }
 
     public void clearShadowMap() {
@@ -2651,7 +2651,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Exception, probably can't load file.", e);
+            LogManager.getLogger().error("Exception, probably can't load file.", e);
             drawCenteredString("Loading Error", 0, (int) (50 * scale), font_note, g);
             return;
         }
@@ -2951,7 +2951,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     p2.x - (int) (HEX_ELEV * scale) }, new int[] { p1.y, p2.y,
                     p2.y }, 3);
             if ((p2.x - (int) (HEX_ELEV * scale)) < 0) {
-                MegaMek.getLogger().info("Negative X value!: " + (p2.x - (int) (HEX_ELEV * scale)));
+                LogManager.getLogger().info("Negative X value!: " + (p2.x - (int) (HEX_ELEV * scale)));
             }
             g.setColor(new Color(0, 0, 0, 0.4f));
             g.fillPolygon(shadow1);*/
@@ -2969,17 +2969,17 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             p1.y + fudge + scaledDelta }, 4);
 
             if ((p1.y + fudge) < 0) {
-                MegaMek.getLogger().info("Negative Y value (Fudge)!: " + (p1.y + fudge));
+                LogManager.getLogger().info("Negative Y value (Fudge)!: " + (p1.y + fudge));
             }
             if ((p2.y + fudge) < 0) {
-                MegaMek.getLogger().info("Negative Y value (Fudge)!: " + (p2.y + fudge));
+                LogManager.getLogger().info("Negative Y value (Fudge)!: " + (p2.y + fudge));
             }
 
             if ((p2.y + fudge + scaledDelta) < 0) {
-                MegaMek.getLogger().info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
+                LogManager.getLogger().info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
             }
             if (( p1.y + fudge + scaledDelta) < 0) {
-                MegaMek.getLogger().info("Negative Y value!: " + ( p1.y + fudge + scaledDelta));
+                LogManager.getLogger().info("Negative Y value!: " + ( p1.y + fudge + scaledDelta));
             }
             g.setColor(color);
             g.drawPolygon(p);
@@ -5158,7 +5158,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
-                    MegaMek.getLogger().error(ex);
+                    LogManager.getLogger().error(ex);
                 }
             }
 
@@ -5998,7 +5998,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 file = new MegaMekFile(Configuration.widgetsDir(),
                         bvSkinSpec.backgrounds.get(0)).getFile();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("BoardView1 Error: icon doesn't exist: "
+                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: "
                             + file.getAbsolutePath());
                 } else {
                     bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
@@ -6010,14 +6010,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 file = new MegaMekFile(Configuration.widgetsDir(),
                         bvSkinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("BoardView1 Error: icon doesn't exist: "
+                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: "
                             + file.getAbsolutePath());
                 } else {
                     scrollPaneBgImg = ImageUtil.loadImageFromFile(file.getAbsolutePath());
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading BoardView background images!", e);
+            LogManager.getLogger().error("Error loading BoardView background images!", e);
         }
 
         // Place the board viewer in a set of scrollbars.
@@ -6245,7 +6245,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     tracker.waitForID(0);
                 } catch (InterruptedException e) {
-                    MegaMek.getLogger().error(e);
+                    LogManager.getLogger().error(e);
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -6265,7 +6265,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             try {
                 tracker.waitForID(1);
             } catch (InterruptedException e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error(e);
             }
             tracker.removeImage(scaled);
             // Cache the image if the flag is set
@@ -6608,7 +6608,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int boardY = (int) ((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
         if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
-            MegaMek.getLogger().error("Error computing linear index or missing background images in BoardView1.getBoardBackgroundHexImage!");
+            LogManager.getLogger().error("Error computing linear index or missing background images in BoardView1.getBoardBackgroundHexImage!");
             return null;
         }
         Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);

@@ -15,23 +15,15 @@
 */
 package megamek.common;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class represents a single, possibly multi-hex building on the board.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $Revision$
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {
     private static final long serialVersionUID = -8236017592012683793L;
@@ -452,18 +444,18 @@ public class Building implements Serializable {
     public void collapseBasement(Coords coords, Board board,
             Vector<Report> vPhaseReport) {
         if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
-            MegaMek.getLogger().error("Hex has no basement to collapse");
+            LogManager.getLogger().error("Hex has no basement to collapse");
             return;
         }
         if (basementCollapsed.get(coords)) {
-            MegaMek.getLogger().error("Hex has basement that already collapsed");
+            LogManager.getLogger().error("Hex has basement that already collapsed");
             return;
         }
         Report r = new Report(2112, Report.PUBLIC);
         r.add(getName());
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        MegaMek.getLogger().error("basement " + basement + "is collapsing, hex:" + coords + " set terrain!");
+        LogManager.getLogger().error("basement " + basement + "is collapsing, hex:" + coords + " set terrain!");
         board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
         basementCollapsed.put(coords, true);
 

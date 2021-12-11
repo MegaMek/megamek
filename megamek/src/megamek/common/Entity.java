@@ -15,7 +15,6 @@
 */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
@@ -40,6 +39,7 @@ import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -3748,7 +3748,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             shots = 1;
         }
         if (ammo == null) {
-            MegaMek.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
+            LogManager.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
             return;
         }
         Mounted m = new Mounted(this, ammo);
@@ -9840,7 +9840,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((phase == GamePhase.DEPLOYMENT) == isDeployed()) {
             if (!isDeployed() && isEligibleForTargetingPhase()
                     && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
-                MegaMek.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
+                LogManager.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
             }

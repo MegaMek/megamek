@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -45,6 +44,7 @@ import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1198,7 +1198,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd.removeLastStep();
         final Entity entity = ce();
         if (entity == null) {
-            MegaMek.getLogger().warning("Cannot process removeLastStep for a null entity.");
+            LogManager.getLogger().warn("Cannot process removeLastStep for a null entity.");
             return;
         } else if (cmd.length() == 0) {
             clear();
@@ -3037,7 +3037,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Handle error condition.
         if (choices.size() == 0) {
-            MegaMek.getLogger().debug("Method called without towable units.");
+            LogManager.getLogger().debug("Method called without towable units.");
             return null;
         }
 
@@ -3176,7 +3176,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Handle error condition.
         if (ce.getAllTowedUnits().isEmpty()) {
-            MegaMek.getLogger().debug("Method called without any towed units.");
+            LogManager.getLogger().debug("Method called without any towed units.");
             return null;
         }
         

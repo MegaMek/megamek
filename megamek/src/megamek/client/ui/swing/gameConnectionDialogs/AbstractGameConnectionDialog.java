@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
 import megamek.client.ui.swing.ClientDialog;
@@ -28,6 +27,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -247,7 +247,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            MegaMek.getLogger().error(ex.getMessage());
+            LogManager.getLogger().error(ex.getMessage());
         }
 
         setConfirmed(true);

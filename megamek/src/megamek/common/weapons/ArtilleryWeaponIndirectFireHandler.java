@@ -1,43 +1,19 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 24, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
-import java.util.Iterator;
-import java.util.Vector;
-
-import megamek.MegaMek;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.HexTarget;
-import megamek.common.Game;
-import megamek.common.INarcPod;
-import megamek.common.LosEffects;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -45,15 +21,16 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 24, 2004
  */
 public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
     private int shootingBA = -1;
@@ -329,7 +306,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // if we have no ammo for this attack then don't bother doing anything else, but log the error
         if (atype == null) {
-            MegaMek.getLogger().error("Artillery weapon fired with no ammo.\n\n" + Thread.currentThread().getStackTrace());
+            LogManager.getLogger().error("Artillery weapon fired with no ammo.\n\n" + Thread.currentThread().getStackTrace());
             return false;
         }
         

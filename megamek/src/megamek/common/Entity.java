@@ -14790,9 +14790,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void loadDefaultQuirks() {
-
         // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks = QuirksHandler.getQuirks(this);
+        List<QuirkEntry> quirks;
+        try {
+            quirks = QuirksHandler.getQuirks(this);
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
+            return;
+        }
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {

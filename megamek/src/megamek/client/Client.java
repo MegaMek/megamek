@@ -450,8 +450,8 @@ public class Client implements IClientCommandHandler {
             case LOUNGE:
                 try {
                     QuirksHandler.initQuirksList();
-                } catch (IOException e) {
-                    MegaMek.getLogger().error(e);
+                } catch (Exception e) {
+                    MegaMek.getLogger().error("Error initializing quirks", e);
                 }
                 UnitRoleHandler.initialize();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);

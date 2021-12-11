@@ -19,10 +19,9 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 /**
- * A single step in the entity's movement.  Since the path planner uses shallow
+ * A single step in the entity's movement. Since the path planner uses shallow
  * copies of MovePaths, multiple paths may share the same MoveStep, so this
  * class needs to be agnostic of what path it belongs to.
  * @since Aug 28, 2003
@@ -115,7 +114,7 @@ public class MoveStep implements Serializable {
     private boolean isCarefulPath = true;
     
     /*
-     * Aero related stuf
+     * Aero related stuff
      */
     private int velocity = -999;
     private int velocityN = -999;
@@ -167,11 +166,6 @@ public class MoveStep implements Serializable {
      * used for landed Aerodyne Dropships and Mobile Structures.
      */
     private ArrayList<Coords> crushedBuildingLocs;
-
-    /**
-     * Global logging instance.
-     */
-    private MMLogger logger;
 
     /**
      * Create a step of the given type.
@@ -305,15 +299,6 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, Minefield mf) {
         this(path, type);
         this.mf = mf;
-    }
-
-    /**
-     * Get the logging instance for this class.
-     * 
-     * @return The logger for this class.
-     */
-    private MMLogger getLogger() {
-        return null == logger ? logger = DefaultMmLogger.getInstance() : logger;
     }
 
     @Override
@@ -3138,13 +3123,13 @@ public class MoveStep implements Serializable {
         final Entity entity = getEntity();
 
         if (null == dest) {
-            throw getLogger().error(new IllegalStateException("Step has no position"));
-        }
-        if (src.distance(dest) > 1) {
-            StringBuffer buf = new StringBuffer();
-            buf.append("Coordinates ").append(src.toString()).append(" and ")
-                    .append(dest.toString()).append(" are not adjacent.");
-            throw getLogger().error(new IllegalArgumentException(buf.toString()));
+            var ex = new IllegalStateException("Step has no position");
+            LogManager.getLogger().error(ex);
+            throw ex;
+        } else if (src.distance(dest) > 1) {
+            var ex = new IllegalArgumentException("Coordinates " + src + " and " + dest + " are not adjacent.");
+            LogManager.getLogger().error(ex);
+            throw ex;
         }
 
         // Assault dropping units cannot move

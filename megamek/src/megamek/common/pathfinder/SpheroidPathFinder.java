@@ -1,67 +1,52 @@
 /*
- * Copyright (c) 2019 The MegaMek Team. All rights reserved.
+ * Copyright (c) 2019 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MekHQ.
+ * This file is part of MegaMek.
  *
- * MekHQ is free software: you can redistribute it and/or modify
+ * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MekHQ is distributed in the hope that it will be useful,
+ * MegaMek is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MekHQ.  If not, see <http://www.gnu.org/licenses/>.
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.pathfinder;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
-import megamek.common.IAero;
 import megamek.common.Game;
+import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths for units behaving
- * like spheroid dropships in atmosphere. Remarkably similar to a jumping infantry unit.
+ * like spheroid DropShips in atmosphere. Remarkably similar to a jumping infantry unit.
  * @author NickAragua
- *
  */
 public class SpheroidPathFinder {
     private Game game;
     private List<MovePath> spheroidPaths;
-    private MMLogger logger;
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.SpheroidPathFinder";
-    
+
     private Set<Coords> visitedCoords = new HashSet<>();
     
     private SpheroidPathFinder(Game game) {
         this.game = game;
-        getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return spheroidPaths;
     }
-    
-    private MMLogger getLogger() {
-        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
-    }
-    
+
     /**
      * Computes paths to nodes in the graph.
      * 
@@ -126,16 +111,14 @@ public class SpheroidPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().error(memoryMessage, e);
+            LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     
     public static SpheroidPathFinder getInstance(Game game) {
-        SpheroidPathFinder ipf = new SpheroidPathFinder(game);
-
-        return ipf;
+        return new SpheroidPathFinder(game);
     }
     
     private MovePath generateHoverPath(MovePath startingPath) {

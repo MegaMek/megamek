@@ -21,6 +21,7 @@ package megamek;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.io.PrintWriter;

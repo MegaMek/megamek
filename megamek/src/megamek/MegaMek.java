@@ -2,15 +2,15 @@
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek;
 
@@ -19,7 +19,6 @@ import megamek.client.ui.preferences.MMPreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogConfig;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -111,14 +110,6 @@ public class MegaMek {
         MegaMek.redirectOutput(logFileName);
     }
 
-    private static void configureLog4j(@Nullable final String logFileName) {
-        if (null == logFileName) {
-            LogConfig.getInstance().disableAll();
-            return;
-        }
-        LogConfig.getInstance().enableSimplifiedLogging();
-    }
-
     /**
      * This needs to be done as we are currently using two different loggers.
      * Both loggers must be set to append in order to prevent them from over-
@@ -149,7 +140,6 @@ public class MegaMek {
                 + File.separator + logFileName;
         resetLogFile(qualifiedLogFilename);
         configureLegacyLogging(logFileName);
-        configureLog4j(logFileName);
     }
 
     public static MMPreferences getPreferences() {

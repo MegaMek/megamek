@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
@@ -31,9 +31,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -41,6 +38,8 @@ import megamek.common.pathfinder.PathDecorator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -49,9 +48,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Princess extends BotClient {
-
-    private static final String LOGGING_CATEGORY = "megamek.client.bot.princess";
-
     private static final char PLUS = '+';
     private static final char MINUS = '-';
 
@@ -82,19 +78,18 @@ public class Princess extends BotClient {
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
-    private final MoraleUtil moraleUtil = new MoraleUtil(getLogger());
+    private final MoraleUtil moraleUtil = new MoraleUtil();
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
-    private MMLogger logger = null;
-    
+
     /** 
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger. 
      */
     public static Princess createPrincess(String name, String host, int port, BehaviorSettings behavior) {
-        Princess result = new Princess(name, host, port, behavior.getVerbosity());
+        Princess result = new Princess(name, host, port);
         result.setBehaviorSettings(behavior);
-        result.getLogger().debug(result.getBehaviorSettings().toLog());
+        LogManager.getLogger().debug(result.getBehaviorSettings().toLog());
         return result;
     }
 
@@ -103,15 +98,10 @@ public class Princess extends BotClient {
      * @param name The display name.
      * @param host The host address to which to connect.
      * @param port The port on the host where to connect.
-     * @param verbosity The verbosity of the bot's reporting and logging.
      */
-    public Princess(final String name,
-                    final String host,
-                    final int port,
-                    final LogLevel verbosity) {
+    public Princess(final String name, final String host, final int port) {
         super(name, host, port);
-        getLogger().setLogLevel(LOGGING_CATEGORY, verbosity);
-        setBehaviorSettings(BehaviorSettingsFactory.getInstance(getLogger()).DEFAULT_BEHAVIOR);
+        setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
         
         fireControlState = new FireControlState();
         pathRankerState = new PathRankerState();
@@ -121,33 +111,6 @@ public class Princess extends BotClient {
         precognition = new Precognition(this);
         precogThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
         precogThread.start();
-    }
-
-    public MMLogger getLogger() {
-        if (null == logger) {
-            logger = DefaultMmLogger.getInstance();
-        }
-        return logger;
-    }
-
-    /**
-     * Use to set a fake logger during unit testing.
-     *
-     * @param logger The logger to be used.
-     */
-    void setLogger(final MMLogger logger) {
-        if (null == logger) {
-            return;
-        }
-        this.logger = logger;
-    }
-
-    public void setVerbosity(final LogLevel level) {
-        getBehaviorSettings().setVerbosity(level);
-    }
-
-    public LogLevel getVerbosity() {
-        return getBehaviorSettings().getVerbosity();
     }
     
     /**
@@ -249,7 +212,7 @@ public class Princess extends BotClient {
     }
 
     private void setFleeBoard(final boolean fleeBoard, final String reason) {
-        getLogger().debug("Setting Flee Board " + fleeBoard + " because: " + reason);
+        LogManager.getLogger().debug("Setting Flee Board " + fleeBoard + " because: " + reason);
 
         this.fleeBoard = fleeBoard;
     }
@@ -285,17 +248,17 @@ public class Princess extends BotClient {
 
     public void setFallBack(final boolean fallBack,
                             final String reason) {
-        getLogger().debug("Setting Fall Back " + fallBack + " because: " + reason);
+        LogManager.getLogger().debug("Setting Fall Back " + fallBack + " because: " + reason);
         this.fallBack = fallBack;
     }
 
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
-        getLogger().info("New behavior settings for " + getName() +
+        LogManager.getLogger().info("New behavior settings for " + getName() +
             "\n" + behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (final PrincessException e) {
-            getLogger().error(e);
+            LogManager.getLogger().error(e);
             return;
         }
         getStrategicBuildingTargets().clear();
@@ -373,7 +336,7 @@ public class Princess extends BotClient {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
-            getLogger().warning("Board does not contain " + coords.toFriendlyString());
+            LogManager.getLogger().warn("Board does not contain " + coords.toFriendlyString());
             return;
         }
         getStrategicBuildingTargets().add(coords);
@@ -393,8 +356,6 @@ public class Princess extends BotClient {
 
     @Override
     protected Vector<Coords> calculateArtyAutoHitHexes() {
-        getLogger().methodBegin();
-
         try {
             // currently returns no artillery hit spots
             // make an empty list
@@ -402,8 +363,8 @@ public class Princess extends BotClient {
             // attach my player id to it
             artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
             return artyAutoHitHexes;
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored){
+            return new PlayerIDandList<>();
         }
     }
     
@@ -416,14 +377,12 @@ public class Princess extends BotClient {
     protected void calculateDeployment() {
         // get the first unit
         final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
-        if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() > LogLevel.WARNING.toInt()) {
-            sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
-        }
+        sendChat("deploying unit " + getEntity(entityNum).getChassis(), Level.INFO);
 
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
         if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
-            getLogger().info("Declining to deploy crippled unit: "
+            LogManager.getLogger().info("Declining to deploy crippled unit: "
                     + getEntity(entityNum).getChassis() + ". Removing unit.");
             sendDeleteEntity(entityNum);
             return;
@@ -432,14 +391,14 @@ public class Princess extends BotClient {
         // get a list of all coordinates to which we can deploy
         final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
         if (0 == startingCoords.size()) {
-            getLogger().error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
+            LogManager.getLogger().error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
         }
 
         // get the coordinates I can deploy on
         final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
         if (null == deployCoords) {
             // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business                
-            getLogger().error("getCoordsAround gave no location for "
+            LogManager.getLogger().error("getCoordsAround gave no location for "
                     + getEntity(entityNum).getChassis() + ". Removing unit.");
             
             sendDeleteEntity(entityNum);
@@ -595,8 +554,6 @@ public class Princess extends BotClient {
     
     @Override
     protected void calculateFiringTurn() {
-        getLogger().methodBegin();
-
         try {
             // get the first entity that can act this turn make sure weapons 
             // are loaded
@@ -624,13 +581,13 @@ public class Princess extends BotClient {
                         skipFiring = true;
                     }
                 } finally {
-                    getLogger().info(msg.toString());
+                    LogManager.getLogger().info(msg.toString());
                 }
             }
             
             if (shooter.isHidden()) {
                 skipFiring = true;
-                getLogger().info("Hidden unit skips firing.");
+                LogManager.getLogger().info("Hidden unit skips firing.");
             }
 
             // calculating a firing plan is somewhat expensive, so 
@@ -648,8 +605,8 @@ public class Princess extends BotClient {
                     getFireControl(shooter).loadAmmo(shooter, plan);
                     plan.sortPlan();
     
-                    getLogger().info(shooter.getDisplayName() + " - Best Firing Plan: " +
-                        plan.getDebugDescription(LogLevel.DEBUG == getVerbosity()));
+                    LogManager.getLogger().info(shooter.getDisplayName() + " - Best Firing Plan: " +
+                            plan.getDebugDescription(LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)));
     
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
@@ -684,7 +641,7 @@ public class Princess extends BotClient {
                     sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
-                    getLogger().info("No best firing plan for " + shooter.getDisplayName());
+                    LogManager.getLogger().info("No best firing plan for " + shooter.getDisplayName());
                     skipFiring = true;
                 }
             }
@@ -716,11 +673,9 @@ public class Princess extends BotClient {
                 }
                 
                 sendAttackData(shooter.getId(), miscPlan);
-                return;
             }
-            
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored) {
+
         }
     }
     
@@ -802,7 +757,7 @@ public class Princess extends BotClient {
 
             return ammoConservation;
         } finally {
-            getLogger().debug(msg.toString());
+            LogManager.getLogger().debug(msg.toString());
         }
     }
 
@@ -831,14 +786,12 @@ public class Princess extends BotClient {
     
     @Override
     protected Vector<Minefield> calculateMinefieldDeployment() {
-        getLogger().methodBegin();
-
         try {
             // currently returns no minefields
             // make an empty vector
             return new Vector<>();
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored) {
+            return new Vector<>();
         }
     }
 
@@ -848,7 +801,7 @@ public class Princess extends BotClient {
      * Additional modifiers for being prone, stealthed, unit type and so on are also factored in.
      *
      * @param entity The unit to be indexed.
-     * @return The movement index of this unit.  May be positive or negative.  Higher index values should move first.
+     * @return The movement index of this unit. May be positive or negative. Higher index values should move first.
      */
     double calculateMoveIndex(final Entity entity,
                               final StringBuilder msg) {
@@ -1057,28 +1010,26 @@ public class Princess extends BotClient {
             }
         }
 
-        final LogLevel level = (null == movingEntity ? LogLevel.WARNING :
-                                LogLevel.DEBUG);
-        getLogger().log(level, msg.toString(), null);
+        if (movingEntity == null) {
+            LogManager.getLogger().warn(msg.toString());
+        } else {
+            LogManager.getLogger().debug(msg.toString());
+        }
 
         return movingEntity;
     }
 
     @Override
-    protected MovePath calculateMoveTurn() {
-        getLogger().methodBegin();
-
+    protected @Nullable MovePath calculateMoveTurn() {
         try {
             return continueMovementFor(getEntityToMove());
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored) {
+            return null;
         }
     }
 
     @Override
-    protected PhysicalOption calculatePhysicalTurn() {
-        getLogger().methodBegin();
-
+    protected @Nullable PhysicalOption calculatePhysicalTurn() {
         try {
             initialize();
             // get the first entity that can act this turn
@@ -1096,13 +1047,13 @@ public class Princess extends BotClient {
                     msg.append("\n\tI will not attack so long as I'm not fired on.");
                     return null;
                 }
-                getLogger().info(msg.toString());
+                LogManager.getLogger().info(msg.toString());
             }
 
             // the original bot's physical options seem superior
             return PhysicalCalculator.getBestPhysical(attacker, game);
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored) {
+            return null;
         }
     }
 
@@ -1153,11 +1104,11 @@ public class Princess extends BotClient {
 
     boolean isImmobilized(final Entity mover) {
         if (mover.isImmobile() && !mover.isShutDown()) {
-            getLogger().info("Is truly immobile.");
+            LogManager.getLogger().info("Is truly immobile.");
             return true;
         }
         if (1 > mover.getRunMP()) {
-            getLogger().info("Has 0 movement.");
+            LogManager.getLogger().info("Has 0 movement.");
             return true;
         }
         if (!(mover instanceof Mech)) {
@@ -1202,7 +1153,7 @@ public class Princess extends BotClient {
         // If we're prone, see if we have a chance of getting up.
         if (mech.isProne()) {
             if (mech.cannotStandUpFromHullDown()) {
-                getLogger().info("Cannot stand up.");
+                LogManager.getLogger().info("Cannot stand up.");
                 return true;
             }
 
@@ -1215,7 +1166,7 @@ public class Princess extends BotClient {
             // consider ourselves immobile.
             final PilotingRollData target = mech.checkGetUp(getUp,
                                                             movePath.getLastStepMovementType());
-            getLogger().info("Need to roll " + target.getValue() +
+            LogManager.getLogger().info("Need to roll " + target.getValue() +
                 " to stand and our tolerance is " + threshold);
             return (target.getValue() >= threshold);
         }
@@ -1228,7 +1179,7 @@ public class Princess extends BotClient {
                                                           movePath.getLastStepMovementType(), hex,
                                                           mech.getPriorPosition(), mech.getPosition(), hex.getLevel(),
                                                           false);
-        getLogger().info("Need to roll " + target.getValue() +
+        LogManager.getLogger().info("Need to roll " + target.getValue() +
             " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
     }
@@ -1243,8 +1194,6 @@ public class Princess extends BotClient {
 
     @Override
     protected MovePath continueMovementFor(final Entity entity) {
-        getLogger().methodBegin();
-
         if (null == entity) {
             throw new NullPointerException("Entity is null.");
         }
@@ -1254,7 +1203,7 @@ public class Princess extends BotClient {
             // updated
 
             // moves this entity during movement phase
-            getLogger().debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
+            LogManager.getLogger().debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
@@ -1264,8 +1213,8 @@ public class Princess extends BotClient {
                 } else if (entity.isCrippled()) {
                     msg += " is crippled and withdrawing.";
                 }
-                getLogger().debug(msg);
-                sendChat(msg, LogLevel.WARNING);
+                LogManager.getLogger().debug(msg);
+                sendChat(msg, Level.WARN);
 
                 // If this entity is falling back, able to flee the board, on 
                 // its home edge, and must flee, do so.
@@ -1277,10 +1226,9 @@ public class Princess extends BotClient {
 
                 // If we want to flee, but cannot, eject the crew.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
-                    msg = entity.getDisplayName() +
-                          " is immobile.  Abandoning unit.";
-                    getLogger().info(msg);
-                    sendChat(msg, LogLevel.WARNING);
+                    msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
+                    LogManager.getLogger().info(msg);
+                    sendChat(msg, Level.WARN);
                     final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.EJECT);
                     return mp;
@@ -1290,23 +1238,22 @@ public class Princess extends BotClient {
             final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
             if (null == paths) {
-                getLogger().warning("No valid paths found.");
+                LogManager.getLogger().warn("No valid paths found.");
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
-            final double thisTimeEstimate =
-                    (paths.size() * moveEvaluationTimeEstimate) / 1e3;
-            if (getVerbosity().willLog(LogLevel.INFO)) {
+            final double thisTimeEstimate = (paths.size() * moveEvaluationTimeEstimate) / 1e3;
+            if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.INFO)) {
                 String timeestimate = "unknown.";
                 if (0 != thisTimeEstimate) {
-                    timeestimate = Integer.toString((int) thisTimeEstimate)
+                    timeestimate = (int) thisTimeEstimate
                                    + " seconds";
                 }
                 final String message = "Moving " + entity.getChassis() + ". "
                                        + Long.toString(paths.size())
                                        + " paths to consider.  Estimated time to completion: "
                                        + timeestimate;
-                sendChat(message, LogLevel.INFO);
+                sendChat(message);
             }
 
             final long startTime = System.currentTimeMillis();
@@ -1336,22 +1283,19 @@ public class Princess extends BotClient {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
             
-            getLogger().debug("Path ranking took " + Long.toString(stop_time - startTime) + " millis");
+            LogManager.getLogger().debug("Path ranking took " + (stop_time - startTime) + " millis");
             
             final RankedPath bestpath = getPathRanker(entity).getBestPath(rankedpaths);
-            getLogger().info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
+            LogManager.getLogger().info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
             
             return performPathPostProcessing(bestpath);
         } finally {
             precognition.unPause();
-            getLogger().methodEnd();
         }
     }
 
     @Override
     protected void initFiring() {
-        getLogger().methodBegin();
-
         try {
             initialize();
 
@@ -1361,7 +1305,7 @@ public class Princess extends BotClient {
             for (final Entity ent : ents) {
                 final String errors = getFireControl(ent).checkAllGuesses(ent, game);
                 if (!StringUtil.isNullOrEmpty(errors)) {
-                    getLogger().warning(errors);
+                    LogManager.getLogger().warn(errors);
                 }
             }
             // -----------------------------------------------------------------------
@@ -1389,7 +1333,7 @@ public class Princess extends BotClient {
                             sendChat("Building in Hex "
                                      + coords.toFriendlyString()
                                      + " designated target due to"
-                                     + " infantry inside building.", LogLevel.INFO);
+                                     + " infantry inside building.", Level.INFO);
                         }
                     }
                 }
@@ -1412,8 +1356,8 @@ public class Princess extends BotClient {
             }
 
             getFireControlState().clearTransientData();
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored) {
+
         }
     }
     
@@ -1475,7 +1419,7 @@ public class Princess extends BotClient {
                     levelingTarget = getAppropriateTarget(bulldozerPaths.get(0).getCoordsToLevel().get(0));
                     getFireControlState().getAdditionalTargets().add(levelingTarget);
                     sendChat("Hex " + levelingTarget.getPosition().toFriendlyString() + " impedes route to destination, targeting for clearing.",
-                            LogLevel.INFO);
+                            Level.INFO);
                 }
 
                 // if any of the long range paths, pruned, are within LOS of leveling coordinates, then we're actually
@@ -1578,7 +1522,7 @@ public class Princess extends BotClient {
                 }
             }
         } finally {
-            getLogger().info(msg.toString());
+            LogManager.getLogger().info(msg.toString());
         }
     }
 
@@ -1608,8 +1552,6 @@ public class Princess extends BotClient {
 
     @Override
     protected void initMovement() {
-        getLogger().methodBegin();
-
         try {
             initialize();
             checkMorale();
@@ -1623,13 +1565,13 @@ public class Princess extends BotClient {
                             getAppropriateTarget(strategicTarget));
                     sendChat("No building to target in Hex " +
                              strategicTarget.toFriendlyString() +
-                             ", targeting for clearing.", LogLevel.INFO);
+                             ", targeting for clearing.", Level.INFO);
                 } else {
                     fireControlState.getAdditionalTargets().add(
                             getAppropriateTarget(strategicTarget));
                     sendChat("Building in Hex " +
                              strategicTarget.toFriendlyString() +
-                             " designated strategic target.", LogLevel.INFO);
+                             " designated strategic target.", Level.INFO);
                 }
             }
 
@@ -1648,7 +1590,7 @@ public class Princess extends BotClient {
                             fireControlState.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +
                                      coords.toFriendlyString()
-                                     + " designated target due to Gun Emplacement.", LogLevel.INFO);
+                                     + " designated target due to Gun Emplacement.", Level.INFO);
                         }
                     }
                 }
@@ -1670,20 +1612,18 @@ public class Princess extends BotClient {
             for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getTargetId(), 0d);
             }
+        } catch (Exception ignored) {
 
-        } finally {
-            getLogger().methodEnd();
         }
     }
 
+    @Override
     public Game getGame() {
         return game;
     }
 
     @Override
     public void initialize() {
-        getLogger().methodBegin();
-
         try {
             if (initialized) {
                 return; // no need to initialize twice
@@ -1714,7 +1654,7 @@ public class Princess extends BotClient {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " +
                                      coords.toFriendlyString() +
-                                     " designated target due to Gun Emplacement.", LogLevel.INFO);
+                                     " designated target due to Gun Emplacement.", Level.INFO);
                         }
                     }
                 }
@@ -1722,8 +1662,8 @@ public class Princess extends BotClient {
 
             initialized = true;
             BotGeometry.debugSelfTest(this);
-        } finally {
-            getLogger().methodEnd();
+        } catch (Exception ignored) {
+
         }
     }
     
@@ -1852,7 +1792,7 @@ public class Princess extends BotClient {
             } else if (MINUS == tick) {
                 adjustment--;
             } else {
-                getLogger().warning("Invalid tick: '" + tick + "'.");
+                LogManager.getLogger().warn("Invalid tick: '" + tick + "'.");
             }
         }
         return adjustment;
@@ -1891,13 +1831,11 @@ public class Princess extends BotClient {
 
     @Override
     public void endOfTurnProcessing() {
-        getLogger().methodBegin();
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishoneredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
-        getLogger().methodEnd();
     }
 
     protected void handlePacket(final Packet c) {
@@ -1907,7 +1845,7 @@ public class Princess extends BotClient {
             getPrecognition().handlePacket(c);
         }
         finally {
-            getLogger().trace(msg.toString());
+            LogManager.getLogger().trace(msg.toString());
         }
     }
     
@@ -2142,13 +2080,13 @@ public class Princess extends BotClient {
             path.addStep(MoveStepType.LAUNCH, unitsToLaunch);
         }
     }
-    
-    public void sendChat(final String message, final LogLevel logLevel) {
-        if (getVerbosity().willLog(logLevel)) {
+
+    public void sendChat(final String message, final Level logLevel) {
+        if (LogManager.getLogger().getLevel().isLessSpecificThan(logLevel)) {
             super.sendChat(message);
         }
     }
-    
+
     /**
      * Override for the 'receive entity update' handler
      * Updates internal state in addition to base client functionality

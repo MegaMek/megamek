@@ -451,8 +451,8 @@ public class Client implements IClientCommandHandler {
             case LOUNGE:
                 try {
                     QuirksHandler.initQuirksList();
-                } catch (IOException e) {
-                    LogManager.getLogger().error(e);
+                } catch (Exception e) {
+                    LogManager.getLogger().error("Error initializing quirks", e);
                 }
                 UnitRoleHandler.initialize();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
@@ -596,7 +596,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Maintain backwards compatability.
+     * Maintain backwards compatibility.
      *
      * @param id
      *            - the <code>int</code> ID of the deployed entity

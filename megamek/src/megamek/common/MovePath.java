@@ -1,43 +1,30 @@
-/**
+/*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Holds movement path for an entity.
@@ -1840,11 +1827,11 @@ public class MovePath implements Cloneable, Serializable {
         // code that's useful to test the destruction-aware pathfinder
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
         // the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
-        Set<Coords> destinationSet = new HashSet<Coords>();
+        Set<Coords> destinationSet = new HashSet<>();
         destinationSet.add(dest);
         
         // debugging code that can be used to find a path to a specific edge
-        Princess princess = new Princess("test", "test", 2020, LogLevel.OFF);
+        Princess princess = new Princess("test", "test", 2020);
         //Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
         
         long marker1 = System.currentTimeMillis();

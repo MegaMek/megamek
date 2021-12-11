@@ -18,7 +18,6 @@ package megamek.client.ui.swing;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
@@ -931,13 +930,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         } catch (IOException e) {
             LogManager.getLogger().error("Error saving custom weapon orders!", e);
         }
-
-        try {
-            QuirksHandler.saveCustomQuirksList();
-        } catch (IOException e) {
-            LogManager.getLogger().error("Error saving quirks override!", e);
-        }
-
+        QuirksHandler.saveCustomQuirksList();
         System.exit(0);
     }
 

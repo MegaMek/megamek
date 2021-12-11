@@ -1,33 +1,24 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import megamek.common.IAero;
 import megamek.common.Game;
+import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths for infantry units.
  * This includes both foot and jump paths.
  * @author NickAragua
- *
  */
 public class NewtonianAerospacePathFinder {
     private Game game;
     protected List<MovePath> aerospacePaths;
     protected MovePath offBoardPath;
-    private MMLogger logger;
-    protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.NewtonianAerospacePathFinder";
-    
+
     // This is a map containing coordinates-with-facing, and the length of the path it took to get there
     protected Map<CoordsWithFacing, Integer> visitedCoords = new HashMap<>();
     // This is a list of all possible moves
@@ -35,8 +26,7 @@ public class NewtonianAerospacePathFinder {
     
     protected NewtonianAerospacePathFinder(Game game) {
         this.game = game;
-        getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
-        
+
         initializeMoveList();
     }
     
@@ -53,11 +43,7 @@ public class NewtonianAerospacePathFinder {
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return aerospacePaths;
     }
-    
-    private MMLogger getLogger() {
-        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
-    }
-    
+
     /**
      * Computes paths to nodes in the graph.
      * 
@@ -65,7 +51,7 @@ public class NewtonianAerospacePathFinder {
      */
     public void run(MovePath startingEdge) {
         try {
-            aerospacePaths = new ArrayList<MovePath>();
+            aerospacePaths = new ArrayList<>();
             
             // can't do anything if the unit is out of control.
             if (((IAero) startingEdge.getEntity()).isOutControlTotal()) {
@@ -96,16 +82,14 @@ public class NewtonianAerospacePathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().error(memoryMessage, e);
+            LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     
     public static NewtonianAerospacePathFinder getInstance(Game game) {
-        NewtonianAerospacePathFinder npf = new NewtonianAerospacePathFinder(game);
-
-        return npf;
+        return new NewtonianAerospacePathFinder(game);
     }
         
     /** 

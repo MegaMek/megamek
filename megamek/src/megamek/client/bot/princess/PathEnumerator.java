@@ -23,6 +23,7 @@ import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -57,15 +58,10 @@ public class PathEnumerator {
     }
 
     void clear() {
-        getOwner().getLogger().methodBegin();
-        try {
-            getUnitPaths().clear();
-            getUnitPotentialLocations().clear();
-            getLastKnownLocations().clear();
-            getLongRangePaths().clear();
-        } finally {
-            getOwner().getLogger().methodEnd();
-        }
+        getUnitPaths().clear();
+        getUnitPotentialLocations().clear();
+        getLastKnownLocations().clear();
+        getLongRangePaths().clear();
     }
 
     Coords getLastKnownCoords(Integer entityId) {
@@ -191,9 +187,9 @@ public class PathEnumerator {
                     }
                 };
                 
-                this.owner.getLogger().debug("Unfiltered paths: " + paths.size());
+                LogManager.getLogger().debug("Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                this.owner.getLogger().debug("Filtered out illegal paths: " + paths.size());
+                LogManager.getLogger().debug("Filtered out illegal paths: " + paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
                 
@@ -201,8 +197,8 @@ public class PathEnumerator {
                 if (offBoardPath != null) {
                     paths.add(offBoardFilter.getShortestPath());
                 }
-                
-                this.owner.getLogger().debug("Filtered out offboard paths: " + paths.size());
+
+                LogManager.getLogger().debug("Filtered out offboard paths: " + paths.size());
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
                 // disabled
@@ -463,7 +459,7 @@ public class PathEnumerator {
     }
     
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {
-        this.getOwner().getLogger().debug(path.length() + ":" + path.toString() + ":" + whyNot);
+        LogManager.getLogger().debug(path.length() + ":" + path + ":" + whyNot);
     }
 
     protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
@@ -500,30 +496,9 @@ public class PathEnumerator {
                 return mapHasBridges.get();
             }
 
-            mapHasBridges = new AtomicBoolean(getGame().getBoard()
-                                                       .containsBridges());
+            mapHasBridges = new AtomicBoolean(getGame().getBoard().containsBridges());
         }
 
         return mapHasBridges.get();
-    }
-    
-    /**
-     * Logs all the passed-in paths.
-     */
-    private void logAllPaths(List<MovePath> paths) {
-        HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
-        for (MovePath path : paths) {
-            if (!pathLengths.containsKey(path.length())) {
-                pathLengths.put(path.length(), 0);
-            }
-            Integer lengthCount = pathLengths.get(path.length());
-            pathLengths.put(path.length(), lengthCount + 1);
-            
-            this.owner.getLogger().debug(path.toString());
-        }
-        
-        for (Integer length : pathLengths.keySet()) {
-            this.owner.getLogger().debug("Paths of length " + length + ": " + pathLengths.get(length));
-        }
     }
 }

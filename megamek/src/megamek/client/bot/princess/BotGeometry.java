@@ -524,7 +524,7 @@ public class BotGeometry {
             area.expandToInclude(areapt1);
             area.expandToInclude(areapt2);
             area.expandToInclude(areapt3);
-            owner.getLogger().debug("Checking area contains proper points... ");
+            LogManager.getLogger().debug("Checking area contains proper points... ");
             msg.append("\n\tChecking area contains proper points... ");
             if (!area.contains(new Coords(1, 1))) {
                 passed = false;
@@ -590,7 +590,7 @@ public class BotGeometry {
             msg.append(passed ? PASSED : FAILED);
 
         } finally {
-            owner.getLogger().debug(msg.toString());
+            LogManager.getLogger().debug(msg.toString());
         }
     }
 }

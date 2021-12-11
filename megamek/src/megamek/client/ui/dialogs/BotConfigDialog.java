@@ -19,18 +19,6 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.event.*;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-
 import megamek.client.Client;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
@@ -38,17 +26,29 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.dialogs.helpDialogs.PrincessHelpDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static megamek.common.Terrains.*;
-
-import megamek.common.enums.GamePhase;
-import megamek.common.logging.LogLevel;
 
 /** A dialog box to configure (Princess) bot properties. */
 public class BotConfigDialog extends AbstractButtonDialog implements ActionListener, 
@@ -56,15 +56,12 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private static final String SAVEGAME_CONFIG = Messages.getString("BotConfigDialog.previousConfig");
     private static final String OK_ACTION = "Ok_Action";
-    private static final int TOOLTIP_WIDTH = 300;
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
     private JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private TipTextField nameField = new TipTextField("", 16);
-    private MMComboBox<String> verbosityCombo;
-    private JLabel verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"), SwingConstants.RIGHT);
     
     private JButton addTargetButton = new TipButton(Messages.getString("BotConfigDialog.addHexTarget"));
     private JButton addUnitButton = new TipButton(Messages.getString("BotConfigDialog.addUnitTarget"));
@@ -200,17 +197,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         namePanel.add(nameLabel);
         namePanel.add(nameField);
         
-        var verbosityPanel = new JPanel();
-        verbosityCombo = new TipCombo<>("Verbosity", LogLevel.getLogLevelNames());
-        verbosityCombo.setToolTipText(Messages.getString("BotConfigDialog.verbosityToolTip"));
-        verbosityCombo.setSelectedIndex(0);
-        verbosityLabel.setLabelFor(verbosityCombo);
-        verbosityLabel.setDisplayedMnemonic(KeyEvent.VK_V);
-        verbosityPanel.add(verbosityLabel);
-        verbosityPanel.add(verbosityCombo);
-        
         panContent.add(namePanel);
-        panContent.add(verbosityPanel);
         return result;
     }
     
@@ -223,7 +210,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         String name = baseName;
         if (client != null) {
             int counter = 0;
-            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(p -> p.getName()).collect(Collectors.toSet());
+            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(Player::getName).collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
                 name = baseName + counter;
@@ -409,9 +396,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     private void updateDialogFields() {
         updatePresetFields();
-        
-        verbosityCombo.setSelectedItem(princessBehavior.getVerbosity().toString());
-        
+
         forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
         withdrawEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
         
@@ -625,7 +610,6 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     private void savePrincessProperties() {
         BehaviorSettings tempBehavior = new BehaviorSettings();
-        tempBehavior.setVerbosity(LogLevel.getLogLevel(verbosityCombo.getSelectedItem()));
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());

@@ -36,8 +36,8 @@ import java.io.*;
 import java.util.*;
 
 public abstract class BotClient extends Client {
-	public static final int BOT_TURN_RETRY_COUNT = 3;
-	
+    public static final int BOT_TURN_RETRY_COUNT = 3;
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
     
@@ -466,24 +466,24 @@ public abstract class BotClient extends Client {
      * Has a retry mechanism for when the turn calculation fails due to concurrency issues
      */
     private synchronized void calculateMyTurn() {
-    	int retryCount = 0;
+        int retryCount = 0;
         boolean success = false;
         
         while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
-        	success = calculateMyTurnWorker();
-        	
-        	if (!success) {
-	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
-	            // as it may be due to some kind of thread-related issue
-        		// limit number of retries so we're not endlessly spinning
-        		// if we can't recover from the error
-	            retryCount++;
-	            try {
-					Thread.sleep(Compute.randomInt(1000) + 500);
-				} catch (InterruptedException e) {
-					LogManager.getLogger().error(e.toString());
-				}
-	        }
+            success = calculateMyTurnWorker();
+
+            if (!success) {
+                // if we fail, take a nap for 500-1500 milliseconds, then try again
+                // as it may be due to some kind of thread-related issue
+                // limit number of retries so we're not endlessly spinning
+                // if we can't recover from the error
+                retryCount++;
+                try {
+                    Thread.sleep(Compute.randomInt(1000) + 500);
+                } catch (InterruptedException e) {
+                    LogManager.getLogger().error(e.toString());
+                }
+            }
         }
     }
 

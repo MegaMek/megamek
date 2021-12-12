@@ -363,7 +363,7 @@ public class Princess extends BotClient {
             // attach my player id to it
             artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
             return artyAutoHitHexes;
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             return new PlayerIDandList<>();
         }
     }

@@ -28,6 +28,8 @@ VERSION HISTORY:
 + Issue #3240: Fixing JumpShip no Grav Deck Crit Handling
 + Issue #3273: Fixing Offboard Artillery NPE
 + PR #3301: Fixing Quirk NPE and Quirk Tool VTOL Handling
++ Data: Rec Guide 19, various unit fixes and fluff. 
+
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

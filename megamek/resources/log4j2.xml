@@ -17,6 +17,9 @@
         <Logger name="megamek" level="info" additivity="false" >
             <AppenderRef ref="MegaMekLog" />
         </Logger>
+        <Logger name="megamek/client/bot" level="error" additivity="false" >
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
         <Root level="info">
             <AppenderRef ref="MegaMekLog" />
         </Root>

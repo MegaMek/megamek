@@ -347,15 +347,21 @@ public class MegaMek {
      * Prints some information about MegaMek. Used in log files to figure out the JVM and
      * version of MegaMek.
      */
-    private static void showInfo() {
+    public static void showInfo() {
+        final long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
+                + File.separator + "timestamp").lastModified();
         // echo some useful stuff
-        String msg = "Starting MegaMek v" + MegaMekConstants.VERSION + " ..." + "\n\tCompiled on " +
-                new Date(TIMESTAMP) + "\n\tToday is " + LocalDate.now() +
-                "\n\tJava vendor " + System.getProperty("java.vendor") + "\n\tJava version "
-                + System.getProperty("java.version") + "\n\tPlatform " + System.getProperty("os.name")
-                + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")"
+        String msg = "Starting MegaMek v" + MegaMekConstants.VERSION;
+        if (TIMESTAMP > 0) {
+            msg += "\n\tCompiled on " + new Date(TIMESTAMP);
+        }
+        msg += "\n\tToday is " + LocalDate.now()
+                + "\n\tJava Vendor: " + System.getProperty("java.vendor")
+                + "\n\tJava Version: " + System.getProperty("java.version")
+                + "\n\tPlatform: " + System.getProperty("os.name") + " " + System.getProperty("os.version")
+                + " (" + System.getProperty("os.arch") + ")"
                 + "\n\tTotal memory available to MegaMek: "
-                + MegaMek.commafy.format(Runtime.getRuntime().maxMemory() / 1024) + " kB";
+                + NumberFormat.getInstance().format(Runtime.getRuntime().maxMemory()) + " GB";
         LogManager.getLogger().info(msg);
     }
 

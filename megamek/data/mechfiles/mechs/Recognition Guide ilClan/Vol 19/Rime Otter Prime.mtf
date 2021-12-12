@@ -1,0 +1,158 @@
+Version:1.0
+Rime Otter
+Prime
+
+Config:Biped Omnimech
+techbase:Clan
+era:3146
+source:ilClan Rec Guide 19 - Dark Age
+rules level:3
+
+mass:55
+engine:275 XL (Clan) Engine(IS)
+structure:IS Reinforced
+myomer:Standard
+
+heat sinks:11 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:18
+RA armor:18
+LT armor:19
+RT armor:19
+CT armor:28
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:7
+RTR armor:7
+RTC armor:7
+
+Weapons:3
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+LRM 10, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLMASC
+CLMASC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM10 (OMNIPOD)
+CLArtemisV (OMNIPOD)
+CLArtemisV (OMNIPOD)
+Clan Ammo LRM-10 (Clan) Artemis V-capable (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Jötunn BattleWorx
+primaryfactory:Goito
+systemmanufacturer:CHASSIS:Type 56-55C Modified Reinforced
+systemmanufacturer:ENGINE:RUFM XL 275
+systemmanufacturer:ARMOR:IceSheet Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Garret T10B
+systemmanufacturer:TARGETING:GC Heimdallr System Type 1
+

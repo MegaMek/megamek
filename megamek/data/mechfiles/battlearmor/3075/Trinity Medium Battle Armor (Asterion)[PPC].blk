@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,12 +17,16 @@ Trinity Medium Battle Armor
 </Name>
 
 <Model>
-(Ying Long)(Plasma)
+(Asterion)[PPC]
 </Model>
 
 <year>
 3065
 </year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -32,33 +36,29 @@ IS Level 2
 Leg
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
 
 <armor_type>
-36
+28
 </armor_type>
 
 <armor_tech>
-1
+3
 </armor_tech>
 
 <Squad Equipment>
-ISBAPlasmaRifle:Body
+ISBASupportPPC:Body
 BABattleClaw:LA
 BABattleClaw:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-IS BA Mimetic:LA
-IS BA Mimetic:Body
-IS BA Mimetic:RA
-IS BA Mimetic:RA
-IS BA Mimetic:LA
-IS BA Mimetic:LA
-IS BA Mimetic:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -96,3 +96,4 @@ biped
 <weightclass>
 2
 </weightclass>
+

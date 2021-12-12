@@ -285,17 +285,18 @@ public class BombType extends AmmoType {
 		bomb.bv = 114;
 		bomb.cost = 15000;
 		bomb.rulesRefs = "358,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
 		.setIntroLevel(false)
 		.setUnofficial(false)
 	    .setTechRating(RATING_D)
 	    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-	    .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
-	    .setISApproximate(false, true, false,false, false)
-	    .setClanAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
-	    .setClanApproximate(false, false, false, false, false)
+	    .setISAdvancement(3071, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+	    .setISApproximate(true, false, false,false, false)
+	    .setClanAdvancement(DATE_NONE, DATE_NONE, 3072, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(false, false, true, false, false)
 	    .setPrototypeFactions(F_FS).setProductionFactions(F_FS)
-	    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+	    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
 		return bomb;
 	}

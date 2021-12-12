@@ -20,7 +20,7 @@ package megamek.common.weapons;
 import java.io.Serializable;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -93,7 +93,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
     
 
-    public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
         ToHitData toHit = waa.toHit(game);
         // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned
         // even
@@ -107,7 +107,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new WeaponHandler(toHit, waa, game, server);
     }
     

@@ -2,33 +2,17 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * Author: Reinhard Vicinus
- */
-
 package megamek.common.verifier;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -41,6 +25,13 @@ import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * @author Reinhard Vicinus
+ */
 public class TestMech extends TestEntity {
 
     public enum MechJumpJets {
@@ -109,7 +100,7 @@ public class TestMech extends TestEntity {
                     && eq.hasFlag(MiscType.F_MECH_EQUIPMENT)
                     && techManager.isLegal(eq)
                     && (!isLam || (eq.getCriticals(null) == 0))
-                    && (!industrialOnly || ((MiscType)eq).isIndustrial())) {
+                    && (!industrialOnly || ((MiscType) eq).isIndustrial())) {
                 retVal.add(eq);
             }
             if (techManager.useMixedTech()) {
@@ -119,7 +110,7 @@ public class TestMech extends TestEntity {
                         && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
                         && techManager.isLegal(eq2)
                         && (!isLam || (eq2.getCriticals(null) == 0))
-                        && (!industrialOnly || ((null != eq) && ((MiscType)eq).isIndustrial()))) {
+                        && (!industrialOnly || ((null != eq) && ((MiscType) eq).isIndustrial()))) {
                     retVal.add(eq2);
                 }
             }
@@ -175,7 +166,7 @@ public class TestMech extends TestEntity {
             return 0;
         } else if ((mech.getJumpType() == Mech.JUMP_IMPROVED)
                 || (mech.getJumpType() == Mech.JUMP_PROTOTYPE_IMPROVED)) {
-            return (int)Math.ceil(mech.getOriginalWalkMP() * 1.5);
+            return (int) Math.ceil(mech.getOriginalWalkMP() * 1.5);
         } else {
             return mech.getOriginalWalkMP();
         }
@@ -895,7 +886,7 @@ public class TestMech extends TestEntity {
         }
 
         for (Mounted m : getEntity().getMisc()) {
-            final MiscType misc = (MiscType)m.getType();
+            final MiscType misc = (MiscType) m.getType();
 
             if (misc.hasFlag(MiscType.F_UMU) && (mech.getJumpType() != Mech.JUMP_NONE)
                     && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
@@ -950,6 +941,11 @@ public class TestMech extends TestEntity {
                     illegal = true;
                     buff.append("Mech can only mount ").append(misc.getName())
                             .append(" in arm with no hand actuator.\n");
+                } else if (replacesLowerArm(misc)
+                            && mech.hasSystem(Mech.ACTUATOR_LOWER_ARM, m.getLocation())) {
+                        illegal = true;
+                        buff.append("Mech can only mount ").append(misc.getName())
+                                .append(" in arm with no lower arm actuator.\n");
                 } else if (requiresHandActuator(misc) && !mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())) {
                     illegal = true;
                     buff.append("Mech requires a hand actuator in the arm that mounts ").append(misc.getName()).append("\n");
@@ -982,7 +978,7 @@ public class TestMech extends TestEntity {
             if (misc.hasFlag(MiscType.F_TRACKS)) {
                 if (mech instanceof QuadVee) {
                     if (misc.hasSubType(MiscType.S_QUADVEE_WHEELS)
-                            != (((QuadVee)mech).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+                            != (((QuadVee) mech).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
                         illegal = true;
                         buff.append("Motive equipment does not match QuadVee motive type.\n");
                     }
@@ -1089,7 +1085,7 @@ public class TestMech extends TestEntity {
         }
         
         if (mech.isSuperHeavy()) {
-            switch (mech.hasEngine()? mech.getEngine().getEngineType() : Engine.NONE) {
+            switch (mech.hasEngine() ? mech.getEngine().getEngineType() : Engine.NONE) {
                 case Engine.NORMAL_ENGINE:
                 case Engine.LARGE_ENGINE:
                     break;
@@ -1153,7 +1149,7 @@ public class TestMech extends TestEntity {
                 buff.append("primitive mechs can't mount advanced inner structure\n");
                 illegal = true;
             }
-            if(mech.hasEngine() && ((mech.getEngine().getEngineType() == Engine.XL_ENGINE)
+            if (mech.hasEngine() && ((mech.getEngine().getEngineType() == Engine.XL_ENGINE)
                     || (mech.getEngine().getEngineType() == Engine.LIGHT_ENGINE)
                     || (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE)
                     || mech.getEngine().hasFlag(Engine.LARGE_ENGINE)
@@ -1250,8 +1246,8 @@ public class TestMech extends TestEntity {
                     buff.append("LAMs cannot mount artillery weapons.\n");
                     illegal = true;
                 } else if (m.getType() instanceof WeaponType
-                        && ((((WeaponType)m.getType()).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
-                                || (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY))) {
+                        && ((((WeaponType) m.getType()).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
+                                || (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_IGAUSS_HEAVY))) {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
                 } else if ((m.getType() instanceof MiscType)
@@ -1259,12 +1255,10 @@ public class TestMech extends TestEntity {
                     buff.append("LAMs cannot be constructed with physical weapons.\n");
                     illegal = true;
                 } else if (m.getType().isSpreadable()) {
-                    if (spread.containsKey(m.getType())) {
-                        spread.get(m.getType()).add(m.getLocation());
-                    } else {
+                    if (!spread.containsKey(m.getType())) {
                         spread.put(m.getType(), new HashSet<>());
-                        spread.get(m.getType()).add(m.getLocation());
                     }
+                    spread.get(m.getType()).add(m.getLocation());
                 }
             }
             for (EquipmentType et : spread.keySet()) {
@@ -1298,9 +1292,9 @@ public class TestMech extends TestEntity {
                     }
                 }
             }
-            int required = total - (mech.isOmni()?
-                    mech.getEngine().getBaseChassisHeatSinks(compact) :
-                        mech.getEngine().integralHeatSinkCapacity(compact));
+            int required = total - (mech.isOmni()
+                    ? mech.getEngine().getBaseChassisHeatSinks(compact)
+                    : mech.getEngine().integralHeatSinkCapacity(compact));
             if (allocated < required) {
                 illegal = true;
                 buff.append("Only " + allocated + " of the required " + required + " heat sinks are allocated to critical slots.");
@@ -1508,7 +1502,6 @@ public class TestMech extends TestEntity {
                     && (misc.hasSubType(MiscType.S_CHAINSAW)
                     || misc.hasSubType(MiscType.S_BACKHOE)
                     || misc.hasSubType(MiscType.S_DUAL_SAW)
-                    || misc.hasSubType(MiscType.S_PILE_DRIVER)
                     || misc.hasSubType(MiscType.S_MINING_DRILL)
                     || misc.hasSubType(MiscType.S_ROCK_CUTTER)
                     || misc.hasSubType(MiscType.S_SPOT_WELDER)
@@ -1539,6 +1532,14 @@ public class TestMech extends TestEntity {
         return replacesHandActuator(misc) ||
                 (misc.hasFlag(MiscType.F_CLUB)
                 && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE));
+    }
+
+    /**
+     * @param misc A type of equipment that can be mounted in a mech arm
+     * @return     Whether the equipment replaces the lower arm and hand actuators
+     */
+    public static boolean replacesLowerArm(MiscType misc) {
+        return misc.hasFlag(MiscType.F_CLUB) && misc.hasSubType(MiscType.S_PILE_DRIVER);
     }
 
     /**

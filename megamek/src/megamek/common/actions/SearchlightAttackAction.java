@@ -21,7 +21,7 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.LosEffects;
 import megamek.common.Report;
 import megamek.common.Tank;
@@ -46,12 +46,12 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         super(entityId, targetType, targetId);
     }
 
-    public boolean isPossible(IGame game) {
+    public boolean isPossible(Game game) {
         return SearchlightAttackAction.isPossible(game, getEntityId(), game
                 .getTarget(getTargetType(), getTargetId()), this);
     }
 
-    public static boolean isPossible(IGame game, int attackerId,
+    public static boolean isPossible(Game game, int attackerId,
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
         
@@ -61,7 +61,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         
         // can't light up if you're stunned
-        if ((attacker instanceof Tank) && (((Tank)attacker).getStunnedTurns() > 0)) {
+        if ((attacker instanceof Tank) && (((Tank) attacker).getStunnedTurns() > 0)) {
             return false;
         }
         
@@ -73,17 +73,14 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         
         // can't light up more than once per round
-        for (Enumeration<EntityAction> actions = game.getActions(); actions
-                .hasMoreElements();) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
             EntityAction action = actions.nextElement();
             if (action instanceof SearchlightAttackAction) {
                 SearchlightAttackAction act = (SearchlightAttackAction) action;
-                if (act == exempt)
-                 {
+                if (act == exempt) {
                     break; // 1st in list is OK
                 }
-                if (act.getEntityId() == attackerId)
-                 {
+                if (act.getEntityId() == attackerId) {
                     return false; // can only declare searchlight once!
                 }
             }
@@ -96,15 +93,14 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         
         // can't light up if out of LOS. Most expensive calculation, so keep it last        
-        LosEffects los = LosEffects.calculateLos(game, attackerId, target);
-        return los.canSee();
+        return LosEffects.calculateLOS(game, attacker, target).canSee();
     }
 
     /**
      * illuminate an entity and all entities that are between us and the hex
      */
-    public Vector<Report> resolveAction(IGame game) {
-        Vector<Report> reports = new Vector<Report>();
+    public Vector<Report> resolveAction(Game game) {
+        Vector<Report> reports = new Vector<>();
         Report r;
         if (!isPossible(game)) {
             r = new Report(3445);
@@ -133,8 +129,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                                                                 // target
         for (Coords c : in) {
             for (Entity en : game.getEntitiesVector(c)) {
-                LosEffects los = LosEffects.calculateLos(game, getEntityId(),
-                        en);
+                LosEffects los = LosEffects.calculateLOS(game, attacker, en);
                 if (los.canSee()) {
                     en.setIlluminated(true);
                     r = new Report(3455);
@@ -155,7 +150,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
      * @param game      The game to update
      * @return          True if new hexes were added, else false.
      */
-    public boolean setHexesIlluminated(IGame game) {
+    public boolean setHexesIlluminated(Game game) {
         boolean hexesAdded = false;
         
         final Entity attacker = getEntity(game);
@@ -165,14 +160,14 @@ public class SearchlightAttackAction extends AbstractAttackAction {
 
         ArrayList<Coords> intervening = Coords.intervening(apos, tpos);
         for (Coords c : intervening) {
-            if (game.getBoard().contains(c)){
+            if (game.getBoard().contains(c)) {
                 hexesAdded |= game.addIlluminatedPosition(c);
             }
         }
         return hexesAdded;
     }
 
-    public boolean willIlluminate(IGame game, Entity who) {
+    public boolean willIlluminate(Game game, Entity who) {
         if (!isPossible(game)) {
             return false;
         }
@@ -186,8 +181,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                                                                 // target
         for (Coords c : in) {
             for (Entity en : game.getEntitiesVector(c)) {
-                LosEffects los = LosEffects.calculateLos(game, getEntityId(),
-                        en);
+                LosEffects los = LosEffects.calculateLOS(game, attacker, en);
                 if (los.canSee() && en.equals(who)) {
                     return true;
                 }

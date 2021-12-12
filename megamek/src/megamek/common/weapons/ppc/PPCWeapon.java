@@ -18,7 +18,7 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.BattleForceElement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -55,7 +55,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new PPCHandler(toHit, waa, game, server);
     }
 
@@ -72,7 +72,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
                 damage = getDamage(range);
             }
             if (capacitor != null && capacitor.getType() instanceof MiscType
-                    && ((MiscType)capacitor.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    && capacitor.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 damage = (damage + 5) / 2;
             }
             if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {

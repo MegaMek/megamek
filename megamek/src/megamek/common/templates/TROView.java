@@ -275,7 +275,7 @@ public class TROView {
         return sb.toString();
     }
 
-    protected String formatArmorType(Entity entity, boolean trim) {
+    public static String formatArmorType(Entity entity, boolean trim) {
         if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK) || entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL)
                 || entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
             return "BAR " + entity.getBARRating(Tank.LOC_FRONT);

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -56,7 +56,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-400
+480
 </fuel>
 
 <engine_type>
@@ -103,6 +103,34 @@ IS Ammo LRM-15 Artemis-capable
 IS Ammo LRM-15 Artemis-capable
 </Fuselage Equipment>
 
+<overview>
+While sporting a large and rather unconventional look, the Thunderbird is an old standby design, one of the most common if dated heavy Aerospace Fighters in use across the Inner Sphere in the mid 31st century.
+</overview>
+
+<deployment>
+A Star League era variant developed in 2724 originally used by the LCAF and SLDF that was reintroduced in 3055. It uses 3 ER Large Lasers and Artemis IV FCS enhanced LRM-15s in place of the LRM-20s with 4 tons of ammo. Other improvements includes 1 less heat sink but all 24 remaining are Double Heat Sinks; an extra ton of fuel (480 pts) and five more tons of armor.
+</deployment>
+
+<history>
+Created in 2487 as part of an alliance between the Lockheed Corporation of Gibbs and CBM Aerospace of Donegal, the original Thunderbird was built for the LCAF as an assault fighter, well suited to air-to-ground attack and DropShip escort missions in the so-called Age of War. Despite its less than sleek look, the sturdy and dependable Thunderbird spread across the Star League as a number of other manufacturers were able to precisely duplicate the fighter, ensuring the design survived the centuries.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp, Alliance Aerospace Group
+</manufacturer>
+
+<primaryFactory>
+Gibbs,Marantha
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockheed/CBM 300-TRB
+ENGINE:Vlar 300
+ARMOR:L/CBM AeroSteel
+COMMUNICATIONS:Neil 6000-a
+TARGETING:N&D Longreach
+</systemManufacturers>
+
 <source>
 TRO 3075 - Star League
 </source>
@@ -110,3 +138,4 @@ TRO 3075 - Star League
 <tonnage>
 100.0
 </tonnage>
+

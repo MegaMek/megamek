@@ -42,7 +42,7 @@ public class DockingCollar implements Transporter {
     private boolean damaged = false;
     private int collarNumber = 0;
 
-    transient IGame game;
+    transient Game game;
 
     /**
      * The total amount of space available for troops.
@@ -175,7 +175,11 @@ public class DockingCollar implements Transporter {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
         for (int id : troops) {
-            loaded.add(game.getEntity(id));
+            Entity entity = game.getEntity(id);
+            
+            if (entity != null) {
+                loaded.add(game.getEntity(id));
+            }
         }
         return loaded;
     }
@@ -309,7 +313,7 @@ public class DockingCollar implements Transporter {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 

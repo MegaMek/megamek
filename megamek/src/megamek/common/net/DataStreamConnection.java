@@ -77,7 +77,7 @@ class DataStreamConnection extends AbstractConnection {
                         getInputStream(), getReceiveBufferSize()));
                 state = PacketReadState.Header;
             }
-            synchronized (in){
+            synchronized (in) {
                 switch (state) {
                     case Header:
                         zipped = in.readBoolean();
@@ -107,7 +107,7 @@ class DataStreamConnection extends AbstractConnection {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(),getSendBufferSize()));
         }
-        synchronized (out){
+        synchronized (out) {
             out.writeBoolean(iszipped);
             out.writeInt(marshallingType);
             out.writeInt(data.length);

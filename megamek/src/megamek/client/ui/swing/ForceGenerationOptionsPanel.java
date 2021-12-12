@@ -85,7 +85,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     private static final int[] UNIT_TYPES = {
         UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
         UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
-        UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP
+        UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
     };
     private static final int EARLIEST_YEAR = 2398;
     private static final int LATEST_YEAR = 3150;
@@ -205,7 +205,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
 
         boolean restrictUnitType = use == Use.FORMATION_BUILDER;
-        
+
         for (int unitType : UNIT_TYPES) {
             if ((unitType < UnitType.JUMPSHIP) || !restrictUnitType) {
                 cbUnitType.addItem(UnitType.getTypeName(unitType));
@@ -326,7 +326,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     public void updateFactionChoice() {
-        FactionRecord old = (FactionRecord)cbFaction.getSelectedItem();
+        FactionRecord old = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
         List<FactionRecord> recs = new ArrayList<>();
@@ -349,10 +349,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     public void updateSubfactionChoice() {
-        FactionRecord old = (FactionRecord)cbSubfaction.getSelectedItem();
+        FactionRecord old = (FactionRecord) cbSubfaction.getSelectedItem();
         cbSubfaction.removeActionListener(this);
         cbSubfaction.removeAllItems();
-        FactionRecord selectedFaction = (FactionRecord)cbFaction.getSelectedItem();
+        FactionRecord selectedFaction = (FactionRecord) cbFaction.getSelectedItem();
         if (selectedFaction != null) {
             List<FactionRecord> recs = new ArrayList<>();
             for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
@@ -538,7 +538,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         
         @Override
         public List<?> getListVal(String key) {
-            switch(key) {
+            switch (key) {
                 case "weightClasses":
                     return currentCard().getSelectedWeights();
                 case "motiveTypes":
@@ -609,7 +609,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             JPanel panMotive = new JPanel();
             add(panMotive, BorderLayout.NORTH);
             
-            switch(unitType) {
+            switch (unitType) {
                 case UnitType.MEK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
                             EntityWeightClass.WEIGHT_COLOSSAL, false);
@@ -865,7 +865,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         public List<EntityMovementMode> getMotiveTypes() {
             return subtypeChecks.stream().filter(AbstractButton::isSelected)
-                    .map(chk -> EntityMovementMode.getMode(chk.getName())).collect(Collectors.toList());
+                    .map(chk -> EntityMovementMode.parseFromString(chk.getName())).collect(Collectors.toList());
         }
     }
     
@@ -1195,7 +1195,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             List<UnitTable.Parameters> params = new ArrayList<>();
             FormationType ft = FormationType.getFormationType(getFormation());
             Parameters p = new UnitTable.Parameters(getFaction(),
-                    getUnitType(), ratGenYear, (String)cbRating.getSelectedItem(),
+                    getUnitType(), ratGenYear, (String) cbRating.getSelectedItem(),
                     IntStream.rangeClosed(ft.getMinWeightClass(), ft.getMaxWeightClass())
                     .boxed().collect(Collectors.toList()),
                     ModelRecord.NETWORK_NONE, EnumSet.noneOf(EntityMovementMode.class),

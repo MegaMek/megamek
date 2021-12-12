@@ -656,7 +656,7 @@ public class MapSettings implements Serializable {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (boardsSelected.get(i).startsWith(BOARD_SURPRISE)) {
                 List<String> boards = LobbyUtility.extractSurpriseMaps(boardsSelected.get(i));
-                int rnd = (int)(Math.random() * boards.size());
+                int rnd = (int) (Math.random() * boards.size());
                 boardsSelected.set(i, boards.get(rnd));
             }
         }
@@ -686,7 +686,7 @@ public class MapSettings implements Serializable {
                     } else {
                         rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
                         // validate that the selected map is legal
-                        IBoard b = new Board(16, 17);
+                        Board b = new Board(16, 17);
                         String boardSelected = boardsAvailable.get(rindex);
                         if (!MapSettings.BOARD_GENERATED.equals(boardSelected)
                                 && !MapSettings.BOARD_RANDOM.equals(boardSelected)
@@ -717,6 +717,8 @@ public class MapSettings implements Serializable {
         for (int i = 0; i < boardsSelected.size(); i++) {
             String boardName = boardsSelected.get(i);
             if (boardName != null) {
+                boardName = boardName.replace(Board.BOARD_REQUEST_ROTATION, "");
+                
                 if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();

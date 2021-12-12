@@ -14,65 +14,23 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.BipedMech;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.IAimingModes;
-import megamek.common.IGame;
-import megamek.common.INarcPod;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.actions.BAVibroClawAttackAction;
-import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.BrushOffAttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.GrappleAttackAction;
-import megamek.common.actions.JumpJetAttackAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.LayExplosivesAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.ThrashAttackAction;
-import megamek.common.actions.TripAttackAction;
+import megamek.common.*;
+import megamek.common.actions.*;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
@@ -184,8 +142,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 "PhysicalDisplay.Done") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
 
     }
@@ -262,10 +218,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         clientgui.mechD.displayEntity(entity);
         clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
 
-        clientgui.bv.centerOnHex(entity.getPosition());
-
-        // Update the menu bar.
-        clientgui.getMenuBar().setEntity(ce());
+        clientgui.getBoardView().centerOnHex(entity.getPosition());
 
         // does it have a club?
         String clubLabel = null;
@@ -298,7 +251,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        clientgui.setDisplayVisible(true);
+        clientgui.maybeShowUnitDisplay();
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
         if (turn instanceof GameTurn.CounterGrappleTurn) {
@@ -324,19 +277,19 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         // end my turn, then.
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((IGame.Phase.PHASE_PHYSICAL == clientgui.getClient().getGame()
+        if ((GamePhase.PHYSICAL == clientgui.getClient().getGame()
                 .getPhase())
             && (null != next)
             && (null != ce())
             && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setDisplayVisible(false);
+            clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
         target(null);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.bv.clearMovementData();
+        clientgui.getBoardView().clearMovementData();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
     }
@@ -475,7 +428,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             
             boolean zweihandering = false;
             int armChosenZwei = PunchAttackAction.RIGHT;
-            if(canZweihander) {
+            if (canZweihander) {
                 
                 //need to choose a primary arm. Do it based on highest predicted damage     		
                 ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient().getGame(),
@@ -580,7 +533,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
-        clientgui.bv.addAttack(saa);
+        clientgui.getBoardView().addAttack(saa);
 
         // and prevent duplicates
         setSearchlightEnabled(false);
@@ -989,7 +942,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         
         if (clientgui.doYesNoDialog(title, message)) {
             boolean zweihandering = false;
-            if(canZweihander) {
+            if (canZweihander) {
                 ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient().getGame(), cen,
                         target, club, ash.getAimTable(), true);
                 zweihandering = clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
@@ -1178,27 +1131,25 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if (index != -1) {
                 disableButtons();
                 switch (index) {
-                case 0:
-                    attacks.addElement(new BrushOffAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
-                            BrushOffAttackAction.LEFT));
-                    break;
-                case 1:
-                    attacks.addElement(new BrushOffAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
-                            BrushOffAttackAction.RIGHT));
-                    break;
-                case 2:
-                    attacks.addElement(new BrushOffAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
-                            BrushOffAttackAction.BOTH));
-                    break;
+                    case 0:
+                        attacks.addElement(new BrushOffAttackAction(cen, target
+                                .getTargetType(), target.getTargetId(),
+                                BrushOffAttackAction.LEFT));
+                        break;
+                    case 1:
+                        attacks.addElement(new BrushOffAttackAction(cen, target
+                                .getTargetType(), target.getTargetId(),
+                                BrushOffAttackAction.RIGHT));
+                        break;
+                    case 2:
+                        attacks.addElement(new BrushOffAttackAction(cen, target
+                                .getTargetType(), target.getTargetId(),
+                                BrushOffAttackAction.BOTH));
+                        break;
                 }
                 ready();
-
-            } // End not-cancel
-
-        } // End choose-attack(s)
+            }
+        }
 
         // If only the left arm is available, confirm that choice.
         else if (canHitLeft) {
@@ -1514,7 +1465,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         // Assume that we have *no* choice.
         Targetable choice = null;
 
@@ -1530,7 +1481,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 targets.add(choice);
             }
         }
-        targets.sort(new Comparator<Targetable>(){
+        targets.sort(new Comparator<Targetable>() {
 
             @Override
             public int compare(Targetable o1, Targetable o2) {
@@ -1596,16 +1547,16 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.PHYSICAL) {
 
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
@@ -1636,7 +1587,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             endMyTurn();
         }
 
@@ -1646,11 +1597,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
+                && (clientgui.getClient().getGame().getPhase() != GamePhase.PHYSICAL)) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.PHYSICAL) {
             setStatusBarText(Messages
                     .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
         }
@@ -1663,10 +1614,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 
@@ -1734,10 +1681,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 selectEntity(e.getId());
             }
         } else {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-                clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.getBoardView().centerOnHex(e.getPosition());
             }
         }
     }
@@ -1825,7 +1772,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     private class AimedShotHandler implements ActionListener, ItemListener {
         private int aimingAt = -1;
 
-        private int aimingMode = IAimingModes.AIM_MODE_NONE;
+        private AimingMode aimingMode = AimingMode.NONE;
 
         private AimedShotDialog asd;
 
@@ -1857,7 +1804,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             if (asd != null) {
-                int oldAimingMode = aimingMode;
+                AimingMode oldAimingMode = aimingMode;
                 closeDialog();
                 aimingMode = oldAimingMode;
             }
@@ -1891,7 +1838,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         public void closeDialog() {
             if (asd != null) {
                 aimingAt = Entity.LOC_NONE;
-                aimingMode = IAimingModes.AIM_MODE_NONE;
+                aimingMode = AimingMode.NONE;
                 asd.dispose();
                 asd = null;
                 updateTarget();

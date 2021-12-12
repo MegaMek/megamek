@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -37,12 +37,12 @@ Spheroid
 </motion_type>
 
 <transporters>
-asfbay:6.0:6:1
+cargobay:258.0:1:1
 2ndclassquarters:0.0:0
-cargobay:258.0:1:3
 crewquarters:0.0:0
 steeragequarters:285.0:0
 1stclassquarters:0.0:0
+artsasfbay:5.0:6:2
 </transporters>
 
 <SafeThrust>
@@ -231,17 +231,16 @@ Ammo Piranha:30
 
 <Hull Equipment>
 CasparIIDroneControlSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
 </Hull Equipment>
 
 <structural_integrity>
 75
 </structural_integrity>
+
+<notes>
+Caspar II Advanced Smart Robotic Control System (Gunnery 4,
+Piloting 5).
+</notes>
 
 <source>
 Jihad Hot Spots: Terra - Jihad
@@ -256,7 +255,7 @@ Jihad Hot Spots: Terra - Jihad
 </designtype>
 
 <crew>
-63
+51
 </crew>
 
 <officers>
@@ -290,3 +289,4 @@ Jihad Hot Spots: Terra - Jihad
 <escape_pod>
 0
 </escape_pod>
+

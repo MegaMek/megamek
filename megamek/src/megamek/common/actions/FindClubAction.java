@@ -23,8 +23,8 @@ package megamek.common.actions;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
@@ -52,12 +52,12 @@ public class FindClubAction extends AbstractEntityAction {
     /**
      * Returns whether an entity can find a club in its current location
      */
-    public static boolean canMechFindClub(IGame game, int entityId) {
+    public static boolean canMechFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
         if ((null == entity) || null == (entity.getPosition())) {
             return false;
         }
-        final IHex hex = game.getBoard().getHex(entity.getPosition());
+        final Hex hex = game.getBoard().getHex(entity.getPosition());
 
         // Only biped and tripod 'Mechs qualify at all.
         if (!(entity instanceof BipedMech || entity instanceof TripodMech)) {

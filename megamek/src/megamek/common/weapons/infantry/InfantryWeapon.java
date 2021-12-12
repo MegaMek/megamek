@@ -74,13 +74,13 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public double getShortAV() {
-        return infantryDamage;
+        return getInfantryDamage();
     }
 
     @Override
     public double getMedAV() {
         if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_SHORT]) {
-            return infantryDamage;
+            return getInfantryDamage();
         } else {
             return 0.0;
         }
@@ -89,7 +89,7 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     public double getLongAV() {
         if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_MED]) {
-            return infantryDamage;
+            return getInfantryDamage();
         } else {
             return 0.0;
         }
@@ -98,7 +98,7 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     public double getExtAV() {
         if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_LONG]) {
-            return infantryDamage;
+            return getInfantryDamage();
         } else {
             return 0.0;
         }
@@ -240,23 +240,24 @@ public abstract class InfantryWeapon extends Weapon {
     public int getSupportVeeSlots(Entity entity) {
         return 1;
     }
-
+    
     /*
      * (non-Javadoc)
      *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (((null != m) && (m.curMode().equals(Weapon.MODE_FLAMER_HEAT)
                 || (waa.getEntity(game).isSupportVehicle()
+                    && m.getLinked() != null
+                    && m.getLinked().getType() != null
                     && (((AmmoType) m.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, server);
         }
         return new InfantryWeaponHandler(toHit, waa, game, server);
     }
-
 }

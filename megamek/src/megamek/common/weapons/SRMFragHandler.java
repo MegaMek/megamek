@@ -19,7 +19,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -39,7 +39,7 @@ public class SRMFragHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public SRMFragHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public SRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         sSalvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;

@@ -52,16 +52,16 @@ public class FactionRecord {
          */
         TechCategory fallthrough() {
             switch (this) {
-            case OMNI_AERO:
-                return OMNI;
-            case CLAN_AERO:
-            case CLAN_VEE:
-                return CLAN;
-            case IS_ADVANCED_AERO:
-            case IS_ADVANCED_VEE:
-                return IS_ADVANCED;
-            default:
-                return null;
+                case OMNI_AERO:
+                    return OMNI;
+                case CLAN_AERO:
+                case CLAN_VEE:
+                    return CLAN;
+                case IS_ADVANCED_AERO:
+                case IS_ADVANCED_VEE:
+                    return IS_ADVANCED;
+                default:
+                    return null;
             }
         }
     }
@@ -126,7 +126,7 @@ public class FactionRecord {
     @Override
     public boolean equals(Object other) {
         return other instanceof FactionRecord
-                && ((FactionRecord)other).getKey().equals(getKey());
+                && ((FactionRecord) other).getKey().equals(getKey());
     }
 
     public String getKey() {
@@ -342,7 +342,7 @@ public class FactionRecord {
             }
         }
         if (count > 0) {
-            return (int)((total / count + 0.5));
+            return (int) ((total / count + 0.5));
         } else {
             return null;
         }
@@ -515,69 +515,69 @@ public class FactionRecord {
     public void loadEra(Node node, int era) {
         for (int i = 0; i < node.getChildNodes().getLength(); i++) {
             Node wn = node.getChildNodes().item(i);
-            switch(wn.getNodeName()) {
-            case "pctOmni":
-                if (wn.getAttributes().getNamedItem("unitType") != null
-                        && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-                    setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
-                } else {
-                    setPctTech(TechCategory.OMNI, era, wn.getTextContent());
-                }
-                break;
-            case "pctClan":
-                if (wn.getAttributes().getNamedItem("unitType") != null
-                        && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-                    setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
-                } else if (wn.getAttributes().getNamedItem("unitType") != null
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
-                    setPctTech(TechCategory.CLAN_VEE, era, wn.getTextContent());
-                } else {
-                    setPctTech(TechCategory.CLAN, era, wn.getTextContent());
-                }
-                break;
-            case "pctSL":
-                if (wn.getAttributes().getNamedItem("unitType") != null
-                        && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-                    setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
-                } else if (wn.getAttributes().getNamedItem("unitType") != null
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
-                    setPctTech(TechCategory.IS_ADVANCED_VEE, era, wn.getTextContent());
-                } else {
-                    setPctTech(TechCategory.IS_ADVANCED, era, wn.getTextContent());
-                }
-                break;
-            case "omniMargin":
-                omniMargin.put(era, Integer.parseInt(wn.getTextContent()));
-                break;
-            case "techMargin":
-                techMargin.put(era, Integer.parseInt(wn.getTextContent()));
-                break;
-            case "upgradeMargin":
-                upgradeMargin.put(era, Integer.parseInt(wn.getTextContent()));
-                break;
-            case "salvage":
-                pctSalvage.put(era,
-                        Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
-                salvage.put(era, new HashMap<>());
-                String [] fields = wn.getTextContent().trim().split(",");
-                for (String field : fields) {
-                    if (field.length() > 0) {
-                        String[] subfields = field.split(":");
-                        if (subfields.length == 2) {
-                            salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
+            switch (wn.getNodeName()) {
+                case "pctOmni":
+                    if (wn.getAttributes().getNamedItem("unitType") != null
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                        setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
+                    } else {
+                        setPctTech(TechCategory.OMNI, era, wn.getTextContent());
+                    }
+                    break;
+                case "pctClan":
+                    if (wn.getAttributes().getNamedItem("unitType") != null
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                        setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
+                    } else if (wn.getAttributes().getNamedItem("unitType") != null
+                                && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
+                        setPctTech(TechCategory.CLAN_VEE, era, wn.getTextContent());
+                    } else {
+                        setPctTech(TechCategory.CLAN, era, wn.getTextContent());
+                    }
+                    break;
+                case "pctSL":
+                    if (wn.getAttributes().getNamedItem("unitType") != null
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                        setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
+                    } else if (wn.getAttributes().getNamedItem("unitType") != null
+                                && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
+                        setPctTech(TechCategory.IS_ADVANCED_VEE, era, wn.getTextContent());
+                    } else {
+                        setPctTech(TechCategory.IS_ADVANCED, era, wn.getTextContent());
+                    }
+                    break;
+                case "omniMargin":
+                    omniMargin.put(era, Integer.parseInt(wn.getTextContent()));
+                    break;
+                case "techMargin":
+                    techMargin.put(era, Integer.parseInt(wn.getTextContent()));
+                    break;
+                case "upgradeMargin":
+                    upgradeMargin.put(era, Integer.parseInt(wn.getTextContent()));
+                    break;
+                case "salvage":
+                    pctSalvage.put(era,
+                            Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
+                    salvage.put(era, new HashMap<>());
+                    String[] fields = wn.getTextContent().trim().split(",");
+                    for (String field : fields) {
+                        if (field.length() > 0) {
+                            String[] subfields = field.split(":");
+                            if (subfields.length == 2) {
+                                salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
+                            }
                         }
                     }
-                }
-                break;
-            case "weightDistribution":
-                try {
-                    int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
-                    setWeightDistribution(era, unitType, wn.getTextContent());
-                } catch (Exception ex) {
-                    MegaMek.getLogger().error("RATGenerator: error parsing weight distributions for " + key
-                            + ", " + era);
-                }
-                break;
+                    break;
+                case "weightDistribution":
+                    try {
+                        int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
+                        setWeightDistribution(era, unitType, wn.getTextContent());
+                    } catch (Exception ex) {
+                        MegaMek.getLogger().error("RATGenerator: error parsing weight distributions for " + key
+                                + ", " + era);
+                    }
+                    break;
             }
         }
     }
@@ -719,7 +719,7 @@ public class FactionRecord {
             }
         }
         
-        if(factionRecordBuilder.length() > 0) {
+        if (factionRecordBuilder.length() > 0) {
             pw.println("\t<faction key='" + key + "'>");
             pw.println(factionRecordBuilder.toString().replaceFirst("\\n$", ""));
             pw.println("\t</faction>");

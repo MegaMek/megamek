@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.DefaultMmLogger;
@@ -22,7 +22,7 @@ import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
  *
  */
 public class NewtonianAerospacePathFinder {
-    private IGame game;
+    private Game game;
     protected List<MovePath> aerospacePaths;
     protected MovePath offBoardPath;
     private MMLogger logger;
@@ -33,7 +33,7 @@ public class NewtonianAerospacePathFinder {
     // This is a list of all possible moves
     protected List<MoveStepType> moves;
     
-    protected NewtonianAerospacePathFinder(IGame game) {
+    protected NewtonianAerospacePathFinder(Game game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
         
@@ -68,11 +68,11 @@ public class NewtonianAerospacePathFinder {
             aerospacePaths = new ArrayList<MovePath>();
             
             // can't do anything if the unit is out of control.
-            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
+            if (((IAero) startingEdge.getEntity()).isOutControlTotal()) {
                 return;
             }
             
-            for(MovePath path : generateStartingPaths(startingEdge)) {
+            for (MovePath path : generateStartingPaths(startingEdge)) {
                 aerospacePaths.addAll(generateChildren(path));
             }
             
@@ -80,7 +80,7 @@ public class NewtonianAerospacePathFinder {
             // now is the time to clean those out.
             // except for the one that we designated as the shortest off-board path
             aerospacePaths.removeIf(path -> !startingEdge.getGame().getBoard().contains(path.getFinalCoords()));
-            if(offBoardPath != null) {
+            if (offBoardPath != null) {
                 aerospacePaths.add(offBoardPath);
             }
             
@@ -97,12 +97,12 @@ public class NewtonianAerospacePathFinder {
                     + "increase java memory limit.";
             
             getLogger().error(memoryMessage, e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     
-    public static NewtonianAerospacePathFinder getInstance(IGame game) {
+    public static NewtonianAerospacePathFinder getInstance(Game game) {
         NewtonianAerospacePathFinder npf = new NewtonianAerospacePathFinder(game);
 
         return npf;
@@ -145,32 +145,32 @@ public class NewtonianAerospacePathFinder {
         // turn left
         // turn right
         // thrust
-        for(int moveType = 0; moveType < moves.size(); moveType++) {
+        for (int moveType = 0; moveType < moves.size(); moveType++) {
             MovePath childPath = startingPath.clone();
 
             // two things we want to avoid:
             // 1: turning back and forth
             // 2: turning more than 2 hexes in a row
             MoveStepType nextStepType = moves.get(moveType);
-            if(tooMuchTurning(childPath, nextStepType)) {
+            if (tooMuchTurning(childPath, nextStepType)) {
                 continue;
             }
             
             childPath.addStep(nextStepType);
             
             CoordsWithFacing pathDestination = new CoordsWithFacing(childPath);
-            if(discardPath(childPath, pathDestination)) {
+            if (discardPath(childPath, pathDestination)) {
                 continue;
             }
             
             // keep track of a single path that takes us off board, if there is such a thing
             // this should always be the shortest one.
-            if(game.getBoard().getHex(pathDestination.getCoords()) == null &&
+            if (game.getBoard().getHex(pathDestination.getCoords()) == null &&
                     (offBoardPath == null || childPath.getMpUsed() < offBoardPath.getMpUsed())) {        
                 offBoardPath = childPath;
             }
             
-            if(!isIntermediatePath(childPath)) {
+            if (!isIntermediatePath(childPath)) {
                 visitedCoords.put(pathDestination, childPath.getMpUsed());
             
                 retval.add(childPath.clone());
@@ -204,15 +204,14 @@ public class NewtonianAerospacePathFinder {
         boolean maxMPExceeded = path.getMpUsed() > path.getEntity().getRunMP();
         
         // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
-        // unless it is illegal or exceeds max MP, in which case we discard it
-        // (max mp is maybe redundant)?
-        if(!path.isMoveLegal() || maxMPExceeded) {
+        // unless it exceeds max MP, in which case we discard it
+        if (maxMPExceeded) {
             return true;
         }
         
         // terminator conditions:
         // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
-        if(visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < path.getMpUsed()) {
+        if (visitedCoords.containsKey(pathDestination) && (visitedCoords.get(pathDestination).intValue() < path.getMpUsed())) {
             return true;
         }
         
@@ -227,19 +226,19 @@ public class NewtonianAerospacePathFinder {
      * @return Whether we're turning too much
      */
     private boolean tooMuchTurning(MovePath path, MoveStepType stepType) {
-        if(path.getLastStep() == null || path.getSecondLastStep() == null) {
+        if (path.getLastStep() == null || path.getSecondLastStep() == null) {
             return false;
         }
         
         // more than two turns in a row is no good
-        if((stepType == MoveStepType.TURN_LEFT || stepType == MoveStepType.TURN_RIGHT) 
+        if ((stepType == MoveStepType.TURN_LEFT || stepType == MoveStepType.TURN_RIGHT)
                 && (path.getSecondLastStep().getType() == path.getLastStep().getType()) 
                 && (path.getLastStep().getType() == stepType)) {
             return true;
         }
         
         // turning back and forth in place is no good
-        if((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
+        if ((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
                 (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT)) {
             return true;
         }

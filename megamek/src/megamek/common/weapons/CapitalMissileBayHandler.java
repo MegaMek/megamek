@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -20,7 +20,7 @@ import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -30,6 +30,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -37,11 +38,6 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
-
-    /**
-     * 
-     */
-
     private static final long serialVersionUID = -1618484541772117621L;
     boolean advancedPD = false;
 
@@ -51,7 +47,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param s
      */
-    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
@@ -63,9 +59,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         
-        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
         
@@ -182,7 +178,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
-        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+        if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
     
             if (bDirect) {
@@ -490,7 +486,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * Insert any additional attacks that should occur before this attack
      */
     @Override
-    protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    protected void insertAttacks(GamePhase phase, Vector<Report> vPhaseReport) {
         // If there are no other missiles in the bay that aren't inserted
         // attacks, there will be a spurious "no damage" report
         if (attackValue < 1) {
@@ -520,11 +516,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * This should return true. Only when handling capital missile attacks can this be false.
      */
     protected boolean canEngageCapitalMissile(Mounted counter) {
-        if (counter.getBayWeapons().size() < 2) {
-            return false;
-        } else {
-            return true;
-        }
+        return counter.getBayWeapons().size() >= 2;
     }
     
     /**
@@ -544,7 +536,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
     
     @Override
-    public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handleAeroSanity(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
@@ -667,7 +659,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
-        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+        if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
     
             if (bDirect) {
@@ -713,10 +705,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
 
         // We have to adjust the reports on a miss, so they line up
-        if (bMissed){
+        if (bMissed) {
             reportMiss(vPhaseReport);
-            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
-                    vPhaseReport)) {
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg, vPhaseReport)) {
                 return false;
             }
         }
@@ -731,10 +722,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             Mounted m = ae.getEquipment(wId);
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                 WeaponType bayWType = ((WeaponType) m.getType());
-                if(bayWType instanceof Weapon) {
+                if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true. Maybe there's a better way to write this?
                     if (bayWHandler instanceof WeaponHandler) {
@@ -746,35 +737,33 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);
-                    if(vPhaseReport.size() > replaceReport) {
+                    if (vPhaseReport.size() > replaceReport) {
                         //fix the reporting - is there a better way to do this
-                        if(vPhaseReport.size() > replaceReport) {
-                            Report currentReport = vPhaseReport.get(replaceReport);
-                            while(null != currentReport) {
-                                vPhaseReport.remove(replaceReport);
-                                if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
-                                    currentReport = null;
-                                } else {
-                                    currentReport = vPhaseReport.get(replaceReport);
-                                }
-                            }
-                            r = new Report(3115);
-                            r.indent(2);
-                            r.newlines = 1;
-                            r.subject = subjectId;
-                            r.add(bayWType.getName());
-                            if (entityTarget != null) {
-                                r.addDesc(entityTarget);
+                        Report currentReport = vPhaseReport.get(replaceReport);
+                        while (null != currentReport) {
+                            vPhaseReport.remove(replaceReport);
+                            if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
+                                currentReport = null;
                             } else {
-                                r.messageId = 3120;
-                                r.add(target.getDisplayName(), true);
+                                currentReport = vPhaseReport.get(replaceReport);
                             }
-                            vPhaseReport.add(replaceReport, r);
                         }
+                        r = new Report(3115);
+                        r.indent(2);
+                        r.newlines = 1;
+                        r.subject = subjectId;
+                        r.add(bayWType.getName());
+                        if (entityTarget != null) {
+                            r.addDesc(entityTarget);
+                        } else {
+                            r.messageId = 3120;
+                            r.add(target.getDisplayName(), true);
+                        }
+                        vPhaseReport.add(replaceReport, r);
                     }
                 }
             }
-        } // Handle the next weapon in the bay
+        }
         Report.addNewline(vPhaseReport);
         return false;
     }

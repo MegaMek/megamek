@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -45,7 +45,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)

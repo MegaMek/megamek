@@ -19,11 +19,12 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -42,7 +43,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }
@@ -54,7 +55,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }
@@ -98,7 +99,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         for (Entity entity :  game.getEntitiesVector(coords)) {
             // if fighter squadron all fighters are damaged
             if (entity instanceof FighterSquadron) {
-                entity.getSubEntities().ifPresent(ents -> ents.forEach(
+                entity.getSubEntities().forEach(
                     ent -> {
                         ToHitData squadronToHit = new ToHitData();
                         squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -106,7 +107,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                         hit.setCapital(false);
                         vPhaseReport.addAll(server.damageEntity(ent, hit, attackValue));
                         server.creditKill(ent, ae);
-                    }));
+                    });
             } else {
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);

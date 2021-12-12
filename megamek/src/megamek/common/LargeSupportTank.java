@@ -16,6 +16,7 @@ package megamek.common;
 import java.util.ArrayList;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -48,7 +49,7 @@ public class LargeSupportTank extends SupportTank {
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
-
+    
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -77,8 +78,8 @@ public class LargeSupportTank extends SupportTank {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -106,8 +107,7 @@ public class LargeSupportTank extends SupportTank {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
 
             int roll = Compute.d6(2);
 
@@ -203,8 +203,8 @@ public class LargeSupportTank extends SupportTank {
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            IHex srcHex = game.getBoard().getHex(src);
-            IHex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = game.getBoard().getHex(src);
+            Hex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                         getPosition(), 1, getElevation(), srcHex.floor(),
@@ -397,7 +397,7 @@ public class LargeSupportTank extends SupportTank {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         // Additional restrictions for hidden large support tanks
         if (isHidden()) {
             // Can't deploy in paved hexes

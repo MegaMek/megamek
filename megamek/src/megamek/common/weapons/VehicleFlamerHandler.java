@@ -25,7 +25,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -50,7 +50,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
      * @param g
      */
     public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -72,13 +72,13 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
         
-        if(bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+        if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             
-            if(bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
             }
-        } else if(flamerDoesHeatOnlyDamage) {
+        } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());

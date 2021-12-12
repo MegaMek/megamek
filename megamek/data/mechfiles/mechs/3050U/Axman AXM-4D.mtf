@@ -3,51 +3,54 @@ Axman
 AXM-4D
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3071
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3071
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:65
-Engine:260 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+heat sinks:10 Single
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous
-LA Armor:17
-RA Armor:17
-LT Armor:21
-RT Armor:21
-CT Armor:28
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:17
+RA armor:17
+LT armor:21
+RT armor:21
+CT armor:28
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
-Weapons:3
-2 ISMediumLaser, Left Arm
-2 ISLAC5, Right Torso, Ammo:40
-2 ISLAC5, Left Torso
+Weapons:6
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Light AC/5, Left Torso
+Light AC/5, Left Torso
+Light AC/5, Right Torso
+Light AC/5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+Medium Laser
+Medium Laser
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
-ISMediumLaser
-ISMediumLaser
 
 Right Arm:
 Shoulder
@@ -59,37 +62,37 @@ Hatchet
 Hatchet
 Hatchet
 Hatchet
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLAC5
-ISLAC5
-ISLAC5
-ISLAC5
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Ammo LAC/5
+IS Ammo LAC/5
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLAC5
-ISLAC5
-ISLAC5
-ISLAC5
-ISLAC5 Ammo
-ISLAC5 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+Light Auto Cannon/5
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -124,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -147,12 +150,9 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
-Overview: If any one 'Mech was representative of the Federated Commonwealth alliance, it was the Axman. Constructed and supplied by parts from throughout the Commonwealth, some would call the Axman a result of "Steiner inspiration and Davion perspiration". Little more than an overgrown Hatchetman, the Axman would repeat the same general philosophy of the lighter 'Mech on a heavier, sturdier, and overall more dangerous chassis. The fact that it used a wide variety of cutting-edge (for the time) technologies for its construction proved the faith both nations had in the new interstellar alliance.
-
-Capabilities: A consumate brawler, the Axman is unsurprisingly build towards using its titanium-sheathed hatchet. Jump jets and a large secondary array of laser weapons give it a similar combat profile to the older Thunderbolt -5SE, though the massive AC/20 mounted in the right torso give the Axman a frightening punch even outside of melee combat. The all was only permitted by falling back on a Magna 260 XL engine. While the engine was without flaws, more than a few MechWarriors found the use of such a fragile engine to be suboptimal on a physically-oriented design.
-
-Deployment: The Axman saw wide usage within the Federated Commonwealth and its closest allies. Though the sundering of the alliance would nearly kill the design, both manufacturing hubs on New Syrtis and Furillo would adapt to keep the design in production. The -4D would be the Davion-flavored take on the design. A switch to four light autocannons instead of the single AC/20 and pulse laser would increase design, while the four tons of ammo allowed for the deployment of newly-developed specialty rounds. A targeting computer would further increase accuracy. These changes necessitated the sacrifice of the jump jets, though the cost-cutting decision to use single heat sinks would prove to be the least popular change.
-
+overview:If any one 'Mech was representative of the Federated Commonwealth alliance, it was the Axman. Constructed and supplied by parts from throughout the Commonwealth, some would call the Axman a result of "Steiner inspiration and Davion perspiration". Little more than an overgrown Hatchetman, the Axman would repeat the same general philosophy of the lighter 'Mech on a heavier, sturdier, and overall more dangerous chassis. The fact that it used a wide variety of cutting-edge (for the time) technologies for its construction proved the faith both nations had in the new interstellar alliance.
+capabilities:A consumate brawler, the Axman is unsurprisingly build towards using its titanium-sheathed hatchet. Jump jets and a large secondary array of laser weapons give it a similar combat profile to the older Thunderbolt -5SE, though the massive AC/20 mounted in the right torso give the Axman a frightening punch even outside of melee combat. The all was only permitted by falling back on a Magna 260 XL engine. While the engine was without flaws, more than a few MechWarriors found the use of such a fragile engine to be suboptimal on a physically-oriented design.
+deployment: The Axman saw wide usage within the Federated Commonwealth and its closest allies. Though the sundering of the alliance would nearly kill the design, both manufacturing hubs on New Syrtis and Furillo would adapt to keep the design in production. The -4D would be the Davion-flavored take on the design. A switch to four light autocannons instead of the single AC/20 and pulse laser would increase design, while the four tons of ammo allowed for the deployment of newly-developed specialty rounds. A targeting computer would further increase accuracy. These changes necessitated the sacrifice of the jump jets, though the cost-cutting decision to use single heat sinks would prove to be the least popular change.
 systemmanufacturer:CHASSIS:Dorwinion
 systemmode:CHASSIS:AXM Standard
 systemmanufacturer:ENGINE:Magna
@@ -163,3 +163,4 @@ systemmanufacturer:COMMUNICATIONS:Johnston
 systemmode:COMMUNICATIONS:Wide Band
 systemmanufacturer:TARGETING:Rander
 systemmode:TARGETING:Pinpoint-HY
+

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -23,11 +23,11 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
 
     protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroLowAltitudePathFinder";
     
-    protected AeroLowAltitudePathFinder(IGame game) {
+    protected AeroLowAltitudePathFinder(Game game) {
         super(game);
     }
 
-    public static AeroLowAltitudePathFinder getInstance(IGame game) {
+    public static AeroLowAltitudePathFinder getInstance(Game game) {
         AeroLowAltitudePathFinder alf = new AeroLowAltitudePathFinder(game);
 
         return alf;
@@ -52,7 +52,7 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
         List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(mp);
         List<MovePath> fullMovePaths = new ArrayList<>();
         
-        for(MovePath altitudePath : altitudePaths) {
+        for (MovePath altitudePath : altitudePaths) {
             fullMovePaths.addAll(super.GenerateAllPaths(altitudePath.clone()));
         }
         
@@ -95,14 +95,14 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
      */
     @Override
     protected boolean pathIsRedundant(MovePath mp) {
-        if(!mp.fliesOffBoard()) {
+        if (!mp.fliesOffBoard()) {
             CoordsWithFacing destinationCoords = new CoordsWithFacing(mp);
-            if(!visitedCoords.containsKey(destinationCoords)) {
+            if (!visitedCoords.containsKey(destinationCoords)) {
                 visitedCoords.put(destinationCoords, new HashMap<>());
             }
             
             // we may or may not have been to these coordinates before, but we haven't been to this height. Not redundant. 
-            if(!visitedCoords.get(destinationCoords).containsKey(mp.getFinalAltitude())) {
+            if (!visitedCoords.get(destinationCoords).containsKey(mp.getFinalAltitude())) {
                 visitedCoords.get(destinationCoords).put(mp.getFinalAltitude(), mp.getMpUsed());
                 return false;
             // we *have* been to these coordinates and height before. This is redundant if the previous visit used less MP.

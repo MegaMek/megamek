@@ -3,46 +3,46 @@ Black Hawk (Nova)
 A
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:2870
-Source:TRO 3050 - Succession Wars
-Rules Level:2
+techbase:Clan
+era:2870
+source:TRO 3050 - Succession Wars
+rules level:2
 
-Mass:50
-Engine:250 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:50
+engine:250 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Double
-Base Chassis Heat Sinks:10
-Walk MP:5
-Jump MP:5
+heat sinks:14 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:5
 
-Armor:Standard(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:23
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:8
-RTR Armor:8
-RTC Armor:8
+armor:Standard(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:23
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:8
+RTR armor:8
+RTC armor:8
 
 Weapons:5
 ER PPC, Left Arm
 ER PPC, Right Arm
 Medium Pulse Laser, Left Torso
-AMS, Left Torso
-AMS, Right Torso
+Anti-Missile System, Left Torso
+Anti-Missile System, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -55,8 +55,8 @@ CLERPPC (omnipod)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -73,8 +73,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMediumPulseLaser (omnipod)
-CLAntiMissileSystem (omnipod)
+CLMediumPulseLaser (OMNIPOD)
+CLAntiMissileSystem (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -87,8 +87,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLAntiMissileSystem (omnipod)
-CLAMS Ammo (omnipod)
+CLAntiMissileSystem (OMNIPOD)
+CLAMS Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -154,11 +154,10 @@ overview:The Nova is a versatile medium OmniMech that is capable of acting as a 
 
 capabilities:A long range sniper configuration, the Nova A has a pair of powerful Clan ER PPCs for long range combat. For protection at close range, the Nova A has a single Medium Pulse Laser and also mounts two Anti-Missile Systems for protection from missile fire.
 
-history:The Black Hawk's debut battle was the combined assault on Kindraa Smythe-Jewel on Foster in 2872 launched by the Hell's Horses, Clan Coyote and Kindraa Payne that saw the Smythe-Jewels wiped out as a faction.
+deployment:A long range sniper configuration, the Nova A has a pair of powerful Clan ER PPCs for long range combat. For protection at close range, the Nova A has a single Medium Pulse Laser and also mounts two Anti-Missile Systems for protection from missile fire.
 
-However, the number of Novas has been diminishing. Only spare parts have been in production since 2921. Designed as an early OmniMech by Clan Hell's Horses, the Nova was produced at the famous Tokasha Mechworks beginning in 2870. At the time of its introduction, the Nova was designed for infantry support, and was the first OmniMech designed with hardpoints allowing Elementals to easily mount and dismount the chassis. However, after Tokasha was taken by Clan Ghost Bear during the Battle of Tokasha, production of the Nova ceased. Since 2921, every Clan has acquired Nova OmniMechs as isorla.
+history:The Black Hawk's debut battle was the combined assault on Kindraa Smythe-Jewel on Foster in 2872 launched by the Hell's Horses, Clan Coyote and Kindraa Payne that saw the Smythe-Jewels wiped out as a faction. However, the number of Novas has been diminishing. Only spare parts have been in production since 2921. Designed as an early OmniMech by Clan Hell's Horses, the Nova was produced at the famous Tokasha Mechworks beginning in 2870. At the time of its introduction, the Nova was designed for infantry support, and was the first OmniMech designed with hardpoints allowing Elementals to easily mount and dismount the chassis. However, after Tokasha was taken by Clan Ghost Bear during the Battle of Tokasha, production of the Nova ceased. Since 2921, every Clan has acquired Nova OmniMechs as isorla. Although the last Nova factory was replaced to create Pouncers, the very few remaining in Clan Space have gotten into the hands of Aggressor Mechwarriors.
 
-Although the last Nova factory was replaced to create Pouncers, the very few remaining in Clan Space have gotten into the hands of Aggressor Mechwarriors.
 manufacturer:Tokasha MechWorks, Olivetti Weaponry
 primaryfactory:Tokasha, Sudeten
 systemmanufacturer:CHASSIS:Star League XTA
@@ -167,3 +166,4 @@ systemmanufacturer:ARMOR:Forge Type HH30
 systemmanufacturer:JUMPJET:Clan Standard Type A2
 systemmanufacturer:COMMUNICATIONS:CH3B
 systemmanufacturer:TARGETING:Version Omega-V TTS
+

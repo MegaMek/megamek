@@ -21,7 +21,7 @@ package megamek.client.ui.swing.lobby.sorters;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 
 /** A Lobby Mek Table sorter that sorts by C3 network association (and by ID after that). */
 public class C3IDSorter implements MekTableSorter {
@@ -45,9 +45,9 @@ public class C3IDSorter implements MekTableSorter {
 
     @Override
     public int compare(final Entity a, final Entity b) {
-        final IPlayer p_a = clientGui.getClient().getGame().getPlayer(a.getOwnerId());
-        final IPlayer p_b = clientGui.getClient().getGame().getPlayer(b.getOwnerId());
-        final IPlayer localPlayer = clientGui.getClient().getLocalPlayer();
+        final Player p_a = clientGui.getClient().getGame().getPlayer(a.getOwnerId());
+        final Player p_b = clientGui.getClient().getGame().getPlayer(b.getOwnerId());
+        final Player localPlayer = clientGui.getClient().getLocalPlayer();
         final int t_a = p_a.getTeam();
         final int t_b = p_b.getTeam();
         String tr_a = a.getC3NetId();

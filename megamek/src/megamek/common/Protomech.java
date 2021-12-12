@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.common.enums.AimingMode;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -674,22 +675,19 @@ public class Protomech extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+        if ((aimedLocation != LOC_NONE) && aimingMode.isImmobile()) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
 
         }
@@ -1363,14 +1361,12 @@ public class Protomech extends Entity {
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
                     || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
+                Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP.hasTAG()) {
                     tagBV += atype.getBV(this);
-                } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
-                        && (game != null)) {
-                    for (Enumeration<Team> e = game.getTeams(); e
-                            .hasMoreElements();) {
+                } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
+                    for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                         Team m = e.nextElement();
                         if (m.getId() == tmpP.getTeam()) {
                             if (m.hasTAG(game)) {
@@ -1653,9 +1649,9 @@ public class Protomech extends Entity {
         
         int finalBV;
         if (useGeometricMeanBV()) {
-            finalBV = (int)Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
+            finalBV = (int) Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
             if (finalBV == 0) {
-                finalBV = (int)Math.round(dbv + obv);
+                finalBV = (int) Math.round(dbv + obv);
             }
             
             bvText.append("Geometric Mean (2Sqrt(O*D) + X");
@@ -1972,7 +1968,7 @@ public class Protomech extends Entity {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -1987,7 +1983,7 @@ public class Protomech extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -2059,13 +2055,13 @@ public class Protomech extends Entity {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.Entity#checkSkid(int, megamek.common.IHex, int,
+     * @see megamek.common.Entity#checkSkid(int, megamek.common.Hex, int,
      * megamek.common.MoveStep, int, int, megamek.common.Coords,
      * megamek.common.Coords, boolean, int)
      */
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType,
-            IHex prevHex, EntityMovementType overallMoveType,
+            Hex prevHex, EntityMovementType overallMoveType,
             MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos,
             Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
@@ -2104,7 +2100,7 @@ public class Protomech extends Entity {
         if (hasMyomerBooster()) {
             walk *= 1.25;
         }
-        int baseWalk = (int)Math.round(walk * 2);
+        int baseWalk = (int) Math.round(walk * 2);
         int baseJump = getJumpMP() * 2;
         if (baseJump > 0) {
             if (baseJump != baseWalk) {
@@ -2147,7 +2143,7 @@ public class Protomech extends Entity {
     
     @Override
     public int getEngineHits() {
-        if(this.isEngineHit()) {
+        if (this.isEngineHit()) {
             return 1;
         }
         return 0;
@@ -2328,12 +2324,12 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_PROTOMECH;
     }
     
     public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, IHex curHex) {
+            EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE,
                          "Protomechs cannot fall");

@@ -29,6 +29,7 @@
         <regexp>java\.util\.concurrent\.locks\.ReentrantLock$</regexp>
         <regexp>java\.util\.concurrent\.locks\.ReentrantLock\$NonfairSync$</regexp>
         <regexp>java\.util\.concurrent\.locks\.ReentrantLock\$Sync$</regexp>
+        <regexp>java\.util\.UUID$</regexp>
         <regexp>java\.util\.EnumMap$</regexp>
         <regexp>java\.util\.HashMap$</regexp>
         <regexp>java\.util\.HashSet$</regexp>
@@ -44,6 +45,12 @@
         <regexp>\[\[Lmegamek.*</regexp>
         <regexp>\[Lmegamek.*</regexp>
         <regexp>megamek.*</regexp>
+        <regexp>\[\[Lmekhq.*</regexp>
+        <regexp>\[Lmekhq.*</regexp>
+        <regexp>mekhq.*</regexp>
+	<regexp>\[\[Lmegameklab.*</regexp>
+        <regexp>\[Lmegameklab.*</regexp>
+        <regexp>megameklab.*</regexp>
         <regexp>\[Z$</regexp>
     </regexps>
   </whitelist>

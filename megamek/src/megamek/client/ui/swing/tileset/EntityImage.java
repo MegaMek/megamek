@@ -30,6 +30,7 @@ import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.icons.Camouflage;
+import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -86,11 +87,11 @@ public class EntityImage {
     }
     
     /** All damage decal/fire/smoke files in DECAL_PATH. */
-    private static DirectoryItems DecalImages;
+    private static AbstractDirectory DecalImages;
 
     static {
         try {
-            DecalImages = new DirectoryItems(DECAL_PATH, "", new ImageFileFactory());
+            DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
             MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());
@@ -466,16 +467,16 @@ public class EntityImage {
     private Image getDamageDecal(Entity entity, int pos) {
         try {
             switch (dmgLevel) {
-            case Entity.DMG_LIGHT:
-                return getIM(PATH_LIGHT, entity.getShortName(), pos);
-            case Entity.DMG_MODERATE:
-                return getIM(PATH_MODERATE, entity.getShortName(), pos);
-            case Entity.DMG_HEAVY:
-                return getIM(PATH_HEAVY, entity.getShortName(), pos);
-            case Entity.DMG_CRIPPLED:
-                return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
-            default: // DMG_NONE:
-                return null;
+                case Entity.DMG_LIGHT:
+                    return getIM(PATH_LIGHT, entity.getShortName(), pos);
+                case Entity.DMG_MODERATE:
+                    return getIM(PATH_MODERATE, entity.getShortName(), pos);
+                case Entity.DMG_HEAVY:
+                    return getIM(PATH_HEAVY, entity.getShortName(), pos);
+                case Entity.DMG_CRIPPLED:
+                    return getIM(PATH_CRIPPLED, entity.getShortName(), pos);
+                default: // DMG_NONE:
+                    return null;
             }
         } catch (Exception e) {
             MegaMek.getLogger().error("Could not load decal image.", e);

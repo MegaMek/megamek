@@ -22,10 +22,7 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.*;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.util.StringUtil;
@@ -47,7 +44,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (IPlayer p : bot.getGame().getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersVector()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/defeat");
@@ -73,7 +70,7 @@ public class ChatProcessor {
                 name += " " + splitMessage[i + 1];
                 i++;
             }
-            for (IPlayer p : bot.getGame().getPlayersVector()) {
+            for (Player p : bot.getGame().getPlayersVector()) {
                 if (p.getName().equals(name)) {
                     if (p.isEnemyOf(bot.getLocalPlayer())) {
                         bot.sendChat("/victory");
@@ -107,8 +104,8 @@ public class ChatProcessor {
         }
         String name = st.nextToken().trim();
         // who is the message from?
-        Enumeration<IPlayer> e = bot.getGame().getPlayers();
-        IPlayer p = null;
+        Enumeration<Player> e = bot.getGame().getPlayers();
+        Player p = null;
         while (e.hasMoreElements()) {
             p = e.nextElement();
             if (name.equalsIgnoreCase(p.getName())) {
@@ -131,8 +128,7 @@ public class ChatProcessor {
         }
     }
 
-    private void additionalTestBotCommands(StringTokenizer st, TestBot tb,
-                                           IPlayer p) {
+    private void additionalTestBotCommands(StringTokenizer st, TestBot tb, Player p) {
         try {
             if (st.hasMoreTokens()
                 && st.nextToken().trim()
@@ -190,10 +186,10 @@ public class ChatProcessor {
         }
     }
 
-    private IPlayer getPlayer(IGame game, String playerName) {
-        Enumeration<IPlayer> players = game.getPlayers();
+    private Player getPlayer(Game game, String playerName) {
+        Enumeration<Player> players = game.getPlayers();
         while (players.hasMoreElements()) {
-            IPlayer testPlayer = players.nextElement();
+            Player testPlayer = players.nextElement();
             if (playerName.equalsIgnoreCase(testPlayer.getName())) {
                 return testPlayer;
             }
@@ -218,7 +214,7 @@ public class ChatProcessor {
 
         // Second token should be the player name the message is directed to.
         String sentTo = tokenizer.nextToken().trim();
-        IPlayer princessPlayer = princess.getLocalPlayer();
+        Player princessPlayer = princess.getLocalPlayer();
         if (princessPlayer == null) {
             princess.getLogger().error("Princess Player is NULL.");
             return;
@@ -241,7 +237,7 @@ public class ChatProcessor {
         }
 
         // Make sure the speaker is a real player.
-        IPlayer speakerPlayer = chatEvent.getPlayer();
+        Player speakerPlayer = chatEvent.getPlayer();
         if (speakerPlayer == null) {
             speakerPlayer = getPlayer(princess.getGame(), from);
             if (speakerPlayer == null) {
@@ -286,6 +282,31 @@ public class ChatProcessor {
                 out.append("\n").append(cmd.getSyntax()).append(" :: ").append(cmd.getDescription());
             }
             princess.sendChat(out.toString());
+        }
+        
+        if (command.toLowerCase().startsWith(ChatCommands.IGNORE_TARGET.getAbbreviation())) {
+            if ((arguments == null) || (arguments.length == 0)) {
+                msg = "Please specify entity ID to ignore.";
+                princess.sendChat(msg);
+                return;
+            }
+            
+            Integer targetID = null;
+            
+            try {
+                targetID = Integer.parseInt(arguments[0]);
+            } catch (Exception ignored) { }
+            
+            if (targetID == null) {
+                msg = "Please specify entity ID as an integer to ignore.";
+                princess.sendChat(msg);
+                return;
+            }
+            
+            princess.getBehaviorSettings().addIgnoredUnitTarget(targetID);
+            msg = "Ignoring target with ID " + targetID;
+            princess.sendChat(msg);
+            return;
         }
 
         // Make sure the command came from my team.

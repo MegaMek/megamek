@@ -32,7 +32,7 @@ public class MovePathTest {
 
     @Test
     public void testGetLastStep() {
-        IGame mockGame = Mockito.mock(IGame.class);
+        Game mockGame = Mockito.mock(Game.class);
         Entity mockMech = Mockito.mock(BipedMech.class);
 
         Vector<MoveStep> stepVector = new Vector<MoveStep>();

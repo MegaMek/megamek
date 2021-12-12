@@ -149,4 +149,18 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+overview:The Trebuchet (also jovially referred to as the Trenchbucket) is a mainline medium weight BattleMech considered to be a fine blend of long- and short-range fire support for a unit of its size.
 
+capabilities:Unlike many other pre-Clan 'Mechs, the Trebuchet was designed from the beginning to work as part of a lance instead of functioning as a standalone model. 
+
+deployment:This Trebuchet was introduced in the Dark Age era. It uses an XXL Fusion Engine for power, and an Endo Steel skeleton is protected by Light Ferro-Fibrous armor. The engine allows the 9R to reach speeds of 110km/h, but it also features a Supercharger to allow it to briefly hit 140km/h. It carries two Medium X-Pulse Lasers and three Clan-built LRM-15s allow it to engage an opponent with missile fire at any range.
+
+history:The Trebuchet first walked off assembly lines in 2780 for the SLDF in the final years of the Star League, between the liberation of Terra from Stefan Amaris and Aleksandr Kerensky's departure. With the onset of the Succession Wars the Trebuchet would become an almost exclusive staple of the Free Worlds League since its manufacturing site on Stewart fell within their territory. However the original TBT-3C models proved to be too difficult to repair and produce with the disappearance of advanced technology, and in 2799 Corean Enterprises went back to the drawing board to create the TBT-5N using older, mass-producible technology. The Free Worlds League Military often partnered the Trebuchet with the Archer, while lances consisting of an Archer, two Trebuchets and a Centurion became a common configuration used for siege operations and by the Regulan Hussars. However the design also found its way into the hands of the other Great Houses and served with distinction during the Succession Wars in nearly every major operation, with a number of variants created to fulfill various needs. The technological renaissance which swept through the Inner Sphere during the 3030s allowed first Kali Yama and then the Irian corporations to begin producing the Trebuchet as well, culminating in upgraded designs debuting several years prior to the Clan Invasion. As late as 3071 advanced Trebuchet variants would continue to be produced and found themselves used by new actors on the galactic stage, most notoriously the Word of Blake.
+
+manufacturer:Tvastar Enterprises
+primaryfactory:Regulas
+systemmanufacturer:CHASSIS:Corean-II Deluxe Endo Steel
+systemmanufacturer:ENGINE:Magna 350 XXL
+systemmanufacturer:ARMOR:Starshield with CASE
+systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
+systemmanufacturer:TARGETING:Corean B-Tech

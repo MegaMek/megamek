@@ -1,4 +1,5 @@
 size 32 17
+option exit_roads_to_pavement false
 tag "Rough (Auto)"
 tag "Water (Auto)"
 tag "MediumForest (Auto)"
@@ -430,7 +431,7 @@ hex 0714 1 "woods:1;foliage_elev:2" "tropical"
 hex 0814 1 "woods:1;foliage_elev:2" "tropical"
 hex 0914 2 "woods:1;foliage_elev:2" "tropical"
 hex 1014 2 "woods:1;foliage_elev:2" "tropical"
-hex 1114 2 "" "tropical"
+hex 1114 2 "woods:1;foliage_elev:2" "tropical"
 hex 1214 2 "woods:2;foliage_elev:2" "tropical"
 hex 1314 2 "" "desert"
 hex 1414 1 "" "desert"

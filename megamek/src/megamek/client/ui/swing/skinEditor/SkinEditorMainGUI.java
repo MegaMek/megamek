@@ -14,73 +14,30 @@
  */
 package megamek.client.ui.swing.skinEditor;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.IOException;
-import java.util.*;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChoiceDialog;
-import megamek.client.ui.swing.CommonMenuBar;
-import megamek.client.ui.swing.ConfirmDialog;
-import megamek.client.ui.swing.DeployMinefieldDisplay;
-import megamek.client.ui.swing.DeploymentDisplay;
-import megamek.client.ui.swing.FiringDisplay;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.PhysicalDisplay;
-import megamek.client.ui.swing.ReportDisplay;
-import megamek.client.ui.swing.SelectArtyAutoHitHexDisplay;
-import megamek.client.ui.swing.StatusBarPhaseDisplay;
-import megamek.client.ui.swing.TargetingPhaseDisplay;
-import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardViewListener,
         ActionListener, ComponentListener {
@@ -97,13 +54,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
 
-    private BoardView1 bv;
+    private BoardView bv;
     private Component bvc;
     private JDialog skinSpecEditorD;
     private SkinSpecEditor skinSpecEditor;
 
-    public JDialog mechW;
-    public UnitDisplay unitDisplay;
+    private UnitDisplay unitDisplay;
+    private UnitDetailPane unitDetailPane;
 
     protected JComponent curPanel;
 
@@ -175,7 +132,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public IBoardView getBoardView() {
+    public BoardView getBoardView() {
         return bv;
     }
 
@@ -185,33 +142,23 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         frame.setJMenuBar(menuBar);
-        Rectangle virtualBounds = getVirtualBounds();
-        int x, y, w, h;
-        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
-            x = GUIPreferences.getInstance().getWindowPosX();
-            y = GUIPreferences.getInstance().getWindowPosY();
-            w = GUIPreferences.getInstance().getWindowSizeWidth();
-            h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX())
-                    || ((x + w) > virtualBounds.getMaxX())) {
-                x = 0;
-            }
-            if ((y < virtualBounds.getMinY())
-                    || ((y + h) > virtualBounds.getMaxY())) {
-                y = 0;
-            }
-            if (w > virtualBounds.getWidth()) {
-                w = (int) virtualBounds.getWidth();
-            }
-            if (h > virtualBounds.getHeight()) {
-                h = (int) virtualBounds.getHeight();
-            }
-            frame.setLocation(x, y);
-            frame.setSize(w, h);
+
+        var prefs = GUIPreferences.getInstance();
+        if (prefs.getWindowSizeHeight() != 0) {
+            frame.setLocation(
+                prefs.getWindowPosX(),
+                prefs.getWindowPosY()
+            );
+            frame.setSize(
+                prefs.getWindowSizeWidth(),
+                prefs.getWindowSizeHeight()
+            );
         } else {
             frame.setSize(800, 600);
         }
         frame.setMinimumSize(new Dimension(640, 480));
+        UIUtil.updateWindowBounds(frame);
+
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<>();
@@ -229,26 +176,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                         .toString()));
         frame.setIconImages(iconList);
 
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if ((x + w) > virtualBounds.getWidth()) {
-            x = 0;
-            w = Math.min(w, (int)virtualBounds.getWidth());
-        }
-        if ((y + h) > virtualBounds.getHeight()) {
-            y = 0;
-            h = Math.min(h, (int)virtualBounds.getHeight());
-        }
-        mechW.setLocation(x, y);
-        mechW.setSize(w, h);
-        mechW.setResizable(true);
-        unitDisplay = new UnitDisplay(null);
-        mechW.add(unitDisplay);
-        mechW.setVisible(true);
-        unitDisplay.displayEntity(testEntity);
+        this.unitDisplay = new UnitDisplay(null);
+
+        this.unitDetailPane = new UnitDetailPane(this.unitDisplay);
+        add(this.unitDetailPane, BorderLayout.EAST);
+
+        this.unitDisplay.displayEntity(testEntity);
     }
 
     /**
@@ -270,8 +203,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         mainNames.clear();
         secondaryNames.clear();
 
+        var game = new Game();
+        testEntity.setGame(game);
+
         try {
-            bv = new BoardView1(new Game(), null, null);
+            bv = new BoardView(game, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -281,31 +217,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                     Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
             die();
         }
-        switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        switchPanel(GamePhase.MOVEMENT);
         frame.validate();
 
-        // This is a horrible hack
-        // Essentially, UnitDisplay (I think specifically ArmorPanel), relies
-        // upon addNotify being called, so I need to way to set the
-        // isDisplayable state to true.  However, if I create a new JDialog, or
-        // called JDialog.setVisible(true), focus will get stolen from the
-        // Skin Spec Editor, which causes undesirable behavior, particularly
-        // with the path JTextFields
-        Dimension sz = mechW.getSize();
-        mechW.remove(unitDisplay);
-        // UnitDisplay has no way to update the skin without being recreated
-        unitDisplay = new UnitDisplay(null);
-        mechW.add(unitDisplay);
-        if (mechW.isVisible()) {
-            // This will cause the isDisplayable state to be true, in effect
-            // ensuring addNotify has been called.
-            mechW.pack();
-        } else {
-            mechW.setVisible(true);
-        }
-        // Packing is going to change the dimensions, so we'll restore old sz
-        mechW.setSize(sz);
-        unitDisplay.displayEntity(testEntity);
+        this.unitDisplay.displayEntity(this.testEntity);
     }
 
     /**
@@ -323,11 +238,16 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         panSecondary.removeAll();
         mainNames.clear();
         secondaryNames.clear();
-        menuBar = new CommonMenuBar(null);
+        menuBar = new CommonMenuBar();
+
+        var game = new Game();
+        testEntity.setGame(game);
+
         initializeFrame();
+
         try {
             // Create the board viewer.
-            bv = new BoardView1(new Game(), null, null);
+            bv = new BoardView(game, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -349,46 +269,24 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             }
         });
 
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice();
-        int x;
-        int y;
-        int h;
-        int w;
+        skinSpecEditor = new SkinSpecEditor(this);
+
         skinSpecEditorD = new JDialog(frame,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false); //$NON-NLS-1$
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = 480;
-        w = 640;
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
-            x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
-        }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
-            y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
-        }
-        skinSpecEditorD.setLocation(x, y);
-        skinSpecEditorD.setSize(w, h);
+
+        var prefs = GUIPreferences.getInstance();
+        skinSpecEditorD.setLocation(
+            prefs.getUnitDetailPosX(),
+            prefs.getUnitDetailPosY()
+        );
+        skinSpecEditorD.setSize(640, 480);
         skinSpecEditorD.setResizable(true);
+        UIUtil.updateWindowBounds(skinSpecEditorD);
+
         skinSpecEditorD.addWindowListener(this);
-        skinSpecEditor = new SkinSpecEditor(this);
         skinSpecEditorD.add(skinSpecEditor);
         skinSpecEditorD.setVisible(true);
 
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
-            x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
-        }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
-            y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
-        }
         frame.pack();
         frame.setVisible(true);
     }
@@ -462,7 +360,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public void switchPanel(IGame.Phase phase) {
+    public void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -483,37 +381,37 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         // Handle phase-specific items.
         switch (phase) {
-            case PHASE_LOUNGE:
+            case LOUNGE:
                 // reset old report tabs and images, if any
                 ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                        .valueOf(GamePhase.INITIATIVE_REPORT));
                 if (rD != null) {
                     rD.resetTabs();
                 }
                 //ChatLounge cl = (ChatLounge) phaseComponents.get(
-                //        String.valueOf(IGame.Phase.PHASE_LOUNGE));
+                //        String.valueOf(Game.Phase.LOUNGE));
                 //cb.setDoneButton(cl.butDone);
                 //cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
                 break;
-            case PHASE_DEPLOY_MINEFIELDS:
-            case PHASE_DEPLOYMENT:
-            case PHASE_TARGETING:
-            case PHASE_MOVEMENT:
-            case PHASE_OFFBOARD:
-            case PHASE_FIRING:
-            case PHASE_PHYSICAL:
+            case DEPLOY_MINEFIELDS:
+            case DEPLOYMENT:
+            case TARGETING:
+            case MOVEMENT:
+            case OFFBOARD:
+            case FIRING:
+            case PHYSICAL:
                 break;
-            case PHASE_INITIATIVE_REPORT:
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_PHYSICAL_REPORT:
-            case PHASE_END_REPORT:
-            case PHASE_VICTORY:
+            case INITIATIVE_REPORT:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                        .valueOf(GamePhase.INITIATIVE_REPORT));
                 //cb.setDoneButton(rD.butDone);
                 //rD.add(cb.getComponent(), GBC.eol().fill(
                 //        GridBagConstraints.HORIZONTAL));
@@ -545,45 +443,45 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() ) {
+        if (GUIPreferences.getInstance().getFocus()) {
             curPanel.requestFocus();
         }
     }
 
-    public void updateButtonPanel(IGame.Phase phase) {
+    public void updateButtonPanel(GamePhase phase) {
         if ((currPhaseDisplay != null)) {
             currPhaseDisplay.setupButtonPanel();
         }
     }
 
-    private JComponent initializePanel(IGame.Phase phase) {
+    private JComponent initializePanel(GamePhase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
         JComponent component;
         String secondary = null;
         String main;
         switch (phase) {
-            case PHASE_LOUNGE:
+            case LOUNGE:
                 component = new ChatLounge(null);
                 main = "ChatLounge"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case PHASE_STARTING_SCENARIO:
+            case STARTING_SCENARIO:
                 component = new JLabel(
                         Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
                 main = "JLabel-StartingScenario"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case PHASE_EXCHANGE:
+            case EXCHANGE:
                 component = new JLabel(
                         Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
                 main = "JLabel-Exchange"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case PHASE_SET_ARTYAUTOHITHEXES:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
@@ -591,10 +489,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_DEPLOY_MINEFIELDS:
+            case DEPLOY_MINEFIELDS:
                 component = new DeployMinefieldDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
@@ -602,10 +500,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_DEPLOYMENT:
+            case DEPLOYMENT:
                 component = new DeploymentDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
@@ -613,10 +511,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_TARGETING:
+            case TARGETING:
                 component = new TargetingPhaseDisplay(null, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
@@ -625,10 +523,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_MOVEMENT:
+            case MOVEMENT:
                 component = new MovementDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "MovementDisplay"; //$NON-NLS-1$
@@ -636,10 +534,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_OFFBOARD:
+            case OFFBOARD:
                 component = new TargetingPhaseDisplay(null, true);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
@@ -648,10 +546,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_FIRING:
+            case FIRING:
                 component = new FiringDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "FiringDisplay"; //$NON-NLS-1$
@@ -659,10 +557,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_PHYSICAL:
+            case PHYSICAL:
                 component = new PhysicalDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "PhysicalDisplay"; //$NON-NLS-1$
@@ -670,35 +568,32 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_INITIATIVE_REPORT:
+            case INITIATIVE_REPORT:
                 component = new ReportDisplay(null);
                 main = "ReportDisplay"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(main, component);
                 break;
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_PHYSICAL_REPORT:
-            case PHASE_END_REPORT:
-            case PHASE_VICTORY:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String
-                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                component = phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(
-                            IGame.Phase.PHASE_INITIATIVE_REPORT);
+                    component = initializePanel(GamePhase.INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 break;
             default:
-                component = new JLabel(
-                        Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
                 main = "JLabel-Default"; //$NON-NLS-1$
                 secondary = main;
                 component.setName(main);
@@ -863,7 +758,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         return frame;
     }
 
-    public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
+    public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
         final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp)));
     }
@@ -936,22 +831,4 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         return curPanel;
     }
 
-    /**
-     * Returns the 'virtual bounds' of the screen.  That is, the union of the
-     * displayable space on all available screen devices.
-     *
-     * @return
-     */
-    private Rectangle getVirtualBounds() {
-        Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for (GraphicsDevice gd : gs) {
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (GraphicsConfiguration element : gc) {
-                virtualBounds = virtualBounds.union(element.getBounds());
-            }
-        }
-        return virtualBounds;
-    }
 }

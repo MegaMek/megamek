@@ -20,7 +20,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -42,7 +42,7 @@ public class ACCaselessHandler extends ACWeaponHandler {
      * @param g
      */
     public ACCaselessHandler (ToHitData t, WeaponAttackAction w,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(t, w, g, s);
     }
 

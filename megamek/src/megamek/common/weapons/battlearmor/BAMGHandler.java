@@ -20,7 +20,7 @@ package megamek.common.weapons.battlearmor;
 import java.util.Vector;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -46,7 +46,7 @@ public class BAMGHandler extends WeaponHandler {
      * @param g
      * @param s
      */
-    public BAMGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public BAMGHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         damageType = DamageType.ANTI_INFANTRY;
     }

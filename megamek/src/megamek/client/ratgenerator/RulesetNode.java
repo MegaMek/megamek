@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
@@ -28,7 +28,6 @@ import megamek.common.UnitType;
  * Base class of all nodes in the Force Generator faction ruleset files.
  * 
  * @author Neoancient
- *
  */
 public class RulesetNode {
     protected String name;
@@ -68,51 +67,52 @@ public class RulesetNode {
 
     public boolean matches(ForceDescriptor fd, boolean augmented) {
         for (Object key : predicates.keySet()) {
-            String property = predicates.getProperty((String)key);
-            switch ((String)key) {
+            String property = predicates.getProperty((String) key);
+            switch ((String) key) {
                 case "ifUnitType":
-                    if (!matches(fd.getUnitType() == null?"":UnitType.getTypeName(fd.getUnitType()), property)) {
+                    if (!matches((fd.getUnitType() == null) ? "" : UnitType.getTypeName(fd.getUnitType()), property)) {
                         return false;
                     }
                     break;
                 case "ifWeightClass":
-                    if (!matches(fd.getWeightClassCode(), predicates.getProperty((String)key))) {
+                    if (!matches(fd.getWeightClassCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifRating":
-                    if (!matches(fd.getRating(), predicates.getProperty((String)key))) {
+                    if (!matches(fd.getRating(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifRole":
                     if (!collectionMatchesProperty(fd.getRoles().stream()
                             .filter(Objects::nonNull)
-                            .map(r -> r.toString())
-                            .collect(Collectors.toList()), predicates.getProperty((String)key))) {
+                            .map(MissionRole::toString)
+                            .collect(Collectors.toList()), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifFlags":
-                    if (!collectionMatchesProperty(fd.getFlags(), predicates.getProperty((String)key))) {
+                    if (!collectionMatchesProperty(fd.getFlags(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifMotive":
                     //FIXME: EntityMovementType::toString does not match the property from the file
-                    if (!collectionMatchesProperty(fd.getMovementModes().stream().map(mt -> mt.toString())
-                            .collect(Collectors.toList()), predicates.getProperty((String)key))) {
+                    if (!collectionMatchesProperty(fd.getMovementModes().stream()
+                            .map(EntityMovementMode::toString)
+                            .collect(Collectors.toList()), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifAugmented":
-                    if (predicates.getProperty((String)key).equals("1") !=
+                    if (predicates.getProperty((String) key).equals("1") !=
                     augmented) {
                         return false;
                     }
                     break;
                 case "ifDateBetween":
-                    if (!matchesDate(fd.getYear(), predicates.getProperty((String)key))) {
+                    if (!matchesDate(fd.getYear(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -126,23 +126,23 @@ public class RulesetNode {
                     }
                     break;
                 case "ifTopLevel":
-                    if(property.equals("1") != fd.isTopLevel()) {
+                    if (property.equals("1") != fd.isTopLevel()) {
                         return false;
                     }
                     break;
                 case "ifFaction":
-                    if (!matches(fd.getFaction(), predicates.getProperty((String)key))) {
+                    if (!matches(fd.getFaction(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifEschelon":
                     if (fd.getEschelon() == null ||
-                    !matches(fd.getEschelonCode(), predicates.getProperty((String)key))) {
+                    !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
                 case "ifIndex":
-                    if (!matches(String.valueOf(fd.getIndex()), predicates.getProperty((String)key))) {
+                    if (!matches(String.valueOf(fd.getIndex()), predicates.getProperty((String) key))) {
                         return false;
                     }
             }
@@ -162,7 +162,7 @@ public class RulesetNode {
         if (property.startsWith("!")) {
             return !matches(val, property.replaceFirst("!", ""));
         }
-        String [] ands = property.split(",");
+        String[] ands = property.split(",");
         for (String and : ands) {
             String[] ors = and.split("\\|");
             boolean result = false;
@@ -180,7 +180,7 @@ public class RulesetNode {
     }
 
     public boolean matchesDate(Integer year, String property) {
-        String [] ands = property.split("\\+");
+        String[] ands = property.split("\\+");
         for (String and : ands) {
             String[] ors = and.split("\\|");
             boolean result = false;
@@ -215,7 +215,7 @@ public class RulesetNode {
         if (property.startsWith("!")) {
             return !collectionMatchesProperty(list, property.replaceFirst("!", ""));
         }
-        String [] ands = property.split(",");
+        String[] ands = property.split(",");
         for (String and : ands) {
             String[] ors = and.split("\\|");
             boolean result = false;
@@ -246,8 +246,8 @@ public class RulesetNode {
 
     public void apply(ForceDescriptor fd, int i) {
         for (Object key : assertions.keySet()) {
-            String property = assertions.getProperty((String)key);
-            switch ((String)key) {
+            String property = assertions.getProperty((String) key);
+            switch ((String) key) {
                 case "unitType":
                     int unitType = ModelRecord.parseUnitType(property);
                     if (unitType < 0) {
@@ -310,9 +310,9 @@ public class RulesetNode {
                     }
                     for (String p : property.split(",")) {
                         if (p.startsWith("-")) {
-                            fd.getMovementModes().remove(EntityMovementMode.getMode(p.replace("-", "")));
+                            fd.getMovementModes().remove(EntityMovementMode.parseFromString(p.replace("-", "")));
                         } else {
-                            fd.getMovementModes().add(EntityMovementMode.getMode(p.replace("+", "")));
+                            fd.getMovementModes().add(EntityMovementMode.parseFromString(p.replace("+", "")));
                         }
                     }
                     break;

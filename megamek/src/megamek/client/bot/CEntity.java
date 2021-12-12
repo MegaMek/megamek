@@ -1938,31 +1938,13 @@ public class CEntity {
         return ToHitData.SIDE_REAR;
     }
 
-    public static int firingArcToHitArc(int arc) {
-        switch (arc) {
-            case Compute.ARC_FORWARD:
-                return ToHitData.SIDE_FRONT;
-            case Compute.ARC_LEFTARM:
-                return ToHitData.SIDE_LEFT;
-            case Compute.ARC_RIGHTARM:
-                return ToHitData.SIDE_RIGHT;
-            case Compute.ARC_REAR:
-                return ToHitData.SIDE_REAR;
-            case Compute.ARC_LEFTSIDE:
-                return ToHitData.SIDE_LEFT;
-            case Compute.ARC_RIGHTSIDE:
-                return ToHitData.SIDE_RIGHT;
-        }
-        return 0;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Entity) {
-            return ((Entity)obj).getId() == entity.getId();
+            return ((Entity) obj).getId() == entity.getId();
         }
         if (obj instanceof CEntity) {
-            return ((CEntity)obj).entity.getId() == entity.getId();
+            return ((CEntity) obj).entity.getId() == entity.getId();
         }
         return false;
     }

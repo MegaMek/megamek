@@ -17,8 +17,8 @@ package megamek.common.actions;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
@@ -97,7 +97,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         return damage;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getLeg());
     }
@@ -105,7 +105,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified leg to kick
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int leg) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
@@ -123,8 +123,8 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mech mode");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation()

@@ -3,71 +3,23 @@
  * ScenarioLoader - Copyright (C) 2002 Josh Yockey
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.IllegalFormatException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Queue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import megamek.MegaMek;
 import megamek.client.generator.RandomGenderGenerator;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.HitData;
-import megamek.common.IAero;
-import megamek.common.IArmorState;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.IStartingPositions;
-import megamek.common.MapSettings;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.Mounted;
-import megamek.common.Player;
-import megamek.common.Protomech;
-import megamek.common.SimpleTechLevel;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
@@ -75,6 +27,12 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#";
@@ -164,7 +122,7 @@ public class ScenarioLoader {
     }
     
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
-    private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
+    private AmmoType getValidAmmoType(Game game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
         final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         final EquipmentType currentAmmoType = mounted.getType();
@@ -382,7 +340,7 @@ public class ScenarioLoader {
         }
     }
 
-    public IGame createGame() throws Exception {
+    public Game createGame() throws Exception {
         MegaMek.getLogger().info("Loading scenario from " + scenarioFile);
         StringMultiMap p = load();
 
@@ -394,7 +352,7 @@ public class ScenarioLoader {
         Game g = new Game();
 
         // build the board
-        g.board = createBoard(p);
+        g.setBoardDirect(createBoard(p));
 
         // build the faction players
         Collection<Player> players = createPlayers(p);
@@ -433,7 +391,7 @@ public class ScenarioLoader {
         // Set up the teams (for initiative)
         g.setupTeams();
 
-        g.setPhase(IGame.Phase.PHASE_STARTING_SCENARIO);
+        g.setPhase(GamePhase.STARTING_SCENARIO);
 
         g.setupRoundDeployment();
 
@@ -508,7 +466,7 @@ public class ScenarioLoader {
         }
     }
 
-    private Collection<Entity> buildFactionEntities(StringMultiMap p, IPlayer player) throws ScenarioLoaderException {
+    private Collection<Entity> buildFactionEntities(StringMultiMap p, Player player) throws ScenarioLoaderException {
         String faction = player.getName();
         Pattern unitPattern = Pattern.compile(String.format("^Unit_\\Q%s\\E_[^_]+$", faction));
         Pattern unitDataPattern = Pattern.compile(String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction));
@@ -781,13 +739,13 @@ public class ScenarioLoader {
             if ((team != null) && !team.isEmpty()) {
                 try {
                     teamId = Integer.parseInt(team);
-                } catch(NumberFormatException ignored) {
+                } catch (NumberFormatException ignored) {
                     teamId++;
                 }
             } else {
                 teamId++;
             }
-            player.setTeam(Math.min(teamId, IPlayer.MAX_TEAMS - 1));
+            player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
             
             String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
             if ((minefields != null) && !minefields.isEmpty()) {
@@ -814,7 +772,7 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private IBoard createBoard(StringMultiMap p) throws ScenarioLoaderException {
+    private Board createBoard(StringMultiMap p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
         if (p.getString(PARAM_MAP_WIDTH) == null) {
             MegaMek.getLogger().info("No map width specified; using " + mapWidth);
@@ -875,7 +833,7 @@ public class ScenarioLoader {
             }
         }
 
-        IBoard[] ba = new IBoard[nWidth * nHeight];
+        Board[] ba = new Board[nWidth * nHeight];
         Queue<String> maps = new LinkedList<>(
             Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
         List<Boolean> rotateBoard = new ArrayList<>();
@@ -997,7 +955,7 @@ public class ScenarioLoader {
 
     public static void main(String[] saArgs) throws Exception {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
-        IGame g = sl.createGame();
+        Game g = sl.createGame();
         if (g != null) {
             MegaMek.getLogger().info("Successfully loaded.");
         }

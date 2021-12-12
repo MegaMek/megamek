@@ -49,7 +49,7 @@ public final class TroopSpace implements Transporter {
      */
     /* package */double currentSpace;
 
-    transient IGame game;
+    transient Game game;
 
 
     // Protected constructors and methods.
@@ -143,7 +143,11 @@ public final class TroopSpace implements Transporter {
         Vector<Entity> loaded = new Vector<Entity>();
         for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
             int key = entry.getKey();
-            loaded.add(game.getEntity(key));
+            Entity entity = game.getEntity(key);
+            
+            if (entity != null) {
+                loaded.add(entity);
+            }
         }
 
         return loaded;
@@ -193,7 +197,7 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public double getUnused(){
+    public double getUnused() {
         return currentSpace;
     }
 
@@ -253,7 +257,7 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
     

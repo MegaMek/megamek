@@ -9,14 +9,14 @@ allprojects {
     targetCompatibility = 11
     
     repositories {
-        jcenter()
+        mavenCentral()
         maven { url 'https://jitpack.io' } // SerialKiller master branch
     }
 }
 
 subprojects {
     group = 'org.megamek'
-    version = '0.49.3-SNAPSHOT'
+    version = '0.49.6-SNAPSHOT'
 }
 
 ext {

@@ -21,10 +21,7 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
-import megamek.common.Coords;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.*;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.LogLevel;
@@ -49,24 +46,24 @@ import org.mockito.stubbing.Answer;
  * Date: 8/17/13
  * Time: 9:32 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class ChatProcessorTest {
 
     private static BotClient mockBotHal;
-    private static final IGame MOCK_GAME = Mockito.mock(IGame.class);
+    private static final Game MOCK_GAME = Mockito.mock(Game.class);
     private static final LogLevel LOG_LEVEL = LogLevel.ERROR;
 
-    private static IPlayer mockBotPlayerHal;
-    private static IPlayer mockBotPlayerVGer;
-    private static IPlayer mockHumanPlayerDave;
-    private static IPlayer mockHumanPlayerKirk;
+    private static Player mockBotPlayerHal;
+    private static Player mockBotPlayerVGer;
+    private static Player mockHumanPlayerDave;
+    private static Player mockHumanPlayerKirk;
 
     @Before
     public void setUp() throws Exception {
-        mockHumanPlayerDave = Mockito.mock(IPlayer.class);
-        mockHumanPlayerKirk = Mockito.mock(IPlayer.class);
-        mockBotPlayerHal = Mockito.mock(IPlayer.class);
-        mockBotPlayerVGer = Mockito.mock(IPlayer.class);
+        mockHumanPlayerDave = Mockito.mock(Player.class);
+        mockHumanPlayerKirk = Mockito.mock(Player.class);
+        mockBotPlayerHal = Mockito.mock(Player.class);
+        mockBotPlayerVGer = Mockito.mock(Player.class);
 
         Mockito.when(mockHumanPlayerDave.getName()).thenReturn("Dave");
         Mockito.when(mockHumanPlayerDave.isEnemyOf(mockBotPlayerHal)).thenReturn(true);
@@ -96,7 +93,7 @@ public class ChatProcessorTest {
         Mockito.when(mockBotPlayerVGer.isEnemyOf(mockHumanPlayerKirk)).thenReturn(true);
         Mockito.when(mockBotPlayerVGer.getTeam()).thenReturn(1);
 
-        final Vector<IPlayer> playerVector = new Vector<>(4);
+        final Vector<Player> playerVector = new Vector<>(4);
         playerVector.add(mockHumanPlayerDave);
         playerVector.add(mockBotPlayerHal);
         playerVector.add(mockHumanPlayerKirk);
@@ -194,7 +191,7 @@ public class ChatProcessorTest {
     public void testAdditionalPrincessCommands() {
         final ChatProcessor testChatProcessor = new ChatProcessor();
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
         Mockito.when(MOCK_GAME.getBoard()).thenReturn(mockBoard);
 

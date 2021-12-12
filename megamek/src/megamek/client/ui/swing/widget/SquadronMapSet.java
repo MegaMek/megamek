@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,7 +29,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -76,7 +75,7 @@ public class SquadronMapSet implements DisplayMapSet {
 
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
 
-    public SquadronMapSet(JComponent c, IGame g) {
+    public SquadronMapSet(JComponent c, Game g) {
         comp = c;
 
         /*
@@ -129,17 +128,16 @@ public class SquadronMapSet implements DisplayMapSet {
     }
 
     public void setEntity(Entity e) {
-        List<Entity> fighters = e.getSubEntities().orElse(Collections.emptyList());
-        for(int i = 0; i < max_size; ++ i) {
-            if(i < fighters.size()) {
+        List<Entity> fighters = e.getSubEntities();
+        for (int i = 0; i < max_size; ++ i) {
+            if (i < fighters.size()) {
                 final Entity fighter = fighters.get(i);
                 IAero a = (IAero) fighter;
                 int armor = a.getCapArmor();
                 int armorO = a.getCap0Armor();
                 armorVLabel[i].setValue(Integer.toString(armor));
 
-                if (((Entity)fighter).getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (fighter.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                     armor = (int) Math.ceil(armor / 10.0);
                     armorO = (int) Math.ceil(armorO / 10.0);
                 }

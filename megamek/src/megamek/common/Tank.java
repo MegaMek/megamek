@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
@@ -98,6 +99,13 @@ public class Tank extends Entity {
 
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
+    
+    // maps ToHitData - SIDE_X constants to LOC_X constants here for hull down fixed side hit locations
+    protected static final Map<Integer, Integer> SIDE_LOC_MAPPING = 
+        Map.of(ToHitData.SIDE_FRONT, LOC_FRONT,
+                ToHitData.SIDE_LEFT, LOC_LEFT,
+                ToHitData.SIDE_RIGHT, LOC_RIGHT,
+                ToHitData.SIDE_REAR, LOC_REAR);
 
     @Override
     public int getUnitType() {
@@ -546,7 +554,7 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -561,7 +569,7 @@ public class Tank extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -639,7 +647,7 @@ public class Tank extends Entity {
             case HYDROFOIL:
                 // Can only deploy under a bridge if there is sufficient clearance.
                 if (hex.containsTerrain(Terrains.BRIDGE)
-                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.surface())) {
+                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.getLevel())) {
                     return true;
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
@@ -918,8 +926,8 @@ public class Tank extends Entity {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
@@ -941,8 +949,7 @@ public class Tank extends Entity {
                 if (!ignoreTurret) {
                     // on a hull down vee, all hits expect for those that come
                     // from the opposite direction to which it entered the hex
-                    // it
-                    // went Hull Down in go to turret if one exists.
+                    // it went Hull Down in go to turret if one exists.
                     if (!hasNoDualTurret()) {
                         int roll = Compute.d6() - 2;
                         if (roll <= 3) {
@@ -958,7 +965,7 @@ public class Tank extends Entity {
                 // the opposite direction to which it entered the hex it went
                 // Hull Down in hit side they come in from
                 else {
-                    nArmorLoc = side;
+                    nArmorLoc = SIDE_LOC_MAPPING.get(side);
                 }
                 // Hull Down tanks don't make hit location rolls
                 return new HitData(nArmorLoc);
@@ -976,9 +983,7 @@ public class Tank extends Entity {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -1195,8 +1200,7 @@ public class Tank extends Entity {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     /**
@@ -1798,15 +1802,13 @@ public class Tank extends Entity {
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
                     || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
+                Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP != null) {
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
-                            && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e
-                                .hasMoreElements();) {
+                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
+                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
@@ -2120,7 +2122,7 @@ public class Tank extends Entity {
         }
 
         // are we wheeled and in light snow?
-        IHex hex = game.getBoard().getHex(getPosition());
+        Hex hex = game.getBoard().getHex(getPosition());
         if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                 && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
@@ -2540,7 +2542,7 @@ public class Tank extends Entity {
 
             if (l == 7) {
                 getWeaponsAndEquipmentCost(true);
-            }else {
+            } else {
                 if (left.get(l).equals("Final Structural Cost")) {
                     bvText.append(startRow);
                     bvText.append(startColumn);
@@ -2656,7 +2658,7 @@ public class Tank extends Entity {
 
         // Engine Costs
         double engineCost = 0.0;
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isSupportVehicle()) {
                 engineCost = 5000 * getEngine().getWeightEngine(this)
                         * Engine.getSVCostMultiplier(getEngine().getEngineType());
@@ -2734,16 +2736,16 @@ public class Tank extends Entity {
         if (!isSupportVehicle()) {
             double diveTonnage;
             switch (movementMode) {
-            case HOVER:
-            case HYDROFOIL:
-            case VTOL:
-            case SUBMARINE:
-            case WIGE:
-                diveTonnage = Math.ceil(weight / 5.0) / 2.0;
-                break;
-            default:
-                diveTonnage = 0.0;
-                break;
+                case HOVER:
+                case HYDROFOIL:
+                case VTOL:
+                case SUBMARINE:
+                case WIGE:
+                    diveTonnage = Math.ceil(weight / 5.0) / 2.0;
+                    break;
+                default:
+                    diveTonnage = 0.0;
+                    break;
             }
             if (movementMode != EntityMovementMode.VTOL) {
                 costs[i++] = diveTonnage * 20000;
@@ -2944,7 +2946,7 @@ public class Tank extends Entity {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
-        IHex occupiedHex = game.getBoard().getHex(getPosition());
+        Hex occupiedHex = game.getBoard().getHex(getPosition());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }
@@ -3170,7 +3172,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3264,7 +3266,7 @@ public class Tank extends Entity {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3880,7 +3882,7 @@ public class Tank extends Entity {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 2;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 3;
         } else {
             return 4;
@@ -3910,26 +3912,26 @@ public class Tank extends Entity {
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
-        case 0:
-            if (location > LOC_BODY && location < LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 1:
-            if (location == LOC_REAR) {
-                return 1.0;
-            }
-            break;
-        case 2:
-            if (location == LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 3:
-            if (location == LOC_TURRET_2) {
-                return 1.0;
-            }
-            break;
+            case 0:
+                if (location > LOC_BODY && location < LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 1:
+                if (location == LOC_REAR) {
+                    return 1.0;
+                }
+                break;
+            case 2:
+                if (location == LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 3:
+                if (location == LOC_TURRET_2) {
+                    return 1.0;
+                }
+                break;
         }
         return 0; 
     }

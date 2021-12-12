@@ -17,10 +17,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import megamek.MegaMek;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBoard;
-import megamek.common.MovePath;
+import megamek.common.*;
 
 /**
  * This contains useful classes and functions for geometric questions
@@ -158,8 +155,7 @@ public class BotGeometry {
             boolean flip = getDirection() > 2;
             HexLine[] edges = a.getEdges();
             if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
-                System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
-                                                             a.toString()));
+                MegaMek.getLogger().error(new IllegalStateException("Detection of NULL edges in ConvexBoardArea: " + a));
                 return 0;
             }
             if (edges[getDirection()].getIntercept() == getIntercept()) {
@@ -340,10 +336,10 @@ public class BotGeometry {
             return msg.toString();
         }
 
-        void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit, IBoard board) {
+        void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit, Board board) {
             while (cfit.hasNext()) {
                 CoordFacingCombo cf = cfit.next();
-                if(cf != null && board.contains(cf.coords)) {
+                if ((cf != null) && board.contains(cf.coords)) {
                     expandToInclude(cf.getCoords());
                 }
             }

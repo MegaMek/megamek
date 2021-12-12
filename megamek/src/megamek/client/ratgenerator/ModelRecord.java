@@ -89,7 +89,7 @@ public class ModelRecord extends AbstractUnitRecord {
 			//TODO: id quads and tripods
 			movementMode = EntityMovementMode.BIPED;
 		} else {
-			movementMode = EntityMovementMode.getMode(ms.getUnitSubType().toLowerCase());
+			movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
 		}
 
     	double totalBV = 0.0;
@@ -116,7 +116,7 @@ public class ModelRecord extends AbstractUnitRecord {
     		}
     		if (eq instanceof WeaponType) {
     			totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-    			switch (((megamek.common.weapons.Weapon)eq).getAmmoType()) {
+    			switch (((megamek.common.weapons.Weapon) eq).getAmmoType()) {
     				case AmmoType.T_AC_LBX:
     				case AmmoType.T_HAG:
     				case AmmoType.T_SBGAUSS:
@@ -124,16 +124,16 @@ public class ModelRecord extends AbstractUnitRecord {
     			}
     			if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
     				flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
-    				roles.add(((WeaponType)eq).getAmmoType() == AmmoType.T_ARROW_IV?
+    				roles.add(((WeaponType) eq).getAmmoType() == AmmoType.T_ARROW_IV?
     				        MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
     			}
         		if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
         			incendiary = true;
         			apWeapons = true;
         		}
-        		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
-        		        || ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM_IMP
-        				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
+        		incendiary |= ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM
+        		        || ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP
+        				|| ((WeaponType) eq).getAmmoType() == AmmoType.T_MRM;
         		
         		if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
         				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
@@ -142,7 +142,7 @@ public class ModelRecord extends AbstractUnitRecord {
         		if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
         			ammoBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
         		}
-        		if (((WeaponType)eq).getLongRange() >= 20) {
+        		if (((WeaponType) eq).getLongRange() >= 20) {
         			lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
         		}
         		if (eq.hasFlag(WeaponType.F_TAG)) {
@@ -298,7 +298,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	}
 	
 	public void setRequiredUnits(String str) {
-		String [] subfields = str.split(",");
+		String[] subfields = str.split(",");
 		for (String unit : subfields) {
 			if (unit.startsWith("req:")) {
 				requiredUnits.add(unit.replace("req:", ""));

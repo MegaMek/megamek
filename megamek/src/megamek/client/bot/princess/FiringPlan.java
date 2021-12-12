@@ -140,12 +140,12 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
             return actionVector;
         }
         
-        if(getTwist() != 0) {
+        if (getTwist() != 0) {
         	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
         		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
         
-        if(flipArms) {
+        if (flipArms) {
             actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
         }
         
@@ -167,8 +167,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
                                                                          .append(" at ");
         Set<Integer> targets = new HashSet<>();
         // loop through all the targets for this firing plan, only show each target once.
-        for(WeaponFireInfo weaponFireInfo : this) {
-            if(!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
+        for (WeaponFireInfo weaponFireInfo : this) {
+            if (!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
                 description.append(weaponFireInfo.getTarget().getDisplayName()).append(", ");
                 targets.add(weaponFireInfo.getTarget().getTargetId());
             }
@@ -343,6 +343,6 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
      */
     @Override
     public int compareTo(FiringPlan other) {
-        return (int)(getUtility() - other.getUtility() + 0.5);
+        return (int) (getUtility() - other.getUtility() + 0.5);
     }
 }

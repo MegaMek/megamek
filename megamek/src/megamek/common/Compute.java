@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -43,6 +44,8 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -317,7 +320,7 @@ public class Compute {
      * The position, and elevation for the stacking violation are derived from
      * the Entity represented by the passed Entity ID.
      */
-    public static Entity stackingViolation(IGame game, int enteringId,
+    public static Entity stackingViolation(Game game, int enteringId,
             Coords coords) {
         Entity entering = game.getEntity(enteringId);
         if (entering == null) {
@@ -337,7 +340,7 @@ public class Compute {
      *            Represents the unit transporing entering, which may affect
      *            stacking, can be null
      */
-    public static Entity stackingViolation(IGame game, Entity entering,
+    public static Entity stackingViolation(Game game, Entity entering,
             Coords dest, Entity transport) {
         return stackingViolation(game, entering, entering.getElevation(), dest,
                 transport);
@@ -355,7 +358,7 @@ public class Compute {
      *            Represents the unit transporing entering, which may affect
      *            stacking, can be null
      */
-    public static Entity stackingViolation(IGame game, Entity entering,
+    public static Entity stackingViolation(Game game, Entity entering,
             int elevation, Coords dest, Entity transport) {
         return stackingViolation(game, entering, entering.getPosition(),
                 elevation, dest, transport);
@@ -372,7 +375,7 @@ public class Compute {
      *            Represents the unit transporing entering, which may affect
      *            stacking, can be null
      */
-    public static Entity stackingViolation(IGame game, Entity entering,
+    public static Entity stackingViolation(Game game, Entity entering,
             Coords origPosition, int elevation, Coords dest, Entity transport) {
         // no stacking violations on the low-atmosphere and space maps
         if (!game.getBoard().onGround()) {
@@ -513,7 +516,7 @@ public class Compute {
      * in the specified hex. This is only called for stacking purposes, and so
      * does not return true if the enemy unit is currenly making a DFA.
      */
-    public static boolean isEnemyIn(IGame game, Entity entity, Coords coords,
+    public static boolean isEnemyIn(Game game, Entity entity, Coords coords,
                                     boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Entity inHex : game.getEntitiesVector(coords)) {
@@ -532,13 +535,13 @@ public class Compute {
     /**
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
-    public static boolean isPilotingSkillNeeded(IGame game, int entityId,
+    public static boolean isPilotingSkillNeeded(Game game, int entityId,
             Coords src, Coords dest, EntityMovementType movementType,
             boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
             int destElevation, MoveStep moveStep) {
         final Entity entity = game.getEntity(entityId);
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
         int delta_alt = (destElevation + destHex.getLevel())
                         - (srcElevation + srcHex.getLevel());
@@ -591,7 +594,7 @@ public class Compute {
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying or QuadVee in vehicle mode.
         if ((movementType != EntityMovementType.MOVE_JUMP)
-                && !(entity.getElevation() > destHex.surface())
+                && !(entity.getElevation() > destHex.getLevel())
                 && !((entity.getMovementMode() == EntityMovementMode.HOVER)
                         || (entity.getMovementMode() == EntityMovementMode.NAVAL)
                         || (entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
@@ -715,7 +718,7 @@ public class Compute {
     /**
      * Can the defending unit be displaced from the source to the destination?
      */
-    public static boolean isValidDisplacement(IGame game, int entityId,
+    public static boolean isValidDisplacement(Game game, int entityId,
             Coords src, int direction) {
         return Compute.isValidDisplacement(game, entityId, src,
                 src.translated(direction));
@@ -724,11 +727,11 @@ public class Compute {
     /**
      * Can the defending unit be displaced from the source to the destination?
      */
-    public static boolean isValidDisplacement(IGame game, int entityId,
+    public static boolean isValidDisplacement(Game game, int entityId,
             Coords src, Coords dest) {
         final Entity entity = game.getEntity(entityId);
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final ArrayList<Coords> intervening = Coords.intervening(src, dest);
         final int direction = src.direction(dest);
 
@@ -770,7 +773,7 @@ public class Compute {
             if (!game.getBoard().contains(c)) {
                 continue;
             }
-            final IHex hex = game.getBoard().getHex(c);
+            final Hex hex = game.getBoard().getHex(c);
             int change = entity.elevationOccupied(hex)
                          - entity.elevationOccupied(srcHex);
             if (change > entity.getMaxElevationChange()) {
@@ -796,7 +799,7 @@ public class Compute {
      *
      * @return valid displacement coords, or null if none
      */
-    public static Coords getValidDisplacement(IGame game, int entityId,
+    public static Coords getValidDisplacement(Game game, int entityId,
             Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = {0, 1, 5, 2, 4, 3};
@@ -834,7 +837,7 @@ public class Compute {
      *
      * @return valid displacement coords, or null if none
      */
-    public static Coords getPreferredDisplacement(IGame game, int entityId,
+    public static Coords getPreferredDisplacement(Game game, int entityId,
             Coords src, int direction) {
         final Entity entity = game.getEntity(entityId);
         int highestElev = Integer.MIN_VALUE;
@@ -855,7 +858,7 @@ public class Compute {
                     // friendly unit here, try next hex
                     continue;
                 }
-                IHex hex = game.getBoard().getHex(dest);
+                Hex hex = game.getBoard().getHex(dest);
                 int elevation = entity.elevationOccupied(hex);
                 if (elevation > highestElev) {
                     highestElev = elevation;
@@ -876,7 +879,7 @@ public class Compute {
             Coords dest = src.translated((direction + offset) % 6);
             if (Compute.isValidDisplacement(game, entityId, src, dest)
                 && game.getBoard().contains(dest)) {
-                IHex hex = game.getBoard().getHex(dest);
+                Hex hex = game.getBoard().getHex(dest);
                 int elevation = entity.elevationOccupied(hex);
                 if (elevation > highestElev) {
                     highestElev = elevation;
@@ -896,12 +899,12 @@ public class Compute {
      * preferring higher hexes, then randomly, or returns the base hex if
      * they're impassible.
      */
-    public static Coords getMissedChargeDisplacement(IGame game, int entityId,
+    public static Coords getMissedChargeDisplacement(Game game, int entityId,
                                                      Coords src, int direction) {
         Coords first = src.translated((direction + 1) % 6);
         Coords second = src.translated((direction + 5) % 6);
-        IHex firstHex = game.getBoard().getHex(first);
-        IHex secondHex = game.getBoard().getHex(second);
+        Hex firstHex = game.getBoard().getHex(first);
+        Hex secondHex = game.getBoard().getHex(second);
         Entity entity = game.getEntity(entityId);
 
         if ((firstHex == null) || (secondHex == null)) {
@@ -940,7 +943,7 @@ public class Compute {
      * the lowest attack modifiers, of course. LOS modifiers and movement are
      * considered.
      */
-    public static Entity findSpotter(IGame game, Entity attacker,
+    public static Entity findSpotter(Game game, Entity attacker,
                                      Targetable target) {
         Entity spotter = null;
         int taggedBy = -1;
@@ -954,8 +957,7 @@ public class Compute {
                     .getTargetId())) || (taggedBy == other.getId()))
                 && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
-                LosEffects los = LosEffects.calculateLos(game, other.getId(),
-                        target, true);
+                LosEffects los = LosEffects.calculateLOS(game, other, target, true);
                 ToHitData mods = los.losModifiers(game);
                 // If the target isn't spotted, can't target
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -993,11 +995,11 @@ public class Compute {
      * @param game Game object
      * @return Whether or not the given entity or other targetable is tagged.
      */
-    public static boolean isTargetTagged(Targetable target, IGame game) {
+    public static boolean isTargetTagged(Targetable target, Game game) {
         boolean targetTagged = false;
         
         Entity te = null;
-        if(target instanceof Entity) {
+        if (target instanceof Entity) {
             te = (Entity) target;
         }
         
@@ -1022,11 +1024,11 @@ public class Compute {
      * @param game Game object
      * @return Whether or not the given entity or other targetable is tagged by the specific attacker.
      */
-    public static boolean isTargetTagged(Entity attacker, Targetable target, IGame game) {
+    public static boolean isTargetTagged(Entity attacker, Targetable target, Game game) {
         boolean targetTagged = false;
         
         Entity te = null;
-        if(target instanceof Entity) {
+        if (target instanceof Entity) {
             te = (Entity) target;
         }
         
@@ -1047,8 +1049,7 @@ public class Compute {
     
     
     public static ToHitData getImmobileMod(Targetable target) {
-        return Compute.getImmobileMod(target, Entity.LOC_NONE,
-                                      IAimingModes.AIM_MODE_NONE);
+        return Compute.getImmobileMod(target, Entity.LOC_NONE, AimingMode.NONE);
     }
 
     /**
@@ -1059,17 +1060,15 @@ public class Compute {
      * @return The relevant ToHitData
      */
     @Nullable
-    public static ToHitData getImmobileMod(Targetable target, int aimingAt,
-                                           int aimingMode) {
+    public static ToHitData getImmobileMod(Targetable target, int aimingAt, AimingMode aimingMode) {
         // if we are bombing hexes, they are not considered immobile.
-        if(target.getTargetType() == Targetable.TYPE_HEX_BOMB ||
-           target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
+        if ((target.getTargetType() == Targetable.TYPE_HEX_BOMB)
+                || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             return null;
         }
 
         if (target.isImmobile()) {
-            if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD)
-                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+            if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }
             return new ToHitData(-4, "target immobile");
@@ -1084,7 +1083,7 @@ public class Compute {
      *
      * @return the modifiers
      */
-    public static ToHitData getRangeMods(IGame game, Entity ae, int weaponId,
+    public static ToHitData getRangeMods(Game game, Entity ae, int weaponId,
                                          Targetable target) {
         Mounted weapon = ae.getEquipment(weaponId);
         WeaponType wtype = (WeaponType) weapon.getType();
@@ -1164,7 +1163,7 @@ public class Compute {
         }
 
         // is water involved?
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         int targTop = target.relHeight();
         int targBottom = target.getElevation();
 
@@ -1335,7 +1334,7 @@ public class Compute {
                 !(isWeaponInfantry || isSwarmOrLegAttack
                   || isAttackerBA))
             && !(ae.isAirborne())
-            && !(ae.isBomber() && ((IBomber)ae).isVTOLBombing())
+            && !(ae.isBomber() && ((IBomber) ae).isVTOLBombing())
             && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                  && !ae.isAirborne() && !ae.isSpaceborne())
             && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target
@@ -1357,7 +1356,7 @@ public class Compute {
         if (isIndirect
             && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
             && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-            && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+            && LosEffects.calculateLOS(game, ae, target).canSee()
             && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                 .canSee(game, ae, target))
             && !(wtype instanceof MekMortarWeapon)) {
@@ -1470,7 +1469,7 @@ public class Compute {
         if (isWeaponInfantry) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
                     (InfantryWeapon) wtype,
-                    (ae instanceof Infantry)? ((Infantry)ae).getSecondaryWeapon() : null,
+                    (ae instanceof Infantry) ? ((Infantry) ae).getSecondaryWeapon() : null,
                             weaponUnderwater);
 
             int rangeModifier = mods.getValue();
@@ -1671,7 +1670,8 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
+    public static int effectiveDistance(final Game game, final Entity attacker,
+                                        final @Nullable Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
     }
 
@@ -1682,9 +1682,13 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(IGame game, Entity attacker, Targetable target,
-                                        boolean useGroundDistance) {
-        if (Compute.isAirToGround(attacker, target)
+    public static int effectiveDistance(final Game game, final Entity attacker,
+                                        final @Nullable Targetable target,
+                                        final boolean useGroundDistance) {
+        if (target == null) {
+            MegaMek.getLogger().error("Attempted to determine the effective distance to a null target");
+            return 0;
+        } else if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
@@ -1839,7 +1843,7 @@ public class Compute {
      * Delete it if nova works but remember to alter the /nova debug server
      * command.
      */
-    public static Entity exposed_findC3Spotter(IGame game, Entity attacker,
+    public static Entity exposed_findC3Spotter(Game game, Entity attacker,
                                                Targetable target) {
         return findC3Spotter(game, attacker, target);
     }
@@ -1854,7 +1858,7 @@ public class Compute {
      * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are
      *         found
      */
-    private static Entity findC3Spotter(IGame game, Entity attacker,
+    private static Entity findC3Spotter(Game game, Entity attacker,
             Targetable target) {
         // no available C3-like system
         if (!attacker.hasC3() && !attacker.hasC3i()
@@ -1875,7 +1879,7 @@ public class Compute {
             }
 
             // Must have LoS, Compute.canSee considers sensors and visual range
-            if (!LosEffects.calculateLos(game, friend.getId(), target).canSee()) {
+            if (!LosEffects.calculateLOS(game, friend, target).canSee()) {
                 continue;
             }
 
@@ -1974,7 +1978,7 @@ public class Compute {
      *
      * @return any applicable modifiers due to being prone
      */
-    public static ToHitData getProneMods(IGame game, Entity attacker,
+    public static ToHitData getProneMods(Game game, Entity attacker,
                                          int weaponId) {
         if (!attacker.isProne()) {
             return null; // no modifier
@@ -1983,7 +1987,7 @@ public class Compute {
         Mounted weapon = attacker.getEquipment(weaponId);
         if (attacker.entityIsQuad()) {
             int legsDead = ((Mech) attacker).countBadLegs();
-            if (legsDead == 0 && !((Mech)attacker).hasHipCrit()) {
+            if (legsDead == 0 && !attacker.hasHipCrit()) {
                 // No legs destroyed and no hip crits: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
@@ -2003,11 +2007,9 @@ public class Compute {
             if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
                 || (weapon.getLocation() == Mech.LOC_LARM || (weapon.getSecondLocation() == Mech.LOC_LARM))) {
                 int otherArm = (weapon.getLocation() == Mech.LOC_RARM
-                        || weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
-                                                                     : Mech.LOC_RARM;
+                        || weapon.getSecondLocation() == Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
-                if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
-                                                   otherArm)) {
+                if (Compute.isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                                          "Prone and firing from other front leg already.");
                 }
@@ -2018,7 +2020,7 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
-            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+            if (((Mech) attacker).getCockpitType() == Mech.COCKPIT_DUAL
                     && attacker.getCrew().hasDedicatedGunner()) {
                 mods.addModifier(1, "attacker prone");
             } else {
@@ -2056,8 +2058,7 @@ public class Compute {
                 }
 
                 int otherArm = (weapon.getLocation() == Mech.LOC_RARM
-                        || weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
-                                                                        : Mech.LOC_RARM;
+                        || weapon.getSecondLocation() == Mech.LOC_RARM) ? Mech.LOC_LARM : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
                                                    otherArm)) {
@@ -2071,7 +2072,7 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire leg-mounted weapons while prone.");
             }
-            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+            if (((Mech) attacker).getCockpitType() == Mech.COCKPIT_DUAL
                     && attacker.getCrew().hasDedicatedGunner()) {
                 mods.addModifier(1, "attacker prone");
             } else {
@@ -2091,11 +2092,10 @@ public class Compute {
      *
      * @return true if there is a previous attack from this arm
      */
-    private static boolean isFiringFromArmAlready(IGame game, int weaponId,
+    private static boolean isFiringFromArmAlready(Game game, int weaponId,
                                                   final Entity attacker, int armLoc) {
         int torsoLoc = Mech.getInnerLocation(armLoc);
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             if (!(ea instanceof WeaponAttackAction)) {
                 continue;
@@ -2162,7 +2162,7 @@ public class Compute {
 
         // only mechs have arm actuators - for those, we check whether
         // there is arm actuator damage
-        else if(attacker instanceof Mech) {
+        else if (attacker instanceof Mech) {
             // split weapons need to account for arm actuator hits, too
             // see bug 1363690
             // we don't need to specifically check for weapons split between
@@ -2182,7 +2182,7 @@ public class Compute {
             }
             
             // only arms can have damaged arm actuators
-            if(location == Mech.LOC_LARM || location == Mech.LOC_RARM) {
+            if (location == Mech.LOC_LARM || location == Mech.LOC_RARM) {
                 if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                              Mech.ACTUATOR_SHOULDER, location) > 0) {
                     mods.addModifier(4, "shoulder actuator destroyed");
@@ -2218,7 +2218,7 @@ public class Compute {
                 mods.addModifier(2, "attacker sensors damaged");
             }
         } else if (sensorHits > 0) {
-            if (attacker instanceof Mech && ((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+            if (attacker instanceof Mech && ((Mech) attacker).getCockpitType() == Mech.COCKPIT_DUAL
                     && attacker.getCrew().hasDedicatedGunner()) {
                 mods.addModifier(1, "attacker sensors damaged");
             } else {
@@ -2255,7 +2255,7 @@ public class Compute {
      * @return The secondary target modifier.
      * @author Ben
      */
-    public static ToHitData getSecondaryTargetMod(IGame game, Entity attacker,
+    public static ToHitData getSecondaryTargetMod(Game game, Entity attacker,
             Targetable target) {
 
         // large craft do not get secondary target mod
@@ -2277,8 +2277,7 @@ public class Compute {
         boolean primaryInFrontArc = false;
         // Track # of targets, for secondary modifiers w/ multi-crew vehicles
         Set<Integer> targIds = new HashSet<>();
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
@@ -2312,7 +2311,7 @@ public class Compute {
                     } else if ((primaryTarget == Entity.NONE) && !curInFrontArc) {
                         primaryTarget = prevAttack.getTargetId();
                     }
-                } else if (primaryTarget == Entity.NONE){
+                } else if (primaryTarget == Entity.NONE) {
                     primaryTarget = prevAttack.getTargetId();
                 }
             }
@@ -2382,7 +2381,7 @@ public class Compute {
     /**
      * Modifier to attacks due to attacker movement
      */
-    public static ToHitData getAttackerMovementModifier(IGame game, int entityId) {
+    public static ToHitData getAttackerMovementModifier(Game game, int entityId) {
         return Compute.getAttackerMovementModifier(game, entityId,
                                                    game.getEntity(entityId).moved);
     }
@@ -2390,7 +2389,7 @@ public class Compute {
     /**
      * Modifier to attacks due to attacker movement
      */
-    public static ToHitData getAttackerMovementModifier(IGame game,
+    public static ToHitData getAttackerMovementModifier(Game game,
             int entityId, EntityMovementType movement) {
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
@@ -2429,7 +2428,7 @@ public class Compute {
 
         //Dual cockpit with both pilot and gunner has lower modifier for attacker movement.
         if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
-                && entity instanceof Mech && ((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL
                 && entity.getCrew().hasDedicatedGunner()) {
             for (TargetRollModifier mod : toHit.getModifiers()) {
                 mod.setValue(mod.getValue() / 2);
@@ -2441,7 +2440,7 @@ public class Compute {
     /**
      * Modifier to attacks due to spotter movement
      */
-    public static ToHitData getSpotterMovementModifier(IGame game, int entityId) {
+    public static ToHitData getSpotterMovementModifier(Game game, int entityId) {
         return Compute.getSpotterMovementModifier(game, entityId,
                                                   game.getEntity(entityId).moved);
     }
@@ -2449,7 +2448,7 @@ public class Compute {
     /**
      * Modifier to attacks due to spotter movement
      */
-    public static ToHitData getSpotterMovementModifier(IGame game,
+    public static ToHitData getSpotterMovementModifier(Game game,
                                                        int entityId, EntityMovementType movement) {
         ToHitData toHit = new ToHitData();
 
@@ -2479,7 +2478,7 @@ public class Compute {
      * Modifier to physical attack BTH due to pilot advantages
      */
     public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
-                                                      final ToHitData toHit, final IGame game) {
+                                                      final ToHitData toHit, final Game game) {
         Objects.requireNonNull(attacker);
 
         if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
@@ -2507,7 +2506,7 @@ public class Compute {
     /**
      * Modifier to attacks due to target movement
      */
-    public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
+    public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
 
         if (entity.isAero()) {
@@ -2550,7 +2549,7 @@ public class Compute {
                         game);
         if (entity.moved != EntityMovementType.MOVE_JUMP
                 && entity.delta_distance > 0
-                && entity instanceof Mech && ((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL
                 && entity.getCrew().hasDedicatedPilot()) {
             if (toHit.getModifiers().isEmpty()) {
                 toHit.addModifier(1, "target moved 1-2 hexes");
@@ -2581,7 +2580,7 @@ public class Compute {
      * Target movement modifer for the specified delta_distance
      */
     public static ToHitData getTargetMovementModifier(int distance,
-            boolean jumped, boolean isVTOL, IGame game) {
+            boolean jumped, boolean isVTOL, Game game) {
         ToHitData toHit = new ToHitData();
         if (distance == 0 && !jumped) {
             return toHit;
@@ -2634,9 +2633,9 @@ public class Compute {
     /**
      * Modifier to attacks due to attacker terrain
      */
-    public static ToHitData getAttackerTerrainModifier(IGame game, int entityId) {
+    public static ToHitData getAttackerTerrainModifier(Game game, int entityId) {
         final Entity attacker = game.getEntity(entityId);
-        final IHex hex = game.getBoard().getHex(attacker.getPosition());
+        final Hex hex = game.getBoard().getHex(attacker.getPosition());
 
         ToHitData toHit = new ToHitData();
 
@@ -2653,22 +2652,22 @@ public class Compute {
      * Modifier to attacks due to target terrain TODO:um....should VTOLs get
      * modifiers for smoke, etc.
      */
-    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
+    public static ToHitData getTargetTerrainModifier(Game game, Targetable t) {
         return Compute.getTargetTerrainModifier(game, t, 0);
     }
 
-    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
+    public static ToHitData getTargetTerrainModifier(Game game, Targetable t,
                                                      int eistatus) {
         return Compute.getTargetTerrainModifier(game, t, eistatus, false);
     }
 
-    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
+    public static ToHitData getTargetTerrainModifier(Game game, Targetable t,
                                                      int eistatus, boolean attackerInSameBuilding) {
         return Compute.getTargetTerrainModifier(game, t, eistatus,
                                                 attackerInSameBuilding, false);
     }
 
-    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
+    public static ToHitData getTargetTerrainModifier(Game game, Targetable t,
                                                      int eistatus, boolean attackerInSameBuilding,
                                                      boolean underwaterWeapon) {
         ToHitData toHit = new ToHitData();
@@ -2680,7 +2679,7 @@ public class Compute {
         }
         
         Entity entityTarget = null;
-        IHex hex = game.getBoard().getHex(t.getPosition());
+        Hex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
             entityTarget = (Entity) t;
             if (hex == null) {
@@ -2710,7 +2709,7 @@ public class Compute {
                 || !hex.containsTerrain(Terrains.SMOKE);
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
-                               && (entityTarget.getElevation() < hex.surface());
+                               && (entityTarget.getElevation() < hex.getLevel());
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -2806,8 +2805,8 @@ public class Compute {
         return toHit;
     }
 
-    public static ToHitData getStrafingTerrainModifier(IGame game,
-                                                       int eistatus, IHex hex) {
+    public static ToHitData getStrafingTerrainModifier(Game game,
+                                                       int eistatus, Hex hex) {
         ToHitData toHit = new ToHitData();
         // Smoke and woods. With L3, the effects STACK.
         int woodsLevel = hex.terrainLevel(Terrains.WOODS);
@@ -2865,52 +2864,44 @@ public class Compute {
     }
 
     /**
-     * Calculates the current theoretical damage absorbable(armor+structure, etc) by the given target.
+     * Calculates the current theoretical damage absorbable (armor+structure, etc) by the given target.
      * Used as a measure of the potential durability of the target under fire.
      */
-    public static int getTargetTotalHP(IGame game, Targetable target) {
+    public static int getTargetTotalHP(Game game, Targetable target) {
         int targetType = target.getTargetType();
         int targetId = target.getTargetId();
         Coords position = target.getPosition();
 
-        //First, handle buildings versus entities, since they are handled differently.
-        if(targetType == Targetable.TYPE_BUILDING) {
-            //Buildings are a simple sum of their current CF and armor values.
-            Building parentBuilding = game.getBoard().getBuildingAt(position); //the building the targeted hex belongs to. We have to get this and then get values for the specific hex internally to it.
-            int targetCF = parentBuilding.getCurrentCF(position);
-            int targetArmor = parentBuilding.getArmor(position);
-            return targetCF + targetArmor;
+        // First, handle buildings versus entities, since they are handled differently.
+        if (targetType == Targetable.TYPE_BUILDING) {
+            // Buildings are a simple sum of their current CF and armor values.
+            // the building the targeted hex belongs to. We have to get this and then get values for the specific hex internally to it.
+            final Building parentBuilding = game.getBoard().getBuildingAt(position);
+            return (parentBuilding == null) ? 0
+                    : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
         } else if (targetType == Targetable.TYPE_ENTITY) {
-            //I don't *think* we have to handle infantry differently here- I think these methods should return the total number of men remaining as internal structure.
+            //I don't *think* we have to handle infantry differently here - I think these methods should return the total number of men remaining as internal structure.
             Entity targetEntity = game.getEntity(targetId);
 
-            if (targetEntity instanceof GunEmplacement) { //If this is a gun emplacement, handle it as the building hex it is in.
-                Building parentBuilding = game.getBoard().getBuildingAt(position);
-                int targetCF = parentBuilding.getCurrentCF(position);
-                int targetArmor = parentBuilding.getArmor(position);
-                return targetCF + targetArmor;
+            if (targetEntity == null) {
+                return 0;
+            } else if (targetEntity instanceof GunEmplacement) {
+                // If this is a gun emplacement, handle it as the building hex it is in.
+                final Building parentBuilding = game.getBoard().getBuildingAt(position);
+                return (parentBuilding == null) ? 0
+                        : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
+            } else {
+                return targetEntity.getTotalArmor() + targetEntity.getTotalInternal();
             }
-            int targetArmor = targetEntity.getTotalArmor();
-            int targetStructure = targetEntity.getTotalInternal();
-            return targetArmor + targetStructure;
         } else if (targetType == Targetable.TYPE_HEX_CLEAR) {
             // clearing a hex - the "HP" is the terrain factor of destroyable terrain on this hex
-            IHex mhex = game.getBoard().getHex(position);
-            int terrainTypes[] = mhex.getTerrainTypes();
+            Hex mhex = game.getBoard().getHex(position);
             int totalTF = 0;
-            
-            for (int i = 0; i < terrainTypes.length; i++) {
-                int tf = 0;
-                int terType = terrainTypes[i];
-                if (mhex.containsTerrain(terType)) {
-                    tf = mhex.getTerrain(terType).getTerrainFactor();
-                }
-                
-                totalTF += tf;
+            for (final int terrainType : mhex.getTerrainTypes()) {
+                totalTF += mhex.containsTerrain(terrainType) ? mhex.getTerrain(terrainType).getTerrainFactor() : 0;
             }
-            
             return totalTF;
-        } else { //something else, e.g. terrain. We probably don't need to handle it for now.
+        } else { // something else, e.g. terrain. We probably don't need to handle it for now.
             return 0;
         }
     }
@@ -2919,7 +2910,7 @@ public class Compute {
      * Returns the weapon attack out of a list that has the highest expected
      * damage
      */
-    public static WeaponAttackAction getHighestExpectedDamage(IGame g,
+    public static WeaponAttackAction getHighestExpectedDamage(Game g,
             List<WeaponAttackAction> vAttacks, boolean assumeHit) {
         float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
@@ -2985,7 +2976,7 @@ public class Compute {
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc.
      */
-    public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
+    public static float getExpectedDamage(Game g, WeaponAttackAction waa,
             boolean assumeHit) {
         return Compute.getExpectedDamage(g, waa, assumeHit, null);
     }
@@ -2994,7 +2985,7 @@ public class Compute {
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc.
      */
-    public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
+    public static float getExpectedDamage(Game g, WeaponAttackAction waa,
             boolean assumeHit, List<ECMInfo> allECMInfo) {
         boolean use_table = false;
 
@@ -3261,7 +3252,7 @@ public class Compute {
                 int rangeToTarget = attacker.getPosition().distance(target.getPosition());
                 
                 //Convert AV to fDamage for bay weapons, fighters, etc
-                if (attacker.usesWeaponBays()){
+                if (attacker.usesWeaponBays()) {
                     double av = 0;
                     double threat = 1;
                     for (int wId : weapon.getBayWeapons()) {
@@ -3402,7 +3393,7 @@ public class Compute {
 
         // Conventional infantry take double damage in the open
         if (g.getEntity(waa.getTargetId()).isConventionalInfantry()) {
-            IHex e_hex = g.getBoard().getHex(
+            Hex e_hex = g.getBoard().getHex(
                     g.getEntity(waa.getTargetId()).getPosition().getX(),
                     g.getEntity(waa.getTargetId()).getPosition().getY());
             if (!e_hex.containsTerrain(Terrains.WOODS)
@@ -3427,7 +3418,7 @@ public class Compute {
      * the damage is an estimation of effectiveness
      */
 
-    public static double getAmmoAdjDamage(IGame cgame, WeaponAttackAction atk) {
+    public static double getAmmoAdjDamage(Game cgame, WeaponAttackAction atk) {
         boolean no_bin = true;
         boolean multi_bin = false;
 
@@ -3719,7 +3710,7 @@ public class Compute {
      *
      * @return the <code>int</code> ID of weapon mode
      */
-    public static int spinUpCannon(IGame cgame, WeaponAttackAction atk) {
+    public static int spinUpCannon(Game cgame, WeaponAttackAction atk) {
         return spinUpCannon(cgame, atk, Compute.d6(2) - 1);
     }
     
@@ -3730,7 +3721,7 @@ public class Compute {
      * @return the <code>int</code> ID of weapon mode
      */
 
-    public static int spinUpCannon(IGame cgame, WeaponAttackAction atk, int spinupThreshold) {
+    public static int spinUpCannon(Game cgame, WeaponAttackAction atk, int spinupThreshold) {
 
         int threshold = 12;
         int final_spin;
@@ -3802,7 +3793,7 @@ public class Compute {
      * Checks to see if a target is in arc of the specified weapon, on the
      * specified entity
      */
-    public static boolean isInArc(IGame game, int attackerId, int weaponId,
+    public static boolean isInArc(Game game, int attackerId, int weaponId,
             Targetable t) {
         Entity ae = game.getEntity(attackerId);
         if ((ae instanceof Mech)
@@ -3829,7 +3820,7 @@ public class Compute {
         if (game.getBoard().inSpace()
             && ae.getPosition().equals(t.getPosition())
             && ae.isAero() && t.isAero()) {
-            int moveSort = shouldMoveBackHex(ae, (Entity)t);
+            int moveSort = shouldMoveBackHex(ae, (Entity) t);
             if (moveSort < 0) {
                 aPos = ae.getPriorPosition();
             }
@@ -3870,7 +3861,7 @@ public class Compute {
      * Returns true if the line between source Coords and target goes through
      * the hex in front of the attacker
      */
-    public static boolean isThroughFrontHex(IGame game, Coords src, Entity t) {
+    public static boolean isThroughFrontHex(Game game, Coords src, Entity t) {
         Coords dest = t.getPosition();
         int fa = dest.degree(src) - (t.getFacing() * 60);
         if (fa < 0) {
@@ -4173,7 +4164,7 @@ public class Compute {
      * checks to see whether the target is within visual range of the entity,
      * but not necessarily LoS
      */
-    public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
+    public static boolean inVisualRange(Game game, Entity ae, Targetable target) {
         return inVisualRange(game, null, ae, target);
     }
 
@@ -4191,7 +4182,7 @@ public class Compute {
      * @param target
      * @return
      */
-    public static boolean inVisualRange(IGame game, LosEffects los, Entity ae,
+    public static boolean inVisualRange(Game game, LosEffects los, Entity ae,
             Targetable target) {
         //Use firing solution if Advanced Sensors is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
@@ -4211,8 +4202,7 @@ public class Compute {
 
         // Target may be in an illuminated hex
         if (!teIlluminated) {
-            int lightLvl = game.isPositionIlluminated(target.getPosition());
-            teIlluminated = lightLvl != Game.ILLUMINATED_NONE;
+            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getPosition()).isNone();
         }
 
         // if either does not have a position then return false
@@ -4222,7 +4212,7 @@ public class Compute {
 
         // check visual range based on planetary conditions
         if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
+            los = LosEffects.calculateLOS(game, ae, target);
         }
         int visualRange = getVisualRange(game, ae, los, teIlluminated);
 
@@ -4279,7 +4269,7 @@ public class Compute {
      * @param game - the current game
      * @param targetId - the ID# of the target entity we're looking for
      */
-    public static boolean isAnySensorContact(IGame game, int targetId) {
+    public static boolean isAnySensorContact(Game game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
             if (detector.hasSensorContactFor(targetId) && game.getEntity(targetId) != null) {
                 game.getEntity(targetId).addBeenDetectedBy(detector.getOwner());
@@ -4306,7 +4296,7 @@ public class Compute {
      * @param game - the current game
      * @param targetId - the ID # of the target we're firing at
      */
-    public static boolean hasAnyFiringSolution(IGame game, int targetId) {
+    public static boolean hasAnyFiringSolution(Game game, int targetId) {
         for (Entity detector : game.getEntitiesVector()) {
             if (detector.hasFiringSolutionFor(targetId) && game.getEntity(targetId) != null) {
                 game.getEntity(targetId).addBeenSeenBy(detector.getOwner());
@@ -4324,7 +4314,7 @@ public class Compute {
      * @param target - the entity we're trying to spot
      * @return
      */
-    private static int calcSpaceECM(IGame game, Entity ae,
+    private static int calcSpaceECM(Game game, Entity ae,
             Targetable target) {
         int mod = 0;
         int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
@@ -4353,7 +4343,7 @@ public class Compute {
      * @param target - the entity we're trying to spot
      * @return
      */
-    private static int calcSensorShadow(IGame game, Entity ae,
+    private static int calcSensorShadow(Game game, Entity ae,
             Targetable target) {
         int mod = 0;
         if (target.getTargetType() != Targetable.TYPE_ENTITY) {
@@ -4381,7 +4371,7 @@ public class Compute {
      * tracked as targets. Also, if the detecting entity no longer meets criteria for having firing solutions,
      * empty the list. We wouldn't want a dead ship to be providing NC3 data, now would we...
      */
-    public static void updateFiringSolutions(IGame game, Entity detector) {
+    public static void updateFiringSolutions(Game game, Entity detector) {
         List<Integer> toRemove = new ArrayList<Integer>();
         //Flush the detecting unit's firing solutions if any of these conditions applies
         if (detector.isDestroyed()
@@ -4434,7 +4424,7 @@ public class Compute {
      * tracked. Also, if the detecting entity no longer meets criteria for having sensor contacts,
      * empty the list. We wouldn't want a dead ship to be providing sensor data, now would we...
      */
-    public static void updateSensorContacts(IGame game, Entity detector) {
+    public static void updateSensorContacts(Game game, Entity detector) {
         List<Integer> toRemove = new ArrayList<Integer>();
         //Flush the detecting unit's sensor contacts if any of these conditions applies
         if (detector.getPosition() == null
@@ -4487,7 +4477,7 @@ public class Compute {
      * @return
      */
 
-    public static boolean calcFiringSolution(IGame game, Entity ae,
+    public static boolean calcFiringSolution(Game game, Entity ae,
             Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
@@ -4595,7 +4585,7 @@ public class Compute {
      * @return
      */
 
-    public static boolean calcSensorContact(IGame game, Entity ae,
+    public static boolean calcSensorContact(Game game, Entity ae,
             Targetable target) {
 
         //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
@@ -4681,7 +4671,7 @@ public class Compute {
         return roll >= tn;
     }
 
-    public static int getVisualRange(IGame game, Entity ae, LosEffects los, boolean teIlluminated) {
+    public static int getVisualRange(Game game, Entity ae, LosEffects los, boolean teIlluminated) {
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
@@ -4698,15 +4688,15 @@ public class Compute {
      *                   needed, however passing in the pre-computed
      *                   collection is much faster
      */
-    public static boolean inSensorRange(IGame game, Entity ae,
+    public static boolean inSensorRange(Game game, Entity ae,
             Targetable target, List<ECMInfo> allECMInfo) {
         return inSensorRange(game, null, ae, target, allECMInfo);
     }
 
-    public static boolean inSensorRange(IGame game, LosEffects los, Entity ae,
+    public static boolean inSensorRange(Game game, LosEffects los, Entity ae,
             Targetable target, List<ECMInfo> allECMInfo) {
         // This is not applicable to objects on the same team.
-        if(!target.isEnemyOf(ae)) {
+        if (!target.isEnemyOf(ae)) {
             return false;
         }
 
@@ -4769,7 +4759,7 @@ public class Compute {
      * Checks to see if the target is visible to the unit, always considering
      * sensors.
      */
-    public static boolean canSee(IGame game, Entity ae, Targetable target) {
+    public static boolean canSee(Game game, Entity ae, Targetable target) {
         return canSee(game, ae, target, true, null, null);
     }
 
@@ -4777,7 +4767,7 @@ public class Compute {
      * Checks to see if the target is visible to the unit, if the sensor flag
      * is true then sensors are checked as well.
      */
-    public static boolean canSee(IGame game, Entity ae, Targetable target,
+    public static boolean canSee(Game game, Entity ae, Targetable target,
             boolean useSensors, LosEffects los, List<ECMInfo> allECMInfo) {
 
         if (!ae.getCrew().isActive()) {
@@ -4788,10 +4778,9 @@ public class Compute {
         }
 
         if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
+            los = LosEffects.calculateLOS(game, ae, target);
         }
-        boolean isVisible = los.canSee()
-                            && Compute.inVisualRange(game, los, ae, target);
+        boolean isVisible = los.canSee() && Compute.inVisualRange(game, los, ae, target);
         if (useSensors) {
             isVisible = isVisible
                     || Compute.inSensorRange(game, los, ae, target, allECMInfo);
@@ -4875,10 +4864,10 @@ public class Compute {
      * type of target. target may be null here, which gives you the range
      * without target entity modifiers
      */
-    public static int getSensorRangeByBracket(IGame game, Entity ae, @Nullable Targetable target,
+    public static int getSensorRangeByBracket(Game game, Entity ae, @Nullable Targetable target,
                                               @Nullable LosEffects los) {
         if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
+            los = LosEffects.calculateLOS(game, ae, target);
         }
 
         Sensor sensor = ae.getActiveSensor();
@@ -4968,7 +4957,7 @@ public class Compute {
         if (isAirToAir(attacker, target)
             && attackPos.equals(target.getPosition())
             && attacker.isAero() && target.isAero()) {
-            int moveSort = shouldMoveBackHex(attacker, (Entity)target);
+            int moveSort = shouldMoveBackHex(attacker, (Entity) target);
             if (moveSort < 0) {
                 attackPos = attacker.getPriorPosition();
             }
@@ -5018,8 +5007,7 @@ public class Compute {
 
         int retVal = e1.getUnitType() - e2.getUnitType();
         if (retVal == 0) {
-            retVal = ((IAero)e2).getCurrentVelocity() -
-                    ((IAero)e1).getCurrentVelocity();
+            retVal = ((IAero) e2).getCurrentVelocity() - ((IAero) e1).getCurrentVelocity();
         }
         // if all criteria are the same, select randomly
         if (retVal == 0) {
@@ -5029,7 +5017,7 @@ public class Compute {
     }
 
     /**
-     * Maintain backwards compatability.
+     * Maintain backwards compatibility.
      *
      * @param missiles - the <code>int</code> number of missiles in the pack.
      */
@@ -5173,7 +5161,7 @@ public class Compute {
         if ((ae == null) || (a == null) || (b == null)) {
             return 0;
         }
-        IBoard board = ae.getGame().getBoard();
+        Board board = ae.getGame().getBoard();
         if (board.inSpace()) {
             return 0;
         }
@@ -5188,7 +5176,7 @@ public class Compute {
         // affected
         int metalContent = 0;
         for (Coords c : coords) {
-            IHex hex = board.getHex(c);
+            Hex hex = board.getHex(c);
             if (hex != null && hex.containsTerrain(Terrains.METAL_CONTENT)) {
                 metalContent += hex.terrainLevel(Terrains.METAL_CONTENT);
             }
@@ -5359,7 +5347,7 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the attack.
      */
     public static ToHitData getSpaceBombBaseToHit(Entity attacker,
-                                                  Entity defender, IGame game) {
+                                                  Entity defender, Game game) {
         int base = TargetRoll.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
 
@@ -5554,12 +5542,11 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the attack.
      */
     public static ToHitData getLegAttackBaseToHit(Entity attacker,
-            Entity defender, IGame game) {
+            Entity defender, Game game) {
         String reason = "Non Infantry not allowed to do AM attacks.";
         ToHitData toReturn = null;
         boolean alreadyPerformingOther = false;
-        for (Enumeration<EntityAction> actions = game.getActions(); actions
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
@@ -5625,7 +5612,7 @@ public class Compute {
             toReturn.addModifier(modifier, men + " trooper(s) active");
         }
 
-        if (defender instanceof Mech && ((Mech)defender).hasTracks()) {
+        if (defender instanceof Mech && ((Mech) defender).hasTracks()) {
             toReturn.addModifier(-2, "has tracks");
         }
 
@@ -5651,13 +5638,12 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the mek.
      */
     public static ToHitData getSwarmMekBaseToHit(Entity attacker,
-            Entity defender, IGame game) {
+            Entity defender, Game game) {
         ToHitData toReturn = null;
         String reason = "Non Infantry not allowed to do AM attacks.";
 
         boolean alreadyPerformingOther = false;
-        for (Enumeration<EntityAction> actions = game.getActions(); actions
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements(); ) {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
@@ -5740,7 +5726,7 @@ public class Compute {
         return toReturn;
     }
 
-    public static boolean canPhysicalTarget(IGame game, int entityId,
+    public static boolean canPhysicalTarget(Game game, int entityId,
                                             Targetable target) {
 
         if (PunchAttackAction.toHit(game, entityId, target,
@@ -5845,7 +5831,7 @@ public class Compute {
      * roads and bridges)? If so it will override prohibited terrain, it may
      * change movement costs, and it may lead to skids.
      *
-     * @param game     - the <code>IGame</code> object.
+     * @param game     - the <code>Game</code> object.
      * @param src      - the <code>Coords</code> being left.
      * @param dest     - the <code>Coords</code> being entered.
      * @param moveStep
@@ -5853,10 +5839,10 @@ public class Compute {
      * <code>dest</code> can be on pavement; <code>false</code>
      * otherwise.
      */
-    public static boolean canMoveOnPavement(IGame game, Coords src,
+    public static boolean canMoveOnPavement(Game game, Coords src,
             Coords dest, MoveStep moveStep) {
-        final IHex srcHex = game.getBoard().getHex(src);
-        final IHex destHex = game.getBoard().getHex(dest);
+        final Hex srcHex = game.getBoard().getHex(src);
+        final Hex destHex = game.getBoard().getHex(dest);
         final int src2destDir = src.direction(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;
@@ -5905,7 +5891,7 @@ public class Compute {
      * @return true if the target can and does occupy the same building, false
      *         otherwise.
      */
-    public static boolean isInSameBuilding(IGame game, Entity attacker,
+    public static boolean isInSameBuilding(Game game, Entity attacker,
             Targetable target) {
         if (!(target instanceof Entity)) {
             return false;
@@ -5927,7 +5913,7 @@ public class Compute {
      * Determine if the given unit is inside of a building at the given
      * coordinates.
      *
-     * @param game   - the <code>IGame</code> object. This value may be
+     * @param game   - the <code>Game</code> object. This value may be
      *               <code>null</code>.
      * @param entity - the <code>Entity</code> to be checked. This value may be
      *               <code>null</code>.
@@ -5937,7 +5923,7 @@ public class Compute {
      * above the building, or if any input argument is <code>null</code>
      * .
      */
-    public static boolean isInBuilding(IGame game, Entity entity) {
+    public static boolean isInBuilding(Game game, Entity entity) {
 
         // No game, no building.
         if (game == null) {
@@ -5957,7 +5943,7 @@ public class Compute {
      * Determine if the given unit is inside of a building at the given
      * coordinates.
      *
-     * @param game   - the <code>IGame</code> object. This value may be
+     * @param game   - the <code>Game</code> object. This value may be
      *               <code>null</code>.
      * @param entity - the <code>Entity</code> to be checked. This value may be
      *               <code>null</code>.
@@ -5969,7 +5955,7 @@ public class Compute {
      * above the building, or if any input argument is <code>null</code>
      * .
      */
-    public static boolean isInBuilding(IGame game, Entity entity, Coords coords) {
+    public static boolean isInBuilding(Game game, Entity entity, Coords coords) {
 
         // No game, no building.
         if (game == null) {
@@ -5991,10 +5977,10 @@ public class Compute {
         return Compute.isInBuilding(game, entity.getElevation(), coords);
     }
 
-    public static boolean isInBuilding(IGame game, int entityElev, Coords coords) {
+    public static boolean isInBuilding(Game game, int entityElev, Coords coords) {
 
         // Get the Hex at those coordinates.
-        final IHex curHex = game.getBoard().getHex(coords);
+        final Hex curHex = game.getBoard().getHex(coords);
 
         if (curHex == null) {
             // probably off board artillery or reinforcement
@@ -6120,7 +6106,7 @@ public class Compute {
      * @return the new target <code>Entity</code>. May return null if no new
      * target available
      */
-    public static Entity getSwarmMissileTarget(IGame game, int aeId,
+    public static Entity getSwarmMissileTarget(Game game, int aeId,
                                                Coords coords, int weaponId) {
         Entity tempEntity = null;
         // first, check the hex of the original target
@@ -6174,7 +6160,7 @@ public class Compute {
      */
     public static Coords getFinalPosition(Coords curpos, int[] v) {
 
-        if ((v == null) || (v.length != 6)) {
+        if ((v == null) || (v.length != 6) || (curpos == null)) {
             return curpos;
         }
 
@@ -6492,8 +6478,8 @@ public class Compute {
                 r.messageId = 9970;
             }
 
-            r.add((int)origDamage);
-            r.add((int)damage);
+            r.add((int) origDamage);
+            r.add((int) damage);
             vReport.addElement(r);
         }
         return (int) damage;
@@ -6581,7 +6567,7 @@ public class Compute {
      * entity and would fall along the angle of attack
      */
     public static ArrayList<Entity> getAdjacentEntitiesAlongAttack(Coords aPos,
-                                                                   Coords tPos, IGame game) {
+                                                                   Coords tPos, Game game) {
         ArrayList<Entity> entities = new ArrayList<Entity>();
         ArrayList<Coords> coords = Coords.intervening(aPos, tPos);
         // loop through all intervening coords
@@ -6598,8 +6584,8 @@ public class Compute {
         return entities;
     }
 
-    public static boolean isInUrbanEnvironment(IGame game, Coords unitPOS) {
-        IHex unitHex = game.getBoard().getHex(unitPOS);
+    public static boolean isInUrbanEnvironment(Game game, Coords unitPOS) {
+        Hex unitHex = game.getBoard().getHex(unitPOS);
 
         if (unitHex.containsTerrain(Terrains.PAVEMENT)
                 || unitHex.containsTerrain(Terrains.BUILDING)
@@ -6610,7 +6596,7 @@ public class Compute {
         // loop through adjacent hexes
         for (int dir = 0; dir <= 5; dir++) {
             Coords adjCoords = unitPOS.translated(dir);
-            IHex adjHex = game.getBoard().getHex(adjCoords);
+            Hex adjHex = game.getBoard().getHex(adjCoords);
 
             if (!game.getBoard().contains(adjCoords)) {
                 continue;
@@ -6678,7 +6664,7 @@ public class Compute {
      * @param en
      * @return number of rounds until return (-1 if never)
      */
-    public static int roundsUntilReturn(IGame game, Entity en) {
+    public static int roundsUntilReturn(Game game, Entity en) {
 
         if (!en.isAero()) {
             return -1;
@@ -6701,7 +6687,7 @@ public class Compute {
         return turns;
     }
 
-    public static boolean inDeadZone(IGame game, Entity ae, Targetable target) {
+    public static boolean inDeadZone(Game game, Entity ae, Targetable target) {
         if (ae.isSpaceborne()) {
             return false;
         }
@@ -6723,12 +6709,12 @@ public class Compute {
     }
 
     public static ArrayList<Coords> getAcceptableUnloadPositions(
-            List<Coords> ring, Entity unit, IGame game, int elev) {
+            List<Coords> ring, Entity unit, Game game, int elev) {
 
         ArrayList<Coords> acceptable = new ArrayList<Coords>();
 
         for (Coords pos : ring) {
-            IHex hex = game.getBoard().getHex(pos);
+            Hex hex = game.getBoard().getHex(pos);
             if (null == hex) {
                 continue;
             }
@@ -6753,14 +6739,14 @@ public class Compute {
      * @param game The game object
      * @return     All adjacent units that can mount the Entity
      */
-    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, Game game) {
         List<Entity> mountable = new ArrayList<>();
         // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader
         // so lets take the ring
         for (Coords c : pos.allAdjacent()) {
-            IHex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard().getHex(c);
             if (null == hex) {
                 continue;
             }
@@ -6772,7 +6758,7 @@ public class Compute {
                     && ((other instanceof SmallCraft) || other.getTowing() != Entity.NONE || other.getTowedBy() != Entity.NONE)
                     && other.canLoad(en)
                     && !other.isAirborne()
-                    && (Math.abs((hex.surface() + other.getElevation())
+                    && (Math.abs((hex.getLevel() + other.getElevation())
                                  - elev) < 3) && !mountable.contains(other)) {
                     mountable.add(other);
                 }
@@ -6783,29 +6769,31 @@ public class Compute {
 
     }
 
-    public static boolean allowAimedShotWith(Mounted weapon, int aimingMode) {
+    public static boolean allowAimedShotWith(Mounted weapon, AimingMode aimingMode) {
         WeaponType wtype = (WeaponType) weapon.getType();
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-        boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA)
-                           && !isWeaponInfantry;
+        boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
         Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
 
         // Leg and swarm attacks can't be aimed.
         if (wtype.getInternalName().equals(Infantry.LEG_ATTACK)
-            || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
+                || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
             return false;
         }
+
         switch (aimingMode) {
-            case (IAimingModes.AIM_MODE_NONE):
+            case NONE:
                 return false;
-            case (IAimingModes.AIM_MODE_IMMOBILE):
+            case IMMOBILE:
                 if (weapon.getCurrentShots() > 1) {
                     return false;
                 }
+
                 if (atype == null) {
                     break;
                 }
+
                 switch (atype.getAmmoType()) {
                     case AmmoType.T_SRM_STREAK:
                     case AmmoType.T_LRM_STREAK:
@@ -6856,7 +6844,7 @@ public class Compute {
                 }
 
                 break;
-            case (IAimingModes.AIM_MODE_TARG_COMP):
+            case TARGETING_COMPUTER:
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                     || wtype.hasFlag(WeaponType.F_PULSE)
                     || (wtype instanceof HAGWeapon)) {
@@ -6882,6 +6870,8 @@ public class Compute {
                     && (atype.getMunitionType() == AmmoType.M_FLAK)) {
                     return false;
                 }
+                break;
+            default:
                 break;
         }
         return true;
@@ -7065,13 +7055,13 @@ public class Compute {
                     //we have no mechanism in MM to handle BA where some suits have the equipment
                     //and others do not
                     boolean useSuit = true;
-                    for(Mounted m : entity.getEquipment()) {
-                        if(m.isMissingForTrooper(trooper)) {
+                    for (Mounted m : entity.getEquipment()) {
+                        if (m.isMissingForTrooper(trooper)) {
                             useSuit = false;
                             break;
                         }
                     }
-                    if(useSuit) {
+                    if (useSuit) {
                         ntroopers++;
                     }
                 }
@@ -7121,7 +7111,7 @@ public class Compute {
      * Should we treat this entity, in its current state, as if it is a spheroid unit
      * flying in atmosphere?
      */
-    public static boolean useSpheroidAtmosphere(IGame game, Entity en) {
+    public static boolean useSpheroidAtmosphere(Game game, Entity en) {
         if (!en.isAero()) {
             return false;
         }

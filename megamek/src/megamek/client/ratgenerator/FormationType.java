@@ -1,39 +1,6 @@
-/**
- * 
- */
 package megamek.client.ratgenerator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.IntSummaryStatistics;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.MechSummary;
-import megamek.common.MiscType;
-import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
-import megamek.common.UnitType;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
@@ -42,11 +9,17 @@ import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
 
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * Campaign Operations rules for force generation.
  * 
  * @author Neoancient
- *
  */
 public class FormationType {
     
@@ -207,21 +180,21 @@ public class FormationType {
         List<Integer> retVal = new ArrayList<>();
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
             if (EquipmentType.get(ms.getEquipmentNames().get(i)) instanceof WeaponType) {
-                final WeaponType weapon = (WeaponType)EquipmentType.get(ms.getEquipmentNames().get(i));
+                final WeaponType weapon = (WeaponType) EquipmentType.get(ms.getEquipmentNames().get(i));
                 if (weapon.getLongRange() < range) {
                     continue;
                 }
                 int damage = 0;
                 if (weapon.getAmmoType() != AmmoType.T_NA) {
                     Optional<EquipmentType> ammo = ms.getEquipmentNames().stream()
-                        .map(name -> EquipmentType.get(name))
+                        .map(EquipmentType::get)
                         .filter(eq -> eq instanceof AmmoType
-                                && ((AmmoType)eq).getAmmoType() == weapon.getAmmoType()
-                                && ((AmmoType)eq).getRackSize() == weapon.getRackSize())
+                                && ((AmmoType) eq).getAmmoType() == weapon.getAmmoType()
+                                && ((AmmoType) eq).getRackSize() == weapon.getRackSize())
                         .findFirst();
                     if (ammo.isPresent()) {
-                        damage = ((AmmoType)ammo.get()).getDamagePerShot()
-                                * Math.max(1, ((AmmoType)ammo.get()).getRackSize());
+                        damage = ((AmmoType) ammo.get()).getDamagePerShot()
+                                * Math.max(1, ((AmmoType) ammo.get()).getRackSize());
                     }
                 } else {
                     damage = weapon.getDamage(range);
@@ -387,10 +360,10 @@ public class FormationType {
                 List<UnitTable.Parameters> tempParams = params.stream().map(UnitTable.Parameters::copy)
                         .collect(Collectors.toList());
                 for (int index : undeterminedVees) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(veeMode));
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(veeMode));
                 }
                 for (int index : undeterminedInfantry) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(infMode));
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(infMode));
                 }
                 List<MechSummary> list = generateFormation(tempParams, numUnits, networkMask, false);
                 if (!list.isEmpty()) {
@@ -400,7 +373,7 @@ public class FormationType {
         }
         /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         
-        int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
+        int cUnits = numUnits.stream().mapToInt(Integer::intValue).sum();
 
         /* Simple case: all units have the same requirements. */
         if (otherCriteria.isEmpty() && useGrouping == null
@@ -1854,11 +1827,10 @@ public class FormationType {
         FormationType ft = new FormationType("Electronic Warfare Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
-                ms -> ms.getEquipmentNames().stream().map(en -> EquipmentType.get(en))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                 .anyMatch(et -> et instanceof TAGWeapon ||  
                         (et instanceof MiscType &&
-                            (((MiscType)et).hasFlag(MiscType.F_BAP)
-                            || ((MiscType)et).hasFlag(MiscType.F_ECM)))),
+                            (et.hasFlag(MiscType.F_BAP) || et.hasFlag(MiscType.F_ECM)))),
                 "Probe, ECM, TAG"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
@@ -2002,7 +1974,7 @@ public class FormationType {
     private static class MaxCountConstraint extends CountConstraint {
         
         public MaxCountConstraint(int max, Predicate<MechSummary> criterion, String description) {
-            super(max, ms -> !criterion.test(ms), description);
+            super(max, criterion.negate(), description);
         }
         
         @Override
@@ -2021,21 +1993,7 @@ public class FormationType {
         
         @Override
         public int getMinimum(int unitSize) {
-            return (int)Math.ceil(pct * unitSize);
-        }
-    }
-    
-    @SuppressWarnings("unused")
-    private static class MaxPercentConstraint extends PercentConstraint {
-        
-        public MaxPercentConstraint(double max, Predicate<MechSummary> criterion,
-                String description) {
-            super(max, ms -> !criterion.test(ms), description);
-        }
-        
-        @Override
-        public int getMinimum(int unitSize) {
-            return unitSize - (int)Math.ceil(pct * unitSize);
+            return (int) Math.ceil(pct * unitSize);
         }
     }
     

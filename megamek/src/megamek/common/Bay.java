@@ -16,6 +16,8 @@
 
 package megamek.common;
 
+import megamek.common.enums.GamePhase;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -41,7 +43,7 @@ public class Bay implements Transporter, ITechnology {
     protected int loadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();
     int bayNumber = 0;
-    transient IGame game = null;
+    transient Game game = null;
     private double damage;
 
     /**
@@ -234,7 +236,7 @@ public class Bay implements Transporter, ITechnology {
         }
 
         currentSpace -= spaceForUnit(unit);
-        if((unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE)) {
+        if ((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
                 loadedThisTurn += 1;
         }
 
@@ -255,7 +257,11 @@ public class Bay implements Transporter, ITechnology {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
         for (int unit : troops) {
-            loaded.add(game.getEntity(unit));
+            Entity entity = game.getEntity(unit);
+            
+            if (entity != null) {
+                loaded.add(game.getEntity(unit));
+            }
         }
         return loaded;
     }
@@ -362,7 +368,7 @@ public class Bay implements Transporter, ITechnology {
 
     protected String numDoorsString() {
         return "(" + getCurrentDoors()
-            + ((getCurrentDoors() == 1)?" door":" doors") + ")";
+            + ((getCurrentDoors() == 1) ? " door" : " doors") + ")";
     }
 
     @Override
@@ -539,7 +545,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 

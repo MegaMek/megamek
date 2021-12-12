@@ -110,9 +110,9 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     private static final String PCD = "PlanetaryConditionsDialog.";
     private JLabel labLight = new JLabel(Messages.getString(PCD + "labLight"), SwingConstants.RIGHT); 
     private JComboBox<String> comLight = new JComboBox<String>();
-    private JLabel labWeather = new TipLabel(Messages.getString(PCD + "labWeather"), SwingConstants.RIGHT, this); 
+    private JLabel labWeather = new TipLabel(Messages.getString(PCD + "labWeather"), SwingConstants.RIGHT);
     private JComboBox<String> comWeather = new JComboBox<String>();
-    private JLabel labWind = new TipLabel(Messages.getString(PCD + "labWind"), SwingConstants.RIGHT, this); 
+    private JLabel labWind = new TipLabel(Messages.getString(PCD + "labWind"), SwingConstants.RIGHT);
     private JComboBox<String> comWind = new JComboBox<String>();
     private JLabel labMinWind = new JLabel(Messages.getString(PCD + "labMinWind"), SwingConstants.RIGHT); 
     private JComboBox<String> comWindFrom = new JComboBox<String>();
@@ -120,20 +120,20 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     private JComboBox<String> comWindDirection = new JComboBox<>();
     private JLabel labWindDirection = new JLabel(Messages.getString(PCD + "labWindDirection"), SwingConstants.RIGHT);
     private JComboBox<String> comWindTo = new JComboBox<String>();
-    private JLabel labAtmosphere = new TipLabel(Messages.getString(PCD + "labAtmosphere"), SwingConstants.RIGHT, this); 
+    private JLabel labAtmosphere = new TipLabel(Messages.getString(PCD + "labAtmosphere"), SwingConstants.RIGHT);
     private JComboBox<String> comFog = new JComboBox<String>();
-    private JLabel labFog = new TipLabel(Messages.getString(PCD + "labFog"), SwingConstants.RIGHT, this); 
+    private JLabel labFog = new TipLabel(Messages.getString(PCD + "labFog"), SwingConstants.RIGHT);
     private JComboBox<String> comAtmosphere = new JComboBox<String>();
-    private JLabel labBlowingSands = new TipLabel(Messages.getString(PCD + "BlowingSands"), SwingConstants.RIGHT, this);
+    private JLabel labBlowingSands = new TipLabel(Messages.getString(PCD + "BlowingSands"), SwingConstants.RIGHT);
     private JCheckBox chkBlowingSands = new JCheckBox();
     private JLabel labShiftWindDir = new JLabel(Messages.getString(PCD + "shiftWindDir"), SwingConstants.RIGHT);
     private JCheckBox chkShiftWindDir = new JCheckBox();
     private JLabel labShiftWindStr = new JLabel(Messages.getString(PCD + "shiftWindStr"), SwingConstants.RIGHT);
     private JCheckBox chkShiftWindStr = new JCheckBox();
     private JTextField fldTemp = new JTextField(4);
-    private JLabel labTemp = new TipLabel(Messages.getString(PCD + "labTemp"), SwingConstants.RIGHT, this); 
+    private JLabel labTemp = new TipLabel(Messages.getString(PCD + "labTemp"), SwingConstants.RIGHT);
     private JTextField fldGrav = new JTextField(4);
-    private JLabel labGrav = new TipLabel(Messages.getString(PCD + "labGrav"), SwingConstants.RIGHT, this);
+    private JLabel labGrav = new TipLabel(Messages.getString(PCD + "labGrav"), SwingConstants.RIGHT);
     private JLabel labEMI = new JLabel(Messages.getString(PCD + "EMI"), SwingConstants.RIGHT);
     private JCheckBox chkEMI = new JCheckBox();
     private JLabel labTerrainAffected = new JLabel(Messages.getString(PCD + "TerrainAffected"), SwingConstants.RIGHT);
@@ -245,7 +245,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             comWindFrom.addItem(PlanetaryConditions.getWindDisplayableName(i));
             comWindTo.addItem(PlanetaryConditions.getWindDisplayableName(i));
         }
-        for(int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
+        for (int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
             comWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
         }
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
@@ -441,7 +441,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             label.setToolTipText(null);
         } else {
             label.setForeground(GUIPreferences.getInstance().getWarningColor());
-            label.setToolTipText(formatTooltip(text.toString()));
+            label.setToolTipText(text.toString());
         }
     }
     
@@ -476,13 +476,13 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         if (specificWind) {
             chkShiftWindStr.setSelected(false);
             switch (weather) {
-            case WE_LIGHTNING_STORM:
-            case WE_SNOW_FLURRIES:
-            case WE_ICE_STORM:
-                comWind.setSelectedIndex(WI_MOD_GALE);
-                break;
-            case WE_GUSTING_RAIN:
-                comWind.setSelectedIndex(WI_STRONG_GALE);
+                case WE_LIGHTNING_STORM:
+                case WE_SNOW_FLURRIES:
+                case WE_ICE_STORM:
+                    comWind.setSelectedIndex(WI_MOD_GALE);
+                    break;
+                case WE_GUSTING_RAIN:
+                    comWind.setSelectedIndex(WI_STRONG_GALE);
             }
         }
         addListeners();
@@ -508,19 +508,19 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         int weather = comWeather.getSelectedIndex();
         int maxTemp = 200;
         switch (weather) {
-        case WE_LIGHT_SNOW:
-        case WE_SLEET:
-        case WE_LIGHT_HAIL:
-        case WE_HEAVY_HAIL:
-            maxTemp = -40;
-            break;
-        case WE_HEAVY_SNOW:
-        case WE_MOD_SNOW:
-        case WE_SNOW_FLURRIES:
-            maxTemp = -50;
-            break;
-        case WE_ICE_STORM:
-            maxTemp = -60;
+            case WE_LIGHT_SNOW:
+            case WE_SLEET:
+            case WE_LIGHT_HAIL:
+            case WE_HEAVY_HAIL:
+                maxTemp = -40;
+                break;
+            case WE_HEAVY_SNOW:
+            case WE_MOD_SNOW:
+            case WE_SNOW_FLURRIES:
+                maxTemp = -50;
+                break;
+            case WE_ICE_STORM:
+                maxTemp = -60;
         }
         setMaximumTemperature(maxTemp);
     }
@@ -630,12 +630,5 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         @Override
         public void focusGained(FocusEvent e) { }
     };
-
-    
-    /** Applies formatting and HTML tags to the plain tooltip string. */
-    private String formatTooltip(String text) {
-        String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
-        return scaleStringForGUI(result);
-    }
 
 }

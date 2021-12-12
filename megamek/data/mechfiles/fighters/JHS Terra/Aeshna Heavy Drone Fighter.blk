@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <armor>
@@ -104,11 +104,12 @@ IS Ultra AC/10 Ammo
 IS Ultra AC/10 Ammo
 IS Ultra AC/10 Ammo
 IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
+ImprovedSmartRoboticControlSystem
 </Fuselage Equipment>
+
+<notes>
+Aerospace Smart Robotic Control System (Improved) gives the Aeshna a Piloting Skill of 5 and a Gunnery Skill of 4
+</notes>
 
 <source>
 JHS:Terra - Jihad
@@ -117,3 +118,4 @@ JHS:Terra - Jihad
 <tonnage>
 100.0
 </tonnage>
+

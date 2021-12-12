@@ -115,3 +115,31 @@ XTRO Periphery - Jihad
 <tonnage>
 100.0
 </tonnage>
+
+<overview>
+While sporting a large and rather unconventional look, the Thunderbird is an old standby design, one of the most common if dated heavy Aerospace Fighters in use across the Inner Sphere in the mid 31st century.
+</overview>
+
+<deployment>
+This Thunderbird refit was developed by the Word of Blake through a shell company, Rim Salvage, during the Jihad. The Thunderbird carried a Rotary AC/5 in each wing, along with a Large Pulse Laser equipped with a Laser Insulator. The main weapons, however, were the paired Centurion Weapon Systems in the nose. These could (in theory) shut down an enemy craft without inflicting damage on it. Nineteen double heat sinks and fifteen tons of Ferro-Aluminum armor protected the craft.
+</deployment>
+
+<history>
+Created in 2487 as part of an alliance between the Lockheed Corporation of Gibbs and CBM Aerospace of Donegal, the original Thunderbird was built for the LCAF as an assault fighter, well suited to air-to-ground attack and DropShip escort missions in the so-called Age of War. Despite its less than sleek look, the sturdy and dependable Thunderbird spread across the Star League as a number of other manufacturers were able to precisely duplicate the fighter, ensuring the design survived the centuries.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Circinus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockheed/CBM 300-TRB
+ENGINE:Vlar 300
+ARMOR:L/CBM AeroSteel
+COMMUNICATIONS:Neil 6000-a
+TARGETING:N&D Longreach
+</systemManufacturers>

@@ -1653,7 +1653,7 @@ public class TestSupportVehicle extends TestEntity {
          */
         public final boolean isClan;
 
-        AdvancedSVArmor(int at, int space, int patchworkSpace, boolean clan){
+        AdvancedSVArmor(int at, int space, int patchworkSpace, boolean clan) {
             this.armorType = at;
             eqType = EquipmentType.get(EquipmentType.getArmorTypeName(at, clan));
             this.space = space;
@@ -1670,8 +1670,8 @@ public class TestSupportVehicle extends TestEntity {
          * @return   The <code>AdvancedSVArmor</code> that correspondes to the given
          *              type or null if no match was found.
          */
-        public static @Nullable AdvancedSVArmor getArmor(int at, boolean c){
-            for (AdvancedSVArmor a : values()){
+        public static @Nullable AdvancedSVArmor getArmor(int at, boolean c) {
+            for (AdvancedSVArmor a : values()) {
                 if ((a.armorType == at) && (a.isClan == c)) {
                     return a;
                 }

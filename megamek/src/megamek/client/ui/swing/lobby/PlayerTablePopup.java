@@ -44,19 +44,21 @@ class PlayerTablePopup {
     static final String PTP_BOTSETTINGS = "BOTSETTINGS";
     static final String PTP_TEAM = "TEAM";
     static final String PTP_DEPLOY = "DEPLOY";
+    static final String PTP_REPLACE = "REPLACE";
 
     static ScalingPopup playerTablePopup(ClientGUI clientGui, ActionListener listener, 
-            Collection<IPlayer> players) {
+            Collection<Player> players) {
         
         ScalingPopup popup = new ScalingPopup();
         
         var cl = clientGui.getClient();
         var isOnePlayer = players.size() == 1;
-        var SinglePlayer = CollectionUtil.anyOneElement(players);
+        var singlePlayer = CollectionUtil.anyOneElement(players);
         var allOwnedBots = players.stream().allMatch(cl::isLocalBot);
         var isConfigurable = isOnePlayer 
-                && (allOwnedBots || (cl.getLocalPlayer().equals(SinglePlayer)));
+                && (allOwnedBots || (cl.getLocalPlayer().equals(singlePlayer)));
         var allConfigurable = players.stream().allMatch(p -> cl.isLocalBot(p) || cl.getLocalPlayer().equals(p));
+        var isSingleGhost = isOnePlayer && singlePlayer.isGhost();
         
         popup.add(menuItem("Player Settings...", PTP_CONFIG, isConfigurable, listener));
         popup.add(teamMenu(allConfigurable, listener));
@@ -64,6 +66,7 @@ class PlayerTablePopup {
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Remove Bot", PTP_BOTREMOVE, isOnePlayer && allOwnedBots, listener));
         popup.add(menuItem("Bot Settings...", PTP_BOTSETTINGS, isOnePlayer && allOwnedBots, listener));
+        popup.add(menuItem("Replace Player...", PTP_REPLACE, isSingleGhost, listener));
         
         return popup;
         
@@ -72,8 +75,8 @@ class PlayerTablePopup {
     /** Returns the "Team" submenu, allowing to assign a player to a team. */
     private static JMenu teamMenu(boolean enabled, ActionListener listener) {
         JMenu menu = new JMenu("Assign to Team");
-        for (int i = 0; i < IPlayer.MAX_TEAMS; i++) {
-            JMenuItem item = menuItem(IPlayer.teamNames[i], PTP_TEAM + "|" + i, enabled, listener);
+        for (int i = 0; i < Player.TEAM_NAMES.length; i++) {
+            JMenuItem item = menuItem(Player.TEAM_NAMES[i], PTP_TEAM + "|" + i, enabled, listener);
             menu.add(item);
         }
         menu.setEnabled(enabled);

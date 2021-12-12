@@ -4,7 +4,7 @@ B
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3065
+Era:3063
 Source:TRO 3145 The Clans - Civil War
 Rules Level:2
 
@@ -161,4 +161,17 @@ CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
+overview:The Tomahawk is an assault-class OmniMech designed by Clan Wolf in 3063. The 'Mech ultimately failed to enter production and remained a prototype, presumably due at least in part to the Clan's troubles during the Jihad.
 
+deployment:The B configuration is outfitted mainly with long-range weaponry. Its main firepower comes from pairs of arm mounted ER PPCs and ER Large Lasers. Backing up these weapons are six ER Medium Lasers and four Medium Pulse Lasers. Additional long-range firepower comes from a torso mounted LRM-10 launcher with a single ton of ammunition. To help cope with heavy heat load from its weapons, thirteen additional Double Heat Sinks are fitted throughout the 'Mech chassis.
+
+history:One these prototypes was piloted by Nathan Wolf in a Circle of Equals on Tamar when he attained the rank of Star Colonel. Although he was victorious against a Thor, it was noted that the Tomahawk still suffered from numerous system errors and gremlins and was not yet ready for mass production. Still, Nathan retained the 'Mech for his subsequent assignment to Omega Galaxy and successfully piloted it in combat on Novo Cressidas in the Star's End system on 11 April 3064. After the Jihad, the design was revisited and improved, and became the Tomahawk II which did enter line production.
+
+manufacturer:Clan Wolf
+primaryfactory:Unknown
+systemmanufacturer:CHASSIS:Unspecified
+systemmanufacturer:ENGINE:Unspecified
+systemmanufacturer:ARMOR:Unspecified
+systemmanufacturer:JUMPJET:Unspecified
+systemmanufacturer:COMMUNICATIONS:Unspecified
+systemmanufacturer:TARGETING:Unspecified

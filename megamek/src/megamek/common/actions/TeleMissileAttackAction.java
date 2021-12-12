@@ -22,16 +22,7 @@ package megamek.common.actions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.TeleMissile;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 
@@ -59,10 +50,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     }
 
     public static int getDamageFor(Entity entity) {      
-        if(entity instanceof TeleMissile) {
-            return ((TeleMissile)entity).getDamageValue();
-        }
-        return 0;
+        return (entity instanceof TeleMissile) ? ((TeleMissile) entity).getDamageValue() : 0;
     }
     
     /**
@@ -96,7 +84,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Since this normally only applies to weaponhandlers, we must recreate it to deal with telemissile
      * entities
      */
-    private boolean checkPDConditions(IGame game, Targetable target) {
+    private boolean checkPDConditions(Game game, Targetable target) {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
@@ -159,7 +147,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
-    public int calcCounterAV(IGame game, Targetable target) {
+    public int calcCounterAV(Game game, Targetable target) {
         if (!checkPDConditions(game, target)) {
             return 0;
         }
@@ -266,11 +254,11 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, game.getTarget(getTargetType(), getTargetId()));
     }
     
-    public ToHitData toHit(IGame game, Targetable target) {
+    public ToHitData toHit(Game game, Targetable target) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
@@ -285,25 +273,26 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+            }
         }
 
         //set the to-hit
         ToHitData toHit = new ToHitData(2, "base");
 
-        TeleMissile tm = (TeleMissile)ae;
+        TeleMissile tm = (TeleMissile) ae;
         
         //thrust used
-        if(ae.mpUsed > 0) 
+        if (ae.mpUsed > 0)
             toHit.addModifier(ae.mpUsed, "thrust used");
         
         //out of fuel
-        if(tm.getCurrentFuel() <= 0) 
+        if (tm.getCurrentFuel() <= 0)
             toHit.addModifier(+6, "out of fuel");
         
         //modifiers for the originating unit need to be added later, because
@@ -312,5 +301,4 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         // done!
         return toHit;
     }
-
 }

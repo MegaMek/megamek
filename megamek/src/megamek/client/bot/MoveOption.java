@@ -25,8 +25,8 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
@@ -131,7 +131,7 @@ public class MoveOption extends MovePath {
     private int facing;
     private boolean prone;
 
-    public MoveOption(IGame game, CEntity centity) {
+    public MoveOption(Game game, CEntity centity) {
         super(game, centity.entity);
         this.centity = centity;
         pos = centity.entity.getPosition();
@@ -197,8 +197,8 @@ public class MoveOption extends MovePath {
         }
 
         //Don't jump onto a building with CF < weight
-        IHex h = getGame().getBoard().getHex(getFinalCoords());
-        if((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
+        Hex h = getGame().getBoard().getHex(getFinalCoords());
+        if ((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
             if (cf < getEntity().getWeight()) {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -228,23 +228,24 @@ public class MoveOption extends MovePath {
         int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType(true)) {
-        case MOVE_WALK:
-        case MOVE_VTOL_WALK:
-            move = 1;
-            break;
-        case MOVE_RUN:
-        case MOVE_VTOL_RUN:
-            move = 2;
-            break;
-        case MOVE_SPRINT:
-        case MOVE_VTOL_SPRINT:
-            move = 3;
-            break;
-        case MOVE_JUMP:
-            move = getEntity().getJumpHeat(last.getMpUsed());
-            break;
-        default:
-            move = 1000;
+            case MOVE_WALK:
+            case MOVE_VTOL_WALK:
+                move = 1;
+                break;
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+                move = 2;
+                break;
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                move = 3;
+                break;
+            case MOVE_JUMP:
+                move = getEntity().getJumpHeat(last.getMpUsed());
+                break;
+            default:
+                move = 1000;
+                break;
         }
         return heat + move; // illegal?
     }
@@ -346,20 +347,20 @@ public class MoveOption extends MovePath {
         }
         toHitd.append(Compute.getAttackerTerrainModifier(getGame(), te.getId()));
 
-        IHex attHex = getGame().getBoard().getHex(ae.getPosition());
-        if (attHex.containsTerrain(Terrains.WATER) && (attHex.surface() > attEl)) {
+        Hex attHex = getGame().getBoard().getHex(ae.getPosition());
+        if (attHex.containsTerrain(Terrains.WATER) && (attHex.getLevel() > attEl)) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
             toHitd.addModifier(TargetRoll.IMPOSSIBLE,
                     "Defender in depth 2+ water");
-        } else if ((attHex.surface() == attEl) && (ae.height() > 0)) {
+        } else if ((attHex.getLevel() == attEl) && (ae.height() > 0)) {
             apc = true;
         }
-        IHex targHex = getGame().getBoard().getHex(te.getPosition());
+        Hex targHex = getGame().getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
-            if ((targHex.surface() == targEl) && (te.height() > 0)) {
+            if ((targHex.getLevel() == targEl) && (te.height() > 0)) {
                 pc = true;
-            } else if (targHex.surface() > targEl) {
+            } else if (targHex.getLevel() > targEl) {
                 toHita.addModifier(TargetRoll.IMPOSSIBLE,
                         "Attacker in depth 2+ water");
                 toHitd.addModifier(TargetRoll.IMPOSSIBLE,
@@ -368,7 +369,7 @@ public class MoveOption extends MovePath {
         }
 
         // calc & add attacker los mods
-        LosEffects los = LosEffects.calculateLos(getGame(), ae.getId(), te);
+        LosEffects los = LosEffects.calculateLOS(getGame(), ae, te);
         toHita.append(los.losModifiers(getGame()));
         // save variables
         pc = los.isTargetCover();
@@ -513,8 +514,8 @@ public class MoveOption extends MovePath {
         max *= mod;
         if (!enemy.getFinalProne() && (distance == 1)
                 && (enemy_firing_arcs[0] != ToHitData.SIDE_REAR)) {
-            IHex h = getGame().getBoard().getHex(getFinalCoords());
-            IHex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
+            Hex h = getGame().getBoard().getHex(getFinalCoords());
+            Hex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getLevel() - h1.getLevel()) < 2) {
                 max += ((((((h1.getLevel() - h.getLevel()) == 1) || getFinalProne()) ? 5
                         : 1)

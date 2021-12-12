@@ -126,11 +126,11 @@ public class AssignNovaNetServerCommand extends ServerCommand {
                 }
             }
         } catch (NumberFormatException nfe) {
-            server.sendServerChat(connID, "Error parsing the command. NFE");
+            server.sendServerChat(connID, "Error parsing the command. NumberFormatException: Cannot determine the format of a number in the command.");
         } catch (NullPointerException npe) {
-            server.sendServerChat(connID, "Error parsing the command. NPE");
+            server.sendServerChat(connID, "Error parsing the command. NullPointerException: " + npe.getMessage());
         } catch (IndexOutOfBoundsException ioobe) {
-            server.sendServerChat(connID, "Error parsing the command. IOOBE");
+            server.sendServerChat(connID, "Error parsing the command. IndexOutOfBoundsException: Insufficient arguments supplied.");
         }
 
     }

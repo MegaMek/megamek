@@ -46,17 +46,17 @@ public class ForceNode extends RulesetNode {
         super();
         eschelon = null;
         eschelonName = null;
-        nameNodes = new ArrayList<ValueNode>();
-        coNodes = new ArrayList<CommanderNode>();
-        xoNodes = new ArrayList<CommanderNode>();
-        ruleGroups = new ArrayList<ArrayList<OptionGroupNode>>();
-        subforces = new ArrayList<SubforcesNode>();
-        attached = new ArrayList<SubforcesNode>();
+        nameNodes = new ArrayList<>();
+        coNodes = new ArrayList<>();
+        xoNodes = new ArrayList<>();
+        ruleGroups = new ArrayList<>();
+        subforces = new ArrayList<>();
+        attached = new ArrayList<>();
     }
 
     public boolean apply(ForceDescriptor fd) {
         for (ArrayList<OptionGroupNode> group : ruleGroups) {
-            ArrayList<OptionGroupNode> toApply = new ArrayList<OptionGroupNode>();
+            ArrayList<OptionGroupNode> toApply = new ArrayList<>();
             for (OptionGroupNode rule : group) {
                 if (rule.matches(fd)) {
                     toApply.add(rule);
@@ -112,7 +112,7 @@ public class ForceNode extends RulesetNode {
                         String content = n.getContent();
                         if (content.startsWith("-")) {
                             for (String p : content.replaceFirst("\\-", "").split(",")) {
-                                fd.getMovementModes().remove(EntityMovementMode.getMode(p));
+                                fd.getMovementModes().remove(EntityMovementMode.parseFromString(p));
                             }
                             break;
                         }
@@ -122,7 +122,7 @@ public class ForceNode extends RulesetNode {
                             fd.getMovementModes().clear();
                         }
                         for (String p : content.split(",")) {
-                            fd.getMovementModes().add(EntityMovementMode.getMode(p));
+                            fd.getMovementModes().add(EntityMovementMode.parseFromString(p));
                         }
                         break;
                     case "formation":

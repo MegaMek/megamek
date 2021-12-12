@@ -42,7 +42,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @param w
      * @param g
      */
-    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         bSalvo = true;
@@ -116,10 +116,14 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if (target.isConventionalInfantry() && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        
+        // conventional infantry weapons with high damage get treated as if they have the infantry burst mod
+        if (target.isConventionalInfantry() && 
+                (wtype.hasFlag(WeaponType.F_INF_BURST) || 
+                (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
-        if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
+        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
         }
         // this doesn't work...

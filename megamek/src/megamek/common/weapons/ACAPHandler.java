@@ -20,8 +20,8 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,7 +40,7 @@ public class ACAPHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public ACAPHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
@@ -99,7 +99,7 @@ public class ACAPHandler extends ACWeaponHandler {
 
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
@@ -128,7 +128,7 @@ public class ACAPHandler extends ACWeaponHandler {
                 critModifier -= 2;
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
                 critModifier -= 2;
             }

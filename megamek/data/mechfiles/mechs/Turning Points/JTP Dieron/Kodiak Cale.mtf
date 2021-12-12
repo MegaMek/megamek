@@ -5,6 +5,7 @@ Kodiak
 Config:Biped
 TechBase:Mixed (Clan Chassis)
 Era:3068
+source:JTP Dieron - Jihad
 Rules Level:4
 
 Mass:100
@@ -138,15 +139,16 @@ Foot Actuator
 CLDouble Heat Sink
 CLDouble Heat Sink
 
-overview:The Kodiak is a fast Assault 'Mech designed by Clan Ghost Bear as a second-line counterpart to the Gladiator. Though not taken to the same extreme as other Clan Totem 'Mechs, the Kodiak does epitomize the Ghost Bears' method of warfare, combining an impressive defensive platform with surprising amounts of speed and firepower. Its massive 400-rated XL Engine propels the Kodiak to a maximum speed of 64.8 km/h, while seventeen and a half tons of Compound 12A2 gives it impressive armor protection. Though it mounts an incredible amount of firepower, even the use of twenty double heat sinks cannot prevent overheating problems when they are all fired simultaneously, though most MechWarriors learn to use their weapons sparingly and love the 'Mech's ability to deliver a massive knockout punch. The Kodiak incorporates the Garret L20 as its communications system, and uses the RCA Instatrack Mark IX for targeting, however the "claws" mounted on both of its arms are purely aesthetic.
+capabilities:Though not taken to the same extreme as other Clan Totem 'Mechs, the Kodiak does epitomize the Ghost Bears' method of warfare, combining an impressive defensive platform with surprising amounts of speed and firepower. Its massive 400-rated XL Engine propels the Kodiak to a maximum speed of 64.8 km/h, while seventeen and a half tons of Compound 12A2 gives it impressive armor protection. Though it mounts an incredible amount of firepower, even the use of twenty double heat sinks cannot prevent overheating problems when they are all fired simultaneously, though most MechWarriors learn to use their weapons sparingly and love the 'Mech's ability to deliver a massive knockout punch. The Kodiak incorporates the Garret L20 as its communications system, and uses the RCA Instatrack Mark IX for targeting, however the "claws" mounted on both of its arms are purely aesthetic.
 
-capabilities:The Mech of the 2nd Dieron Regulars' commander, Tai-sa Cale Schultz-Tanaka, the Kodiak Cale was recovered from a battlefield on Dieron and re-equipped with Inner Sphere and Clan technologies. Keeping the standard Clan Endo-Steel chassis and double heat sinks, techs replaced the XL engine with a standard unit. This reduced the 'Mech's top speed to 54 km/h, but increased survivability. Most of the Clan weaponry was also removed: Only a trio of Clan ER Medium Lasers in the left arm and a pair of Streak SRM 6 launchers in the left torso remain. The Kodiak Cale uses an Autocannon/10 and Heavy PPC for its main hitting power. These are backed up by the Clan weapons and a pair of Inner Sphere ER Medium Lasers and a pair of Inner Sphere Medium Lasers. The most important addition to the Cale version is the electronics suite: A Beagle Active Probe in the right torso spots enemy forces, while a C3 Master computer in the left torso allows the Kodiak Cale to feed targeting data to supporting units.
+deployment:The Mech of the 2nd Dieron Regulars' commander, Tai-sa Cale Schultz-Tanaka, the Kodiak Cale was recovered from a battlefield on Dieron and re-equipped with Inner Sphere and Clan technologies. Keeping the standard Clan Endo-Steel chassis and double heat sinks, techs replaced the XL engine with a standard unit. This reduced the 'Mech's top speed to 54 km/h, but increased survivability. Most of the Clan weaponry was also removed: Only a trio of Clan ER Medium Lasers in the left arm and a pair of Streak SRM 6 launchers in the left torso remain. The Kodiak Cale uses an Autocannon/10 and Heavy PPC for its main hitting power. These are backed up by the Clan weapons and a pair of Inner Sphere ER Medium Lasers and a pair of Inner Sphere Medium Lasers. The most important addition to the Cale version is the electronics suite: A Beagle Active Probe in the right torso spots enemy forces, while a C3 Master computer in the left torso allows the Kodiak Cale to feed targeting data to supporting units. 
 
-deployment:The vast majority of Kodiaks are used by the Ghost Bears, and indeed was exclusive to them in the first years since its introduction. Of those which are found in other toumans, Clan Snow Raven has the largest share, payment for their help in relocating to the Inner Sphere, followed by Clan Goliath Scorpion and Clan Cloud Cobra. Among the Crusader Clans though, only Clan Ice Hellion fields a handful of these 'Mechs. As a interesting note, and proof of the expansion of the Kodiak, at least two of these mechs were found in a Smoke Jaguar unit on planet Asgard, during Operation Bulldog.
-manufacturer:Bergan Industries
-primaryfactory:Alshain
+history:The vast majority of Kodiaks are used by the Ghost Bears, and indeed was exclusive to them in the first years since its introduction. Of those which are found in other toumans, Clan Snow Raven has the largest share, payment for their help in relocating to the Inner Sphere, followed by Clan Goliath Scorpion and Clan Cloud Cobra. Among the Crusader Clans though, only Clan Ice Hellion fields a handful of these 'Mechs.[3] As a interesting note, and proof of the expansion of the Kodiak, at least two of these mechs were found in a Smoke Jaguar unit on planet Asgard, during Operation Bulldog.
+
+manufacturer:Field Refit
+primaryfactory:Field Refit
 systemmanufacturer:CHASSIS:Bergan Version 12.6 Endo Steel
-systemmanufacturer:ENGINE:400 XL
+systemmanufacturer:ENGINE:400
 systemmanufacturer:ARMOR:Compound 12A2
 systemmanufacturer:COMMUNICATIONS:Garret L20
 systemmanufacturer:TARGETING:RCA Instatrac Mark IX

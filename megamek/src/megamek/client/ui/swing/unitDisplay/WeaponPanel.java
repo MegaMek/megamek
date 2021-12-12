@@ -51,8 +51,8 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
@@ -69,6 +69,7 @@ import megamek.common.WeaponComparatorDamage;
 import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -78,15 +79,13 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
  */
-public class WeaponPanel extends PicMap implements ListSelectionListener,
-        ActionListener {
+public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
     
     /**
      * Mouse adaptor for the weapon list.  Supports rearranging the weapons
      * to define a custom ordering.
      *
      * @author arlith
-     *
      */
     private class WeaponListMouseAdapter extends MouseInputAdapter {
 
@@ -140,10 +139,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     Mounted m = srcModel.getWeaponAt(i);
                     ent.setCustomWeaponOrder(m, i);
                 }
-                if (unitDisplay.getClientGUI() != null) {
-                    unitDisplay.getClientGUI().getMenuBar()
-                            .updateSaveWeaponOrderMenuItem();
-                }
             }
             addListeners();
         }
@@ -155,13 +150,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
      * the Mounteds given WeaponComparators.
      *
      * @author arlith
-     *
      */
     class WeaponListModel extends AbstractListModel<String> {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = 6312003196674512339L;
 
         /**
@@ -176,7 +166,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         WeaponListModel(Entity e) {
             en = e;
-            weapons = new ArrayList<Mounted>();
+            weapons = new ArrayList<>();
         }
 
         /**
@@ -245,7 +235,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         public String getElementAt(int index) {
             final Mounted mounted = weapons.get(index);
             final WeaponType wtype = (WeaponType) mounted.getType();
-            IGame game = null;
+            Game game = null;
             if (unitDisplay.getClientGUI() != null) {
                 game = unitDisplay.getClientGUI().getClient().getGame();
             }
@@ -947,7 +937,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         removeListeners();
         
         // Grab a copy of the game.
-        IGame game = null;
+        Game game = null;
 
         if (unitDisplay.getClientGUI() != null) {
             game = unitDisplay.getClientGUI().getClient().getGame();
@@ -989,7 +979,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
         Coords position = entity.getPosition();
         if (!en.isOffBoard() && (position != null)) {
-            IHex hex = game.getBoard().getHex(position);
+            Hex hex = game.getBoard().getHex(position);
             if (hex.containsTerrain(Terrains.FIRE)
                 && (hex.getFireTurn() > 0)) {
                 // standing in fire
@@ -1054,7 +1044,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             if ((entity instanceof LandAirMech)
                     && (entity.getConversionMode() == LandAirMech.CONV_MODE_MECH)
                     && mounted.getType().hasFlag(WeaponType.F_BOMB_WEAPON)
-                    && ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_RL_BOMB
+                    && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_RL_BOMB
                     && !mounted.getType().hasFlag(WeaponType.F_TAG)) {
                 continue;
             }
@@ -1062,7 +1052,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
                 && (game.getPhase() == mounted.usedInPhase())
-                && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
+                && (game.getPhase() == GamePhase.FIRING)) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {
@@ -1218,7 +1208,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             weaponList.setSelectedIndex(-1);
             return;
         }
-        int index = ((WeaponListModel)weaponList.getModel()).getIndex(wn);
+        int index = ((WeaponListModel) weaponList.getModel()).getIndex(wn);
         if (index == -1) {
             weaponList.setSelectedIndex(-1);
             return;
@@ -1265,7 +1255,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                         && entity.getWeaponBayList().size() == 0)) {
             return -1;
         }
-        WeaponListModel weapList = (WeaponListModel)weaponList.getModel();
+        WeaponListModel weapList = (WeaponListModel) weaponList.getModel();
         for (int i = 0; i < weaponList.getModel().getSize(); i++) {
             Mounted selectedWeap = weapList.getWeaponAt(i);
             if (entity.isWeaponValidForPhase(selectedWeap)) {
@@ -2089,13 +2079,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 // set the standard ranges, depending on capital or no
                 //boolean isCap = wtype.isCapital();
                 int rangeMultiplier = wtype.isCapital() ? 2 : 1;
-                final IGame game = unitDisplay.getClientGUI().getClient().getGame();
+                final Game game = unitDisplay.getClientGUI().getClient().getGame();
                 if (game.getBoard().onGround()) {
                     rangeMultiplier *= 8;
                 }
                 
-                for(int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
-                    if(maxr >= rangeIndex) {
+                for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
+                    if (maxr >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
                     }
                 }
@@ -2120,7 +2110,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay)gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
         }
     }
 
@@ -2578,7 +2568,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             JComponent currPanel = unitDisplay.getClientGUI().getCurrentPanel();
             // When in the Firing Phase, update the targeting information.
             if (currPanel instanceof FiringDisplay) {
-                FiringDisplay firingDisplay = (FiringDisplay)currPanel;
+                FiringDisplay firingDisplay = (FiringDisplay) currPanel;
 
                 Mounted mounted = null;
                 WeaponListModel weaponModel = (WeaponListModel) weaponList
@@ -2620,12 +2610,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             // Tell the <Phase>Display to update the 
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
-                unitDisplay.getClientGUI().bv.clearFieldofF();
+                unitDisplay.getClientGUI().getBoardView().clearFieldofF();
             }
         }
         onResize();
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         ClientGUI clientgui = unitDisplay.getClientGUI();
         if (ev.getSource().equals(m_chAmmo)
@@ -2747,11 +2738,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
             weapComparator = new WeaponComparatorNum(entity);
         }
-        if (unitDisplay.getClientGUI() != null) {
-            unitDisplay.getClientGUI().getMenuBar()
-                    .updateSaveWeaponOrderMenuItem();
-        }
-        ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
+        ((WeaponListModel) weaponList.getModel()).sort(weapComparator);
     }
     
     private void addListeners() {

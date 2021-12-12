@@ -37,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-troopspace:10.0
+troopspace:10.0:OMNI
 </transporters>
 
 <SafeThrust>

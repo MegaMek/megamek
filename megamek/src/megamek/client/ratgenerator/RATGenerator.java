@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -373,7 +374,7 @@ public class RATGenerator {
         }
         AvailabilityRating retVal = list.get(0).makeCopy(faction);
         
-        retVal.availability = (int)(AvailabilityRating.calcAvRating(totalWt / list.size()));
+        retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / list.size()));
         if (totalAdj < 0) {
             retVal.ratingAdjustment = (totalAdj - 1)/ list.size();
         } else {
@@ -481,7 +482,7 @@ public class RATGenerator {
                     Math.max(early, cRec.getIntroYear()), late, year);
             if (cAv > 0) {
                 double totalModelWeight = cRec.totalModelWeight(early,
-                        cRec.isOmni()?user : fRec);
+                        cRec.isOmni() ? user : fRec);
                 for (ModelRecord mRec : cRec.getModels()) {
                     if (mRec.getIntroYear() >= year
                             || (weightClasses.size() > 0
@@ -623,13 +624,13 @@ public class RATGenerator {
         
         List<UnitTable.TableEntry> retVal = new ArrayList<>();
         for (FactionRecord faction : salvageWeights.keySet()) {
-            int wt = (int)(salvageWeights.get(faction) * adj + 0.5);
+            int wt = (int) (salvageWeights.get(faction) * adj + 0.5);
             if (wt > 0) {
                 retVal.add(new UnitTable.TableEntry(wt, faction));
             }
         }
         for (ModelRecord mRec : unitWeights.keySet()) {
-            int wt = (int)(unitWeights.get(mRec) * adj + 0.5);
+            int wt = (int) (unitWeights.get(mRec) * adj + 0.5);
             if (wt > 0) {
                 retVal.add(new UnitTable.TableEntry(wt, mRec.getMechSummary()));
             }
@@ -803,7 +804,7 @@ public class RATGenerator {
     public void dispose() {
         interrupted = true;
         dispose = true;
-        if (initialized){
+        if (initialized) {
             rg = null;
         }
     }
@@ -812,10 +813,10 @@ public class RATGenerator {
         // Give the MSC some time to initialize
         MechSummaryCache msc = MechSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
-        while( !interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis() ) {
+        while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
                 Thread.sleep(50);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 // Ignore
             }
         }
@@ -1039,7 +1040,7 @@ public class RATGenerator {
             if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 chassisIndex.get(era).put(chassisKey,
                         new HashMap<>());
-                String [] codes = wn2.getTextContent().trim().split(",");
+                String[] codes = wn2.getTextContent().trim().split(",");
                 for (String code : codes) {
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
                     cr.getIncludedFactions().add(code.split(":")[0]);
@@ -1082,7 +1083,7 @@ public class RATGenerator {
                 mr.setRequiredUnits(wn2.getTextContent().trim());                                        
             } else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 modelIndex.get(era).put(mr.getKey(), new HashMap<>());
-                String [] codes = wn2.getTextContent().trim().split(",");
+                String[] codes = wn2.getTextContent().trim().split(",");
                 for (String code : codes) {
                     AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
                     mr.getIncludedFactions().add(code.split(":")[0]);
@@ -1092,21 +1093,21 @@ public class RATGenerator {
         }        
     }
 
-    public synchronized void registerListener(ActionListener l){
+    public synchronized void registerListener(ActionListener l) {
         listeners.add(l);
     }
 
-    public synchronized void removeListener(ActionListener l){
+    public synchronized void removeListener(ActionListener l) {
         listeners.remove(l);
     }
 
     /**
      * Notifies all the listeners that initialization is finished
      */
-    public void notifyListenersOfInitialization(){
-        if (initialized){
+    public void notifyListenersOfInitialization() {
+        if (initialized) {
             // Possibility of adding a new listener during notification.
-            for (ActionListener l : new ArrayList<>(listeners)){
+            for (ActionListener l : new ArrayList<>(listeners)) {
                 l.actionPerformed(new ActionEvent(
                         this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
             }
@@ -1116,9 +1117,9 @@ public class RATGenerator {
     /**
      * Notifies all the listeners that era is loaded
      */
-    public void notifyListenersEraLoaded(){
-        if (initialized){
-            for (ActionListener l : listeners){
+    public void notifyListenersEraLoaded() {
+        if (initialized) {
+            for (ActionListener l : listeners) {
                 l.actionPerformed(new ActionEvent(
                         this,ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
             }
@@ -1169,10 +1170,10 @@ public class RATGenerator {
 
         for (int i = 0; i < ERAS.size(); i++) {
             int era = ERAS.get(i);
-            int nextEra = (i < ERAS.size() - 1)? ERAS.get(i + 1) : era;
+            int nextEra = (i < ERAS.size() - 1) ? ERAS.get(i + 1) : era;
             try {
                 file = new File(dir + "/" + era + ".xml");
-                pw = new PrintWriter(file, "UTF-8");
+                pw = new PrintWriter(file, StandardCharsets.UTF_8);
                 pw.println("<?xml version='1.0' encoding='UTF-8'?>");
                 pw.println("<!-- Era " + era + "-->");
                 pw.println("<ratgen>");
@@ -1195,8 +1196,8 @@ public class RATGenerator {
                         if (avFields.size() > 0) {
                             String omni = "";
                             if (cr.isOmni() && cr.getModels().size() > 0) {
-                                omni = cr.getModels().iterator().next().isClan()?
-                                        "' omni='Clan" : "' omni='IS";
+                                omni = cr.getModels().iterator().next().isClan()
+                                        ? "' omni='Clan" : "' omni='IS";
                             }
                             pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
                                     + "' unitType='" + UnitType.getTypeName(cr.getUnitType())
@@ -1210,7 +1211,7 @@ public class RATGenerator {
                             }
                             pw.println("</availability>");
 
-                            for (ModelRecord mr : cr.getModels()) {
+                            for (ModelRecord mr : cr.getSortedModels()) {
                                 if (cr.getIntroYear() < nextEra
                                         && modelIndex.get(era).containsKey(mr.getKey())) {
                                     avFields.clear();

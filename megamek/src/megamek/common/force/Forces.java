@@ -18,27 +18,20 @@
  */ 
 package megamek.common.force;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import megamek.MegaMek;
 import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
 
-import static megamek.common.force.Force.*;
-import static java.util.stream.Collectors.*;
+import java.io.Serializable;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.common.force.Force.NO_FORCE;
 
 /**
  * Manages a collection of Forces for a game. The game only needs to hold one Forces object.
@@ -52,9 +45,9 @@ public final class Forces implements Serializable {
     private static final long serialVersionUID = -1382468145554363945L;
     
     private HashMap<Integer, Force> forces = new HashMap<>();
-    private transient IGame game;
+    private transient Game game;
     
-    public Forces(IGame g) {
+    public Forces(Game g) {
         game = g;
     }
     
@@ -64,36 +57,34 @@ public final class Forces implements Serializable {
      * Returns the id of the newly created Force or Force.NO_FORCE if no force was 
      * created.  
      */
-    public synchronized int addTopLevelForce(String forceName, IPlayer owner) {
-        if (!verifyForceName(forceName) || owner == null) {
+    public synchronized int addTopLevelForce(final Force force, final @Nullable Player owner) {
+        if (!verifyForceName(force.getName()) || (owner == null)) {
             return NO_FORCE;
         }
 
-        int newId = newId();
-        Force newForce = new Force(forceName, newId, owner);
-        forces.put(newId, newForce);
+        final int newId = newId();
+        forces.put(newId, new Force(force.getName(), newId, force.getCamouflage().clone(), owner));
         return newId;
     }
-    
+
     /** 
-     * Adds a subforce with the provided name to the provided parent. Verifies the name
-     * and the force before applying the change.
-     * Returns the id of the newly created Force or Force.NO_FORCE if no new subforce was 
-     * created.  
+     * Adds the provided subforce to the provided parent. Verifies the name and the force before
+     * applying the change.
+     * @return the id of the newly created Force or Force.NO_FORCE if no new subforce was created.
      */
-    public synchronized int addSubForce(String forceName, Force parent) {
-        if (!contains(parent) || !verifyForceName(forceName)) {
+    public synchronized int addSubForce(final Force force, final Force parent) {
+        if (!contains(parent) || !verifyForceName(force.getName())) {
             return NO_FORCE;
         }
-        
+
         // Create and add the new force
-        int newId = newId();
-        Force newForce = new Force(forceName, newId, parent);
+        final int newId = newId();
+        final Force newForce = new Force(force.getName(), newId, force.getCamouflage().clone(), parent);
         forces.put(newId, newForce);
         parent.addSubForce(newForce);
         return newId;
     }
-    
+
     /** Returns a list of all the game's entities that are not part of any force. */
     public List<Entity> forcelessEntities() {
         return game.getEntitiesStream().filter(e -> !e.partOfForce()).collect(toList());
@@ -139,7 +130,6 @@ public final class Forces implements Serializable {
     public Entity getEntity(int id) {
         return game.getEntity(id);
     }
-    
     
     /** 
      * Adds the provided Entity to the provided force. Does nothing if the force doesn't exist
@@ -261,14 +251,14 @@ public final class Forces implements Serializable {
     /** 
      * Returns the owner of this force. 
      */
-    public IPlayer getOwner(Force force) {
+    public Player getOwner(Force force) {
         return game.getPlayer(getOwnerId(force));
     }
     
     /** 
      * Returns the owner of this force. 
      */
-    public IPlayer getOwner(int forceId) {
+    public Player getOwner(int forceId) {
         return getOwner(getForce(forceId));
     }
     
@@ -277,10 +267,10 @@ public final class Forces implements Serializable {
      * E.g., If it is part of a lance in a company, the lance will be returned.
      * If it is part of no force, returns null. 
      */
-    public Force getForce(Entity entity) {
+    public @Nullable Force getForce(final Entity entity) {
         return forces.get(getForceId(entity.getId()));
     }
-    
+
     /** 
      * Returns the id of the force that the provided entity is a direct part of.
      * E.g., If it is part of a lance in a company, the lance id will be returned.
@@ -303,7 +293,7 @@ public final class Forces implements Serializable {
         }
         return Force.NO_FORCE;
     }
-    
+
     /**
      * Parses the force string of the provided entity. 
      * Returns a List of Force stubs in the order of highest to lowest force.
@@ -311,20 +301,30 @@ public final class Forces implements Serializable {
      * contain only the name and id and have no parent and no owner and 
      * the passed entity is not added to them!
      */
-    public static ArrayList<Force> parseForceString(Entity entity) {
-        ArrayList<Force> result = new ArrayList<>();
-        String forceString = entity.getForceString();
-        StringTokenizer st = new StringTokenizer(forceString, "|\\");
-        
-        while (st.hasMoreTokens()) {
-            String forceName = st.nextToken();
-            String forceId = st.nextToken();
-            int id = Integer.parseInt(forceId);
-            result.add(new Force(forceName, id));
+    public static List<Force> parseForceString(Entity entity) {
+        final List<Force> forces = new ArrayList<>();
+        final String a = entity.getForceString();
+        final String[] b = a.split("\\|\\|");
+        for (final String forceText : b) {
+            final String[] force = forceText.split("\\|");
+            if ((force.length != 2) && (force.length != 4)) {
+                MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName());
+                break;
+            }
+
+            final Camouflage camouflage = (force.length == 4) ? new Camouflage(force[2], force[3]) : new Camouflage();
+
+            try {
+                final Force f = new Force(force[0], Integer.parseInt(force[1]), camouflage);
+                forces.add(f);
+            } catch (Exception e) {
+                MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName(), e);
+                break;
+            }
         }
-        return result;
+        return forces;
     }
-    
+
     /** 
      * Returns a list of all subforces of the provided force, including
      * subforces of subforces to any depth. 
@@ -343,7 +343,7 @@ public final class Forces implements Serializable {
     /** 
      * For the given player, returns a list of forces that are his own or belong to his team. 
      */
-    public ArrayList<Force> getAvailableForces(IPlayer player) {
+    public ArrayList<Force> getAvailableForces(Player player) {
         ArrayList<Force> result = new ArrayList<>();
         for (Force force: getTopLevelForces()) {
             if (isAvailable(force, player)) {
@@ -354,22 +354,21 @@ public final class Forces implements Serializable {
         return result;
     }
     
-    private boolean isAvailable(Force force, IPlayer player) {
-        IPlayer owner = game.getPlayer(getOwnerId(force));
+    private boolean isAvailable(Force force, Player player) {
+        Player owner = game.getPlayer(getOwnerId(force));
         return (owner != null) && !owner.isEnemyOf(player);
     }
     
-    public String forceStringFor(Entity entity) {
-        List<Force> ancestors = forceChain(entity);
-        String result = "";
-        for (Force ancestor: ancestors) {
-            result += "\\" + ancestor.getName() + "|" + ancestor.getId();
+    public String forceStringFor(final Entity entity) {
+        final StringBuilder result = new StringBuilder();
+        for (final Force ancestor : forceChain(entity)) {
+            result.append(ancestor.getName()).append("|").append(ancestor.getId());
+            if (!ancestor.getCamouflage().isDefault()) {
+                result.append("|").append(ancestor.getCamouflage().getCategory()).append("|").append(ancestor.getCamouflage().getFilename());
+            }
+            result.append("||");
         }
-        // Remove the backslash at the start
-        if (result.length() > 0) {
-            result = result.substring(1);
-        }
-        return result;
+        return result.toString();
     }
     
     /** 
@@ -418,10 +417,10 @@ public final class Forces implements Serializable {
     }
     
     /** 
-     * Sets the game reference to the provided IGame. Used when transferring
+     * Sets the game reference to the provided Game. Used when transferring
      * the forces between client and server.
      */
-    public void setGame(IGame g) {
+    public void setGame(Game g) {
         game = g;
     }
     
@@ -529,7 +528,7 @@ public final class Forces implements Serializable {
                 allEntities.put(entity.getId(), entity);
             }
 
-            var entityIds = new ArrayList<Integer>(entry.getValue().getEntities());
+            var entityIds = new ArrayList<>(entry.getValue().getEntities());
             for (int entityId: entityIds) {
                 // Remove non-existent/dead entities
                 if (!allEntities.containsKey(entityId)) {
@@ -543,8 +542,8 @@ public final class Forces implements Serializable {
                     game.getEntity(entityId).setForceId(entry.getKey());
                 }
                 // Remove entities from enemy forces
-                IPlayer enOwner = game.getPlayer(allEntities.get(entityId).getOwnerId());
-                IPlayer foOwner = game.getPlayer(getOwnerId(entry.getValue()));
+                Player enOwner = game.getPlayer(allEntities.get(entityId).getOwnerId());
+                Player foOwner = game.getPlayer(getOwnerId(entry.getValue()));
                 if (enOwner != null && enOwner.isEnemyOf(foOwner)) {
                     removeEntityFromForces(game.getEntity(entityId));
                 }
@@ -563,8 +562,8 @@ public final class Forces implements Serializable {
                 // Correct parentID (the subforce's parent entry must be equal to the current force
                 getForce(subforceId).setParent(entry.getKey());
                 // Remove subforces from enemy forces
-                IPlayer subFoOwner = game.getPlayer(getOwnerId(getForce(subforceId)));
-                IPlayer foOwner = game.getPlayer(getOwnerId(entry.getValue()));
+                Player subFoOwner = game.getPlayer(getOwnerId(getForce(subforceId)));
+                Player foOwner = game.getPlayer(getOwnerId(entry.getValue()));
                 if (subFoOwner != null && subFoOwner.isEnemyOf(foOwner)) {
                     promoteForce(getForce(subforceId));
                 }
@@ -586,7 +585,7 @@ public final class Forces implements Serializable {
                 parent.removeSubForce(forceId);
                 result.add(parent);
             }
-            forces.remove((Integer)forceId);
+            forces.remove(forceId);
         }
         return result;
     }
@@ -610,7 +609,7 @@ public final class Forces implements Serializable {
                     parent.removeSubForce(force.getId());
                     result.add(parent);
                 }
-                forces.remove((Integer)force.getId());
+                forces.remove(force.getId());
             }
         }
         return result;
@@ -629,8 +628,8 @@ public final class Forces implements Serializable {
      */
     public ArrayList<Force> attachForce(Force force, Force newParent) {
         ArrayList<Force> result = new ArrayList<>();
-        IPlayer forceOwner = game.getPlayer(getOwnerId(force));
-        IPlayer parentOwner = game.getPlayer(getOwnerId(newParent));
+        Player forceOwner = game.getPlayer(getOwnerId(force));
+        Player parentOwner = game.getPlayer(getOwnerId(newParent));
         if (isSubForce(force, newParent) || forceOwner == null 
                 || forceOwner.isEnemyOf(parentOwner) || force.getParentId() == newParent.getId()) {
             return result;
@@ -678,7 +677,7 @@ public final class Forces implements Serializable {
      * present owner. Returns a list of affected forces containing the force if it 
      * was changed, empty otherwise.
      */
-    public ArrayList<Force> assignForceOnly(Force force, IPlayer newOwner) {
+    public ArrayList<Force> assignForceOnly(Force force, Player newOwner) {
         ArrayList<Force> result = new ArrayList<>();
         if (getOwner(force).isEnemyOf(newOwner)) {
             MegaMek.getLogger().error("Tried to reassign a force without units to an enemy.");
@@ -696,7 +695,7 @@ public final class Forces implements Serializable {
      * Promotes the force to top-level if the parent force is now an enemy force.  
      * Returns a list of affected forces.
      */
-    public Set<Force> assignFullForces(Force force, IPlayer newOwner) {
+    public Set<Force> assignFullForces(Force force, Player newOwner) {
         Set<Force> result = new HashSet<>();
 
         // gather up this whole force tree

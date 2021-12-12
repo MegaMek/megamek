@@ -24,8 +24,8 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -161,7 +161,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
         
         //SMASH! CamOps, pg. 82
-        if(zweihandering) {
+        if (zweihandering) {
             nDamage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 
@@ -180,8 +180,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                  || mType.hasSubType(MiscType.S_ROCK_CUTTER)
                  || mType.hasSubType(MiscType.S_SPOT_WELDER)
                  || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType
-                .hasSubType(MiscType.S_COMBINE))
-            ) {
+                .hasSubType(MiscType.S_COMBINE))) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();
@@ -248,7 +247,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         return zweihandering;
     }
     
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return ClubAttackAction.toHit(game, getEntityId(),
                                       game.getTarget(getTargetType(), getTargetId()), getClub(),
                                       aiming, zweihandering);
@@ -264,7 +263,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
      * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
      * @return
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, Mounted club, int aimTable, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         MiscType clubType;
@@ -324,8 +323,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.height();
         final int targetElevation = target.getElevation()

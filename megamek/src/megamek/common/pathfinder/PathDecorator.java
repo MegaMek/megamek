@@ -23,7 +23,7 @@ import java.util.Set;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.EntityMovementMode;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
@@ -113,7 +113,7 @@ public class PathDecorator {
         desiredMPs.add(source.getCachedEntityState().getRunMPNoGravity());
         desiredMPs.add(source.getCachedEntityState().getWalkMP());
         
-        for(int desiredMP : desiredMPs) {
+        for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
             retVal.addAll(clippedPaths);
         }
@@ -137,13 +137,10 @@ public class PathDecorator {
      */
     public static List<MovePath> clipToDesiredMP(MovePath source, int desiredMP) {
         MovePath newPath = source.clone();
-        while(newPath.getMpUsed() > desiredMP) {
+        while (newPath.getMpUsed() > desiredMP) {
             newPath.removeLastStep();
         }
-        
-        List<MovePath> clippedPaths = generatePossiblePaths(newPath, desiredMP);
-        
-        return clippedPaths;
+        return generatePossiblePaths(newPath, desiredMP);
     }
     
     /**
@@ -151,16 +148,12 @@ public class PathDecorator {
      * up to the desired MP
      */
     public static List<MovePath> generatePossiblePaths(MovePath source, int desiredMP) {
-        List<MovePath> turnPaths = new ArrayList<>();
-        
         LongestPathFinder lpf = LongestPathFinder
                 .newInstanceOfLongestPath(desiredMP,
                         MoveStepType.FORWARDS, source.getGame());
         lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
         lpf.run(source);
-        turnPaths.addAll(lpf.getLongestComputedPaths());
-        
-        return turnPaths;
+        return new ArrayList<>(lpf.getLongestComputedPaths());
     }
     
     /**
@@ -175,7 +168,7 @@ public class PathDecorator {
         
         // get the hex that is in the direction we're facing
         Coords destinationCoords = source.getFinalCoords().translated(source.getFinalFacing());
-        IHex destHex = source.getGame().getBoard().getHex(destinationCoords);
+        Hex destHex = source.getGame().getBoard().getHex(destinationCoords);
         if (destHex == null) {
             return;
         }
@@ -187,7 +180,7 @@ public class PathDecorator {
             return;
         }
         
-        IHex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
+        Hex srcHex = source.getGame().getBoard().getHex(source.getFinalCoords());
         int absHeight = srcHex.getLevel() + entityElevation;  
         int destElevation = absHeight - destHex.getLevel();
         int safeElevation = destHex.maxTerrainFeatureElevation(false);
@@ -210,7 +203,7 @@ public class PathDecorator {
 
             source.addStep(MoveStepType.UP);
 
-            if(!source.isMoveLegal()) {
+            if (!source.isMoveLegal()) {
                 source.removeLastStep();
                 return;
             }

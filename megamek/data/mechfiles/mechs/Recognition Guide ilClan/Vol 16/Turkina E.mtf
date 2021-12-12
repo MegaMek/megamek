@@ -1,0 +1,165 @@
+Version:1.0
+Turkina
+E
+
+Config:Biped Omnimech
+techbase:Clan
+era:3070
+source:Recognition Guide:ilClan #16 - Jihad
+rules level:2
+
+mass:95
+engine:285 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:15 Clan Double
+base chassis heat sinks:11
+walk mp:3
+jump mp:3
+
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:7
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+HAG/40, Right Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Left Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Turkina is a powerful OmniMech that was first seen in the Turkina Keshik at the Battle of Tukayyid, and entered general service with Clan Jade Falcon following the end of the Refusal War. In a design oddity, the Turkina mounts enough jump jets to vault 90 meters hardwired onto the frame, rather than using them in modular pods. While this simplified repair, it also uses tonnage that could be devoted to other systems when a mission does not call for jumping. Designers also included fifteen double heat sinks, four more than could be fit into the engine, so they are fixed in the torso. The Turkina has 42 tons available for modular pods.
+capabilities:This powerful close range variant is equipped with six Streak SRM-6, and an HAG 40.
+history:The Turkina is named after Turkina, the first Jade Falcon to be tamed, who inspired the leaders of Clan Jade Falcon in its early days. The name of the Turkina Keshik is also derived from this bird.
+manufacturer:Complex Beta, Olivetti Weapons
+primaryfactory:Ironhold, Sudeten
+systemmanufacturer:CHASSIS:JF Standard
+systemmanufacturer:ENGINE:285 JF Extralight
+systemmanufacturer:ARMOR:JF Standard
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFIX/Olivetti Pinpoint Advanced
+

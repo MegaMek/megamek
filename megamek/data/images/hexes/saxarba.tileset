@@ -100,7 +100,7 @@ super * "water:0" "volcano" "saxarba/theme_volcano/water_volcano_0.png"
 #WATER
 # Garden Lakes use water:0 so they must be included now
 include "saxarba/SMV_Fluff/GardenLakes.tileinc"
-#super * "water:0" "" "saxarba/water/water_0.png"
+include "Structured_Water/Structured_Water - Saxarba - 0.tileinc"
 
 #ELEVATOR
 super * "elevator:10" "" "saxarba/misc/elevator_10.png"
@@ -262,7 +262,7 @@ super * "water:1" "volcano" "saxarba/theme_volcano/water_volcano_1.png"
 
 #WATER
 #super * "water:1" "" "saxarba/water/water_1.png"
-include "Structured_Water/Structured_Water - Saxarba.tileinc"
+include "Structured_Water/Structured_Water - Saxarba - 1.tileinc"
 
 #ROADS
 include "saxarba/Includes/BasicRoads.tileinc"
@@ -343,7 +343,7 @@ super * "water:2" "lunar" "saxarba/theme_lunar/water_lunar_2.png"
 super * "water:2" "volcano" "saxarba/theme_volcano/water_volcano_2.png"
 
 #WATER
-super * "water:2" "" "saxarba/water/water_2.png"
+include "Structured_Water/Structured_Water - Saxarba - 2.tileinc"
 
 #TROPICAL THEME TREES
 super * "woods:3;foliage_elev:*" "tropical" "saxarba/theme_tropical/woods_ultra_tropical.png"
@@ -394,9 +394,9 @@ super * "water:4" "volcano" "saxarba/theme_volcano/water_volcano_4.png"
 super * "water:*" "volcano" "saxarba/theme_volcano/water_volcano_4.png"
 
 #WATER
-super * "water:3" "" "saxarba/water/water_3.png"
-super * "water:4" "" "saxarba/water/water_4.png"
-super * "water:*" "" "saxarba/water/water_4.png"
+include "Structured_Water/Structured_Water - Saxarba - 3.tileinc"
+include "Structured_Water/Structured_Water - Saxarba - 4.tileinc"
+
 
 #The rapids & ice won't look good over some water/trees combination, not sure if there's a fix for this.
 #RAPIDS

@@ -803,7 +803,7 @@ public class MiscType extends EquipmentType {
                     pct = 0.1;
                 }
                 if (getSubType() == S_IMPROVED) {
-                    pct += hasFlag(F_SASRCS)? 0.01 : 0.02;
+                    pct += hasFlag(F_SASRCS) ? 0.01 : 0.02;
                 } else if (getSubType() == S_ELITE) { // only shielded
                     pct += 0.03;
                 }
@@ -1038,17 +1038,17 @@ public class MiscType extends EquipmentType {
                 costValue = (int) Math.ceil(entity.getWeight() * 150);
             } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
                 switch (entity.getWeightClass()) {
-                case EntityWeightClass.WEIGHT_ASSAULT:
-                    costValue = 300000;
-                    break;
-                case EntityWeightClass.WEIGHT_HEAVY:
-                    costValue = 150000;
-                    break;
-                case EntityWeightClass.WEIGHT_MEDIUM:
-                    costValue = 75000;
-                    break;
-                default:
-                    costValue = 50000;
+                    case EntityWeightClass.WEIGHT_ASSAULT:
+                        costValue = 300000;
+                        break;
+                    case EntityWeightClass.WEIGHT_HEAVY:
+                        costValue = 150000;
+                        break;
+                    case EntityWeightClass.WEIGHT_MEDIUM:
+                        costValue = 75000;
+                        break;
+                    default:
+                        costValue = 50000;
                 }
             } else if (hasFlag(F_BASIC_FIRECONTROL)) {
                 // 5% of weapon cost
@@ -1287,14 +1287,14 @@ public class MiscType extends EquipmentType {
             return (int) Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
             switch (entity.getWeightClass()) {
-            case EntityWeightClass.WEIGHT_LIGHT:
-                return 1;
-            case EntityWeightClass.WEIGHT_MEDIUM:
-                return 2;
-            case EntityWeightClass.WEIGHT_HEAVY:
-                return 3;
-            case EntityWeightClass.WEIGHT_ASSAULT:
-                return 4;
+                case EntityWeightClass.WEIGHT_LIGHT:
+                    return 1;
+                case EntityWeightClass.WEIGHT_MEDIUM:
+                    return 2;
+                case EntityWeightClass.WEIGHT_HEAVY:
+                    return 3;
+                case EntityWeightClass.WEIGHT_ASSAULT:
+                    return 4;
             }
             return entity.getWeightClass();
         } else if (hasFlag(F_TRACKS)) {
@@ -1345,9 +1345,7 @@ public class MiscType extends EquipmentType {
     }
 
     public double getBV(Entity entity, Mounted linkedTo) {
-
         if (hasFlag(F_PPC_CAPACITOR) && (linkedTo != null) && (linkedTo.getLinkedBy() != null)) {
-
             if (linkedTo.getType() instanceof ISLightPPC) {
                 return 44;
             }
@@ -1398,46 +1396,25 @@ public class MiscType extends EquipmentType {
             return returnBV;
         }
         // check for known formulas
+        double tsmMod = entity.hasWorkingMisc(F_TSM) ? 2 : 1;
         if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
-            returnBV = Math.ceil((entity.getWeight() / 10.0) + 1) * 1.725;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil((entity.getWeight() / 10.0) + 1) * 1.725 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE_THB)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.0;
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 5.0) * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
-            returnBV = Math.ceil(entity.getWeight() / 4.0);
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 4.0) * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            returnBV = Math.ceil((entity.getWeight() / 10.0) * 1.725);
-            if (entity.hasWorkingMisc(F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.ceil(entity.getWeight() / 10.0) * 1.725 * tsmMod;
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
-            returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
+            returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275 * tsmMod;
         } else if (hasFlag(F_TALON)) {
-            // according to an email from TPTB, Talon BV is the extra damage
-            // they
+            // according to an email from TPTB, Talon BV is the extra damage they
             // do for kicks, so 50% of normal kick damage
-            returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5);
-            if (entity.hasWorkingMisc(MiscType.F_TSM)) {
-                returnBV *= 2;
-            }
+            returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5) * tsmMod;
         } else if (hasFlag(MiscType.F_RAM_PLATE)) {
             // half the maximum charge damage (rounded down) * 1.1
             int damage = ((int) (entity.getWeight() * entity.getRunMP() * 0.1)) / 2;
@@ -2333,9 +2310,15 @@ public class MiscType extends EquipmentType {
         //Errata May 8/2020 - CGL requested change to TP.
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+<<<<<<< HEAD
                 .setAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+=======
+                .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+>>>>>>> refs/remotes/origin/master
 
         return misc;
     }
@@ -2643,7 +2626,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "205,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
-                .setISApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, true, true).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
         return misc;
     }
@@ -6949,8 +6932,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "221,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2559, 2567, 3045, 2865, 3040)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        		.setISAdvancement(2559, 2567, 3045, 2865, 3040)
+                .setISApproximate(false, false, false, false, true)
+                .setPrototypeFactions(F_TH)
+                .setTechRating(RATING_E)
                 .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
         return misc;
     }
@@ -7209,7 +7195,7 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_BUZZSAW;
         misc.bv = 67;// From the Ask the Writer Forum
         // Assuming this is a variant of the Dual Saw
-        misc.rulesRefs = "243,TM";
+        misc.rulesRefs = "Unbound";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -8919,8 +8905,13 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "342,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+<<<<<<< HEAD
                 .setISAdvancement(DATE_NONE,3067, 3085,DATE_NONE,DATE_NONE)
                 .setISApproximate(false, false, true,false,false).setPrototypeFactions(F_LC)
+=======
+                .setISAdvancement(DATE_NONE, 3067, 3085)
+                .setISApproximate(false, false, true).setPrototypeFactions(F_LC)
+>>>>>>> refs/remotes/origin/master
                 .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -8941,8 +8932,13 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "342,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+<<<<<<< HEAD
                 .setClanAdvancement(DATE_NONE,3073,3085,DATE_NONE,DATE_NONE)
                 .setClanApproximate(false,false,true,false,false)
+=======
+                .setClanAdvancement(DATE_NONE, 3073, 3085)
+                .setClanApproximate(false,false,true)
+>>>>>>> refs/remotes/origin/master
                 .setPrototypeFactions(F_CWX)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;

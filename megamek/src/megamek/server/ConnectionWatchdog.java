@@ -50,7 +50,7 @@ public class ConnectionWatchdog extends TimerTask {
             return;
         }
 
-        server.greeting(id);
+        server.clientVersionCheck(id);
         failCount++;
     }
 }

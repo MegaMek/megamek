@@ -14,13 +14,9 @@
 
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
@@ -31,8 +27,8 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -126,8 +122,8 @@ public class AreaEffectHelper {
     private static void addFuelAirBlastRadiusIndex(int ammoType, int blastRadius) {
         // this is relatively inefficient, but probably the least inefficient of the options
         // to acquire a list of the ammo types
-        for(AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
-            if(at.getMunitionType() == AmmoType.M_FAE) {
+        for (AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
+            if (at.getMunitionType() == AmmoType.M_FAE) {
                 fuelAirBlastRadiusIndex.put(at.getInternalName(), blastRadius);
             }
         }
@@ -137,7 +133,7 @@ public class AreaEffectHelper {
      * Get the blast radius of a particular equipment type, given the internal name.
      */
     public static int getFuelAirBlastRadiusIndex(String name) {
-        if(fuelAirBlastRadiusIndex == null) {
+        if (fuelAirBlastRadiusIndex == null) {
             initializeFuelAirBlastRadiusIndexData();
         }
         
@@ -149,12 +145,12 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
-        IGame game = attacker.getGame();
+        Game game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
                 game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
         
-        if(notEnoughAtmo) {
+        if (notEnoughAtmo) {
             Report r = new Report(9986);
             r.indent(1);
             r.subject = attacker.getId();
@@ -166,7 +162,7 @@ public class AreaEffectHelper {
         boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
         
-        if(thinAtmo) {
+        if (thinAtmo) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -185,12 +181,12 @@ public class AreaEffectHelper {
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
         int distFromCenter = center.distance(target.getPosition());
         int damageBracket = blastRadius - distFromCenter;
-        if(damageBracket < 0) {
+        if (damageBracket < 0) {
             return;
         }
         
         int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-        if(thinAtmo) {
+        if (thinAtmo) {
             damage = (int) Math.ceil(damage / 2.0);
         }
                 
@@ -204,12 +200,12 @@ public class AreaEffectHelper {
      * Helper function that processes damage for fuel-air explosives.
      */
     public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
-        IGame game = attacker.getGame();
+        Game game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
                 game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
         
-        if(notEnoughAtmo) {
+        if (notEnoughAtmo) {
             Report r = new Report(9986);
             r.indent(1);
             r.subject = attacker.getId();
@@ -221,7 +217,7 @@ public class AreaEffectHelper {
         boolean thinAtmo = game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_THIN;
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
         
-        if(thinAtmo) {
+        if (thinAtmo) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -239,11 +235,11 @@ public class AreaEffectHelper {
         //      not here, but in artilleryDamageHex, make sure to 1.5x damage for light building or unit with armor BAR < 10
         //      not here, but in artilleryDamageHex, make sure to .5x damage for "castle brian" or "armored" building
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
-        for(int damageBracket = blastRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
+        for (int damageBracket = blastRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
             List<Coords> donut = center.allAtDistance(distFromCenter);
-            for(Coords coords : donut) {
+            for (Coords coords : donut) {
                 int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-                if(thinAtmo) {
+                if (thinAtmo) {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
                 
@@ -265,8 +261,8 @@ public class AreaEffectHelper {
      * Checks all units at given coords.
      */
     public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, IGame game, Server server) {
-        for(Entity entity : game.getEntitiesVector(coords)) {
+            Vector<Report> vPhaseReport, Game game, Server server) {
+        for (Entity entity : game.getEntitiesVector(coords)) {
             checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
         }
     }
@@ -276,11 +272,11 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, IGame game, Server server) {
+            Vector<Report> vPhaseReport, Game game, Server server) {
         int rollTarget = -1;
-        if(entity instanceof BattleArmor) {
+        if (entity instanceof BattleArmor) {
             rollTarget = 7;
-        } else if(entity instanceof Infantry) {
+        } else if (entity instanceof Infantry) {
             rollTarget = 9;
         } else {
             return;
@@ -300,7 +296,7 @@ public class AreaEffectHelper {
         r.choose(destroyed);
         vPhaseReport.addElement(r);
         
-        if(destroyed) {
+        if (destroyed) {
             vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
             alreadyHit.add(entity.getId());
         }
@@ -310,7 +306,7 @@ public class AreaEffectHelper {
     /**
      * Worker function that clears minefields.
      */
-    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport, IGame game, Server server) {
+    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport, Game game, Server server) {
         Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
         ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
         while (minefields.hasMoreElements()) {
@@ -350,7 +346,7 @@ public class AreaEffectHelper {
     public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs, 
             boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
             Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
-            Entity killer, IHex hex, int subjectId, Vector<Report> vPhaseReport, Server server) {
+            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, Server server) {
         Report r;
         
         int hits = damage;
@@ -438,7 +434,7 @@ public class AreaEffectHelper {
             hits *= 2;
             
             // if it's fuel-air, we take even more damage!
-            if(isFuelAirBomb) {
+            if (isFuelAirBomb) {
                 hits *= 2;
             }
         }
@@ -464,7 +460,7 @@ public class AreaEffectHelper {
                     r.add(toHit.getTableDesc());
                     r.add(0);
                     vPhaseReport.add(r);
-                    vPhaseReport.addAll(server.vehicleMotiveDamage((Tank)entity, 0));
+                    vPhaseReport.addAll(server.vehicleMotiveDamage((Tank) entity, 0));
                     return;
                 }
                 
@@ -569,7 +565,7 @@ public class AreaEffectHelper {
                 if (specialCaseFlechette && !(entity instanceof Infantry)) {
                     damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
                 // fuel-air bombs do 1.5x damage to locations hit that have a BAR rating of less than 10.
-                } else if(isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
+                } else if (isFuelAirBomb && !(entity instanceof Infantry) && (entity.getBARRating(hit.getLocation()) < 10)) {
                     damageToDeal = (int) Math.ceil(damageToDeal * 1.5);
                     
                     r = new Report(9991);
@@ -599,6 +595,17 @@ public class AreaEffectHelper {
      * @return
      */
     public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
+        if (ammo == null) {
+            MegaMek.getLogger().error("Attempting to calculate damage fall-off with null ammo.\n\n"
+                    + Arrays.toString(Thread.currentThread().getStackTrace()));
+
+            DamageFalloff empty = new DamageFalloff();
+            empty.damage = 0;
+            empty.falloff = 10;
+            empty.clusterMunitionsFlag = false;
+            return empty;
+        }
+        
         int damage = ammo.getRackSize();
         int falloff = 10;
         boolean clusterMunitionsFlag = false;
@@ -687,7 +694,7 @@ public class AreaEffectHelper {
     public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport, Server server) {
         NukeStats nukeStats = getNukeStats(nukeType);
                 
-        if(nukeStats == null) {
+        if (nukeStats == null) {
             Report r = new Report(9998);
             r.add(nukeType);
             vPhaseReport.add(r);
@@ -705,7 +712,7 @@ public class AreaEffectHelper {
         int blastDistance = entity.getPosition().distance(coords);
         
         // if the entity is in the crater radius, bye
-        if(blastDistance < craterRadius) {
+        if (blastDistance < craterRadius) {
             vPhaseReport.addAll(server.destroyEntity(entity, "nuclear explosion proximity", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
@@ -715,7 +722,7 @@ public class AreaEffectHelper {
         
         // calculate the damage to the entity based on the range to the nuke
         int damageToEntity = nukeStats.baseDamage - (blastDistance * nukeStats.degradation);
-        if(damageToEntity < 0) {
+        if (damageToEntity < 0) {
             return;
         } else {
             applyExplosionClusterDamageToEntity(entity, damageToEntity, 5, coords, vPhaseReport, server);
@@ -725,7 +732,7 @@ public class AreaEffectHelper {
         // Apply secondary effects against the entity if it's within the secondary blast radius
         // Since the effects are unit-dependent, we'll just define it in the
         // entity. 
-        if(!entity.isDestroyed() && (blastDistance <= nukeStats.secondaryRadius)) {
+        if (!entity.isDestroyed() && (blastDistance <= nukeStats.secondaryRadius)) {
             server.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
         }
         
@@ -764,11 +771,11 @@ public class AreaEffectHelper {
      * if such a type is not defined.
      */
     public static NukeStats getNukeStats(int nukeType) {
-        if(nukeStats == null) {
+        if (nukeStats == null) {
             initializeNukeStats();
         }
         
-        if(nukeStats.containsKey(nukeType)) {
+        if (nukeStats.containsKey(nukeType)) {
             return nukeStats.get(nukeType);
         }
         

@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
@@ -34,7 +34,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame g, Server s) {
+            WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
     }
 

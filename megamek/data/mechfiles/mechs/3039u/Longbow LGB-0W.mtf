@@ -3,39 +3,39 @@ Longbow
 LGB-0W
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2529
-Source:TRO 3039 - Age of War
-Rules Level:1
+techbase:Inner Sphere
+era:2529
+source:TRO 3039 - Age of War
+rules level:1
 
-Mass:85
-Engine:340 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:340 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:13 Single
-Walk MP:4
-Jump MP:0
+heat sinks:13 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:9
-RA Armor:9
-LT Armor:18
-RT Armor:18
-CT Armor:21
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:9
+RA armor:9
+LT armor:18
+RT armor:18
+CT armor:21
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:5
-Small Laser, Head
 LRM 20, Left Arm
 LRM 20, Right Arm
 LRM 5, Left Torso
 LRM 5, Right Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
@@ -149,4 +149,17 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
+
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+
+deployment:To add some speed to the Longbow, the OW variant removes two Medium Lasers and five and a half tons of armor. This allowed the Strand 255 Fusion Engine to be replaced with a larger Strand 340, increasing the top speed of the Longbow to 64 km/h, allowing the 'Mech to keep up with most heavy 'Mechs. The LGB-0W used the O/P 3000 COMSET communications system and the Octagon Tartrac System C targeting and tracking system.
+
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Fletcher (TH),Loburg
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 340
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C
 

@@ -22,6 +22,7 @@ import megamek.client.ui.panels.PortraitChooser;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Portrait;
 
 import javax.swing.*;
 
@@ -44,6 +45,11 @@ public class PortraitChooserDialog extends AbstractIconChooserDialog {
     @Override
     protected PortraitChooser getChooser() {
         return (PortraitChooser) super.getChooser();
+    }
+
+    @Override
+    public @Nullable Portrait getSelectedItem() {
+        return getChooser().getSelectedItem();
     }
     //endregion Getters
 }

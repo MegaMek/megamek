@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -37,7 +37,7 @@ public class BPodHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public BPodHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public BPodHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

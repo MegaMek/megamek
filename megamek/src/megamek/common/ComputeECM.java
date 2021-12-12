@@ -373,7 +373,7 @@ public class ComputeECM {
         // ECCM that counter an ECM need to get removed from allEcmInfo later
         LinkedList<ECMInfo> eccmToRemove = new LinkedList<ECMInfo>();
         
-        IGame game = null;
+        Game game = null;
         for (Entity e : entities) {
             ECMInfo ecmInfo = e.getECMInfo();
             if (ecmInfo != null) {
@@ -416,7 +416,7 @@ public class ComputeECM {
                 && allEccmInfo.size() > 0) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
-            while (ecmIterator.hasNext()){
+            while (ecmIterator.hasNext()) {
                 ECMInfo ecmInfo = ecmIterator.next();
                 // Ignore ECCM
                 if (ecmInfo.isECCM()) {

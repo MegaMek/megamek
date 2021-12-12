@@ -52,7 +52,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
     public static void main(String[] args) {
         boolean ignoreUnofficial = true;
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-unofficial")){
+            if (args[i].equals("-unofficial")) {
                 ignoreUnofficial = false;
             } else {
                 System.err.println("Error: Invalid argument.\n"); //$NON-NLS-1$

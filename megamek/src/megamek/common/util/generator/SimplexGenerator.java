@@ -49,15 +49,15 @@ public class SimplexGenerator implements ElevationGenerator {
         double noiseScale = (200.0 + rnd.nextDouble() * 30.0) / (4.0 + hilliness / 5.0);
         hilliness = Math.max(hilliness, 1);
         
-        for(int w = 0; w < width; ++ w) {
-            for(int h = 0; h < height; ++ h) {
+        for (int w = 0; w < width; ++ w) {
+            for (int h = 0; h < height; ++ h) {
                 double x = DIST_H * w;
                 double y = DIST_V * (2 * h + (w & 1)) / 2.0;
                 // SimplexNoise.noiseOctaves(..., 6) is between -6 and +6, most values are in the [-2, 2] range
                 double val = SimplexNoise.noiseOctaves(
                         x / noiseScale + noiseStartX,
                         y / noiseScale + noiseStartY, 6) + 0.5;
-                if(val < 0) {
+                if (val < 0) {
                     // Flatten out the bottom part
                     // TODO: Make this configurable?
                     val = 0;

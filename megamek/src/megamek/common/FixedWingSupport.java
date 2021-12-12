@@ -507,7 +507,7 @@ public class FixedWingSupport extends ConvFighter {
         return 1.0;
     }
 
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
     }
 }

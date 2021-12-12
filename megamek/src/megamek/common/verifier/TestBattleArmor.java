@@ -364,8 +364,8 @@ public class TestBattleArmor extends TestEntity {
         if ((loc == BattleArmor.MOUNT_LOC_TURRET)
                 || ((loc == BattleArmor.MOUNT_LOC_BODY)
                         && (ba.getTurretCapacity() > 0))) {
-            int otherLoc = (loc == BattleArmor.MOUNT_LOC_BODY)?
-                    BattleArmor.MOUNT_LOC_TURRET : BattleArmor.MOUNT_LOC_BODY;
+            int otherLoc = (loc == BattleArmor.MOUNT_LOC_BODY)
+                    ? BattleArmor.MOUNT_LOC_TURRET : BattleArmor.MOUNT_LOC_BODY;
             for (Mounted m : ba.getEquipment()) {
                 if (m.getBaMountLoc() == otherLoc 
                         && (m.getLocation() == trooper 
@@ -762,7 +762,7 @@ public class TestBattleArmor extends TestEntity {
         for (Mounted m : ba.getEquipment()) {
             // BA Tasers should be mounted individually
             if (m.getType().hasFlag(WeaponType.F_TASER)
-                    && m.getLocation() == BattleArmor.LOC_SQUAD){
+                    && m.getLocation() == BattleArmor.LOC_SQUAD) {
                 buff.append("BA Tasers should be mounted individually " +
                         "instead of as a squad weapon!");
                 return false;
@@ -770,9 +770,8 @@ public class TestBattleArmor extends TestEntity {
             
             // BA NARC should be mounted individually
             if ((m.getType() instanceof WeaponType)
-                    && ((WeaponType)m.getType()).getAmmoType() 
-                        == AmmoType.T_NARC
-                    && m.getLocation() == BattleArmor.LOC_SQUAD){
+                    && ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NARC
+                    && m.getLocation() == BattleArmor.LOC_SQUAD) {
                 buff.append("BA NARC should be mounted individually " +
                         "instead of as a squad weapon!");
                 return false;
@@ -841,9 +840,9 @@ public class TestBattleArmor extends TestEntity {
                     }
                 // Special considerations for armored gloves
                 } else if (link.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
-                    if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)){
+                    if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
                         if ((m.getType() instanceof InfantryWeapon)) {
-                            int crew = ((InfantryWeapon)m.getType()).getCrew();
+                            int crew = ((InfantryWeapon) m.getType()).getCrew();
                             if (crew > 1) {
                                 buff.append(m.getName()
                                         + " has a crew size of " + crew
@@ -896,10 +895,10 @@ public class TestBattleArmor extends TestEntity {
 
             if (m.getLocation() != BattleArmor.LOC_SQUAD) {
                 critsUsed[m.getLocation()][m.getBaMountLoc()] += critSize;
-                if ((m.getType() instanceof WeaponType)){
+                if ((m.getType() instanceof WeaponType)) {
                     numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
-                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)){
+                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                     numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
             } else {
@@ -923,14 +922,14 @@ public class TestBattleArmor extends TestEntity {
             }
         }
         
-        if (numSSWMs > 1){
+        if (numSSWMs > 1) {
             buff.append("Squad has " + numSSWMs + " squad support " +
                     "weapon mounts, but only 1 is allowed!\n");
             correct = false;
         }
         
         if (numSSWMs > 0 
-                && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD){
+                && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
             buff.append("Quad BattleArmor cannot use squad support " +
                     "weapon mounts!\n");
             correct = false;
@@ -943,11 +942,11 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
         
-        if (squadSupportWeapon != null){
-            WeaponType sswType = (WeaponType)squadSupportWeapon.getType();
-            for (Mounted ammo : ba.getAmmo()){
+        if (squadSupportWeapon != null) {
+            WeaponType sswType = (WeaponType) squadSupportWeapon.getType();
+            for (Mounted ammo : ba.getAmmo()) {
                 if (ammo.isSquadSupportWeapon() && 
-                        !AmmoType.isAmmoValid(ammo, sswType)){
+                        !AmmoType.isAmmoValid(ammo, sswType)) {
                     buff.append(ammo.getName() + " is squad support weapon " +
                             "mounted, but it is not a legal ammo type for " +
                             "the squad support weapon!\n");
@@ -1033,7 +1032,7 @@ public class TestBattleArmor extends TestEntity {
                 // Ammo mounted in a DWP doesn't get assigned a location
                 if ((m.getType() instanceof AmmoType) 
                         && (m.getLinkedBy() != null) 
-                        && m.getLinkedBy().isDWPMounted() ) {
+                        && m.getLinkedBy().isDWPMounted()) {
                     continue;
                 }
 
@@ -1333,10 +1332,10 @@ public class TestBattleArmor extends TestEntity {
             }
             double modifier = 1;
             // Ammo mounted in a DWP has its weight reduced by 25%
-            if (m.getLinkedBy() != null && m.getLinkedBy().isDWPMounted()){
+            if (m.getLinkedBy() != null && m.getLinkedBy().isDWPMounted()) {
                 modifier = 0.75f;
             } else if (m.isSquadSupportWeapon()) {
-                if (ba.isClan()){
+                if (ba.isClan()) {
                     modifier = 0.4;
                 } else {
                     modifier = 0.5;

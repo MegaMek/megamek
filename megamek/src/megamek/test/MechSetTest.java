@@ -134,7 +134,7 @@ public class MechSetTest {
             testFile(mechDir, mechset);
             testFile(wreckDir, wreckset);
             
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IOException!");
             e.printStackTrace();
         }

@@ -1,17 +1,27 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
+
+import megamek.MegaMek;
+import megamek.common.*;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.server.Server;
+import megamek.server.Server.DamageType;
+import megamek.server.SmokeCloud;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,41 +30,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
-
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.IAero;
-import megamek.common.IAimingModes;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
-import megamek.server.SmokeCloud;
 
 /**
  * @author Andrew Hunter A basic, simple attack handler. May or may not work for
@@ -69,7 +44,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public int roll;
     protected boolean isJammed = false;
 
-    protected IGame game;
+    protected Game game;
     protected transient Server server; // must not save the server
     protected boolean bMissed;
     protected boolean bSalvo = false;
@@ -409,11 +384,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return ae.getId();
     }
 
+    public Entity getAttacker() {
+        return ae;
+    }
+    
     /**
      * Do we care about the specified phase?
      */
-    public boolean cares(IGame.Phase phase) {
-        if (phase == IGame.Phase.PHASE_FIRING) {
+    public boolean cares(GamePhase phase) {
+        if (phase == GamePhase.FIRING) {
             return true;
         }
         return false;
@@ -770,7 +749,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
-    public boolean handle(IGame.Phase phase, Vector<Report> returnedReports) {
+    public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
         if (!cares(phase)) {
             return true;
         }
@@ -925,7 +904,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
             //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
             //when Advanced Point Defense is on, but they work correctly.
-            if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            if (!(amsBayEngagedCap || pdBayEngagedCap)) {
                 addGlancingBlowReports(vPhaseReport);
     
                 if (bDirect) {
@@ -1407,8 +1386,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            int savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            AimingMode savedAimingMode = waa.getAimingMode();
+            waa.setAimingMode(AimingMode.NONE);
             int savedAimedLocation = waa.getAimedLocation();
             waa.setAimedLocation(Entity.LOC_NONE);
             boolean savedSalvo = bSalvo;
@@ -1475,7 +1454,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         
         boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
         
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
         
         // a very specific situation where a mech is standing in a height 1 building
@@ -1599,17 +1578,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Worker function - does the entity gain partial cover from shallow water?
      */
-    protected boolean unitGainsPartialCoverFromWater(IHex targetHex, Entity entityTarget) {
+    protected boolean unitGainsPartialCoverFromWater(Hex targetHex, Entity entityTarget) {
         return (targetHex != null) && 
                 targetHex.containsTerrain(Terrains.WATER) &&
-                (entityTarget.relHeight() == targetHex.surface());
+                (entityTarget.relHeight() == targetHex.getLevel());
     }
     
     /**
      * Worker function - is a part of this unit inside the hex's terrain features, 
      * but part sticking out?
      */
-    protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+    protected boolean unitStickingOutOfBuilding(Hex targetHex, Entity entityTarget) {
         // target needs to be on the board,
         // be tall enough for it to make a difference,
         // target "feet" are below the "ceiling"
@@ -1779,7 +1758,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     // Among other things, basically a refactored Server#preTreatWeaponAttack
-    public WeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         damageType = DamageType.NONE;
         toHit = t;
         waa = w;
@@ -1925,7 +1904,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (entityTarget == null) {
             return nDamage;
         }
-        IHex hex = game.getBoard().getHex(entityTarget.getPosition());
+        Hex hex = game.getBoard().getHex(entityTarget.getPosition());
         boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
         boolean isAboveWoods = (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
                 || entityTarget.isAirborne() || !hasWoods;
@@ -1934,8 +1913,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 && hasWoods
                 && !isAboveWoods
                 && !(entityTarget.getSwarmAttackerId() == ae.getId())) {
-            ITerrain woodHex = hex.getTerrain(Terrains.WOODS);
-            ITerrain jungleHex = hex.getTerrain(Terrains.JUNGLE);
+            Terrain woodHex = hex.getTerrain(Terrains.WOODS);
+            Terrain jungleHex = hex.getTerrain(Terrains.JUNGLE);
             int treeAbsorbs = 0;
             String hexType = "";
             if (woodHex != null) {
@@ -1967,8 +1946,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Check for Laser Inhibiting smoke clouds
      */
-    public int checkLI(int nDamage, Entity entityTarget,
-            Vector<Report> vPhaseReport) {
+    public int checkLI(int nDamage, Entity entityTarget, Vector<Report> vPhaseReport) {
 
         weapon = ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
@@ -1991,8 +1969,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (!game.getBoard().contains(curr)) {
                 continue;
             }
-            ITerrain smokeHex = game.getBoard().getHex(curr)
-                    .getTerrain(Terrains.SMOKE);
+            Terrain smokeHex = game.getBoard().getHex(curr).getTerrain(Terrains.SMOKE);
             if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
                     && wtype.hasFlag(WeaponType.F_ENERGY)
                     && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT) || (smokeHex
@@ -2041,7 +2018,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Insert any additionaly attacks that should occur before this attack
      */
-    protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    protected void insertAttacks(GamePhase phase, Vector<Report> vPhaseReport) {
         return;
     }
 
@@ -2127,18 +2104,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return nMissilesModifier;
     }
 
+    @Override
     public boolean isStrafing() {
         return isStrafing;
     }
 
+    @Override
     public void setStrafing(boolean isStrafing) {
         this.isStrafing = isStrafing;
     }
 
+    @Override
     public boolean isStrafingFirstShot() {
         return isStrafingFirstShot;
     }
 
+    @Override
     public void setStrafingFirstShot(boolean isStrafingFirstShot) {
         this.isStrafingFirstShot = isStrafingFirstShot;
     }
@@ -2161,7 +2142,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected double applyGlancingBlowModifier(double initialValue, boolean roundup) {
         // if we're not going to be applying any glancing blow modifiers, just return what we came in with
-        if(!bGlancing && !bLowProfileGlancing) {
+        if (!bGlancing && !bLowProfileGlancing) {
             return initialValue;
         }
         

@@ -16,57 +16,9 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.common.Compute.d6;
-
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
-import java.awt.MediaTracker;
-import java.awt.SystemColor;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.awt.Window;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
-
 import com.thoughtworks.xstream.XStream;
-
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -74,7 +26,9 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
@@ -82,18 +36,9 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.KeyBindParser;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummaryCache;
-import megamek.common.Player;
-import megamek.common.QuirksHandler;
-import megamek.common.WeaponOrderHandler;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.logging.LogLevel;
-import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -104,6 +49,25 @@ import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+
+import static megamek.common.Compute.d6;
 
 public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
@@ -118,7 +82,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private Client client;
     private Server server;
     private CommonAboutDialog about;
-    private GameOptionsDialog optionsDialog;
     private CommonSettingsDialog settingsDialog;
 
     private MegaMekController controller;
@@ -218,7 +181,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
-        CommonMenuBar menuBar = new CommonMenuBar();
+        CommonMenuBar menuBar = new CommonMenuBar(this);
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);
         showMainMenu();
@@ -234,7 +197,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
-                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION,
+                    Messages.getString("MegaMek.welcome.title") + MegaMekConstants.VERSION,
                     Messages.getString("MegaMek.welcome.message"), true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
@@ -273,7 +236,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION,
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
                 JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250,15));
         if (skinSpec.fontColors.size() > 0) {
@@ -289,7 +252,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         scenB.addActionListener(actionListener);
         loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
-        loadB.setActionCommand(ClientGUI.FILE_GAME_OPEN);
+        loadB.setActionCommand(ClientGUI.FILE_GAME_LOAD);
         loadB.addActionListener(actionListener);
         connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
@@ -431,20 +394,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     }
 
     /**
-     * Display the game options dialog.
-     */
-    void showGameOptions() {
-        GameOptions options = new GameOptions();
-        options.initialize();
-        options.loadOptions();
-        if (optionsDialog == null) {
-            optionsDialog = new GameOptionsDialog(frame, options, true);
-        }
-        optionsDialog.update(options);
-        optionsDialog.setVisible(true);
-    }
-
-    /**
      * Display the board editor.
      */
     void showEditor() {
@@ -465,7 +414,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
-        skinEditor.switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        skinEditor.switchPanel(GamePhase.MOVEMENT);
         launch(skinEditor.getFrame());        
     }
 
@@ -519,8 +468,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             client.die();
         }
         launch(gui.getFrame());
-
-        optionsDialog = null;
     }
 
     void loadGame() {
@@ -544,10 +491,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        IGame newGame = null;
+        Game newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
-            newGame = (IGame) xstream.fromXML(gzi);
+            newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
             MegaMek.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
             JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
@@ -555,12 +502,18 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        Vector<String> playerNames = null;
-        if (newGame != null) {
-            playerNames = new Vector<>();
-            for (IPlayer player : newGame.getPlayersVector()) {
-                playerNames.add(player.getName());
-            }
+        if (!MegaMekConstants.VERSION.is(newGame.getVersion())) {
+            final String message = String.format(Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
+                    newGame.getVersion(), MegaMekConstants.VERSION);
+            JOptionPane.showMessageDialog(frame, message,
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            MegaMek.getLogger().error(message);
+            return;
+        }
+
+        Vector<String> playerNames = new Vector<>();
+        for (Player player : newGame.getPlayersVector()) {
+            playerNames.add(player.getName());
         }
 
         HostDialog hd = new HostDialog(frame, playerNames);
@@ -604,8 +557,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             frame.setVisible(false);
             client.die();
         }
-        optionsDialog = null;
-
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
@@ -654,8 +605,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             frame.setVisible(false);
             client.die();
         }
-        optionsDialog = null;
-
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
@@ -713,7 +662,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
 
         ScenarioLoader sl = new ScenarioLoader(fc.getSelectedFile());
-        IGame g;
+        Game g;
         try {
             g = sl.createGame();
         } catch (Exception e) {
@@ -824,7 +773,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 client.die();
             }
         }
-        optionsDialog = null;
 
         // calculate initial BV
         server.calculatePlayerInitialCounts();
@@ -847,9 +795,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // If he didn't have a name when hasSlot was set, then the host should
         // be an observer.
         if (!hasSlot) {
-            Enumeration<IPlayer> pE = server.getGame().getPlayers();
+            Enumeration<Player> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
-                IPlayer tmpP = pE.nextElement();
+                Player tmpP = pE.nextElement();
                 if (tmpP.getName().equals(localName)) {
                     tmpP.setObserver(true);
                 }
@@ -889,20 +837,19 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     }
 
     void connectBot() {
-        ConnectDialog cd = new ConnectDialog(frame);
+        var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-
         if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 
         // initialize game
-        BotConfigDialog bcd = new BotConfigDialog(frame);
+        var bcd = new BotConfigDialog(frame, cd.getPlayerName());
         bcd.setVisible(true);
-        if (bcd.dialogAborted) {
-            return; // user didn't click 'ok', add no bot
+        if (bcd.getResult() == DialogResult.CANCELLED) {
+            return; 
         }
-        client = bcd.getSelectedBot(cd.getServerAddress(), cd.getPort());
+        client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(), bcd.getBehaviorSettings());
         client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
@@ -982,12 +929,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             MegaMek.getLogger().error("Error saving custom weapon orders!", e);
         }
 
-        try {
-            QuirksHandler.saveCustomQuirksList();
-        } catch (IOException e) {
-            MegaMek.getLogger().error("Error saving quirks override!", e);
-        }
-
+        QuirksHandler.saveCustomQuirksList();
         System.exit(0);
     }
 
@@ -1025,7 +967,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         System.runFinalization();
     }
     
-    private ActionListener actionListener = ev -> {
+    private final ActionListener actionListener = ev -> {
         switch (ev.getActionCommand()) {
             case ClientGUI.BOARD_NEW:
                 showEditor();
@@ -1048,14 +990,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             case ClientGUI.FILE_GAME_CONNECT_BOT:
                 connectBot();
                 break;
-            case ClientGUI.FILE_GAME_OPEN:
+            case ClientGUI.FILE_GAME_LOAD:
                 loadGame();
                 break;
             case ClientGUI.FILE_GAME_QLOAD:
                 quickLoadGame();
-                break;
-            case ClientGUI.VIEW_GAME_OPTIONS:
-                showGameOptions();
                 break;
             case ClientGUI.HELP_ABOUT:
                 showAbout();
@@ -1083,7 +1022,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             frame.repaint();
         } else if (e.getName().equals(GUIPreferences.UI_THEME)) {
             try {
-                UIManager.setLookAndFeel((String)e.getNewValue());
+                UIManager.setLookAndFeel((String) e.getNewValue());
                 // We went all Oprah and gave everybody frames...
                 // so now we have to let everybody who got a frame
                 // under their chair know that we updated our look

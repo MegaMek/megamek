@@ -33,8 +33,8 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Targetable;
@@ -63,7 +63,7 @@ import megamek.common.pathfinder.SpheroidPathFinder;
 public class PathEnumerator {
 
     private final Princess owner;
-    private final IGame game;
+    private final Game game;
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
     private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
@@ -73,7 +73,7 @@ public class PathEnumerator {
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
 
-    public PathEnumerator(Princess owningPrincess, IGame game) {
+    public PathEnumerator(Princess owningPrincess, Game game) {
         owner = owningPrincess;
         this.game = game;
     }
@@ -154,10 +154,10 @@ public class PathEnumerator {
         int retryCount = 0;
         boolean success = false;
         
-        while((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
+        while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
             success = recalculateMovesForWorker(mover);
             
-            if(!success) {
+            if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
                 // as it may be due to some kind of thread-related issue
                 // limit number of retries so we're not endlessly spinning
@@ -203,7 +203,7 @@ public class PathEnumerator {
             
             // Aero movement on atmospheric ground maps
             // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
-            if(mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
+            if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
                 MovePath startPath = new MovePath(getGame(), mover);
                 apf.run(startPath);
@@ -224,7 +224,7 @@ public class PathEnumerator {
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
                 
                 MovePath offBoardPath = offBoardFilter.getShortestPath();
-                if(offBoardPath != null) {
+                if (offBoardPath != null) {
                     paths.add(offBoardFilter.getShortestPath());
                 }
                 
@@ -234,22 +234,22 @@ public class PathEnumerator {
                 // disabled
                 // logAllPaths(paths);
             // this handles the case of the mover being an aerospace unit and "advances space flight" rules being on
-            } else if(mover.isAero() && game.useVectorMove()) {
+            } else if (mover.isAero() && game.useVectorMove()) {
                 NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
                 npf.run(new MovePath(game, mover));
                 paths.addAll(npf.getAllComputedPathsUncategorized());
             // this handles the case of the mover being an aerospace unit on a space map
-            } else if(mover.isAero() && game.getBoard().inSpace()) {
+            } else if (mover.isAero() && game.getBoard().inSpace()) {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
             // this handles the case of the mover being a winged aerospace unit on a low-atmo map
-            } else if(mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
+            } else if (mover.isAero() && game.getBoard().inAtmosphere() && !Compute.useSpheroidAtmosphere(game, mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
             // this handles the case of the mover acting like a spheroid aerospace unit in an atmosphere
-            } else if(Compute.useSpheroidAtmosphere(game, mover)) {
+            } else if (Compute.useSpheroidAtmosphere(game, mover)) {
                 SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game);
                 spf.run(new MovePath(game, mover));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
@@ -299,7 +299,7 @@ public class PathEnumerator {
 
                 // calling .debug is expensive even if we don't actually log anything
                 // so let's not do this unless we're debugging
-                /* for(MovePath path : paths) {
+                /* for (MovePath path : paths) {
 	                    getOwner().getLogger().debug(path.toString());
                 }*/
                 
@@ -334,7 +334,7 @@ public class PathEnumerator {
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             MegaMek.getLogger().error(e.toString());
             return false;
         }
@@ -347,7 +347,7 @@ public class PathEnumerator {
         // don't bother doing this if the entity can't move anyway
         // or if it's not one of mine
         // or if I've already moved it
-        if((mover.getWalkMP() == 0) ||
+        if ((mover.getWalkMP() == 0) ||
                 ((getOwner().getLocalPlayer() != null) && (mover.getOwnerId() != getOwner().getLocalPlayer().getId())) || 
                 !mover.isSelectableThisTurn()) {
             return;
@@ -356,9 +356,9 @@ public class PathEnumerator {
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
         
         // where are we going?
-        Set<Coords> destinations = new HashSet<Coords>();
+        Set<Coords> destinations = new HashSet<>();
         // if we're going to an edge or can't see anyone, generate long-range paths to the opposite edge
-        switch(getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
+        switch (getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
             case MoveToDestination:
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
@@ -368,9 +368,9 @@ public class PathEnumerator {
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
                 break;
             default:
-                for(Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
+                for (Targetable target : FireControl.getAllTargetableEnemyEntities(getOwner().getLocalPlayer(), getGame(), getOwner().getFireControlState())) {
                     // don't consider crippled units as valid long-range pathfinding targets 
-                    if((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
+                    if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
                         continue;
                     }
                     
@@ -381,20 +381,20 @@ public class PathEnumerator {
                 break;
         }
         
-        if(!getLongRangePaths().containsKey(mover.getId())) {
+        if (!getLongRangePaths().containsKey(mover.getId())) {
             getLongRangePaths().put(mover.getId(), new ArrayList<>());
         }
         
         // calculate a ground-bound long range path
         BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker());
         
-        if(bmp != null) {
+        if (bmp != null) {
             getLongRangePaths().get(mover.getId()).add(bmp);
         }
         
         // calculate a jumping long range path
         BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true, owner.getClusterTracker()); 
-        if(jmp != null) {
+        if (jmp != null) {
             getLongRangePaths().get(mover.getId()).add(jmp);
         }
     }
@@ -412,7 +412,7 @@ public class PathEnumerator {
     private void adjustPathForBridge(MovePath path) {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
-            IHex hex = getGame().getBoard().getHex(c);
+            Hex hex = getGame().getBoard().getHex(c);
             if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
                 if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >=
                     path.getEntity().getWeight()) {
@@ -512,7 +512,7 @@ public class PathEnumerator {
         return lastKnownLocations;
     }
 
-    protected IGame getGame() {
+    protected Game getGame() {
         return game;
     }
 
@@ -538,8 +538,8 @@ public class PathEnumerator {
      */
     private void logAllPaths(List<MovePath> paths) {
         HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
-        for(MovePath path : paths) {
-            if(!pathLengths.containsKey(path.length())) {
+        for (MovePath path : paths) {
+            if (!pathLengths.containsKey(path.length())) {
                 pathLengths.put(path.length(), 0);
             }
             Integer lengthCount = pathLengths.get(path.length());
@@ -548,7 +548,7 @@ public class PathEnumerator {
             this.owner.getLogger().debug(path.toString());
         }
         
-        for(Integer length : pathLengths.keySet()) {
+        for (Integer length : pathLengths.keySet()) {
             this.owner.getLogger().debug("Paths of length " + length + ": " + pathLengths.get(length));
         }
     }

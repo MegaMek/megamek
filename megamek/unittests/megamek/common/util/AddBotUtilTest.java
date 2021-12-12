@@ -7,8 +7,8 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.event.GameListener;
 import megamek.common.logging.LogLevel;
 import org.junit.Before;
@@ -36,27 +36,27 @@ public class AddBotUtilTest {
     private static final String DEFAULT_VERBOSITY = LogLevel.WARNING.toString();
 
     private Client mockClient;
-    private IGame mockGame;
+    private Game mockGame;
     private Princess mockPrincess;
     private AddBotUtil testAddBotUtil;
 
     @Before
     public void setUp() {
-        final IPlayer mockHumanPlayer = Mockito.mock(IPlayer.class);
+        final Player mockHumanPlayer = Mockito.mock(Player.class);
         Mockito.when(mockHumanPlayer.getName()).thenReturn(HUMAN_PLAYER_NAME);
         Mockito.when(mockHumanPlayer.isGhost()).thenReturn(false);
 
-        final IPlayer mockBotPlayer = Mockito.mock(IPlayer.class);
+        final Player mockBotPlayer = Mockito.mock(Player.class);
         Mockito.when(mockBotPlayer.getName()).thenReturn(BOT_PLAYER_NAME);
         Mockito.when(mockBotPlayer.isGhost()).thenReturn(true);
 
-        final Vector<IPlayer> playerVector = new Vector<>(2);
+        final Vector<Player> playerVector = new Vector<>(2);
         playerVector.add(mockHumanPlayer);
         playerVector.add(mockBotPlayer);
 
-        final Enumeration<IPlayer> playerEnumeration = playerVector.elements();
+        final Enumeration<Player> playerEnumeration = playerVector.elements();
 
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getPlayersVector()).thenReturn(playerVector);
         Mockito.when(mockGame.getPlayers()).thenReturn(playerEnumeration);
         Mockito.doNothing().when(mockGame).addGameListener(Mockito.any(GameListener.class));
@@ -81,11 +81,11 @@ public class AddBotUtilTest {
         Mockito.when(mockTestBot.getGame()).thenReturn(mockGame);
 
         testAddBotUtil = Mockito.spy(new AddBotUtil());
-        Mockito.doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(Mockito.any(IPlayer.class),
+        Mockito.doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(Mockito.any(Player.class),
                                                                                   Mockito.nullable(LogLevel.class),
                                                                                   Mockito.anyString(),
                                                                                   Mockito.anyInt());
-        Mockito.doReturn(mockTestBot).when(testAddBotUtil).makeNewTestBotClient(Mockito.any(IPlayer.class),
+        Mockito.doReturn(mockTestBot).when(testAddBotUtil).makeNewTestBotClient(Mockito.any(Player.class),
                                                                                 Mockito.anyString(),
                                                                                 Mockito.anyInt());
     }

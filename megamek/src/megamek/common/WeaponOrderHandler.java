@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.io.BufferedWriter;
@@ -29,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -48,20 +48,19 @@ public class WeaponOrderHandler {
 
     public static class WeaponOrder {
         public Entity.WeaponSortOrder orderType = WeaponSortOrder.DEFAULT;
-        public Map<Integer, Integer> customWeaponOrderMap =
-                new HashMap<Integer, Integer>();
+        public Map<Integer, Integer> customWeaponOrderMap = new HashMap<>();
 
         @Override
         public boolean equals(Object obj) {
-            if(this == obj) {
+            if (this == obj) {
                 return true;
-            }
-            if((null == obj) || (getClass() != obj.getClass())) {
+            } else if ((null == obj) || (getClass() != obj.getClass())) {
                 return false;
+            } else {
+                final WeaponOrder other = (WeaponOrder) obj;
+                return Objects.equals(orderType, other.orderType)
+                        && Objects.equals(customWeaponOrderMap, other.customWeaponOrderMap);
             }
-            final WeaponOrder other = (WeaponOrder) obj;
-            return Objects.equals(orderType, other.orderType)
-                    && Objects.equals(customWeaponOrderMap, other.customWeaponOrderMap);
         }
 
         @Override
@@ -70,8 +69,7 @@ public class WeaponOrderHandler {
         }
     }
 
-    public static final String CUSTOM_WEAPON_ORDER_FILENAME =
-            "customWeaponOrder.xml";
+    public static final String CUSTOM_WEAPON_ORDER_FILENAME = "customWeaponOrder.xml";
 
     private static final String CUSTOM_WEAPON_ORDER = "customWeaponOrders";
     private static final String UNIT = "unit";
@@ -89,9 +87,7 @@ public class WeaponOrderHandler {
      *
      * @throws IOException
      */
-    public synchronized static void saveWeaponOrderFile()
-            throws IOException {
-
+    public synchronized static void saveWeaponOrderFile() throws IOException {
         // If the map hasn't been updated, we don't need to save it.
         if (!updated.get()) {
             return;
@@ -100,8 +96,7 @@ public class WeaponOrderHandler {
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new MegaMekFile(Configuration.configDir(), path).getFile();
         if (file.exists() && !file.canWrite()) {
-            System.err.println("WARN: Could not save custom weapon orders " +
-                    "from " + path);
+            MegaMek.getLogger().error("Could not save custom weapon orders from " + path);
             return;
         }
 
@@ -109,10 +104,8 @@ public class WeaponOrderHandler {
                 new FileOutputStream(file)));
 
          // Output the doctype and header stuff.
-        output.write("<?xml version=\"1.0\"?>"); //$NON-NLS-1$
-        output.write(CommonConstants.NL);
-        output.write("<" + CUSTOM_WEAPON_ORDER +">"); //$NON-NLS-1$
-        output.write(CommonConstants.NL);
+        output.write("<?xml version=\"1.0\"?>\n");
+        output.write("<" + CUSTOM_WEAPON_ORDER +">\n");
 
         // Create the UNIT_ID tag for each chassis/model id
         for (String unitId : weaponOrderMap.keySet()) {
@@ -137,34 +130,28 @@ public class WeaponOrderHandler {
 
             // Write out XML
             output.write("\t");
-            output.write("<" + UNIT +">"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.write("\t\t");
-            output.write("<" + ID +">"); //$NON-NLS-1$
+            output.write("<" + UNIT +">");
+            output.write("\n\t\t");
+            output.write("<" + ID +">");
             output.write(unitId);
-            output.write("</" + ID +">"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.write("\t\t");
-            output.write("<" + ORDER_TYPE +">"); //$NON-NLS-1$
+            output.write("</" + ID +">");
+            output.write("\n\t\t");
+            output.write("<" + ORDER_TYPE +">");
             output.write(weapOrder.orderType.toString());
-            output.write("</" + ORDER_TYPE +">"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.write("\t\t");
-            output.write("<" + WEAPON_LIST +">"); //$NON-NLS-1$
+            output.write("</" + ORDER_TYPE +">");
+            output.write("\n\t\t");
+            output.write("<" + WEAPON_LIST +">");
             output.write(weaponList.toString());
-            output.write("</" + WEAPON_LIST +">"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.write("\t\t");
-            output.write("<" + ORDER_LIST +">"); //$NON-NLS-1$
+            output.write("</" + WEAPON_LIST +">");
+            output.write("\n\t\t");
+            output.write("<" + ORDER_LIST +">");
             output.write(orderList.toString());
-            output.write("</" + ORDER_LIST +">"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.write("\t");
-            output.write("</" + UNIT +">"); //$NON-NLS-1$
+            output.write("</" + ORDER_LIST +">");
+            output.write("\n\t");
+            output.write("</" + UNIT +">");
         }
 
-        output.write(CommonConstants.NL);
-        output.write("</" + CUSTOM_WEAPON_ORDER +">"); //$NON-NLS-1$
+        output.write("\n</" + CUSTOM_WEAPON_ORDER +">");
 
         output.close();
     }

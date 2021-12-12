@@ -15,7 +15,7 @@ package megamek.common.weapons.missiles;
 
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -48,11 +48,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
     
@@ -68,11 +68,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
         }
         int clusterRoll = 7;
         if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {
+            if (fcs.getType().hasFlag(MiscType.F_ARTEMIS)) {
                 clusterRoll = 9;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
+            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                 clusterRoll = 10;
             }
         }

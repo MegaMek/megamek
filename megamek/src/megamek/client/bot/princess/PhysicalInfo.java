@@ -18,7 +18,7 @@ import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -73,12 +73,12 @@ public class PhysicalInfo {
      * @param target             The {@link megamek.common.Targetable} of the attack.
      * @param targetState        The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param physicalAttackType The type of attack being made.
-     * @param game               The {@link megamek.common.IGame} in progress.
+     * @param game               The {@link megamek.common.Game} in progress.
      * @param owner              The owning {@link Princess} bot.
      * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     PhysicalInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
-                 PhysicalAttackType physicalAttackType, IGame game, Princess owner, boolean guess) {
+                 PhysicalAttackType physicalAttackType, Game game, Princess owner, boolean guess) {
 
         this.owner = owner;
 
@@ -115,11 +115,11 @@ public class PhysicalInfo {
      * @param shooter            The {@link megamek.common.Entity} doing the attacking.
      * @param target             The {@link megamek.common.Targetable} of the attack.
      * @param physicalAttackType The type of attack being made.
-     * @param game               The {@link megamek.common.IGame} in progress.
+     * @param game               The {@link megamek.common.Game} in progress.
      * @param owner              The owning {@link Princess} bot.
      * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
-    PhysicalInfo(Entity shooter, Targetable target, PhysicalAttackType physicalAttackType, IGame game, Princess owner,
+    PhysicalInfo(Entity shooter, Targetable target, PhysicalAttackType physicalAttackType, Game game, Princess owner,
                  boolean guess) {
         this(shooter, null, target, null, physicalAttackType, game, owner, guess);
     }
@@ -128,7 +128,7 @@ public class PhysicalInfo {
      * Helper function to determine damage and criticals
      */
     protected void initDamage(PhysicalAttackType physicalAttackType, EntityState shooterState, EntityState targetState,
-                              boolean guess, IGame game) {
+                              boolean guess, Game game) {
         StringBuilder msg =
                 new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" ").append(physicalAttackType.toString())

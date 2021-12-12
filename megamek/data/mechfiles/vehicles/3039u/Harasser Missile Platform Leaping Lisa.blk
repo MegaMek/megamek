@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Harasser Missile Platform
 2815
 </year>
 
+<originalBuildYear>
+2815
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 10
@@ -50,6 +57,13 @@ Hover
 
 <Body Equipment>
 IS Ammo SRM-4
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
 </Body Equipment>
 
 <Front Equipment>
@@ -76,3 +90,8 @@ TRO 3039 - Succession Wars
 <tonnage>
 25.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

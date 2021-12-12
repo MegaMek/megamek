@@ -1,70 +1,34 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.AWTEvent;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
-// import java.awt.Dimension; Import never used
-// import java.awt.Insets; Import never used
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.common.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
- * <p>
- * Title: Ruler
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Ken Nguyen (kenn)
  * @version 1.0
  */
 public class Ruler extends JDialog implements BoardViewListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4820402626782115601L;
     public static Color color1 = Color.cyan;
     public static Color color2 = Color.magenta;
@@ -75,7 +39,7 @@ public class Ruler extends JDialog implements BoardViewListener {
     private Color endColor;
     private int distance;
     private Client client;
-    private IBoardView bv;
+    private BoardView bv;
     private boolean flip;
 
     private JPanel buttonPanel;
@@ -102,8 +66,8 @@ public class Ruler extends JDialog implements BoardViewListener {
     private JCheckBox cboIsMech2 = 
         new JCheckBox(Messages.getString("Ruler.isMech"));
 
-    public Ruler(JFrame f, Client c, IBoardView b) {
-        super(f, Messages.getString("Ruler.title"), false); //$NON-NLS-1$
+    public Ruler(JFrame f, Client c, BoardView b) {
+        super(f, Messages.getString("Ruler.title"), false);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
         start = null;
@@ -128,11 +92,7 @@ public class Ruler extends JDialog implements BoardViewListener {
     private void jbInit() {
         buttonPanel = new JPanel();
         butFlip.setText(Messages.getString("Ruler.flip")); //$NON-NLS-1$
-        butFlip.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                butFlip_actionPerformed();
-            }
-        });
+        butFlip.addActionListener(e -> butFlip_actionPerformed());
         getContentPane().setLayout(gridBagLayout1);
         jLabel1 = new JLabel(Messages.getString("Ruler.Start"), SwingConstants.RIGHT); //$NON-NLS-1$
         tf_start.setEditable(false);
@@ -152,11 +112,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         tf_los2.setEditable(false);
         tf_los2.setColumns(30);
         butClose.setText(Messages.getString("Ruler.Close")); //$NON-NLS-1$
-        butClose.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                butClose_actionPerformed();
-            }
-        });
+        butClose.addActionListener(e -> butClose_actionPerformed());
         heightLabel1 = new JLabel(Messages.getString("Ruler.Height1"), SwingConstants.RIGHT); //$NON-NLS-1$
         heightLabel1.setForeground(startColor);
         height1.setText("1"); //$NON-NLS-1$
@@ -167,13 +123,7 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height1.setColumns(5);
-        cboIsMech1.addItemListener(new ItemListener(){
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                checkBoxSelectionChanged();
-            }
-            
-        });
+        cboIsMech1.addItemListener(e -> checkBoxSelectionChanged());
         
         heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT); //$NON-NLS-1$
         heightLabel2.setForeground(endColor);
@@ -185,13 +135,7 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height2.setColumns(5);
-        cboIsMech2.addItemListener(new ItemListener(){
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                checkBoxSelectionChanged();
-            }
-            
-        });
+        cboIsMech2.addItemListener(e -> checkBoxSelectionChanged());
         
         //need to set all the minimum sizes to prevent jtextfield going to zero size
         //on dialog resize.setColumns(16);
@@ -508,7 +452,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         setVisible(true);
     }
     
-    void checkBoxSelectionChanged(){
+    void checkBoxSelectionChanged() {
         setText();
         setVisible(true);
     }

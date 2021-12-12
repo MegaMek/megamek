@@ -31,8 +31,9 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -140,7 +141,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if ((clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
+        if ((clientgui.getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);
@@ -314,7 +315,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 Entity ent = clientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
                     clientgui.mechD.displayEntity(ent);
-                    clientgui.setDisplayVisible(true);
+                    clientgui.setUnitDisplayVisible(true);
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

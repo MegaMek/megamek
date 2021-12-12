@@ -29,7 +29,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
@@ -65,23 +65,22 @@ public abstract class PathRanker implements IPathRanker {
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
      */
-    RankedPath rankPath(MovePath path, IGame game) {
+    RankedPath rankPath(MovePath path, Game game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(me), game);
         int maxWeaponRange = me.getMaxWeaponRange();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
         Coords allyCenter = calcAllyCenter(me.getId(), friends, game);
 
-        return rankPath(path, game, maxWeaponRange, fallTolerance, homeDistance, enemies, allyCenter);
+        return rankPath(path, game, maxWeaponRange, fallTolerance, enemies, allyCenter);
     }
 
-    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
+    abstract RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords);
 
-    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
-                                    double fallTolerance, int startingHomeDistance,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
+                                    double fallTolerance,
                                     List<Entity> enemies, List<Entity> friends) {
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
@@ -92,7 +91,7 @@ public abstract class PathRanker implements IPathRanker {
         getPathRankerState().getPathSuccessProbabilities().clear();
         
         // Let's try to whittle down this list.
-        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
+        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         getOwner().getLogger().debug("Validated " + validPaths.size() + " out of " +
                 movePaths.size() + " possible paths.");
 
@@ -108,7 +107,7 @@ public abstract class PathRanker implements IPathRanker {
         for (MovePath path : validPaths) {
             count = count.add(BigDecimal.ONE);
             
-            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies,
                     allyCenter);
             
             returnPaths.add(rankedPath);
@@ -130,18 +129,17 @@ public abstract class PathRanker implements IPathRanker {
         
         // if we're trying to fight, but aren't going to be doing any damage no matter how we move
         // then let's try to get closer
-        if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
+        if (noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
             
             behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
             return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
-                    startingHomeDistance, enemies, friends);
+                    enemies, friends);
         }
         
         return returnPaths;
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
-                                         double fallTolerance, int startingHomeDistance) {
+    private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange, double fallTolerance) {
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
@@ -166,7 +164,7 @@ public abstract class PathRanker implements IPathRanker {
         
         for (MovePath path : startingPathList) {
             // just in case
-            if((path == null) || !path.isMoveLegal()) {
+            if ((path == null) || !path.isMoveLegal()) {
                 continue;
             }
 
@@ -174,10 +172,10 @@ public abstract class PathRanker implements IPathRanker {
 
             try {
                 // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
-            	if(isAirborneAeroOnGroundMap) {
+            	if (isAirborneAeroOnGroundMap) {
             		// if we have no bombs, we want to make sure our altitude is above 1
             		// if we do have bombs, we may consider altitude bombing (in the future)
-            		if((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
+            		if ((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
             		        (path.getFinalAltitude() < 2)) {
             		    msg.append("\n\tNo bombs but at altitude 1. No way.");
             		    continue;
@@ -214,7 +212,7 @@ public abstract class PathRanker implements IPathRanker {
                 }
 
                 // first crack at logic involving unjamming RACs: just do it
-                if(needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
+                if (needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
                     logLevel = LogLevel.INFO;
                     msg.append("\n\tINADVISABLE: Want to unjam autocannon but path involves running or jumping");
                     continue;
@@ -255,17 +253,17 @@ public abstract class PathRanker implements IPathRanker {
      * unit on this turn. Rankers that extend this class should override this
      * function
      */
-    public void initUnitTurn(Entity unit, IGame game) {
+    public void initUnitTurn(Entity unit, Game game) {
     }
 
-    public Targetable findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Targetable findClosestEnemy(Entity me, Coords position, Game game) {
         return findClosestEnemy(me, position, game, true);
     }
     
     /**
      * Find the closest enemy to a unit with a path
      */
-    public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
+    public Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets) {
         int range = 9999;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
@@ -291,10 +289,10 @@ public abstract class PathRanker implements IPathRanker {
         }
         
         // if specified, we also consider strategic targets
-        if(includeStrategicTargets) {
-            for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+        if (includeStrategicTargets) {
+            for (Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
                 int distance = position.distance(t.getPosition());
-                if(distance < range) {
+                if (distance < range) {
                     range = distance;
                     closest = t;
                 }
@@ -309,7 +307,7 @@ public abstract class PathRanker implements IPathRanker {
      */
     protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         // introduced a caching mechanism, as the success probability was being calculated at least twice
-        if(getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
+        if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
             return getPathRankerState().getPathSuccessProbabilities().get(movePath.getKey());
         }
         
@@ -358,34 +356,43 @@ public abstract class PathRanker implements IPathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        Coords edgeCoords;
-        int boardHeight = game.getBoard().getHeight();
-        int boardWidth = game.getBoard().getWidth();
-        StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-        if (CardinalEdge.NORTH.equals(homeEdge)) {
-            msg.append("North");
-            edgeCoords = new Coords(position.getX(), 0);
-        } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
-            msg.append("South");
-            edgeCoords = new Coords(position.getX(), boardHeight);
-        } else if (CardinalEdge.WEST.equals(homeEdge)) {
-            msg.append("West");
-            edgeCoords = new Coords(0, position.getY());
-        } else if (CardinalEdge.EAST.equals(homeEdge)) {
-            msg.append("East");
-            edgeCoords = new Coords(boardWidth, position.getY());
-        } else {
-            msg.append("Default");
-            getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
-            edgeCoords = new Coords(boardWidth / 2, 0);
+    /**
+     * Returns distance to the unit's home edge.
+     * Gives the distance to the closest edge
+     *
+     * @param position Final coordinates of the proposed move.
+     * @param homeEdge Unit's home edge.
+     * @param game     The {@link Game} currently in play.
+     * @return The distance to the unit's home edge.
+     */
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game) {
+        int width = game.getBoard().getWidth();
+        int height = game.getBoard().getHeight();
+
+        int distance;
+        switch (homeEdge) {
+            case NORTH: {
+                distance = position.getY();
+                break;
+            }
+            case SOUTH: {
+                distance = height - position.getY() - 1;
+                break;
+            }
+            case WEST: {
+                distance = position.getX();
+                break;
+            }
+            case EAST: {
+                distance = width - position.getX() - 1;
+                break;
+            }
+            default: {
+                getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
+                distance = position.getY();
+            }
         }
-        msg.append(edgeCoords.toFriendlyString());
 
-        int distance = edgeCoords.distance(position);
-        msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
-
-        getOwner().getLogger().debug(msg.toString());
         return distance;
     }
 
@@ -420,12 +427,12 @@ public abstract class PathRanker implements IPathRanker {
      * todo incorporate test for building damage just from moving through building
      *
      * @param path The {@link MovePath} being traversed.
-     * @param game The {@link IGame} being played.
+     * @param game The {@link Game} being played.
      * @return True if there is a building in our path that might collapse.
      */
-    private boolean willBuildingCollapse(MovePath path, IGame game) {
+    private boolean willBuildingCollapse(MovePath path, Game game) {
         // airborne aircraft cannot collapse buildings
-        if(path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+        if (path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
         }
         
@@ -467,7 +474,7 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     @Nullable
-    Coords calcAllyCenter(int myId, List<Entity> friends, IGame game) {
+    Coords calcAllyCenter(int myId, List<Entity> friends, Game game) {
         if ((friends == null) || friends.isEmpty()) {
             return null;
         }

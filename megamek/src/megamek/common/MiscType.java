@@ -2310,16 +2310,9 @@ public class MiscType extends EquipmentType {
         //Errata May 8/2020 - CGL requested change to TP.
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
-<<<<<<< HEAD
                 .setAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, true, false, false)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
-=======
-                .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, true, false, false)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
->>>>>>> refs/remotes/origin/master
-
         return misc;
     }
 
@@ -8905,13 +8898,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "342,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-<<<<<<< HEAD
                 .setISAdvancement(DATE_NONE,3067, 3085,DATE_NONE,DATE_NONE)
                 .setISApproximate(false, false, true,false,false).setPrototypeFactions(F_LC)
-=======
-                .setISAdvancement(DATE_NONE, 3067, 3085)
-                .setISApproximate(false, false, true).setPrototypeFactions(F_LC)
->>>>>>> refs/remotes/origin/master
                 .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
@@ -8932,13 +8920,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "342,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-<<<<<<< HEAD
                 .setClanAdvancement(DATE_NONE,3073,3085,DATE_NONE,DATE_NONE)
                 .setClanApproximate(false,false,true,false,false)
-=======
-                .setClanAdvancement(DATE_NONE, 3073, 3085)
-                .setClanApproximate(false,false,true)
->>>>>>> refs/remotes/origin/master
                 .setPrototypeFactions(F_CWX)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;

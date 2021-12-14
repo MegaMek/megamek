@@ -10765,7 +10765,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     };
 
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        // bvText = new StringBuffer();
         long cost = 0;
 
         NumberFormat commafy = NumberFormat.getInstance();
@@ -10782,8 +10781,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             long itemCost = (long) mounted.getCost();
             if (!ignoreAmmo && isSupportVehicle() && (mounted.getSize() > 1)
                     && (mounted.getType() instanceof InfantryWeapon)) {
-                itemCost += (mounted.getSize() - 1)
-                        * ((InfantryWeapon) mounted.getType()).getAmmoCost();
+                itemCost += Double.valueOf((mounted.getSize() - 1d)
+                                * ((InfantryWeapon) mounted.getType()).getAmmoCost()).longValue();
             }
 
             cost += itemCost;
@@ -12420,20 +12419,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the tonnage of additional mounted communications equipment
      */
     public int getExtraCommGearTons() {
-        int i = 0;
+        double i = 0;
         for (Mounted mounted : miscList) {
-            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)
-                && !mounted.isInoperable()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS) && !mounted.isInoperable()) {
                 i += mounted.getTonnage();
             }
         }
-        return i;
+        return (int) Math.round(i); // the rounding shouldn't be needed, but is safer
     }
 
     /**
      * Returns information (range, location, strength) about ECM if the unit
-     * has active ECM or null if it doesn't.  In the case of multiple ECCM
-     * system, the best one takes precendence, as a unit can only have one
+     * has active ECM or null if it doesn't. In the case of multiple ECCM
+     * system, the best one takes precedence, as a unit can only have one
      * active ECCM at a time.
      *
      * @return
@@ -12514,8 +12512,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns information (range, location, strength) about ECCM if the unit
-     * has active ECCM or null if it doesn't.  In the case of multiple ECCM
-     * system, the best one takes precendence, as a unit can only have one
+     * has active ECCM or null if it doesn't. In the case of multiple ECCM
+     * system, the best one takes precedence, as a unit can only have one
      * active ECCM at a time.
      *
      * @return
@@ -13933,7 +13931,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (hasBoostedC3()) {
                 multiplier = 0.07;
             }
-            xbv += totalForceBV * multiplier;
+            xbv += (int) Math.round(totalForceBV * multiplier);
         }
         return xbv;
     }

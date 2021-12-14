@@ -35,7 +35,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
      * Damage a BA does with its vibroclaws.
      */
     public static int getDamageFor(Entity entity) {
-        return Compute.missilesHit(((BattleArmor)entity).getShootingStrength()) * entity.getVibroClaws();
+        return Compute.missilesHit(((BattleArmor) entity).getShootingStrength()) * entity.getVibroClaws();
     }
 
     public ToHitData toHit(Game game) {

@@ -242,7 +242,7 @@ public class ForceDescriptor {
                 }
             } else {
                 if (null != generationRule) {
-                    switch(generationRule) {
+                    switch (generationRule) {
                         case "chassis":
                             if (getChassis().isEmpty()) {
                                 generate(generationRule);
@@ -455,7 +455,7 @@ public class ForceDescriptor {
         //will get the infantry support role.
         if (infSubs.size() > 0) {
             generateLance(infSubs);
-            int footCount = (int)infSubs.stream().filter(fd -> fd.getMovementModes()
+            int footCount = (int) infSubs.stream().filter(fd -> fd.getMovementModes()
                     .contains(EntityMovementMode.INF_LEG)).count();
             for (int i = 0; i < baseSubs.size(); i++) {
                 if (baseSubs.get(i).getUnitType() == UnitType.TANK
@@ -482,7 +482,7 @@ public class ForceDescriptor {
         }
 
         //Any BA in exceess of the number of omni base units will require mag clamps, up to the number of base units.
-        int magReq = Math.min((int)(baSubs.size() - baseUnitList.stream().filter(mr -> mr.isOmni()).count()),
+        int magReq = Math.min((int) (baSubs.size() - baseUnitList.stream().filter(AbstractUnitRecord::isOmni).count()),
                 baSubs.size());
         for (int i = 0; i < baSubs.size(); i++) {
             if (i < magReq) {
@@ -604,7 +604,7 @@ public class ForceDescriptor {
                                 }
                             }
                         }
-                        if (Compute.d6(2) >= target - ((av == null)?0:av.adjustForRating(ratingLevel, totalLevels))) {
+                        if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                             sub.getChassis().clear();
                             sub.getChassis().add(model);
                             int oldWt = sub.getWeightClass();
@@ -634,10 +634,10 @@ public class ForceDescriptor {
                                     }
                                 }
                             }
-                            if (Compute.d6(2) >= target - ((av == null)?0:av.adjustForRating(ratingLevel, totalLevels))) {
+                            if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                                 sub.setUnit(mRec);
                                 if (useWeights) {
-                                    weights.remove((Object)mRec.getWeightClass());
+                                    weights.remove((Object) mRec.getWeightClass());
                                 }
                                 foundUnit = true;
                                 break;
@@ -655,7 +655,7 @@ public class ForceDescriptor {
                             }
                         }
                     }
-                    if (Compute.d6(2) >= target - ((av == null)?0:av.adjustForRating(ratingLevel, totalLevels))) {
+                    if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                         sub.getChassis().add(baseModel.getChassis());
                         sub.setWeightClass(-1);
                         unit = sub.generate();
@@ -781,7 +781,7 @@ public class ForceDescriptor {
         fd.getRoles().clear();
         fd.getRoles().addAll(roles.stream().filter(r -> r.fitsUnitType(unitType)).collect(Collectors.toList()));
 
-        int wtIndex = (useWeightClass() && weightClass != null && weightClass != -1)?0:4;
+        int wtIndex = (useWeightClass() && weightClass != null && weightClass != -1) ? 0 : 4;
 
         while (wtIndex < 5) {
             for (int roleStrictness = 3; roleStrictness >= 0; roleStrictness--) {
@@ -892,16 +892,14 @@ public class ForceDescriptor {
         if (subforces.size() > 0) {
             int coPos = 0;
             if (coNode != null) {
-                coPos = (coNode.getPosition() == null)?1:
-                    Math.min(coNode.getPosition(), 1);
+                coPos = (coNode.getPosition() == null) ? 1 : Math.min(coNode.getPosition(), 1);
             }
             int xoPos = 0;
             if (xoNode != null && (xoNode.getPosition() == null || xoNode.getPosition() > 0)) {
-                xoPos = (xoNode.getPosition() == null)?coPos + 1:
-                    Math.max(coPos, xoNode.getPosition());
+                xoPos = (xoNode.getPosition() == null) ? coPos + 1 : Math.max(coPos, xoNode.getPosition());
             }
             if (coPos + xoPos > 0) {
-                ForceDescriptor [] forces = subforces.toArray(new ForceDescriptor[subforces.size()]);
+                ForceDescriptor[] forces = subforces.toArray(new ForceDescriptor[0]);
                 Arrays.sort(forces, forceSorter);
                 if (coPos != 0) {
                     ForceDescriptor coFound = null;
@@ -1019,7 +1017,7 @@ public class ForceDescriptor {
                 }
             }
             if (c > 0) {
-                weightClass = (int)(wt / c + 0.5);
+                weightClass = (int) (wt / c + 0.5);
             }
         }
 
@@ -1170,18 +1168,26 @@ public class ForceDescriptor {
 
     public static int decodeWeightClass(String code) {
         switch (code) {
-            case "UL":return EntityWeightClass.WEIGHT_ULTRA_LIGHT;
-            case "L":return EntityWeightClass.WEIGHT_LIGHT;
-            case "M":return EntityWeightClass.WEIGHT_MEDIUM;
-            case "H":return EntityWeightClass.WEIGHT_HEAVY;
-            case "A":return EntityWeightClass.WEIGHT_ASSAULT;
-            case "SH":case "C":return EntityWeightClass.WEIGHT_COLOSSAL;
+            case "UL":
+                return EntityWeightClass.WEIGHT_ULTRA_LIGHT;
+            case "L":
+                return EntityWeightClass.WEIGHT_LIGHT;
+            case "M":
+                return EntityWeightClass.WEIGHT_MEDIUM;
+            case "H":
+                return EntityWeightClass.WEIGHT_HEAVY;
+            case "A":
+                return EntityWeightClass.WEIGHT_ASSAULT;
+            case "SH":
+            case "C":
+                return EntityWeightClass.WEIGHT_COLOSSAL;
+            default:
+                return -1;
         }
-        return -1;
     }
 
     public String getWeightClassCode() {
-        final String[] codes = {"UL", "L", "M", "H", "A", "SH"};
+        final String[] codes = { "UL", "L", "M", "H", "A", "SH" };
         if (weightClass == null || weightClass == -1) {
             return "";
         }
@@ -1229,7 +1235,7 @@ public class ForceDescriptor {
         } else {
             wc = EntityWeightClass.WEIGHT_MEDIUM;
         }
-        weightClass = (int)Math.round(wc);
+        weightClass = (int) Math.round(wc);
 
         //Some names require knowing the weight class first.
         if (null != nameNodes) {
@@ -1246,7 +1252,7 @@ public class ForceDescriptor {
     }
 
     public ArrayList<Object> getAllChildren() {
-        ArrayList<Object> retVal = new ArrayList<Object>();
+        ArrayList<Object> retVal = new ArrayList<>();
         retVal.addAll(subforces);
         retVal.addAll(attached);
         return retVal;
@@ -1280,7 +1286,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{latin:parent}", LATIN[getParent().getNameIndex()]);
             retVal = retVal.replace("{roman:parent}", ROMAN[getParent().getNameIndex()]);
             retVal = retVal.replace("{cardinal:parent}", Integer.toString(getParent().getNameIndex() + 1));
-            retVal = retVal.replace("{alpha:parent}", Character.toString((char)(getParent().getNameIndex() + 'A')));
+            retVal = retVal.replace("{alpha:parent}", Character.toString((char) (getParent().getNameIndex() + 'A')));
         }
         if (getParent() != null && retVal.contains("{name:parent}")) {
             String parentName = getParent().getName().replaceAll(".*\\[", "").replaceAll("\\].*", "");
@@ -1295,7 +1301,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{latin}", LATIN[getNameIndex()]);
             retVal = retVal.replace("{roman}", ROMAN[getNameIndex()]);
             retVal = retVal.replace("{cardinal}", Integer.toString(getNameIndex() + 1));
-            retVal = retVal.replace("{alpha}", Character.toString((char)(getNameIndex() + 'A')));
+            retVal = retVal.replace("{alpha}", Character.toString((char) (getNameIndex() + 'A')));
             if (retVal.contains("{formation}")) {
                 if (null != formationType && null != formationType.getCategory()) {
                     retVal = retVal.replace("{formation}", formationType.getCategory()
@@ -1313,13 +1319,12 @@ public class ForceDescriptor {
     public String getDescription() {
         StringBuilder retVal = new StringBuilder();
         if (unitType != null) {
-            //			if (useWeightClass() && weightClass != null && weightClass >= 0) {
             if (weightClass != null && weightClass >= 0) {
                 retVal.append(EntityWeightClass.getClassName(weightClass)).append(" ");
             }
 
             if (roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) {
-                retVal.append(getUnitTypeName().equals("Infantry")?"Field":"Mobile").append(" ");
+                retVal.append(getUnitTypeName().equals("Infantry") ? "Field" : "Mobile").append(" ");
             } else {
                 retVal.append(UnitType.getTypeName(unitType)).append(" ");
             }

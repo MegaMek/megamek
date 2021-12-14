@@ -1044,7 +1044,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if ((entity instanceof LandAirMech)
                     && (entity.getConversionMode() == LandAirMech.CONV_MODE_MECH)
                     && mounted.getType().hasFlag(WeaponType.F_BOMB_WEAPON)
-                    && ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_RL_BOMB
+                    && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_RL_BOMB
                     && !mounted.getType().hasFlag(WeaponType.F_TAG)) {
                 continue;
             }
@@ -1208,7 +1208,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             weaponList.setSelectedIndex(-1);
             return;
         }
-        int index = ((WeaponListModel)weaponList.getModel()).getIndex(wn);
+        int index = ((WeaponListModel) weaponList.getModel()).getIndex(wn);
         if (index == -1) {
             weaponList.setSelectedIndex(-1);
             return;
@@ -1255,7 +1255,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         && entity.getWeaponBayList().size() == 0)) {
             return -1;
         }
-        WeaponListModel weapList = (WeaponListModel)weaponList.getModel();
+        WeaponListModel weapList = (WeaponListModel) weaponList.getModel();
         for (int i = 0; i < weaponList.getModel().getSize(); i++) {
             Mounted selectedWeap = weapList.getWeaponAt(i);
             if (entity.isWeaponValidForPhase(selectedWeap)) {
@@ -2084,8 +2084,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     rangeMultiplier *= 8;
                 }
                 
-                for(int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
-                    if(maxr >= rangeIndex) {
+                for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
+                    if (maxr >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
                     }
                 }
@@ -2110,7 +2110,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay)gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
         }
     }
 
@@ -2568,7 +2568,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             JComponent currPanel = unitDisplay.getClientGUI().getCurrentPanel();
             // When in the Firing Phase, update the targeting information.
             if (currPanel instanceof FiringDisplay) {
-                FiringDisplay firingDisplay = (FiringDisplay)currPanel;
+                FiringDisplay firingDisplay = (FiringDisplay) currPanel;
 
                 Mounted mounted = null;
                 WeaponListModel weaponModel = (WeaponListModel) weaponList
@@ -2738,7 +2738,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
             weapComparator = new WeaponComparatorNum(entity);
         }
-        ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
+        ((WeaponListModel) weaponList.getModel()).sort(weapComparator);
     }
     
     private void addListeners() {

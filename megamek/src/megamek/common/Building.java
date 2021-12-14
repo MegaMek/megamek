@@ -146,7 +146,7 @@ public class Building implements Serializable {
         @Override
         public boolean equals(Object o) {
             if (o instanceof DemolitionCharge) {
-                return uuid.equals(((DemolitionCharge)o).uuid);
+                return uuid.equals(((DemolitionCharge) o).uuid);
             }
             return false;
         }
@@ -643,10 +643,10 @@ public class Building implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof Building)) {
+        if (!(obj instanceof Building)) {
             return false;
         }
         // True until we're talking about more than one Board per Game.
@@ -793,7 +793,7 @@ public class Building implements Serializable {
      * @return the amount of damage the building absorbs
      */
     public int getAbsorbtion(Coords pos) {
-        // if(getBldgClass() == Building.CASTLE_BRIAN) {
+        // if (getBldgClass() == Building.CASTLE_BRIAN) {
         // return (int) Math.ceil(getPhaseCF(pos));
         // }
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);

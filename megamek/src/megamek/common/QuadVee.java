@@ -160,8 +160,8 @@ public class QuadVee extends QuadMech {
             wmp = wmp / (1 << badTracks);
         }
 
-        //Now apply modifiers
-        if (!ignoremodulararmor && hasModularArmor() ) {
+        // Now apply modifiers
+        if (!ignoremodulararmor && hasModularArmor()) {
             wmp--;
         }
 

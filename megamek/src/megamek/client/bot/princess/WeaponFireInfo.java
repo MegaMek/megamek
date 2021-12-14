@@ -364,16 +364,16 @@ public class WeaponFireInfo {
 
     double computeExpectedDamage() {
         // bombs require some special consideration
-        if(weapon.isGroundBomb()) {
+        if (weapon.isGroundBomb()) {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
         }
         
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
             int bayDamage = 0;
-            for(int weaponID : weapon.getBayWeapons()) {
+            for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
@@ -383,7 +383,7 @@ public class WeaponFireInfo {
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
                 // then we can count it. Otherwise, it's not going to contribute to damage, and we want 
                 // to avoid grossly overestimating damage.
-                if(targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
+                if (targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
                     bayDamage += weaponType.getDamage();
                 }
             }
@@ -400,7 +400,7 @@ public class WeaponFireInfo {
 
         // artillery and cluster table use the rack size as the base damage amount
         // a little inaccurate, but better than ignoring those weapons entirely       
-        if((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             return weaponType.getRackSize();
         }
@@ -434,9 +434,9 @@ public class WeaponFireInfo {
      // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
             int bayHeat = 0;
-            for(int weaponID : weapon.getBayWeapons()) {
+            for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 bayHeat += weaponType.getHeat();
@@ -461,7 +461,7 @@ public class WeaponFireInfo {
         double damage = 0D; //lol double damage I wish
         
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
-        if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+        if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
                 final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
         
@@ -476,7 +476,7 @@ public class WeaponFireInfo {
                 // now we go through all affected hexes and add up the damage done
                 for (final Coords coords : affectedHexes) {
                     for (final Entity currentVictim : game.getEntitiesVector(coords)) {                        
-                        if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
+                        if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
                             damage += damagePerShot;
                         } else { // we prefer not to blow up friendlies if we can help it
                             damage -= damagePerShot;
@@ -530,7 +530,7 @@ public class WeaponFireInfo {
         }
         // If we can't hit, set everything zero and return..
         if (12 < getToHit().getValue()) {
-            if(debugging) {
+            if (debugging) {
                 owner.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
             }
             setProbabilityToHit(0);
@@ -556,13 +556,13 @@ public class WeaponFireInfo {
         // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
         String currentFireMode = getWeapon().curMode().getName();
         int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
-        if(!currentFireMode.equals(getWeapon().curMode().getName())) {
+        if (!currentFireMode.equals(getWeapon().curMode().getName())) {
         	setUpdatedFiringMode(spinMode);
         }
         
         setHeat(computeHeat(weapon));
         
-        if(debugging) {
+        if (debugging) {
             msg.append("\n\tHeat: ").append(getHeat());
         }
 
@@ -635,7 +635,7 @@ public class WeaponFireInfo {
             }
         }
 
-        if(debugging) {
+        if (debugging) {
             owner.getLogger().debug(msg.toString());
         }
     }

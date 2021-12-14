@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -35,7 +34,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Tank unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
 public class TankMapSet implements DisplayMapSet {
 
@@ -43,7 +42,7 @@ public class TankMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[12];
     private PMSimpleLabel[] labels = new PMSimpleLabel[13];
     private PMValueLabel[] vLabels = new PMValueLabel[13];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
     
     private UnitDisplay unitDisplay;
@@ -125,18 +124,16 @@ public class TankMapSet implements DisplayMapSet {
             a = t.getArmor(i);
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
-                    / (double) a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
         }
         for (int i = 7; i < 12; i++) {
             a = t.getInternal(i - 6);
             a0 = t.getOInternal(i - 6);
             vLabels[i].setValue(t.getInternalString(i - 6));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
-                    / (double) a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
-            vLabels[12].setValue(String.valueOf(((SupportTank)t).getBARRating(1)));
+            vLabels[12].setValue(String.valueOf(t.getBARRating(1)));
         } else {
             labels[12].setVisible(false);
             vLabels[12].setVisible(false);

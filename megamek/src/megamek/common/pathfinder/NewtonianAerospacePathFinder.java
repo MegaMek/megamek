@@ -68,11 +68,11 @@ public class NewtonianAerospacePathFinder {
             aerospacePaths = new ArrayList<MovePath>();
             
             // can't do anything if the unit is out of control.
-            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
+            if (((IAero) startingEdge.getEntity()).isOutControlTotal()) {
                 return;
             }
             
-            for(MovePath path : generateStartingPaths(startingEdge)) {
+            for (MovePath path : generateStartingPaths(startingEdge)) {
                 aerospacePaths.addAll(generateChildren(path));
             }
             
@@ -80,7 +80,7 @@ public class NewtonianAerospacePathFinder {
             // now is the time to clean those out.
             // except for the one that we designated as the shortest off-board path
             aerospacePaths.removeIf(path -> !startingEdge.getGame().getBoard().contains(path.getFinalCoords()));
-            if(offBoardPath != null) {
+            if (offBoardPath != null) {
                 aerospacePaths.add(offBoardPath);
             }
             
@@ -97,7 +97,7 @@ public class NewtonianAerospacePathFinder {
                     + "increase java memory limit.";
             
             getLogger().error(memoryMessage, e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
@@ -145,32 +145,32 @@ public class NewtonianAerospacePathFinder {
         // turn left
         // turn right
         // thrust
-        for(int moveType = 0; moveType < moves.size(); moveType++) {
+        for (int moveType = 0; moveType < moves.size(); moveType++) {
             MovePath childPath = startingPath.clone();
 
             // two things we want to avoid:
             // 1: turning back and forth
             // 2: turning more than 2 hexes in a row
             MoveStepType nextStepType = moves.get(moveType);
-            if(tooMuchTurning(childPath, nextStepType)) {
+            if (tooMuchTurning(childPath, nextStepType)) {
                 continue;
             }
             
             childPath.addStep(nextStepType);
             
             CoordsWithFacing pathDestination = new CoordsWithFacing(childPath);
-            if(discardPath(childPath, pathDestination)) {
+            if (discardPath(childPath, pathDestination)) {
                 continue;
             }
             
             // keep track of a single path that takes us off board, if there is such a thing
             // this should always be the shortest one.
-            if(game.getBoard().getHex(pathDestination.getCoords()) == null &&
+            if (game.getBoard().getHex(pathDestination.getCoords()) == null &&
                     (offBoardPath == null || childPath.getMpUsed() < offBoardPath.getMpUsed())) {        
                 offBoardPath = childPath;
             }
             
-            if(!isIntermediatePath(childPath)) {
+            if (!isIntermediatePath(childPath)) {
                 visitedCoords.put(pathDestination, childPath.getMpUsed());
             
                 retval.add(childPath.clone());
@@ -226,19 +226,19 @@ public class NewtonianAerospacePathFinder {
      * @return Whether we're turning too much
      */
     private boolean tooMuchTurning(MovePath path, MoveStepType stepType) {
-        if(path.getLastStep() == null || path.getSecondLastStep() == null) {
+        if (path.getLastStep() == null || path.getSecondLastStep() == null) {
             return false;
         }
         
         // more than two turns in a row is no good
-        if((stepType == MoveStepType.TURN_LEFT || stepType == MoveStepType.TURN_RIGHT) 
+        if ((stepType == MoveStepType.TURN_LEFT || stepType == MoveStepType.TURN_RIGHT)
                 && (path.getSecondLastStep().getType() == path.getLastStep().getType()) 
                 && (path.getLastStep().getType() == stepType)) {
             return true;
         }
         
         // turning back and forth in place is no good
-        if((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
+        if ((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
                 (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT)) {
             return true;
         }

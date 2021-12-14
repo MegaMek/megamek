@@ -207,7 +207,7 @@ public class BoardEditor extends JPanel
     private Game game = new Game();
     private Board board = game.getBoard();
     private BoardView bv;
-    public static final int [] allDirections = {0,1,2,3,4,5};
+    public static final int[] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
     private Component bvc;
     private CommonMenuBar menuBar = new CommonMenuBar(this);
@@ -1865,8 +1865,8 @@ public class BoardEditor extends JPanel
             if (newTheme != null) {
                 choTheme.setSelectedItem(newTheme);
             }
-        } else if (ae.getSource().equals(choTheme) ) { 
-            curHex.setTheme((String)choTheme.getSelectedItem());
+        } else if (ae.getSource().equals(choTheme)) {
+            curHex.setTheme((String) choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
             setConvenientTerrain(ae, new Terrain(Terrains.WOODS, 1), new Terrain(Terrains.FOLIAGE_ELEV, 2));

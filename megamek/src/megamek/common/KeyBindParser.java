@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -62,7 +63,7 @@ public class KeyBindParser {
     private static ArrayList<IPreferenceChangeListener> listeners = new ArrayList<>();
     public static final String KEYBINDS_CHANGED = "keyBindsChanged";
 
-    public static void parseKeyBindings(MegaMekController controller){
+    public static void parseKeyBindings(MegaMekController controller) {
         // Always register the hard-coded defaults first so that new binds get their keys
         registerDefaultKeyBinds(controller);
         
@@ -122,11 +123,9 @@ public class KeyBindParser {
                 String command = elem.getTextContent();
 
                 // Get the isRepeatable
-                elem = (Element) bindingList
-                        .getElementsByTagName(IS_REPEATABLE).item(0);
+                elem = (Element) bindingList.getElementsByTagName(IS_REPEATABLE).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + IS_REPEATABLE + " element #"
-                            + bindCount);
+                    MegaMek.getLogger().error("Missing " + IS_REPEATABLE + " element #" + bindCount);
                     continue;
                 }
                 boolean isRepeatable =
@@ -134,9 +133,8 @@ public class KeyBindParser {
 
                 KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
 
-                if (keyBind == null){
-                    System.err.println("Unknown command: " + command +
-                            ", element #" + bindCount);
+                if (keyBind == null) {
+                    MegaMek.getLogger().error("Unknown command: " + command + ", element #" + bindCount);
                 } else {
                     keyBind.key = keyCode;
                     keyBind.modifiers = modifiers;
@@ -167,7 +165,7 @@ public class KeyBindParser {
     /**
      * Write the current keybindings to the default XML file.
      */
-    public static void writeKeyBindings(){
+    public static void writeKeyBindings() {
         try {
             Writer output = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(new MegaMekFile(Configuration.configDir(),
@@ -177,7 +175,7 @@ public class KeyBindParser {
                     "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
                     " xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsd\">\n");
 
-            for (KeyCommandBind kcb : KeyCommandBind.values()){
+            for (KeyCommandBind kcb : KeyCommandBind.values()) {
                 output.write("    <KeyBind>\n");
                 output.write("         <command>"+kcb.cmd+"</command> ");
                 String keyTxt = "";

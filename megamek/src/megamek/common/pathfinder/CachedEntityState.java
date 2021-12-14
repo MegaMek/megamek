@@ -36,7 +36,7 @@ public class CachedEntityState {
     }
     
     public int getWalkMP() {
-        if(walkMP == null) {
+        if (walkMP == null) {
             walkMP = backingEntity.getWalkMP();
         }
         
@@ -44,7 +44,7 @@ public class CachedEntityState {
     }
     
     public int getRunMP() {
-        if(runMP == null) {
+        if (runMP == null) {
             runMP = backingEntity.getRunMP();
         }
         
@@ -52,7 +52,7 @@ public class CachedEntityState {
     }
     
     public int getRunMPwithoutMASC() {
-        if(runMPWithoutMasc == null) {
+        if (runMPWithoutMasc == null) {
             runMPWithoutMasc = backingEntity.getRunMPwithoutMASC();
         }
         
@@ -60,7 +60,7 @@ public class CachedEntityState {
     }
     
     public int getSprintMP() {
-        if(sprintMP == null) {
+        if (sprintMP == null) {
             sprintMP = backingEntity.getSprintMP();
         }
         
@@ -68,7 +68,7 @@ public class CachedEntityState {
     }
     
     public int getSprintMPwithoutMASC() {
-        if(sprintMPWithoutMasc == null) {
+        if (sprintMPWithoutMasc == null) {
             sprintMPWithoutMasc = backingEntity.getSprintMPwithoutMASC();
         }
         
@@ -76,7 +76,7 @@ public class CachedEntityState {
     }
     
     public int getJumpMP() {
-        if(jumpMP == null) {
+        if (jumpMP == null) {
             jumpMP = backingEntity.getJumpMP();
         }
         
@@ -84,7 +84,7 @@ public class CachedEntityState {
     }
     
     public int getJumpMPWithTerrain() {
-        if(jumpMPWithTerrain == null) {
+        if (jumpMPWithTerrain == null) {
             jumpMPWithTerrain = backingEntity.getJumpMPWithTerrain();
         }
         
@@ -92,7 +92,7 @@ public class CachedEntityState {
     }
     
     public boolean hasWorkingMisc(BigInteger flag) {
-        if(!hasWorkingMisc.containsKey(flag)) {
+        if (!hasWorkingMisc.containsKey(flag)) {
             hasWorkingMisc.put(flag, backingEntity.hasWorkingMisc(flag));
         }
         
@@ -100,8 +100,8 @@ public class CachedEntityState {
     }
     
     public int getTorsoJumpJets() {
-        if(torsoJumpJets == null) {
-            if(backingEntity instanceof Mech) {
+        if (torsoJumpJets == null) {
+            if (backingEntity instanceof Mech) {
                 torsoJumpJets = ((Mech) backingEntity).torsoJumpJets();
             } else {
                 torsoJumpJets = 0;

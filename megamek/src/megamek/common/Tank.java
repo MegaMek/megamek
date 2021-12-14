@@ -569,7 +569,7 @@ public class Tank extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -2542,7 +2542,7 @@ public class Tank extends Entity {
 
             if (l == 7) {
                 getWeaponsAndEquipmentCost(true);
-            }else {
+            } else {
                 if (left.get(l).equals("Final Structural Cost")) {
                     bvText.append(startRow);
                     bvText.append(startColumn);
@@ -2658,7 +2658,7 @@ public class Tank extends Entity {
 
         // Engine Costs
         double engineCost = 0.0;
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isSupportVehicle()) {
                 engineCost = 5000 * getEngine().getWeightEngine(this)
                         * Engine.getSVCostMultiplier(getEngine().getEngineType());
@@ -2736,16 +2736,16 @@ public class Tank extends Entity {
         if (!isSupportVehicle()) {
             double diveTonnage;
             switch (movementMode) {
-            case HOVER:
-            case HYDROFOIL:
-            case VTOL:
-            case SUBMARINE:
-            case WIGE:
-                diveTonnage = Math.ceil(weight / 5.0) / 2.0;
-                break;
-            default:
-                diveTonnage = 0.0;
-                break;
+                case HOVER:
+                case HYDROFOIL:
+                case VTOL:
+                case SUBMARINE:
+                case WIGE:
+                    diveTonnage = Math.ceil(weight / 5.0) / 2.0;
+                    break;
+                default:
+                    diveTonnage = 0.0;
+                    break;
             }
             if (movementMode != EntityMovementMode.VTOL) {
                 costs[i++] = diveTonnage * 20000;
@@ -3172,7 +3172,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3266,7 +3266,7 @@ public class Tank extends Entity {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3882,7 +3882,7 @@ public class Tank extends Entity {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 2;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 3;
         } else {
             return 4;
@@ -3912,26 +3912,26 @@ public class Tank extends Entity {
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
-        case 0:
-            if (location > LOC_BODY && location < LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 1:
-            if (location == LOC_REAR) {
-                return 1.0;
-            }
-            break;
-        case 2:
-            if (location == LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 3:
-            if (location == LOC_TURRET_2) {
-                return 1.0;
-            }
-            break;
+            case 0:
+                if (location > LOC_BODY && location < LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 1:
+                if (location == LOC_REAR) {
+                    return 1.0;
+                }
+                break;
+            case 2:
+                if (location == LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 3:
+                if (location == LOC_TURRET_2) {
+                    return 1.0;
+                }
+                break;
         }
         return 0; 
     }

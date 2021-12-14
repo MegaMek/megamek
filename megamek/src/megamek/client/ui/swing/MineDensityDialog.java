@@ -52,7 +52,7 @@ public class MineDensityDialog extends JDialog implements ActionListener {
         butOk.addActionListener(this);
         
         choDensity.removeAllItems();
-        for(int i =5; i < 35; i = i + 5) {
+        for (int i =5; i < 35; i = i + 5) {
             choDensity.addItem(Integer.toString(i));
         }
         choDensity.setSelectedIndex(0);
@@ -89,7 +89,7 @@ public class MineDensityDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOk) {
-            density = Integer.parseInt((String)choDensity.getSelectedItem());
+            density = Integer.parseInt((String) choDensity.getSelectedItem());
         }
         this.setVisible(false);
     }

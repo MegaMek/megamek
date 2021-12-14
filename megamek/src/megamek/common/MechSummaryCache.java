@@ -416,10 +416,10 @@ public class MechSummaryCache {
                     TechConstants.T_IS_EXPERIMENTAL });
         }
         ms.setTons(e.getWeight());
-        if (e instanceof BattleArmor){
-            ms.setTOweight(((BattleArmor)e).getAlternateWeight());
+        if (e instanceof BattleArmor) {
+            ms.setTOweight(((BattleArmor) e).getAlternateWeight());
             ms.setTWweight(e.getWeight());
-            ms.setSuitWeight(((BattleArmor)e).getTrooperWeight());
+            ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());
         e.setUseGeometricBV(true);
@@ -510,18 +510,18 @@ public class MechSummaryCache {
         }
 
         ms.setGyroType(e.getGyroType());
-        if (e.hasEngine()){
+        if (e.hasEngine()) {
             ms.setEngineName(e.getEngine().getEngineName());
         } else {
             ms.setEngineName("None");
         }
 
-        if (e instanceof Mech){
+        if (e instanceof Mech) {
             if (((Mech) e).hasTSM(false)) {
                 ms.setMyomerName("Triple-Strength");
             } else if (((Mech) e).hasTSM(true)) {
                     ms.setMyomerName("Prototype Triple-Strength");
-            } else if (((Mech)e).hasIndustrialTSM()) {
+            } else if (((Mech) e).hasIndustrialTSM()) {
                 ms.setMyomerName("Industrial Triple-Strength");
             } else {
                 ms.setMyomerName("Standard");

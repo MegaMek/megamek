@@ -247,17 +247,17 @@ public final class Force implements Serializable {
     }
     
     void removeEntity(Entity entity) {
-        entities.remove((Integer)entity.getId());
+        entities.remove((Integer) entity.getId());
     }
     
     /** Removes the given id from the list of subordinated entities. */
     void removeEntity(int id) {
-        entities.remove((Integer)id);
+        entities.remove((Integer) id);
     }
     
     /** Removes the given id from the list of (direct) subforces. */
     void removeSubForce(int id) {
-        subForces.remove((Integer)id);
+        subForces.remove((Integer) id);
     }
     
     @Override

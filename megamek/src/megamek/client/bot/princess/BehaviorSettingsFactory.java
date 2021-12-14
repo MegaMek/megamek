@@ -149,7 +149,7 @@ public class BehaviorSettingsFactory {
                 getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
-            try(InputStream is = new FileInputStream(behaviorFile)) {
+            try (InputStream is = new FileInputStream(behaviorFile)) {
                 return MegaMekXmlUtil.newSafeDocumentBuilder().parse(is);
             }
         } catch (Exception e) {
@@ -226,7 +226,7 @@ public class BehaviorSettingsFactory {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(behaviorDoc);
-            try(Writer writer = new FileWriter(behaviorFile)) {
+            try (Writer writer = new FileWriter(behaviorFile)) {
                 StreamResult result = new StreamResult(writer);
                 transformer.transform(source, result);
                 return true;

@@ -74,7 +74,7 @@ class MapListPopup {
         menu.setEnabled(enabled);
         if (enabled) {
             // Since it's not visible to the player, the random board can already be chosen here
-            int rnd = (int)(Math.random() * boards.size());
+            int rnd = (int) (Math.random() * boards.size());
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(rnd), enabled, listener));
             }

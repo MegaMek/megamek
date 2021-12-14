@@ -236,7 +236,7 @@ public class Bay implements Transporter, ITechnology {
         }
 
         currentSpace -= spaceForUnit(unit);
-        if((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
+        if ((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
                 loadedThisTurn += 1;
         }
 
@@ -368,7 +368,7 @@ public class Bay implements Transporter, ITechnology {
 
     protected String numDoorsString() {
         return "(" + getCurrentDoors()
-            + ((getCurrentDoors() == 1)?" door":" doors") + ")";
+            + ((getCurrentDoors() == 1) ? " door" : " doors") + ")";
     }
 
     @Override

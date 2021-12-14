@@ -904,7 +904,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
             //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
             //when Advanced Point Defense is on, but they work correctly.
-            if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            if (!(amsBayEngagedCap || pdBayEngagedCap)) {
                 addGlancingBlowReports(vPhaseReport);
     
                 if (bDirect) {

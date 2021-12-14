@@ -845,38 +845,38 @@ public class Board implements Serializable {
             }
         }
         switch (nDir) {
-        case START_ANY:
-            return true;
-        case START_NW:
-            return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() < (height / 2)))
-                    || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() < (width / 2)));
-        case START_N:
-            return (c.getY() < (miny + nLimit)) && (c.getY() >= miny);
-        case START_NE:
-            return ((c.getX() > (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() < (height / 2)))
-                    || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() > (width / 2)));
-        case START_E:
-            return (c.getX() >= (maxx - nLimit)) && (c.getX() < maxx);
-        case START_SE:
-            return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() > (height / 2)))
-                    || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() > (width / 2)));
-        case START_S:
-            return (c.getY() >= (maxy - nLimit)) && (c.getY() < maxy);
-        case START_SW:
-            return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() > (height / 2)))
-                    || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() < (width / 2)));
-        case START_W:
-            return (c.getX() < (minx + nLimit)) && (c.getX() >= minx);
-        case START_EDGE:
-            return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx))
-                    || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny))
-                    || ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx))
-                    || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy));
-        case START_CENTER:
-            return (c.getX() >= (width / 3)) && (c.getX() <= ((2 * width) / 3)) && (c.getY() >= (height / 3))
-                    && (c.getY() <= ((2 * height) / 3));
-        default: // ummm. .
-            return false;
+            case START_ANY:
+                return true;
+            case START_NW:
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() < (height / 2)))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() < (width / 2)));
+            case START_N:
+                return (c.getY() < (miny + nLimit)) && (c.getY() >= miny);
+            case START_NE:
+                return ((c.getX() > (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() < (height / 2)))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() > (width / 2)));
+            case START_E:
+                return (c.getX() >= (maxx - nLimit)) && (c.getX() < maxx);
+            case START_SE:
+                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() > (height / 2)))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() > (width / 2)));
+            case START_S:
+                return (c.getY() >= (maxy - nLimit)) && (c.getY() < maxy);
+            case START_SW:
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() > (height / 2)))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() < (width / 2)));
+            case START_W:
+                return (c.getX() < (minx + nLimit)) && (c.getX() >= minx);
+            case START_EDGE:
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny))
+                        || ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy));
+            case START_CENTER:
+                return (c.getX() >= (width / 3)) && (c.getX() <= ((2 * width) / 3)) && (c.getY() >= (height / 3))
+                        && (c.getY() <= ((2 * height) / 3));
+            default: // ummm. .
+                return false;
         }
 
     }
@@ -993,7 +993,7 @@ public class Board implements Serializable {
                     st.nextToken();
                     if (st.ttype == StreamTokenizer.TT_NUMBER) {
                         int x, y, coordWidth = 100;
-                        int coords = (int)st.nval;
+                        int coords = (int) st.nval;
                         if (coords > 9999) {
                             coordWidth = 1000;
                         }
@@ -1034,7 +1034,7 @@ public class Board implements Serializable {
         } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             MegaMek.getLogger().error("Invalid board data!");
             newData(nw, nh, nd, errBuff);
-        } else if (errBuff == null){
+        } else if (errBuff == null) {
             MegaMek.getLogger().error("Invalid board data!");
         }
 
@@ -1520,15 +1520,15 @@ public class Board implements Serializable {
         }
         for (BoardListener l : boardListeners) {
             switch (event.getType()) {
-            case BoardEvent.BOARD_CHANGED_HEX:
-                l.boardChangedHex(event);
-                break;
-            case BoardEvent.BOARD_NEW_BOARD:
-                l.boardNewBoard(event);
-                break;
-            case BoardEvent.BOARD_CHANGED_ALL_HEXES:
-                l.boardChangedAllHexes(event);
-                break;
+                case BoardEvent.BOARD_CHANGED_HEX:
+                    l.boardChangedHex(event);
+                    break;
+                case BoardEvent.BOARD_NEW_BOARD:
+                    l.boardNewBoard(event);
+                    break;
+                case BoardEvent.BOARD_CHANGED_ALL_HEXES:
+                    l.boardChangedAllHexes(event);
+                    break;
             }
         }
     }

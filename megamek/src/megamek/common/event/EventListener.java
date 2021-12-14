@@ -28,14 +28,14 @@ class EventListener {
     }
     
     public void trigger(MMEvent event) {
-        if(!event.isCancellable() || !event.isCancelled()) {
+        if (!event.isCancellable() || !event.isCancelled()) {
             try {
                 method.invoke(handler, event);
-            } catch(IllegalAccessException e) {
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
-            } catch(InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
         }

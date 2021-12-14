@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -35,7 +34,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to 
- * represent ASF unit in MechDsiplay.ArmorPanel class.
+ * represent ASF unit in MechDisplay.ArmorPanel class.
  */
 public class SpheroidMapSet implements DisplayMapSet{
 
@@ -45,7 +44,7 @@ public class SpheroidMapSet implements DisplayMapSet{
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[13];
     private PMValueLabel[] vLabels = new PMValueLabel[13];
-    private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer>  bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     //private static final int INT_STR_OFFSET = 4;
@@ -83,41 +82,41 @@ public class SpheroidMapSet implements DisplayMapSet{
         setContent();
     }
 
-    public void setRest(){
+    public void setRest() {
     }
 
-    public PMAreasGroup getContentGroup(){
+    public PMAreasGroup getContentGroup() {
         return content;
     }
 
-    public Vector<BackGroundDrawer> getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
-    public void setEntity(Entity e){
+    public void setEntity(Entity e) {
         Aero t = (Aero) e;
         int a = 1;
         int a0 = 1;
-        for(int i = 0; i < t.locations(); i++){
+        for (int i = 0; i < t.locations(); i++) {
             a = t.getArmor(i);
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
 
         }
         a = t.getSI();
         a0 = t.get0SI();
         vLabels[4].setValue(Integer.toString(t.getSI()));
-        WidgetUtils.setAreaColor(areas[4], vLabels[4], (double)a/(double)a0);
+        WidgetUtils.setAreaColor(areas[4], vLabels[4], (double) a / (double) a0);
 
         //now for the vitals
         vLabels[5].setValue(getCriticalHitTally(t.getAvionicsHits(),3));
         vLabels[6].setValue(getCriticalHitTally(t.getEngineHits(),t.getMaxEngineHits()));
         vLabels[7].setValue(getCriticalHitTally(t.getFCSHits(),3));
         vLabels[8].setValue(getCriticalHitTally(t.getSensorHits(),3));
-        if(t instanceof SmallCraft) {
+        if (t instanceof SmallCraft) {
             //add in thrusters
-            SmallCraft sc = (SmallCraft)t;
+            SmallCraft sc = (SmallCraft) t;
             vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(),3));
             vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(),3));
         } else {
@@ -126,7 +125,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         }
         if (t instanceof Dropship) {
         	// add docking collar and kf boom
-        	Dropship ds = (Dropship)t;
+        	Dropship ds = (Dropship) t;
         	int kfboom = 0;
         	int collar = 0;
         	if (ds.isKFBoomDamaged()) {
@@ -141,9 +140,8 @@ public class SpheroidMapSet implements DisplayMapSet{
 
     }
 
-    private void setContent(){
-
-        for(int i = 0; i < 4; i++){
+    private void setContent() {
+        for (int i = 0; i < 4; i++) {
             content.addArea(areas[i]);
             content.addArea(labels[i]);
             content.addArea(vLabels[i]);
@@ -170,7 +168,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         content.addArea(vLabels[12]);
     }
 
-    private void setAreas(){
+    private void setAreas() {
         areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay, Aero.LOC_NOSE);
         areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor, unitDisplay, Aero.LOC_RWING);
         areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor, unitDisplay, Aero.LOC_LWING);
@@ -178,7 +176,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         areas[4] = new PMSimplePolygonArea(Structure, unitDisplay, Aero.LOC_NOSE);
     }
 
-    private void setLabels(){
+    private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         //Labels for Front view
@@ -295,7 +293,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
 
-    private void translateAreas(){
+    private void translateAreas() {
         areas[Aero.LOC_NOSE].translate(0,0);
         //       areas[Aero.LOC_NOSE + INT_STR_OFFSET].translate(8,29);
         areas[Aero.LOC_LWING].translate(0,0);
@@ -310,16 +308,16 @@ public class SpheroidMapSet implements DisplayMapSet{
 
         String marks = "";
 
-        if(tally < 1) {
+        if (tally < 1) {
             return marks;
         }
 
-        if(tally >= max) {
+        if (tally >= max) {
             marks = "Out";
             return marks;
         }
 
-        while(tally > 0) {
+        while (tally > 0) {
             marks = marks + "X";
             tally--;
         }

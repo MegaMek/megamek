@@ -129,7 +129,7 @@ public abstract class PathRanker implements IPathRanker {
         
         // if we're trying to fight, but aren't going to be doing any damage no matter how we move
         // then let's try to get closer
-        if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
+        if (noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
             
             behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
             return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
@@ -164,7 +164,7 @@ public abstract class PathRanker implements IPathRanker {
         
         for (MovePath path : startingPathList) {
             // just in case
-            if((path == null) || !path.isMoveLegal()) {
+            if ((path == null) || !path.isMoveLegal()) {
                 continue;
             }
 
@@ -172,10 +172,10 @@ public abstract class PathRanker implements IPathRanker {
 
             try {
                 // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
-            	if(isAirborneAeroOnGroundMap) {
+            	if (isAirborneAeroOnGroundMap) {
             		// if we have no bombs, we want to make sure our altitude is above 1
             		// if we do have bombs, we may consider altitude bombing (in the future)
-            		if((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
+            		if ((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
             		        (path.getFinalAltitude() < 2)) {
             		    msg.append("\n\tNo bombs but at altitude 1. No way.");
             		    continue;
@@ -212,7 +212,7 @@ public abstract class PathRanker implements IPathRanker {
                 }
 
                 // first crack at logic involving unjamming RACs: just do it
-                if(needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
+                if (needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
                     logLevel = LogLevel.INFO;
                     msg.append("\n\tINADVISABLE: Want to unjam autocannon but path involves running or jumping");
                     continue;
@@ -289,10 +289,10 @@ public abstract class PathRanker implements IPathRanker {
         }
         
         // if specified, we also consider strategic targets
-        if(includeStrategicTargets) {
-            for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+        if (includeStrategicTargets) {
+            for (Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
                 int distance = position.distance(t.getPosition());
-                if(distance < range) {
+                if (distance < range) {
                     range = distance;
                     closest = t;
                 }
@@ -307,7 +307,7 @@ public abstract class PathRanker implements IPathRanker {
      */
     protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         // introduced a caching mechanism, as the success probability was being calculated at least twice
-        if(getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
+        if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
             return getPathRankerState().getPathSuccessProbabilities().get(movePath.getKey());
         }
         
@@ -432,7 +432,7 @@ public abstract class PathRanker implements IPathRanker {
      */
     private boolean willBuildingCollapse(MovePath path, Game game) {
         // airborne aircraft cannot collapse buildings
-        if(path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+        if (path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
         }
         

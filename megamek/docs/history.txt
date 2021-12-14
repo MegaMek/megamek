@@ -25,6 +25,10 @@ VERSION HISTORY:
 + PR #3288: princess: ignoreTarget: unitID
 + PR #3292: Quad Mechs no longer swap cover and aiming mode when doing a head hit edge reroll
 + PR #3289: Upgrading Mockito to 4.1.0
++ Issue #3240: Fixing JumpShip no Grav Deck Crit Handling
++ Issue #3273: Fixing Offboard Artillery NPE
++ PR #3301: Fixing Quirk NPE and Quirk Tool VTOL Handling
++ Data: Rec Guide 19, various unit fixes and fluff. 
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

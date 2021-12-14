@@ -399,7 +399,7 @@ public class BuildingBlock {
 
         startIndex = findStartIndex(blockName);
         endIndex = findEndIndex(blockName);
-        if((startIndex == -1) || (endIndex == -1)) {
+        if ((startIndex == -1) || (endIndex == -1)) {
             return new double[]{0};
         }
 
@@ -413,7 +413,7 @@ public class BuildingBlock {
         int dataRecord = 0;
 
         // fill up the data array with the raw data we want...
-        for(int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
+        for (int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
             try {
                 data[dataRecord] = Double.valueOf(rawData.get(rawRecord).toString()).doubleValue();
                 dataRecord ++;

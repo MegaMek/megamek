@@ -656,7 +656,7 @@ public class MapSettings implements Serializable {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (boardsSelected.get(i).startsWith(BOARD_SURPRISE)) {
                 List<String> boards = LobbyUtility.extractSurpriseMaps(boardsSelected.get(i));
-                int rnd = (int)(Math.random() * boards.size());
+                int rnd = (int) (Math.random() * boards.size());
                 boardsSelected.set(i, boards.get(rnd));
             }
         }

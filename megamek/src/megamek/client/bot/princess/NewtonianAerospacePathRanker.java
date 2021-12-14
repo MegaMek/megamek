@@ -107,7 +107,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             return returnResponse;
         }
         int range = closest.distance(finalCoords);
-        if(range == 0) {
+        if (range == 0) {
             range = 1;
         }
 
@@ -123,14 +123,14 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         // will likely make an effort to move out of the arc, so it reduces our expected damage
         // we calculate the proportion by looking at the number of "enemy movable area" vertices
         // that are in our main firing arc, compared to the max (6).
-        if(arcToUse != Compute.ARC_360) {
+        if (arcToUse != Compute.ARC_360) {
             int inArcVertexCount = 0;
             ConvexBoardArea movableArea = getPathEnumerator().getUnitMovableAreas().get(enemy.getId());
 
-            for(int vertexNum = 0; vertexNum < 6; vertexNum++) {
+            for (int vertexNum = 0; vertexNum < 6; vertexNum++) {
                 Coords vertex = movableArea.getVertexNum(vertexNum);
 
-                if(vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
+                if (vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
                     inArcVertexCount++;
                 }
             }
@@ -169,27 +169,27 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
      * @return 0 if there's no
      */
     int calculateSensorShadowMod(MovePath path) {
-        if(!path.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+        if (!path.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
             return 0;
         }
 
         int sensorShadowMod = 0;
         List<Coords> coordsToCheck = path.getFinalCoords().allAdjacent();
         coordsToCheck.add(path.getFinalCoords());
-        for(Coords coords : coordsToCheck) {
+        for (Coords coords : coordsToCheck) {
             // if the coordinate contains a large craft within a certain mass of me, it will generate a sensor shadow
             Iterator<Entity> potentialShadowIter = path.getGame().getFriendlyEntities(coords, path.getEntity());
 
-            while(potentialShadowIter.hasNext() && sensorShadowMod == 0) {
+            while (potentialShadowIter.hasNext() && sensorShadowMod == 0) {
                 Entity potentialShadow = potentialShadowIter.next();
-                if(potentialShadow.isDone() &&
+                if (potentialShadow.isDone() &&
                         potentialShadow.isLargeCraft() &&
                         (potentialShadow.getWeight() - path.getEntity().getWeight() >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                     sensorShadowMod = 1;
                 }
             }
 
-            if(sensorShadowMod == 1) {
+            if (sensorShadowMod == 1) {
                 break;
             }
         }
@@ -218,7 +218,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             return 0.0;
         }
 
-        if(offBoardDirection == OffBoardDirection.NONE) {
+        if (offBoardDirection == OffBoardDirection.NONE) {
             return 0.0;
         }
 
@@ -240,13 +240,13 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
 
         // step one: check if the position is out of bounds by more than the unit has available thrust
-        if(nextCoords.getX() < -availableThrust) {
+        if (nextCoords.getX() < -availableThrust) {
             offBoardDirection = OffBoardDirection.WEST;
         } else if (nextCoords.getX() > board.getWidth() + availableThrust) {
             offBoardDirection = OffBoardDirection.EAST;
         } else if (nextCoords.getY() < -availableThrust) {
             offBoardDirection = OffBoardDirection.NORTH;
-        } else if(nextCoords.getY() > board.getHeight() + availableThrust) {
+        } else if (nextCoords.getY() > board.getHeight() + availableThrust) {
             offBoardDirection = OffBoardDirection.SOUTH;
         }
 
@@ -262,7 +262,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     public static boolean willFlyOffBoard(Entity entity, Coords coords) {
         OffBoardDirection offBoardDirection = calculateOffBoardDirection(entity, coords, entity.getVectors());
 
-        if(offBoardDirection == OffBoardDirection.NONE) {
+        if (offBoardDirection == OffBoardDirection.NONE) {
             return false;
         }
 

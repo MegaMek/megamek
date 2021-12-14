@@ -327,23 +327,23 @@ public abstract class Mech extends Entity {
                 .defaultAutoejectDisabled();
 
         switch (inCockpitType) {
-        case COCKPIT_TRIPOD:
-            setCrew(new Crew(CrewType.TRIPOD));
-            break;
-        case COCKPIT_SUPERHEAVY_TRIPOD:
-            setCrew(new Crew(CrewType.SUPERHEAVY_TRIPOD));
-            break;
-        case COCKPIT_DUAL:
-            setCrew(new Crew(CrewType.DUAL));
-            break;
-        case COCKPIT_COMMAND_CONSOLE:
-	case COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
-	case COCKPIT_SMALL_COMMAND_CONSOLE:
-            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
-            break;
-        case COCKPIT_QUADVEE:
-            setCrew(new Crew(CrewType.QUADVEE));
-            break;
+            case COCKPIT_TRIPOD:
+                setCrew(new Crew(CrewType.TRIPOD));
+                break;
+            case COCKPIT_SUPERHEAVY_TRIPOD:
+                setCrew(new Crew(CrewType.SUPERHEAVY_TRIPOD));
+                break;
+            case COCKPIT_DUAL:
+                setCrew(new Crew(CrewType.DUAL));
+                break;
+            case COCKPIT_COMMAND_CONSOLE:
+            case COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+            case COCKPIT_SMALL_COMMAND_CONSOLE:
+                setCrew(new Crew(CrewType.COMMAND_CONSOLE));
+                break;
+            case COCKPIT_QUADVEE:
+                setCrew(new Crew(CrewType.QUADVEE));
+                break;
         }
     }
 
@@ -1037,7 +1037,7 @@ public abstract class Mech extends Entity {
     @Override
     public void setEngine(Engine e) {
         super.setEngine(e);
-        if(hasEngine() && getEngine().engineValid) {
+        if (hasEngine() && getEngine().engineValid) {
             setOriginalWalkMP(calculateWalk());
         }
     }
@@ -1049,7 +1049,7 @@ public abstract class Mech extends Entity {
      *         and weight
      */
     protected int calculateWalk() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         if (isPrimitive()) {
@@ -1603,7 +1603,7 @@ public abstract class Mech extends Entity {
      *            add. must be a lookupname of a heatsinktype
      */
     public void addEngineSinks(int totalSinks, String sinkName) {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return;
         }
         EquipmentType sinkType = EquipmentType.get(sinkName);
@@ -1651,7 +1651,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getEngineCritHeat() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         int engineCritHeat = 0;
@@ -3083,7 +3083,7 @@ public abstract class Mech extends Entity {
         }
 
         // add criticals
-        if (critSlot == -1){
+        if (critSlot == -1) {
             for (int i = 0; i < reqSlots; i++) {
                 CriticalSlot cs = new CriticalSlot(mounted);
                 addCritical(loc, cs);
@@ -3092,11 +3092,11 @@ public abstract class Mech extends Entity {
             // Need to ensure that we have enough contiguous critical slots
             int iterations = 0;
             while ((getContiguousNumberOfCrits(loc, critSlot) < reqSlots) &&
-                    (iterations < getNumberOfCriticals(loc))){
+                    (iterations < getNumberOfCriticals(loc))) {
                 critSlot = (critSlot + 1) % getNumberOfCriticals(loc);
                 iterations++;
             }
-            if (iterations >= getNumberOfCriticals(loc)){
+            if (iterations >= getNumberOfCriticals(loc)) {
                 throw new LocationFullException(mounted.getName()
                         + " does not fit in " + getLocationAbbr(loc) + " on "
                         + getDisplayName()
@@ -3379,7 +3379,7 @@ public abstract class Mech extends Entity {
      * @param startingSlot  The critical slot to start at
      * @return
      */
-    private int getContiguousNumberOfCrits(int loc, int startingSlot){
+    private int getContiguousNumberOfCrits(int loc, int startingSlot) {
 
         int numCritSlots = getNumberOfCriticals(loc);
         int contiguousCrits = 0;
@@ -3776,7 +3776,7 @@ public abstract class Mech extends Entity {
             }
 
             if (etype instanceof AmmoType
-                    && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+                    && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 toSubtract = 1;
             }
 
@@ -3785,7 +3785,7 @@ public abstract class Mech extends Entity {
                     && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
                 // blue shield needs to be special cased, because it's one
                 // mounted with lots of locations,
-                // and some of those could be proteced by cas
+                // and some of those could be protected by cas
                 toSubtract = 0;
             }
 
@@ -3850,7 +3850,7 @@ public abstract class Mech extends Entity {
                     }
                 } else {
                     // inner sphere with XL or XXL counts everywhere
-                    if(hasEngine() && (getEngine().getSideTorsoCriticalSlots().length <= 2)) {
+                    if (hasEngine() && (getEngine().getSideTorsoCriticalSlots().length <= 2)) {
                         // without XL or XXL, only count torsos if not CASEed,
                         // and arms if arm & torso not CASEed
                         if (((loc == LOC_RT) || (loc == LOC_LT))
@@ -3913,9 +3913,9 @@ public abstract class Mech extends Entity {
         int bvWalk = getWalkMP(false, true, true);
         int airmechMP = 0;
         if (((getEntityType() & ETYPE_LAND_AIR_MECH) != 0)) {
-            bvWalk = ((LandAirMech)this).getBVWalkMP();
-            if (((LandAirMech)this).getLAMType() == LandAirMech.LAM_STANDARD) {
-                airmechMP = ((LandAirMech)this).getAirMechFlankMP();
+            bvWalk = ((LandAirMech) this).getBVWalkMP();
+            if (((LandAirMech) this).getLAMType() == LandAirMech.LAM_STANDARD) {
+                airmechMP = ((LandAirMech) this).getAirMechFlankMP();
             }
         } else if (((getEntityType() & ETYPE_QUADVEE) != 0)
                 && (getMovementMode() == EntityMovementMode.WHEELED)) {
@@ -4833,7 +4833,7 @@ public abstract class Mech extends Entity {
                     
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
-                    if(obj1BV.equals(obj2BV)) {
+                    if (obj1BV.equals(obj2BV)) {
                         Double obj1Heat = (Double) obj1.get(1);
                         Double obj2Heat = (Double) obj2.get(1);
                         
@@ -5409,7 +5409,7 @@ public abstract class Mech extends Entity {
         double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = structureCost;
         costs[i++] = getActuatorCost();// arm and/or leg actuators
-        if(hasEngine()) {
+        if (hasEngine()) {
             costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
         }
         if (getGyroType() == Mech.GYRO_XL) {
@@ -5481,7 +5481,7 @@ public abstract class Mech extends Entity {
 
         if (this instanceof LandAirMech) {
             costs[i++] = (structureCost + weaponCost)
-                    * (((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
+                    * (((LandAirMech) this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
         } else if (this instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {
@@ -5680,7 +5680,7 @@ public abstract class Mech extends Entity {
                 r = new Report(7073, Report.PUBLIC);
             }
             vDesc.addElement(r);
-        } else if (getCrew().isEjected()){
+        } else if (getCrew().isEjected()) {
             r = new Report(7074, Report.PUBLIC);
             vDesc.addElement(r);
         }
@@ -6569,7 +6569,7 @@ public abstract class Mech extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -6591,7 +6591,7 @@ public abstract class Mech extends Entity {
         // except during conversion.
         if (movementMode == EntityMovementMode.TRACKED
                 || (this instanceof QuadVee && convertingNow
-                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
+                        && ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
                                 && !hex.containsTerrain(Terrains.ICE)
@@ -6603,7 +6603,7 @@ public abstract class Mech extends Entity {
         }
         if (movementMode == EntityMovementMode.WHEELED
                 || (this instanceof QuadVee && convertingNow
-                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+                        && ((QuadVee) this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
             return hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.ROUGH)
                     || hex.containsTerrain(Terrains.RUBBLE)
@@ -6683,7 +6683,7 @@ public abstract class Mech extends Entity {
 
         sb.append(MtfFile.MASS).append((int) weight).append(newLine);
         sb.append(MtfFile.ENGINE);
-        if(hasEngine()) {
+        if (hasEngine()) {
                 sb.append(getEngine().getEngineName())
                 .append(" Engine")
                 .append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)")
@@ -6713,11 +6713,11 @@ public abstract class Mech extends Entity {
 
         if (this instanceof LandAirMech) {
             sb.append(MtfFile.LAM);
-            sb.append(((LandAirMech)this).getLAMTypeString());
+            sb.append(((LandAirMech) this).getLAMTypeString());
             sb.append(newLine);
         } else if (this instanceof QuadVee) {
             sb.append(MtfFile.MOTIVE);
-            sb.append(((QuadVee)this).getMotiveTypeString());
+            sb.append(((QuadVee) this).getMotiveTypeString());
             sb.append(newLine);
         }
 
@@ -7300,25 +7300,26 @@ public abstract class Mech extends Entity {
         List<CriticalSlot> retVal = new ArrayList<>();
         
         switch (cockpitType) {
-        // these always occupy slots 2 and 3 in the head
-        case Mech.COCKPIT_COMMAND_CONSOLE:
-        case Mech.COCKPIT_DUAL:
-        case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
-        case Mech.COCKPIT_INTERFACE:
-        case Mech.COCKPIT_QUADVEE:
-        case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
-            retVal.add(getCritical(Mech.LOC_HEAD, 2));
-            retVal.add(getCritical(Mech.LOC_HEAD, 3));
-            break;
-        case Mech.COCKPIT_TORSO_MOUNTED:
-            for (int critIndex = 0; critIndex < getNumberOfCriticals(Mech.LOC_CT); critIndex++) {
-                CriticalSlot slot = getCritical(Mech.LOC_CT, critIndex);
-                if (slot.getIndex() == SYSTEM_COCKPIT) {
-                    retVal.add(slot);
+            // these always occupy slots 2 and 3 in the head
+            case Mech.COCKPIT_COMMAND_CONSOLE:
+            case Mech.COCKPIT_DUAL:
+            case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+            case Mech.COCKPIT_INTERFACE:
+            case Mech.COCKPIT_QUADVEE:
+            case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+                retVal.add(getCritical(Mech.LOC_HEAD, 2));
+                retVal.add(getCritical(Mech.LOC_HEAD, 3));
+                break;
+            case Mech.COCKPIT_TORSO_MOUNTED:
+                for (int critIndex = 0; critIndex < getNumberOfCriticals(Mech.LOC_CT); critIndex++) {
+                    CriticalSlot slot = getCritical(Mech.LOC_CT, critIndex);
+                    if (slot.getIndex() == SYSTEM_COCKPIT) {
+                        retVal.add(slot);
+                    }
                 }
-            }
-        default:
-            retVal.add(getCritical(Mech.LOC_HEAD, 2));
+            default:
+                retVal.add(getCritical(Mech.LOC_HEAD, 2));
+                break;
         }
         
         return retVal;
@@ -7474,7 +7475,7 @@ public abstract class Mech extends Entity {
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return true;
         }
         boolean success = true;
@@ -7931,7 +7932,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
-        if(hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+        if (hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             Report r = new Report(2280);
             r.addDesc(this);
             r.subject = getId();
@@ -8249,7 +8250,7 @@ public abstract class Mech extends Entity {
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3,
                     3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5 } };
 
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isClan()) {
                 if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
                     switch (getEngine().getEngineType()) {
@@ -8398,7 +8399,7 @@ public abstract class Mech extends Entity {
                 specialAbilities.put(BattleForceSPA.BHJ2, null);
             } else if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
                 specialAbilities.put(BattleForceSPA.BHJ3, null);
-            } else if (((MiscType)m.getType()).isShield()) {
+            } else if (((MiscType) m.getType()).isShield()) {
                 specialAbilities.put(BattleForceSPA.SHLD, null);
             } else if (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
                 specialAbilities.put(BattleForceSPA.ITSM, null);
@@ -8744,11 +8745,11 @@ public abstract class Mech extends Entity {
                 }
             }
         }
-        //there is room for debate here but I think most people would agree that a
-        //legged biped mech (and a double legged quad mech) or a hipped mech are not
-        //escapable, although technically they still have as much MP as foot infantry which
-        //can escape. We could also consider creating options to control this.
-        if(((this instanceof BipedMech) && (legsDestroyed > 0))
+        // there is room for debate here but I think most people would agree that a
+        // legged biped mech (and a double legged quad mech) or a hipped mech are not
+        // escapable, although technically they still have as much MP as foot infantry which
+        // can escape. We could also consider creating options to control this.
+        if (((this instanceof BipedMech) && (legsDestroyed > 0))
                 || (legsDestroyed > 1) || (hipHits > 0)) {
             return false;
         }
@@ -8773,10 +8774,7 @@ public abstract class Mech extends Entity {
         // as being immobilized as well, which makes sense because the 'Mech
         // certainly isn't leaving that hex under its own power anymore.
         int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
-        if (getGyroHits() >= hitsToDestroyGyro) {
-            return true;
-        }
-        return false;
+        return getGyroHits() >= hitsToDestroyGyro;
     }
 
     @Override

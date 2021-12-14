@@ -121,10 +121,10 @@ public class MMRoll extends Roll {
         this.total += result;
         
         //if we are only keeping a subset then total will be different
-        if(keep != -1 && all.size() >= keep) {
+        if (keep != -1 && all.size() >= keep) {
             this.total = 0;
             Collections.sort(all, Collections.reverseOrder());
-            for(int i = 0; i < keep; i++) {
+            for (int i = 0; i < keep; i++) {
                 this.total += all.get(i);
             }
         }
@@ -167,7 +167,7 @@ public class MMRoll extends Roll {
             buffer.append(")");
         }
         
-        if(keep != -1) {
+        if (keep != -1) {
             buffer.append(" [");
             buffer.append(keep);
             buffer.append(" highest]");
@@ -205,7 +205,7 @@ public class MMRoll extends Roll {
             }
         }
 
-        if(keep != -1) {
+        if (keep != -1) {
             buffer.append(" (Keep ");
             buffer.append(keep);
             buffer.append( " highest rolls)");

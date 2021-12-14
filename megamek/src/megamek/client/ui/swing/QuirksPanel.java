@@ -68,17 +68,16 @@ public class QuirksPanel extends JPanel {
 
     public void refreshQuirks() {
         removeAll();
-        quirkComps = new ArrayList<DialogOptionComponent>();
+        quirkComps = new ArrayList<>();
         for (Integer eqNum : h_wpnQuirks.keySet()) {
-            h_wpnQuirkComps.put(eqNum, new ArrayList<DialogOptionComponent>());
+            h_wpnQuirkComps.put(eqNum, new ArrayList<>());
         }
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             add(new JLabel(group.getDisplayableName()), GBC.eol());
 
-            for (Enumeration<IOption> j = group.getSortedOptions(); j
-                    .hasMoreElements(); ) {
+            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (!Quirks.isQuirkLegalFor(option, entity)) {
@@ -97,16 +96,13 @@ public class QuirksPanel extends JPanel {
             Mounted m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
             JLabel labWpn = new JLabel(m.getName() + " ("
-                                       + entity.getLocationName(m.getLocation()) + ")");
+                    + entity.getLocationName(m.getLocation()) + ")");
             add(labWpn, GBC.eol());
-            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i
-                    .hasMoreElements(); ) {
+            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
                 IOptionGroup group = i.nextElement();
-                for (Enumeration<IOption> j = group.getSortedOptions(); j
-                        .hasMoreElements(); ) {
+                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
                     IOption option = j.nextElement();
-                    if (!WeaponQuirks.isQuirkLegalFor(option, entity,
-                            m.getType())) {
+                    if (!WeaponQuirks.isQuirkLegalFor(option, entity, m.getType())) {
                         continue;
                     }
                     addWeaponQuirk(key, option, editable);

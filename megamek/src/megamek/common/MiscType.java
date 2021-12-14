@@ -803,7 +803,7 @@ public class MiscType extends EquipmentType {
                     pct = 0.1;
                 }
                 if (getSubType() == S_IMPROVED) {
-                    pct += hasFlag(F_SASRCS)? 0.01 : 0.02;
+                    pct += hasFlag(F_SASRCS) ? 0.01 : 0.02;
                 } else if (getSubType() == S_ELITE) { // only shielded
                     pct += 0.03;
                 }
@@ -1038,17 +1038,17 @@ public class MiscType extends EquipmentType {
                 costValue = (int) Math.ceil(entity.getWeight() * 150);
             } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
                 switch (entity.getWeightClass()) {
-                case EntityWeightClass.WEIGHT_ASSAULT:
-                    costValue = 300000;
-                    break;
-                case EntityWeightClass.WEIGHT_HEAVY:
-                    costValue = 150000;
-                    break;
-                case EntityWeightClass.WEIGHT_MEDIUM:
-                    costValue = 75000;
-                    break;
-                default:
-                    costValue = 50000;
+                    case EntityWeightClass.WEIGHT_ASSAULT:
+                        costValue = 300000;
+                        break;
+                    case EntityWeightClass.WEIGHT_HEAVY:
+                        costValue = 150000;
+                        break;
+                    case EntityWeightClass.WEIGHT_MEDIUM:
+                        costValue = 75000;
+                        break;
+                    default:
+                        costValue = 50000;
                 }
             } else if (hasFlag(F_BASIC_FIRECONTROL)) {
                 // 5% of weapon cost
@@ -1287,14 +1287,14 @@ public class MiscType extends EquipmentType {
             return (int) Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
             switch (entity.getWeightClass()) {
-            case EntityWeightClass.WEIGHT_LIGHT:
-                return 1;
-            case EntityWeightClass.WEIGHT_MEDIUM:
-                return 2;
-            case EntityWeightClass.WEIGHT_HEAVY:
-                return 3;
-            case EntityWeightClass.WEIGHT_ASSAULT:
-                return 4;
+                case EntityWeightClass.WEIGHT_LIGHT:
+                    return 1;
+                case EntityWeightClass.WEIGHT_MEDIUM:
+                    return 2;
+                case EntityWeightClass.WEIGHT_HEAVY:
+                    return 3;
+                case EntityWeightClass.WEIGHT_ASSAULT:
+                    return 4;
             }
             return entity.getWeightClass();
         } else if (hasFlag(F_TRACKS)) {
@@ -1345,9 +1345,7 @@ public class MiscType extends EquipmentType {
     }
 
     public double getBV(Entity entity, Mounted linkedTo) {
-
         if (hasFlag(F_PPC_CAPACITOR) && (linkedTo != null) && (linkedTo.getLinkedBy() != null)) {
-
             if (linkedTo.getType() instanceof ISLightPPC) {
                 return 44;
             }

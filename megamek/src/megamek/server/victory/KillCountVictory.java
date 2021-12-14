@@ -51,22 +51,22 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         boolean teamHasHighestKills = true;
         int highestKillsId = -1;
         int killCount = 0;
-        for (Integer killer : killsTeam.keySet()){
-            if (killsTeam.get(killer) > killCount){
+        for (Integer killer : killsTeam.keySet()) {
+            if (killsTeam.get(killer) > killCount) {
                 highestKillsId = killer;
                 killCount = killsTeam.get(killer);
             }
         }
         
-        for (Integer killer : killsPlayer.keySet()){
-            if (killsTeam.get(killer) > killCount){
+        for (Integer killer : killsPlayer.keySet()) {
+            if (killsTeam.get(killer) > killCount) {
                 highestKillsId = killer;
                 killCount = killsPlayer.get(killer);
                 teamHasHighestKills = false;
             }
         }
         
-        if (killCount >= killCondition){
+        if (killCount >= killCondition) {
             Report r = new Report(7106, Report.PUBLIC);
             victory = true;
             if (teamHasHighestKills) {
@@ -95,18 +95,18 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
             Entity wreck = victims.nextElement();
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
             
-            if (killer == null){
+            if (killer == null) {
                 continue;
             }            
             
             int team = killer.getOwner().getTeam();
             // Friendly fire doesn't count
-            if (team == wreck.getOwner().getTeam()){
+            if (team == wreck.getOwner().getTeam()) {
                 continue;
             }
-            if (team != Player.TEAM_NONE){
+            if (team != Player.TEAM_NONE) {
                 Integer kills = teamKills.get(team);
-                if (kills == null){
+                if (kills == null) {
                     kills = 1;
                 } else {
                     kills++;
@@ -115,11 +115,11 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
             } else {
                 Integer player = killer.getOwner().getId();
                 // Friendly fire doesn't count
-                if (wreck.getOwner().getId() == player){
+                if (wreck.getOwner().getId() == player) {
                     continue;
                 }
                 Integer kills = playerKills.get(player);
-                if (kills == null){
+                if (kills == null) {
                     kills = 1;
                 } else {
                     kills++;

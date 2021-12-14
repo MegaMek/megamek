@@ -171,7 +171,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                 hit.makeGlancingBlow();
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport

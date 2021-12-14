@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.List;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.BombType;
 import megamek.common.Entity;
@@ -94,21 +95,20 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         }
         
         // Need to remove ammo from fighters within a squadron
-        if (ae instanceof FighterSquadron){
+        if (ae instanceof FighterSquadron) {
             // In a fighter squadron, we will haved dropped a salvo of bombs.
             //  The salvo consists of one bomb from each fighter equipped with
             //  a bomb of the proper type.  
             for (int type = 0; type < payload.length; type++) {
                 List<Entity> activeFighters = ae.getActiveSubEntities();
-                if(activeFighters.isEmpty()) {
+                if (activeFighters.isEmpty()) {
                     break;
                 }
                 int fighterIndex = 0;                                
                 for (int i = 0; i < payload[type]; i++) {
                     boolean bombRemoved = false;
                     int iterations = 0;
-                    while (!bombRemoved && iterations <= activeFighters.size())
-                    {
+                    while (!bombRemoved && iterations <= activeFighters.size()) {
                         Aero fighter = (Aero) activeFighters.get(fighterIndex);
                         // find the first mounted bomb of this type and drop it
                         for (Mounted bomb : fighter.getBombs()) {
@@ -123,15 +123,15 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                         iterations++;
                         fighterIndex = (fighterIndex + 1) % activeFighters.size();
                     }
-                    if (iterations > activeFighters.size()){
-                        System.err.println("Error: couldn't find ammo for a " +
-                                "dropped bomb in SpaceBombAttackHandler.useAmmo()");
+
+                    if (iterations > activeFighters.size()) {
+                        MegaMek.getLogger().error("Couldn't find ammo for a dropped bomb");
                     }                    
                 }
                 // Now remove a bomb from the squadron
-                if (payload[type] > 0){
+                if (payload[type] > 0) {
                     double numSalvos = Math.ceil((payload[type] + 0.0) / activeFighters.size());
-                    for (int salvo = 0; salvo < numSalvos; salvo++){
+                    for (int salvo = 0; salvo < numSalvos; salvo++) {
                         for (Mounted bomb : ae.getBombs()) {
                             if (((BombType) bomb.getType()).getBombType() == type
                                     && !bomb.isDestroyed()

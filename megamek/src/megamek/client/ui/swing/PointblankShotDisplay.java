@@ -630,7 +630,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         
         // If the user picked a hex along the flight path, server needs to know
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
-            Coords targetPos = ((Entity)target).getPlayerPickedPassThrough(cen);
+            Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(cen);
             if (targetPos != null) {
                 clientgui.getClient().sendPlayerPickedPassThrough(
                         ((Entity) target).getId(), cen, targetPos);
@@ -926,7 +926,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         Coords evtCoords = b.getCoords();
         if (clientgui.isProcessingPointblankShot() && (evtCoords != null)
             && (ce() != null)) {
-            if (!evtCoords.equals(ce().getPosition())){
+            if (!evtCoords.equals(ce().getPosition())) {
                 if (shiftheld) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
@@ -1020,7 +1020,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     public void clear() {
         if ((target instanceof Entity) 
                 && Compute.isGroundToAir(ce(), target)) {
-            ((Entity)target).setPlayerPickedPassThrough(cen, null);
+            ((Entity) target).setPlayerPickedPassThrough(cen, null);
         }
         clearAttacks();        
         clientgui.getBoardView().select(null);

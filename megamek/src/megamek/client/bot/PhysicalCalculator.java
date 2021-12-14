@@ -184,8 +184,7 @@ public final class PhysicalCalculator {
                 pod_ranking = 0.0;
                 Iterator<INarcPod> pod_list = entity.getINarcPodsAttached();
                 best_pod = pod_list.next();
-                for (pod_list = entity.getINarcPodsAttached(); pod_list
-                        .hasNext(); ) {
+                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasNext(); ) {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
@@ -325,7 +324,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         
@@ -612,7 +611,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         

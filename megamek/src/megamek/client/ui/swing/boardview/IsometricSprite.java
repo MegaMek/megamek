@@ -153,7 +153,7 @@ class IsometricSprite extends Sprite {
         // draw the 'fuel leak' decal where appropriate
         boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
         
-        if(drawFuelLeak) {
+        if (drawFuelLeak) {
             Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
             if (null != fuelLeak) {
                 graph.drawImage(fuelLeak, x, y, observer);
@@ -163,7 +163,7 @@ class IsometricSprite extends Sprite {
         // draw the 'tires' or 'tracks' decal where appropriate
         boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
         
-        if(drawMotiveWreckage) {
+        if (drawMotiveWreckage) {
             Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
             if (null != motiveWreckage) {
                 graph.drawImage(motiveWreckage, x, y, observer);
@@ -179,7 +179,7 @@ class IsometricSprite extends Sprite {
                 .getDefaultConfiguration();
         image = config.createCompatibleImage(bounds.width, bounds.height,
                 Transparency.TRANSLUCENT);
-        Graphics2D g = (Graphics2D)image.getGraphics();
+        Graphics2D g = (Graphics2D) image.getGraphics();
 
         // draw the unit icon translucent if hidden from the enemy 
         // (and activated graphics setting); or submerged

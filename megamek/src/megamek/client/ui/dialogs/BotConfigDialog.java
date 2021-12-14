@@ -615,7 +615,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         var bc = client.bots.get(botName);
         if (bc instanceof Princess) {
             try {
-                princessBehavior = ((Princess)bc).getBehaviorSettings().getCopy();
+                princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (PrincessException e) {
                 e.printStackTrace();
@@ -639,7 +639,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             if (targetsListModel.get(i) instanceof Coords) {
                 tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());
             } else {
-                tempBehavior.addPriorityUnit(Integer.toString((int)targetsListModel.get(i)));
+                tempBehavior.addPriorityUnit(Integer.toString((int) targetsListModel.get(i)));
             }
         }
         princessBehavior = tempBehavior;
@@ -745,7 +745,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 presets.add(UIUtil.BOT_MARKER + otherName);
             }
         }
-        ((PresetsModel)presetsList.getModel()).fireUpdate();
+        ((PresetsModel) presetsList.getModel()).fireUpdate();
     }
     
     private class PresetsModel extends DefaultListModel<String> {

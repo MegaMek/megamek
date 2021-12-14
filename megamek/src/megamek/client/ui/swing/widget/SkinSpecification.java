@@ -219,18 +219,18 @@ public class SkinSpecification {
      */
     public boolean shouldBoldMouseOver = true;
 
-    public SkinSpecification(String compName){
+    public SkinSpecification(String compName) {
         this.compName = compName;
         tl_corner = tr_corner = bl_corner = br_corner = "";
-        topEdge = new ArrayList<String>();
-        rightEdge = new ArrayList<String>();
-        bottomEdge = new ArrayList<String>();
-        leftEdge = new ArrayList<String>();
-        backgrounds = new ArrayList<String>();
-        topShouldTile = new ArrayList<Boolean>();
-        rightShouldTile = new ArrayList<Boolean>();
-        bottomShouldTile = new ArrayList<Boolean>();
-        leftShouldTile = new ArrayList<Boolean>();
+        topEdge = new ArrayList<>();
+        rightEdge = new ArrayList<>();
+        bottomEdge = new ArrayList<>();
+        leftEdge = new ArrayList<>();
+        backgrounds = new ArrayList<>();
+        topShouldTile = new ArrayList<>();
+        rightShouldTile = new ArrayList<>();
+        bottomShouldTile = new ArrayList<>();
+        leftShouldTile = new ArrayList<>();
         fontColors = new ArrayList<>();
         fontColors.add(Color.black);
     }

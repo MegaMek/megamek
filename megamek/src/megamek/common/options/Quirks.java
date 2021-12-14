@@ -212,7 +212,7 @@ public class Quirks extends AbstractOptions {
                 }
             }
             
-            if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)
@@ -241,8 +241,8 @@ public class Quirks extends AbstractOptions {
 		// Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
 		// made sense to him. Uncertain at this time if CGL would adopt them but
 		// including them since Quirks is already an option. Hammer
-        if(en instanceof GunEmplacement) {
-        	if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+        if (en instanceof GunEmplacement) {
+        	if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
         	        || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
         	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
         	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
@@ -315,7 +315,7 @@ public class Quirks extends AbstractOptions {
             return true;
         }
 
-        if(en instanceof Tank) {
+        if (en instanceof Tank) {
 
             // Power reverse only legal for wheeled or tracked combat vehicles
             if (qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
@@ -329,7 +329,7 @@ public class Quirks extends AbstractOptions {
                 }
             } else if (en.hasEngine() && en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
-            } else if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+            } else if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
@@ -381,12 +381,12 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-            if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+            if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 return false;
             }
             
-            if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+            if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
@@ -394,8 +394,8 @@ public class Quirks extends AbstractOptions {
             return true;
         }
               
-        if(en instanceof BattleArmor) {
-            if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+        if (en instanceof BattleArmor) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
@@ -461,8 +461,8 @@ public class Quirks extends AbstractOptions {
             return true;
         }
 
-        if(en instanceof Jumpship) {
-            if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+        if (en instanceof Jumpship) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)

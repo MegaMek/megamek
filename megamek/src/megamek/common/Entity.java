@@ -6613,7 +6613,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void assignTMAMS(final TeleMissileAttackAction telemissileAttack) {
         // AMS Bays can fire at all incoming attacks each round
-        // Point defense bays are added too, provided they haven't first at something else already.
+        // Point defense bays are added too, provided they haven't fired at something else already.
         getActiveAMS().stream()
                 .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMSBAY)
                         || (ams.getType().hasFlag(WeaponType.F_PDBAY) && !ams.isUsedThisRound()))

@@ -6659,27 +6659,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         getActiveAMS().stream()
                 .filter(ams -> !ams.isAPDS())
                 .forEach(ams -> {
-            // make a new vector of only incoming attacks in arc
-            final List<WeaponAttackAction> vAttacksInArc = new ArrayList<>();
-            attacks.stream()
-                    .filter(weaponHandler -> (weaponHandler.waa != null)
-                            && !targets.contains(weaponHandler.waa))
-                    .forEach(weaponHandler -> {
-                if (weaponHandler instanceof CapitalMissileBearingsOnlyHandler) {
-                    if (Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                            game.getTarget(weaponHandler.waa.getOriginalTargetType(),
-                                    weaponHandler.waa.getOriginalTargetId()))) {
-                        vAttacksInArc.add(weaponHandler.waa);
-                    }
-                } else {
-                    if (Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                            game.getEntity(weaponHandler.waa.getEntityId()))) {
-                        vAttacksInArc.add(weaponHandler.waa);
-                    }
-                }
-            });
+            // make a new list of only incoming attacks in arc
+            final List<WeaponAttackAction> attacksInArc = attacks.stream()
+                    .filter(weaponHandler -> (weaponHandler.getWaa() != null)
+                            && !targets.contains(weaponHandler.getWaa())
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    (weaponHandler instanceof CapitalMissileBearingsOnlyHandler)
+                                            ? game.getTarget(weaponHandler.waa.getOriginalTargetType(),
+                                                    weaponHandler.waa.getOriginalTargetId())
+                                            : game.getEntity(weaponHandler.waa.getEntityId())))
+                    .map(WeaponHandler::getWaa)
+                    .collect(Collectors.toList());
 
-            if (vAttacksInArc.isEmpty()) {
+            if (attacksInArc.isEmpty()) {
                 return;
             }
 
@@ -6688,15 +6680,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
                     || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
                             && ams.getType().hasFlag(WeaponType.F_AMS))) {
-                vAttacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
+                attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat
                 // Unlike single AMS, PD bays can gang up on 1 attack
-                Compute.getHighestExpectedDamage(game, vAttacksInArc, true).addCounterEquipment(ams);
+                Compute.getHighestExpectedDamage(game, attacksInArc, true).addCounterEquipment(ams);
             } else {
                 // Otherwise, find the most dangerous salvo by expected damage and target it
                 // this ensures that only 1 AMS targets the strike. Use for non-bays.
-                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, attacksInArc, true);
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
             }

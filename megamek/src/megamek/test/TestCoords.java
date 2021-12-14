@@ -32,12 +32,12 @@ public class TestCoords {
     
     public static void main(String[] args) {
 
-        for(int x = 1; x < 10; ++ x) {
+        for (int x = 1; x < 10; ++ x) {
             Coords coords = new Coords(x, 2);
             System.out.println(String.format(OUTFORMAT, coords, coords.hashCode()));
         }
         
-        for(int y = 10; y < 19; ++ y) {
+        for (int y = 10; y < 19; ++ y) {
             Coords coords = new Coords(1, y);
             System.out.println(String.format(OUTFORMAT, coords, coords.hashCode()));
         }
@@ -166,7 +166,7 @@ public class TestCoords {
         if (resultingCoords.size() != 6) {
             iscorrect = false;
         }
-        for(int x = 0; x < expectedCoords.size(); x++) {
+        for (int x = 0; x < expectedCoords.size(); x++) {
             if (! resultingCoords.contains(expectedCoords.get(x))) {
                 iscorrect = false;
             }
@@ -197,7 +197,7 @@ public class TestCoords {
         if (resultingCoords.size() != 12) {
             iscorrect = false;
         }
-        for(int x = 0; x < expectedCoords.size(); x++) {
+        for (int x = 0; x < expectedCoords.size(); x++) {
             if (! resultingCoords.contains(expectedCoords.get(x))) {
                 iscorrect = false;
             }

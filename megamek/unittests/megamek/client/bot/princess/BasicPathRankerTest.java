@@ -1284,7 +1284,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
         Mockito.when(mockGameOptions.booleanOption(Mockito.anyString())).thenReturn(false);
          
-        for(int x = 0; x < entities.size(); x++) {
+        for (int x = 0; x < entities.size(); x++) {
             Mockito.when(mockGame.getEntity(x + 1)).thenReturn(entities.get(x));
             Mockito.when(entities.get(x).getGame()).thenReturn(mockGame);
             Mockito.when(entities.get(x).getId()).thenReturn(x + 1);

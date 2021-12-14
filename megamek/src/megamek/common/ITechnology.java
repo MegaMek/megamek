@@ -228,8 +228,8 @@ public interface ITechnology {
      */
     default SimpleTechLevel findMinimumRulesLevel(boolean clan) {
         if (getCommonDate(clan) != DATE_NONE) {
-            return (getStaticTechLevel() == SimpleTechLevel.INTRO)?
-                    SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
+            return (getStaticTechLevel() == SimpleTechLevel.INTRO)
+                    ? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate(clan) != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;
@@ -247,8 +247,8 @@ public interface ITechnology {
      */
     default SimpleTechLevel findMinimumRulesLevel() {
         if (getCommonDate() != DATE_NONE) {
-            return (getStaticTechLevel() == SimpleTechLevel.INTRO)?
-                    SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
+            return (getStaticTechLevel() == SimpleTechLevel.INTRO)
+                    ? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate() != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;

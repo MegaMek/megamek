@@ -1,0 +1,152 @@
+Version:1.0
+Orion
+C 2
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3143
+source:ilClan Rec Guide 19 - Dark Age
+rules level:3
+
+mass:75
+engine:300 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:22
+RT armor:22
+CT armor:36
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:5
+Large Pulse Laser, Left Arm
+ER Medium Laser, Right Arm
+Extended LRM 15, Left Torso
+Streak SRM 4, Left Torso
+ER Large Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+CLStreakSRM4
+Clan Streak SRM 4 Ammo
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+CLCASEII
+
+Right Torso:
+CLERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -388,7 +388,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         }
         double weight = entity.getWeight();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            weight = ((Entity)target).getWeight();
+            weight = ((Entity) target).getWeight();
         }
         return (int) Math
                 .ceil((weight / 10.0) * (distance - 1)

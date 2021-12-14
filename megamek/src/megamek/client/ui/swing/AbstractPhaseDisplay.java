@@ -23,6 +23,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.CommandAction;
@@ -86,20 +87,18 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(borderSkinComp);
 
         try {
-            if (pdSkinSpec.backgrounds.size() > 0){
+            if (!pdSkinSpec.backgrounds.isEmpty()) {
                 File file = new MegaMekFile(Configuration.widgetsDir(), 
                         pdSkinSpec.backgrounds.get(0)).getFile();
                 URI imgURL = file.toURI();
-                if (!file.exists()){
-                    System.err.println("PhaseDisplay Error: icon doesn't exist: "
-                            + file.getAbsolutePath());
+                if (!file.exists()) {
+                    MegaMek.getLogger().error("PhaseDisplay icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     backgroundIcon = new ImageIcon(imgURL.toURL());
                 }
             }
-        } catch (Exception e){
-            System.out.println("Error loading PhaseDisplay background image!");
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Error loading PhaseDisplay background image!", e);
         }
         
         setBorder(new MegamekBorder(borderSkinComp));
@@ -151,8 +150,9 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         }
     }
     
+    @Override
     protected void paintComponent(Graphics g) {
-        if (backgroundIcon == null){
+        if (backgroundIcon == null) {
             super.paintComponent(g);
             return;
         }
@@ -164,8 +164,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         if ((iW < 1) || (iH < 1)) {
             return;
         }
-        for (int x = 0; x < w; x+=iW){
-            for (int y = 0; y < h; y+=iH){
+        for (int x = 0; x < w; x += iW) {
+            for (int y = 0; y < h; y += iH) {
                 g.drawImage(backgroundIcon.getImage(), x, y, 
                         backgroundIcon.getImageObserver());
             }
@@ -187,7 +187,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
      * @param distracted
      *            <code>true</code> if the listener should ignore events
      *            <code>false</code> if the listener should pay attention
-     *            again. Events that occured while the listener was distracted
+     *            again. Events that occurred while the listener was distracted
      *            NOT going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {

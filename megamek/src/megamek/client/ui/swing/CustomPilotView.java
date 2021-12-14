@@ -171,7 +171,7 @@ public class CustomPilotView extends JPanel {
             }
         }
         if (entity.getCrew() instanceof LAMPilot) {
-            LAMPilot pilot = (LAMPilot)entity.getCrew();
+            LAMPilot pilot = (LAMPilot) entity.getCrew();
             fldGunneryL.setText(Integer.toString(pilot.getGunneryMechL()));
             fldGunneryM.setText(Integer.toString(pilot.getGunneryMechM()));
             fldGunneryB.setText(Integer.toString(pilot.getGunneryMechB()));
@@ -200,11 +200,11 @@ public class CustomPilotView extends JPanel {
         if (entity.getCrew() instanceof LAMPilot) {
             add(label, GBC.std());
             add(fldPiloting, GBC.eol());
-            fldPiloting.setText(Integer.toString(((LAMPilot)entity.getCrew()).getPilotingMech()));
+            fldPiloting.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingMech()));
             label = new JLabel(Messages.getString("CustomMechDialog.labPilotingAero"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldPilotingAero, GBC.eop());
-            fldPilotingAero.setText(Integer.toString(((LAMPilot)entity.getCrew()).getPilotingAero()));
+            fldPilotingAero.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingAero()));
         } else {
             add(label, GBC.std());
             add(fldPiloting, GBC.eop());

@@ -131,7 +131,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         texBoardWidth.addActionListener(this);
         texBoardHeight.addActionListener(this);
         
-        if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+        if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             spnMapHeight.setEnabled(false);
             spnMapWidth.setEnabled(false);
         }

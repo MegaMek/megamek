@@ -55,11 +55,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
          */
        public int priority;
     
-    private ArtyAutoHitCommand(String c){
+    private ArtyAutoHitCommand(String c) {
     cmd = c;
     }
     
-    public String getCmd(){
+    public String getCmd() {
     return cmd;
     }
     
@@ -71,7 +71,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             priority = p;
         }
     
-    public String toString(){
+    public String toString() {
             return Messages
                     .getString("SelectArtyAutoHitHexDisplay." + getCmd());
     }

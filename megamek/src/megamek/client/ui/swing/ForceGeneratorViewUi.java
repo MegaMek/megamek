@@ -501,7 +501,7 @@ public class ForceGeneratorViewUi {
                 setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
-            ForceDescriptor fd = (ForceDescriptor)value;
+            ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
                 String uname = "";

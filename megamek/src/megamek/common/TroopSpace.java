@@ -197,7 +197,7 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public double getUnused(){
+    public double getUnused() {
         return currentSpace;
     }
 

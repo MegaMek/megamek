@@ -146,7 +146,7 @@ public class HitData {
         glancing = -2;
     }
 
-    public void makeDirectBlow(int mod){
+    public void makeDirectBlow(int mod) {
         glancing = mod;
     }
 

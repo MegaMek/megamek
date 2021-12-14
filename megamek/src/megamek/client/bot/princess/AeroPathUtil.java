@@ -51,7 +51,7 @@ public class AeroPathUtil
 	 */
 	public static boolean willStall(MovePath movePath) {
 		// Stalling only happens in atmospheres on ground maps
-		if(!movePath.isOnAtmosphericGroundMap()) {
+		if (!movePath.isOnAtmosphericGroundMap()) {
 			return false;
 		}
 		
@@ -114,7 +114,7 @@ public class AeroPathUtil
         Collection<MovePath> paths = new ArrayList<MovePath>();
         
         // sanity check: if we've already done something else with the path, there's no acceleration to be done
-        if(startingPath.length() > 0) {
+        if (startingPath.length() > 0) {
             return paths;
         }
         
@@ -122,9 +122,9 @@ public class AeroPathUtil
         
         // we go from the lower bound to the current velocity and generate paths with the required number of DECs to get to
         // the desired velocity
-        for(int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++) {
+        for (int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++) {
             MovePath path = startingPath.clone();
-            for(int deltaVelocity = 0; deltaVelocity < currentVelocity - desiredVelocity; deltaVelocity++) {
+            for (int deltaVelocity = 0; deltaVelocity < currentVelocity - desiredVelocity; deltaVelocity++) {
                 path.addStep(MoveStepType.DEC);
             }
             
@@ -132,16 +132,16 @@ public class AeroPathUtil
         }
         
         // If the unaltered starting path is within acceptable velocity bounds, it's also a valid "acceleration".
-        if(startingPath.getFinalVelocity() <= upperBound &&
+        if (startingPath.getFinalVelocity() <= upperBound &&
            startingPath.getFinalVelocity() >= lowerBound) {
             paths.add(startingPath.clone());
         }
         
         // we go from the current velocity to the upper bound and generate paths with the required number of DECs to get to
         // the desired velocity
-        for(int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++) {
+        for (int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++) {
             MovePath path = startingPath.clone();
-            for(int deltaVelocity = 0; deltaVelocity < upperBound - desiredVelocity; deltaVelocity++) {
+            for (int deltaVelocity = 0; deltaVelocity < upperBound - desiredVelocity; deltaVelocity++) {
                 path.addStep(MoveStepType.ACC);
             }
             
@@ -172,22 +172,22 @@ public class AeroPathUtil
         
         // clone path add UP
         // if path uses more MP than entity has available or altitude higher than 10, stop
-        for(int altChange = 0; ; altChange++) {
+        for (int altChange = 0; ; altChange++) {
             int altChangeCost = altChange * 2;
             
             // if we are going to attempt to change altitude but won't actually be able to, break out.
-            if((path.getFinalAltitude() + altChange > 10) ||
+            if ((path.getFinalAltitude() + altChange > 10) ||
                     path.getMpUsed() + altChangeCost > path.getEntity().getRunMP()) {
                 break;
             }
             
             MovePath childPath = path.clone();
             
-            for(int numSteps = 0; numSteps < altChange; numSteps++) {
+            for (int numSteps = 0; numSteps < altChange; numSteps++) {
                 childPath.addStep(MoveStepType.UP);
             }
             
-            if((childPath.getFinalAltitude() > 10) ||
+            if ((childPath.getFinalAltitude() > 10) ||
                     childPath.getMpUsed() > path.getEntity().getRunMP()) {
                 break;
             }
@@ -198,17 +198,17 @@ public class AeroPathUtil
         // clone path add DOWN
         // if the path is already at minimum altitude, skip this
         // if path uses more MP than entity has available or altitude lower than 1, stop
-        if(path.getFinalAltitude() > 1) {
-            for(int altChange = 1; ; altChange++) {
+        if (path.getFinalAltitude() > 1) {
+            for (int altChange = 1; ; altChange++) {
                 MovePath childPath = path.clone();
                 
-                for(int numSteps = 0; numSteps < altChange; numSteps++) {
+                for (int numSteps = 0; numSteps < altChange; numSteps++) {
                     childPath.addStep(MoveStepType.DOWN);
                 }
                 
                 // going down doesn't use MP, but if we drop down more than 2 altitude it causes a massive 
                 // difficulty PSR, which is just not worth it.
-                if((childPath.getFinalAltitude() < 1) ||
+                if ((childPath.getFinalAltitude() < 1) ||
                         childPath.length() > 2) {
                     break;
                 }
@@ -228,10 +228,10 @@ public class AeroPathUtil
     public static List<MovePath> generateValidRotations(MovePath path) {
         List<MovePath> childPaths = new ArrayList<>();
         
-        for(int x = 1; x < TURNS.size(); x++) {
+        for (int x = 1; x < TURNS.size(); x++) {
             MovePath childPath = path.clone();
             
-            for(MoveStepType turn : TURNS.get(x)) {
+            for (MoveStepType turn : TURNS.get(x)) {
                 childPath.addStep(turn);
             }
             

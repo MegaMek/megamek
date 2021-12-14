@@ -189,7 +189,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             if (experimental == null) {
                 if (advanced != null && prodDate > advanced) {
                     experimental = advanced;
-                } else if (standard != null && prodDate > standard){
+                } else if (standard != null && prodDate > standard) {
                     experimental = standard;
                     advanced = null;
                 }
@@ -364,7 +364,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     
     @Override
     public int getTechBase() {
-        return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
+        return isClan() ? TECH_BASE_CLAN : TECH_BASE_IS;
     }
 
     @Override

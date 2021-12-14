@@ -129,7 +129,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             

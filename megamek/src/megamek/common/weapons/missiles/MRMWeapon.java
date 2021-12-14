@@ -62,7 +62,7 @@ public abstract class MRMWeapon extends MissileWeapon {
             return damage;
         }
         if (fcs != null && fcs.getType() instanceof MiscType
-                && ((MiscType)fcs.getType()).hasFlag(MiscType.F_APOLLO)) {
+                && fcs.getType().hasFlag(MiscType.F_APOLLO)) {
             damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
         } else {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize());

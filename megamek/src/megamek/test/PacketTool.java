@@ -405,7 +405,7 @@ public class PacketTool extends Frame implements Runnable {
                      * * Save the board here.
                      */
                     Board recvBoard = (Board) packet.getObject(0);
-                    try(OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
+                    try (OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
                         recvBoard.save(os);
                     } catch (IOException ioErr) {
                         ioErr.printStackTrace();

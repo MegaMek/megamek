@@ -58,13 +58,13 @@ public class FlamerHandler extends WeaponHandler {
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
         
-        if(bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+        if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             
-            if(bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
             }
-        } else if(flamerDoesHeatOnlyDamage) {
+        } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());

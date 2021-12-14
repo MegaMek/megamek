@@ -1087,7 +1087,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case DEPLOY_MINEFIELDS:
@@ -1098,7 +1098,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case DEPLOYMENT:
@@ -1109,7 +1109,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case TARGETING:
@@ -1121,7 +1121,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
@@ -1133,7 +1133,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case OFFBOARD:
@@ -1145,7 +1145,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case FIRING:
@@ -1156,7 +1156,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case POINTBLANK_SHOT:
@@ -1167,7 +1167,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case PHYSICAL:
@@ -1178,7 +1178,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case INITIATIVE_REPORT:
@@ -1473,11 +1473,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         entity.setDone(true);
                         entity.setUnloaded(true);
                         if (entity instanceof IBomber) {
-                            ((IBomber)entity).applyBombs();
+                            ((IBomber) entity).applyBombs();
                         }
                     }
                 }
-                if (loadedUnits.size() > 0){
+
+                if (!loadedUnits.isEmpty()) {
                     client.sendAddEntity(loadedUnits);
                     addedUnits = true;
                 }
@@ -1679,7 +1680,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
-        public void gamePlayerChange(GamePlayerChangeEvent e){
+        public void gamePlayerChange(GamePlayerChangeEvent e) {
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
@@ -1850,12 +1851,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gameClientFeedbackRequest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;
-            switch (evt.getCFRType()){
+            switch (evt.getCFRType()) {
                 case Packet.COMMAND_CFR_DOMINO_EFFECT:                    
                     // If the client connects to a game as a bot, it's possible
                     // to have the bot respond AND have the client ask the
                     // player. This is bad, ignore this if the client is a bot
-                    if (client instanceof BotClient){
+                    if (client instanceof BotClient) {
                         return;
                     }
                     MovePath stepForward = new MovePath(client.getGame(), e);
@@ -1871,8 +1872,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (stepForward.isMoveLegal() 
-                            && stepBackward.isMoveLegal()){
+                    if (stepForward.isMoveLegal() && stepBackward.isMoveLegal()) {
                         options = new Object[3];
                         paths = new MovePath[3];
                         options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
@@ -1882,11 +1882,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         paths[1] = stepBackward;
                         paths[2] = null;
                         optionType = JOptionPane.YES_NO_CANCEL_OPTION;
-                    } else if (stepForward.isMoveLegal()){
+                    } else if (stepForward.isMoveLegal()) {
                         options = new Object[2];
                         paths = new MovePath[2];
-                        options[0] = Messages.getString("CFRDomino.Forward",
-                                new Object[] { stepForward.getMpUsed() });
+                        options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
                         options[1] = Messages.getString("CFRDomino.NoAction");
                         paths[0] = stepForward;
                         paths[1] = null;
@@ -1905,7 +1904,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             optionType, JOptionPane.QUESTION_MESSAGE, null, 
                             options, options[0]);
                     // If they closed it, assume no action
-                    if (choice == JOptionPane.CLOSED_OPTION){
+                    if (choice == JOptionPane.CLOSED_OPTION) {
                         choice = options.length - 1;
                     }
                     client.sendDominoCFRResponse(paths[choice]);
@@ -2282,7 +2281,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
      * @return
      */
-    public boolean shouldIgnoreHotKeys(){
+    public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys 
                 || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
                 || ((about != null) && about.isVisible())

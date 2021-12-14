@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -33,9 +32,9 @@ import megamek.common.Jumpship;
 import megamek.common.util.fileUtils.MegaMekFile;
 /**
  * Class which keeps set of all areas required to 
- * represent ASF unit in MechDsiplay.ArmorPanel class.
+ * represent ASF unit in MechDisplay.ArmorPanel class.
  */
-public class WarshipMapSet implements DisplayMapSet{
+public class WarshipMapSet implements DisplayMapSet {
 
     private UnitDisplay unitDisplay;
     
@@ -85,33 +84,33 @@ public class WarshipMapSet implements DisplayMapSet{
         setContent();
     }
 
-    public void setRest(){
+    public void setRest() {
     }
 
-    public PMAreasGroup getContentGroup(){
+    public PMAreasGroup getContentGroup() {
         return content;
     }
 
-    public Vector<BackGroundDrawer> getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
-    public void setEntity(Entity e){
+    public void setEntity(Entity e) {
         Jumpship t = (Jumpship) e;
         int a = 1;
         int a0 = 1;
         //TODO: change this back to locations
-        for(int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             a = t.getArmor(i);
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double)a/(double)a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
 
         }
         a = t.getSI();
         a0 = t.get0SI();
         vLabels[6].setValue(Integer.toString(t.getSI()));
-        WidgetUtils.setAreaColor(areas[6], vLabels[6], (double)a/(double)a0);
+        WidgetUtils.setAreaColor(areas[6], vLabels[6], (double) a / (double) a0);
 
         //now for the vitals
         //need some extra info for docking collars
@@ -148,9 +147,8 @@ public class WarshipMapSet implements DisplayMapSet{
 
     }
 
-    private void setContent(){
-
-        for(int i = 0; i < 6; i++){
+    private void setContent() {
+        for (int i = 0; i < 6; i++) {
             content.addArea(areas[i]);
             content.addArea(labels[i]);
             content.addArea(vLabels[i]);
@@ -182,7 +180,7 @@ public class WarshipMapSet implements DisplayMapSet{
 
     }
 
-    private void setAreas(){
+    private void setAreas() {
         areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay, Jumpship.LOC_NOSE);
         areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor, unitDisplay, Jumpship.LOC_FLS);
         areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor, unitDisplay, Jumpship.LOC_FRS);
@@ -192,7 +190,7 @@ public class WarshipMapSet implements DisplayMapSet{
         areas[6] = new PMSimplePolygonArea(Structure, unitDisplay, Jumpship.LOC_NOSE);
     }
 
-    private void setLabels(){
+    private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         //Labels for Front view
@@ -317,7 +315,7 @@ public class WarshipMapSet implements DisplayMapSet{
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
 
-    private void translateAreas(){
+    private void translateAreas() {
 
     }
 
@@ -325,16 +323,16 @@ public class WarshipMapSet implements DisplayMapSet{
 
         String marks = "";
 
-        if(tally < 1) {
+        if (tally < 1) {
             return marks;
         }
 
-        if(tally >= max) {
+        if (tally >= max) {
             marks = "Out";
             return marks;
         }
 
-        while(tally > 0) {
+        while (tally > 0) {
             marks = marks + "X";
             tally--;
         }

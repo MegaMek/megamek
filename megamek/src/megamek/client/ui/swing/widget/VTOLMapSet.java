@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000,2001,2002,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -34,10 +33,9 @@ import megamek.common.VTOL;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to represent Tank unit in
- * MechDsiplay.ArmorPanel class.
+ * Class which keeps set of all areas required to represent VTOL unit in
+ * MechDisplay.ArmorPanel class.
  */
-
 public class VTOLMapSet implements DisplayMapSet {
     
     public static final int LABEL_NONE          = 0;
@@ -68,7 +66,7 @@ public class VTOLMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
     private PMSimpleLabel[] labels = new PMSimpleLabel[25];
     private PMValueLabel[] vLabels = new PMValueLabel[LABEL_LOC_NUMBER+1];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     // Polygons for all areas
@@ -210,7 +208,7 @@ public class VTOLMapSet implements DisplayMapSet {
             areas[LABEL_CHIN_TU_IS].setVisible(false);
         }
         if ((vtol instanceof SupportVTOL) && !vtol.hasPatchworkArmor()) {
-            vLabels[LABEL_BAR_RATING].setValue(String.valueOf(((SupportVTOL)vtol).getBARRating(1)));
+            vLabels[LABEL_BAR_RATING].setValue(String.valueOf(vtol.getBARRating(1)));
         } else {
             labels[LABEL_BAR_RATING+6].setVisible(false);
             vLabels[LABEL_BAR_RATING].setVisible(false);

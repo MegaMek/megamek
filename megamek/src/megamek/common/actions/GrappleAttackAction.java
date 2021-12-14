@@ -145,7 +145,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         if ((grappleSide != Entity.GRAPPLE_BOTH) && (ae instanceof Mech)) {
             Mech attacker = (Mech) ae;
-            Mech teMech = (te instanceof Mech) ? (Mech)te : null;
+            Mech teMech = (te instanceof Mech) ? (Mech) te : null;
             if (attacker.hasActiveTSM(false)
                     && ((teMech == null) || !teMech.hasActiveTSM(false)
                             || teMech.hasActiveTSM(false))) {

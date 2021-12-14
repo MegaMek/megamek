@@ -139,35 +139,35 @@ public class DedicatedServer {
             while (hasNext()) {
                 int tokType = getToken();
                 switch (tokType) {
-                case TOK_OPTION:
-                    switch (getTokenValue()) {
-                        case OPTION_PORT:
-                            nextToken();
-                            parsePort();
-                            break;
-                        case OPTION_ANNOUNCE:
-                            nextToken();
-                            parseAnnounce();
-                            break;
-                        case OPTION_PASSWORD:
-                            nextToken();
-                            parsePassword();
-                            break;
-                        case OPTION_MAIL:
-                            nextToken();
-                            parseMail();
-                            break;
-                    }
-                    break;
-                case TOK_LITERAL:
-                    gameFilename = getTokenValue();
-                    nextToken();
-                    break;
-                case TOK_EOF:
-                    // Do nothing, although this shouldn't happen
-                    break;
-                default:
-                    throw new ParseException("unexpected input");
+                    case TOK_OPTION:
+                        switch (getTokenValue()) {
+                            case OPTION_PORT:
+                                nextToken();
+                                parsePort();
+                                break;
+                            case OPTION_ANNOUNCE:
+                                nextToken();
+                                parseAnnounce();
+                                break;
+                            case OPTION_PASSWORD:
+                                nextToken();
+                                parsePassword();
+                                break;
+                            case OPTION_MAIL:
+                                nextToken();
+                                parseMail();
+                                break;
+                        }
+                        break;
+                    case TOK_LITERAL:
+                        gameFilename = getTokenValue();
+                        nextToken();
+                        break;
+                    case TOK_EOF:
+                        // Do nothing, although this shouldn't happen
+                        break;
+                    default:
+                        throw new ParseException("unexpected input");
                 }
                 nextToken();                
             }

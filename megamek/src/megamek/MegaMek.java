@@ -633,7 +633,7 @@ public class MegaMek {
                                     && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
                                 testEntity = new TestAero((Aero) entity,
                                         entityVerifier.aeroOption, null);
-                            } else if (entity instanceof BattleArmor){
+                            } else if (entity instanceof BattleArmor) {
                                 testEntity = new TestBattleArmor((BattleArmor) entity,
                                         entityVerifier.baOption, null);
                             }

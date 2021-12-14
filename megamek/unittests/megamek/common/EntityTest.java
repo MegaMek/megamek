@@ -89,11 +89,10 @@ public class EntityTest {
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;
-            computedWeight = (int)e.getWeight();
+            computedWeight = (int) e.getWeight();
             TestCase.assertEquals(expectedWeight, computedWeight);
-        } catch (Exception exc){
+        } catch (Exception exc) {
             TestCase.fail(exc.getMessage());
         }
     }
-    
 }

@@ -364,7 +364,7 @@ public class ECMInfo {
         }
         if (angelStrength != 0) {
             strengthString = ", aS: " + angelStrength;
-        } else if (strength != 0){
+        } else if (strength != 0) {
             if (isECMNova) {
                 strengthString = ", nS: " + strength;
             } else {

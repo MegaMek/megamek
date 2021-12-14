@@ -133,7 +133,7 @@ public class RandomCallsignGenerator implements Serializable {
                 String[] values = input.nextLine().split(",");
                 if (values.length == 2) {
                     callsigns.put(values[0], Integer.parseInt(values[1]));
-                } else if (values.length < 2){
+                } else if (values.length < 2) {
                     MegaMek.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
                 } else {
                     MegaMek.getLogger().error("Too many fields in " + file + " on " + lineNumber);

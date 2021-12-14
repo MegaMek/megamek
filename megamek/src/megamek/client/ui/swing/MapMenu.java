@@ -1115,7 +1115,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu createConvertMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
         
-        if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
+        if (myEntity instanceof Mech && ((Mech) myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
@@ -1133,24 +1133,21 @@ public class MapMenu extends JPopupMenu {
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
                     currentMode == LandAirMech.CONV_MODE_MECH);
             item.setEnabled(currentMode == LandAirMech.CONV_MODE_MECH
-                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
-                            LandAirMech.CONV_MODE_MECH));
+                    || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_MECH));
             menu.add(item);
-            if (((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
+            if (((LandAirMech) myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                         currentMode == LandAirMech.CONV_MODE_AIRMECH);
                 item.setEnabled(currentMode == LandAirMech.CONV_MODE_AIRMECH
-                        || ((LandAirMech)myEntity).canConvertTo(currentMode,
-                                LandAirMech.CONV_MODE_AIRMECH));
+                        || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_AIRMECH));
                 menu.add(item);
             }
             item = createConvertMenuItem("MovementDisplay.moveModeFighter",
                     MovementDisplay.MoveCommand.MOVE_MODE_AIR,
                     currentMode == LandAirMech.CONV_MODE_FIGHTER);
             item.setEnabled(currentMode == LandAirMech.CONV_MODE_FIGHTER
-                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
-                            LandAirMech.CONV_MODE_FIGHTER));
+                    || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_FIGHTER));
             menu.add(item);
         }
         return menu;

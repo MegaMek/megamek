@@ -219,7 +219,7 @@ public class GameTurn implements Serializable {
             this.attackType = attackType;
         }
 
-        public String getAttackType(){
+        public String getAttackType() {
             return attackType;
         }
         /**
@@ -389,7 +389,7 @@ public class GameTurn implements Serializable {
          * Get the class code of this turn
          * @return the classcode of this turn
          */
-        public int getTurnCode(){
+        public int getTurnCode() {
             return mask;
         }
         

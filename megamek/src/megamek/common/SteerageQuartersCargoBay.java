@@ -78,10 +78,7 @@ public final class SteerageQuartersCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Steerage Quarters ("
-                + getCurrentDoors() + " doors) - ");
-        returnString.append((int)currentSpace);
-        return returnString.toString();
+        return "Steerage Quarters (" + getCurrentDoors() + " doors) - " + (int) currentSpace;
     }
 
     @Override

@@ -25,12 +25,12 @@ public class ListEntitiesCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         Player p = server.getGame().getPlayer(connId);
-        if(null == p) {
+        if (null == p) {
             return;
         }
         for (Entity ent : server.getGame().getEntitiesVector()) {
             try {
-                if(ent.getOwnerId() == connId) {
+                if (ent.getOwnerId() == connId) {
                     server.sendServerChat(connId,
                             ent.getId() + " - " + ent.getDisplayName());
                 }

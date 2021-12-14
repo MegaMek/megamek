@@ -435,13 +435,13 @@ public class TechAdvancement implements ITechnology {
     private int getDate(int index, boolean clan) {
         if (clan) {
             if (clanApproximate[index] && clanAdvancement[index] > 0) {
-                return clanAdvancement[index] + ((index == EXTINCT)? 5 : -5);
+                return clanAdvancement[index] + ((index == EXTINCT) ? 5 : -5);
             } else {
                 return clanAdvancement[index];
             }
         } else {
             if (isApproximate[index] && isAdvancement[index] > 0) {
-                return isAdvancement[index] + ((index == EXTINCT)? 5 : -5);
+                return isAdvancement[index] + ((index == EXTINCT) ? 5 : -5);
             } else {
                 return isAdvancement[index];
             }

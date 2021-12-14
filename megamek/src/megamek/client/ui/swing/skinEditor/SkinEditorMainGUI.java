@@ -443,7 +443,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() ) {
+        if (GUIPreferences.getInstance().getFocus()) {
             curPanel.requestFocus();
         }
     }
@@ -489,7 +489,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case DEPLOY_MINEFIELDS:
@@ -500,7 +500,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case DEPLOYMENT:
@@ -511,7 +511,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case TARGETING:
@@ -523,7 +523,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case MOVEMENT:
@@ -534,7 +534,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case OFFBOARD:
@@ -546,7 +546,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case FIRING:
@@ -557,7 +557,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case PHYSICAL:
@@ -568,7 +568,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
                 break;
             case INITIATIVE_REPORT:
@@ -585,18 +585,15 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case END_REPORT:
             case VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String
-                        .valueOf(GamePhase.INITIATIVE_REPORT));
+                component = phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(
-                            GamePhase.INITIATIVE_REPORT);
+                    component = initializePanel(GamePhase.INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 break;
             default:
-                component = new JLabel(
-                        Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
                 main = "JLabel-Default"; //$NON-NLS-1$
                 secondary = main;
                 component.setName(main);

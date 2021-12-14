@@ -28,6 +28,12 @@ VERSION HISTORY:
 + Issue #3240: Fixing JumpShip no Grav Deck Crit Handling
 + Issue #3273: Fixing Offboard Artillery NPE
 + PR #3301: Fixing Quirk NPE and Quirk Tool VTOL Handling
++ Data: Rec Guide 19, various unit fixes and fluff.
++ PR #3305: Adding CodeQL GitHub Action - Automated Code Insights
++ PR #3297: Rewriting Telemissile AMS to handle LGTM, Performance, and Code Issues
++ PR #3299: LGTM Code Issues: Fixes Round 1
++ PR #3310: JUnit Update to 4.13.2 from 4.12
+
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ
 + Data: New Sprites and unit file fixes.

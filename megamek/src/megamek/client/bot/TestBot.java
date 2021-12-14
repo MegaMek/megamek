@@ -812,24 +812,20 @@ public class TestBot extends BotClient {
                             to_check.addAll(c);
                         }
                     }
-                    int range = option.getFinalCoords().distance(
-                            enemy.current.getFinalCoords());
+                    int range = option.getFinalCoords().distance(enemy.current.getFinalCoords());
                     int compare = 0;
-                    if ((enemy.long_range) > (range - Math.max(enemy.jumpMP,
-                                                               enemy.runMP))) {
+                    if ((enemy.long_range) > (range - Math.max(enemy.jumpMP, enemy.runMP))) {
                         compare = 30;
                     } else if (enemy.long_range > range) {
                         compare = 10;
                     }
-                    double mod = enemies_moved / getEnemyEntities().size();
-                    compare *= (1 + mod);
-                    for (int k = 0; (k <= compare)
-                                    && (k < enemy_move_array.size()); k++) {
+                    double mod = enemies_moved / (double) getEnemyEntities().size();
+                    compare *= 1 + (int) Math.round(mod);
+                    for (int k = 0; (k <= compare) && (k < enemy_move_array.size()); k++) {
                         if (enemy_move_array.size() < compare) {
                             to_check.add(enemy_move_array.get(k));
                         } else {
-                            int value = Compute.randomInt(enemy_move_array
-                                                                  .size());
+                            int value = Compute.randomInt(enemy_move_array.size());
                             if ((value % 2) == 1) {
                                 to_check.add(enemy_move_array.get(value));
                             } else {

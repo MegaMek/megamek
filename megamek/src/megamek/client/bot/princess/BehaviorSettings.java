@@ -26,9 +26,11 @@ import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since 8/17/13 10:47 PM
+ * @since 17-Aug-2013 10:47 PM
  */
 public class BehaviorSettings implements Serializable {
+    //region Variable Declarations
+    private static final long serialVersionUID = -1895924639830817372L;
 
     static final double[] SELF_PRESERVATION_VALUES = {
             2.5,
@@ -90,7 +92,6 @@ public class BehaviorSettings implements Serializable {
             1.6,
             1.8,
             2.0};
-    private static final long serialVersionUID = 7359327693190889212L;
 
     private String description = BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION;
 
@@ -109,8 +110,10 @@ public class BehaviorSettings implements Serializable {
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
     
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
+    //endregion Variable Declarations
 
     public BehaviorSettings() {
+
     }
 
     public BehaviorSettings(final Element behavior) throws PrincessException {
@@ -845,18 +848,16 @@ public class BehaviorSettings implements Serializable {
         if (!description.equals(that.description)) return false;
         if (destinationEdge != that.destinationEdge) return false;
         if (retreatEdge != that.retreatEdge) return false;
-        if ((null != strategicBuildingTargets) ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : 
-                (null != that.strategicBuildingTargets)) {
+
+        if (!strategicBuildingTargets.equals(that.strategicBuildingTargets)) {
             return false;
         }
 
-        if ((null != priorityUnitTargets) ? !priorityUnitTargets.equals(that.priorityUnitTargets) : 
-                (null != that.priorityUnitTargets)) {
+        if (!priorityUnitTargets.equals(that.priorityUnitTargets)) {
             return false;
         }
         
-        if ((null != ignoredUnitTargets) ? !ignoredUnitTargets.equals(that.ignoredUnitTargets) : 
-                (null != that.ignoredUnitTargets)) {
+        if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
             return false;
         }
 
@@ -874,9 +875,9 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + hyperAggressionIndex;
         result = 31 * result + destinationEdge.hashCode();
         result = 31 * result + retreatEdge.hashCode();
-        result = 31 * result + (null != strategicBuildingTargets ? strategicBuildingTargets.hashCode() : 0);
-        result = 31 * result + (null != priorityUnitTargets ? priorityUnitTargets.hashCode() : 0);
-        result = 31 * result + (null != ignoredUnitTargets ? ignoredUnitTargets.hashCode() : 0);
+        result = 31 * result + strategicBuildingTargets.hashCode();
+        result = 31 * result + priorityUnitTargets.hashCode();
+        result = 31 * result + ignoredUnitTargets.hashCode();
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
         return result;

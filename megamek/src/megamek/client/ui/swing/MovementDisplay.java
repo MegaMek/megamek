@@ -3537,13 +3537,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         int bayNum = 1;
         int i = 0;
         Bay currentBay;
-        Vector<Entity> currentFighters = new Vector<Entity>();
         int doors = 0;
         Vector<Bay> FighterBays = ce.getFighterBays();
         for (i = 0; i < FighterBays.size(); i++) {
             currentBay = FighterBays.elementAt(i);
-            Vector<Integer> bayChoices = new Vector<Integer>();
-            currentFighters = currentBay.getLaunchableUnits();
+            Vector<Integer> bayChoices = new Vector<>();
+            Vector<Entity> currentFighters = currentBay.getLaunchableUnits();
             /*
              * We will assume that if more fighters are launched than is safe,
              * that these excess fighters will be distributed equally among
@@ -3612,7 +3611,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     doIt = true;
                 }
             }
-            if ((choiceDialog.getAnswer() == true) && doIt) {
+
+            if (choiceDialog.getAnswer() && doIt) {
                 // load up the choices
                 int[] unitsLaunched = choiceDialog.getChoices();
                 for (int element : unitsLaunched) {
@@ -3620,7 +3620,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     //Prompt the player to load passengers aboard small craft
                     Entity en = clientgui.getClient().getGame().getEntity(currentFighters.elementAt(element).getId());
                     if (en instanceof SmallCraft) {
-                        loadPassengerAtLaunch(en);
+                        loadPassengerAtLaunch((SmallCraft) en);
                     }
                 }
                 choices.put(i, bayChoices);
@@ -3644,7 +3644,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private TreeMap<Integer, Vector<Integer>> getUndockedUnits() {
         Entity ce = ce();
-        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
@@ -3661,39 +3661,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // cycle through the docking collars
             int i = 0;
             int collarNum = 1;
-            Vector<Entity> currentDropships = new Vector<Entity>();
             for (DockingCollar collar : ce.getDockingCollars()) {
-                currentDropships = collar.getLaunchableUnits();
-                Vector<Integer> collarChoices = new Vector<Integer>();
+                Vector<Entity> currentDropships = collar.getLaunchableUnits();
+                Vector<Integer> collarChoices = new Vector<>();
                 if (currentDropships.size() > 0) {
                     String[] names = new String[currentDropships.size()];
-                    String question = Messages
-                            .getString(
-                                    "MovementDisplay.LaunchDropshipDialog.message", new Object[]{
-                                                                                                  ce.getShortName(), 1, collarNum});
+                    String question = Messages.getString("MovementDisplay.LaunchDropshipDialog.message",
+                            ce.getShortName(), 1, collarNum);
                     for (int loop = 0; loop < names.length; loop++) {
                         names[loop] = currentDropships.elementAt(loop)
                                                       .getShortName();
                     }
 
                     boolean doIt = false;
-                    ChoiceDialog choiceDialog = new ChoiceDialog(
-                            clientgui.frame,
-                            Messages.getString(
-                                    "MovementDisplay.LaunchDropshipDialog.title", new Object[]{
-                                                                                                collar.getType(), collarNum}), question,
-                            names);
+                    ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame,
+                            Messages.getString("MovementDisplay.LaunchDropshipDialog.title",
+                                    collar.getType(), collarNum), question, names);
                     while (!doIt) {
-                        choiceDialog = new ChoiceDialog(
-                                clientgui.frame,
-                                Messages.getString(
-                                        "MovementDisplay.LaunchDropshipDialog.title",
-                                        new Object[]{
-                                                      collar.getType(), collarNum}),
-                                question, names);
+                        choiceDialog = new ChoiceDialog(clientgui.frame,
+                                Messages.getString("MovementDisplay.LaunchDropshipDialog.title",
+                                        collar.getType(), collarNum), question, names);
                         choiceDialog.setVisible(true);
                         if ((choiceDialog.getChoices() != null)
-                            && (choiceDialog.getChoices().length > (1))) {
+                                && (choiceDialog.getChoices().length > (1))) {
                             ConfirmDialog nag = new ConfirmDialog(
                                     clientgui.frame,
                                     Messages.getString("MovementDisplay.areYouSure"),
@@ -3705,16 +3695,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             doIt = true;
                         }
                     }
-                    if ((choiceDialog.getAnswer() == true) && doIt) {
+                    if (choiceDialog.getAnswer() && doIt) {
                         // load up the choices
                         int[] unitsLaunched = choiceDialog.getChoices();
                         for (int element : unitsLaunched) {
-                            collarChoices.add(currentDropships.elementAt(
-                                    element).getId());
-                            //Prompt the player to load passengers aboard the launching ship(s)
+                            collarChoices.add(currentDropships.elementAt(element).getId());
+                            // Prompt the player to load passengers aboard the launching ship(s)
                             Entity en = clientgui.getClient().getGame().getEntity(currentDropships.elementAt(element).getId());
                             if (en instanceof SmallCraft) {
-                                loadPassengerAtLaunch(en);
+                                loadPassengerAtLaunch((SmallCraft) en);
                             }
                         }
                         choices.put(i, collarChoices);
@@ -3727,43 +3716,50 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 collarNum++;
                 i++;
             }
-        }// End have-choices
+        }
+
         // Return the chosen unit.
         return choices;
     }
     
     /**
-     * Worker function that consolidates code for loading dropships/small craft with passengers
+     * Worker function that consolidates code for loading DropShips / Small Craft with passengers
      * 
-     * @param en - The launching entity, which has already been tested to see if it's a small craft
+     * @param craft The launching entity, which has already been tested to see if it's a small craft
      */
-     private void loadPassengerAtLaunch(Entity en) {
-         SmallCraft craft = (SmallCraft) en;
+     private void loadPassengerAtLaunch(SmallCraft craft) {
+         final Entity currentEntity = ce();
+         if (currentEntity == null) {
+             LogManager.getLogger().error("Cannot load passenger at launch for a null current entity.");
+             return;
+         }
+
          int space = 0;
          for (Bay b : craft.getTransportBays()) {
-             if (b instanceof CargoBay || b instanceof InfantryBay || b instanceof BattleArmorBay) {
+             if ((b instanceof CargoBay) || (b instanceof InfantryBay) || (b instanceof BattleArmorBay)) {
                  // Assume a passenger takes up 0.1 tons per single infantryman weight calculations
-                 space += (b.getUnused() / 0.1);
+                 space += (int) Math.round(b.getUnused() / 0.1);
              }
          }
-         //Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
-         //already aboard
+         // Passengers don't actually 'load' into bays to consume space, so update what's available for anyone
+         // already aboard
          space -= ((craft.getTotalOtherCrew() + craft.getTotalPassengers()) * 0.1);
-         //Make sure the text displays either the carrying capacity or the number of passengers left aboard
-         space = Math.min(space, ce().getNPassenger());
+         // Make sure the text displays either the carrying capacity or the number of passengers left aboard
+         space = Math.min(space, currentEntity.getNPassenger());
          ConfirmDialog takePassenger = new ConfirmDialog(clientgui.frame,
                  Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.Title"),
                  Messages.getString("MovementDisplay.FillSmallCraftPassengerDialog.message",
-                         new Object[]{craft.getShortName(), space, ce().getShortName() + "'", ce().getNPassenger()}), false);
+                         craft.getShortName(), space, currentEntity.getShortName() + "'",
+                         currentEntity.getNPassenger()), false);
          takePassenger.setVisible(true);
          if (takePassenger.getAnswer()) {
-             //Move the passengers
-             ce().setNPassenger(ce().getNPassenger() - space);
-             if (ce() instanceof Aero) {
-                 ((Aero) ce()).addEscapeCraft(craft.getExternalIdAsString());
+             // Move the passengers
+             currentEntity.setNPassenger(currentEntity.getNPassenger() - space);
+             if (currentEntity instanceof Aero) {
+                 ((Aero) currentEntity).addEscapeCraft(craft.getExternalIdAsString());
              }
-             clientgui.getClient().sendUpdateEntity(ce());
-             craft.addPassengers(ce().getExternalIdAsString(), space);
+             clientgui.getClient().sendUpdateEntity(currentEntity);
+             craft.addPassengers(currentEntity.getExternalIdAsString(), space);
              clientgui.getClient().sendUpdateEntity(craft);
          }
      }
@@ -3777,65 +3773,58 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private TreeMap<Integer, Vector<Integer>> getDroppedUnits() {
         Entity ce = ce();
-        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+        if (ce == null) {
+            LogManager.getLogger().error("Cannot get dropped units for a null current entity");
+            return new TreeMap<>();
+        }
 
         Vector<Entity> droppableUnits = ce.getDroppableUnits();
+
+        if (droppableUnits.isEmpty()) {
+            LogManager.getLogger().error("Cannot get dropped units when no units are droppable.");
+            return new TreeMap<>();
+        }
+
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
         Set<Integer> alreadyDropped = cmd.getDroppedUnits();
+        // cycle through the bays
+        int bayNum = 1;
+        Vector<Bay> Bays = ce.getTransportBays();
+        for (int i = 0; i < Bays.size(); i++) {
+            Bay currentBay = Bays.elementAt(i);
+            Vector<Integer> bayChoices = new Vector<>();
+            List<Entity> currentUnits = currentBay.getDroppableUnits().stream()
+                    .filter(e -> !alreadyDropped.contains(e.getId()))
+                    .collect(Collectors.toList());
 
-        // Handle error condition.
-        if (droppableUnits.size() <= 0) {
-            System.err
-                    .println("MovementDisplay#getDroppedUnits() called without loaded units.");
-
-        } else {
-            // cycle through the bays
-            int bayNum = 1;
-            Bay currentBay;
-            List<Entity> currentUnits = new ArrayList<Entity>();
-            int doors = 0;
-            Vector<Bay> Bays = ce.getTransportBays();
-            for (int i = 0; i < Bays.size(); i++) {
-                currentBay = Bays.elementAt(i);
-                Vector<Integer> bayChoices = new Vector<Integer>();
-                currentUnits = currentBay.getDroppableUnits().stream()
-                        .filter(e -> !alreadyDropped.contains(e.getId()))
-                        .collect(Collectors.toList());
-
-                doors = currentBay.getCurrentDoors();
-                if ((currentUnits.size() > 0) && (doors > 0)) {
-                    String[] names = new String[currentUnits.size()];
-                    String question = Messages
-                            .getString(
-                                    "MovementDisplay.DropUnitDialog.message", new Object[]{
-                                                                                            doors, bayNum});
-                    for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentUnits.get(loop)
-                                                  .getShortName();
+            int doors = currentBay.getCurrentDoors();
+            if ((currentUnits.size() > 0) && (doors > 0)) {
+                String[] names = new String[currentUnits.size()];
+                String question = Messages.getString("MovementDisplay.DropUnitDialog.message",
+                        doors, bayNum);
+                for (int loop = 0; loop < names.length; loop++) {
+                    names[loop] = currentUnits.get(loop).getShortName();
+                }
+                ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.DropUnitDialog.title",
+                                currentBay.getType(), bayNum), question, names, false, doors);
+                choiceDialog.setVisible(true);
+                if (choiceDialog.getAnswer()) {
+                    // load up the choices
+                    int[] unitsLaunched = choiceDialog.getChoices();
+                    for (int element : unitsLaunched) {
+                        bayChoices.add(currentUnits.get(element).getId());
                     }
-                    ChoiceDialog choiceDialog = new ChoiceDialog(
-                            clientgui.frame,
-                            Messages.getString(
-                                    "MovementDisplay.DropUnitDialog.title", new Object[]{
-                                                                                          currentBay.getType(), bayNum}), question,
-                            names, false, doors);
-                    choiceDialog.setVisible(true);
-                    if (choiceDialog.getAnswer() == true) {
-                        // load up the choices
-                        int[] unitsLaunched = choiceDialog.getChoices();
-                        for (int element : unitsLaunched) {
-                            bayChoices.add(currentUnits.get(element)
-                                                       .getId());
-                        }
-                        choices.put(i, bayChoices);
-                        // now remove them (must be a better way?)
-                        for (int l = unitsLaunched.length; l > 0; l--) {
-                            currentUnits.remove(unitsLaunched[l - 1]);
-                        }
+                    choices.put(i, bayChoices);
+                    // now remove them (must be a better way?)
+                    for (int l = unitsLaunched.length; l > 0; l--) {
+                        currentUnits.remove(unitsLaunched[l - 1]);
                     }
                 }
-                bayNum++;
             }
-        }// End have-choices
+            bayNum++;
+        }
+
         // Return the chosen unit.
         return choices;
     }

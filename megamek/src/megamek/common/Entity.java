@@ -6608,38 +6608,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Assign AMS systems to incoming telemissile attacks. This
-     * allows AMS bays to work against these modified physical attacks
+     * Assign AMS systems to an incoming telemissile attack. This allows AMS bays to work against
+     * these modified physical attacks.
      */
-    public void assignTMAMS(Vector<AttackAction> vTMAttacks) {
-        HashSet<AttackAction> targets = new HashSet<AttackAction>();
-        for (Mounted ams : getActiveAMS()) {
-         // make a new vector of only incoming attacks in arc
-            Vector<TeleMissileAttackAction> vTMAttacksInArc = new Vector<TeleMissileAttackAction>(
-                    vTMAttacks.size());
-
-            for (AttackAction aa : vTMAttacks) {
-                //We already made sure these are all telemissile attacks in Server
-                TeleMissileAttackAction taa = (TeleMissileAttackAction) aa;
-                if (!targets.contains(taa)
-                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                game.getEntity(taa.getEntityId()))) {
-                    vTMAttacksInArc.addElement(taa);
-                }
-            }
-            //AMS Bays can fire at all incoming attacks each round
-            //Point defense bays are added too. If they haven't fired
-            //at something else already, they can attack now.
-            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)
-                    || (ams.getType().hasFlag(WeaponType.F_PDBAY)
-                            && !ams.isUsedThisRound())) {
-                for (TeleMissileAttackAction taa : vTMAttacksInArc) {
-                    if (taa != null) {
-                        taa.addCounterEquipment(ams);
-                    }
-                }
-            }
-        }
+    public void assignTMAMS(final TeleMissileAttackAction telemissileAttack) {
+        // AMS Bays can fire at all incoming attacks each round
+        // Point defense bays are added too, provided they haven't fired at something else already.
+        getActiveAMS().stream()
+                .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMSBAY)
+                        || (ams.getType().hasFlag(WeaponType.F_PDBAY) && !ams.isUsedThisRound()))
+                .filter(ams -> Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                        game.getEntity(telemissileAttack.getEntityId())))
+                .forEach(telemissileAttack::addCounterEquipment);
     }
 
     /**
@@ -10785,7 +10765,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     };
 
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        // bvText = new StringBuffer();
         long cost = 0;
 
         NumberFormat commafy = NumberFormat.getInstance();
@@ -10802,8 +10781,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             long itemCost = (long) mounted.getCost();
             if (!ignoreAmmo && isSupportVehicle() && (mounted.getSize() > 1)
                     && (mounted.getType() instanceof InfantryWeapon)) {
-                itemCost += (mounted.getSize() - 1)
-                        * ((InfantryWeapon) mounted.getType()).getAmmoCost();
+                itemCost += Double.valueOf((mounted.getSize() - 1d)
+                                * ((InfantryWeapon) mounted.getType()).getAmmoCost()).longValue();
             }
 
             cost += itemCost;
@@ -12440,20 +12419,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the tonnage of additional mounted communications equipment
      */
     public int getExtraCommGearTons() {
-        int i = 0;
+        double i = 0;
         for (Mounted mounted : miscList) {
-            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)
-                && !mounted.isInoperable()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS) && !mounted.isInoperable()) {
                 i += mounted.getTonnage();
             }
         }
-        return i;
+        return (int) Math.round(i); // the rounding shouldn't be needed, but is safer
     }
 
     /**
      * Returns information (range, location, strength) about ECM if the unit
-     * has active ECM or null if it doesn't.  In the case of multiple ECCM
-     * system, the best one takes precendence, as a unit can only have one
+     * has active ECM or null if it doesn't. In the case of multiple ECCM
+     * system, the best one takes precedence, as a unit can only have one
      * active ECCM at a time.
      *
      * @return
@@ -12534,8 +12512,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns information (range, location, strength) about ECCM if the unit
-     * has active ECCM or null if it doesn't.  In the case of multiple ECCM
-     * system, the best one takes precendence, as a unit can only have one
+     * has active ECCM or null if it doesn't. In the case of multiple ECCM
+     * system, the best one takes precedence, as a unit can only have one
      * active ECCM at a time.
      *
      * @return
@@ -13953,7 +13931,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (hasBoostedC3()) {
                 multiplier = 0.07;
             }
-            xbv += totalForceBV * multiplier;
+            xbv += (int) Math.round(totalForceBV * multiplier);
         }
         return xbv;
     }

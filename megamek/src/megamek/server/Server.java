@@ -418,8 +418,7 @@ public class Server implements Runnable {
             final TimerTask register = new TimerTask() {
                 @Override
                 public void run() {
-                    registerWithServerBrowser(true,
-                                              Server.getServerInstance().metaServerUrl);
+                    registerWithServerBrowser(true, Server.getServerInstance().metaServerUrl);
                 }
             };
             serverBrowserUpdateTimer = new Timer(
@@ -13486,36 +13485,20 @@ public class Server implements Runnable {
     }
 
     /**
-     * Determine which telemissile attack actions could be affected by AMS, and
-     * assign AMS to those attacks.
+     * Determine which telemissile attack actions could be affected by AMS, and assign AMS to those
+     * attacks.
      */
-    public void assignTeleMissileAMS(TeleMissileAttackAction taa) {
-        // Map target to a list of telemissile attacks directed at entities
-        Hashtable<Entity, Vector<AttackAction>> htTMAttacks = new Hashtable<>();
-
-        //This should be impossible but just in case...
-        if (taa == null) {
-            LogManager.getLogger().error("Null TeleMissileAttackAction!");
-        }
-
-        Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY)
+    public void assignTeleMissileAMS(final TeleMissileAttackAction taa) {
+        final Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY)
                 ? (Entity) taa.getTarget(game) : null;
 
-        //If a telemissile is still on the board and its original target is not....
+        // If a telemissile is still on the board and its original target is not, just return.
         if (target == null) {
             LogManager.getLogger().info("Telemissile has no target. AMS not assigned.");
             return;
         }
 
-        Vector<AttackAction> v = htTMAttacks.computeIfAbsent(target, k -> new Vector<>());
-        v.addElement(taa);
-        // Let each target assign its AMS
-        for (Entity e : htTMAttacks.keySet()) {
-            Vector<AttackAction> vTMAttacks = htTMAttacks.get(e);
-            // Allow MM to automatically assign AMS targets
-            // AMS bays can fire multiple times, so manual target assignment is kind of pointless
-            e.assignTMAMS(vTMAttacks);
-        }
+        target.assignTMAMS(taa);
     }
 
     /**
@@ -22632,21 +22615,17 @@ public class Server implements Runnable {
                     }
 
                     // check for overpenetration
-                    if (game.getOptions().booleanOption(
-                            OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
                         int opRoll = Compute.d6(1);
-                        if ((((te instanceof Jumpship) || (te instanceof SpaceStation))
-                             && !(te instanceof Warship) && (opRoll > 3))
-                            || ((te instanceof Dropship) && (opRoll > 4))
-                            || ((te instanceof Warship)
-                                && (a.get0SI() <= 30) && (opRoll > 5))) {
+                        if (((te instanceof Jumpship) && !(te instanceof Warship) && (opRoll > 3))
+                                || ((te instanceof Dropship) && (opRoll > 4))
+                                || ((te instanceof Warship) && (a.get0SI() <= 30) && (opRoll > 5))) {
                             // over-penetration happened
                             r = new Report(9090);
                             r.subject = te_n;
                             r.newlines = 0;
                             vDesc.addElement(r);
-                            int new_loc = a.getOppositeLocation(hit
-                                                                        .getLocation());
+                            int new_loc = a.getOppositeLocation(hit.getLocation());
                             damage = Math.min(damage, te.getArmor(new_loc));
                             // We don't want to deal negative damage
                             damage = Math.max(damage, 0);
@@ -22659,8 +22638,7 @@ public class Server implements Runnable {
                             r.add(te.getLocationAbbr(new_loc));
                             vDesc.addElement(r);
                             te.setArmor(te.getArmor(new_loc) - damage, new_loc);
-                            if ((te instanceof Warship)
-                                || (te instanceof Dropship)) {
+                            if ((te instanceof Warship) || (te instanceof Dropship)) {
                                 damage = 2;
                             } else {
                                 damage = 0;
@@ -22669,7 +22647,7 @@ public class Server implements Runnable {
                     }
 
                     // divide damage in half
-                    // do not divide by half if it is an ammo exposion
+                    // do not divide by half if it is an ammo explosion
                     if (!ammoExplosion && !nukeS2S
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                         damage /= 2;

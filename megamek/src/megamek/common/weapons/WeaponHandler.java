@@ -304,12 +304,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         bayWAmmo.setShotsLeft(Math.max(0,
                             bayWAmmo.getBaseShotsLeft() - 1));
                     }
+
                     if (isAMSBay) {
                         // get the attack value
-                        amsAV += bayWType.getShortAV();
+                        amsAV += (int) Math.round(bayWType.getShortAV());
                         // set the ams as having fired, if it did
                         setAMSBayReportingFlag();
                     }
+
                     if (isPDBay) {
                         // get the attack value
                         pdAV += bayWType.getShortAV();

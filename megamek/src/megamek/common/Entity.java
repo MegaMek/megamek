@@ -6663,11 +6663,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final List<WeaponAttackAction> attacksInArc = attacks.stream()
                     .filter(weaponHandler -> (weaponHandler.getWaa() != null)
                             && !targets.contains(weaponHandler.getWaa())
-                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                            && Compute.isInArc(getGame(), getId(), getEquipmentNum(ams),
                                     (weaponHandler instanceof CapitalMissileBearingsOnlyHandler)
-                                            ? game.getTarget(weaponHandler.waa.getOriginalTargetType(),
-                                                    weaponHandler.waa.getOriginalTargetId())
-                                            : game.getEntity(weaponHandler.waa.getEntityId())))
+                                            ? getGame().getTarget(weaponHandler.getWaa().getOriginalTargetType(),
+                                                    weaponHandler.getWaa().getOriginalTargetId())
+                                            : getGame().getEntity(weaponHandler.getWaa().getEntityId())))
                     .map(WeaponHandler::getWaa)
                     .collect(Collectors.toList());
 
@@ -6678,17 +6678,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             // AMS Bays can fire at all incoming attacks each round
             // So can standard AMS if the unofficial option is turned on
             if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
-                    || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
+                    || (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
                             && ams.getType().hasFlag(WeaponType.F_AMS))) {
                 attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
                 // Point defense bays are assigned to the attack with the greatest threat
                 // Unlike single AMS, PD bays can gang up on 1 attack
-                Compute.getHighestExpectedDamage(game, attacksInArc, true).addCounterEquipment(ams);
+                Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
             } else {
                 // Otherwise, find the most dangerous salvo by expected damage and target it
                 // this ensures that only 1 AMS targets the strike. Use for non-bays.
-                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, attacksInArc, true);
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
             }

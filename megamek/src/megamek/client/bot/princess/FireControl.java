@@ -2260,7 +2260,18 @@ public class FireControl {
     	// loop through all enemy targets, pick a random one out of the closest.
     	// future revision: pick one that's the least evasive
     	for (Targetable target : enemyTargets) {
-    		LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
+    	    // don't spot aerospace units
+    	    if (target.isAirborne()) {
+    	        continue;
+    	    }
+    	    
+    	    // don't spot sensor returns
+    	    if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
+	            ((Entity) target).isSensorReturn(spotter.getOwner())) {
+    	        continue;
+    	    }    	        
+    	    
+    	    LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
             
             // if we're in LOS
     		if (effects.canSee()) {

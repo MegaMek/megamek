@@ -35,6 +35,7 @@ VERSION HISTORY:
 + PR #3310: JUnit Update to 4.13.2 from 4.12
 + Issue #3312, 3313: Prevent bot units from spotting aerospace fighters and sensor contacts for indirect fire
 + PR #3298: Entity::assignAMS Performance Refactor
++ PR #3307: Log4j2 2.16.0 Swapover From Log4j1 1.2.17
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

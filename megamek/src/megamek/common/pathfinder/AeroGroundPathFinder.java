@@ -345,7 +345,7 @@ public class AeroGroundPathFinder {
             // this slightly increases the area covered by the aero in cases where the path takes it near the edge
             if (mp.nextForwardStepOffBoard()
                     && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
-                final MoveStep lastStep = mp.getLastStep(); // saving to prevent unnecessary computation
+                final MoveStep lastStep = mp.getLastStep(); // using to prevent unnecessary computation
                 if ((lastStep != null) && lastStep.canAeroTurn(game)) {
                     // we want to generate a path that looks like this:
                     // ||

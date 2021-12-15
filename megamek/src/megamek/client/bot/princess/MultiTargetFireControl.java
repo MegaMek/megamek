@@ -24,6 +24,7 @@ import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Princess-Bot fire control class used to calculate firing plans for units that
@@ -115,7 +116,7 @@ public class MultiTargetFireControl extends FireControl {
         for (Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
             if (owner.getHonorUtil().isEnemyBroken(target.getTargetId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
-                owner.getLogger().info(target.getDisplayName() + " is broken - ignoring");
+                LogManager.getLogger().info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }
             

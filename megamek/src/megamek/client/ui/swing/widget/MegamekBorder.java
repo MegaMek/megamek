@@ -3,42 +3,37 @@
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007,2008 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.widget;
 
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.MediaTracker;
+import megamek.common.Configuration;
+import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.border.EtchedBorder;
-
-import megamek.MegaMek;
-import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
-
 /**
  * A Border that has an image for each corner as well as images for the line
- * inbetween each corner (an edge).  Edges can consist of multiple possible 
- * icon and each possible icon can be tiled or static.  The total amount of 
+ * in between each corner (an edge). Edges can consist of multiple possible
+ * icon and each possible icon can be tiled or static. The total amount of
  * space taken up by tiled icons is determined by subtracting the space of the
  * static icons and then evenly distributing it amongst each tiled icon.
  * 
  * @author arlith
- *
  */
 public class MegamekBorder extends EtchedBorder {
     private static final long serialVersionUID = 1L;
@@ -94,7 +89,7 @@ public class MegamekBorder extends EtchedBorder {
         imgURL = file.toURI();
         icon = new ImageIcon(imgURL.toURL());
         if (!file.exists()) {
-            MegaMek.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+            LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
             iconsLoaded = false;
         }
         return icon;
@@ -138,7 +133,7 @@ public class MegamekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.leftEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 leftLine.add(new ImageIcon(imgURL.toURL()));
@@ -157,7 +152,7 @@ public class MegamekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.rightEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 rightLine.add(new ImageIcon(imgURL.toURL()));
@@ -176,7 +171,7 @@ public class MegamekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.topEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 topLine.add(new ImageIcon(imgURL.toURL()));
@@ -195,7 +190,7 @@ public class MegamekBorder extends EtchedBorder {
                 file = new MegaMekFile(Configuration.widgetsDir(), skin.bottomEdge.get(i)).getFile();
                 imgURL = file.toURI();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
+                    LogManager.getLogger().error("MegaMekBorder icon doesn't exist: " + file.getAbsolutePath());
                     iconsLoaded = false;
                 }
                 bottomLine.add(new ImageIcon(imgURL.toURL()));

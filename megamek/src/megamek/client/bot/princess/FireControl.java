@@ -18,7 +18,6 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.enums.IlluminationLevel;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
@@ -26,6 +25,8 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -1070,12 +1071,12 @@ public class FireControl {
                               final Mounted weapon,
                               final Game game) {
 
-        // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
-        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+        // This really should only be done for debugging purposes. Regular play should avoid the overhead.
+        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
-        // Don't bother checking these as the guesses are minimal (or non-existant).
+        // Don't bother checking these as the guesses are minimal (or non-existent).
         if (shooter.isAero() || (null == shooter.getPosition()) || (null == target.getPosition())) {
             return null;
         }
@@ -1117,14 +1118,10 @@ public class FireControl {
      *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
-    private String checkGuessPhysical(final Entity shooter,
-                                      final Targetable target,
-                                      final PhysicalAttackType attackType,
-                                      final Game game) {
-
-        // This really should only be done for debugging purposes. Regular play
-        // should avoid the overhead.
-        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+    private @Nullable String checkGuessPhysical(final Entity shooter, final Targetable target,
+                                                final PhysicalAttackType attackType, final Game game) {
+        // This really should only be done for debugging purposes. Regular play should avoid the overhead.
+        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
@@ -1144,10 +1141,8 @@ public class FireControl {
         final PhysicalInfo accurateInfo = new PhysicalInfo(shooter, target, attackType, game, owner, false);
         if (guessInfo.getHitData().getValue() != accurateInfo.getHitData().getValue()) {
             ret += "Incorrect To Hit prediction, physical attack " + attackType.name() + ":\n";
-            ret += " Guess: " + Integer.toString(guessInfo.getHitData().getValue()) + " " + guessInfo.getHitData()
-                                                                                                     .getDesc() +
-                   "\n";
-            ret += " Real:  " + Integer.toString(accurateInfo.getHitData().getValue()) + " " +
+            ret += " Guess: " + guessInfo.getHitData().getValue() + " " + guessInfo.getHitData().getDesc() + "\n";
+            ret += " Real:  " + accurateInfo.getHitData().getValue() + " " +
                    accurateInfo.getHitData().getDesc() + "\n";
         }
         return ret;
@@ -1164,11 +1159,9 @@ public class FireControl {
      *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
-    String checkAllGuesses(final Entity shooter,
-                           final Game game) {
-
+    @Nullable String checkAllGuesses(final Entity shooter, final Game game) {
         // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
-        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
@@ -1569,11 +1562,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1647,24 +1640,24 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
 
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
         
         // if we have no bombs on board, we can't attack from down here
         if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude() &&
             0 == shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
-            owner.getLogger().error("Shooter will crash if striking at altitude 1!");
+            LogManager.getLogger().error("Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
 
         if (AeroGroundPathFinder.OPTIMAL_STRIKE_ALTITUDE < flightPath.getFinalAltitude()) {
-            owner.getLogger().error("Shooter's altitude is too high!");
+            LogManager.getLogger().error("Shooter's altitude is too high!");
             return myPlan;
         }
 
@@ -1785,11 +1778,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1818,9 +1811,9 @@ public class FireControl {
             if ((shoot.getProbabilityToHit() > toHitThreshold)) {
                 myPlan.add(shoot);
                 continue;
-            }            
-            
-            owner.getLogger().debug("\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) 
+            }
+
+            LogManager.getLogger().debug("\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit())
                       + ") for " + weapon.getName() +
                       " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
@@ -2260,7 +2253,18 @@ public class FireControl {
     	// loop through all enemy targets, pick a random one out of the closest.
     	// future revision: pick one that's the least evasive
     	for (Targetable target : enemyTargets) {
-    		LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
+    	    // don't spot aerospace units
+    	    if (target.isAirborne()) {
+    	        continue;
+    	    }
+    	    
+    	    // don't spot sensor returns
+    	    if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
+	            ((Entity) target).isSensorReturn(spotter.getOwner())) {
+    	        continue;
+    	    }    	        
+    	    
+    	    LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
             
             // if we're in LOS
     		if (effects.canSee()) {
@@ -2369,7 +2373,7 @@ public class FireControl {
         for (final Targetable enemy : enemies) {
 
             if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getTargetId())) {
-                owner.getLogger().info(enemy.getDisplayName() + " is being explicitly ignored");
+                LogManager.getLogger().info(enemy.getDisplayName() + " is being explicitly ignored");
                 continue;
             }
             
@@ -2379,7 +2383,7 @@ public class FireControl {
             final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
             if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getTargetId(), playerId,
                                                            owner.getForcedWithdrawal())) {
-                owner.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
+                LogManager.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
                 continue;
             }
 
@@ -2388,8 +2392,8 @@ public class FireControl {
                                                                              enemy,
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
-            
-            owner.getLogger().info(shooter.getDisplayName() + " at " + enemy
+
+            LogManager.getLogger().info(shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
@@ -2489,7 +2493,7 @@ public class FireControl {
             final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                owner.getLogger().warning(shooter.getDisplayName() + " tried to load " 
+                LogManager.getLogger().warn(shooter.getDisplayName() + " tried to load "
                           + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
                 continue;
@@ -2678,7 +2682,7 @@ public class FireControl {
             return preferredAmmo;
         } finally {
             msg.append("\n\tReturning: ").append(null == preferredAmmo ? "null" : preferredAmmo.getDesc());
-            owner.getLogger().debug(msg.toString());
+            LogManager.getLogger().debug(msg.toString());
         }
     }
 

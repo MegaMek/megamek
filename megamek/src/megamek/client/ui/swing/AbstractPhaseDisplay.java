@@ -1,29 +1,18 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.net.URI;
-
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-
-import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.CommandAction;
@@ -34,36 +23,20 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
 import megamek.common.Coords;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GameEntityNewOffboardEvent;
-import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameMapQueryEvent;
-import megamek.common.event.GameNewActionEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerConnectedEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.event.GameVictoryEvent;
+import megamek.common.event.*;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
-public abstract class AbstractPhaseDisplay extends JPanel implements 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.URI;
+
+public abstract class AbstractPhaseDisplay extends JPanel implements
         BoardViewListener, GameListener, Distractable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4421205210788230341L;
     
     public static final int DONE_BUTTON_WIDTH = 125;
@@ -92,13 +65,13 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                         pdSkinSpec.backgrounds.get(0)).getFile();
                 URI imgURL = file.toURI();
                 if (!file.exists()) {
-                    MegaMek.getLogger().error("PhaseDisplay icon doesn't exist: " + file.getAbsolutePath());
+                    LogManager.getLogger().error("PhaseDisplay icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     backgroundIcon = new ImageIcon(imgURL.toURL());
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading PhaseDisplay background image!", e);
+            LogManager.getLogger().error("Error loading PhaseDisplay background image!", e);
         }
         
         setBorder(new MegamekBorder(borderSkinComp));

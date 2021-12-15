@@ -1,15 +1,8 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import org.apache.logging.log4j.LogManager;
 
-import megamek.MegaMek;
+import java.util.*;
 
 /**
  * This class provides a skeletal implementation of path finder algorithm in a
@@ -307,9 +300,9 @@ public class AbstractPathFinder<N, C, E> {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            MegaMek.getLogger().error(memoryMessage, e);
+            LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
 

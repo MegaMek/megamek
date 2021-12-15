@@ -16,8 +16,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -42,7 +40,6 @@ public class BasicPathRankerTest {
     private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00");
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
-    private final MMLogger fakeLogger = new FakeLogger();
 
     private final double TOLERANCE = 0.001;
 
@@ -85,7 +82,6 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
         Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
         Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);

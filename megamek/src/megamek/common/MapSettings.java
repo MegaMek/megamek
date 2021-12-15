@@ -1,19 +1,29 @@
 /*
  * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.common.util.BuildingTemplate;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
+
+import javax.xml.bind.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,26 +33,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
-import megamek.MegaMek;
-import megamek.client.ui.swing.lobby.LobbyUtility;
-import megamek.common.util.BuildingTemplate;
-import megamek.utils.MegaMekXmlUtil;
-
 /**
- * MapSettings.java Created on March 27, 2002, 1:07 PM
+ * MapSettings.java
  *
  * @author Ben
+ * @since March 27, 2002, 1:07 PM
  */
 @XmlRootElement(name = "ENVIRONMENT")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -380,7 +375,7 @@ public class MapSettings implements Serializable {
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
+            LogManager.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
         }
 
         return ms;

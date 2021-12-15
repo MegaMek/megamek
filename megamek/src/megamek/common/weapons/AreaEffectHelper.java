@@ -10,44 +10,19 @@
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
 * details.  
-*/  
-
+*/
 package megamek.common.weapons;
 
-import java.util.*;
-
-import megamek.MegaMek;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.SupportTank;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
+import megamek.common.*;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * Class containing functionality that helps out with area effect weapons. 
  * @author NickAragua
- *
  */
 public class AreaEffectHelper {
     // maps equipment name to blast radius index for fuel-air ordnance
@@ -596,7 +571,7 @@ public class AreaEffectHelper {
      */
     public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
         if (ammo == null) {
-            MegaMek.getLogger().error("Attempting to calculate damage fall-off with null ammo.\n\n"
+            LogManager.getLogger().error("Attempting to calculate damage fall-off with null ammo.\n\n"
                     + Arrays.toString(Thread.currentThread().getStackTrace()));
 
             DamageFalloff empty = new DamageFalloff();

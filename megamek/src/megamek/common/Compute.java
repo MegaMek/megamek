@@ -15,34 +15,9 @@
 */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.BAVibroClawAttackAction;
-import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.BrushOffAttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.GrappleAttackAction;
-import megamek.common.actions.JumpJetAttackAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.LayExplosivesAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.ThrashAttackAction;
-import megamek.common.actions.TripAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.IlluminationLevel;
@@ -57,6 +32,9 @@ import megamek.common.weapons.mgs.MGWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * The compute class is designed to provide static methods for mechs and other
@@ -1686,7 +1664,7 @@ public class Compute {
                                         final @Nullable Targetable target,
                                         final boolean useGroundDistance) {
         if (target == null) {
-            MegaMek.getLogger().error("Attempted to determine the effective distance to a null target");
+            LogManager.getLogger().error("Attempted to determine the effective distance to a null target");
             return 0;
         } else if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
@@ -3214,9 +3192,8 @@ public class Compute {
                 if (vCounters != null) {
                     for (int x = 0; x < vCounters.size(); x++) {
                         EquipmentType type = vCounters.get(x).getType();
-                        if ((type instanceof WeaponType)
-                            && type.hasFlag(WeaponType.F_AMS)) {
-                            fHits *= 0.6;
+                        if ((type instanceof WeaponType) && type.hasFlag(WeaponType.F_AMS)) {
+                            fHits *= 0.6f;
                         }
                     }
                 }
@@ -3224,20 +3201,19 @@ public class Compute {
 
             // * HAGs modify their cluster hits for range.
             if (wt instanceof HAGWeapon) {
-                int distance = attacker.getPosition().distance(
-                        target.getPosition());
+                int distance = attacker.getPosition().distance(target.getPosition());
                 if (distance <= wt.getShortRange()) {
-                    fHits *= 1.2;
+                    fHits *= 1.2f;
                 } else if (distance > wt.getMediumRange()) {
-                    fHits *= 0.8;
+                    fHits *= 0.8f;
                 }
             }
 
             fDamage *= fHits;
 
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
-                || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
-                || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
+                    || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                    || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                 fDamage = fHits * wt.getDamage();
             }
 
@@ -3245,8 +3221,7 @@ public class Compute {
             // Direct fire weapons (and LBX slug rounds) just do a single shot
             // so they don't use the missile hits table. Weapon bays also deal
             // damage in a single block
-            if ((attacker.getPosition() != null)
-                && (target.getPosition() != null)) {
+            if ((attacker.getPosition() != null) && (target.getPosition() != null)) {
                 // Damage may vary by range for some weapons, so let's see how far
                 // away we actually are and then set the damage accordingly.
                 int rangeToTarget = attacker.getPosition().distance(target.getPosition());
@@ -5262,7 +5237,7 @@ public class Compute {
         }
 
         // none? get out of here
-        if (vEnemyGTCoords.size() == 0) {
+        if (vEnemyGTCoords.isEmpty()) {
             return -1;
         }
 
@@ -5281,20 +5256,20 @@ public class Compute {
             Enumeration<Integer> ranges = vFriendlyECMRanges.elements();
             Enumeration<Double> strengths = vFriendlyECMStrengths.elements();
             for (Coords friendlyECMCoords : vFriendlyECMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyECMCoords);
-                double strength = strengths.nextElement().doubleValue();
+                double strength = strengths.nextElement();
                 if (nDist <= range) {
-                    ecmStatus += strength;
+                    ecmStatus += (int) Math.round(strength);
                 }
             }
             // now, subtract one for each enemy ECCM
             ranges = vEnemyECCMRanges.elements();
             strengths = vEnemyECCMStrengths.elements();
             for (Coords enemyECCMCoords : vEnemyECCMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(enemyECCMCoords);
-                double strength = strengths.nextElement().doubleValue();
+                double strength = strengths.nextElement();
                 if (nDist <= range) {
                     ecmStatus -= strength;
                 }
@@ -5305,8 +5280,8 @@ public class Compute {
                 ranges = vEnemyGTRanges.elements();
                 Enumeration<Integer> ids = vEnemyGTId.elements();
                 for (Coords enemyGTCoords : vEnemyGTCoords) {
-                    int range = ranges.nextElement().intValue();
-                    int id = ids.nextElement().intValue();
+                    int range = ranges.nextElement();
+                    int id = ids.nextElement();
                     int nDist = c.distance(enemyGTCoords);
                     if ((nDist <= range) && !hEnemyGTCrossed.get(id)) {
                         hEnemyGTCrossed.put(id, true);

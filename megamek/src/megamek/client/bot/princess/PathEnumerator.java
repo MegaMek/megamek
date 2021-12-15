@@ -1,64 +1,39 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.common.Aero;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
-import megamek.common.pathfinder.AeroGroundPathFinder;
+import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
-import megamek.common.pathfinder.AeroLowAltitudePathFinder;
-import megamek.common.pathfinder.AeroSpacePathFinder;
-import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
-import megamek.common.pathfinder.InfantryPathFinder;
-import megamek.common.pathfinder.LongestPathFinder;
-import megamek.common.pathfinder.NewtonianAerospacePathFinder;
-import megamek.common.pathfinder.PronePathFinder;
-import megamek.common.pathfinder.ShortestPathFinder;
-import megamek.common.pathfinder.SpheroidPathFinder;
+import org.apache.commons.logging.Log;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class contains logic that calculates and stores 
  * a) possible paths that units in play can take, and
  * b) their possible locations
- *
  */
 public class PathEnumerator {
 
@@ -83,15 +58,10 @@ public class PathEnumerator {
     }
 
     void clear() {
-        getOwner().getLogger().methodBegin();
-        try {
-            getUnitPaths().clear();
-            getUnitPotentialLocations().clear();
-            getLastKnownLocations().clear();
-            getLongRangePaths().clear();
-        } finally {
-            getOwner().getLogger().methodEnd();
-        }
+        getUnitPaths().clear();
+        getUnitPotentialLocations().clear();
+        getLastKnownLocations().clear();
+        getLongRangePaths().clear();
     }
 
     Coords getLastKnownCoords(Integer entityId) {
@@ -166,7 +136,7 @@ public class PathEnumerator {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    MegaMek.getLogger().error(e.toString());
+                    LogManager.getLogger().error(e.toString());
                 }
             }
         }
@@ -217,9 +187,9 @@ public class PathEnumerator {
                     }
                 };
                 
-                this.owner.getLogger().debug("Unfiltered paths: " + paths.size());
+                LogManager.getLogger().debug("Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                this.owner.getLogger().debug("Filtered out illegal paths: " + paths.size());
+                LogManager.getLogger().debug("Filtered out illegal paths: " + paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
                 
@@ -227,8 +197,8 @@ public class PathEnumerator {
                 if (offBoardPath != null) {
                     paths.add(offBoardFilter.getShortestPath());
                 }
-                
-                this.owner.getLogger().debug("Filtered out offboard paths: " + paths.size());
+
+                LogManager.getLogger().debug("Filtered out offboard paths: " + paths.size());
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
                 // disabled
@@ -335,7 +305,7 @@ public class PathEnumerator {
 
             return true;
         } catch (Exception e) {
-            MegaMek.getLogger().error(e.toString());
+            LogManager.getLogger().error(e.toString());
             return false;
         }
     }
@@ -489,7 +459,7 @@ public class PathEnumerator {
     }
     
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {
-        this.getOwner().getLogger().debug(path.length() + ":" + path.toString() + ":" + whyNot);
+        LogManager.getLogger().debug(path.length() + ":" + path + ":" + whyNot);
     }
 
     protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
@@ -526,30 +496,9 @@ public class PathEnumerator {
                 return mapHasBridges.get();
             }
 
-            mapHasBridges = new AtomicBoolean(getGame().getBoard()
-                                                       .containsBridges());
+            mapHasBridges = new AtomicBoolean(getGame().getBoard().containsBridges());
         }
 
         return mapHasBridges.get();
-    }
-    
-    /**
-     * Logs all the passed-in paths.
-     */
-    private void logAllPaths(List<MovePath> paths) {
-        HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
-        for (MovePath path : paths) {
-            if (!pathLengths.containsKey(path.length())) {
-                pathLengths.put(path.length(), 0);
-            }
-            Integer lengthCount = pathLengths.get(path.length());
-            pathLengths.put(path.length(), lengthCount + 1);
-            
-            this.owner.getLogger().debug(path.toString());
-        }
-        
-        for (Integer length : pathLengths.keySet()) {
-            this.owner.getLogger().debug("Paths of length " + length + ": " + pathLengths.get(length));
-        }
     }
 }

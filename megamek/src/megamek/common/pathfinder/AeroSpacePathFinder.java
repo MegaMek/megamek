@@ -1,25 +1,21 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.IAero;
 import megamek.common.Game;
+import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class generates move paths suitable for use by an aerospace unit
  * operating on a space map, with 'advanced flight' turned off.
  * @author NickAragua
- *
  */
 public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
-
-    protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroSpacePathFinder";
-    
     protected AeroSpacePathFinder(Game game) {
         super(game);
     }
@@ -36,9 +32,7 @@ public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
     }
     
     public static AeroSpacePathFinder getInstance(Game game) {
-        AeroSpacePathFinder asf = new AeroSpacePathFinder(game);
-
-        return asf;
+        return new AeroSpacePathFinder(game);
     }
     
     /** 

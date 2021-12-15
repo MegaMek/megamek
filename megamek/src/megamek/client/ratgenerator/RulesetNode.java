@@ -13,16 +13,15 @@
  */
 package megamek.client.ratgenerator;
 
+import megamek.common.EntityMovementMode;
+import megamek.common.UnitType;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
-import org.w3c.dom.Node;
-
-import megamek.MegaMek;
-import megamek.common.EntityMovementMode;
-import megamek.common.UnitType;
 
 /**
  * Base class of all nodes in the Force Generator faction ruleset files.
@@ -279,7 +278,7 @@ public class RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                MegaMek.getLogger().error("Force generator could not parse role " + p);
+                                LogManager.getLogger().error("Force generator could not parse role " + p);
                             }
                         }
                     }
@@ -289,7 +288,7 @@ public class RulesetNode {
                     if (null != ft) {
                         fd.setFormationType(ft);
                     } else {
-                        MegaMek.getLogger().warning("Could not parse formation type " + property);
+                        LogManager.getLogger().warn("Could not parse formation type " + property);
                     }
                     break;
                 case "flags":

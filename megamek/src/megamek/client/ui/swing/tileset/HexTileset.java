@@ -2,58 +2,38 @@
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * HexTileset.java
- *
- * Created on May 9, 2002, 1:33 PM
- */
-
 package megamek.client.ui.swing.tileset;
 
-import java.awt.Component;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.common.*;
 import megamek.common.event.*;
-import megamek.common.logging.*;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.*;
+import java.io.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * Matches each hex with an appropriate image.
  *
  * @author Ben
+ * @since May 9, 2002, 1:33 PM
  */
 public class HexTileset implements BoardListener {
-    
-    private static final LogLevel LOGLVL = LogLevel.WARNING;
-
     /**
      * The image width of a hex image.
      */
@@ -83,7 +63,6 @@ public class HexTileset implements BoardListener {
         game = g;
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        MegaMek.getLogger().setLogLevel(LOGLVL);
     }
 
     /** Clears the image cache for the given hex. */
@@ -309,7 +288,7 @@ public class HexTileset implements BoardListener {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    MegaMek.getLogger().info("Including " + incFile);
+                    LogManager.getLogger().info("Including " + incFile);
                     loadFromFile(incFile);
                 }
             }
@@ -320,10 +299,10 @@ public class HexTileset implements BoardListener {
         
         String loadInfo = String.format("Loaded %o base images, %o super images and %o ortho images", 
                 bases.size(), supers.size(), orthos.size());
-        MegaMek.getLogger().info(loadInfo);
+        LogManager.getLogger().info(loadInfo);
         
         if (incDepth == 0) {
-            MegaMek.getLogger().info("HexTileset loaded in " + (endTime - startTime) + "ms.");
+            LogManager.getLogger().info("HexTileset loaded in " + (endTime - startTime) + "ms.");
         }
         incDepth--;
     }
@@ -594,7 +573,7 @@ public class HexTileset implements BoardListener {
                 if (null != image) {
                     images.add(image);
                 } else {
-                    MegaMek.getLogger().error("Received null image from "
+                    LogManager.getLogger().error("Received null image from "
                             + "ImageUtil.loadImageFromFile! File: " + imgFile);
                 }
             }

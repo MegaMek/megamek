@@ -14,10 +14,10 @@
 */
 package megamek.common.util;
 
-import megamek.MegaMek;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import org.apache.logging.log4j.LogManager;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -205,7 +205,7 @@ public class EmailService {
                 // All good, just shut down
                 running = false;
             } catch (Exception ex) {
-                MegaMek.getLogger().error("Error sending email", ex);
+                LogManager.getLogger().error("Error sending email", ex);
             }
         }
     }

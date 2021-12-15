@@ -11,24 +11,18 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-
 package megamek.client.ui.swing;
 
-import javax.swing.JTabbedPane;
-
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.DetachablePane;
-
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Displays the unit detail pane to players.
  */
 public class UnitDetailPane extends DetachablePane {
-
-
     private UnitDisplay detail;
 
     public UnitDetailPane(UnitDisplay detail) {
@@ -52,7 +46,7 @@ public class UnitDetailPane extends DetachablePane {
         try {
             state = Mode.valueOf(prefs.getUnitDetailState().toUpperCase());
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error setting unit detail state", e);
+            LogManager.getLogger().error("Error setting unit detail state", e);
         }
         setState(state);
     }

@@ -14,23 +14,13 @@
 */
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import megamek.MegaMek;
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.logging.LogLevel;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere
@@ -58,7 +48,6 @@ public class AeroGroundPathFinder {
 
     protected AeroGroundPathFinder(Game game) {
         this.game = game;
-        MegaMek.getLogger().setLogLevel(LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
@@ -103,9 +92,9 @@ public class AeroGroundPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
 
-            MegaMek.getLogger().error(memoryMessage, e);
+            LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
 

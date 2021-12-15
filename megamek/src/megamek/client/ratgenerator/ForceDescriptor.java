@@ -12,38 +12,19 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ratgenerator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import megamek.MegaMek;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.UnitType;
+import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.LogLevel;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.
  *
  * @author Neoancient
- *
  */
 public class ForceDescriptor {
 
@@ -208,7 +189,7 @@ public class ForceDescriptor {
             if (null != mr) {
                 setUnit(mr);
             } else {
-                MegaMek.getLogger().error("Could not generate unit");
+                LogManager.getLogger().error("Could not generate unit");
             }
         } else {
             if (null != formationType) {
@@ -237,7 +218,7 @@ public class ForceDescriptor {
                             generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
                         }
                     } catch (NullPointerException ex) {
-                        MegaMek.getLogger().error("Found null generation rule in force node with formation set.");
+                        LogManager.getLogger().error("Found null generation rule in force node with formation set.");
                     }
                 }
             } else {
@@ -819,7 +800,7 @@ public class ForceDescriptor {
             }
         };
 
-        MegaMek.getLogger().debug("Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
+        LogManager.getLogger().debug("Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
         return null;
     }
 
@@ -834,7 +815,7 @@ public class ForceDescriptor {
                     String forceString = getForceString();
                     entity.setForceString(forceString);
                 } catch (EntityLoadingException ex) {
-                    MegaMek.getLogger().error("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath(), ex);
+                    LogManager.getLogger().error("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath(), ex);
                 }
             }
         }
@@ -1008,7 +989,7 @@ public class ForceDescriptor {
             for (ForceDescriptor sub : subforces) {
                 if (sub.useWeightClass()) {
                     if (sub.getWeightClass() == null) {
-                        MegaMek.getLogger().error("Weight class == null for " 
+                        LogManager.getLogger().error("Weight class == null for " 
                                 + sub.getUnitType() + " with " + sub.getSubforces().size() + " subforces.");
                     } else {
                         wt += sub.getWeightClass();
@@ -1724,30 +1705,5 @@ public class ForceDescriptor {
         retVal.generateAttachments = generateAttachments;
 
         return retVal;
-    }
-
-    /**
-     * Intended for debugging output. Shows description of current eschelon and all subforces
-     *
-     * @param indent   Prefix for the current eschelon
-     * @param logLevel The level to pass to the logging utility
-     */
-    public void show(String indent, LogLevel logLevel) {
-        final String[] eschelonNames = {
-                "Element", "Squad", "(2)", "Lance", "Company", "Battalion",
-                "Regiment", "Brigade", "Division", "Corps", "Army"
-        };
-        final String[] airEschelonNames = {
-                "Element", "(1)", "(2)", "Flight", "Squadron", "Group", "Wing", "Regiment"
-        };
-
-        MegaMek.getLogger().log(logLevel, indent + weightClass + " " + unitType + " "
-                        + (((unitType == UnitType.AERO) || (unitType == UnitType.CONV_FIGHTER)) ? airEschelonNames[eschelon] : eschelonNames[eschelon]), null);
-        for (ForceDescriptor sub : subforces) {
-            sub.show(indent + "  ", logLevel);
-        }
-        for (ForceDescriptor sub : attached) {
-            sub.show(indent + " +", logLevel);
-        }
     }
 }

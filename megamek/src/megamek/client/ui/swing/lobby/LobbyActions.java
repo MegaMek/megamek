@@ -18,20 +18,17 @@
  */ 
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Dimension;
-import java.util.*;
-import java.util.Map.Entry;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
-import megamek.client.generator.*;
+import megamek.client.generator.RandomCallsignGenerator;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.CamoChooserDialog;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.CustomMechDialog;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.UnitEditorDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -40,10 +37,22 @@ import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CollectionUtil;
+import org.apache.logging.log4j.LogManager;
 
-import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-import static java.util.stream.Collectors.*;
-import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
+import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
+import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
 
 /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
@@ -1107,7 +1116,7 @@ public class LobbyActions {
     
     void sendSingleUpdate(Collection<Entity> changedEntities, Collection<Force> changedForces) {
         if (!areAllied(changedEntities, changedForces)) {
-            MegaMek.getLogger().error("Cannot send force update unless all changed entities and forces are allied!");
+            LogManager.getLogger().error("Cannot send force update unless all changed entities and forces are allied!");
             return;
         }
         
@@ -1248,7 +1257,7 @@ public class LobbyActions {
      */
     private boolean areAllied(Collection<Entity> entities) {
         if (entities.isEmpty()) {
-            MegaMek.getLogger().warning("Empty collection of entities received, cannot determine if no entities are all allied. Returning true.");
+            LogManager.getLogger().warn("Empty collection of entities received, cannot determine if no entities are all allied. Returning true.");
             return true;
         }
         Entity randomEntry = entities.stream().findAny().get();
@@ -1263,7 +1272,7 @@ public class LobbyActions {
      */
     private boolean areAllied(Collection<Entity> entities, Collection<Force> forces) {
         if (entities.isEmpty() && forces.isEmpty()) {
-            MegaMek.getLogger().warning("Empty collection of entities and forces received, cannot determine if these are allied. Returning true.");
+            LogManager.getLogger().warn("Empty collection of entities and forces received, cannot determine if these are allied. Returning true.");
             return true;
         }
         if (forces.isEmpty()) {
@@ -1290,7 +1299,7 @@ public class LobbyActions {
      */
     private boolean areForcesAllied(Collection<Force> forces) {
         if (forces.isEmpty()) {
-            MegaMek.getLogger().warning("Empty collection of forces received, cannot determine if these are allied. Returning true.");
+            LogManager.getLogger().warn("Empty collection of forces received, cannot determine if these are allied. Returning true.");
             return true;
         }
         Force randomEntry = forces.stream().findAny().get();

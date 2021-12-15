@@ -11,20 +11,14 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import megamek.MegaMek;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
@@ -434,7 +428,7 @@ public class FighterSquadron extends Aero {
                         newmount.setNWeapons(groups.get(key));
                         weaponGroups.put(key, getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        MegaMek.getLogger().error("Unable to compile weapon groups.", ex);
+                        LogManager.getLogger().error("Unable to compile weapon groups.", ex);
                         return;
                     }
                 } else if (name != "0") {
@@ -892,7 +886,7 @@ public class FighterSquadron extends Aero {
         EntityMovementMode moveMode = entities.get(0).getMovementMode();
         for (Entity fighter : entities) {
             if (moveMode != fighter.getMovementMode()) {
-                MegaMek.getLogger().error("Error: Fighter squadron movement mode doesn't agree!");
+                LogManager.getLogger().error("Error: Fighter squadron movement mode doesn't agree!");
                 return EntityMovementMode.NONE;
             }
         }

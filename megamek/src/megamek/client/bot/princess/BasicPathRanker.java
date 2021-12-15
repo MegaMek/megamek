@@ -13,23 +13,18 @@
  */
 package megamek.client.bot.princess;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * A very "basic" pathranker
@@ -59,7 +54,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         
         bestDamageByEnemies = new TreeMap<>();
         
-        getOwner().getLogger().debug("Using " + getOwner().getBehaviorSettings().getDescription()
+        LogManager.getLogger().debug("Using " + getOwner().getBehaviorSettings().getDescription()
                         + " behavior");
     }
     
@@ -104,7 +99,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         Set<CoordFacingCombo> enemyFacingSet =
                 pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
         if (enemyFacingSet == null) {
-            getOwner().getLogger().warning("no facing set for " + enemy.getDisplayName());
+            LogManager.getLogger().warn("no facing set for " + enemy.getDisplayName());
             return false;
         }
         return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing))
@@ -810,7 +805,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
             return totalHazard;
         } finally {
-            getOwner().getLogger().debug(logMsg.toString());
+            LogManager.getLogger().debug(logMsg.toString());
         }
     }
 

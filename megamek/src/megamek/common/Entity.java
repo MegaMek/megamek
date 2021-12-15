@@ -15,7 +15,6 @@
 */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
@@ -40,6 +39,7 @@ import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -3750,7 +3750,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             shots = 1;
         }
         if (ammo == null) {
-            MegaMek.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
+            LogManager.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
             return;
         }
         Mounted m = new Mounted(this, ammo);
@@ -6610,100 +6610,63 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Assign AMS systems to incoming telemissile attacks. This
-     * allows AMS bays to work against these modified physical attacks
+     * Assign AMS systems to an incoming telemissile attack. This allows AMS bays to work against
+     * these modified physical attacks.
      */
-    public void assignTMAMS(Vector<AttackAction> vTMAttacks) {
-        HashSet<AttackAction> targets = new HashSet<AttackAction>();
-        for (Mounted ams : getActiveAMS()) {
-         // make a new vector of only incoming attacks in arc
-            Vector<TeleMissileAttackAction> vTMAttacksInArc = new Vector<TeleMissileAttackAction>(
-                    vTMAttacks.size());
-
-            for (AttackAction aa : vTMAttacks) {
-                //We already made sure these are all telemissile attacks in Server
-                TeleMissileAttackAction taa = (TeleMissileAttackAction) aa;
-                if (!targets.contains(taa)
-                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                game.getEntity(taa.getEntityId()))) {
-                    vTMAttacksInArc.addElement(taa);
-                }
-            }
-            //AMS Bays can fire at all incoming attacks each round
-            //Point defense bays are added too. If they haven't fired
-            //at something else already, they can attack now.
-            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)
-                    || (ams.getType().hasFlag(WeaponType.F_PDBAY)
-                            && !ams.isUsedThisRound())) {
-                for (TeleMissileAttackAction taa : vTMAttacksInArc) {
-                    if (taa != null) {
-                        taa.addCounterEquipment(ams);
-                    }
-                }
-            }
-        }
+    public void assignTMAMS(final TeleMissileAttackAction telemissileAttack) {
+        // AMS Bays can fire at all incoming attacks each round
+        // Point defense bays are added too, provided they haven't fired at something else already.
+        getActiveAMS().stream()
+                .filter(ams -> ams.getType().hasFlag(WeaponType.F_AMSBAY)
+                        || (ams.getType().hasFlag(WeaponType.F_PDBAY) && !ams.isUsedThisRound()))
+                .filter(ams -> Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                        game.getEntity(telemissileAttack.getEntityId())))
+                .forEach(telemissileAttack::addCounterEquipment);
     }
 
     /**
      * Assign AMS systems to the most dangerous incoming missile attacks. This
      * should only be called once per turn, or AMS will get extra attacks
      */
-    public void assignAMS(Vector<WeaponHandler> vAttacks) {
+    public void assignAMS(final List<WeaponHandler> attacks) {
+        final Set<WeaponAttackAction> targets = new HashSet<>();
+        getActiveAMS().stream()
+                .filter(ams -> !ams.isAPDS())
+                .forEach(ams -> {
+            // make a new list of only incoming attacks in arc
+            final List<WeaponAttackAction> attacksInArc = attacks.stream()
+                    .filter(weaponHandler -> (weaponHandler.getWaa() != null)
+                            && !targets.contains(weaponHandler.getWaa())
+                            && Compute.isInArc(getGame(), getId(), getEquipmentNum(ams),
+                                    (weaponHandler instanceof CapitalMissileBearingsOnlyHandler)
+                                            ? getGame().getTarget(weaponHandler.getWaa().getOriginalTargetType(),
+                                                    weaponHandler.getWaa().getOriginalTargetId())
+                                            : getGame().getEntity(weaponHandler.getWaa().getEntityId())))
+                    .map(WeaponHandler::getWaa)
+                    .collect(Collectors.toList());
 
-        HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
-        for (Mounted ams : getActiveAMS()) {
-            // Ignore APDS, it gets assigned elsewhere
-            if (ams.isAPDS()) {
-                continue;
+            if (attacksInArc.isEmpty()) {
+                return;
             }
 
-            // make a new vector of only incoming attacks in arc
-            Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
-                    vAttacks.size());
-            for (WeaponHandler wr : vAttacks) {
-                if (wr instanceof CapitalMissileBearingsOnlyHandler) {
-                    if (!targets.contains(wr.waa)
-                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                    game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
-                        vAttacksInArc.addElement(wr.waa);
-                    }
-                } else {
-                    if (!targets.contains(wr.waa)
-                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                    game.getEntity(wr.waa.getEntityId()))) {
-                        vAttacksInArc.addElement(wr.waa);
-                    }
-                }
-            }
-            //AMS Bays can fire at all incoming attacks each round
-            //So can standard AMS if the unofficial option is turned on
+            // AMS Bays can fire at all incoming attacks each round
+            // So can standard AMS if the unofficial option is turned on
             if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
-                    || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
+                    || (getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
                             && ams.getType().hasFlag(WeaponType.F_AMS))) {
-                for (WeaponAttackAction waa : vAttacksInArc) {
-                    if (waa != null) {
-                        waa.addCounterEquipment(ams);
-                    }
-                }
+                attacksInArc.forEach(waa -> waa.addCounterEquipment(ams));
             } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
-                //Point defense bays are assigned to the attack with the greatest threat
-                //Unlike single AMS, PD bays can gang up on 1 attack
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                        vAttacksInArc, true);
-                    if (waa != null) {
-                        waa.addCounterEquipment(ams);
-                    }
+                // Point defense bays are assigned to the attack with the greatest threat
+                // Unlike single AMS, PD bays can gang up on 1 attack
+                Compute.getHighestExpectedDamage(getGame(), attacksInArc, true).addCounterEquipment(ams);
             } else {
-            //Otherwise, find the most dangerous salvo by expected damage and target it
-            // this ensures that only 1 AMS targets the strike. Use for non-bays.
-            WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                    vAttacksInArc, true);
-                if (waa != null) {
+                // Otherwise, find the most dangerous salvo by expected damage and target it
+                // this ensures that only 1 AMS targets the strike. Use for non-bays.
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(getGame(), attacksInArc, true);
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
-                }
             }
-        }
+        });
     }
 
     /**
@@ -9842,7 +9805,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((phase == GamePhase.DEPLOYMENT) == isDeployed()) {
             if (!isDeployed() && isEligibleForTargetingPhase()
                     && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
-                MegaMek.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
+                LogManager.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
             }
@@ -10787,7 +10750,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     };
 
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        // bvText = new StringBuffer();
         long cost = 0;
 
         NumberFormat commafy = NumberFormat.getInstance();
@@ -10804,8 +10766,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             long itemCost = (long) mounted.getCost();
             if (!ignoreAmmo && isSupportVehicle() && (mounted.getSize() > 1)
                     && (mounted.getType() instanceof InfantryWeapon)) {
-                itemCost += (mounted.getSize() - 1)
-                        * ((InfantryWeapon) mounted.getType()).getAmmoCost();
+                itemCost += Double.valueOf((mounted.getSize() - 1d)
+                                * ((InfantryWeapon) mounted.getType()).getAmmoCost()).longValue();
             }
 
             cost += itemCost;
@@ -12442,20 +12404,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the tonnage of additional mounted communications equipment
      */
     public int getExtraCommGearTons() {
-        int i = 0;
+        double i = 0;
         for (Mounted mounted : miscList) {
-            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)
-                && !mounted.isInoperable()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS) && !mounted.isInoperable()) {
                 i += mounted.getTonnage();
             }
         }
-        return i;
+        return (int) Math.round(i); // the rounding shouldn't be needed, but is safer
     }
 
     /**
      * Returns information (range, location, strength) about ECM if the unit
-     * has active ECM or null if it doesn't.  In the case of multiple ECCM
-     * system, the best one takes precendence, as a unit can only have one
+     * has active ECM or null if it doesn't. In the case of multiple ECCM
+     * system, the best one takes precedence, as a unit can only have one
      * active ECCM at a time.
      *
      * @return
@@ -12536,8 +12497,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns information (range, location, strength) about ECCM if the unit
-     * has active ECCM or null if it doesn't.  In the case of multiple ECCM
-     * system, the best one takes precendence, as a unit can only have one
+     * has active ECCM or null if it doesn't. In the case of multiple ECCM
+     * system, the best one takes precedence, as a unit can only have one
      * active ECCM at a time.
      *
      * @return
@@ -13955,7 +13916,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (hasBoostedC3()) {
                 multiplier = 0.07;
             }
-            xbv += totalForceBV * multiplier;
+            xbv += (int) Math.round(totalForceBV * multiplier);
         }
         return xbv;
     }
@@ -14797,7 +14758,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         try {
             quirks = QuirksHandler.getQuirks(this);
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return;
         }
 

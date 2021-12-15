@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -32,6 +31,7 @@ import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
 import megamek.server.victory.VictoryResult;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
@@ -343,7 +343,7 @@ public class Game implements Serializable {
 
     public void setOptions(final @Nullable GameOptions options) {
         if (options == null) {
-            MegaMek.getLogger().error("Can't set the game options to null!");
+            LogManager.getLogger().error("Can't set the game options to null!");
         } else {
             this.options = options;
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -1208,7 +1208,7 @@ public class Game implements Serializable {
                     return null;
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return null;
         }
     }
@@ -1600,7 +1600,7 @@ public class Game implements Serializable {
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
-                        MegaMek.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
+                        LogManager.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
                     }
                 }
             }
@@ -3099,9 +3099,11 @@ public class Game implements Serializable {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) {
+    public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) throws RuntimeException {
         if (ip == null) {
-            throw MegaMek.getLogger().error(new RuntimeException("Illuminated Positions is null."));
+            var ex = new RuntimeException("Illuminated Positions is null.");
+            LogManager.getLogger().error(ex);
+            throw ex;
         }
         illuminatedPositions = ip;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -3323,7 +3325,7 @@ public class Game implements Serializable {
 
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
-            MegaMek.getLogger().error("Can't set the planetary conditions to null!");
+            LogManager.getLogger().error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -3431,7 +3433,7 @@ public class Game implements Serializable {
         if ((entitiesInCacheCount != entityVectorSize) && !getPhase().isDeployment()
                 && !getPhase().isExchange() && !getPhase().isLounge()
                 && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
-            MegaMek.getLogger().warning("Entities vector has " + entities.size()
+            LogManager.getLogger().warn("Entities vector has " + entities.size()
                     + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
             List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
@@ -3439,14 +3441,14 @@ public class Game implements Serializable {
                     missingIds.add(id);
                 }
             }
-            MegaMek.getLogger().info("Missing ids: " + missingIds);
+            LogManager.getLogger().info("Missing ids: " + missingIds);
         }
         for (Entity e : entities) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
                 HashSet<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
-                    MegaMek.getLogger().warning("Entity " + e.getId() + " is in "
+                    LogManager.getLogger().warn("Entity " + e.getId() + " is in "
                             + e.getPosition() + " however the position cache "
                             + "does not have it in that position!");
                 }
@@ -3460,7 +3462,7 @@ public class Game implements Serializable {
                 }
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
-                    MegaMek.getLogger().warning("Entity Position Cache thinks Entity " + eId
+                    LogManager.getLogger().warn("Entity Position Cache thinks Entity " + eId
                             + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
                 }
             }

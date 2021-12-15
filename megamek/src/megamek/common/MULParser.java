@@ -12,37 +12,28 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.xml.parsers.DocumentBuilder;
-
-import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.enums.Gender;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import megamek.common.loaders.EntityLoadingException;
-import megamek.utils.MegaMekXmlUtil;
+import javax.xml.parsers.DocumentBuilder;
+import java.io.InputStream;
+import java.util.*;
 
 /**
- * Class for reading in and parsing MUL XML files.  The MUL xsl is defined in
+ * Class for reading in and parsing MUL XML files. The MUL xsl is defined in
  * the docs directory.
  *
  * @author arlith
- *
  */
 public class MULParser {
 
@@ -1249,7 +1240,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    MegaMek.getLogger().error("Error in loading MUL, issues with extraData elements!");
+                    LogManager.getLogger().error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         } // End have-required-fields

@@ -2266,8 +2266,8 @@ public class FireControl {
     	    }
     	    
     	    // don't spot sensor returns
-    	    if (target.getTargetType() == Targetable.TYPE_ENTITY &&
-    	            ((Entity) target).isSensorReturn(spotter.getOwner())) {
+    	    if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
+	            ((Entity) target).isSensorReturn(spotter.getOwner())) {
     	        continue;
     	    }    	        
     	    

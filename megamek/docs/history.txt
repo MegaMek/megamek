@@ -34,6 +34,7 @@ VERSION HISTORY:
 + PR #3299: LGTM Code Issues: Fixes Round 1
 + PR #3310: JUnit Update to 4.13.2 from 4.12
 + Issue #3312, 3313: Prevent bot units from spotting aerospace fighters and sensor contacts for indirect fire
++ PR #3298: Entity::assignAMS Performance Refactor
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

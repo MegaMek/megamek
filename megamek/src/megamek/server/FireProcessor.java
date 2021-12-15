@@ -15,16 +15,12 @@
 */
 package megamek.server;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 public class FireProcessor extends DynamicTerrainProcessor {
 
@@ -190,7 +186,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         try {
             burnDamage = game.getOptions().intOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT);
         } catch (Exception ex) {
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
         }
 
         // Report that damage applied to terrain

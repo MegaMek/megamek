@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
@@ -22,6 +21,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,8 +32,9 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * @author Andrew Hunter A basic, simple attack handler. May or may not work for
- *         any particular weapon; must be overloaded to support special rules.
+ * A basic, simple attack handler. May or may not work for any particular weapon; must be overloaded
+ * to support special rules.
+ * @author Andrew Hunter
  */
 public class WeaponHandler implements AttackHandler, Serializable {
 
@@ -1134,7 +1135,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         // we shouldn't be here, but if we get here, let's set hits to 0
                         // to avoid infinite loops
                         hits = 0;
-                        MegaMek.getLogger().error("Unexpected target type: " + target.getTargetType());
+                        LogManager.getLogger().error("Unexpected target type: " + target.getTargetType());
                     }
                 } // Handle the next cluster.
             } else { // We missed, but need to handle special miss cases

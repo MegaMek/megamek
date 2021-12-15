@@ -14,10 +14,10 @@
  */
 package megamek.common;
 
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.enums.AimingMode;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
@@ -502,10 +502,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
             return true;
         } else if (isMilitary() && !hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
             return true;
         } else {
             return false;

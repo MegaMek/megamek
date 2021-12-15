@@ -13,20 +13,18 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
+
+import megamek.client.ui.swing.AdvancedSearchDialog;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.MegaMek;
-import megamek.client.ui.swing.AdvancedSearchDialog;
-
-
 /**
- * Class to perform filtering on units.  This class stores a list of
+ * Class to perform filtering on units. This class stores a list of
  * constraints and for a given <code>MechSummary</code> it can tell whether
  * that <code>MechSummary</codes> meets the constraints or not.
  *
@@ -372,11 +370,11 @@ public class MechSearchFilter {
                 int currQty = qtyIter.next();
 
                 if (null == currEq) {
-                    MegaMek.getLogger().debug("List<String> currEq is null");
+                    LogManager.getLogger().debug("List<String> currEq is null");
                 }
 
                 if (null == n) {
-                    MegaMek.getLogger().debug("ExpNode n is null");
+                    LogManager.getLogger().debug("ExpNode n is null");
                 }
 
                 if (currEq.equals(n.name) && currQty >= n.qty)

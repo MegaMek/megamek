@@ -43,6 +43,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -451,7 +452,7 @@ public class Client implements IClientCommandHandler {
                 try {
                     QuirksHandler.initQuirksList();
                 } catch (Exception e) {
-                    MegaMek.getLogger().error("Error initializing quirks", e);
+                    LogManager.getLogger().error("Error initializing quirks", e);
                 }
                 UnitRoleHandler.initialize();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
@@ -595,7 +596,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Maintain backwards compatability.
+     * Maintain backwards compatibility.
      *
      * @param id
      *            - the <code>int</code> ID of the deployed entity
@@ -1394,7 +1395,7 @@ public class Client implements IClientCommandHandler {
                         getHost(), serverVersion, MegaMekConstants.VERSION);
                 JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
                         JOptionPane.ERROR_MESSAGE);
-                MegaMek.getLogger().error(message);
+                LogManager.getLogger().error(message);
                 disconnected();
                 break;
             case Packet.COMMAND_SERVER_CORRECT_NAME:

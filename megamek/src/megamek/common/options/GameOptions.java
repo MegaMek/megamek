@@ -1,42 +1,36 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.options;
 
+import megamek.common.TechConstants;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.bind.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Vector;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
-
-import megamek.MegaMek;
-import megamek.common.TechConstants;
-import megamek.utils.MegaMekXmlUtil;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Contains the options determining play in the current game.
@@ -346,7 +340,7 @@ public class GameOptions extends AbstractOptions {
                 changedOptions.add(parseOptionNode(bo, print));
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading XML for game options: " + e.getMessage(), e);
+            LogManager.getLogger().error("Error loading XML for game options: " + e.getMessage(), e);
         }
 
         return changedOptions;
@@ -398,7 +392,7 @@ public class GameOptions extends AbstractOptions {
                     }
                 }
             } else {
-                MegaMek.getLogger().warning("Invalid option '" + name + "' when trying to load options file.");
+                LogManager.getLogger().warn("Invalid option '" + name + "' when trying to load options file.");
             }
         }
 
@@ -557,7 +551,7 @@ public class GameOptions extends AbstractOptions {
                     }
                 }
             } catch (Exception e) {
-                MegaMek.getLogger().error("Failed to parse Game Option Node", e);
+                LogManager.getLogger().error("Failed to parse Game Option Node", e);
             }
         }
     }

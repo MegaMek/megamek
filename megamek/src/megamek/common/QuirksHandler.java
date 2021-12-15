@@ -13,13 +13,13 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -184,7 +184,7 @@ public class QuirksHandler {
 
         final File file = new File(path);
         if (!file.exists() || !file.isFile()) {
-            MegaMek.getLogger().warning("Could not load quirks from " + path);
+            LogManager.getLogger().warn("Could not load quirks from " + path);
             return quirkMap;
         }
 
@@ -310,9 +310,10 @@ public class QuirksHandler {
             log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
         } catch (Exception e) {
-            throw MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
+            throw e;
         } finally {
-            MegaMek.getLogger().info(log.toString());
+            LogManager.getLogger().info(log.toString());
         }
     }
 
@@ -425,7 +426,7 @@ public class QuirksHandler {
 
             output.write(CUSTOM_QUIRKS_FOOTER);
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error writing CustomQuirks file!", e);
+            LogManager.getLogger().error("Error writing CustomQuirks file!", e);
         }
     }
 
@@ -502,7 +503,8 @@ public class QuirksHandler {
 
             return quirks.isEmpty() ? null : quirks;
         } catch (Exception e) {
-            throw MegaMek.getLogger().error("generalId: '" + generalId + "'\nunitId: '" + unitId + "'\n", e);
+            LogManager.getLogger().error("generalId: '" + generalId + "'\nunitId: '" + unitId + "'\n", e);
+            throw e;
         }
     }
 
@@ -512,7 +514,7 @@ public class QuirksHandler {
             try {
                 QuirksHandler.initQuirksList();
             } catch (Exception e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error(e);
             }
         }
 
@@ -630,7 +632,7 @@ public class QuirksHandler {
             try {
                 QuirksHandler.initQuirksList();
             } catch (Exception e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error(e);
             }
         }
 

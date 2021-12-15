@@ -13,10 +13,8 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
 import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 17-Aug-2013 10:47 PM
  */
 public class BehaviorSettings implements Serializable {
@@ -109,9 +108,6 @@ public class BehaviorSettings implements Serializable {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
-    private LogLevel verbosity = LogLevel.WARNING; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
-
-    private MMLogger logger = null;
     
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     //endregion Variable Declarations
@@ -122,17 +118,6 @@ public class BehaviorSettings implements Serializable {
 
     public BehaviorSettings(final Element behavior) throws PrincessException {
         fromXml(behavior);
-    }
-
-    private MMLogger getLogger() {
-        if (null == logger) {
-            logger = DefaultMmLogger.getInstance();
-        }
-        return logger;
-    }
-
-    void setLogger(final MMLogger logger) {
-        this.logger = logger;
     }
 
     public BehaviorSettings getCopy() throws PrincessException {
@@ -147,7 +132,6 @@ public class BehaviorSettings implements Serializable {
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
         copy.setHyperAggressionIndex(getHyperAggressionIndex());
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
-        copy.setVerbosity(getVerbosity());
         for (final String t : getStrategicBuildingTargets()) {
             copy.addStrategicTarget(t);
         }
@@ -159,20 +143,6 @@ public class BehaviorSettings implements Serializable {
         }
         
         return copy;
-    }
-
-    /**
-     * The verbosity of Princess chat messages. This is separate from the megameklog.txt logging level.
-     */
-    public LogLevel getVerbosity() {
-        return verbosity;
-    }
-
-    /**
-     * The verbosity of Princess chat messages. This is separate from the megameklog.txt logging level.
-     */
-    public void setVerbosity(final LogLevel verbosity) {
-        this.verbosity = verbosity;
     }
 
     /**
@@ -726,8 +696,6 @@ public class BehaviorSettings implements Serializable {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
                 setBraveryIndex(child.getTextContent());
-            } else if ("verbosity".equalsIgnoreCase(child.getNodeName())) {
-                setVerbosity(LogLevel.getLogLevel(child.getTextContent()));
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -805,10 +773,6 @@ public class BehaviorSettings implements Serializable {
             braveryNode.setTextContent("" + getBraveryIndex());
             behavior.appendChild(braveryNode);
 
-            final Element verbosityNode = doc.createElement("verbosity");
-            verbosityNode.setTextContent(getVerbosity().toString());
-            behavior.appendChild(verbosityNode);
-
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -831,8 +795,7 @@ public class BehaviorSettings implements Serializable {
 
             return behavior;
         } catch (final Exception e) {
-            getLogger().error(e);
-            
+            LogManager.getLogger().error(e);
         }
 
         return null;
@@ -851,7 +814,6 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\tFall Shame: ").append(getFallShameIndex());
         out.append("\n\tBravery: ").append(getBraveryIndex());
         out.append("\n\tHerd Mentality: ").append(getHerdMentalityIndex());
-        out.append("\n\tVerbosity: ").append(getVerbosity());
         out.append("\n\tTargets:");
         out.append("\n\t\tCoords: ");
         for (final String t : getStrategicBuildingTargets()) {

@@ -13,16 +13,16 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This class represents a squad or point of battle armor equiped infantry,
@@ -2117,7 +2117,7 @@ public class BattleArmor extends Infantry {
     public boolean isCrippled() {
         double activeTroopPercent = (double) getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
         } else {

@@ -18,9 +18,9 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Messages;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 
@@ -119,7 +119,7 @@ public enum PlayerColour {
 
         }
 
-        MegaMek.getLogger().error("Unable to parse PlayerColour from text " + text + ", returning BLUE");
+        LogManager.getLogger().error("Unable to parse PlayerColour from text " + text + ", returning BLUE");
 
         return BLUE;
     }

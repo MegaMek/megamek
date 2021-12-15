@@ -13,19 +13,28 @@
 */  
 package megamek.client.ui.swing.tooltip;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.options.*;
+import megamek.common.Configuration;
+import megamek.common.Crew;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
-import static megamek.client.ui.swing.util.UIUtil.*;
+import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_BEGIN;
+import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_END;
+import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
+import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 public final class PilotToolTip {
     
@@ -131,7 +140,7 @@ public final class PilotToolTip {
                 }
                 result.append("<TD VALIGN=TOP><IMG SRC=file:").append(tempPath).append("></TD>");
             } catch (Exception e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error(e);
             }
             result.append("<TD WIDTH=3></TD>");
         }

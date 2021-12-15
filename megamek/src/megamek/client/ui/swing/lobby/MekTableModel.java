@@ -18,31 +18,34 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Image;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.table.*;
-
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.MapSettings;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
-import megamek.common.options.*;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
+import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiGreen;
 
 public class MekTableModel extends AbstractTableModel {
     //region Variable Declarations
@@ -362,7 +365,7 @@ public class MekTableModel extends AbstractTableModel {
                 int width = height * image.getWidth(null) / image.getHeight(null);
                 setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
             } else {
-                MegaMek.getLogger().error("Trying to resize a unit icon of height or width 0!");
+                LogManager.getLogger().error("Trying to resize a unit icon of height or width 0!");
                 setIcon(null);
             }
         }

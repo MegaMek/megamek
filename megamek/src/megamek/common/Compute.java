@@ -15,34 +15,9 @@
 */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.BAVibroClawAttackAction;
-import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.BrushOffAttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.GrappleAttackAction;
-import megamek.common.actions.JumpJetAttackAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.LayExplosivesAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.ThrashAttackAction;
-import megamek.common.actions.TripAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.IlluminationLevel;
@@ -57,6 +32,9 @@ import megamek.common.weapons.mgs.MGWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * The compute class is designed to provide static methods for mechs and other
@@ -1686,7 +1664,7 @@ public class Compute {
                                         final @Nullable Targetable target,
                                         final boolean useGroundDistance) {
         if (target == null) {
-            MegaMek.getLogger().error("Attempted to determine the effective distance to a null target");
+            LogManager.getLogger().error("Attempted to determine the effective distance to a null target");
             return 0;
         } else if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {

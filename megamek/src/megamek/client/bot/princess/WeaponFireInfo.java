@@ -1,49 +1,37 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
+
+import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.BombType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.Targetable;
-import megamek.common.TechAdvancement;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
-
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
  * probability to hit and expected damage
  *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 11/24/14 2:50 PM
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since 11/24/14 2:50 PM
  */
 public class WeaponFireInfo {
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
@@ -528,10 +516,10 @@ public class WeaponFireInfo {
         } else {
             setToHit(calcToHit());
         }
-        // If we can't hit, set everything zero and return..
+        // If we can't hit, set everything zero and return...
         if (12 < getToHit().getValue()) {
             if (debugging) {
-                owner.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
+                LogManager.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
             }
             setProbabilityToHit(0);
             setMaxDamage(0);
@@ -636,7 +624,7 @@ public class WeaponFireInfo {
         }
 
         if (debugging) {
-            owner.getLogger().debug(msg.toString());
+            LogManager.getLogger().debug(msg.toString());
         }
     }
     

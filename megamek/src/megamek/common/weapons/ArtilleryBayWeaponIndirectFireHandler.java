@@ -13,34 +13,15 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import megamek.MegaMek;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.Game;
-import megamek.common.INarcPod;
-import megamek.common.LosEffects;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * @author Sebastian Brocks
@@ -50,7 +31,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     boolean handledAmmoAndReport = false;
 
     /**
-     * This consructor may only be used for deserialization.
+     * This constructor may only be used for deserialization.
      */
     protected ArtilleryBayWeaponIndirectFireHandler() {
         super();
@@ -90,7 +71,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
+                LogManager.getLogger().debug("Handler can't find any ammo! Oh no!");
             }
 
             int shots = bayW.getCurrentShots();

@@ -19,14 +19,18 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ResourceBundle;
 
 /**
@@ -183,7 +187,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         } finally {
             setVisible(false);
         }
@@ -206,7 +210,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
     }
 

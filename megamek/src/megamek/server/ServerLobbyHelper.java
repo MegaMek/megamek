@@ -18,7 +18,6 @@
  */
 package megamek.server;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.lobby.LobbyActions;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -27,6 +26,7 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -217,7 +217,7 @@ class ServerLobbyHelper {
             forceList.stream().forEach(f -> changedForces.addAll(forces.promoteForce(forces.getForce(f.getId()))));
         } else {
             if (!forces.contains(newParentId)) {
-                MegaMek.getLogger().warning("Tried to attach forces to non-existing parent force ID " + newParentId);
+                LogManager.getLogger().warn("Tried to attach forces to non-existing parent force ID " + newParentId);
                 return;
             }
             Force newParent = forces.getForce(newParentId);
@@ -312,7 +312,7 @@ class ServerLobbyHelper {
             game.setForces(forcesClone);
             server.send(createForceUpdatePacket(forceList));
         } else {
-            MegaMek.getLogger().warning("Invalid forces update received.");
+            LogManager.getLogger().warn("Invalid forces update received.");
             server.send(server.createFullEntitiesPacket());
         }
     }
@@ -408,7 +408,7 @@ class ServerLobbyHelper {
         if (forceId != Force.NO_FORCE) {
             var forceOwner = forces.getOwner(forceId);
             if (entities.stream().anyMatch(e -> e.getOwner().isEnemyOf(forceOwner))) {
-                MegaMek.getLogger().warning("Tried to add entities to an enemy force.");
+                LogManager.getLogger().warn("Tried to add entities to an enemy force.");
                 return;
             }
             for (Entity entity: entities) {

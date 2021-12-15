@@ -20,23 +20,63 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
+import megamek.client.Client;
+import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.Princess;
+import megamek.client.bot.ui.swing.BotGUI;
+import megamek.client.generator.RandomCallsignGenerator;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.dialogs.BotConfigDialog;
+import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.EntityReadoutDialog;
+import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
+import megamek.client.ui.swing.lobby.sorters.*;
+import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
+import megamek.client.ui.swing.util.ScalingPopup;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.*;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.*;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
+import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.BoardUtilities;
+import megamek.common.util.CollectionUtil;
+import megamek.common.util.CrewSkillSummaryUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utils.BoardsTagger;
+import org.apache.logging.log4j.LogManager;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.KeyboardFocusManager;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -46,13 +86,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -60,54 +96,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.*;
-import javax.swing.tree.*;
-
-import megamek.MegaMek;
-import megamek.client.Client;
-import megamek.client.generator.RandomNameGenerator;
-import megamek.client.bot.BotClient;
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.Princess;
-import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.generator.RandomCallsignGenerator;
-import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.BVDisplayDialog;
-import megamek.client.ui.dialogs.BotConfigDialog;
-import megamek.client.ui.dialogs.CamoChooserDialog;
-import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.dialogs.EntityReadoutDialog;
-import megamek.client.ui.swing.*;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.dialog.DialogButton;
-import megamek.client.ui.swing.dialog.MMConfirmDialog;
-import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
-import megamek.client.ui.swing.lobby.sorters.*;
-import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
-import megamek.client.ui.swing.util.*;
-import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
-import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.*;
-import megamek.common.force.*;
-import megamek.common.options.*;
-import megamek.common.preference.*;
-import megamek.common.util.BoardUtilities;
-import megamek.common.util.CollectionUtil;
-import megamek.common.util.CrewSkillSummaryUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.BoardsTagger;
-
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-import static megamek.common.util.CollectionUtil.*;
-import static java.util.stream.Collectors.*;
+import static megamek.client.ui.swing.util.UIUtil.*;
+import static megamek.common.util.CollectionUtil.theElement;
+import static megamek.common.util.CollectionUtil.union;
 
 public class ChatLounge extends AbstractPhaseDisplay implements  
         ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
@@ -1856,7 +1850,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } catch (Exception e) {
                     dialog.setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
                     pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
-                    MegaMek.getLogger().error(e);
+                    LogManager.getLogger().error(e);
                 }
 
                 JButton button = new DialogButton(Messages.getString("Okay"));
@@ -1960,7 +1954,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
                     "There was a problem while saving the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
         }
     }
 
@@ -1993,7 +1987,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
                     "There was a problem while loading the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
         }
     }
     

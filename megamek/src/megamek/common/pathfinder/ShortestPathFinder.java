@@ -1,13 +1,13 @@
 package megamek.common.pathfinder;
 
+import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
-
-import megamek.MegaMek;
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
 
 /**
  * Implementation of MovePathFinder designed to find the shortest path between
@@ -367,7 +367,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         Hex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
-            MegaMek.getLogger().debug("getLevelDiff: currHex was null!" +
+            LogManager.getLogger().debug("getLevelDiff: currHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ncurrHex:  " + mp.getFinalCoords() +
                     "\nPath: " + mp);
@@ -375,7 +375,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         Hex destHex = board.getHex(dest);
         if (destHex == null) {
-            MegaMek.getLogger().debug("getLevelDiff: destHex was null!" +
+            LogManager.getLogger().debug("getLevelDiff: destHex was null!" +
                     "\nStart: " + mp.getStartCoords() +
                     "\ndestHex: " + dest +
                     "\nPath: " + mp);

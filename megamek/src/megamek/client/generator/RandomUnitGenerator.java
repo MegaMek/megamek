@@ -2,46 +2,31 @@
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.generator;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * This class sets up a random unit generator that can then
@@ -62,10 +47,6 @@ import megamek.common.MechSummaryCache;
  * @author Jay Lawson
  */
 public class RandomUnitGenerator implements Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5765118329881301375L;
 
     // The RATs are stored in a hashmap of string vectors. The keys are the RAT
@@ -229,7 +210,7 @@ public class RandomUnitGenerator implements Serializable {
                 } else {
                     String[] values = line.split(",");
                     if (values.length < 2) {
-                        MegaMek.getLogger().error(String.format("Not enough fields in %s on %d",
+                        LogManager.getLogger().error(String.format("Not enough fields in %s on %d",
                                 fileName, lineNumber));
                         continue;
                     }
@@ -238,14 +219,14 @@ public class RandomUnitGenerator implements Serializable {
                     try {
                         weight = Integer.parseInt(values[1].trim());
                     } catch (NumberFormatException nef) {
-                        MegaMek.getLogger().error(String.format(
+                        LogManager.getLogger().error(String.format(
                                 "The frequency field could not be interpreted on line %d of %s",
                                 lineNumber, fileName));
                         continue;
                     }
 
                     if (weight <= 0.0f) {
-                        MegaMek.getLogger().error(String.format(
+                        LogManager.getLogger().error(String.format(
                                 "The frequency field is zero or negative (%d) on line %d of %s",
                                 Math.round(weight), lineNumber, fileName));
                         continue;
@@ -253,7 +234,7 @@ public class RandomUnitGenerator implements Serializable {
 
                     // The @ symbol denotes a reference to another RAT rather than a unit.
                     if (!name.startsWith("@") && (null == msc.getMech(name))) {
-                        MegaMek.getLogger().error(String.format(
+                        LogManager.getLogger().error(String.format(
                                 "The unit %s could not be found in the %s RAT (%s)",
                                 name, key, fileName));
                         continue;
@@ -366,7 +347,7 @@ public class RandomUnitGenerator implements Serializable {
                         }
                     }
                 } catch (IOException e) {
-                    MegaMek.getLogger().error("Unable to load " + ratFile.getName());
+                    LogManager.getLogger().error("Unable to load " + ratFile.getName());
                 }
             }
 

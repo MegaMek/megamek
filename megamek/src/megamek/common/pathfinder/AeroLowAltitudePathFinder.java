@@ -1,36 +1,30 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.IAero;
 import megamek.common.Game;
+import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This class is intended to be used by the bot for generating possible paths for 
  * aerospace units on a low-altitude atmospheric map.
  * @author NickAragua
- *
  */
 public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
-
-    protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroLowAltitudePathFinder";
-    
     protected AeroLowAltitudePathFinder(Game game) {
         super(game);
     }
 
     public static AeroLowAltitudePathFinder getInstance(Game game) {
-        AeroLowAltitudePathFinder alf = new AeroLowAltitudePathFinder(game);
-
-        return alf;
+        return new AeroLowAltitudePathFinder(game);
     }
     
     @Override

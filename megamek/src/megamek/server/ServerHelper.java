@@ -18,14 +18,11 @@
  */
 package megamek.server;
 
-import java.time.Clock;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
+
+import java.util.*;
 
 /**
  * This class contains computations carried out by the Server class.

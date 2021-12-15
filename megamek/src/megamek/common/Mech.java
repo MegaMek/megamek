@@ -15,13 +15,6 @@
 */
 package megamek.common;
 
-import java.io.PrintWriter;
-import java.math.BigInteger;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import megamek.MegaMek;
 import megamek.common.enums.AimingMode;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
@@ -39,6 +32,13 @@ import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.common.weapons.prototypes.*;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.PrintWriter;
+import java.math.BigInteger;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * You know what mechs are, silly.
@@ -8629,33 +8629,33 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (countInternalDamagedLimbs() >= 3) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
             return true;
         }
 
         if (isLocationBad(LOC_LT)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Left Torso destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Left Torso destroyed.");
             return true;
         }
 
         if (isLocationBad(LOC_RT)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Right Torso destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Right Torso destroyed.");
             return true;
         }
 
         if (getEngineHits() >= 2) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: 2 or more Engine Hits.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: 2 or more Engine Hits.");
             return true;
 
         }
 
         if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
             return true;
         }
 
@@ -8665,18 +8665,18 @@ public abstract class Mech extends Entity {
             if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
                     || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                             SYSTEM_SENSORS, LOC_CT) > 0)) {
-                MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Sensors destroyed.");
+                LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Sensors destroyed.");
                 return true;
             }
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             return true;
         }
 
         if (isPermanentlyImmobilized(checkCrew)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -8689,7 +8689,7 @@ public abstract class Mech extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -8779,37 +8779,37 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isDmgHeavy() {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.33) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 1/3 head armor remaining");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 1/3 head armor remaining");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.25) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% armor remaining");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% armor remaining");
             return true;
         }
 
         if (countInternalDamagedLimbs() == 2) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Two limbs with internal damage");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Two limbs with internal damage");
             return true;
         }
 
         if (countInternalDamagedTorsos() == 1) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Torso internal damage");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Torso internal damage");
             return true;
         }
 
         if (getEngineHits() == 1) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Engine hit");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Engine hit");
             return true;
         }
 
         if (getGyroHits() == 1) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Gyro hit");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Gyro hit");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 3)) {
-            MegaMek.getLogger().debug(getDisplayName() + " Three crew hits");
+            LogManager.getLogger().debug(getDisplayName() + " Three crew hits");
             return true;
         }
 
@@ -8826,7 +8826,7 @@ public abstract class Mech extends Entity {
             }
         }
         if (((double) totalInoperable / totalWeapons) >= 0.75) {
-            MegaMek.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% weapons operable");
+            LogManager.getLogger().debug(getDisplayName() + " HEAVY DAMAGE: Less than 25% weapons operable");
             return true;
         }
         return false;
@@ -8835,22 +8835,22 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isDmgModerate() {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.67) {
-            MegaMek.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 2/3 head armor");
+            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 2/3 head armor");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% armor");
+            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% armor");
             return true;
         }
 
         if (countInternalDamagedLimbs() == 1) {
-            MegaMek.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Limb with internal damage");
+            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Limb with internal damage");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 2)) {
-            MegaMek.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: 2 crew hits");
+            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: 2 crew hits");
             return true;
         }
 
@@ -8868,7 +8868,7 @@ public abstract class Mech extends Entity {
         }
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% weapons operable");
+            LogManager.getLogger().debug(getDisplayName() + " MODERATE DAMAGE: Less than 50% weapons operable");
             return true;
         }
         return false;
@@ -8877,17 +8877,17 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isDmgLight() {
         if (getArmor(LOC_HEAD) < getOArmor(LOC_HEAD)) {
-            MegaMek.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: head armor damaged");
+            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: head armor damaged");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.75) {
-            MegaMek.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: less than 75% armor remaining");
+            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: less than 75% armor remaining");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 1)) {
-            MegaMek.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: crew hit");
+            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: crew hit");
             return true;
         }
 
@@ -8905,7 +8905,7 @@ public abstract class Mech extends Entity {
         }
 
         if (((double) totalInoperable / totalWeapons) >= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: Less than 75% weapons operable");
+            LogManager.getLogger().debug(getDisplayName() + " LIGHT DAMAGE: Less than 75% weapons operable");
             return true;
         }
         return false;

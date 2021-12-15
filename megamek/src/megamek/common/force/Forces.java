@@ -18,12 +18,12 @@
  */ 
 package megamek.common.force;
 
-import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
@@ -140,7 +140,7 @@ public final class Forces implements Serializable {
     public ArrayList<Force> addEntity(Entity entity, int forceId) {
         ArrayList<Force> result = new ArrayList<>();
         if (!forces.containsKey(forceId)) {
-            MegaMek.getLogger().error("Tried to add entity to non-existing force");
+            LogManager.getLogger().error("Tried to add entity to non-existing force");
             return result;
         }
         int formerForce = getForceId(entity);
@@ -190,7 +190,7 @@ public final class Forces implements Serializable {
             result.add(getForce(formerForce));
             getForce(formerForce).removeEntity(entity);
         } else {
-            MegaMek.getLogger().warning("Removed entity from non-existent force!");
+            LogManager.getLogger().warn("Removed entity from non-existent force!");
         }
         return result;
     }
@@ -215,7 +215,7 @@ public final class Forces implements Serializable {
             result.add(getForce(formerForce));
             getForce(formerForce).removeEntity(entityId);
         } else {
-            MegaMek.getLogger().warning("Removed entity from non-existent force!");
+            LogManager.getLogger().warn("Removed entity from non-existent force!");
         }
         return result;
     }
@@ -308,7 +308,7 @@ public final class Forces implements Serializable {
         for (final String forceText : b) {
             final String[] force = forceText.split("\\|");
             if ((force.length != 2) && (force.length != 4)) {
-                MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName());
+                LogManager.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName());
                 break;
             }
 
@@ -318,7 +318,7 @@ public final class Forces implements Serializable {
                 final Force f = new Force(force[0], Integer.parseInt(force[1]), camouflage);
                 forces.add(f);
             } catch (Exception e) {
-                MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName(), e);
+                LogManager.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName(), e);
                 break;
             }
         }
@@ -680,7 +680,7 @@ public final class Forces implements Serializable {
     public ArrayList<Force> assignForceOnly(Force force, Player newOwner) {
         ArrayList<Force> result = new ArrayList<>();
         if (getOwner(force).isEnemyOf(newOwner)) {
-            MegaMek.getLogger().error("Tried to reassign a force without units to an enemy.");
+            LogManager.getLogger().error("Tried to reassign a force without units to an enemy.");
             return result; 
         }
         if (getOwnerId(force) != newOwner.getId()) {

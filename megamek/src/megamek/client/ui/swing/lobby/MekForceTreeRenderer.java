@@ -18,27 +18,23 @@
  */ 
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
-import javax.swing.UIManager;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.force.*;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /** A specialized renderer for the Mek Force tree. */
 public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
@@ -129,7 +125,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             int width = height * image.getWidth(null) / image.getHeight(null);
             setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
         } else {
-            MegaMek.getLogger().error("Trying to resize a unit icon of height or width 0!");
+            LogManager.getLogger().error("Trying to resize a unit icon of height or width 0!");
             setIcon(null);
         }
     }

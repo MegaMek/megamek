@@ -16,8 +16,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import org.junit.Assert;
@@ -32,7 +30,6 @@ import java.util.List;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 11/22/13 8:33 AM
  */
 @RunWith(value = JUnit4.class)
@@ -47,12 +44,10 @@ public class PrincessTest {
 
         MoraleUtil mockMoralUtil = Mockito.mock(MoraleUtil.class);
 
-        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
     }
 
     @Test

@@ -1,18 +1,29 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,30 +35,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
-
-import megamek.common.annotations.Nullable;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import megamek.MegaMek;
-import megamek.common.Configuration;
-import megamek.common.EntityMovementMode;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.UnitType;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
-
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
  * including faction, era, unit type, weight class, equipment rating, faction subcommand, vehicle
  * movement mode, and mission role.
  * 
  * @author Neoancient
- *
  */
 public class RATGenerator {
     
@@ -172,7 +165,7 @@ public class RATGenerator {
 
     public AvailabilityRating findModelAvailabilityRecord(int era, String unit, FactionRecord fRec) {
         if (null == models.get(unit)) {
-            MegaMek.getLogger().error("Trying to find record for unknown model " + unit);
+            LogManager.getLogger().error("Trying to find record for unknown model " + unit);
             return null;
         }
         if (fRec == null || models.get(unit).factionIsExcluded(fRec)) {
@@ -460,7 +453,7 @@ public class RATGenerator {
         for (String chassisKey : chassisIndex.get(early).keySet()) {
             ChassisRecord cRec = chassis.get(chassisKey);
             if (cRec == null) {
-                MegaMek.getLogger().error("Could not locate chassis " + chassisKey);
+                LogManager.getLogger().error("Could not locate chassis " + chassisKey);
                 continue;
             }
             
@@ -592,7 +585,7 @@ public class RATGenerator {
             for (String fKey : salvageEntries.keySet()) {
                 FactionRecord salvageFaction = factions.get(fKey);
                 if (salvageFaction == null) {
-                    MegaMek.getLogger().debug("Could not locate faction " + fKey 
+                    LogManager.getLogger().debug("Could not locate faction " + fKey 
                             + " for " + fRec.getKey() + " salvage");
                 } else {
                     double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
@@ -822,7 +815,7 @@ public class RATGenerator {
         }
 
         if (!(dir.exists() && dir.isDirectory())) {
-            MegaMek.getLogger().error(dir + " is not a directory");
+            LogManager.getLogger().error(dir + " is not a directory");
         } else {
             loadFactions(dir);
 
@@ -871,7 +864,7 @@ public class RATGenerator {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            MegaMek.getLogger().error("Unable to read RAT generator factions file");
+            LogManager.getLogger().error("Unable to read RAT generator factions file");
             return;
         }
 
@@ -881,7 +874,7 @@ public class RATGenerator {
             DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
             return;
         }
 
@@ -897,7 +890,7 @@ public class RATGenerator {
                     FactionRecord rec = FactionRecord.createFromXml(wn);
                     factions.put(rec.getKey(), rec);
                 } else {
-                    MegaMek.getLogger().warning("Faction key not found in " + file.getPath());
+                    LogManager.getLogger().warn("Faction key not found in " + file.getPath());
                 }
             }            
         }
@@ -923,7 +916,7 @@ public class RATGenerator {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            MegaMek.getLogger().error("Unable to read RAT generator file for era " + era);
+            LogManager.getLogger().error("Unable to read RAT generator file for era " + era);
             return;
         }
         while (!MechSummaryCache.getInstance().isInitialized()) {
@@ -940,7 +933,7 @@ public class RATGenerator {
             DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
             return;
         }
 
@@ -961,11 +954,11 @@ public class RATGenerator {
                             if (rec != null) {
                                 rec.loadEra(wn, era);
                             } else {
-                                MegaMek.getLogger().error("Faction " + fKey + " not found in "
+                                LogManager.getLogger().error("Faction " + fKey + " not found in "
                                         + file.getPath());
                             }
                         } else {
-                            MegaMek.getLogger().error("Faction key not found in " + file.getPath());
+                            LogManager.getLogger().error("Faction key not found in " + file.getPath());
                         }
                     }
                 }
@@ -1065,7 +1058,7 @@ public class RATGenerator {
                 models.put(modelKey, mr);
             }
             if (mr == null) {
-                MegaMek.getLogger().error(cr.getChassis() + " " 
+                LogManager.getLogger().error(cr.getChassis() + " " 
                         + wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
                 return;
             }

@@ -1,51 +1,33 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Terrains;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths for infantry units.
  * This includes both foot and jump paths.
  * @author NickAragua
- *
  */
 public class InfantryPathFinder {
     private Game game;
     private List<MovePath> infantryPaths;
-    private MMLogger logger;
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.InfantryPathFinder";
-    
+
     private Set<Coords> visitedCoords = new HashSet<>();
     
     
     private InfantryPathFinder(Game game) {
         this.game = game;
-        getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return infantryPaths;
     }
-    
-    private MMLogger getLogger() {
-        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
-    }
-    
+
     /**
      * Computes paths to nodes in the graph.
      * 
@@ -100,16 +82,15 @@ public class InfantryPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().error(memoryMessage, e);
+            LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     
     public static InfantryPathFinder getInstance(Game game) {
-        InfantryPathFinder ipf = new InfantryPathFinder(game);
 
-        return ipf;
+        return new InfantryPathFinder(game);
     }
     
     /**

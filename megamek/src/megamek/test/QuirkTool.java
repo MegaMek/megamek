@@ -14,9 +14,9 @@
  */
 package megamek.test;
 
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.util.*;
@@ -51,7 +51,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
         try {
             QuirksHandler.initQuirksList();
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error initializing quirks", e);
+            LogManager.getLogger().error("Error initializing quirks", e);
             return;
         }
         
@@ -72,7 +72,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
             }
 
             if (idEntitiesMap.get(quirkId) == null) {
-                MegaMek.getLogger().warning("Entry: " + quirkId + "doesn't have any matches!");
+                LogManager.getLogger().warn("Entry: " + quirkId + "doesn't have any matches!");
             }
         }
         
@@ -82,7 +82,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
             boolean containsNonMech = false;
             for (final Entity ent : entities) {
                 if (!(ent instanceof Mech)) {
-                    MegaMek.getLogger().info("Entry " + quirkId + " contains non 'Mek");
+                    LogManager.getLogger().info("Entry " + quirkId + " contains non 'Mek");
                     containsNonMech = true;
                 }
 
@@ -104,15 +104,15 @@ public class QuirkTool implements MechSummaryCache.Listener {
             }
 
             if (containsNonMech) {
-                MegaMek.getLogger().info("Non-Mek Entry " + quirkId);
+                LogManager.getLogger().info("Non-Mek Entry " + quirkId);
             }
 
             if (types.size() > 1) {
-                MegaMek.getLogger().warning("Entry " + quirkId + " contains mixed types");
+                LogManager.getLogger().warn("Entry " + quirkId + " contains mixed types");
             }
 
             if (types.isEmpty()) {
-                MegaMek.getLogger().warning("Entry " + quirkId + " doesn't have any matches");
+                LogManager.getLogger().warn("Entry " + quirkId + " doesn't have any matches");
             }
         }
     }
@@ -121,7 +121,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
         try {
             return new MechFileParser(file, entityName).getEntity();
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return null;
         }
     }

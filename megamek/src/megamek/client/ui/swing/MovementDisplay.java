@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -45,6 +44,7 @@ import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1198,7 +1198,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd.removeLastStep();
         final Entity entity = ce();
         if (entity == null) {
-            MegaMek.getLogger().warning("Cannot process removeLastStep for a null entity.");
+            LogManager.getLogger().warn("Cannot process removeLastStep for a null entity.");
             return;
         } else if (cmd.length() == 0) {
             clear();
@@ -3037,7 +3037,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Handle error condition.
         if (choices.size() == 0) {
-            MegaMek.getLogger().debug("Method called without towable units.");
+            LogManager.getLogger().debug("Method called without towable units.");
             return null;
         }
 
@@ -3176,7 +3176,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Handle error condition.
         if (ce.getAllTowedUnits().isEmpty()) {
-            MegaMek.getLogger().debug("Method called without any towed units.");
+            LogManager.getLogger().debug("Method called without any towed units.");
             return null;
         }
         
@@ -3730,7 +3730,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      private void loadPassengerAtLaunch(SmallCraft craft) {
          final Entity currentEntity = ce();
          if (currentEntity == null) {
-             MegaMek.getLogger().error("Cannot load passenger at launch for a null current entity.");
+             LogManager.getLogger().error("Cannot load passenger at launch for a null current entity.");
              return;
          }
 
@@ -3774,68 +3774,57 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private TreeMap<Integer, Vector<Integer>> getDroppedUnits() {
         Entity ce = ce();
         if (ce == null) {
-            MegaMek.getLogger().error("Cannot get dropped units for a null current entity");
+            LogManager.getLogger().error("Cannot get dropped units for a null current entity");
             return new TreeMap<>();
         }
-        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
 
         Vector<Entity> droppableUnits = ce.getDroppableUnits();
+
+        if (droppableUnits.isEmpty()) {
+            LogManager.getLogger().error("Cannot get dropped units when no units are droppable.");
+            return new TreeMap<>();
+        }
+
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
         Set<Integer> alreadyDropped = cmd.getDroppedUnits();
+        // cycle through the bays
+        int bayNum = 1;
+        Vector<Bay> Bays = ce.getTransportBays();
+        for (int i = 0; i < Bays.size(); i++) {
+            Bay currentBay = Bays.elementAt(i);
+            Vector<Integer> bayChoices = new Vector<>();
+            List<Entity> currentUnits = currentBay.getDroppableUnits().stream()
+                    .filter(e -> !alreadyDropped.contains(e.getId()))
+                    .collect(Collectors.toList());
 
-        // Handle error condition.
-        if (droppableUnits.size() <= 0) {
-            System.err
-                    .println("MovementDisplay#getDroppedUnits() called without loaded units.");
-
-        } else {
-            // cycle through the bays
-            int bayNum = 1;
-            Bay currentBay;
-            List<Entity> currentUnits = new ArrayList<Entity>();
-            int doors = 0;
-            Vector<Bay> Bays = ce.getTransportBays();
-            for (int i = 0; i < Bays.size(); i++) {
-                currentBay = Bays.elementAt(i);
-                Vector<Integer> bayChoices = new Vector<Integer>();
-                currentUnits = currentBay.getDroppableUnits().stream()
-                        .filter(e -> !alreadyDropped.contains(e.getId()))
-                        .collect(Collectors.toList());
-
-                doors = currentBay.getCurrentDoors();
-                if ((currentUnits.size() > 0) && (doors > 0)) {
-                    String[] names = new String[currentUnits.size()];
-                    String question = Messages
-                            .getString(
-                                    "MovementDisplay.DropUnitDialog.message", new Object[]{
-                                                                                            doors, bayNum});
-                    for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentUnits.get(loop)
-                                                  .getShortName();
+            int doors = currentBay.getCurrentDoors();
+            if ((currentUnits.size() > 0) && (doors > 0)) {
+                String[] names = new String[currentUnits.size()];
+                String question = Messages.getString("MovementDisplay.DropUnitDialog.message",
+                        doors, bayNum);
+                for (int loop = 0; loop < names.length; loop++) {
+                    names[loop] = currentUnits.get(loop).getShortName();
+                }
+                ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.DropUnitDialog.title",
+                                currentBay.getType(), bayNum), question, names, false, doors);
+                choiceDialog.setVisible(true);
+                if (choiceDialog.getAnswer()) {
+                    // load up the choices
+                    int[] unitsLaunched = choiceDialog.getChoices();
+                    for (int element : unitsLaunched) {
+                        bayChoices.add(currentUnits.get(element).getId());
                     }
-                    ChoiceDialog choiceDialog = new ChoiceDialog(
-                            clientgui.frame,
-                            Messages.getString(
-                                    "MovementDisplay.DropUnitDialog.title", new Object[]{
-                                                                                          currentBay.getType(), bayNum}), question,
-                            names, false, doors);
-                    choiceDialog.setVisible(true);
-                    if (choiceDialog.getAnswer() == true) {
-                        // load up the choices
-                        int[] unitsLaunched = choiceDialog.getChoices();
-                        for (int element : unitsLaunched) {
-                            bayChoices.add(currentUnits.get(element)
-                                                       .getId());
-                        }
-                        choices.put(i, bayChoices);
-                        // now remove them (must be a better way?)
-                        for (int l = unitsLaunched.length; l > 0; l--) {
-                            currentUnits.remove(unitsLaunched[l - 1]);
-                        }
+                    choices.put(i, bayChoices);
+                    // now remove them (must be a better way?)
+                    for (int l = unitsLaunched.length; l > 0; l--) {
+                        currentUnits.remove(unitsLaunched[l - 1]);
                     }
                 }
-                bayNum++;
             }
-        }// End have-choices
+            bayNum++;
+        }
+
         // Return the chosen unit.
         return choices;
     }

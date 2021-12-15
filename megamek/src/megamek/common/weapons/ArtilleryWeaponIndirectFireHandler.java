@@ -418,7 +418,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (actualDamage > 0) {
                 AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null,
                         0, false, asfFlak, isFlak, altitude,
-                    effectiveTargetPos, atype, targetPos, false, ae, null, altitude,
+                        effectiveTargetPos, atype, targetPos, false, ae, null, altitude,
                         vPhaseReport, server);
             }
         } else {

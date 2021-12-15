@@ -553,8 +553,8 @@ public class ForceDescriptor {
         if (ratingLevel < 0) {
             target = 10;
         }
-        Integer era = RATGenerator.getInstance().eraForYear(getYear());
-        AvailabilityRating av = null;
+        int era = RATGenerator.getInstance().eraForYear(getYear());
+        AvailabilityRating av;
         ModelRecord baseModel = null;
         /* Generate base model using weight class of entire formation */
         if (ut != null) {
@@ -574,6 +574,7 @@ public class ForceDescriptor {
                 }
             }
         }
+
         for (ForceDescriptor sub : subs) {
             boolean foundUnit = false;
             if (baseModel == null || (ut != null && !ut.equals(sub.getUnitType()))) {

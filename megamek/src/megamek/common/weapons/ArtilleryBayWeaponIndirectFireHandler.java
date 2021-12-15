@@ -226,8 +226,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     }
                 }
             }
-
-        } // End have-valid-spotters
+        }
 
         // If at least one valid spotter, then get the benefits thereof.
         if (null != bestSpotter) {
@@ -242,7 +241,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
         // Is the attacker still alive and we're not shooting FLAK?
         // then adjust the target
-        if ((null != ae) && !isFlak) {
+        if (!isFlak) {
 
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
@@ -273,8 +272,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
 
             }
-
-        } // End artyAttacker-alive
+        }
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -334,8 +332,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             addHeat();
         }
         
-        //In the case of misses, we'll need to hit multiple hexes
-        List<Coords> targets = new ArrayList<Coords>();
+        // In the case of misses, we'll need to hit multiple hexes
+        List<Coords> targets = new ArrayList<>();
         if (!bMissed) {
             r = new Report(3199);
             r.subject = subjectId;
@@ -366,7 +364,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     moF = moF + 2;
                 }
             }
-            //We're only going to display one missed shot hex on the board, at the intended target
+            // We're only going to display one missed shot hex on the board, at the intended target
             artyMsg = "Artillery missed here on round "
                     + game.getRoundCount() + ", fired by "
                     + game.getPlayer(aaa.getPlayerId()).getName();
@@ -406,7 +404,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
             nweaponsHit--;
             }
-            //If we managed to land everything off the board, stop
+            // If we managed to land everything off the board, stop
             if (targets.isEmpty()) {
                 return !bMissed;
             }
@@ -422,11 +420,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             } else {
                 radius = 1;
             }
+
             if (!bMissed) {
-                //If we hit, only one effect will stack in the target hex
+                // If we hit, only one effect will stack in the target hex
                 server.deliverArtilleryFlare(targetPos, radius);
             } else {
-                //Deliver a round to each target hex
+                // Deliver a round to each target hex
                 for (Coords c : targets) {
                     server.deliverArtilleryFlare(c, radius);
                 }
@@ -436,13 +435,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
             if (!bMissed) {
-                //Keep blasting the target hex with each weapon in the bay that fired
+                // Keep blasting the target hex with each weapon in the bay that fired
                 while (nweaponsHit > 0) {
                     server.doNuclearExplosion(targetPos, 1, vPhaseReport);
                     nweaponsHit--;
                 }
             } else {
-                //Deliver a round to each target hex
+                // Deliver a round to each target hex
                 for (Coords c : targets) {
                     server.doNuclearExplosion(c, 1, vPhaseReport);
                 }
@@ -451,11 +450,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
             if (!bMissed) {
-                //If we hit, only one effect will stack in the target hex
+                // If we hit, only one effect will stack in the target hex
                 server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
                         atype.getRackSize(), ae.getId());
             } else {
-                //Deliver a round to each target hex
+                // Deliver a round to each target hex
                 for (Coords c : targets) {
                     server.deliverFASCAMMinefield(c, ae.getOwner().getId(),
                             atype.getRackSize(), ae.getId());
@@ -465,26 +464,24 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
             if (!bMissed) {
-                //If we hit, only one effect will stack in the target hex
-                server.deliverArtilleryInferno(targetPos, ae, subjectId,
-                        vPhaseReport);
+                // If we hit, only one effect will stack in the target hex
+                server.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
             } else {
-                //Deliver a round to each target hex
+                // Deliver a round to each target hex
                 for (Coords c : targets) {
-                    server.deliverArtilleryInferno(c, ae, subjectId,
-                            vPhaseReport);
+                    server.deliverArtilleryInferno(c, ae, subjectId, vPhaseReport);
                 }
             }
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
             if (!bMissed) {
-                //If we hit, only one effect will stack in the target hex
+                // If we hit, only one effect will stack in the target hex
                 server.deliverThunderVibraMinefield(targetPos, ae.getOwner()
                         .getId(), atype.getRackSize(), waa.getOtherAttackInfo(), ae
                         .getId());
             } else {
-                //Deliver a round to each target hex
+                // Deliver a round to each target hex
                 for (Coords c : targets) {
                     server.deliverThunderVibraMinefield(c, ae.getOwner()
                             .getId(), atype.getRackSize(), waa.getOtherAttackInfo(), ae
@@ -495,10 +492,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
             if (!bMissed) {
-                //If we hit, only one effect will stack in the target hex
+                // If we hit, only one effect will stack in the target hex
                 server.deliverArtillerySmoke(targetPos, vPhaseReport);
             } else {
-                //Deliver a round to each target hex
+                // Deliver a round to each target hex
                 for (Coords c : targets) {
                     server.deliverArtillerySmoke(c, vPhaseReport);
                 }
@@ -533,13 +530,11 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (server.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
@@ -552,9 +547,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // artillery may unintentionally clear minefields, but only if it wasn't
             // trying to. For a hit on the target, just do this once.
             if (!mineClear && game.containsMinefield(targetPos)) {
-                Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                        .elements();
-                ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+                Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
+                ArrayList<Minefield> mfRemoved = new ArrayList<>();
                 while (minefields.hasMoreElements()) {
                     Minefield mf = minefields.nextElement();
                     if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
@@ -566,7 +560,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     server.removeMinefield(mf);
                 }
             }
-            //Here we're doing damage for each hit with more standard artillery shells
+            // Here we're doing damage for each hit with more standard artillery shells
             while (nweaponsHit > 0) {
                 server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                         subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
@@ -574,13 +568,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 nweaponsHit--;
             }
         } else {
-            //Now if we missed, resolve a strike on each scatter hex
+            // Now if we missed, resolve a strike on each scatter hex
             for (Coords c : targets) {
-                //Accidental mine clearance...
+                // Accidental mine clearance...
                 if (!mineClear && game.containsMinefield(c)) {
-                    Enumeration<Minefield> minefields = game.getMinefields(c)
-                            .elements();
-                    ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+                    Enumeration<Minefield> minefields = game.getMinefields(c).elements();
+                    ArrayList<Minefield> mfRemoved = new ArrayList<>();
                     while (minefields.hasMoreElements()) {
                         Minefield mf = minefields.nextElement();
                         if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {

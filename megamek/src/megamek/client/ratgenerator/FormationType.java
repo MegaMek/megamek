@@ -258,7 +258,7 @@ public class FormationType {
         
         List<Integer> wcs = IntStream.rangeClosed(minWeightClass,
                 Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY))
-                .mapToObj(Integer::valueOf)
+                .boxed()
                 .collect(Collectors.toList());
         List<Integer> airWcs = wcs.stream().filter(wc -> wc < EntityWeightClass.WEIGHT_ASSAULT)
                 .collect(Collectors.toList()); 
@@ -577,7 +577,7 @@ public class FormationType {
 		    											slaveType, masterType);
 		    									for (int j = 0; j < g.get(i); j++) {
 		    										if (base == null) {
-		    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+		    											base = tables.get(tableIndex).generateUnit(filter::test);
 		    											if (base != null) {
                                                             found.putIfAbsent(tableIndex, new ArrayList<>());
                                                             found.get(tableIndex).add(base);
@@ -629,7 +629,7 @@ public class FormationType {
 	    								}
 	    								final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
 	    								for (int j = 0; j < workingCombo.get(i); j++) {
-	    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+	    									MechSummary unit = tables.get(tableIndex).generateUnit(filter::test);
 	    									if (unit != null) {
 	    									    list.putIfAbsent(tableIndex, new ArrayList<>());
 	    										list.get(tableIndex).add(unit);
@@ -638,7 +638,7 @@ public class FormationType {
 	    							}
 	    						}
 	    						List<MechSummary> retVal = list.values().stream()
-	    						        .flatMap(l -> l.stream()).collect(Collectors.toList());
+	    						        .flatMap(Collection::stream).collect(Collectors.toList());
 	    						if (retVal.size() < cUnits) {
 	    							groups.remove(gIndex);
 	    						} else {
@@ -658,7 +658,7 @@ public class FormationType {
     							}
     							final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
     							for (int j = 0; j < combo.get(i); j++) {
-    								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+    								MechSummary unit = tables.get(tableIndex).generateUnit(filter::test);
     								if (unit != null) {
     								    list.putIfAbsent(tableIndex, new ArrayList<>());
     									list.get(tableIndex).add(unit);
@@ -667,7 +667,7 @@ public class FormationType {
 	    					}
 	    				}
                         List<MechSummary> retVal = list.values().stream()
-                                .flatMap(l -> l.stream()).collect(Collectors.toList());
+                                .flatMap(Collection::stream).collect(Collectors.toList());
                         if (retVal.size() < cUnits) {
                             unitTypeGroupings.remove(utIndex);
                         } else {
@@ -675,7 +675,7 @@ public class FormationType {
                         }
 	    			}
                     List<MechSummary> retVal = list.values().stream()
-                            .flatMap(l -> l.stream()).collect(Collectors.toList());
+                            .flatMap(Collection::stream).collect(Collectors.toList());
                     if (retVal.size() < cUnits) {
 						networkGroupings.remove(networkIndex);
 					} else {
@@ -727,7 +727,7 @@ public class FormationType {
             return null;
         }
         List<UnitTable.Parameters> tmpParams = params.stream()
-                .map(p -> p.copy()).collect(Collectors.toList());
+                .map(UnitTable.Parameters::copy).collect(Collectors.toList());
         tmpParams.forEach(p -> p.getWeightClasses().clear());
         List<MechSummary> retVal = new ArrayList<>();
         for (int i = 0; i < tmpParams.size(); i++) {
@@ -887,9 +887,7 @@ public class FormationType {
     				}
     				if (hasRoom) {
     					int[][] newVal = new int[group + 1][];
-    					for (int j = 0; j < group; j++) {
-    						newVal[j] = prev[j];
-    					}
+                        System.arraycopy(prev, 0, newVal, 0, group);
     					newVal[group] = new int[dist.length];
     					System.arraycopy(dist, 0, newVal[group], 0, dist.length);
     					newList.add(newVal);
@@ -1004,11 +1002,10 @@ public class FormationType {
     						break;
     					}
     				}
+
     				if (hasRoom) {
     					int[][] newVal = new int[group + 1][];
-    					for (int j = 0; j < group; j++) {
-    						newVal[j] = prev[j];
-    					}
+                        System.arraycopy(prev, 0, newVal, 0, group);
     					newVal[group] = new int[dist.length];
     					System.arraycopy(dist, 0, newVal[group], 0, dist.length);
     					newList.add(newVal);
@@ -1077,7 +1074,7 @@ public class FormationType {
     		if (c.isPairedWithPrevious()) {
     			continue;
     		}
-			long matches = units.stream().filter(ms -> c.matches(ms)).count();
+			long matches = units.stream().filter(c::matches).count();
 			if (matches < c.getMinimum(units.size())) {
 				if (c.isPairedWithNext() && i + 1 < otherCriteria.size()) {
 					i++;
@@ -1094,13 +1091,13 @@ public class FormationType {
 					.collect(Collectors.toList());
 			if (groupedUnits.size() > 0) {
 				Map<String,List<MechSummary>> groups = groupedUnits.stream()
-						.collect(Collectors.groupingBy(ms -> ms.getChassis()));
+						.collect(Collectors.groupingBy(MechSummary::getChassis));
 				GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
 					for (int i = 0; i < group.size() - 1; i++) {
 						for (int j = i + 1; j < group.size(); j++) {
 							if (!groupingCriteria.matches(group.get(i), group.get(j))) {
 								groups = groupedUnits.stream()
-										.collect(Collectors.groupingBy(ms -> ms.getName()));
+										.collect(Collectors.groupingBy(MechSummary::getName));
 								break GROUP_LOOP;
 							}
 						}
@@ -1127,7 +1124,6 @@ public class FormationType {
      */
     public String qualificationReport(List<MechSummary> units) {
     	List<MechSummary> wrongUnits = new ArrayList<>();
-    	List<MechSummary> ideal = new ArrayList<>();
     	List<MechSummary> weight = new ArrayList<>();
     	List<MechSummary> main = new ArrayList<>();
     	List<List<MechSummary>> other = new ArrayList<>();
@@ -1139,17 +1135,16 @@ public class FormationType {
     		if (!isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType()))) {
     			wrongUnits.add(ms);
     		}
-    		if (!idealRole.equals(UnitRole.UNDETERMINED)
-    				&& idealRole.equals(UnitRoleHandler.getRoleFor(ms))) {
-    			ideal.add(ms);
-    		}
+
     		if (ms.getWeightClass() >= minWeightClass
     				&& ms.getWeightClass() <= maxWeightClass) {
     			weight.add(ms);
     		}
+
     		if (mainCriteria.test(ms)) {
     			main.add(ms);
     		}
+
     		for (int i = 0; i < otherCriteria.size(); i++) {
     			if (otherCriteria.get(i).matches(ms)) {
     				other.get(i).add(ms);
@@ -1157,17 +1152,18 @@ public class FormationType {
     		}
     	}
     	StringBuilder sb = new StringBuilder("<html>");
-    	if (wrongUnits.size() > 0) {
+    	if (!wrongUnits.isEmpty()) {
     		sb.append("<font color='red'>Wrong unit type:</font>\n\t");
-    		sb.append(wrongUnits.stream().map(ms -> ms.getName()).collect(Collectors.joining("\n\t")))
+    		sb.append(wrongUnits.stream().map(MechSummary::getName).collect(Collectors.joining("\n\t")))
     			.append("<br/><br/>\n");
     	}
     	sb.append("Unit Roles:<br/>\n&nbsp;&nbsp;&nbsp;");
     	sb.append(units.stream().map(ms -> ms.getName() + ": " + UnitRoleHandler.getRoleFor(ms))
     		.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
     	if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-    		sb.append("Ideal role: ").append(idealRole.toString()).append("<br/><br/>\n");
+    		sb.append("Ideal role: ").append(idealRole).append("<br/><br/>\n");
     	}
+
     	if (weight.size() < units.size()) {
     		sb.append("<font color='red'>");
     	}
@@ -1179,13 +1175,15 @@ public class FormationType {
     	if (weight.size() < units.size()) {
     		sb.append("</font>");
     	}
-    	if (weight.size() > 0) {
+
+    	if (!weight.isEmpty()) {
     		sb.append("&nbsp;&nbsp;&nbsp;").append(weight.stream().map(ms -> ms.getName() + ": "
     				+ EntityWeightClass.getClassName(ms.getWeightClass()))
     				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
     	} else {
     		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
     	}
+
     	if (mainDescription != null) {
         	if (main.size() < units.size()) {
         		sb.append("<font color='red'>");
@@ -1194,13 +1192,15 @@ public class FormationType {
         	if (main.size() < units.size()) {
         		sb.append("</font>");
         	}
-        	if (main.size() > 0) {
-        		sb.append("&nbsp;&nbsp;&nbsp;").append("\t").append(main.stream().map(ms -> ms.getName())
+
+        	if (!main.isEmpty()) {
+        		sb.append("&nbsp;&nbsp;&nbsp;").append("\t").append(main.stream().map(MechSummary::getName)
         				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
         	} else {
         		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
         	}
     	}
+
     	for (int i = 0; i < otherCriteria.size(); i++) {
     		boolean isShort = false;
     		if (other.get(i).size() < otherCriteria.get(i).getMinimum(units.size())) {
@@ -1217,6 +1217,7 @@ public class FormationType {
         	if (isShort) {
         		sb.append("<font color='red'>");
         	}
+
         	if (otherCriteria.get(i).isPairedWithPrevious()) {
         		sb.append("<b>or</b> ");
         	}
@@ -1226,26 +1227,28 @@ public class FormationType {
         	if (isShort) {
         		sb.append("</font>");
         	}
+
         	if (other.get(i).size() > 0) {
-        		sb.append("&nbsp;&nbsp;&nbsp;").append(other.get(i).stream().map(ms -> ms.getName())
+        		sb.append("&nbsp;&nbsp;&nbsp;").append(other.get(i).stream().map(MechSummary::getName)
         				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
         	} else {
         		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
         	}
     	}
+
     	if (groupingCriteria != null) {
 			List<MechSummary> groupedUnits = units.stream()
 					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
 					.collect(Collectors.toList());
 			if (groupedUnits.size() > 0) {
 				Map<String,List<MechSummary>> groups = groupedUnits.stream()
-						.collect(Collectors.groupingBy(ms -> ms.getChassis()));
+						.collect(Collectors.groupingBy(MechSummary::getChassis));
 				GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
 					for (int i = 0; i < group.size() - 1; i++) {
 						for (int j = i + 1; j < group.size(); j++) {
 							if (!groupingCriteria.matches(group.get(i), group.get(j))) {
 								groups = groupedUnits.stream()
-										.collect(Collectors.groupingBy(ms -> ms.getName()));
+										.collect(Collectors.groupingBy(MechSummary::getName));
 								break GROUP_LOOP;
 							}
 						}
@@ -1356,7 +1359,7 @@ public class FormationType {
         		"Sniper");
         c.setPairedWithPrevious(true);
         ft.otherCriteria.add(c);
-        ft.reportMetrics.put("Armor", ms -> ms.getTotalArmor());
+        ft.reportMetrics.put("Armor", MechSummary::getTotalArmor);
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1369,7 +1372,7 @@ public class FormationType {
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
         ft.mainDescription = "Armor 40+";
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ACWeapon
                             || eq instanceof LBXACWeapon
                             || eq instanceof UACWeapon
@@ -1483,7 +1486,7 @@ public class FormationType {
                 ms -> ms.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY,
                 "Medium, Heavy"));
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ACWeapon
                             || eq instanceof LBXACWeapon
                             || eq instanceof UACWeapon), //UAC includes RAC
@@ -1931,6 +1934,7 @@ public class FormationType {
         public String getDescription() {
             return description;
         }
+
         public boolean matches(MechSummary ms) {
             return criterion.test(ms);
         }
@@ -2046,6 +2050,7 @@ public class FormationType {
             return groupSize;
         }
         
+        @Override
         public boolean matches(MechSummary ms) {
             return criterion == null || criterion.test(ms);
         }

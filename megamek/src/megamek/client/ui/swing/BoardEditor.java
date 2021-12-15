@@ -118,6 +118,11 @@ public class BoardEditor extends JPanel
                 return getTerrainType() == ((TerrainHelper) other).getTerrainType();
             }
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getTerrainType());
+        }
     }
 
     /**

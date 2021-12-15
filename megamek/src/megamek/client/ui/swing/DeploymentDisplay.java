@@ -661,7 +661,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             bayChoices.add(((Bay) t).getBayNumber());
                         }
                     }
-                    if ((bayChoices.size() > 1) && !(other instanceof Infantry)) {
+
+                    if (bayChoices.size() > 1) {
                         String[] retVal = new String[bayChoices.size()];
                         int i = 0;
                         for (Integer bn : bayChoices) {

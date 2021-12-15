@@ -479,9 +479,7 @@ public class Precognition implements Runnable {
                     getOwner().getLogger().debug("Received entity change event for "
                                     + changeEvent.getEntity().getDisplayName()
                                     + " (ID " + entity.getId() + ")");
-                    Integer entityId = changeEvent.getEntity().getId();
-                    dirtifyUnit(entityId);
-
+                    dirtifyUnit(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
                     getOwner().getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());

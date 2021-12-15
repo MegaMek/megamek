@@ -1,31 +1,19 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.options;
 
-
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.GunEmplacement;
-import megamek.common.Jumpship;
-import megamek.common.MiscType;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
@@ -35,9 +23,7 @@ import megamek.common.weapons.lasers.EnergyWeapon;
  * @author Taharqa (Jay Lawson)
  */
 public class WeaponQuirks extends AbstractOptions {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks"; //$NON-NLS-1$
 
@@ -159,8 +145,6 @@ public class WeaponQuirks extends AbstractOptions {
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)) {
             if (en instanceof Protomech
                 || en instanceof Aero
-                || en instanceof Jumpship
-                || en instanceof Dropship
                 || en instanceof GunEmplacement)  {
 
                 return false;
@@ -168,52 +152,36 @@ public class WeaponQuirks extends AbstractOptions {
         }
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
-            if (en instanceof Protomech
-                || en instanceof Jumpship) {
-
+            if ((en instanceof Protomech) || (en instanceof Jumpship)) {
                 return false;
             }
         }
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
-            if (en instanceof Aero
-                || en instanceof BattleArmor
-                || en instanceof Jumpship
-                || en instanceof Dropship
-                || en instanceof Tank
-                || en instanceof GunEmplacement) {
-
+            if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)) {
                 return false;
             }
         }
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
-            if (en instanceof Aero
-                || en instanceof Jumpship
-                || en instanceof Dropship) {
-
+            if (en instanceof Aero) {
                 return false;
             }
         }
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
-            if (en instanceof Aero
-                || en instanceof Jumpship
-                || en instanceof Dropship) {
-
+            if (en instanceof Aero) {
                 return false;
             }
         }
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             if (en instanceof Jumpship) {
-
                 return false;
             }
         }
 
         return true;
-
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
@@ -224,9 +192,7 @@ public class WeaponQuirks extends AbstractOptions {
         }
 
         protected WeaponQuirksInfo() {
-            super("WeaponQuirksInfo"); //$NON-NLS-1$
+            super("WeaponQuirksInfo");
         }
     }
-
-
 }

@@ -2015,8 +2015,7 @@ public class Server implements Runnable {
 
         // Unless overridden by the "protos_move_multi" option, all ProtoMechs
         // in a unit declare fire, and they don't mix with infantry.
-        if (protosMoved && !protosMoveMulti && !isMultiTurn && (entityUsed != null)) {
-
+        if (protosMoved && !protosMoveMulti && !isMultiTurn) {
             // What's the unit number and ID of the entity used?
             final short movingUnit = entityUsed.getUnitNumber();
             final int movingId = entityUsed.getId();

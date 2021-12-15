@@ -1056,21 +1056,17 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_CLAN_ADVANCED;
                     }
                 } else if (isClan) {
-                    if (year <= 2949) {
+                    if (year <= 3030) {
                         return TechConstants.T_CLAN_UNOFFICIAL;
-                    } else if (year <= 3079) {
-                        return TechConstants.T_CLAN_EXPERIMENTAL;
-                    } else {
+                    } else if (year <= 3120) {
                         return TechConstants.T_CLAN_ADVANCED;
-                    }
+                    } 
                 } else if (isLarge) {
-                    if (year <= 3058) {
+                    if (year <= 3055) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                    } else if (year <= 3130) {
-                        return TechConstants.T_IS_EXPERIMENTAL;
-                    } else {
+                    } else if (year <= 3120) {
                         return TechConstants.T_IS_ADVANCED;
-                    }
+                    } 
                 }
             case FISSION:
                 if (isClan) {

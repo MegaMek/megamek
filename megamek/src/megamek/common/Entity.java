@@ -1240,12 +1240,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             .setTechRating(RATING_A)
             .setAvailability(RATING_E, RATING_D, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS    
     protected static final TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL)
-            .setISAdvancement(3050, 3082, 3115)
-            .setClanAdvancement(2820, 3082, 3115).setApproximate(true, true, true)
+            .setISAdvancement(DATE_NONE, 3050, 3082, DATE_NONE, DATE_NONE)
+            .setClanAdvancement(DATE_NONE, 2820, 3082, DATE_NONE, DATE_NONE)
+            .setApproximate(false, true, true, false, false)
             .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(3061, 3082).setClanAdvancement(3061, 3077)
             .setPrototypeFactions(F_CSF,F_FW).setProductionFactions(F_CJF,F_FW)

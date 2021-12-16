@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -33,6 +32,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +52,7 @@ public class MapMenu extends JPopupMenu {
     private Coords coords;
     Game game;
     Component currentPanel;
-    private IBoard board;
+    private Board board;
     Client client;
     ClientGUI gui;
     Entity selectedEntity;
@@ -207,7 +207,7 @@ public class MapMenu extends JPopupMenu {
                         ((MovementDisplay) currentPanel).actionPerformed(e);
                     }
                 } catch (Exception ex) {
-                    MegaMek.getLogger().error(ex);
+                    LogManager.getLogger().error(ex);
                 }
             });
             if (game.getPhase() == GamePhase.MOVEMENT) {
@@ -451,13 +451,12 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("View");
         Game game = client.getGame();
                 
-        IPlayer localPlayer = client.getLocalPlayer();
+        Player localPlayer = client.getLocalPlayer();
         
         for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
-            if (!entity.isSensorReturn(localPlayer)
-                    && entity.hasSeenEntity(localPlayer)) {
+            if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)) {
                 menu.add(viewJMenuItem(entity));
             }
         }
@@ -1116,7 +1115,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu createConvertMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
         
-        if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
+        if (myEntity instanceof Mech && ((Mech) myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
@@ -1134,24 +1133,21 @@ public class MapMenu extends JPopupMenu {
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
                     currentMode == LandAirMech.CONV_MODE_MECH);
             item.setEnabled(currentMode == LandAirMech.CONV_MODE_MECH
-                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
-                            LandAirMech.CONV_MODE_MECH));
+                    || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_MECH));
             menu.add(item);
-            if (((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
+            if (((LandAirMech) myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
                 item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                         currentMode == LandAirMech.CONV_MODE_AIRMECH);
                 item.setEnabled(currentMode == LandAirMech.CONV_MODE_AIRMECH
-                        || ((LandAirMech)myEntity).canConvertTo(currentMode,
-                                LandAirMech.CONV_MODE_AIRMECH));
+                        || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_AIRMECH));
                 menu.add(item);
             }
             item = createConvertMenuItem("MovementDisplay.moveModeFighter",
                     MovementDisplay.MoveCommand.MOVE_MODE_AIR,
                     currentMode == LandAirMech.CONV_MODE_FIGHTER);
             item.setEnabled(currentMode == LandAirMech.CONV_MODE_FIGHTER
-                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
-                            LandAirMech.CONV_MODE_FIGHTER));
+                    || ((LandAirMech) myEntity).canConvertTo(currentMode, LandAirMech.CONV_MODE_FIGHTER));
             menu.add(item);
         }
         return menu;
@@ -1195,7 +1191,7 @@ public class MapMenu extends JPopupMenu {
         final boolean canStartFires = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE); //$NON-NLS-1$
         
-        IPlayer localPlayer = client.getLocalPlayer();
+        Player localPlayer = client.getLocalPlayer();
         
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
@@ -1208,7 +1204,7 @@ public class MapMenu extends JPopupMenu {
             }
         }
 
-        IHex h = board.getHex(coords);
+        Hex h = board.getHex(coords);
         // If the hex is null, we're done here
         if (h == null) {
             return menu;
@@ -1290,7 +1286,7 @@ public class MapMenu extends JPopupMenu {
         // Check for Mine Clearance
         if (isFiringDisplay || isTargetingDisplay) {
             if (client.getGame().containsMinefield(coords)) {
-                menu.add(TargetMenuItem(new MinefieldTarget(coords, board)));
+                menu.add(TargetMenuItem(new MinefieldTarget(coords)));
             }
         }
 
@@ -1346,7 +1342,7 @@ public class MapMenu extends JPopupMenu {
         }
 
         if (type.equals("M")) {
-            return new MinefieldTarget(targetCoords, board);
+            return new MinefieldTarget(targetCoords);
         }
 
         return new HexTarget(targetCoords, Integer.parseInt(target.nextToken()));
@@ -1544,11 +1540,10 @@ public class MapMenu extends JPopupMenu {
     }
 
     private void selectTarget() {
-        Vector<Entity> list = new Vector<Entity>();
+        Vector<Entity> list = new Vector<>();
 
-        IPlayer localPlayer = client.getLocalPlayer();
-        boolean friendlyFire = (game.getOptions()
-                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
+        Player localPlayer = client.getLocalPlayer();
+        boolean friendlyFire = (game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
 
         for (Entity en : game.getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible

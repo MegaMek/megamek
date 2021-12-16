@@ -2,32 +2,25 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * Author: Reinhard Vicinus
- */
-
 package megamek.common;
 
 import java.io.Serializable;
 
 /**
- * This class represents an engine, such as those driving mechs.
+ * This class represents an engine, such as those driving 'Meks.
+ * @author Reinhard Vicinus
  */
 public class Engine implements Serializable, ITechnology {
-    /**
-     *
-     */
     private static final long serialVersionUID = -246032529363109609L;
 
     public static final double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
@@ -887,96 +880,95 @@ public class Engine implements Serializable, ITechnology {
             .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
 
     public TechAdvancement getTechAdvancement() {
-        switch(engineType) {
-        case COMBUSTION_ENGINE:
-            if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                return SUPPORT_ICE_TA;              
-            } else {
-                if (hasFlag(LARGE_ENGINE)) {
-                    return LARGE_ICE_TA;
+        switch (engineType) {
+            case COMBUSTION_ENGINE:
+                if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                    return SUPPORT_ICE_TA;              
                 } else {
-                    return STANDARD_ICE_TA;
+                    if (hasFlag(LARGE_ENGINE)) {
+                        return LARGE_ICE_TA;
+                    } else {
+                        return STANDARD_ICE_TA;
+                    }
                 }
-            }
-        case NORMAL_ENGINE:
-            if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                return SUPPORT_FUSION_TA;
-            } else {
-                if (hasFlag(LARGE_ENGINE)) {
-                    return LARGE_FUSION_TA;
+            case NORMAL_ENGINE:
+                if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                    return SUPPORT_FUSION_TA;
                 } else {
-                    return STANDARD_FUSION_TA;
+                    if (hasFlag(LARGE_ENGINE)) {
+                        return LARGE_FUSION_TA;
+                    } else {
+                        return STANDARD_FUSION_TA;
+                    }
                 }
-            }
-        case XL_ENGINE:
-            if (hasFlag(CLAN_ENGINE)) {
-                if (hasFlag(LARGE_ENGINE)) {
-                    return LARGE_CLAN_XL_TA;
+            case XL_ENGINE:
+                if (hasFlag(CLAN_ENGINE)) {
+                    if (hasFlag(LARGE_ENGINE)) {
+                        return LARGE_CLAN_XL_TA;
+                    } else {
+                        return CLAN_XL_TA;
+                    }
                 } else {
-                    return CLAN_XL_TA;
+                    if (hasFlag(LARGE_ENGINE)) {
+                        return LARGE_IS_XL_TA;
+                    } else {
+                        return IS_XL_TA;
+                    }
                 }
-            } else {
-                if (hasFlag(LARGE_ENGINE)) {
-                    return LARGE_IS_XL_TA;
+            case XXL_ENGINE:
+                if (hasFlag(CLAN_ENGINE)) {
+                    if (hasFlag(LARGE_ENGINE)) {
+                        return LARGE_CLAN_XXL_TA;
+                    } else {
+                        return CLAN_XXL_TA;
+                    }
                 } else {
-                    return IS_XL_TA;
+                    if (hasFlag(LARGE_ENGINE)) {
+                        return LARGE_IS_XXL_TA;
+                    } else {
+                        return IS_XXL_TA;
+                    }
                 }
-            }
-        case XXL_ENGINE:
-            if (hasFlag(CLAN_ENGINE)) {
-                if (hasFlag(LARGE_ENGINE)) {
-                    return LARGE_CLAN_XXL_TA;
+            case FUEL_CELL:
+                if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                    return SUPPORT_FUEL_CELL_TA;
                 } else {
-                    return CLAN_XXL_TA;
+                    return FUEL_CELL_TA;
                 }
-            } else {
+            case LIGHT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
-                    return LARGE_IS_XXL_TA;
+                    return LARGE_LIGHT_FUSION_TA;
                 } else {
-                    return IS_XXL_TA;
+                    return LIGHT_FUSION_TA;
                 }
-            }
-        case FUEL_CELL:
-            if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                return SUPPORT_FUEL_CELL_TA;
-            } else {
-                return FUEL_CELL_TA;
-            }
-        case LIGHT_ENGINE:
-            if (hasFlag(LARGE_ENGINE)) {
-                return LARGE_LIGHT_FUSION_TA;
-            } else {
-                return LIGHT_FUSION_TA;
-            }
-        case COMPACT_ENGINE:
-            return COMPACT_FUSION_TA;
-        case FISSION:
-            if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                return SUPPORT_FISSION_TA;
-            } else {                
-                return FISSION_TA;
-            }
-        case MAGLEV:
-            return SUPPORT_MAGLEV_TA;
-        case STEAM:
-            return SUPPORT_STEAM_TA;
-        case BATTERY:
-            return SUPPORT_BATTERY_TA;
-        case SOLAR:
-            return SUPPORT_SOLAR_TA;
-        case NONE:
-            return SUPPORT_NONE_TA;
-        case EXTERNAL:
-            return SUPPORT_EXTERNAL_TA;
-        default:
-            return new TechAdvancement();
+            case COMPACT_ENGINE:
+                return COMPACT_FUSION_TA;
+            case FISSION:
+                if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                    return SUPPORT_FISSION_TA;
+                } else {                
+                    return FISSION_TA;
+                }
+            case MAGLEV:
+                return SUPPORT_MAGLEV_TA;
+            case STEAM:
+                return SUPPORT_STEAM_TA;
+            case BATTERY:
+                return SUPPORT_BATTERY_TA;
+            case SOLAR:
+                return SUPPORT_SOLAR_TA;
+            case NONE:
+                return SUPPORT_NONE_TA;
+            case EXTERNAL:
+                return SUPPORT_EXTERNAL_TA;
+            default:
+                return new TechAdvancement();
         }
     }
+
     /**
-     * Return the tech type (tech level + tech base) for the current engine.
-     *
      * @param year The game year
-     * @return     The tech constant
+     * @return the tech type (tech level + tech base) for the current engine.
      */
     public int getTechType(int year) {
         boolean isLarge = hasFlag(LARGE_ENGINE);
@@ -994,14 +986,11 @@ public class Engine implements Serializable, ITechnology {
                     } else {
                         return TechConstants.T_CLAN_TW;
                     }
-                }
-                if (isClan) {
+                } else if (isClan) {
                     return TechConstants.T_CLAN_TW;
-                }
-                if (isSV) {
+                } else if (isSV) {
                     return TechConstants.T_ALLOWED_ALL;
-                }
-                if (year <= 2285) {
+                } else if (year <= 2285) {
                     return TechConstants.T_IS_UNOFFICIAL;
                 } else {
                     return TechConstants.T_INTRO_BOXSET;
@@ -1015,8 +1004,7 @@ public class Engine implements Serializable, ITechnology {
                     } else {
                         return TechConstants.T_CLAN_ADVANCED;
                     }
-                }
-                if (isClan) {
+                } else if (isClan) {
                     if (year <= 2819) {
                         return TechConstants.T_CLAN_UNOFFICIAL;
                     } else if (year <= 2827) {
@@ -1026,31 +1014,30 @@ public class Engine implements Serializable, ITechnology {
                     } else {
                         return TechConstants.T_CLAN_TW;
                     }
-                }
-                if (isLarge) {
+                } else if (isLarge) {
                     if (year <= 2630) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                        } else if (year <= 2822) {
+                    } else if (year <= 2822) {
                         return TechConstants.T_IS_ADVANCED;
-                        } else if (year <= 3053) {
+                    } else if (year <= 3053) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                        } else if (year <= 3080) {
+                    } else if (year <= 3080) {
                         return TechConstants.T_IS_EXPERIMENTAL;
-                        } else {
+                    } else {
                         return TechConstants.T_IS_ADVANCED;
-                        }
+                    }
                 } else {
                     if (year <= 2556) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                        } else if (year <= 2579) {
+                    } else if (year <= 2579) {
                         return TechConstants.T_IS_EXPERIMENTAL;
-                           } else if (year <= 2865) {
+                    } else if (year <= 2865) {
                         return TechConstants.T_IS_ADVANCED;
-                           } else if (year <= 3035) {
+                    } else if (year <= 3035) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                        } else if (year <=3045){
+                    } else if (year <= 3045) {
                         return TechConstants.T_IS_TW_NON_BOX;
-                        }
+                    }
                 }
             case XXL_ENGINE:
                 if ((isClan) && (isLarge)) {
@@ -1061,8 +1048,7 @@ public class Engine implements Serializable, ITechnology {
                     } else {
                         return TechConstants.T_CLAN_ADVANCED;
                     }
-                }
-                if (isClan) {
+                } else if (isClan) {
                     if (year <= 2949) {
                         return TechConstants.T_CLAN_UNOFFICIAL;
                     } else if (year <= 3079) {
@@ -1070,8 +1056,7 @@ public class Engine implements Serializable, ITechnology {
                     } else {
                         return TechConstants.T_CLAN_ADVANCED;
                     }
-                }
-                if (isLarge) {
+                } else if (isLarge) {
                     if (year <= 3058) {
                         return TechConstants.T_IS_UNOFFICIAL;
                     } else if (year <= 3130) {
@@ -1083,11 +1068,9 @@ public class Engine implements Serializable, ITechnology {
             case FISSION:
                 if (isClan) {
                     return TechConstants.T_CLAN_UNOFFICIAL;
-                }
-                if (isSV) {
+                } else if (isSV) {
                     return TechConstants.T_ALLOWED_ALL;
-                }
-                if (isLarge) {
+                } else if (isLarge) {
                     return TechConstants.T_IS_UNOFFICIAL;
                 } else {
                     if (year <= 2470) {
@@ -1101,13 +1084,8 @@ public class Engine implements Serializable, ITechnology {
             case FUEL_CELL:
                 if (isSV) {
                     return TechConstants.T_ALLOWED_ALL;
-                }
-                if (isClan) {
-                    if (year <= 3078) {
-                        return TechConstants.T_CLAN_ADVANCED;
-                    } else {
-                        return TechConstants.T_CLAN_TW;
-                    }
+                } else if (isClan) {
+                    return (year > 3078) ? TechConstants.T_CLAN_TW : TechConstants.T_CLAN_ADVANCED;
                 } else {
                     if (year <= 2285) {
                         return TechConstants.T_IS_UNOFFICIAL;
@@ -1119,12 +1097,10 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_IS_TW_NON_BOX;
                     }
                 }
-
             case LIGHT_ENGINE:
                 if (isClan) {
                     return TechConstants.T_CLAN_UNOFFICIAL;
-                }
-                if (isLarge) {
+                } else if (isLarge) {
                     if (year < 3064) {
                         return TechConstants.T_IS_UNOFFICIAL;
                     } else if (year < 3065) {
@@ -1143,20 +1119,12 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_IS_TW_NON_BOX;
                     }
                 }
-
             case COMBUSTION_ENGINE:
                 if (isSV) {
                     return TechConstants.T_ALLOWED_ALL;
-                }
-                if (isClan) {
-                    if (year <= 2807) {
-                        return TechConstants.T_CLAN_UNOFFICIAL;
-                    } else {
-                        return TechConstants.T_CLAN_TW;
-                    }
-
-                }
-                if (isLarge) {
+                } else if (isClan) {
+                    return (year > 2807) ? TechConstants.T_CLAN_TW : TechConstants.T_CLAN_UNOFFICIAL;
+                } else if (isLarge) {
                     if (year <= 2630) {
                         return TechConstants.T_IS_UNOFFICIAL;
                     } else if (year <= 3080) {
@@ -1188,10 +1156,10 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_IS_TW_NON_BOX;
                     }
                 }
+            default:
+                return TechConstants.T_TECH_UNKNOWN;
         }
-        return TechConstants.T_TECH_UNKNOWN;
     }
-    
 
     public int getEngineType() {
         return engineType;

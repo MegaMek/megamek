@@ -245,7 +245,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             comWindFrom.addItem(PlanetaryConditions.getWindDisplayableName(i));
             comWindTo.addItem(PlanetaryConditions.getWindDisplayableName(i));
         }
-        for(int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
+        for (int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
             comWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
         }
         for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
@@ -476,13 +476,13 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         if (specificWind) {
             chkShiftWindStr.setSelected(false);
             switch (weather) {
-            case WE_LIGHTNING_STORM:
-            case WE_SNOW_FLURRIES:
-            case WE_ICE_STORM:
-                comWind.setSelectedIndex(WI_MOD_GALE);
-                break;
-            case WE_GUSTING_RAIN:
-                comWind.setSelectedIndex(WI_STRONG_GALE);
+                case WE_LIGHTNING_STORM:
+                case WE_SNOW_FLURRIES:
+                case WE_ICE_STORM:
+                    comWind.setSelectedIndex(WI_MOD_GALE);
+                    break;
+                case WE_GUSTING_RAIN:
+                    comWind.setSelectedIndex(WI_STRONG_GALE);
             }
         }
         addListeners();
@@ -508,19 +508,19 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         int weather = comWeather.getSelectedIndex();
         int maxTemp = 200;
         switch (weather) {
-        case WE_LIGHT_SNOW:
-        case WE_SLEET:
-        case WE_LIGHT_HAIL:
-        case WE_HEAVY_HAIL:
-            maxTemp = -40;
-            break;
-        case WE_HEAVY_SNOW:
-        case WE_MOD_SNOW:
-        case WE_SNOW_FLURRIES:
-            maxTemp = -50;
-            break;
-        case WE_ICE_STORM:
-            maxTemp = -60;
+            case WE_LIGHT_SNOW:
+            case WE_SLEET:
+            case WE_LIGHT_HAIL:
+            case WE_HEAVY_HAIL:
+                maxTemp = -40;
+                break;
+            case WE_HEAVY_SNOW:
+            case WE_MOD_SNOW:
+            case WE_SNOW_FLURRIES:
+                maxTemp = -50;
+                break;
+            case WE_ICE_STORM:
+                maxTemp = -60;
         }
         setMaximumTemperature(maxTemp);
     }

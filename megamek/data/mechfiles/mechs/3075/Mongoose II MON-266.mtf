@@ -3,32 +3,32 @@ Mongoose II
 MON-266
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3073
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3073
+source:TRO 3075
+rules level:2
 
-Mass:40
-Engine:320 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:40
+engine:320 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:8
+jump mp:0
 
-Armor:Standard
-LA Armor:10
-RA Armor:10
-LT Armor:12
-RT Armor:12
-CT Armor:14
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:12
+RT armor:12
+CT armor:14
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:1
 ER Large Laser, Center Torso
@@ -38,9 +38,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -52,8 +52,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -69,8 +69,8 @@ BeagleActiveProbe
 BeagleActiveProbe
 ISMASC
 ISMASC
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -83,8 +83,8 @@ ISC3iUnit
 ISC3iUnit
 ISGuardianECMSuite
 ISGuardianECMSuite
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -107,7 +107,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -122,8 +122,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -136,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -145,4 +145,19 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:Luthien Armor Works was working on an upgrade of the Mongoose for ComStar to be a faster and tougher scout 'Mech, when the chaos on Luthien during the early years of the Jihad forced them to look elsewhere. 
+
+capabilities:The result is the Mongoose II, an effective hunter-killer that is able to find hidden enemies and provide long range fire support. Equipped with an impressive suite of electronics, the 'Mech carries a Beagle Active Probe, Guardian ECM Suite, C3i Computer, and MASC that enables it move up to 172 km/h in bursts. A respectable seven tons of armor protects the Mongoose II.
+
+deployment:The only ranged weapon on the Mongoose II is its Diverse Optics Sunbeam ER Large Laser. The ammo-independent weapon is just as potent at long range as at pointblank. With its quick speed, the Mongoose II can also close in to use its fists for quick hits, making this BattleMech an effective brawler.
+
+history:ComStar financed a refit of a lost Rim Worlds Republic factory on Kwangjong-ni. New versions of the Zeus and Banshee were walking off the line for battlefield testing when Word of Blake conquered Hesperus II. Anxious to stay solvent, ComStar C-bills paid for the upgrade to the Kwangjong-ni facility. In exchange, Defiance sold them sixty-six percent of its production for its first two years.
+
+manufacturer:Arc-Royal MechWorks, Defiance Manufacturing Annex
+primaryfactory:Arc-Royal,Kwangjong-ni
+systemmanufacturer:CHASSIS:Alshain Type 69-40S
+systemmanufacturer:ENGINE:Pitban 320 XL
+systemmanufacturer:ARMOR:Starshield
+systemmanufacturer:COMMUNICATIONS:Nashan Comm-i U-284
+systemmanufacturer:TARGETING:Nashan Trac V-102 with Active Probe
 

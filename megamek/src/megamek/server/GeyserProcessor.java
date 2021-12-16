@@ -50,7 +50,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
             if (g.turnsToGo > 0) {
                 g.turnsToGo--;
             } else {
-                IHex hex = server.getGame().getBoard().getHex(g.position);
+                Hex hex = server.getGame().getBoard().getHex(g.position);
                 if (hex.terrainLevel(Terrains.GEYSER) == 2) {
                     r = new Report(5275, Report.PUBLIC);
                     r.add(g.position.getBoardNum());
@@ -86,7 +86,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
     }
 
     private void findGeysers() {
-        IBoard b = server.getGame().getBoard();
+        Board b = server.getGame().getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
         for (int x = 0; x < width; x++) {

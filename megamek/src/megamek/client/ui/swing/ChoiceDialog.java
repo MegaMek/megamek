@@ -167,7 +167,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 JPanel panAllButtons = new JPanel(grid);
                 panAllButtons.add(butSelectAll);
                 butSelectAll.addActionListener(this);
-                if(maxChoices != -1 && maxChoices < choices.length) {
+                if (maxChoices != -1 && maxChoices < choices.length) {
                     butSelectAll.setEnabled(false);
                 }
                 panAllButtons.add(butClearAll);
@@ -236,12 +236,12 @@ public class ChoiceDialog extends JDialog implements ActionListener {
     }
 
     public void checkDisableChoices() {
-        if(maxChoices == -1) {
+        if (maxChoices == -1) {
             return;
         }
-        if(countChoices() >= maxChoices) {
+        if (countChoices() >= maxChoices) {
             for (int loop = 0; loop < checkboxes.length; loop++) {
-                if(!checkboxes[loop].isSelected()) {
+                if (!checkboxes[loop].isSelected()) {
                     checkboxes[loop].setEnabled(false);
                 }              
             }
@@ -387,7 +387,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
     
     public int countChoices() {
         int index = 0;
-        if(checkboxes != null) {
+        if (checkboxes != null) {
             for (int loop = 0; loop < checkboxes.length; loop++) {
                 if (checkboxes[loop].isSelected()) {
                     index++;

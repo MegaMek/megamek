@@ -319,7 +319,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.BACKWARDS));
-            } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
+            } else if (mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.FORWARDS));

@@ -53,8 +53,8 @@ public class ManeuverType {
                                      Game game, MovePath mp) {
 
         // We can only perform one maneuver in a turn (important for side-slip)
-        for (final MoveStep step : mp.getStepVector()){
-            if (step.getType() == MoveStepType.MANEUVER){
+        for (final MoveStep step : mp.getStepVector()) {
+            if (step.getType() == MoveStepType.MANEUVER) {
                 return false;
             }
         }
@@ -65,69 +65,49 @@ public class ManeuverType {
             return false;
         }
 
-        switch(type) {
-        case (MAN_NONE):
-            return true;
-        case (MAN_LOOP):
-            if(velocity >= 4) {
+        switch (type) {
+            case (MAN_NONE):
                 return true;
-            } else {
-                return false;
-            }
-        case (MAN_IMMELMAN):
-            if((velocity >= 3) && (altitude < 9)) {
+            case (MAN_LOOP):
+                return velocity >= 4;
+            case (MAN_IMMELMAN):
+                return (velocity >= 3) && (altitude < 9);
+            case (MAN_SPLIT_S):
+                return (altitude + 2) > ceiling;
+            case (MAN_HAMMERHEAD):
                 return true;
-            } else {
-                return false;
-            }
-        case (MAN_SPLIT_S):
-            if((altitude + 2) > ceiling) {
+            case (MAN_HALF_ROLL):
                 return true;
-            } else {
-                return false;
-            }
-        case (MAN_HAMMERHEAD):
-            return true;
-        case (MAN_HALF_ROLL):
-            return true;
-        case (MAN_BARREL_ROLL):
-            if(velocity >= 2) {
-                return true;
-            } else {
-                return false;
-            }
-        case (MAN_SIDE_SLIP_LEFT):
-        case (MAN_SIDE_SLIP_RIGHT):
-            if(velocity > 0) {
-                // If we're on a ground map, we need to make sure we can move
-                //  all 16 hexes
-                if (game.getBoard().getType() == Board.T_GROUND){
-                    MovePath tmpMp = mp.clone();                    
-                    for (int i = 0; i < 8; i++){
-                        if (type == MAN_SIDE_SLIP_LEFT){
-                            tmpMp.addStep(MoveStepType.LATERAL_LEFT,true,true);
-                        } else {
-                            tmpMp.addStep(MoveStepType.LATERAL_RIGHT,true,true);
+            case (MAN_BARREL_ROLL):
+                return velocity >= 2;
+            case (MAN_SIDE_SLIP_LEFT):
+            case (MAN_SIDE_SLIP_RIGHT):
+                if (velocity > 0) {
+                    // If we're on a ground map, we need to make sure we can move
+                    //  all 16 hexes
+                    if (game.getBoard().getType() == Board.T_GROUND) {
+                        MovePath tmpMp = mp.clone();                    
+                        for (int i = 0; i < 8; i++) {
+                            if (type == MAN_SIDE_SLIP_LEFT) {
+                                tmpMp.addStep(MoveStepType.LATERAL_LEFT,true,true);
+                            } else {
+                                tmpMp.addStep(MoveStepType.LATERAL_RIGHT,true,true);
+                            }
                         }
+                        for (int i = 0; i < 8; i++) {
+                            tmpMp.addStep(MoveStepType.FORWARDS,true,true);
+                        }                    
+                        return tmpMp.getLastStep().isLegal(tmpMp);
+                    } else {
+                        return true;
                     }
-                    for (int i = 0; i < 8; i++){
-                        tmpMp.addStep(MoveStepType.FORWARDS,true,true);
-                    }                    
-                    return tmpMp.getLastStep().isLegal(tmpMp);
-                }else{
-                    return true;
+                } else {
+                    return false;
                 }
-            } else {
+            case (MAN_VIFF):
+                return isVTOL;
+            default:
                 return false;
-            }
-        case (MAN_VIFF):
-            if(isVTOL) {
-                return true;
-            } else {
-                return false;
-            }
-        default:
-            return false;
         }
     }
 
@@ -135,26 +115,26 @@ public class ManeuverType {
      * thrust cost of maneuver
      */
     public static int getCost(int type, int velocity) {
-        switch(type) {
-        case (MAN_LOOP):
-            return 4;
-        case (MAN_IMMELMAN):
-            return 4;
-        case (MAN_SPLIT_S):
-            return 2;
-        case (MAN_HAMMERHEAD):
-            return velocity;
-        case (MAN_HALF_ROLL):
-            return 1;
-        case (MAN_BARREL_ROLL):
-            return 1;
-        case (MAN_SIDE_SLIP_LEFT):
-        case (MAN_SIDE_SLIP_RIGHT):
-            return 1;
-        case (MAN_VIFF):
-            return velocity + 2;
-        default:
-            return 0;
+        switch (type) {
+            case (MAN_LOOP):
+                return 4;
+            case (MAN_IMMELMAN):
+                return 4;
+            case (MAN_SPLIT_S):
+                return 2;
+            case (MAN_HAMMERHEAD):
+                return velocity;
+            case (MAN_HALF_ROLL):
+                return 1;
+            case (MAN_BARREL_ROLL):
+                return 1;
+            case (MAN_SIDE_SLIP_LEFT):
+            case (MAN_SIDE_SLIP_RIGHT):
+                return 1;
+            case (MAN_VIFF):
+                return velocity + 2;
+            default:
+                return 0;
         }
     }
 
@@ -169,30 +149,30 @@ public class ManeuverType {
      * @return The control roll modifier
      */
     public static int getMod(int type, boolean isVSTOLCF) {
-        switch(type) {
-        case (MAN_LOOP):
-            return 1;
-        case (MAN_IMMELMAN):
-            return 1;
-        case (MAN_SPLIT_S):
-            return 2;
-        case (MAN_HAMMERHEAD):
-            return 3;
-        case (MAN_HALF_ROLL):
-            return -1;
-        case (MAN_BARREL_ROLL):
-            return 0;
-        case (MAN_SIDE_SLIP_LEFT):
-        case (MAN_SIDE_SLIP_RIGHT):
-            if(isVSTOLCF) {
+        switch (type) {
+            case (MAN_LOOP):
+                return 1;
+            case (MAN_IMMELMAN):
+                return 1;
+            case (MAN_SPLIT_S):
+                return 2;
+            case (MAN_HAMMERHEAD):
+                return 3;
+            case (MAN_HALF_ROLL):
                 return -1;
-            } else {
+            case (MAN_BARREL_ROLL):
                 return 0;
-            }
-        case (MAN_VIFF):
-            return 2;
-        default:
-            return 0;
+            case (MAN_SIDE_SLIP_LEFT):
+            case (MAN_SIDE_SLIP_RIGHT):
+                if (isVSTOLCF) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            case (MAN_VIFF):
+                return 2;
+            default:
+                return 0;
         }
     }
 

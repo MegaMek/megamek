@@ -67,7 +67,7 @@ public class MPodHandler extends LBXHandler {
             hitMod -= 4;
         }
         
-        if(bLowProfileGlancing) {
+        if (bLowProfileGlancing) {
             hitMod -= 4;
         }
         

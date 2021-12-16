@@ -315,7 +315,7 @@ public interface IAero {
 
         // if the entity has already moved, its movement got interrupted (probably by a hidden unit, not much else can interrupt an aero unit)
         // in which case, the movement is complete. We just need to allow the user to hit 'done'.
-        if(((Entity) this).delta_distance > 0) {
+        if (((Entity) this).delta_distance > 0) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: aero has already moved");
         // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere,
         // hovering, landing, or going off board
@@ -356,7 +356,7 @@ public interface IAero {
         // Supposed to be -1 for lifting off from an "airfield or landing pad."
         // We will just treat this as having paved terrain
         Coords pos = ((Entity) this).getPosition();
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
         if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
@@ -371,7 +371,7 @@ public interface IAero {
         boolean allAdjacentHigher = true;
         Set<Coords> positions = new HashSet<Coords>(((Entity) this).getSecondaryPositions().values());
         positions.add(pos);
-        IHex adjHex;
+        Hex adjHex;
         for (Coords currPos : positions) {
             hex = ((Entity) this).getGame().getBoard().getHex(currPos);
             for (int dir = 0; dir < 6; dir++) {
@@ -509,7 +509,7 @@ public interface IAero {
         }
 
         for (Coords pos : landingPositions) {
-            IHex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+            Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
                 rough = true;
             } else if (hex.containsTerrain(Terrains.WOODS, 2)) {
@@ -624,7 +624,7 @@ public interface IAero {
 
     default String hasRoomForHorizontalTakeOff() {
         // walk along the hexes in the facing of the unit
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
         int elev = hex.getLevel();
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getTakeOffLength() + " hexes required)";
@@ -671,7 +671,7 @@ public interface IAero {
 
     default String hasRoomForHorizontalLanding() {
         // walk along the hexes in the facing of the unit
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
         int elev = hex.getLevel();
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
@@ -716,7 +716,7 @@ public interface IAero {
 
     default String hasRoomForVerticalLanding() {
         Coords pos = ((Entity) this).getPosition();
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
         if (((Entity) this).getGame().getBoard().getBuildingAt(pos) != null) {
             return "Buildings in the way";
         }

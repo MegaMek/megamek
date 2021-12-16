@@ -1,59 +1,37 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 24, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author MKerensky
+ * @since Sep 24, 2004
  */
 public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
     boolean detRangeShort = (weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_BEARING_SHORT)
@@ -110,7 +88,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
+                LogManager.getLogger().debug("Handler can't find any ammo! Oh no!");
             }
         }    
     }
@@ -274,7 +252,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
         //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
         //when Advanced Point Defense is on, but they work correctly.
-        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+        if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
     
             if (bDirect) {
@@ -330,10 +308,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 Mounted m = ae.getEquipment(wId);
                 if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                     WeaponType bayWType = ((WeaponType) m.getType());
-                    if(bayWType instanceof Weapon) {
+                    if (bayWType instanceof Weapon) {
                         replaceReport = vPhaseReport.size();
                         WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                        AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                        AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                         bayWHandler.setAnnouncedEntityFiring(false);
                         // This should always be true. Maybe there's a better way to write this?
                         if (bayWHandler instanceof WeaponHandler) {
@@ -341,31 +319,29 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                             wHandler.setParentBayHandler(this);
                         }
                         bayWHandler.handle(phase, vPhaseReport);
-                        if(vPhaseReport.size() > replaceReport) {
+                        if (vPhaseReport.size() > replaceReport) {
                             //fix the reporting - is there a better way to do this
-                            if(vPhaseReport.size() > replaceReport) {
-                                Report currentReport = vPhaseReport.get(replaceReport);
-                                while(null != currentReport) {
-                                    vPhaseReport.remove(replaceReport);
-                                    if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
-                                        currentReport = null;
-                                    } else {
-                                        currentReport = vPhaseReport.get(replaceReport);
-                                    }
-                                }
-                                r = new Report(3115);
-                                r.indent(2);
-                                r.newlines = 1;
-                                r.subject = subjectId;
-                                r.add(bayWType.getName());
-                                if (entityTarget != null) {
-                                    r.addDesc(entityTarget);
+                            Report currentReport = vPhaseReport.get(replaceReport);
+                            while (null != currentReport) {
+                                vPhaseReport.remove(replaceReport);
+                                if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
+                                    currentReport = null;
                                 } else {
-                                    r.messageId = 3120;
-                                    r.add(target.getDisplayName(), true);
+                                    currentReport = vPhaseReport.get(replaceReport);
                                 }
-                                vPhaseReport.add(replaceReport, r);
                             }
+                            r = new Report(3115);
+                            r.indent(2);
+                            r.newlines = 1;
+                            r.subject = subjectId;
+                            r.add(bayWType.getName());
+                            if (entityTarget != null) {
+                                r.addDesc(entityTarget);
+                            } else {
+                                r.messageId = 3120;
+                                r.add(target.getDisplayName(), true);
+                            }
+                            vPhaseReport.add(replaceReport, r);
                         }
                     }
                 }
@@ -422,7 +398,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } else if (!bMissed){ // Hex is targeted, need to report a hit
+        } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -451,7 +427,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         Vector<Aero> targets = new Vector<Aero>();
         
         // get all entities on the opposing side
-        for(Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
+        for (Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
             Entity e = enemies.next();
             //Narrow the list to small craft and larger
             if (((e.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != 0)) {

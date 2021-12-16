@@ -14,37 +14,20 @@
 
 package megamek.test;
 
-import java.awt.Button;
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextField;
+import megamek.common.Board;
+import megamek.common.net.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.SwingUtilities;
-
-import megamek.common.Board;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListenerAdapter;
-import megamek.common.net.DisconnectedEvent;
-import megamek.common.net.IConnection;
-import megamek.common.net.Packet;
-import megamek.common.net.PacketReceivedEvent;
 
 /**
  * This class provides an AWT GUI for testing the transmission and reception of
@@ -54,9 +37,6 @@ import megamek.common.net.PacketReceivedEvent;
  */
 public class PacketTool extends Frame implements Runnable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3249150110009720658L;
 
     /**
@@ -70,7 +50,7 @@ public class PacketTool extends Frame implements Runnable {
     private Panel panConnect = null;
 
     /**
-     * The panel containing the transimission controls.
+     * The panel containing the transmission controls.
      */
     private Panel panXmit = null;
 
@@ -97,7 +77,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * The connection to the other peer.
      */
-    IConnection conn = null;
+    AbstractConnection conn = null;
 
     /**
      * Display a window for testing the transmission of boards.
@@ -209,14 +189,13 @@ public class PacketTool extends Frame implements Runnable {
             conn = ConnectionFactory.getInstance().createServerConnection(
                     new Socket(host, port), 1);
             Timer t = new Timer(true);
-            final Runnable packetUpdate = new Runnable() {
-                public void run() {
-                    IConnection connection = conn;
-                    if (connection != null) {
-                        connection.update();
-                    }
+            final Runnable packetUpdate = () -> {
+                AbstractConnection connection = conn;
+                if (connection != null) {
+                    connection.update();
                 }
             };
+
             final TimerTask packetUpdate2 = new TimerTask() {
                 @Override
                 public void run() {
@@ -426,7 +405,7 @@ public class PacketTool extends Frame implements Runnable {
                      * * Save the board here.
                      */
                     Board recvBoard = (Board) packet.getObject(0);
-                    try(OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
+                    try (OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
                         recvBoard.save(os);
                     } catch (IOException ioErr) {
                         ioErr.printStackTrace();
@@ -488,7 +467,7 @@ public class PacketTool extends Frame implements Runnable {
      *
      * @param deadConn - the <code>Connection</code> that has terminated.
      */
-    public synchronized void disconnected(IConnection deadConn) {
+    public synchronized void disconnected(AbstractConnection deadConn) {
         // write something in the log
         System.out.println("s: connection " + deadConn.getId() + " disconnected");
 
@@ -501,7 +480,7 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.setEnabled(true);
     }
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -517,5 +496,4 @@ public class PacketTool extends Frame implements Runnable {
         }
 
     };
-
 }

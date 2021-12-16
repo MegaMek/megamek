@@ -37,7 +37,7 @@ public class HexTarget implements Targetable {
      * the board parameter is ignored.
      */
     @Deprecated
-    public HexTarget(Coords c, IBoard board, int nType) {
+    public HexTarget(Coords c, Board board, int nType) {
         m_coords = c;
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);

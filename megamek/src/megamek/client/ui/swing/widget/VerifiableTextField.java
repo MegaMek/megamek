@@ -267,9 +267,9 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         Color bgColor = UIManager.getColor("TextField.background");
         Color warnColor = GUIPreferences.getInstance().getWarningColor();
         double part = 0.1;
-        int r = (int)(part * warnColor.getRed()   + (1-part) * bgColor.getRed());  
-        int g = (int)(part * warnColor.getGreen() + (1-part) * bgColor.getGreen());
-        int b = (int)(part * warnColor.getBlue()  + (1-part) * bgColor.getBlue());
+        int r = (int) (part * warnColor.getRed() + (1 - part) * bgColor.getRed());  
+        int g = (int) (part * warnColor.getGreen() + (1 - part) * bgColor.getGreen());
+        int b = (int) (part * warnColor.getBlue() + (1 - part) * bgColor.getBlue());
         return new Color(r, g, b);
     }
     

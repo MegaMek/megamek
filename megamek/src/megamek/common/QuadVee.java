@@ -160,8 +160,8 @@ public class QuadVee extends QuadMech {
             wmp = wmp / (1 << badTracks);
         }
 
-        //Now apply modifiers
-        if (!ignoremodulararmor && hasModularArmor() ) {
+        // Now apply modifiers
+        if (!ignoremodulararmor && hasModularArmor()) {
             wmp--;
         }
 
@@ -515,7 +515,7 @@ public class QuadVee extends QuadMech {
                 }
             }
             // are we wheeled and in light snow?
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                     && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
@@ -557,7 +557,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
-            IHex occupiedHex = game.getBoard().getHex(getPosition());
+            Hex occupiedHex = game.getBoard().getHex(getPosition());
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         }

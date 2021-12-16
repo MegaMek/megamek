@@ -50,7 +50,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     private static short permMod12[] = new short[512];
 
     static {
-        for(int i = 0; i < 512; i++) {
+        for (int i = 0; i < 512; i++) {
             perm[i] = p[i & 255];
             permMod12[i] = (short) (perm[i] % 12);
         }
@@ -64,7 +64,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     private static final double F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
     private static final double G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
 
-    // This method is a *lot* faster than using (int)Math.floor(x)
+    // This method is a *lot* faster than using (int) Math.floor(x)
     private static int fastfloor(double x) {
         int xi = (int) x;
         return (x < xi) ? xi - 1 : xi;
@@ -92,12 +92,12 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     }
 
     public static double noiseOctaves(double xin, double yin, int octaves, double scale) {
-        if(octaves <= 0) {
+        if (octaves <= 0) {
             throw new IllegalArgumentException("Octaves have to be non-null"); // $NON-NLS-0$
         }
         double result = 0.0;
         double overallScale = 0.0;
-        for(int i = 0; i < octaves; ++i) {
+        for (int i = 0; i < octaves; ++i) {
             double octaveScale = Math.pow(2.0, i);
             result += noise(xin * octaveScale + i, yin * octaveScale + i) / Math.pow(scale, i);
             overallScale += 1.0 / Math.pow(scale, i);
@@ -124,7 +124,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         // For the 2D case, the simplex shape is an equilateral triangle.
         // Determine which simplex we are in.
         int i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
-        if(x0 > y0) {
+        if (x0 > y0) {
             i1 = 1;
             j1 = 0;
         } // lower triangle, XY order: (0,0)->(1,0)->(1,1)
@@ -149,7 +149,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         int gi2 = permMod12[ii + 1 + perm[jj + 1]];
         // Calculate the contribution from the three corners
         double t0 = 0.5 - x0 * x0 - y0 * y0;
-        if(t0 < 0) {
+        if (t0 < 0) {
             n0 = 0.0;
         } else {
             t0 *= t0;
@@ -157,14 +157,14 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
                                                     // 2D gradient
         }
         double t1 = 0.5 - x1 * x1 - y1 * y1;
-        if(t1 < 0) {
+        if (t1 < 0) {
             n1 = 0.0;
         } else {
             t1 *= t1;
             n1 = t1 * t1 * dot(grad3[gi1], x1, y1);
         }
         double t2 = 0.5 - x2 * x2 - y2 * y2;
-        if(t2 < 0) {
+        if (t2 < 0) {
             n2 = 0.0;
         } else {
             t2 *= t2;
@@ -197,56 +197,58 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k)
                         // coords
         int i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
-        if(x0 >= y0) {
-            if(y0 >= z0) {
+        if (x0 >= y0) {
+            if (y0 >= z0) {
+                // X Y Z order
                 i1 = 1;
                 j1 = 0;
                 k1 = 0;
                 i2 = 1;
                 j2 = 1;
                 k2 = 0;
-            } // X Y Z order
-            else if(x0 >= z0) {
+            } else if (x0 >= z0) {
+                // X Z Y order
                 i1 = 1;
                 j1 = 0;
                 k1 = 0;
                 i2 = 1;
                 j2 = 0;
                 k2 = 1;
-            } // X Z Y order
-            else {
+            } else {
+                // Z X Y order
                 i1 = 0;
                 j1 = 0;
                 k1 = 1;
                 i2 = 1;
                 j2 = 0;
                 k2 = 1;
-            } // Z X Y order
-        } else { // x0<y0
-            if(y0 < z0) {
+            }
+        } else {
+            if (y0 < z0) {
+                // Z Y X order
                 i1 = 0;
                 j1 = 0;
                 k1 = 1;
                 i2 = 0;
                 j2 = 1;
                 k2 = 1;
-            } // Z Y X order
-            else if(x0 < z0) {
+            } else if (x0 < z0) {
+                // Y Z X order
                 i1 = 0;
                 j1 = 1;
                 k1 = 0;
                 i2 = 0;
                 j2 = 1;
                 k2 = 1;
-            } // Y Z X order
-            else {
+            } else {
+                // Y X Z order
                 i1 = 0;
                 j1 = 1;
                 k1 = 0;
                 i2 = 1;
                 j2 = 1;
                 k2 = 0;
-            } // Y X Z order
+            }
         }
         // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
         // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z),
@@ -275,28 +277,28 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         int gi3 = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]];
         // Calculate the contribution from the four corners
         double t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
-        if(t0 < 0) {
+        if (t0 < 0) {
             n0 = 0.0;
         } else {
             t0 *= t0;
             n0 = t0 * t0 * dot(grad3[gi0], x0, y0, z0);
         }
         double t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
-        if(t1 < 0) {
+        if (t1 < 0) {
             n1 = 0.0;
         } else {
             t1 *= t1;
             n1 = t1 * t1 * dot(grad3[gi1], x1, y1, z1);
         }
         double t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
-        if(t2 < 0) {
+        if (t2 < 0) {
             n2 = 0.0;
         } else {
             t2 *= t2;
             n2 = t2 * t2 * dot(grad3[gi2], x2, y2, z2);
         }
         double t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
-        if(t3 < 0) {
+        if (t3 < 0) {
             n3 = 0.0;
         } else {
             t3 *= t3;
@@ -338,32 +340,32 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         int ranky = 0;
         int rankz = 0;
         int rankw = 0;
-        if(x0 > y0) {
+        if (x0 > y0) {
             rankx++;
         } else {
             ranky++;
         }
-        if(x0 > z0) {
+        if (x0 > z0) {
             rankx++;
         } else {
             rankz++;
         }
-        if(x0 > w0) {
+        if (x0 > w0) {
             rankx++;
         } else {
             rankw++;
         }
-        if(y0 > z0) {
+        if (y0 > z0) {
             ranky++;
         } else {
             rankz++;
         }
-        if(y0 > w0) {
+        if (y0 > w0) {
             ranky++;
         } else {
             rankw++;
         }
-        if(z0 > w0) {
+        if (z0 > w0) {
             rankz++;
         } else {
             rankw++;
@@ -428,35 +430,35 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         int gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32;
         // Calculate the contribution from the five corners
         double t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
-        if(t0 < 0) {
+        if (t0 < 0) {
             n0 = 0.0;
         } else {
             t0 *= t0;
             n0 = t0 * t0 * dot(grad4[gi0], x0, y0, z0, w0);
         }
         double t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
-        if(t1 < 0) {
+        if (t1 < 0) {
             n1 = 0.0;
         } else {
             t1 *= t1;
             n1 = t1 * t1 * dot(grad4[gi1], x1, y1, z1, w1);
         }
         double t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
-        if(t2 < 0) {
+        if (t2 < 0) {
             n2 = 0.0;
         } else {
             t2 *= t2;
             n2 = t2 * t2 * dot(grad4[gi2], x2, y2, z2, w2);
         }
         double t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
-        if(t3 < 0) {
+        if (t3 < 0) {
             n3 = 0.0;
         } else {
             t3 *= t3;
             n3 = t3 * t3 * dot(grad4[gi3], x3, y3, z3, w3);
         }
         double t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
-        if(t4 < 0) {
+        if (t4 < 0) {
             n4 = 0.0;
         } else {
             t4 *= t4;

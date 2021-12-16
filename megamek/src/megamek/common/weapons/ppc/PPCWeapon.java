@@ -72,7 +72,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
                 damage = getDamage(range);
             }
             if (capacitor != null && capacitor.getType() instanceof MiscType
-                    && ((MiscType)capacitor.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    && capacitor.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 damage = (damage + 5) / 2;
             }
             if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {

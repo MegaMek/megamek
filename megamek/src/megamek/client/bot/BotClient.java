@@ -13,80 +13,31 @@
  */
 package megamek.client.bot;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.ECMInfo;
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.GameTurn;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.*;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.*;
 
 public abstract class BotClient extends Client {
-	public static final int BOT_TURN_RETRY_COUNT = 3;
-	
+    public static final int BOT_TURN_RETRY_COUNT = 3;
+
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
     
@@ -146,7 +97,7 @@ public abstract class BotClient extends Client {
                 }
 
                 // unloading "stranded" units happens as part of a game turn change, so that's where we do it.
-                if(canUnloadStranded()) {
+                if (canUnloadStranded()) {
                     sendUnloadStranded(getStrandedEntities());
                 }
             }
@@ -209,7 +160,7 @@ public abstract class BotClient extends Client {
                                 sendHiddenPBSCFRResponse(new Vector<>());
                                 sendHiddenPBSCFRResponse(pointBlankShots);
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             // if we screw up, don't keep everyone else waiting
                             sendHiddenPBSCFRResponse(null);
                             throw e;
@@ -291,7 +242,7 @@ public abstract class BotClient extends Client {
 
     protected abstract Vector<Coords> calculateArtyAutoHitHexes();
 
-    protected abstract void checkMoral();
+    protected abstract void checkMorale();
 
     @Override
     protected boolean keepGameLog() {
@@ -308,22 +259,22 @@ public abstract class BotClient extends Client {
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
         // unless doing so would kill it or be illegal due to stacking violation
-        for(Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
+        for (Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
             
-            if(transport != null && transport.isPermanentlyImmobilized(true)) {
+            if (transport != null && transport.isPermanentlyImmobilized(true)) {
                 boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(), transport.getPosition());
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
                         currentEntity.isLocationProhibited(transport.getPosition());
                         
-                if(!stackingViolation && !unloadFatal) {
+                if (!stackingViolation && !unloadFatal) {
                     entitiesToUnload.add(currentEntity.getId());
                 }
             }
         }
         
         int[] entityIDs = new int[entitiesToUnload.size()];
-        for(int x = 0; x < entitiesToUnload.size(); x++) {
+        for (int x = 0; x < entitiesToUnload.size(); x++) {
             entityIDs[x] = entitiesToUnload.get(x);
         }
         
@@ -356,7 +307,7 @@ public abstract class BotClient extends Client {
      * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
      */
     public List<Entity> getEnemyEntities() {
-        if(currentTurnEnemyEntities == null) {
+        if (currentTurnEnemyEntities == null) {
             currentTurnEnemyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
@@ -376,7 +327,7 @@ public abstract class BotClient extends Client {
      * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
      */
     public List<Entity> getFriendEntities() {
-        if(currentTurnFriendlyEntities == null) {
+        if (currentTurnFriendlyEntities == null) {
             currentTurnFriendlyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
@@ -515,24 +466,24 @@ public abstract class BotClient extends Client {
      * Has a retry mechanism for when the turn calculation fails due to concurrency issues
      */
     private synchronized void calculateMyTurn() {
-    	int retryCount = 0;
+        int retryCount = 0;
         boolean success = false;
         
-        while((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
-        	success = calculateMyTurnWorker();
-        	
-        	if(!success) {
-	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
-	            // as it may be due to some kind of thread-related issue
-        		// limit number of retries so we're not endlessly spinning
-        		// if we can't recover from the error
-	            retryCount++;
-	            try {
-					Thread.sleep(Compute.randomInt(1000) + 500);
-				} catch (InterruptedException e) {
-					MegaMek.getLogger().error(e.toString());
-				}
-	        }
+        while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
+            success = calculateMyTurnWorker();
+
+            if (!success) {
+                // if we fail, take a nap for 500-1500 milliseconds, then try again
+                // as it may be due to some kind of thread-related issue
+                // limit number of retries so we're not endlessly spinning
+                // if we can't recover from the error
+                retryCount++;
+                try {
+                    Thread.sleep(Compute.randomInt(1000) + 500);
+                } catch (InterruptedException e) {
+                    LogManager.getLogger().error(e.toString());
+                }
+            }
         }
     }
 
@@ -594,7 +545,7 @@ public abstract class BotClient extends Client {
             
             return true;
         } catch (Throwable t) {
-            MegaMek.getLogger().error(t);            
+            LogManager.getLogger().error(t);            
             return false;
         }
     }
@@ -603,7 +554,7 @@ public abstract class BotClient extends Client {
         double mass = 0;
 
         // Add the mass of anyone else standing in/on this building.
-        final IHex hex = game.getBoard().getHex(coords);
+        final Hex hex = game.getBoard().getHex(coords);
         final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
         final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
         Iterator<Entity> crowd = game.getEntities(coords);
@@ -654,13 +605,12 @@ public abstract class BotClient extends Client {
         int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         Coords highestHex;
         List<RankedCoords> validCoords = new LinkedList<>();
         Vector<Entity> valid_attackers;
         WeaponAttackAction test_attack;
-        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                .getEntitiesVector());
+        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
 
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
@@ -864,7 +814,7 @@ public abstract class BotClient extends Client {
                     }
                 }
                 boolean foundAdj = false;
-                IPlayer owner = deployed_ent.getOwner();
+                Player owner = deployed_ent.getOwner();
                 for (int x = 0; x < 6 && !foundAdj; x++) {
                     highestHex = coord.getCoords().translated(x);
                     for (Entity test_ent : game.getEntitiesVector(highestHex)) {
@@ -929,7 +879,7 @@ public abstract class BotClient extends Client {
             // Make sure I'm not stuck in a dead-end.
             coord.fitness += calculateEdgeAccessFitness(deployed_ent, board);
             
-            if(coord.fitness > highestFitness) {
+            if (coord.fitness > highestFitness) {
                 highestFitness = coord.fitness;
             }
         }
@@ -938,8 +888,8 @@ public abstract class BotClient extends Client {
         // This indicates that we do not have a way of getting to the opposite board edge,
         // even when considering terrain destruction
         // attempt to deploy in the biggest area this unit can access instead
-        if(highestFitness < -10) {
-            for(RankedCoords rc : validCoords) {
+        if (highestFitness < -10) {
+            for (RankedCoords rc : validCoords) {
                 rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
         }
@@ -961,7 +911,7 @@ public abstract class BotClient extends Client {
      * -50 if this can be accomplished but terrain must be destroyed,
      * -100 if this cannot be accomplished at all
      */
-    private int calculateEdgeAccessFitness(Entity entity, IBoard board) {
+    private int calculateEdgeAccessFitness(Entity entity, Board board) {
         // Flying units can always get anywhere
         if (entity.isAirborne() || entity instanceof VTOL) {
             return 0;

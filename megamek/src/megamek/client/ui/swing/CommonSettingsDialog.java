@@ -499,7 +499,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             GUIPreferences gs = GUIPreferences.getInstance();
             IClientPreferences cs = PreferenceManager.getClientPreferences();
 
-            guiScale.setValue((int)(gs.getGUIScale() * 10));
+            guiScale.setValue((int) (gs.getGUIScale() * 10));
             autoEndFiring.setSelected(gs.getAutoEndFiring());
             autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
             nagForMASC.setSelected(gs.getNagForMASC());
@@ -722,7 +722,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
-        gs.setValue(GUIPreferences.GUI_SCALE, (float)(guiScale.getValue()) / 10);
+        gs.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
         
         gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
@@ -760,13 +760,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
         gs.setGameSummaryMiniMap(gameSummaryMM.isSelected());
 
-        UITheme newUITheme = (UITheme)uiThemes.getSelectedItem();
+        UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = gs.getUITheme();
         if (!oldUITheme.equals(newUITheme.getClassName())) {
             gs.setUITheme(newUITheme.getClassName());
         }
 
-        String newSkinFile = (String)skinFiles.getSelectedItem();
+        String newSkinFile = (String) skinFiles.getSelectedItem();
         String oldSkinFile = gs.getSkinFile();
         if (!oldSkinFile.equals(newSkinFile)) {
             boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
@@ -1394,7 +1394,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     }
     
     /** Creates a panel with a list boxes that allow the button order to be changed. */
-    private JPanel getButtonOrderPanel(){
+    private JPanel getButtonOrderPanel() {
         JPanel buttonOrderPanel = new JPanel();
         buttonOrderPanel.setLayout(new BoxLayout(buttonOrderPanel, BoxLayout.Y_AXIS));
         JTabbedPane phasePane = new JTabbedPane();

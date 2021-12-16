@@ -14,8 +14,6 @@
 package megamek.client.bot.princess;
 
 import junit.framework.TestCase;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import megamek.utils.MegaMekXmlUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,19 +31,13 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 9/6/13 10:11 PM
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since 9/6/13 10:11 PM
  */
 @RunWith(JUnit4.class)
 public class BehaviorSettingsFactoryTest {
 
-    private final MMLogger fakeLogger = new FakeLogger();
-
-    private BehaviorSettingsFactory testFactory =
-            BehaviorSettingsFactory.getInstance(fakeLogger);
+    private BehaviorSettingsFactory testFactory = BehaviorSettingsFactory.getInstance();
 
     private static Document buildTestDocument() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilder documentBuilder = MegaMekXmlUtil.newSafeDocumentBuilder();

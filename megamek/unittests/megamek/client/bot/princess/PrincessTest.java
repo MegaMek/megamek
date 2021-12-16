@@ -14,23 +14,8 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.GameTurn;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import org.junit.Assert;
@@ -45,10 +30,9 @@ import java.util.List;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 11/22/13 8:33 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class PrincessTest {
 
     private Princess mockPrincess;
@@ -58,14 +42,12 @@ public class PrincessTest {
     public void setUp() {
         mockPathRanker = Mockito.mock(BasicPathRanker.class);
 
-        MoralUtil mockMoralUtil = Mockito.mock(MoralUtil.class);
+        MoraleUtil mockMoralUtil = Mockito.mock(MoraleUtil.class);
 
-        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
-        Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
+        Mockito.when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);
     }
 
     @Test
@@ -482,7 +464,7 @@ public class PrincessTest {
         Mockito.when(mockPrincess.isImmobilized(Mockito.any(Entity.class))).thenCallRealMethod();
         Mockito.when(mockPrincess.getBooleanOption(Mockito.eq("tacops_careful_stand"))).thenReturn(false);
 
-        IHex mockHex = Mockito.mock(IHex.class);
+        Hex mockHex = Mockito.mock(Hex.class);
         Mockito.when(mockHex.getLevel()).thenReturn(0);
         Mockito.when(mockPrincess.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
 

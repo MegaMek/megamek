@@ -1,22 +1,26 @@
 package megamek.server.victory;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.server.Server;
-import megamek.common.Game;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Vector;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class ServerTest {
 
     protected Game createMockedGame() {
@@ -60,8 +64,8 @@ public class ServerTest {
 
         testServer.setGame(testGame);
         testServer.victory();
-        Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(IPlayer.PLAYER_NONE);
-        Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(IPlayer.TEAM_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(Player.TEAM_NONE);
     }
 
     @Test
@@ -108,9 +112,9 @@ public class ServerTest {
         Mockito.when(victoryResult.victory()).thenReturn(true);
         Mockito.when(victoryResult.isDraw()).thenReturn(false);
         Mockito.when(victoryResult.getWinningPlayer()).thenReturn(winner);
-        Mockito.when(victoryResult.getWinningTeam()).thenReturn(IPlayer.TEAM_NONE);
+        Mockito.when(victoryResult.getWinningTeam()).thenReturn(Player.TEAM_NONE);
 
-        IPlayer mockedPlayer = Mockito.mock(IPlayer.class);
+        Player mockedPlayer = Mockito.mock(Player.class);
         Mockito.when(mockedPlayer.getName()).thenReturn("The champion");
         Mockito.when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
 

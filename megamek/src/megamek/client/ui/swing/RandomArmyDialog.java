@@ -2,15 +2,15 @@
  * MegaMek -
  * Copyright (C) 2006 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -64,8 +64,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private MechSearchFilter searchFilter;
 
-    private JLabel m_labelPlayer = new JLabel(Messages
-            .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT);
+    private JLabel m_labelPlayer = new JLabel(Messages.getString("RandomArmyDialog.Player"), SwingConstants.RIGHT);
 
     private JComboBox<String> m_chPlayer = new JComboBox<>();
     private JComboBox<String> m_chType = new JComboBox<>();
@@ -144,17 +143,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private UnitTable generatedRAT;
 
     public RandomArmyDialog(ClientGUI cl) {
-        super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
+        super(cl.frame, Messages.getString("RandomArmyDialog.title"), true);
         m_clientgui = cl;
         m_client = cl.getClient();
         rug = RandomUnitGenerator.getInstance();
         rug.registerListener(this);
-        if (rug.isInitialized()){
-            m_ratStatus = new JLabel(Messages
-                    .getString("RandomArmyDialog.ratStatusDoneLoading"));            
+        if (rug.isInitialized()) {
+            m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));            
         } else {
-            m_ratStatus = new JLabel(Messages
-                    .getString("RandomArmyDialog.ratStatusLoading"));
+            m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusLoading"));
         }
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
@@ -399,11 +396,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_lRAT.setIntercellSpacing(new Dimension(5, 0));
         m_lRAT.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         for (int i = 0; i < ratModel.getColumnCount(); i++) {
-        	m_lRAT.getColumnModel().getColumn(i).setPreferredWidth(ratModel.getPreferredWidth(i));
+            m_lRAT.getColumnModel().getColumn(i).setPreferredWidth(ratModel.getPreferredWidth(i));
         }
-		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
-		m_lRAT.getColumnModel().getColumn(RATTableModel.COL_BV).setCellRenderer(rightRenderer);
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        m_lRAT.getColumnModel().getColumn(RATTableModel.COL_BV).setCellRenderer(rightRenderer);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
@@ -516,14 +513,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     public void valueChanged(TreeSelectionEvent ev) {
         if (ev.getSource().equals(m_treeRAT)) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)m_treeRAT.getLastSelectedPathComponent();
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) m_treeRAT.getLastSelectedPathComponent();
             if (node == null) {
                 return;
             }
 
             Object nodeInfo = node.getUserObject();
             if (node.isLeaf()) {
-                String ratName = (String)nodeInfo;
+                String ratName = (String) nodeInfo;
                 rug.setChosenRAT(ratName);
             }
         }
@@ -604,31 +601,31 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 armyModel.addUnit(m);
             }
         } else if (ev.getSource().equals(m_bAdd)) {
-            for(int sel : m_lUnits.getSelectedRows()) {
+            for (int sel : m_lUnits.getSelectedRows()) {
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
-        } else if (ev.getSource().equals(m_bAdvSearch)){
+        } else if (ev.getSource().equals(m_bAdvSearch)) {
             searchFilter=asd.showDialog();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
-        } else if (ev.getSource().equals(m_bAdvSearchClear)){
+        } else if (ev.getSource().equals(m_bAdvSearchClear)) {
             searchFilter=null;
             m_bAdvSearchClear.setEnabled(false);
         } else if (ev.getSource().equals(m_bRoll)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
-                if(m_pMain.getSelectedIndex() == TAB_RAT) {
+                if (m_pMain.getSelectedIndex() == TAB_RAT) {
                     int units = Integer.parseInt(m_tUnits.getText());
-                    if(units > 0) {
+                    if (units > 0) {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else if (m_pMain.getSelectedIndex() == TAB_RAT_GENERATOR) {
-                	int units = m_pRATGenOptions.getNumUnits();
-                	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
-                		unitsModel.setData(generatedRAT.generateUnits(units));
-                	}
-                	//generateUnits removes salvage entries that have no units meeting criteria
-                	ratModel.refreshData();
+                    int units = m_pRATGenOptions.getNumUnits();
+                    if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
+                        unitsModel.setData(generatedRAT.generateUnits(units));
+                    }
+                    //generateUnits removes salvage entries that have no units meeting criteria
+                    ratModel.refreshData();
                 } else if (m_pMain.getSelectedIndex() == TAB_FORMATION_BUILDER) {
                     ArrayList<MechSummary> unitList = new ArrayList<>();
                     FactionRecord fRec = m_pFormationOptions.getFaction();
@@ -730,12 +727,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         } else if (ev.getSource().equals(m_bGenerate)) {
-        	generateRAT();
+            generateRAT();
         } else if (ev.getSource().equals(m_bAddToForce)) {
             for (int sel : m_lRAT.getSelectedRows()) {
                 MechSummary ms = generatedRAT.getMechSummary(sel);
                 if (ms != null) {
-                	armyModel.addUnit(ms);
+                    armyModel.addUnit(ms);
                 }
             }
         } else if (ev.getSource().equals(rug)) {
@@ -763,14 +760,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     };
     
-	private void updatePlayerChoice() {
+    private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
         String clientName = m_clientgui.getClient().getName();
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
         for (Client client : m_clientgui.getBots().values()) {
-            IPlayer player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
+            Player player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
 
             if (!player.isObserver()) {
                 m_chPlayer.addItem(client.getName());
@@ -857,25 +854,25 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     }
     
     private TreePath findPathByName(String[] nodeNames) {
-        TreeNode root = (TreeNode)m_treeRAT.getModel().getRoot();
+        TreeNode root = (TreeNode) m_treeRAT.getModel().getRoot();
         return findNextNode(new TreePath(root), nodeNames, 0);
     }
     
     private TreePath findNextNode(TreePath parent, String[] nodes, int depth) {
-        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
         String currNode = node.toString();
 
         // If equal, go down the branch
         if (currNode.equals(nodes[depth].trim())) {
             // If at end, return match
-            if (depth == nodes.length-1) {
+            if (depth == nodes.length - 1) {
                 return parent;
             }
 
             // Traverse children
             if (node.getChildCount() >= 0) {
                 for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
-                    TreeNode n = (TreeNode)e.nextElement();
+                    TreeNode n = (TreeNode) e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = findNextNode(path, nodes, depth + 1);
                     // Found a match
@@ -891,17 +888,17 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     
     @SuppressWarnings("unchecked")
     private void generateRAT() {
-    	FactionRecord fRec = m_pRATGenOptions.getFaction();
-    	if (fRec != null) {
-			generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
-			        m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
-			        (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
-					m_pRATGenOptions.getIntegerOption("networkMask"),
-					(List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
-					(List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
-					m_pRATGenOptions.getIntegerOption("roleStrictness"));
-			ratModel.refreshData();
-    	}
+        FactionRecord fRec = m_pRATGenOptions.getFaction();
+        if (fRec != null) {
+            generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
+                    m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
+                    (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
+                    m_pRATGenOptions.getIntegerOption("networkMask"),
+                    (List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
+                    (List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
+                    m_pRATGenOptions.getIntegerOption("roleStrictness"));
+            ratModel.refreshData();
+        }
     }
 
     @Override
@@ -937,7 +934,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if(!e.isMapSettingsOnlyChange()) {
+            if (!e.isMapSettingsOnlyChange()) {
                 updateRATYear();
             }
         }
@@ -1035,19 +1032,19 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     public class RATTableModel extends AbstractTableModel {
 
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 7807207311532173654L;
-		
-		private static final int COL_WEIGHT = 0;
+         *
+         */
+        private static final long serialVersionUID = 7807207311532173654L;
+
+        private static final int COL_WEIGHT = 0;
         private static final int COL_UNIT = 1;
         private static final int COL_BV = 2;
         private static final int N_COL = 3;
 
         public int getRowCount() {
-        	if (generatedRAT == null) {
-        		return 0;
-        	}
+            if (generatedRAT == null) {
+                return 0;
+            }
             return generatedRAT.getNumEntries();
         }
 
@@ -1060,15 +1057,16 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
         
         public int getPreferredWidth(int col) {
-        	switch (col) {
-        	case COL_WEIGHT:
-        		return 12;
-        	case COL_UNIT:
-        		return 240;
-        	case COL_BV:
-        		return 18;
-        	}
-        	return 0;
+            switch (col) {
+                case COL_WEIGHT:
+                    return 12;
+                case COL_UNIT:
+                    return 240;
+                case COL_BV:
+                    return 18;
+                default:
+                    return 0;
+            }
         }
         
         @Override
@@ -1095,20 +1093,20 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
 
         public Object getValueAt(int row, int col) {
-        	if (generatedRAT != null) {
-		    	switch (col) {
-		    	case COL_WEIGHT:
-		    		return generatedRAT.getEntryWeight(row);
-		    	case COL_UNIT:
-		    		return generatedRAT.getEntryText(row);
-		    	case COL_BV:
-		    		int bv = generatedRAT.getBV(row);
-		    		if (bv > 0) {
-		    			return String.valueOf(bv);
-		    		}
-		    	}
-        	}
-		   	return "";
+            if (generatedRAT != null) {
+                switch (col) {
+                    case COL_WEIGHT:
+                        return generatedRAT.getEntryWeight(row);
+                    case COL_UNIT:
+                        return generatedRAT.getEntryText(row);
+                    case COL_BV:
+                        int bv = generatedRAT.getBV(row);
+                        if (bv > 0) {
+                            return String.valueOf(bv);
+                        }
+                }
+            }
+            return "";
         }
     }
 }

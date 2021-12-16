@@ -18,18 +18,18 @@
  */
 package megamek.common.force;
 
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.annotations.Nullable;
-import megamek.common.icons.Camouflage;
 
 /**
  * A representation of a force or part of a force. Very similar to MHQ's Force.
@@ -53,7 +53,7 @@ public final class Force implements Serializable {
     /**
      * Creates a top-level (no parent) force
      */
-    public Force(final String name, final int id, final Camouflage camouflage, final IPlayer owner) {
+    public Force(final String name, final int id, final Camouflage camouflage, final Player owner) {
         this(name, id, camouflage);
         Objects.requireNonNull(owner);
         ownerId = owner.getId();
@@ -91,7 +91,7 @@ public final class Force implements Serializable {
      * Creates a force object that is not integrated into any forces. Used
      * to send a new force to the server. In other cases, use Forces.add.
      */
-    public static Force createToplevelForce(String name, IPlayer owner) {
+    public static Force createToplevelForce(String name, Player owner) {
         return new Force(name, -1, new Camouflage(), owner);
     }
 
@@ -247,17 +247,17 @@ public final class Force implements Serializable {
     }
     
     void removeEntity(Entity entity) {
-        entities.remove((Integer)entity.getId());
+        entities.remove((Integer) entity.getId());
     }
     
     /** Removes the given id from the list of subordinated entities. */
     void removeEntity(int id) {
-        entities.remove((Integer)id);
+        entities.remove((Integer) id);
     }
     
     /** Removes the given id from the list of (direct) subforces. */
     void removeSubForce(int id) {
-        subForces.remove((Integer)id);
+        subForces.remove((Integer) id);
     }
     
     @Override

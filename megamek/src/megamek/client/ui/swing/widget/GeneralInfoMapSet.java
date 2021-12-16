@@ -43,11 +43,7 @@ import megamek.common.QuadVee;
 import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.IOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
+import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -362,10 +358,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
-            mpR1.setString(Integer.toString(((LandAirMech)en).getAirMechWalkMP()));
-            mpR2.setString(Integer.toString(((LandAirMech)en).getAirMechRunMP()));
-            mpR3.setString(Integer.toString(((LandAirMech)en).getAirMechCruiseMP()));
-            mpR4.setString(Integer.toString(((LandAirMech)en).getAirMechFlankMP()));
+            mpR1.setString(Integer.toString(((LandAirMech) en).getAirMechWalkMP()));
+            mpR2.setString(Integer.toString(((LandAirMech) en).getAirMechRunMP()));
+            mpR3.setString(Integer.toString(((LandAirMech) en).getAirMechCruiseMP()));
+            mpR4.setString(Integer.toString(((LandAirMech) en).getAirMechFlankMP()));
         } else {
             mpL4.setVisible(false);
             mpR4.setVisible(false);
@@ -392,7 +388,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
-        if(en.getCoolantFailureAmount() > 0) {
+        if (en.getCoolantFailureAmount() > 0) {
             heatCap -= en.getCoolantFailureAmount();
             heatCapWater -= en.getCoolantFailureAmount();
         }
@@ -420,7 +416,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
         } else if (en instanceof QuadVee || en instanceof LandAirMech
-                || (en instanceof Mech && ((Mech)en).hasTracks())) {
+                || (en instanceof Mech && ((Mech) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
                 //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
@@ -509,8 +505,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
             if (en.getMovementMode() == EntityMovementMode.WHEELED) {
-                mpR1.setString(Integer.toString(((IAero)en).getCurrentThrust()));
-                mpR2.setString(Integer.toString((int)Math.ceil(((IAero)en).getCurrentThrust() * 1.5)));
+                mpR1.setString(Integer.toString(((IAero) en).getCurrentThrust()));
+                mpR2.setString(Integer.toString((int) Math.ceil(((IAero) en).getCurrentThrust() * 1.5)));
                 mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
                 mpR3.setString(Integer.toString(en.getWalkMP()));
                 mpR3.setVisible(true);
@@ -562,11 +558,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     }
 
     /**
-     * Add all options from the given IOptions instance into an array of PMSimpleLabel elements.
-     * @param optionsInstance IOptions instance
+     * Add all options from the given AbstractOptions instance into an array of PMSimpleLabel elements.
+     * @param optionsInstance AbstractOptions instance
      * @param quirksAndPartReps
      */
-    public void addOptionsToList(IOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
+    public void addOptionsToList(AbstractOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {

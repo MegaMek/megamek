@@ -129,16 +129,15 @@ public class SquadronMapSet implements DisplayMapSet {
 
     public void setEntity(Entity e) {
         List<Entity> fighters = e.getSubEntities();
-        for(int i = 0; i < max_size; ++ i) {
-            if(i < fighters.size()) {
+        for (int i = 0; i < max_size; ++ i) {
+            if (i < fighters.size()) {
                 final Entity fighter = fighters.get(i);
                 IAero a = (IAero) fighter;
                 int armor = a.getCapArmor();
                 int armorO = a.getCap0Armor();
                 armorVLabel[i].setValue(Integer.toString(armor));
 
-                if (((Entity)fighter).getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (fighter.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                     armor = (int) Math.ceil(armor / 10.0);
                     armorO = (int) Math.ceil(armorO / 10.0);
                 }

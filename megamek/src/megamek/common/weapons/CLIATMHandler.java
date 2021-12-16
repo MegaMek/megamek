@@ -93,7 +93,7 @@ public class CLIATMHandler extends ATMHandler {
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             
             // some question here about "partial streak missiles"
-            if(streakInactive()) {
+            if (streakInactive()) {
                 toReturn = applyGlancingBlowModifier(toReturn, true);
             }
         }
@@ -186,7 +186,7 @@ public class CLIATMHandler extends ATMHandler {
         // If we are in streak mode and miss, don't fire AMS! - However, AMS
         // shouldn't fire if we miss anyway, right?
         /*
-         * if(bMissed && allShotsHit()) { return 0; }
+         * if (bMissed && allShotsHit()) { return 0; }
          */
         // //////
         // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE.

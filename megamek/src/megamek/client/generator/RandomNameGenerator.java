@@ -16,14 +16,17 @@
  */
 package megamek.client.generator;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.common.enums.Gender;
 import megamek.common.util.weightedMaps.WeightedIntMap;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * This class sets up a random name generator that can then be used to generate random pilot names.
@@ -344,7 +347,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to parse historical ethnicity file " + file, e);
+            LogManager.getLogger().error("Failed to parse historical ethnicity file " + file, e);
         }
     }
 
@@ -359,7 +362,7 @@ public class RandomNameGenerator implements Serializable {
                 factionGivenNamesLoadMap, factionEthnicCodesLoadMap);
 
         if (factionGivenNamesLoadMap.isEmpty() || factionEthnicCodesLoadMap.isEmpty()) {
-            MegaMek.getLogger().error("No faction files found!");
+            LogManager.getLogger().error("No faction files found!");
 
             // We will create a general list where everything is weighted at one to allow players to
             // continue to play with named characters, indexing it at 1
@@ -440,11 +443,11 @@ public class RandomNameGenerator implements Serializable {
                 if (!factionGivenNamesLoadMap.get(key).get(ethnicCode).isEmpty()) {
                     factionEthnicCodesLoadMap.get(key).put(ethnicCode, Integer.parseInt(values[2]));
                 } else {
-                    MegaMek.getLogger().error("There are no possible options for " + ethnicCode + " for file " + file);
+                    LogManager.getLogger().error("There are no possible options for " + ethnicCode + " for file " + file);
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to parse " + file, e);
+            LogManager.getLogger().error("Failed to parse " + file, e);
         }
     }
 
@@ -508,14 +511,14 @@ public class RandomNameGenerator implements Serializable {
                 lineNumber++;
                 final String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    MegaMek.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
+                    LogManager.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
                     continue;
                 }
 
                 map.get(Integer.parseInt(values[0])).put(values[1], Integer.parseInt(values[2]));
             }
         } catch (IOException e) {
-            MegaMek.getLogger().error("Could not find " + file + "!");
+            LogManager.getLogger().error("Could not find " + file + "!");
         }
     }
     //endregion Initialization

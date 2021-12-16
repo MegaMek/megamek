@@ -2,42 +2,33 @@
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.test;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Vector;
 
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.common.Configuration;
 import megamek.common.Terrain;
 import megamek.common.util.StringUtil;
 
+import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Vector;
 
 /**
  * This class provides a utility to read in a HexTileSet and test to make
  * sure all images are accessible
  * 
  * @author arlith
- *
  */
 public class HexSetTest {
 
@@ -143,7 +134,7 @@ public class HexSetTest {
                 && imgFile.getCanonicalPath().endsWith(imgFile.getName());
         if (!exactmatch) {
             System.out.print("Error with " + entryName + ": ");
-            String dirFiles[] = imgFile.getParentFile().list();
+            String[] dirFiles = imgFile.getParentFile().list();
             if (dirFiles != null) {
                 Arrays.sort(dirFiles, new StringCompCaseInsensitive());
                 int result = Arrays.binarySearch(dirFiles, imgFile.getName(),
@@ -167,11 +158,7 @@ public class HexSetTest {
             File hexesDir = Configuration.hexesDir();
             
             String[] tilesetFiles = Configuration.hexesDir().list(
-                    new FilenameFilter() {
-                        public boolean accept(File directory, String fileName) {
-                            return fileName.endsWith(".tileset");
-                        }
-                    });
+                    (directory, fileName) -> fileName.endsWith(".tileset"));
             if (tilesetFiles != null) {
                 Arrays.sort(tilesetFiles);
                 for (String tileset : tilesetFiles) {
@@ -181,7 +168,7 @@ public class HexSetTest {
             // Create the default hexset, so we can validate it as well
             testFile(hexesDir, TilesetManager.FILENAME_DEFAULT_HEX_SET, 0);
 
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IOException!");
             e.printStackTrace();
         }

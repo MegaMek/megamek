@@ -20,39 +20,15 @@
  */
 package megamek.client.ui.swing.tileset;
 
-import java.awt.Image;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.HashMap;
-import java.util.Objects;
-
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.FighterSquadron;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.QuadVee;
-import megamek.common.SmallCraft;
-import megamek.common.SpaceStation;
-import megamek.common.Tank;
-import megamek.common.TeleMissile;
-import megamek.common.TripodMech;
-import megamek.common.Warship;
+import megamek.common.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.*;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
@@ -193,7 +169,7 @@ public class MechTileset {
         MechEntry entry = entryFor(entity, secondaryPos);
 
         if (entry == null) {
-            MegaMek.getLogger().warning("Entry is null, please make sure that there is a default entry for "
+            LogManager.getLogger().warn("Entry is null, please make sure that there is a default entry for "
                     + entity.getShortNameRaw() + " in both mechset.txt and wreckset.txt. Defaulting to "
                     + LIGHT_STRING);
             entry = default_light;
@@ -386,12 +362,12 @@ public class MechTileset {
                     && st.sval.equalsIgnoreCase("include")) {
                 st.nextToken();
                 name = st.sval;
-                MegaMek.getLogger().debug("Loading more unit images from " + name + "...");
+                LogManager.getLogger().debug("Loading more unit images from " + name + "...");
                 try {
                     loadFromFile(name);
-                    MegaMek.getLogger().debug("... finished " + name + ".");
+                    LogManager.getLogger().debug("... finished " + name + ".");
                 } catch (IOException e) {
-                    MegaMek.getLogger().debug("... failed: " + e.getMessage() + ".", e);
+                    LogManager.getLogger().debug("... failed: " + e.getMessage() + ".", e);
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
                     && st.sval.equalsIgnoreCase("chassis")) {
@@ -489,7 +465,7 @@ public class MechTileset {
             File fin = new MegaMekFile(dir, imageFile).getFile();
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
-                MegaMek.getLogger().warning("Received null image from ImageUtil.loadImageFromFile! File: "
+                LogManager.getLogger().warn("Received null image from ImageUtil.loadImageFromFile! File: "
                         + fin.toString());
             }
         }

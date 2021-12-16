@@ -31,8 +31,8 @@ import megamek.client.ui.panels.SkillGenerationOptionsPanel;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
+import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -249,7 +249,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     private void setupValues() {
-        IPlayer player = client.getLocalPlayer();
+        Player player = client.getLocalPlayer();
         fldInit.setText(Integer.toString(player.getConstantInitBonus()));
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
@@ -301,7 +301,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butText[i].append(IStartingPositions.START_LOCATION_NAMES[i]).append("</FONT><BR>");
         }
 
-        for (IPlayer player: client.getGame().getPlayersVector()) {
+        for (Player player : client.getGame().getPlayersVector()) {
             int pos = player.getStartingPos(); 
             if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) { 
                 int index = pos > 10 ? pos - 10 : pos;

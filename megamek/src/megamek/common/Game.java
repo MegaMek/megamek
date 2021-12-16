@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -32,6 +31,7 @@ import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
 import megamek.server.victory.VictoryResult;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
@@ -58,7 +58,7 @@ public class Game implements Serializable {
 
     private GameOptions options = new GameOptions();
 
-    public IBoard board = new Board();
+    private Board board = new Board();
 
     private final List<Entity> entities = new CopyOnWriteArrayList<>();
     private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
@@ -68,10 +68,10 @@ public class Game implements Serializable {
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
 
-    private Vector<IPlayer> players = new Vector<>();
+    private Vector<Player> players = new Vector<>();
     private Vector<Team> teams = new Vector<>();
 
-    private Hashtable<Integer, IPlayer> playerIds = new Hashtable<>();
+    private Hashtable<Integer, Player> playerIds = new Hashtable<>();
 
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
@@ -184,14 +184,18 @@ public class Game implements Serializable {
         return version;
     }
 
-    public IBoard getBoard() {
+    public Board getBoard() {
         return board;
     }
 
-    public void setBoard(IBoard board) {
-        IBoard oldBoard = this.board;
-        this.board = board;
+    public void setBoard(Board board) {
+        Board oldBoard = this.board;
+        setBoardDirect(board);
         processGameEvent(new GameBoardNewEvent(this, oldBoard, board));
+    }
+
+    public void setBoardDirect(final Board board) {
+        this.board = board;
     }
 
     public boolean containsMinefield(Coords coords) {
@@ -304,9 +308,9 @@ public class Game implements Serializable {
         minefields.clear();
         vibrabombs.removeAllElements();
 
-        Enumeration<IPlayer> iter = getPlayers();
+        Enumeration<Player> iter = getPlayers();
         while (iter.hasMoreElements()) {
-            IPlayer player = iter.nextElement();
+            Player player = iter.nextElement();
             player.removeMinefields();
         }
     }
@@ -339,7 +343,7 @@ public class Game implements Serializable {
 
     public void setOptions(final @Nullable GameOptions options) {
         if (options == null) {
-            MegaMek.getLogger().error("Can't set the game options to null!");
+            LogManager.getLogger().error("Can't set the game options to null!");
         } else {
             this.options = options;
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -371,10 +375,10 @@ public class Game implements Serializable {
     /**
      * @return a player's team, which may be null if they do not have a team
      */
-    public @Nullable Team getTeamForPlayer(IPlayer p) {
+    public @Nullable Team getTeamForPlayer(Player p) {
         for (Team team : teams) {
-            for (Enumeration<IPlayer> j = team.getPlayers(); j.hasMoreElements(); ) {
-                final IPlayer player = j.nextElement();
+            for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements(); ) {
+                final Player player = j.nextElement();
                 if (p == player) {
                     return team;
                 }
@@ -395,14 +399,14 @@ public class Game implements Serializable {
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
-        for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        for (Enumeration<Player> i = getPlayers(); i.hasMoreElements(); ) {
+            final Player player = i.nextElement();
             // Ignore players not on a team
-            if (player.getTeam() == IPlayer.TEAM_UNASSIGNED) {
+            if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 continue;
             }
-            if (!useTeamInit || (player.getTeam() == IPlayer.TEAM_NONE)) {
-                Team new_team = new Team(IPlayer.TEAM_NONE);
+            if (!useTeamInit || (player.getTeam() == Player.TEAM_NONE)) {
+                Team new_team = new Team(Player.TEAM_NONE);
                 new_team.addPlayer(player);
                 initTeams.addElement(new_team);
             }
@@ -410,10 +414,10 @@ public class Game implements Serializable {
 
         if (useTeamInit) {
             // Now, go through all the teams, and add the appropriate player
-            for (int t = IPlayer.TEAM_NONE + 1; t < IPlayer.MAX_TEAMS; t++) {
+            for (int t = Player.TEAM_NONE + 1; t < Player.TEAM_NAMES.length; t++) {
                 Team new_team = null;
-                for (Enumeration<IPlayer> i = getPlayers(); i.hasMoreElements(); ) {
-                    final IPlayer player = i.nextElement();
+                for (Enumeration<Player> i = getPlayers(); i.hasMoreElements(); ) {
+                    final Player player = i.nextElement();
                     if (player.getTeam() == t) {
                         if (new_team == null) {
                             new_team = new Team(t);
@@ -444,14 +448,14 @@ public class Game implements Serializable {
     /**
      * Return an enumeration of player in the game
      */
-    public Enumeration<IPlayer> getPlayers() {
+    public Enumeration<Player> getPlayers() {
         return players.elements();
     }
 
     /**
      * Return the players vector
      */
-    public Vector<IPlayer> getPlayersVector() {
+    public Vector<Player> getPlayersVector() {
         return players;
     }
 
@@ -465,11 +469,11 @@ public class Game implements Serializable {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    public @Nullable IPlayer getPlayer(final int id) {
-        return (IPlayer.PLAYER_NONE == id) ? null : playerIds.get(id);
+    public @Nullable Player getPlayer(final int id) {
+        return (Player.PLAYER_NONE == id) ? null : playerIds.get(id);
     }
 
-    public void addPlayer(int id, IPlayer player) {
+    public void addPlayer(int id, Player player) {
         player.setGame(this);
         players.addElement(player);
         playerIds.put(id, player);
@@ -477,8 +481,8 @@ public class Game implements Serializable {
         updatePlayer(player);
     }
 
-    public void setPlayer(int id, IPlayer player) {
-        final IPlayer oldPlayer = getPlayer(id);
+    public void setPlayer(int id, Player player) {
+        final Player oldPlayer = getPlayer(id);
         player.setGame(this);
         players.setElementAt(player, players.indexOf(oldPlayer));
         playerIds.put(id, player);
@@ -486,12 +490,12 @@ public class Game implements Serializable {
         updatePlayer(player);
     }
 
-    protected void updatePlayer(IPlayer player) {
+    protected void updatePlayer(Player player) {
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
     public void removePlayer(int id) {
-        IPlayer playerToRemove = getPlayer(id);
+        Player playerToRemove = getPlayer(id);
         players.removeElement(playerToRemove);
         playerIds.remove(id);
         setupTeams();
@@ -502,7 +506,7 @@ public class Game implements Serializable {
      * Returns the number of entities owned by the player, regardless of their
      * status, as long as they are in the game.
      */
-    public int getEntitiesOwnedBy(IPlayer player) {
+    public int getEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
             if ((entity != null) && player.equals(entity.getOwner())) {
@@ -516,7 +520,7 @@ public class Game implements Serializable {
      * Returns the number of entities owned by the player, regardless of their
      * status.
      */
-    public int getAllEntitiesOwnedBy(IPlayer player) {
+    public int getAllEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player)) {
@@ -534,7 +538,7 @@ public class Game implements Serializable {
     /**
      * @return the number of non-destroyed entities owned by the player
      */
-    public int getLiveEntitiesOwnedBy(IPlayer player) {
+    public int getLiveEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
@@ -549,7 +553,7 @@ public class Game implements Serializable {
      * @return the number of non-destroyed entities owned by the player, including entities not yet
      * deployed. Ignores offboard units and captured Mek pilots.
      */
-    public int getLiveDeployedEntitiesOwnedBy(IPlayer player) {
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
@@ -565,7 +569,7 @@ public class Game implements Serializable {
      * @return the number of non-destroyed commander entities owned by the player. Ignores offboard
      * units and captured Mek pilots.
      */
-    public int getLiveCommandersOwnedBy(IPlayer player) {
+    public int getLiveCommandersOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
@@ -581,7 +585,7 @@ public class Game implements Serializable {
     /**
      * @return true if the player has a valid unit with the Tactical Genius pilot special ability.
      */
-    public boolean hasTacticalGenius(IPlayer player) {
+    public boolean hasTacticalGenius(Player player) {
         for (Entity entity : entities) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS)
                     && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
@@ -725,8 +729,7 @@ public class Game implements Serializable {
         // FIXME: occasionally getTurn() returns null. Handle that case
         // intelligently.
         this.turnIndex = turnIndex;
-        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
-                .getPlayerNum()), prevPlayerId));
+        processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn().getPlayerNum()), prevPlayerId));
     }
 
     /**
@@ -1198,14 +1201,14 @@ public class Game implements Serializable {
                         return null;
                     }
                 case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
+                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID));
                 case Targetable.TYPE_INARC_POD:
                     return INarcPod.idToInstance(nID);
                 default:
                     return null;
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return null;
         }
     }
@@ -1473,9 +1476,9 @@ public class Game implements Serializable {
     }
 
     private void removeArtyAutoHitHexes() {
-        Enumeration<IPlayer> iter = getPlayers();
+        Enumeration<Player> iter = getPlayers();
         while (iter.hasMoreElements()) {
-            IPlayer player = iter.nextElement();
+            Player player = iter.nextElement();
             player.removeArtyAutoHitHexes();
         }
     }
@@ -1597,7 +1600,7 @@ public class Game implements Serializable {
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
-                        MegaMek.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
+                        LogManager.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
                     }
                 }
             }
@@ -1610,7 +1613,7 @@ public class Game implements Serializable {
      * @param player
      * @return
      */
-    public synchronized List<Entity> getAllOffboardEnemyEntities(IPlayer player) {
+    public synchronized List<Entity> getAllOffboardEnemyEntities(Player player) {
         List<Entity> vector = new ArrayList<>();
         for (Entity e : entities) {
             if (e.getOwner().isEnemyOf(player) && e.isOffBoard() && !e.isDestroyed() && e.isDeployed()) {
@@ -1652,7 +1655,7 @@ public class Game implements Serializable {
             return false;
         }
         
-        IHex hex = getBoard().getHex(c);
+        Hex hex = getBoard().getHex(c);
         
         for (Entity entity : getEntitiesVector(c, true)) {
             if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) && entity.getElevation() == hex.ceiling()) {
@@ -1674,7 +1677,7 @@ public class Game implements Serializable {
     public @Nullable Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<>();
         if (board.contains(c)) {
-            IHex hex = board.getHex(c);
+            Hex hex = board.getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
                         && ((entity.getElevation() == 0) // Standing on hex surface
@@ -1922,7 +1925,7 @@ public class Game implements Serializable {
      * @param hide   - should fighters loaded into squadrons be excluded?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide) {
+    public ArrayList<Entity> getPlayerEntities(Player player, boolean hide) {
         ArrayList<Entity> output = new ArrayList<>();
         for (Entity entity : entities) {
             if (entity.isPartOfFighterSquadron() && hide) {
@@ -1942,7 +1945,7 @@ public class Game implements Serializable {
      * @param hide   - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide) {
+    public ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide) {
         ArrayList<Integer> output = new ArrayList<>();
         for (Entity entity : entities) {
             if (entity.isPartOfFighterSquadron() && hide) {
@@ -1993,7 +1996,7 @@ public class Game implements Serializable {
      * @return number of infantry <code>playerId</code> has not selected yet this turn
      */
     public int getInfantryLeft(int playerId) {
-        IPlayer player = getPlayer(playerId);
+        Player player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -2011,7 +2014,7 @@ public class Game implements Serializable {
      * @return number of ProtoMechs <code>playerId</code> has not selected yet this turn
      */
     public int getProtomechsLeft(int playerId) {
-        IPlayer player = getPlayer(playerId);
+        Player player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -2029,7 +2032,7 @@ public class Game implements Serializable {
      * @return number of vehicles <code>playerId</code> has not selected yet this turn
      */
     public int getVehiclesLeft(int playerId) {
-        IPlayer player = getPlayer(playerId);
+        Player player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -2047,7 +2050,7 @@ public class Game implements Serializable {
      * @return number of 'Mechs <code>playerId</code> has not selected yet this turn
      */
     public int getMechsLeft(int playerId) {
-        IPlayer player = getPlayer(playerId);
+        Player player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
@@ -2684,8 +2687,8 @@ public class Game implements Serializable {
      * @return true if the specified player is either the victor, or is on the winning team. Best
      * to call during GamePhase.VICTORY.
      */
-    public boolean isPlayerVictor(IPlayer player) {
-        if (player.getTeam() == IPlayer.TEAM_NONE) {
+    public boolean isPlayerVictor(Player player) {
+        if (player.getTeam() == Player.TEAM_NONE) {
             return player.getId() == victoryPlayerId;
         }
         return player.getTeam() == victoryTeam;
@@ -3023,8 +3026,7 @@ public class Game implements Serializable {
         if (gameListeners == null) {
             gameListeners = new Vector<>();
         }
-        for (Enumeration<GameListener> e = gameListeners.elements(); e
-                .hasMoreElements(); ) {
+        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
             event.fireEvent(e.nextElement());
         }
     }
@@ -3097,9 +3099,11 @@ public class Game implements Serializable {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) {
+    public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) throws RuntimeException {
         if (ip == null) {
-            throw MegaMek.getLogger().error(new RuntimeException("Illuminated Positions is null."));
+            var ex = new RuntimeException("Illuminated Positions is null.");
+            LogManager.getLogger().error(ex);
+            throw ex;
         }
         illuminatedPositions = ip;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -3321,7 +3325,7 @@ public class Game implements Serializable {
 
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
-            MegaMek.getLogger().error("Can't set the planetary conditions to null!");
+            LogManager.getLogger().error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -3429,7 +3433,7 @@ public class Game implements Serializable {
         if ((entitiesInCacheCount != entityVectorSize) && !getPhase().isDeployment()
                 && !getPhase().isExchange() && !getPhase().isLounge()
                 && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
-            MegaMek.getLogger().warning("Entities vector has " + entities.size()
+            LogManager.getLogger().warn("Entities vector has " + entities.size()
                     + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
             List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
@@ -3437,14 +3441,14 @@ public class Game implements Serializable {
                     missingIds.add(id);
                 }
             }
-            MegaMek.getLogger().info("Missing ids: " + missingIds);
+            LogManager.getLogger().info("Missing ids: " + missingIds);
         }
         for (Entity e : entities) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
                 HashSet<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
-                    MegaMek.getLogger().warning("Entity " + e.getId() + " is in "
+                    LogManager.getLogger().warn("Entity " + e.getId() + " is in "
                             + e.getPosition() + " however the position cache "
                             + "does not have it in that position!");
                 }
@@ -3458,7 +3462,7 @@ public class Game implements Serializable {
                 }
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
-                    MegaMek.getLogger().warning("Entity Position Cache thinks Entity " + eId
+                    LogManager.getLogger().warn("Entity Position Cache thinks Entity " + eId
                             + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
                 }
             }
@@ -3506,7 +3510,7 @@ public class Game implements Serializable {
      */
     public void cancelVictory() {
         setForceVictory(false);
-        setVictoryPlayerId(IPlayer.PLAYER_NONE);
-        setVictoryTeam(IPlayer.TEAM_NONE);
+        setVictoryPlayerId(Player.PLAYER_NONE);
+        setVictoryTeam(Player.TEAM_NONE);
     }
 }

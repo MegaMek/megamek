@@ -14,9 +14,10 @@
  */
 package megamek.common;
 
-import java.util.Vector;
+import megamek.common.enums.AimingMode;
+import org.apache.logging.log4j.LogManager;
 
-import megamek.MegaMek;
+import java.util.Vector;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
@@ -100,7 +101,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
 
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
@@ -154,8 +155,8 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         return rollHitLocation(table, side);
     }
 
@@ -312,7 +313,7 @@ public class GunEmplacement extends Tank {
         }
         double xbv = 0.0;
         if (!ignoreC3 && (game != null)) {
-            xbv += getExtraC3BV((int)Math.round(finalBV));
+            xbv += getExtraC3BV((int) Math.round(finalBV));
         }
 
         finalBV += xbv;
@@ -501,10 +502,10 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
             return true;
         } else if (isMilitary() && !hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
             return true;
         } else {
             return false;

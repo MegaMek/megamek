@@ -722,7 +722,7 @@ public class EntityListFile {
             output.write(String.valueOf(entity.wasNeverDeployed()));
             if (entity.isAero()) {
                 output.write("\" velocity=\"");
-                output.write(((IAero)entity).getCurrentVelocity() + "");
+                output.write(((IAero) entity).getCurrentVelocity() + "");
                 output.write("\" altitude=\"");
                 output.write(entity.getAltitude() + "");
             }
@@ -1110,7 +1110,7 @@ public class EntityListFile {
         output.write("\" piloting=\"");
         output.write(String.valueOf(crew.getPiloting(pos)));
         if (crew instanceof LAMPilot) {
-            writeLAMAeroAttributes(output, (LAMPilot)crew,
+            writeLAMAeroAttributes(output, (LAMPilot) crew,
                     (null != entity.getGame())
                     && entity.getGame().getOptions()
                     .booleanOption(OptionsConstants.RPG_RPG_GUNNERY));

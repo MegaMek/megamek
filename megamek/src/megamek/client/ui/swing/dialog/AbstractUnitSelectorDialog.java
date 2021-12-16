@@ -1,41 +1,44 @@
 /*
- *  MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
- *  Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
- *  Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
+ * Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
+ * Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.dialog;
 
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.panes.EntityViewPane;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.AdvancedSearchDialog;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.*;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.sorter.NaturalOrderComparator;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.*;
-import javax.swing.table.*;
-
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
@@ -136,7 +139,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             sortList.add(new SortKey(guiPreferences.getMechSelectorSortColumn(),
                     SortOrder.valueOf(guiPreferences.getMechSelectorSortOrder())));
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
+            LogManager.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
 
             sortList.add(new SortKey(guiPreferences.getMechSelectorDefaultSortColumn(),
                     SortOrder.valueOf(guiPreferences.getMechSelectorDefaultSortOrder())));
@@ -584,7 +587,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             // print so this sets the source file to the full path.
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            MegaMek.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
+            LogManager.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
                             + ": " + e.getMessage(), e);
             return null;
         }
@@ -600,7 +603,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         // break out if there are no units to filter
         if (mechs == null) {
-            MegaMek.getLogger().error("No mechs were loaded");
+            LogManager.getLogger().error("No mechs were loaded");
         } else {
             unitModel.setData(mechs);
         }

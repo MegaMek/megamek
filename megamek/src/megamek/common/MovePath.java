@@ -1,43 +1,30 @@
-/**
+/*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Holds movement path for an entity.
@@ -162,11 +149,11 @@ public class MovePath implements Cloneable, Serializable {
             sb.append(' ');
         }
         
-        if(!getGame().getBoard().contains(this.getFinalCoords())) {
+        if (!getGame().getBoard().contains(this.getFinalCoords())) {
             sb.append("OUT!");
         }
         
-        if(this.getFliesOverEnemy()) {
+        if (this.getFliesOverEnemy()) {
             sb.append("E! ");
         }
         
@@ -415,7 +402,7 @@ public class MovePath implements Cloneable, Serializable {
 
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
-            IHex hex = game.getBoard().getHex(step.getPosition());
+            Hex hex = game.getBoard().getHex(step.getPosition());
             if ((hex != null) && isJumping() && step.isEndPos(this)) {
                 PilotingRollData psr = entity.checkLandingInHeavyWoods(step.getMovementType(false), hex);
                 if (psr.getValue() != PilotingRollData.CHECK_FALSE) {
@@ -514,7 +501,7 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
         
-        if(step.useAeroAtmosphere(game, entity) 
+        if (step.useAeroAtmosphere(game, entity)
         		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
         		&& step.getPosition() != null  											//null
         		&& game.getFirstEnemyEntity(step.getPosition(), entity) != null) {
@@ -601,7 +588,7 @@ public class MovePath implements Cloneable, Serializable {
         }
         
         if (getEntity() instanceof LandAirMech
-                && !((LandAirMech)getEntity()).canConvertTo(getFinalConversionMode())) {
+                && !((LandAirMech) getEntity()).canConvertTo(getFinalConversionMode())) {
             steps.forEach(s -> {
                 if (s.getType() == MoveStepType.CONVERT_MODE) {
                     s.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -628,7 +615,7 @@ public class MovePath implements Cloneable, Serializable {
                 getEntity().setConvertingNow(false);
                 //Mechs using tracks have the movement mode set at the beginning of the turn, so
                 //it will need to be reset.
-                if (getEntity() instanceof Mech && ((Mech)getEntity()).hasTracks()) {
+                if (getEntity() instanceof Mech && ((Mech) getEntity()).hasTracks()) {
                     getEntity().toggleConversionMode();
                 }
             }
@@ -641,7 +628,7 @@ public class MovePath implements Cloneable, Serializable {
             }
             
             // if this step is part of a manuever, undo the whole manuever, all the way to the beginning.
-            if(step1.isManeuver()) {
+            if (step1.isManeuver()) {
                 int stepIndex = steps.size() - 1;
                 
                 while (steps.size() > 0 && steps.get(stepIndex).isManeuver()) {
@@ -686,7 +673,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     private void regenerateStepTypes() {
         containedStepTypes.clear();
-        for(MoveStep step : steps) {
+        for (MoveStep step : steps) {
             containedStepTypes.add(step.getType());
         }
     }
@@ -733,28 +720,14 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean goesThroughCoords(int x, int y) {
         Enumeration<MoveStep> steps = getSteps();
-        while(steps.hasMoreElements()) {
+        while (steps.hasMoreElements()) {
             MoveStep step = steps.nextElement();
-            if(step.getPosition().getX() == x && step.getPosition().getY() == y) {
+            if (step.getPosition().getX() == x && step.getPosition().getY() == y) {
                 return true;
             }
         }
         
         return false;
-    }
-    
-    /**
-     * Check for the presence of any step type that's not the specified step type in the move path
-     * @param type The step type to check for
-     * @return Whether or not there are any other step types 
-     */
-    public boolean containsAnyOther(final MoveStepType type) {
-    	for(Iterator<MoveStepType> iter = containedStepTypes.iterator(); iter.hasNext();) {
-    		if(iter.next() != type)
-				return true;
-    	}
-    	
-    	return false;
     }
 
     /**
@@ -775,7 +748,7 @@ public class MovePath implements Cloneable, Serializable {
      * this path.
      */
     public Coords getFinalCoords() {
-        if(getGame().useVectorMove()) {
+        if (getGame().useVectorMove()) {
             return Compute.getFinalPosition(getEntity().getPosition(), getFinalVectors());
         }
         
@@ -870,7 +843,7 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() != null) {
             return getLastStep().getClearance();
         }
-        IHex hex = entity.getGame().getBoard().getHex(getEntity().getPosition());
+        Hex hex = entity.getGame().getBoard().getHex(getEntity().getPosition());
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
             return getEntity().getElevation() - hex.terrainLevel(Terrains.BLDG_ELEV);
         }
@@ -1352,7 +1325,7 @@ public class MovePath implements Cloneable, Serializable {
             //  this is because getNextMoves only considers turning and
             //  forward/backward movement
             if (type == MoveStepType.CHARGE ||
-                    type == MoveStepType.DFA){
+                    type == MoveStepType.DFA) {
                 MovePath expandedPath = candidatePath.clone();
                 expandedPath.addStep(type);
                 if (expandedPath.getLastStep().isMovementPossible(getGame(),
@@ -1627,7 +1600,7 @@ public class MovePath implements Cloneable, Serializable {
         }
         // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
         if ((getEntity() instanceof LandAirMech)
-                && (((LandAirMech)getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)){
+                && (((LandAirMech) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)) {
             if (getLastStep() != null) {
                 return getLastStep().getClearance() > 0;
             } else {
@@ -1854,11 +1827,11 @@ public class MovePath implements Cloneable, Serializable {
         // code that's useful to test the destruction-aware pathfinder
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
         // the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
-        Set<Coords> destinationSet = new HashSet<Coords>();
+        Set<Coords> destinationSet = new HashSet<>();
         destinationSet.add(dest);
         
         // debugging code that can be used to find a path to a specific edge
-        Princess princess = new Princess("test", "test", 2020, LogLevel.OFF);
+        Princess princess = new Princess("test", "test", 2020);
         //Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
         
         long marker1 = System.currentTimeMillis();

@@ -416,7 +416,7 @@ public class ComputeECM {
                 && allEccmInfo.size() > 0) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
-            while (ecmIterator.hasNext()){
+            while (ecmIterator.hasNext()) {
                 ECMInfo ecmInfo = ecmIterator.next();
                 // Ignore ECCM
                 if (ecmInfo.isECCM()) {

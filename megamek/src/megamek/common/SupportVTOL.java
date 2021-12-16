@@ -158,7 +158,7 @@ public class SupportVTOL extends VTOL {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
     
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL | Entity.ETYPE_SUPPORT_VTOL;
     }
     

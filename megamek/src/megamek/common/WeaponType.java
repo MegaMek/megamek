@@ -928,7 +928,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int getMaxRange(Mounted weapon) {
-        if(null != weapon) {
+        if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
                 if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {

@@ -32,20 +32,20 @@ public class UnitBehavior {
         BehaviorSettings botSettings = owner.getBehaviorSettings();
         
         if (botSettings.isForcedWithdrawal() && entity.isCrippled()) {
-            if(owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
+            if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }
             
             return BehaviorType.ForcedWithdrawal;
         } else if (botSettings.shouldAutoFlee() && botSettings.getDestinationEdge() != CardinalEdge.NONE) {
-            if(owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
+            if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }
             
             return BehaviorType.MoveToDestination;
         } else {
             // if we can't see anyone, move to contact
-            if(!entity.getGame().getAllEnemyEntities(entity).hasNext()) {
+            if (!entity.getGame().getAllEnemyEntities(entity).hasNext()) {
                 return BehaviorType.MoveToContact;
             }
             

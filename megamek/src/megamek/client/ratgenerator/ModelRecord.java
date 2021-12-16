@@ -1,39 +1,30 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ratgenerator;
+
+import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Set;
-
-import megamek.MegaMek;
-import megamek.common.AmmoType;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.MechSummary;
-import megamek.common.MiscType;
-import megamek.common.UnitType;
-import megamek.common.WeaponType;
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
  * of missions in addition to what is formally declared in the data files.
  * 
  * @author Neoancient
- *
  */
 public class ModelRecord extends AbstractUnitRecord {
 	public static final int NETWORK_NONE = 0;
@@ -101,7 +92,7 @@ public class ModelRecord extends AbstractUnitRecord {
     	    //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
     	    //is that there is a null equipment name.
     	    if (null == ms.getEquipmentNames().get(i)) {
-    	        MegaMek.getLogger().error(
+    	        LogManager.getLogger().error(
     	                "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
     	                + ms.getName() + ", index " + i);
     	        continue;
@@ -116,7 +107,7 @@ public class ModelRecord extends AbstractUnitRecord {
     		}
     		if (eq instanceof WeaponType) {
     			totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-    			switch (((megamek.common.weapons.Weapon)eq).getAmmoType()) {
+    			switch (((megamek.common.weapons.Weapon) eq).getAmmoType()) {
     				case AmmoType.T_AC_LBX:
     				case AmmoType.T_HAG:
     				case AmmoType.T_SBGAUSS:
@@ -124,16 +115,16 @@ public class ModelRecord extends AbstractUnitRecord {
     			}
     			if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
     				flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
-    				roles.add(((WeaponType)eq).getAmmoType() == AmmoType.T_ARROW_IV?
+    				roles.add(((WeaponType) eq).getAmmoType() == AmmoType.T_ARROW_IV?
     				        MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
     			}
         		if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
         			incendiary = true;
         			apWeapons = true;
         		}
-        		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
-        		        || ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM_IMP
-        				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
+        		incendiary |= ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM
+        		        || ((WeaponType) eq).getAmmoType() == AmmoType.T_SRM_IMP
+        				|| ((WeaponType) eq).getAmmoType() == AmmoType.T_MRM;
         		
         		if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
         				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
@@ -142,7 +133,7 @@ public class ModelRecord extends AbstractUnitRecord {
         		if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
         			ammoBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
         		}
-        		if (((WeaponType)eq).getLongRange() >= 20) {
+        		if (((WeaponType) eq).getLongRange() >= 20) {
         			lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
         		}
         		if (eq.hasFlag(WeaponType.F_TAG)) {
@@ -291,14 +282,14 @@ public class ModelRecord extends AbstractUnitRecord {
 			if (mr != null) {
 				roles.add(mr);
 			} else {
-			    MegaMek.getLogger().error("Could not parse mission role for "
+			    LogManager.getLogger().error("Could not parse mission role for "
 						+ getChassis() + " " + getModel() + ": " + role);
 			}
 		}
 	}
 	
 	public void setRequiredUnits(String str) {
-		String [] subfields = str.split(",");
+		String[] subfields = str.split(",");
 		for (String unit : subfields) {
 			if (unit.startsWith("req:")) {
 				requiredUnits.add(unit.replace("req:", ""));

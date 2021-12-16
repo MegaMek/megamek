@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -35,10 +35,6 @@ import megamek.common.weapons.ppc.ISPlasmaRifle;
 import megamek.server.Server;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4718048077136686433L;
 
     /**
@@ -46,8 +42,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, Server s) {
+    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -79,26 +74,27 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     }
                 }
             }
+
             if (extraHeat > 0) {
                 Report r = new Report(3400);
                 r.subject = subjectId;
                 r.indent(2);
                 if (entityTarget.getArmor(hit) > 0 &&                        
                         (entityTarget.getArmorType(hit.getLocation()) == 
-                           EquipmentType.T_ARMOR_REFLECTIVE)){
-                   entityTarget.heatFromExternal += Math.max(1, extraHeat/2);
-                   r.messageId=3406;
-                   r.add(Math.max(1, extraHeat/2));
+                           EquipmentType.T_ARMOR_REFLECTIVE)) {
+                   entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
+                   r.messageId = 3406;
+                   r.add(Math.max(1, extraHeat / 2));
                    r.choose(true);
                    r.add(extraHeat);
                    r.add(EquipmentType.armorNames
                            [entityTarget.getArmorType(hit.getLocation())]);
                 } else if (entityTarget.getArmor(hit) > 0 &&  
                        (entityTarget.getArmorType(hit.getLocation()) == 
-                           EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
-                    entityTarget.heatFromExternal += extraHeat/2;
-                    r.messageId=3406;
-                    r.add(extraHeat/2);
+                           EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                    entityTarget.heatFromExternal += extraHeat / 2;
+                    r.messageId = 3406;
+                    r.add(extraHeat / 2);
                     r.choose(true);
                     r.add(extraHeat);
                     r.add(EquipmentType.armorNames
@@ -165,11 +161,10 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         }
         Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
                 nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 
     @Override
@@ -178,5 +173,4 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }
-
 }

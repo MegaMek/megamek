@@ -2,15 +2,15 @@
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
@@ -26,10 +26,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * @author dirk
  */
 public class SpecialHexDisplay implements Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
@@ -130,27 +126,25 @@ public class SpecialHexDisplay implements Serializable {
      * Defines that everyone can see an obscured display.
      */
     public static int SHD_OBSCURED_ALL = 2;
-    
-    
+
     private String info;
     private Type type;
     private int round;
 
-    private IPlayer owner = null;
+    private Player owner;
 
     private int obscured = SHD_OBSCURED_ALL;
 
     public static int NO_ROUND = -99;
 
-    public SpecialHexDisplay(Type type, int round, IPlayer owner, String info) {
+    public SpecialHexDisplay(Type type, int round, Player owner, String info) {
         this.type = type;
         this.info = info;
         this.round = round;
         this.owner = owner;
     }
 
-    public SpecialHexDisplay(Type type, int round, IPlayer owner, String info,
-            int obscured) {
+    public SpecialHexDisplay(Type type, int round, Player owner, String info, int obscured) {
         this.type = type;
         this.info = info;
         this.round = round;
@@ -205,42 +199,41 @@ public class SpecialHexDisplay implements Serializable {
         this.type = type;
     }
 
-    public IPlayer getOwner() {
+    public Player getOwner() {
         return owner;
     }
 
-    public void setOwner(IPlayer owner) {
+    public void setOwner(Player owner) {
         this.owner = owner;
     }
 
-    public void setObscuredLevel(int o){
-        if (o >= SHD_OBSCURED_OWNER && o <= SHD_OBSCURED_ALL){
+    public void setObscuredLevel(int o) {
+        if (o >= SHD_OBSCURED_OWNER && o <= SHD_OBSCURED_ALL) {
             obscured = o;
         }
     }
     
-    public int getObscuredLevel(){
+    public int getObscuredLevel() {
         return obscured;
     }
     
     /**
-     * Determines whether this special hex should be obscurred from the given
-     * <code>IPlayer</code>.
+     * Determines whether this special hex should be obscured from the given <code>Player</code>.
      * 
      * @param other
      * @return
      */
-    public boolean isObscured(IPlayer other) {
-        if (obscured == SHD_OBSCURED_OWNER && other != null 
-                && owner.equals(other)){
+    public boolean isObscured(Player other) {
+        if ((obscured == SHD_OBSCURED_OWNER) && owner.equals(other)) {
             return false;
-        } else if (obscured == SHD_OBSCURED_TEAM && other != null 
-                && owner.getTeam() == other.getTeam()){
+        } else if ((obscured == SHD_OBSCURED_TEAM) && (other != null)
+                && (owner.getTeam() == other.getTeam())) {
             return false;
-        } else if (obscured == SHD_OBSCURED_ALL){
+        } else if (obscured == SHD_OBSCURED_ALL) {
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     public void setObscured(int obscured) {
@@ -252,8 +245,7 @@ public class SpecialHexDisplay implements Serializable {
      * @param curRound
      * @return
      */
-    public boolean drawNow(GamePhase phase, int curRound,
-                           IPlayer playerChecking) {
+    public boolean drawNow(GamePhase phase, int curRound, Player playerChecking) {
         boolean shouldDisplay = thisRound(curRound)
                 || (pastRound(curRound) && type.drawBefore())
                 || (futureRound(curRound) && type.drawAfter());
@@ -270,7 +262,7 @@ public class SpecialHexDisplay implements Serializable {
                 && (type == Type.ARTILLERY_AUTOHIT
                         || type == Type.ARTILLERY_ADJUSTED
                         || type == Type.ARTILLERY_INCOMING 
-                        || type == Type.ARTILLERY_TARGET)){
+                        || type == Type.ARTILLERY_TARGET)) {
             return false;
         }
 
@@ -286,19 +278,16 @@ public class SpecialHexDisplay implements Serializable {
      * @param toPlayer
      * @return
      */
-    public boolean isOwner(IPlayer toPlayer) {
-        if ((owner == null) || owner.equals(toPlayer)) {
-            return true;
-        }
-        return false;
+    public boolean isOwner(Player toPlayer) {
+        return (owner == null) || owner.equals(toPlayer);
     }
     
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final SpecialHexDisplay other = (SpecialHexDisplay) obj;
@@ -310,6 +299,7 @@ public class SpecialHexDisplay implements Serializable {
         return Objects.hash(type, owner, round);
     }
     
+    @Override
     public String toString() {
         return "SHD: " + type.name() + ", " + "round " + round + ", by "
                 + owner.getName();

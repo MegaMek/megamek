@@ -53,13 +53,12 @@ public class BattleArmorMapSet implements DisplayMapSet {
     // Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     // Set of Backgrpund drawers which will be sent to PicMap component
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
     private int stepY = 53;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$
-            GUIPreferences.getInstance().getInt(
-                    "AdvancedMechDisplayArmorLargeFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     /**
      * This constructor have to be called anly from addNotify() method
@@ -113,25 +112,20 @@ public class BattleArmorMapSet implements DisplayMapSet {
             armorLabels[x].setVisible(true);
             unitAreas[x].setVisible(true);
         }
+
         for (int x = men; x < BattleArmor.BA_MAX_MEN; x++) {
             armorAreas[x].setVisible(false);
             armorLabels[x].setVisible(false);
             unitAreas[x].setVisible(false);
         }
-        /*
-         * if (ba.isClan()){ men = 5; armorAreas[4].setVisible(true);
-         * armorLabels[4].setVisible(true); unitAreas[4].setVisible(true); }
-         * else{ men = 4; armorAreas[4].setVisible(false);
-         * armorLabels[4].setVisible(false); unitAreas[4].setVisible(false); }
-         */
+
         for (int i = 0; i < men; i++) {
             armor = (ba.getArmor(i + 1, false) < 0) ? 0 : ba.getArmor(i + 1,
                     false);
             internal = (ba.getInternal(i + 1) < 0) ? 0 : ba.getInternal(i + 1);
             if ((armor + internal) == 0) {
                 armorAreas[i].setVisible(false);
-                armorLabels[i].setValue(Messages
-                        .getString("BattleArmorMapSet.Killed")); //$NON-NLS-1$
+                armorLabels[i].setValue(Messages.getString("BattleArmorMapSet.Killed"));
             } else {
                 drawArmorImage(armorImage[i], armor + internal);
                 armorLabels[i].setValue(Integer.toString(armor + internal));

@@ -35421,12 +35421,9 @@ public class Server implements Runnable {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            DataOutputStream printout = new DataOutputStream(
-                    conn.getOutputStream());
+            DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
             String content;
-            content = "port="
-                      + URLEncoder.encode(
-                              Integer.toString(serverSocket.getLocalPort()), "UTF-8");
+            content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
             if (register) {
                 for (AbstractConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());

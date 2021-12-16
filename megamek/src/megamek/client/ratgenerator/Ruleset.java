@@ -24,6 +24,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -343,9 +344,8 @@ public class Ruleset {
         InputStream is;
         try {
             is = new FileInputStream(f);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is,
-                    Charset.forName("UTF-8")));
-            String line = null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("#") && line.contains(":")) {
                     String[] fields = line.split(":");

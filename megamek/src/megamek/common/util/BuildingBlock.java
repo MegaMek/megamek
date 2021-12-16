@@ -15,18 +15,11 @@ package megamek.common.util;
 
 import org.apache.logging.log4j.LogManager;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 /**
  * buildingBlock is based on a file format I used in an online game. The
@@ -533,38 +526,30 @@ public class BuildingBlock {
     /**
      * Writes the buildingBlock data to a file.
      *
-     * @param fileName
-     *            File to write. Overwrites existing files.
-     * @return Returns true on success.
+     * @param fileName File to write. Overwrites existing files.
+     * @return true on success.
      */
     public boolean writeBlockFile(String fileName) {
-
         File file = new File(fileName);
 
         if (file.exists()) {
             if (!file.delete()) {
-
-                System.err.println("Unable to delete file...(so I could re-write it)");
+                LogManager.getLogger().error("Unable to delete file with name " + fileName);
                 return false;
             }
         }
 
-        try {
-
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-
-            for (int c = 0; c < rawData.size(); c++) {
-
-                out.write(rawData.get(c).toString());
-                out.newLine();
-
+        try (OutputStream fos = new FileOutputStream(file);
+             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+             BufferedWriter bw = new BufferedWriter(osw)) {
+            for (String rawDatum : rawData) {
+                bw.write(rawDatum);
+                bw.newLine();
             }
 
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-
-            System.err.println("Unable to save block file " + fileName);
+            bw.flush();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Unable to save block file " + fileName, e);
             return false;
         }
 

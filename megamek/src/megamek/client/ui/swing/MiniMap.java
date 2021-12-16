@@ -975,7 +975,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 } else if (entity.getWeightClass() < 6) {
                     s = STRAT_WEIGHTS[entity.getWeightClass()];
                 }
-                if (!s.equals("")) {
+                if (!s.isBlank()) {
                     var fontContext = new FontRenderContext(null, true, true);
                     var font = new Font("SansSerif", Font.BOLD, 100);
                     FontMetrics currentMetrics = getFontMetrics(font);

@@ -294,7 +294,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
-        if (!searchText.equals("")) {
+        if (!searchText.isBlank()) {
             ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
             for (List<DialogOptionComponent> comps : optionComps.values()) {
                 ArrayList<DialogOptionComponent> newComps = new ArrayList<>();

@@ -103,7 +103,7 @@ public class HexSetTest {
                 Vector<String> filenames = StringUtil.splitString(imageName, ";");
                 for (String entryFile : filenames) {
                     String entryName;
-                    if ((theme == null) || theme.equals("")) {
+                    if ((theme == null) || theme.isBlank()) {
                         entryName = terrain;
                     } else {
                         entryName = terrain + " " +  theme;

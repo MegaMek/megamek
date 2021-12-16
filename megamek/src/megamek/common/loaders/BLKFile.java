@@ -243,7 +243,7 @@ public class BLKFile {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }

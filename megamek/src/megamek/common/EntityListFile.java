@@ -1302,7 +1302,7 @@ public class EntityListFile {
             critVal = critVal.concat(" gear=\"none\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1326,7 +1326,7 @@ public class EntityListFile {
             critVal = critVal.concat(" kfboom=\"none\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1371,7 +1371,7 @@ public class EntityListFile {
             critVal = critVal.concat("\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");

@@ -237,8 +237,8 @@ public class SkinSpecification {
     
     public boolean hasBorder() {
         // Return false if any corner doesn't exsit
-        if (tl_corner.equals("") || tr_corner.equals("")
-                || bl_corner.equals("") || br_corner.equals("")) {
+        if (tl_corner.isBlank() || tr_corner.isBlank()
+                || bl_corner.isBlank() || br_corner.isBlank()) {
             return false;
         }
         
@@ -250,25 +250,25 @@ public class SkinSpecification {
         
         // Make sure edges don't contain empty strings
         for (String edge : topEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
         
         for (String edge : rightEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
         
         for (String edge : bottomEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
         
         for (String edge : leftEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
@@ -282,7 +282,7 @@ public class SkinSpecification {
         }
         
         for (String bg : backgrounds) {
-            if (bg.equals("")) {
+            if (bg.isBlank()) {
                 return false;
             }
         }

@@ -822,7 +822,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         
         String selectedRATPath = 
                 GUIPreferences.getInstance().getRATSelectedRAT();
-        if (!selectedRATPath.equals("")) {
+        if (!selectedRATPath.isBlank()) {
             String[] nodes = selectedRATPath.replace('[', ' ')
                     .replace(']', ' ').split(",");
             TreePath path = findPathByName(nodes);

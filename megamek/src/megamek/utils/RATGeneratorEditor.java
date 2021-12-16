@@ -827,7 +827,7 @@ public class RATGeneratorEditor extends JFrame {
         public void setValueAt(Object value, int row, int col) {
             AvailabilityRating ar;
             int era = ERAS[col - 1];
-            if ((value).equals("")) {
+            if ((value).isBlank()) {
                 ar = null;
             } else if (!((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
                 return;
@@ -902,7 +902,7 @@ public class RATGeneratorEditor extends JFrame {
             }       
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
-                if (!copyFrom.get(i).equals("")) {
+                if (!copyFrom.get(i).isBlank()) {
                     AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i],
                             newFaction + ":" + copyFrom.get(i));
                     if (mode == MODE_MODEL) {
@@ -1375,7 +1375,7 @@ public class RATGeneratorEditor extends JFrame {
             }       
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
-                if (!copyFrom.get(i).equals("")) {
+                if (!copyFrom.get(i).isBlank()) {
                     factionRec.setSalvage(ERAS[i], newFaction, Integer.parseInt(copyFrom.get(i)));
                 }
             }

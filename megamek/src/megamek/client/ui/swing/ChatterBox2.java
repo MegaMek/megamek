@@ -551,8 +551,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         while (words.hasMoreElements()) {
             String nextWord = words.nextElement();
             if (fm.stringWidth(nextLine + " " + nextWord) < lineWidth) {
-                nextLine = (nextLine.equals("")) ? nextWord : nextLine + " "
-                        + nextWord;
+                nextLine = nextLine.isBlank() ? nextWord : nextLine + " " + nextWord;
             } else {
                 messages.addElement(nextLine);
                 nextLine = nextWord;
@@ -808,7 +807,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:
-                if ((message == null) || message.equals("")) {
+                if ((message == null) || message.isBlank()) {
                     return;
                 }
 

@@ -611,6 +611,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Implement the <code>ActionListener</code> interface.
      */
+    @Override
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:

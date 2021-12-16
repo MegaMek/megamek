@@ -87,6 +87,7 @@ public class MineDensityDialog extends JDialog implements ActionListener {
         return density;
     }
 
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOk) {
             density = Integer.parseInt((String) choDensity.getSelectedItem());

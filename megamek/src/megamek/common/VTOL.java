@@ -67,6 +67,7 @@ public class VTOL extends Tank implements IBomber {
         return LOC_TURRET;
     }
     
+    @Override
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
@@ -262,14 +263,17 @@ public class VTOL extends Tank implements IBomber {
         return LOC_FRONT;
     }
     
+    @Override
     public int getMaxBombPoints() {
         return (int) Math.round(getWeight() / 5);
     }
 
+    @Override
     public int[] getBombChoices() {
         return bombChoices.clone();
     }
 
+    @Override
     public void setBombChoices(int[] bc) {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
@@ -656,6 +660,7 @@ public class VTOL extends Tank implements IBomber {
         return 1.0; 
     }
 
+    @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         specialAbilities.put(BattleForceSPA.ATMO, null);
@@ -673,6 +678,7 @@ public class VTOL extends Tank implements IBomber {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
+    @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
         if (!hasNoTurret()) {
@@ -687,6 +693,7 @@ public class VTOL extends Tank implements IBomber {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 8;
     }

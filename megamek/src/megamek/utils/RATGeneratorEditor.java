@@ -802,6 +802,7 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS.length + 1;
         }
 
+        @Override
         public int getRowCount() {
             if (data == null) {
                 return 0;
@@ -1306,6 +1307,7 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS.length + 1;
         }
         
+        @Override
         public int getRowCount() {
             if (data == null) {
                 return 0;

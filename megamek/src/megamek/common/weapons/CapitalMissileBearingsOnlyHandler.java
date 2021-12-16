@@ -861,6 +861,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * Used for Aero Sanity. This is done in calcAttackValue() otherwise
      *
      */
+    @Override
     protected int initializeCapMissileArmor() {
         int armor = 0;
         for (int wId : weapon.getBayWeapons()) {

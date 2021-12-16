@@ -133,6 +133,7 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.add(hostPort);
         button = new Button("Listen");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 (new Thread(PacketTool.this, "Packet Reader")).start();
             }
@@ -140,6 +141,7 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.add(button);
         button = new Button("Connect");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 connect();
             }
@@ -149,6 +151,7 @@ public class PacketTool extends Frame implements Runnable {
         // Populate the transmission panel.
         button = new Button("Load Board");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boardLoad();
             }
@@ -159,6 +162,7 @@ public class PacketTool extends Frame implements Runnable {
         panXmit.add(boardName);
         butSend = new Button("Send");
         butSend.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 send();
             }
@@ -276,6 +280,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * Listen for incoming clients.
      */
+    @Override
     public void run() {
         int port = 0;
         try {

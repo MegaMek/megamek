@@ -224,6 +224,7 @@ public class Jumpship extends Aero {
         return false;
     }
 
+    @Override
     public String getCritDamageString() {
         StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
         boolean first = toReturn.length() == 0;
@@ -606,6 +607,7 @@ public class Jumpship extends Aero {
      * Used for abandoning a unit
      * @return
      */
+    @Override
     public int getNMarines() {
         return nMarines;
     }
@@ -614,6 +616,7 @@ public class Jumpship extends Aero {
         nBattleArmor = m;
     }
 
+    @Override
     public int getNBattleArmor() {
         return nBattleArmor;
     }

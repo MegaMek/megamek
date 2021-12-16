@@ -88,10 +88,12 @@ public class GameCFREvent extends GameEvent {
      * a GameListener instance that their event has been fired.
      * @param gl GameListener recipient.
      */
+    @Override
     public void fireEvent(GameListener gl) {
         gl.gameClientFeedbackRequest(this);
     }
     
+    @Override
     public String getEventName() {
         String evtName = "Client Feedback Request, ";
         switch (cfrType) {

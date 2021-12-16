@@ -132,6 +132,7 @@ public class ConfirmDialog extends JDialog{
         Action yesAction = new AbstractAction() {
             private static final long serialVersionUID = -5442315938595454381L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 confirmation = true;
                 setVisible(false);
@@ -152,6 +153,7 @@ public class ConfirmDialog extends JDialog{
         Action noAction = new AbstractAction() {
             private static final long serialVersionUID = -952830599469731009L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 confirmation = false;
                 setVisible(false);

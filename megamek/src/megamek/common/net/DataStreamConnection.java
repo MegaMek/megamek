@@ -177,14 +177,17 @@ class DataStreamConnection extends AbstractConnection {
             this.data = data;
         }
 
+        @Override
         public int getMarshallingType() {
             return marshallingType;
         }
 
+        @Override
         public byte[] getData() {
             return data;
         }
 
+        @Override
         public boolean isCompressed() {
             return compressed;
         }

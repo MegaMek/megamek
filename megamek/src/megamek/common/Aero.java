@@ -313,6 +313,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * A method to determine if an aero has suffered 3 sensor hits.
      * When double-blind is on, this affects both standard visibility and sensor rolls
      */
+    @Override
     public boolean isAeroSensorDestroyed() {
         return getSensorHits() >= 3;
     }
@@ -4264,6 +4265,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * @return The number conventional marines available to vessels for boarding actions.
      */
+    @Override
     public int getNMarines() {
         return 0;
     }

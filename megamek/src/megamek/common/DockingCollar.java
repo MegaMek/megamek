@@ -295,6 +295,7 @@ public class DockingCollar implements Transporter {
         return rv;
     }
 
+    @Override
     public int getCargoMpReduction(Entity carrier) {
         return 0;
     }

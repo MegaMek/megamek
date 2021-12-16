@@ -76,18 +76,22 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             cmd = c;
         }
 
+        @Override
         public String getCmd() {
             return cmd;
         }
 
+        @Override
         public int getPriority() {
             return priority;
         }
 
+        @Override
         public void setPriority(int p) {
             priority = p;
         }
 
+        @Override
         public String toString() {
             return Messages.getString("PhysicalDisplay." + getCmd());
         }
@@ -142,6 +146,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     }
 
+    @Override
     protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
         int i = 0;
@@ -1636,6 +1641,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
@@ -1718,11 +1724,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         // ActionListener, listens to the button in the dialog.
+        @Override
         public void actionPerformed(ActionEvent ev) {
             closeDialog();
         }
 
         // ItemListener, listens to the radiobuttons in the dialog.
+        @Override
         public void itemStateChanged(ItemEvent ev) {
             IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
             aimingAt = icb.getIndex();

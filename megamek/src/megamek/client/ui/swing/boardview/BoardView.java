@@ -436,6 +436,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         clearSprites();
         addMouseListener(this);
         addMouseWheelListener(new MouseWheelListener() {
+            @Override
             public void mouseWheelMoved(MouseWheelEvent we) {
                 Point mousePoint = we.getPoint();
                 Point dispPoint = new Point(mousePoint.x + getBounds().x, mousePoint.y + getBounds().y);
@@ -878,6 +879,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
     }
 
+    @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
             case IClientPreferences.MAP_TILESET:
@@ -4584,6 +4586,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     //
     // MouseListener
     //
+    @Override
     public void mousePressed(MouseEvent me) {
         requestFocusInWindow();
         stopSoftCentering();
@@ -4630,6 +4633,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiersEx(), me.getButton());
     }
 
+    @Override
     public void mouseReleased(MouseEvent me) {
         // don't show the popup if we are drag-scrolling
         if (me.isPopupTrigger() && !dragging) {
@@ -4665,9 +4669,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
     }
 
+    @Override
     public void mouseEntered(MouseEvent me) {
     }
 
+    @Override
     public void mouseExited(MouseEvent me) {
         // Reset the tooltip dismissal delay to the preference
         // value so that elements outside the boardview can
@@ -4946,6 +4952,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @see
      * megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
      */
+    @Override
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
         clearHexImageCache();
@@ -4959,6 +4966,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @see
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
+    @Override
     public void boardChangedHex(BoardEvent b) {
         hexImageCache.remove(b.getCoords());
         // Also repaint the surrounding hexes because of shadows, border etc.
@@ -4975,6 +4983,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @see
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
+    @Override
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         clearHexImageCache();
         clearShadowMap();
@@ -5185,6 +5194,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         protected long currentTime = System.currentTimeMillis();
 
+        @Override
         public void run() {
             currentTime = System.currentTimeMillis();
             if (isShowing()) {
@@ -5220,6 +5230,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         highlightSelectedEntity();
     }
 
+    @Override
     public synchronized void weaponSelected(MechDisplayEvent b) {
         selectedEntity = b.getEntity();
         selectedWeapon = b.getEquip();

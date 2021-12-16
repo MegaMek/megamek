@@ -616,14 +616,17 @@ public abstract class AbstractConnection {
             }
         }
 
+        @Override
         public int getMarshallingType() {
             return marshallingType;
         }
 
+        @Override
         public byte[] getData() {
             return data;
         }
 
+        @Override
         public boolean isCompressed() {
             return zipped;
         }

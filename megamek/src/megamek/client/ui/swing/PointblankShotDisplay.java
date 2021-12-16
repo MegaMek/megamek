@@ -78,18 +78,22 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             cmd = c;
         }
 
+        @Override
         public String getCmd() {
             return cmd;
         }
 
+        @Override
         public int getPriority() {
             return priority;
         }
 
+        @Override
         public void setPriority(int p) {
             priority = p;
         }
 
+        @Override
         public String toString() {
             return Messages.getString("FiringDisplay." + getCmd());
         }
@@ -126,6 +130,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {
                     return;
@@ -656,6 +661,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
      * Adds a weapon attack with the currently selected weapon to the attack
      * queue.
      */
+    @Override
     void fire() {
         final Game game = clientgui.getClient().getGame();
         // get the selected weaponnum
@@ -750,6 +756,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     /**
      * Targets something
      */
+    @Override
     public void target(Targetable t) {
         if (ce() == null) {
             return;
@@ -789,6 +796,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     /**
      * Targets something
      */
+    @Override
     public void updateTarget() {
         setFireEnabled(false);
         Game game = clientgui.getClient().getGame();
@@ -939,6 +947,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -971,36 +980,43 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         }
     }
 
+    @Override
     protected void setFireEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
     }
 
+    @Override
     protected void setTwistEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
     }
 
+    @Override
     protected void setSkipEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SKIP).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SKIP.getCmd(), enabled);
     }
 
+    @Override
     protected void setFlipArmsEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
     }
 
+    @Override
     protected void setSearchlightEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SEARCHLIGHT.getCmd(), enabled);
     }
 
+    @Override
     protected void setFireModeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
     }
 
+    @Override
     protected void setFireCalledEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CALLED).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CALLED.getCmd(), enabled);
@@ -1021,6 +1037,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     //
     // ItemListener
     //
+    @Override
     public void itemStateChanged(ItemEvent ev) {
 
         // Are we ignoring events?
@@ -1062,6 +1079,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         }
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

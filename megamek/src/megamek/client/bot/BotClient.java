@@ -58,6 +58,7 @@ public abstract class BotClient extends Client {
     private ClientGUI clientgui = null;
 
     public class CalculateBotTurn implements Runnable {
+        @Override
         public void run() {
             calculateMyTurn();
             flushConn();
@@ -1169,6 +1170,7 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
     
+    @Override
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));

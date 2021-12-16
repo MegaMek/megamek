@@ -999,10 +999,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         private Vector<WeaponType> weapons = new Vector<>();
 
+        @Override
         public int getRowCount() {
             return weapons.size();
         }
 
+        @Override
         public int getColumnCount() {
             return N_COL;
         }
@@ -1125,10 +1127,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         private int[] qty;
         private Vector<EquipmentType> equipment = new Vector<>();
 
+        @Override
         public int getRowCount() {
             return equipment.size();
         }
 
+        @Override
         public int getColumnCount() {
             return N_COL;
         }

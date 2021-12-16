@@ -179,6 +179,7 @@ public class UnitEditorDialog extends JDialog {
         });
         JButton butCancel = new JButton(Messages.getString("Cancel"));
         butCancel.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setVisible(false);
             }
@@ -1538,6 +1539,7 @@ public class UnitEditorDialog extends JDialog {
                 JCheckBox check = new JCheckBox("");
                 check.setActionCommand(Integer.toString(i));
                 check.addActionListener(new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent evt) {
                         checkBoxes(evt);
                     }

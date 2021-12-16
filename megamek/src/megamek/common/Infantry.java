@@ -210,6 +210,7 @@ public class Infantry extends Entity {
         return UnitType.INFANTRY;
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -1479,9 +1480,10 @@ public class Infantry extends Entity {
      * roll for the piloting skill check. now includes the level 3 terains which
      * can bog down
      */
+    @Override
     public PilotingRollData checkBogDown(MoveStep step,
-            EntityMovementType moveType, Hex curHex, Coords lastPos,
-            Coords curPos, int lastElev, boolean isPavementStep) {
+                                         EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                         Coords curPos, int lastElev, boolean isPavementStep) {
         return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
     }
 
@@ -2660,6 +2662,7 @@ public class Infantry extends Entity {
 
     }
     
+    @Override
     public boolean isConventionalInfantry() {
         return true;
     }
@@ -2669,6 +2672,7 @@ public class Infantry extends Entity {
         return Entity.ETYPE_INFANTRY;
     }
 
+    @Override
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -2736,6 +2740,7 @@ public class Infantry extends Entity {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 1;
     }

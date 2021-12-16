@@ -242,8 +242,9 @@ public class MegamekBorder extends EtchedBorder {
     /**
      * Paints the border using the loaded corner icons and edge icons.
      */
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, 
-            int height) {
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width,
+                            int height) {
         // Do nothing if we don't want to draw a border
         if (noBorder) {
             return;
@@ -391,6 +392,7 @@ public class MegamekBorder extends EtchedBorder {
         }
     }
     
+    @Override
     public Insets getBorderInsets(Component c, Insets insets) {
         if (noBorder) {
             return new Insets(0,0,0,0);
@@ -403,6 +405,7 @@ public class MegamekBorder extends EtchedBorder {
         return (Insets) (insets.clone());
     }
     
+    @Override
     public boolean isBorderOpaque() {
         return true;
     }

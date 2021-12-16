@@ -56,7 +56,7 @@ public class MegaMek {
     public static final String PREFERENCES_FILE = "mmconf/megamek.preferences";
     public static final String LEGACY_LOG_FILE_NAME = "megameklog.txt";
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         String logFileName = LEGACY_LOG_FILE_NAME;
         CommandLineParser cp = new CommandLineParser(args);
 
@@ -247,7 +247,7 @@ public class MegaMek {
      *
      * @param args the arguments to the dedicated server.
      */
-    private static void startDedicatedServer(String[] args) {
+    private static void startDedicatedServer(String... args) {
         StringBuffer message = new StringBuffer("Starting Dedicated Server. ");
         MegaMek.dumpArgs(message, args);
         LogManager.getLogger().info(message.toString());
@@ -261,7 +261,7 @@ public class MegaMek {
      * @param guiName The name of the GUI, usually AWT or swing
      * @param args    The arguments to be passed onto the GUI.
      */
-    private static void startGUI(String guiName, String[] args) {
+    private static void startGUI(String guiName, String... args) {
         if (null == guiName) {
             LogManager.getLogger().error("guiName must be non-null");
             return;
@@ -389,7 +389,7 @@ public class MegaMek {
         private static final String OPTION_DATADIR = "data";
         private static final String OPTION_RATGEN_EDIT = "editratgen";
 
-        CommandLineParser(String[] args) {
+        CommandLineParser(String... args) {
             super(args);
         }
 

@@ -86,18 +86,22 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             cmd = c;
         }
 
+        @Override
         public String getCmd() {
             return cmd;
         }
 
+        @Override
         public int getPriority() {
             return priority;
         }
 
+        @Override
         public void setPriority(int p) {
             priority = p;
         }
 
+        @Override
         public String toString() {
             return Messages.getString("FiringDisplay." + getCmd());
         }
@@ -613,6 +617,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
     }
 
+    @Override
     protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
         int i = 0;
@@ -2375,6 +2380,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     //
     // ItemListener
     //
+    @Override
     public void itemStateChanged(ItemEvent ev) {
 
         // Are we ignoring events?
@@ -2419,6 +2425,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
@@ -2436,6 +2443,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);

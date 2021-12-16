@@ -1046,6 +1046,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return TA_LAM[lamType];
     }
     
+    @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_MECH) {
             return super.height();

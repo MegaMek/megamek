@@ -743,8 +743,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         partRepsComps.add(optionComp);
     }
 
+    @Override
     public void optionClicked(DialogOptionComponent comp, IOption option,
-            boolean state) {
+                              boolean state) {
     }
 
     public boolean isOkay() {
@@ -840,6 +841,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         chHidden.addActionListener(this);
     }
 
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
         if (actionEvent.getSource().equals(butOffBoardDistance)) {

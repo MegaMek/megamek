@@ -515,6 +515,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             }
         }
         
+        @Override
         public void optionsChanged() {
             ((CardLayout) getLayout()).show(this, (String) cbUnitType.getSelectedItem());
         }
@@ -550,6 +551,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             }
         }
 
+        @Override
         public void updateGeneratedUnits(List<MechSummary> list) {
 
         }
@@ -884,6 +886,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             add(airCard, "Air");
         }
         
+        @Override
         public void optionsChanged() {
             if (getUnitType() != null) {
                 ((CardLayout) getLayout()).show(this, (getUnitType() < UnitType.CONV_FIGHTER)

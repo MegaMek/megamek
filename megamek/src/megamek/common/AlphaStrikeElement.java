@@ -86,6 +86,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
     }
 
+    @Override
     protected void initWeaponLocations(Entity en) {
         weaponLocations = new WeaponLocation[en.getNumAlphaStrikeWeaponsLocations()];
         locationNames = new String[weaponLocations.length];
@@ -98,6 +99,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
     }
     
+    @Override
     protected double locationMultiplier(Entity en, int loc, Mounted mount) {
     	return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
@@ -254,6 +256,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.newLine();
     }
     
+    @Override
     protected String formatSPAString(BattleForceSPA spa) {
         /* BOMB rating for ASFs and CFs is one less than for BF */
         if (spa.equals(BattleForceSPA.BOMB)

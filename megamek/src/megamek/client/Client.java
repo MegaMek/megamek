@@ -123,6 +123,7 @@ public class Client implements IClientCommandHandler {
             shouldStop = true;
         }
 
+        @Override
         public void run() {
             while (!shouldStop) {
                 // Write any queued packets
@@ -1842,6 +1843,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Registers a new command in the client command table
      */
+    @Override
     public void registerCommand(ClientCommand command) {
         //Warning, the special direction commands are registered seperatly
         commandsHash.put(command.getName(), command);

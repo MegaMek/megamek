@@ -53,16 +53,19 @@ public class PMPicArea implements PMHotArea {
     }
 
     // PMElement interface methods
+    @Override
     public void translate(int x, int y) {
         areaShape.translate(x, y);
         this.x = this.x + x;
         this.y = this.y + y;
     }
 
+    @Override
     public Rectangle getBounds() {
         return areaShape.getBounds();
     }
 
+    @Override
     public void drawInto(Graphics g) {
         if ((g == null) || (!visible))
             return;
@@ -78,6 +81,7 @@ public class PMPicArea implements PMHotArea {
         this.idleImage = idle;
     }
     
+    @Override
     public void setVisible(boolean v) {
         visible = v;
     }

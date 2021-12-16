@@ -218,7 +218,8 @@ public class ModelRecord extends AbstractUnitRecord {
 		return movementMode;
 	}
 	
-	public boolean isClan() {
+	@Override
+    public boolean isClan() {
 		return clan;
 	}
 	

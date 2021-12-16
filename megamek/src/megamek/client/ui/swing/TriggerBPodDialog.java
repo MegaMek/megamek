@@ -245,6 +245,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                         / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         setVisible(false);
     }

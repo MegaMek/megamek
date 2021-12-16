@@ -435,6 +435,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private final Runnable drawMapable = new Runnable() {
         private final int redrawDelay = 0;
 
+        @Override
         public void run() {
             try {
                 if ((System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {

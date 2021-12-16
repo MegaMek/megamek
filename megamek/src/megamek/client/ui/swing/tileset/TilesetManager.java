@@ -382,6 +382,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         return hexMask;
     }
 
+    @Override
     public Set<String> getThemes() {
         return hexTileset.getThemes();
     }

@@ -688,10 +688,12 @@ public final class UIUtil {
         }
         
         FocusListener l = new FocusListener() {
+            @Override
             public void focusLost(FocusEvent e) {
                 updateHint();
             };
             
+            @Override
             public void focusGained(FocusEvent e) {
                 if (getText().equals(hintText)) {
                     setText("");

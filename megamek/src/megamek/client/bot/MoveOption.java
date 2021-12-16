@@ -56,6 +56,7 @@ public class MoveOption extends MovePath {
             damage_weight = damage;
         }
 
+        @Override
         public int compare(MoveOption e0, MoveOption e1) {
             if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) > ((damage_weight
                     * e1.damage) - (utility_weight * e1.getUtility()))) {
@@ -92,6 +93,7 @@ public class MoveOption extends MovePath {
 
     public static class DistanceComparator implements Comparator<MoveOption> {
 
+        @Override
         public int compare(MoveOption e0, MoveOption e1) {
             return e0.getDistUtility() < e1.getDistUtility() ? -1 : 1;
         }

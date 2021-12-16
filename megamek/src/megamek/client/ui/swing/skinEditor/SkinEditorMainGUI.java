@@ -305,6 +305,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     /**
      * Implement the <code>ActionListener</code> interface.
      */
+    @Override
     public void actionPerformed(ActionEvent event) {
     }
 
@@ -741,10 +742,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setState(Frame.NORMAL);
     }
 
+    @Override
     public void windowIconified(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowOpened(WindowEvent windowEvent) {
         // ignored
     }
@@ -789,14 +792,17 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         // ignored
     }
 
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
         // ignored
     }
 
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
         // ignored
     }

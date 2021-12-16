@@ -503,6 +503,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         savePrincessProperties();
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addTargetButton) {
             var dlg = new BotConfigTargetHexDialog(getFrame(), clientGui);

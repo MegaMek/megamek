@@ -2534,6 +2534,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         onResize();
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

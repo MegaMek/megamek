@@ -284,6 +284,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
     }
     
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             apply();

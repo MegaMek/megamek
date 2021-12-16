@@ -101,6 +101,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         return true;
     }
 
+    @Override
     public int compareTo(InitiativeRoll other) {
         int minSize = Math.min(size(), other.size());
         int compare = 0;

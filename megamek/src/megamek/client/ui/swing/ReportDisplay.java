@@ -65,6 +65,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("doneButton")) {
                     ready();
@@ -253,6 +254,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
             rerollInitiative();
@@ -272,6 +274,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         rerolled = false;
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 int phaseTab = tabs.indexOfTab("Phase");
                 if (phaseTab > 0) {
@@ -291,6 +294,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         GUIPreferences.getInstance().removePreferenceChangeListener(this);

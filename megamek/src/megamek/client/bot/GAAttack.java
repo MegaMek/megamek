@@ -47,12 +47,12 @@ public class GAAttack extends GA {
         this.attack = attack;
         this.attacker = attacker;
         game = tb.getGame();
-        target_array = new ArrayList<Entity>(game.getEntitiesVector());
-        ArrayList<Integer> temp = new ArrayList<Integer>();
+        target_array = new ArrayList<>(game.getEntitiesVector());
+        ArrayList<Integer> temp = new ArrayList<>();
         for (int i = 0; i < target_array.size(); i++) {
             Entity entity = target_array.get(i);
             if (entity.isEnemyOf(attacker.entity) && entity.isDeployed()) {
-                temp.add(Integer.valueOf(i));
+                temp.add(i);
             }
         }
         targets = new CEntity.Table(tb);
@@ -92,8 +92,7 @@ public class GAAttack extends GA {
         @SuppressWarnings("unused")
         int heat_total = 0;
         if (chromArrayList.genes[chromosomeDim - 1] >= target_array.size()) {
-            chromArrayList.genes[chromosomeDim - 1] = valid_target_indexes.get(
-                    0).intValue();
+            chromArrayList.genes[chromosomeDim - 1] = valid_target_indexes.get(0);
         }
         Entity target = target_array
                 .get(chromArrayList.genes[chromosomeDim - 1]);
@@ -384,8 +383,7 @@ public class GAAttack extends GA {
                     }
                 }
             }
-            cv.genes[chromosomeDim - 1] = valid_target_indexes.get(
-                    Compute.randomInt(valid_target_indexes.size())).intValue();
+            cv.genes[chromosomeDim - 1] = valid_target_indexes.get(Compute.randomInt(valid_target_indexes.size()));
             chromosomes[i].fitness = getFitness(i);
         }
     }

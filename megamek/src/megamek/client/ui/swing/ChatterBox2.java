@@ -275,6 +275,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         computeScrollBarOffset();
     }
 
+    @Override
     public boolean slide() {
         if (slidingDown) {
             if (slideOffset < getMaxSlideOffset()) {
@@ -327,10 +328,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return mouseOver;
     }
 
+    @Override
     public boolean isBeingDragged() {
         return scrolling || resizing ;
     }
 
+    @Override
     public boolean isMouseOver(Point p, Dimension size) {
         int xMin = DIST_SIDE;
         int xMax = xMin + width;
@@ -357,6 +360,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return mouseOver;
     }
 
+    @Override
     public boolean isHit(Point p, Dimension size) {
         if (isSliding()) {
             return false;
@@ -446,6 +450,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     /**
      * Draws the chatter box.
      */
+    @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
         graph.setColor(COLOR_BACKGROUND);
         graph.setFont(FONT_CHAT);
@@ -703,6 +708,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     // KeyListener
     //
+    @Override
     public void keyPressed(KeyEvent ke) {
 
         if (!bv.getChatterBoxActive()) {
@@ -840,9 +846,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         bv.refreshDisplayables();
     }
 
+    @Override
     public void keyReleased(KeyEvent ke) {
     }
 
+    @Override
     public void keyTyped(KeyEvent ke) {
     }
 

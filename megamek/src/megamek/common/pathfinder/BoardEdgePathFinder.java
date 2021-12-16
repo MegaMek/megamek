@@ -686,6 +686,7 @@ public class BoardEdgePathFinder {
          * Favors paths that move closer to the destination edge first.
          * in case of tie, favors paths that cost less MP
          */
+        @Override
         public int compare(MovePath first, MovePath second) {
             // normalize MP cost difference over max MP cost
             int costDifference = first.getMpUsed() - second.getMpUsed();

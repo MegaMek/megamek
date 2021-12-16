@@ -2737,6 +2737,7 @@ public class Game implements Serializable {
                 private Iterator<Entity> iter = getEntities();
 
                 // Do any more entities meet the selection criteria?
+                @Override
                 public boolean hasNext() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
@@ -2753,6 +2754,7 @@ public class Game implements Serializable {
                 }
 
                 // Get the next entity that meets the selection criteria.
+                @Override
                 public Entity next() {
                     // Pre-approve an entity.
                     if (!hasNext()) {
@@ -2843,6 +2845,7 @@ public class Game implements Serializable {
                 private Enumeration<Entity> iter = vOutOfGame.elements();
 
                 // Do any more entities meet the selection criteria?
+                @Override
                 public boolean hasMoreElements() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
@@ -2859,6 +2862,7 @@ public class Game implements Serializable {
                 }
 
                 // Get the next entity that meets the selection criteria.
+                @Override
                 public Entity nextElement() {
                     // Pre-approve an entity.
                     if (!hasMoreElements()) {

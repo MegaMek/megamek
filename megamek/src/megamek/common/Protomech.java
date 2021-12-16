@@ -2022,10 +2022,12 @@ public class Protomech extends Entity {
         return grappled_id;
     }
     
+    @Override
     public boolean isGrappledThisRound() {
         return grappledThisRound;
     }
     
+    @Override
     public void setGrappledThisRound(boolean grappled) {
         grappledThisRound = grappled;
     }
@@ -2328,6 +2330,7 @@ public class Protomech extends Entity {
         return Entity.ETYPE_PROTOMECH;
     }
     
+    @Override
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);

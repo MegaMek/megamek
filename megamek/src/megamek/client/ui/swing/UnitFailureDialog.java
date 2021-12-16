@@ -105,25 +105,30 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
         });
     }
 
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         setVisible(false);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent ie) {
         reasonTextArea.setText(hFailedFiles.get(failedList.getSelectedValue())
                 .toString());
     }
 
+    @Override
     public void keyPressed(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
             setVisible(false);
         }
     }
 
+    @Override
     public void keyTyped(KeyEvent ke) {
 
     }
 
+    @Override
     public void keyReleased(KeyEvent ke) {
 
     }

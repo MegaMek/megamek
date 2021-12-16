@@ -81,6 +81,7 @@ public class EmailService {
             setText(body.toString(), "UTF-8", "html");
         }
 
+        @Override
         protected void updateMessageID() throws MessagingException {
             // no-op, we have already set it in the ctor
         }
@@ -124,6 +125,7 @@ public class EmailService {
         var password = mailProperties.getProperty("megamek.smtp.password", "").trim();
         if (login.length() > 0 && password.length() > 0) {
             auth = new Authenticator() {
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(login, password);
                     }
@@ -133,6 +135,7 @@ public class EmailService {
         mailSession = Session.getInstance(mailProperties, auth);
 
         mailWorker = new Thread() {
+                @Override
                 public void run() {
                     workerMain();
                 }

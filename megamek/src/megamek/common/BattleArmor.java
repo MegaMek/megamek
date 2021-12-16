@@ -1293,6 +1293,7 @@ public class BattleArmor extends Infantry {
         return hasCamoSystem;
     }
 
+    @Override
     public boolean isStealthy() {
         return isStealthy;
     }
@@ -2179,6 +2180,7 @@ public class BattleArmor extends Infantry {
         return damage;
     }
 
+    @Override
     public boolean isConventionalInfantry() {
         return false;
     }

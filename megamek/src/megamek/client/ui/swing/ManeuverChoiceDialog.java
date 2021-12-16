@@ -199,6 +199,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         initialize(parent, question, choices);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         // No choices, no selection.
         if (checkboxes == null) {

@@ -9,33 +9,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
+import java.text.NumberFormat;
+import java.util.*;
+
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class Dropship extends SmallCraft {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1528728632696989565L;
-    
     
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,Left,Right,AFT
@@ -65,8 +53,7 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
-     * 
+     * Primitive DropShips may be constructed with no docking collar, or with a pre-boom collar.
      */
     public static final int COLLAR_STANDARD  = 0;
     public static final int COLLAR_PROTOTYPE = 1;
@@ -99,6 +86,7 @@ public class Dropship extends SmallCraft {
         return UnitType.DROPSHIP;
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
@@ -144,6 +132,7 @@ public class Dropship extends SmallCraft {
         this.boomType = boomType;
     }
 
+    @Override
     public String getCritDamageString() {
         StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
         boolean first = toReturn.length() == 0;

@@ -289,6 +289,7 @@ public class SkinSpecification {
         return true;
     }
 
+    @Override
     public String toString() {
         return "SkinSpec for " + compName;
     }

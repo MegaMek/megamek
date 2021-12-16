@@ -510,6 +510,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         addWindowListener(windowListener);
     }
 
+    @Override
     public void valueChanged(TreeSelectionEvent ev) {
         if (ev.getSource().equals(m_treeRAT)) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) m_treeRAT.getLastSelectedPathComponent();
@@ -525,6 +526,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(m_bOK)) {
             if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {

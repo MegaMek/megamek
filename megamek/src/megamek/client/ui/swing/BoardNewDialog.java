@@ -83,6 +83,7 @@ public class BoardNewDialog extends JDialog implements ActionListener {
                 + frame.getSize().height / 2 - getSize().height / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             try {

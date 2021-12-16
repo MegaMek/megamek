@@ -2046,6 +2046,7 @@ public class FormationType {
             return groupSize;
         }
         
+        @Override
         public boolean matches(MechSummary ms) {
             return criterion == null || criterion.test(ms);
         }

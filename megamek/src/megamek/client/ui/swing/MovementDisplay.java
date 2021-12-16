@@ -607,6 +607,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Return the button list: we need to determine what unit type is selected
      * and then get a button list appropriate for that unit.
      */
+    @Override
     protected ArrayList<MegamekButton> getButtonList() {
         int flag;
 
@@ -4463,6 +4464,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     //
     // ActionListener
     //
+    @Override
     public synchronized void actionPerformed(ActionEvent ev) {
         final Entity ce = ce();
 
@@ -5298,6 +5300,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     private final int ownerId = clientgui.getClient()
                             .getLocalPlayer().getId();
 
+                    @Override
                     public boolean accept(Entity acc) {
                         if (turn.isValid(ownerId, acc, game)) {
                             return true;

@@ -47,6 +47,7 @@ public class DistractableAdapter implements Distractable, Serializable {
      *
      * @return <code>true</code> if the listener is ignoring events.
      */
+    @Override
     public boolean isIgnoringEvents() {
         return this.isDistracted;
     }
@@ -59,6 +60,7 @@ public class DistractableAdapter implements Distractable, Serializable {
      *            again. Events that occured while the listener was distracted
      *            NOT going to be processed.
      */
+    @Override
     public void setIgnoringEvents(boolean distracted) {
         this.isDistracted = distracted;
     }
@@ -66,6 +68,7 @@ public class DistractableAdapter implements Distractable, Serializable {
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
     }
 

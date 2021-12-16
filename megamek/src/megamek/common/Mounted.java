@@ -397,6 +397,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 && !type.isNextTurnModeSwitch(curModeName);
     }
 
+    @Override
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
 
@@ -407,6 +408,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         called.reset();
     }
 
+    @Override
     public void newPhase(GamePhase phase) {
         jammed = jammedThisPhase;
     }

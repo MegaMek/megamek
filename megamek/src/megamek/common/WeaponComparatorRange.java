@@ -34,6 +34,7 @@ public class WeaponComparatorRange implements Comparator<Mounted> {
             this.ascending = -1;
     }
 
+    @Override
     public int compare(Mounted obj1, Mounted obj2) {
         if (obj1.getType() instanceof WeaponType
                 && obj2.getType() instanceof WeaponType) {

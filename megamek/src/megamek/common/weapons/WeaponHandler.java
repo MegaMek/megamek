@@ -383,10 +383,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
      */
+    @Override
     public int getAttackerId() {
         return ae.getId();
     }
 
+    @Override
     public Entity getAttacker() {
         return ae;
     }
@@ -394,6 +396,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Do we care about the specified phase?
      */
+    @Override
     public boolean cares(GamePhase phase) {
         if (phase == GamePhase.FIRING) {
             return true;
@@ -752,6 +755,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
+    @Override
     public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
         if (!cares(phase)) {
             return true;
@@ -1890,14 +1894,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return false;
     }
 
+    @Override
     public boolean announcedEntityFiring() {
         return announcedEntityFiring;
     }
 
+    @Override
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring) {
         this.announcedEntityFiring = announcedEntityFiring;
     }
 
+    @Override
     public WeaponAttackAction getWaa() {
         return waa;
     }

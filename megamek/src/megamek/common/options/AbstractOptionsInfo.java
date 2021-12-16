@@ -93,6 +93,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
      */
+    @Override
     public IOptionInfo getOptionInfo(String name) {
         return optionsHash.get(name);
     }
@@ -102,6 +103,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see megamek.common.options.IOptionsInfo#getGroups()
      */
+    @Override
     public Enumeration<IBasicOptionGroup> getGroups() {
         return groups.elements();
     }
@@ -199,22 +201,27 @@ public class AbstractOptionsInfo implements IOptionsInfo {
             this.name = optionName;
         }
 
+        @Override
         public String getDisplayableName() {
             return getOptionDisplayableName(name);
         }
 
+        @Override
         public String getDisplayableNameWithValue() {
             return getOptionDisplayableName(name);
         }
 
+        @Override
         public String getDescription() {
             return getOptionDescription(name);
         }
 
+        @Override
         public int getTextFieldLength() {
             return textFieldLength;
         }
 
+        @Override
         public boolean isLabelBeforeTextField() {
             return labelBeforeTextField;
         }

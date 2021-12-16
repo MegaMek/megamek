@@ -138,6 +138,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
                 + parent.getSize().height / 2 - size.height / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butCancel)) {
             okay = false;

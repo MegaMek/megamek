@@ -147,38 +147,47 @@ public class BuildingTarget implements Targetable {
 
     // Implementation of Targetable
 
+    @Override
     public int getTargetType() {
         return type;
     }
 
+    @Override
     public int getTargetId() {
         return id;
     }
 
+    @Override
     public Coords getPosition() {
         return position;
     }
 
+    @Override
     public Map<Integer, Coords> getSecondaryPositions() {
         return new HashMap<>();
     }
 
+    @Override
     public int relHeight() {
         return getHeight() + getElevation();
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public int getElevation() {
         return elevation;
     }
 
+    @Override
     public boolean isImmobile() {
         return true;
     }
 
+    @Override
     public String getDisplayName() {
         return name;
     }
@@ -202,10 +211,12 @@ public class BuildingTarget implements Targetable {
         return new Coords(idNoType - (y * 1000), y);
     }
 
+    @Override
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
 
+    @Override
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -214,10 +225,12 @@ public class BuildingTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
      */
+    @Override
     public boolean isOffBoard() {
         return false;
     }
 
+    @Override
     public boolean isAero() {
         return false;
     }
@@ -226,6 +239,7 @@ public class BuildingTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
      */
+    @Override
     public boolean isAirborne() {
         return false;
     }
@@ -234,14 +248,17 @@ public class BuildingTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
      */
+    @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
 
+    @Override
     public int getAltitude() {
         return 0;
     }
 
+    @Override
     public boolean isEnemyOf(Entity other) {
         return true;
     }

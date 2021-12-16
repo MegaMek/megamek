@@ -59,18 +59,22 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     cmd = c;
     }
     
+    @Override
     public String getCmd() {
     return cmd;
     }
     
+        @Override
         public int getPriority() {
             return priority;
         }
         
+        @Override
         public void setPriority(int p) {
             priority = p;
         }
     
+    @Override
     public String toString() {
             return Messages
                     .getString("SelectArtyAutoHitHexDisplay." + getCmd());

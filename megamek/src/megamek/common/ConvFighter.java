@@ -179,6 +179,7 @@ public class ConvFighter extends Aero {
         specialAbilities.put(BattleForceSPA.ATMO, null);
     }
     
+    @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }

@@ -297,14 +297,17 @@ public class EquipmentType implements ITechnology {
         return techLevel;
     }
 
+    @Override
     public int getTechLevel(int date) {
         return techAdvancement.getTechLevel(date);
     }
     
+    @Override
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
     }
     
+    @Override
     public SimpleTechLevel getStaticTechLevel() {
         if (null != techAdvancement.getStaticTechLevel()) {
             return techAdvancement.getStaticTechLevel();
@@ -569,10 +572,12 @@ public class EquipmentType implements ITechnology {
         }
 
         return new Enumeration<EquipmentMode>() {
+            @Override
             public boolean hasMoreElements() {
                 return false;
             }
 
+            @Override
             public EquipmentMode nextElement() {
                 return null;
             }
@@ -1129,6 +1134,7 @@ public class EquipmentType implements ITechnology {
         return techAdvancement;
     }
 
+    @Override
     public int getTechRating() {
         return techAdvancement.getTechRating();
     }
@@ -1153,14 +1159,17 @@ public class EquipmentType implements ITechnology {
         return getEraAvailabilityName(era);
     }
 
+    @Override
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }
     
+    @Override
     public boolean isMixedTech() {
         return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
     
+    @Override
     public int getTechBase() {
         return techAdvancement.getTechBase();
     }

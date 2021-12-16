@@ -383,6 +383,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         return ai;
     }
 
+    @Override
     public void hexMoused(BoardViewEvent b) {
         if ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
@@ -393,22 +394,27 @@ public class Ruler extends JDialog implements BoardViewListener {
         bv.drawRuler(start, end, startColor, endColor);
     }
 
+    @Override
     public void hexCursor(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
         //ignored
     }
@@ -455,10 +461,12 @@ public class Ruler extends JDialog implements BoardViewListener {
         setVisible(true);
     }
 
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
         //ignored
     }

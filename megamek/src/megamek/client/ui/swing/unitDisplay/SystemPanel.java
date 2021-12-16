@@ -468,6 +468,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
     //
     // ItemListener
     //
+    @Override
     public void itemStateChanged(ItemEvent ev) {
         removeListeners();
         try {
@@ -716,6 +717,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

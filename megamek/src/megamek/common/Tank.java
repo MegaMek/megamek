@@ -173,6 +173,7 @@ public class Tank extends Entity {
      */
     private FuelType fuelType = FuelType.PETROCHEMICALS;
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -243,6 +244,7 @@ public class Tank extends Entity {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
+    @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
         if (!hasNoDualTurret()) {
@@ -3940,6 +3942,7 @@ public class Tank extends Entity {
     	return getBattleForceLocationMultiplier(index, location, rearMounted);
     }
     
+    @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         if (!isSupportVehicle()) {
@@ -4361,6 +4364,7 @@ public class Tank extends Entity {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 4;
     }

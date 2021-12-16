@@ -36,6 +36,7 @@ public class BVRatioVictory extends AbstractBVVictory {
         this.ratio = ratio;
     }
 
+    @Override
     public VictoryResult victory(Game game, Map<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);

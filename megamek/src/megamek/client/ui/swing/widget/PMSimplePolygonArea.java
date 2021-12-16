@@ -81,14 +81,17 @@ public class PMSimplePolygonArea implements PMHotArea {
     }
 
     // PMElement interface methods
+    @Override
     public void translate(int x, int y) {
         areaShape.translate(x, y);
     }
 
+    @Override
     public Rectangle getBounds() {
         return areaShape.getBounds();
     }
 
+    @Override
     public void drawInto(Graphics g) {
         if ((g == null) || (!visible))
             return;
@@ -104,6 +107,7 @@ public class PMSimplePolygonArea implements PMHotArea {
         g.setColor(oldColor);
     }
 
+    @Override
     public void setVisible(boolean v) {
         visible = v;
     }

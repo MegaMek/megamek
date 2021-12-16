@@ -165,6 +165,7 @@ public class GameTurn implements Serializable {
                     && (entity.getId() == entityId);
         }
 
+        @Override
         public String toString() {
             return super.toString() + " eid: " + entityId;
         }

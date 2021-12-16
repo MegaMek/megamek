@@ -121,7 +121,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupButtonPanel();        
     }
     
-    protected ArrayList<MegamekButton> getButtonList() {                
+    @Override
+    protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
         DeployCommand[] commands = DeployCommand.values();
         CommandComparator comparator = new CommandComparator();
@@ -614,6 +615,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
         final Client client = clientgui.getClient();
         final String actionCmd = ev.getActionCommand();
@@ -870,6 +872,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         die();
     }

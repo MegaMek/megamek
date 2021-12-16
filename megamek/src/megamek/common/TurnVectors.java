@@ -386,6 +386,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * 
      * @return the "total" <code>TurnOrdered</code> marker.
      */
+    @Override
     public ITurnOrdered nextElement() {
         return this.getTurnTotalEnum().nextElement();
     }
@@ -395,6 +396,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * 
      * @return <code>true</code> if we've read all turn markers.
      */
+    @Override
     public boolean hasMoreElements() {
         return this.getTurnTotalEnum().hasMoreElements();
     }

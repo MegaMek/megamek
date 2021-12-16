@@ -1641,6 +1641,7 @@ public class MovePath implements Cloneable, Serializable {
             this.backward = backward;
         }
 
+        @Override
         public int compare(final MovePath first, final MovePath second) {
             final int firstDist = first.getMpUsed() + first.getFinalCoords().distance(destination)
                     + getFacingDiff(first);

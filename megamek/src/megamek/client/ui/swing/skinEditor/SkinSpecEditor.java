@@ -228,6 +228,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         currSkinCombo.removeAllItems();
         String[] xmlFiles = 
             Configuration.skinsDir().list(new FilenameFilter() {
+                @Override
                 public boolean accept(File directory, String fileName) {
                     return fileName.endsWith(".xml");
                 } 

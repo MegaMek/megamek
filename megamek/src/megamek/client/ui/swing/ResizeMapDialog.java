@@ -130,16 +130,19 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         setResizable(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) { 
+            @Override
+            public void windowClosing(WindowEvent e) {
                 doCancel(); 
             }
             
             // Hide the west edge warning when some other program is brought to foreground
+            @Override
             public void windowDeactivated(WindowEvent e) {
                 westNotice.setVisible(false);
                 super.windowDeactivated(e);
             }
 
+            @Override
             public void windowIconified(WindowEvent e) {
                 westNotice.setVisible(false);
                 super.windowIconified(e);

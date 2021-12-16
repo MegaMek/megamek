@@ -433,6 +433,7 @@ implements IMechLoader
     }
 
     /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech = null;

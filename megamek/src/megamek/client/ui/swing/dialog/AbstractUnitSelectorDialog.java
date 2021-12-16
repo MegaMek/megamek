@@ -290,14 +290,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         textFilter.setMinimumSize(new Dimension(300, 28));
         textFilter.setPreferredSize(new Dimension(300, 28));
         textFilter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 filterUnits();
             }
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 filterUnits();
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 filterUnits();
             }
@@ -381,6 +384,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         Action closeAction = new AbstractAction() {
             private static final long serialVersionUID = 2587225044226668664L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 close();
             }
@@ -389,6 +393,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         Action selectAction = new AbstractAction() {
             private static final long serialVersionUID = 4043951169453748540L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 select(false);
             }
@@ -652,6 +657,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles key released events
      * @param ke the key that was released
      */
+    @Override
     public void keyReleased(KeyEvent ke) {
     }
 
@@ -659,6 +665,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles key pressed events
      * @param ke the pressed key
      */
+    @Override
     public void keyPressed(KeyEvent ke) {
         long curTime = System.currentTimeMillis();
         if ((curTime - lastSearch) > KEY_TIMEOUT) {
@@ -689,6 +696,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles key typed events
      * @param ke the typed key
      */
+    @Override
     public void keyTyped(KeyEvent ke) {
     }
 
@@ -757,10 +765,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         private MechSummary[] data = new MechSummary[0];
         //endregion Variable Declarations
 
+        @Override
         public int getRowCount() {
             return data.length;
         }
 
+        @Override
         public int getColumnCount() {
             return N_COL;
         }
@@ -807,6 +817,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             fireTableDataChanged();
         }
 
+        @Override
         public Object getValueAt(int row, int col) {
             if (data.length <= row) {
                 return "?";

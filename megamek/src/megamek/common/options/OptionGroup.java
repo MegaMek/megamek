@@ -50,6 +50,7 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
         this(name, "");
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -58,10 +59,12 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
         this.key = key;
     }
 
+    @Override
     public String getKey() {
         return key;
     }
 
+    @Override
     public Enumeration<String> getOptionNames() {
         return optionNames.elements();
     }

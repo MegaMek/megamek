@@ -202,6 +202,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
                 + parent.getSize().height / 2 - size.height / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         setVisible(false);
     }

@@ -364,6 +364,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     /**
      * ActionListener, listens to the button in the dialog.
      */
+    @Override
     public void actionPerformed(ActionEvent ev) {
         closeDialog();
     }
@@ -371,6 +372,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     /**
      * ItemListener, listens to the radiobuttons in the dialog.
      */
+    @Override
     public void itemStateChanged(ItemEvent ev) {
         IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
         aimingAt = icb.getIndex();

@@ -214,6 +214,7 @@ public class ChatterBox implements KeyListener {
     //
     // KeyListener
     //
+    @Override
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
             history.addFirst(inputField.getText());
@@ -254,10 +255,12 @@ public class ChatterBox implements KeyListener {
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent ev) {
         //ignored
     }
 
+    @Override
     public void keyTyped(KeyEvent ev) {
         //ignored
     }

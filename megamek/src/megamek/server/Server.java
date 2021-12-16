@@ -2029,6 +2029,7 @@ public class Server implements Runnable {
 
                 private final short unitNum = movingUnit;
 
+                @Override
                 public boolean accept(Entity entity) {
                     return (entity instanceof Protomech)
                             && entity.isSelectableThisTurn()
@@ -3401,6 +3402,7 @@ public class Server implements Runnable {
                 Iterator<Entity> playerProtos = game.getSelectedEntities(new EntitySelector() {
                             private final int ownerId = player.getId();
 
+                            @Override
                             public boolean accept(Entity entity) {
                                 return (entity instanceof Protomech)
                                         && (ownerId == entity.getOwnerId())
@@ -13399,6 +13401,7 @@ public class Server implements Runnable {
                             public int player = firingEntity.getOwnerId();
                             public Targetable target = aaa.getTarget(game);
 
+                            @Override
                             public boolean accept(Entity entity) {
                                 LosEffects los = LosEffects.calculateLOS(game, entity, target);
                                 return ((player == entity.getOwnerId()) && !(los.isBlocked())
@@ -30178,6 +30181,7 @@ public class Server implements Runnable {
                     int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
+                        @Override
                         public boolean accept(Entity entity) {
                             return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
                         }
@@ -31309,6 +31313,7 @@ public class Server implements Runnable {
     /**
      * Listen for incoming clients.
      */
+    @Override
     public void run() {
         Thread currentThread = Thread.currentThread();
         LogManager.getLogger().info("s: listening for clients...");

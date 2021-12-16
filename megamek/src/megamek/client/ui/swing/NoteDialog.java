@@ -102,6 +102,7 @@ public class NoteDialog extends JDialog implements ActionListener {
         return accepted;
     }
   
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(butDone)) {
             note.setInfo(noteText.getText());

@@ -65,6 +65,7 @@ public class TestBot extends BotClient {
             this.entity = entity;
         }
 
+        @Override
         public void run() {
             result = calculateMove(entity);
         }

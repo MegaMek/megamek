@@ -67,6 +67,7 @@ public class OptionGroupNode extends RulesetNode {
         return retVal;
     }
 
+    @Override
     protected void loadFromXml(Node node) {
         super.loadFromXml(node);
         NodeList nl = node.getChildNodes();

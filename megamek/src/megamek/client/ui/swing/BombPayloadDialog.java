@@ -248,6 +248,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         initialize(parent, title, bombs, spaceBomb, bombDump, limit, numFighters);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butOK) {
             confirm = true;
@@ -258,6 +259,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void itemStateChanged(ItemEvent ie) {
         if (limit < 0) {

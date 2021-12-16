@@ -109,6 +109,7 @@ public class EquipmentMode {
         return name.equals(modeName);
     }
     
+    @Override
     public String toString() {
         return getName();
     }

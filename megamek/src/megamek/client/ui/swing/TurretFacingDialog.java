@@ -227,6 +227,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2), (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butCancel)) {
             dispose();

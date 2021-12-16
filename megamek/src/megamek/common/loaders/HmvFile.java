@@ -451,6 +451,7 @@ public class HmvFile implements IMechLoader {
         return false;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
             Tank vehicle = null;

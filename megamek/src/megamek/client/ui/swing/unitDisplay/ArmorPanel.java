@@ -250,7 +250,7 @@ class ArmorPanel extends PicMap {
             minRightMargin = minAeroLeftMargin;
         }
         if (ams == null) {
-            System.err.println("The armor panel is null."); //$NON-NLS-1$
+            System.err.println("The armor panel is null.");
             return;
         }
         ams.setEntity(en);

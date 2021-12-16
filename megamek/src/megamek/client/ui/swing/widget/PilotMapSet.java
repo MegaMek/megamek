@@ -39,7 +39,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  */
 public class PilotMapSet implements DisplayMapSet {
 
-    private static String STAR3 = "***"; //$NON-NLS-1$
+    private static String STAR3 = "***";
     private static int N_ADV = 35;
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
@@ -47,10 +47,10 @@ public class PilotMapSet implements DisplayMapSet {
     private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, initBL, commandBL;
     private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, //$NON-NLS-1$
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
     private int yCoord = 1;
 
@@ -79,12 +79,12 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(portraitArea);
         yCoord = 6;
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
-        nameL = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
+        nameL = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord());
         nameL.setColor(Color.yellow);
         content.addArea(nameL);
 
         fm = comp.getFontMetrics(FONT_VALUE);
-        nickL = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        nickL = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getNewYCoord());
         content.addArea(nickL);
 
         hitsR = createLabel(STAR3, fm, 0, getNewYCoord());
@@ -92,43 +92,43 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(hitsR);
         getNewYCoord();
 
-        pilotL = createLabel(Messages.getString("PilotMapSet.pilotLAntiMech"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        pilotL = createLabel(Messages.getString("PilotMapSet.pilotLAntiMech"), fm, 0, getNewYCoord());
         content.addArea(pilotL);
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(pilotR);
 
-        initBL = createLabel(Messages.getString("PilotMapSet.initBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
+        initBL = createLabel(Messages.getString("PilotMapSet.initBL"), fm, pilotL.getSize().width + 50, getYCoord());
         content.addArea(initBL);
         initBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(initBR);
 
-        gunneryL = createLabel(Messages.getString("PilotMapSet.gunneryL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        gunneryL = createLabel(Messages.getString("PilotMapSet.gunneryL"), fm, 0, getNewYCoord());
         content.addArea(gunneryL);
         gunneryR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(gunneryR);
 
-        commandBL = createLabel(Messages.getString("PilotMapSet.commandBL"), fm, pilotL.getSize().width + 50, //$NON-NLS-1$
+        commandBL = createLabel(Messages.getString("PilotMapSet.commandBL"), fm, pilotL.getSize().width + 50,
                 getYCoord());
         content.addArea(commandBL);
         commandBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(commandBR);
 
-        gunneryLL = createLabel(Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord()); //$NON-NLS-1$
+        gunneryLL = createLabel(Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord());
         content.addArea(gunneryLL);
         gunneryLR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
         content.addArea(gunneryLR);
 
-        gunneryML = createLabel(Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        gunneryML = createLabel(Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord());
         content.addArea(gunneryML);
         gunneryMR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
         content.addArea(gunneryMR);
 
-        toughBL = createLabel(Messages.getString("PilotMapSet.toughBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
+        toughBL = createLabel(Messages.getString("PilotMapSet.toughBL"), fm, pilotL.getSize().width + 50, getYCoord());
         content.addArea(toughBL);
         toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(toughBR);
 
-        gunneryBL = createLabel(Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        gunneryBL = createLabel(Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord());
         content.addArea(gunneryBL);
         gunneryBR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
         content.addArea(gunneryBR);
@@ -236,7 +236,7 @@ public class PilotMapSet implements DisplayMapSet {
             hitsR.setString(en.getCrew().getStatusDesc(slot));
         }
         for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i].setString(""); //$NON-NLS-1$
+            advantagesR[i].setString("");
         }
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups
@@ -262,10 +262,12 @@ public class PilotMapSet implements DisplayMapSet {
         }
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }

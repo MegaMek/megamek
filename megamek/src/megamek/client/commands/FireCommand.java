@@ -206,8 +206,7 @@ public class FireCommand extends ClientCommand {
         // validate
         if (ce() == null || target == null || mounted == null
             || !(mounted.getType() instanceof WeaponType)) {
-            throw new IllegalArgumentException(
-                    "current fire parameters are invalid"); //$NON-NLS-1$
+            throw new IllegalArgumentException("current fire parameters are invalid");
         }
 
         // declare searchlight, if possible
@@ -250,8 +249,7 @@ public class FireCommand extends ClientCommand {
     private void doSearchlight(Targetable target) {
         // validate
         if (ce() == null || target == null) {
-            throw new IllegalArgumentException(
-                    "current searchlight parameters are invalid"); //$NON-NLS-1$
+            throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
         if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null))

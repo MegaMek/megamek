@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Methods shared by Aero and LandAirMech
@@ -97,7 +98,7 @@ public interface IAero {
 
     void setAltLossThisRound(int i);
 
-    public void resetAltLossThisRound();
+    void resetAltLossThisRound();
 
     int getNoseArmor();
 
@@ -219,11 +220,10 @@ public interface IAero {
                         newmount.setNWeapons(groups.get(key));
                         getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
-                        ex.printStackTrace();
+                        LogManager.getLogger().error("Unable to compile weapon groups", ex);
                         return;
                     }
-                } else if (name != "0") {
+                } else if (!"0".equals(name)) {
                     ((Entity) this).addFailedEquipment(name);
                 }
             }
@@ -369,7 +369,7 @@ public interface IAero {
         // TW doesn't define what a crater is, assume it means that the hex
         // level of all surrounding hexes is greater than what we are sitting on
         boolean allAdjacentHigher = true;
-        Set<Coords> positions = new HashSet<Coords>(((Entity) this).getSecondaryPositions().values());
+        Set<Coords> positions = new HashSet<>(((Entity) this).getSecondaryPositions().values());
         positions.add(pos);
         Hex adjHex;
         for (Coords currPos : positions) {
@@ -484,7 +484,7 @@ public interface IAero {
         boolean clear = false;
         boolean paved = true;
 
-        Set<Coords> landingPositions = new HashSet<Coords>();
+        Set<Coords> landingPositions = new HashSet<>();
         boolean isDropship = (this instanceof Dropship);
         // Vertical landing just checks the landing hex
         if (isVertical) {
@@ -629,9 +629,9 @@ public interface IAero {
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getTakeOffLength() + " hexes required)";
         // dropships need a strip three hexes wide
-        Vector<Coords> startingPos = new Vector<Coords>();
+        Vector<Coords> startingPos = new Vector<>();
         startingPos.add(((Entity) this).getPosition());
-        if (((Entity) this) instanceof Dropship) {
+        if (this instanceof Dropship) {
             startingPos.add(((Entity) this).getPosition().translated((facing + 4) % 6));
             startingPos.add(((Entity) this).getPosition().translated((facing + 2) % 6));
         }
@@ -644,9 +644,10 @@ public interface IAero {
                 }
                 // no units in the way
                 for (Entity en : ((Entity) this).getGame().getEntitiesVector(pos)) {
-                    if (en.equals((Entity) this)) {
+                    if (en.equals(this)) {
                         continue;
                     }
+
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }
@@ -676,7 +677,7 @@ public interface IAero {
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
         // dropships need a a landing strip three hexes wide
-        Vector<Coords> startingPos = new Vector<Coords>();
+        Vector<Coords> startingPos = new Vector<>();
         startingPos.add(((Entity) this).getPosition());
         if (this instanceof Dropship) {
             startingPos.add(((Entity) this).getPosition().translated((facing + 5) % 6));
@@ -789,5 +790,6 @@ public interface IAero {
      * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */
     default void updateSensorOptions() {
+
     }
 }

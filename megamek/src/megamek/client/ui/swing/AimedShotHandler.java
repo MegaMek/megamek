@@ -90,8 +90,8 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
             asd = new AimedShotDialog(
                     this.firingDisplay.clientgui.frame,
-                    Messages.getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
-                    Messages.getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
+                    Messages.getString("FiringDisplay.AimedShotDialog.title"),
+                    Messages.getString("FiringDisplay.AimedShotDialog.message"),
                     options, enabled, aimingAt, this, this);
 
             asd.setVisible(true);

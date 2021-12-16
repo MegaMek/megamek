@@ -47,7 +47,7 @@ public class ShowValidTargetsCommand extends ServerCommand {
                                 + " at a to hit penalty of ";
                         str = str
                                 + thd.getValue()
-                                + ", at range " + ent.getPosition().distance(entList.get(i).getPosition()) + thd.getTableDesc() + ";\n"; //$NON-NLS-1$
+                                + ", at range " + ent.getPosition().distance(entList.get(i).getPosition()) + thd.getTableDesc() + ";\n";
                     }
 
                 }

@@ -38,15 +38,15 @@ public class MineDensityDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -7642956136536119067L;
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
-    private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    private JButton butOk = new JButton(Messages.getString("Okay"));
     private JLabel labDensity = new JLabel(Messages
-            .getString("MineDensityDialog.labDensity"), SwingConstants.RIGHT); //$NON-NLS-1$
+            .getString("MineDensityDialog.labDensity"), SwingConstants.RIGHT);
     private JComboBox<String> choDensity = new JComboBox<String>();
     private int density = -1;
     //private JFrame frame;
 
     public MineDensityDialog(JFrame p) {
-        super(p, Messages.getString("MineDensityDialog.title"), true); //$NON-NLS-1$
+        super(p, Messages.getString("MineDensityDialog.title"), true);
         super.setResizable(false);
         //frame = p;
         butOk.addActionListener(this);

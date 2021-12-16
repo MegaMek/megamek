@@ -46,12 +46,13 @@ import java.util.Vector;
  */
 public class ChatterBox2 implements KeyListener, IDisplayable {
 
-    private static final String FILENAME_BUTTON_UP = "upbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_DOWN = "downbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif"; //$NON-NLS-1$
-    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));  //$NON-NLS-2$
+    private static final String FILENAME_BUTTON_UP = "upbutton.gif";
+    private static final String FILENAME_BUTTON_DOWN = "downbutton.gif";
+    private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif";
+    private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif";
+    private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif";
+    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD,
+            GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
     private static final Color COLOR_TEXT_BACK = Color.black;
     private static final Color COLOR_TEXT_FRONT = Color.white;
     private static final Color COLOR_BACKGROUND;
@@ -60,8 +61,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     static {
         Color temp;
         try {
-            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor"); //$NON-NLS-1$
-            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy")); //$NON-NLS-1$
+            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor");
+            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(),
+                    GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy"));
         } catch (Throwable err) {
             temp = Color.gray;
         }

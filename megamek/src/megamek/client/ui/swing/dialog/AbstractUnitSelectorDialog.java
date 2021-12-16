@@ -110,7 +110,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
-        super(frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("MechSelectorDialog.title"), true);
         setName("UnitSelectorDialog");
         this.frame = frame;
         this.unitLoadingDialog = unitLoadingDialog;
@@ -209,7 +209,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 column.setPreferredWidth(25);
             }
         }
-        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
         JScrollPane scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
@@ -227,13 +227,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.setMinimumSize(new Dimension(300, 180));
         panelFilterButtons.setPreferredSize(new Dimension(300, 180));
 
-        JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType")); //$NON-NLS-1$
-        labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
+        JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
+        labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
-        listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
+        listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
         JScrollPane techLevelScroll = new JScrollPane(listTechLevel);
         techLevelScroll.setMinimumSize(new Dimension(300, 100));
         techLevelScroll.setPreferredSize(new Dimension(300, 100));
@@ -241,7 +241,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
 
-        JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
+        JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
         labelWeight.setName("labelWeight");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 1;
@@ -251,7 +251,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
-        weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
+        weightModel.addElement(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
         comboWeight.setMinimumSize(new Dimension(300, 27));
@@ -261,7 +261,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 1;
         panelFilterButtons.add(comboWeight, gridBagConstraintsWest);
 
-        JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
+        JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
         labelUnitType.setName("labelUnitType");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -306,7 +306,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 3;
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
 
-        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
+        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 3;

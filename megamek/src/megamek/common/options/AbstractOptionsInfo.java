@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.options;
 
 import java.util.Enumeration;
@@ -26,10 +25,10 @@ import java.util.Vector;
  */
 public class AbstractOptionsInfo implements IOptionsInfo {
 
-    protected static final String GROUP_SUFFIX = ".group."; //$NON-NLS-1$
-    protected static final String OPTION_SUFFIX = ".option."; //$NON-NLS-1$
-    protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName"; //$NON-NLS-1$
-    protected static final String DESCRIPTION_SUFFIX = ".description"; //$NON-NLS-1$
+    protected static final String GROUP_SUFFIX = ".group.";
+    protected static final String OPTION_SUFFIX = ".option.";
+    protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName";
+    protected static final String DESCRIPTION_SUFFIX = ".description";
 
     /**
      * The OptionsInfo name that must be unique. Every instance of the
@@ -46,14 +45,14 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * Hashtable of the <code>OptionInfo</code> used to store/find option
      * info.
      */
-    private Hashtable<String, OptionInfo> optionsHash = new Hashtable<String, OptionInfo>();
+    private Hashtable<String, OptionInfo> optionsHash = new Hashtable<>();
 
     /**
      * List of option groups. The order of groups is important. The first group
      * added by <code>addGroup</code> is the first in the
      * <code>Enumeration</code> returned by <code>getGroups</code>
      */
-    private Vector<IBasicOptionGroup> groups = new Vector<IBasicOptionGroup>();
+    private Vector<IBasicOptionGroup> groups = new Vector<>();
 
     /**
      * Flag that indicates that this filling the the options info data is
@@ -84,7 +83,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     protected AbstractOptionsInfo(String name) {
         if (names.contains(name)) {
             throw new IllegalArgumentException(
-                    "OptionsInfo '" + name + "' is already registered"); //$NON-NLS-1$ //$NON-NLS-2$
+                    "OptionsInfo '" + name + "' is already registered");
         }
         this.name = name;
     }

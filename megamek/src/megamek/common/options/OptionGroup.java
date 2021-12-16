@@ -47,7 +47,7 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
      * @param name option name
      */
     public OptionGroup(String name) {
-        this(name, ""); //$NON-NLS-1$
+        this(name, "");
     }
 
     public String getName() {

@@ -73,7 +73,7 @@ public class SquadronMapSet implements DisplayMapSet {
 
     private int max_size;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, 9);
 
     public SquadronMapSet(JComponent c, Game g) {
         comp = c;
@@ -119,14 +119,17 @@ public class SquadronMapSet implements DisplayMapSet {
     public void setRest() {
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         List<Entity> fighters = e.getSubEntities();
         for (int i = 0; i < max_size; ++ i) {
@@ -222,13 +225,13 @@ public class SquadronMapSet implements DisplayMapSet {
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
         for (int i = 0; i < max_size; i++) {
-            nameLabel[i] = new PMSimpleLabel("Unknown", fm, Color.white); //$NON-NLS-1$
+            nameLabel[i] = new PMSimpleLabel("Unknown", fm, Color.white);
             armorVLabel[i] = new PMValueLabel(fm, Color.red.brighter());
-            avCritLabel[i] = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
-            engineCritLabel[i] = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
-            fcsCritLabel[i] = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
-            sensorCritLabel[i] = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
-            pilotCritLabel[i] = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
+            avCritLabel[i] = new PMSimpleLabel("Avionics:", fm, Color.white);
+            engineCritLabel[i] = new PMSimpleLabel("Engine:", fm, Color.white);
+            fcsCritLabel[i] = new PMSimpleLabel("FCS:", fm, Color.white);
+            sensorCritLabel[i] = new PMSimpleLabel("Sensors:", fm, Color.white);
+            pilotCritLabel[i] = new PMSimpleLabel("Pilot hits:", fm, Color.white);
         }
     }
 

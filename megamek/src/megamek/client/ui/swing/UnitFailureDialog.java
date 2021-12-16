@@ -53,10 +53,10 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
 
     private JList<String> failedList;
 
-    private JTextArea reasonTextArea = new JTextArea("", 4, 20); //$NON-NLS-1$
+    private JTextArea reasonTextArea = new JTextArea("", 4, 20);
 
     public UnitFailureDialog(JFrame frame, Map<String, String> hff) {
-        super(frame, Messages.getString("UnitFailureDialog.title")); //$NON-NLS-1$
+        super(frame, Messages.getString("UnitFailureDialog.title"));
 
         hFailedFiles = hff;
         String[] failed = new String[hFailedFiles.size()];
@@ -69,7 +69,7 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
 
         reasonTextArea.setEditable(false);
         reasonTextArea.setOpaque(false);
-        reasonTextArea.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+        reasonTextArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
         failedList.addListSelectionListener(this);
 
         getContentPane().setLayout(new BorderLayout());
@@ -82,7 +82,7 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
                 - (getSize().width / 2), (frame.getLocation().y
                 + (frame.getSize().height / 2)) - (getSize().height / 2));
 
-        JButton okButton = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+        JButton okButton = new JButton(Messages.getString("Okay"));
         okButton.addActionListener(this);
 
         getContentPane().add(okButton, BorderLayout.SOUTH);

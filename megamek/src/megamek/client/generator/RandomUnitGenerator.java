@@ -191,7 +191,7 @@ public class RandomUnitGenerator implements Serializable {
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             int lineNumber = 0;
-            String key = "Huh"; //$NON-NLS-1$
+            String key = "Huh";
             float totalWeight = 0.0f;
             RatEntry re = new RatEntry();
             String line = null;
@@ -200,7 +200,7 @@ public class RandomUnitGenerator implements Serializable {
                     return;
                 }
 
-                if (line.startsWith("#")) { //$NON-NLS-1$
+                if (line.startsWith("#")) {
                     continue;
                 }
 
@@ -260,7 +260,7 @@ public class RandomUnitGenerator implements Serializable {
 
     private RatTreeNode getNodeByPath(RatTreeNode root, String path) {
         RatTreeNode result = root;
-        String[] pathElements = path.split("/", -1); //$NON-NLS-1$
+        String[] pathElements = path.split("/", -1);
         for (int i = 0; i < pathElements.length - 1; i++) {
             if (pathElements[i].length() == 0) {
                 continue;
@@ -314,14 +314,14 @@ public class RandomUnitGenerator implements Serializable {
             }
             String ratFileNameLC = ratFile.getName().toLowerCase(Locale.ROOT);
 
-            if (ratFileNameLC.equals("_svn") || ratFileNameLC.equals(".svn")) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (ratFileNameLC.equals("_svn") || ratFileNameLC.equals(".svn")) {
                 // This is a Subversion work directory. Lets ignore it.
                 continue;
             }
 
             // READ IN RATS
             if (ratFile.isDirectory()) {
-                RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/"); //$NON-NLS-1$
+                RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/");
 
                 // recursion is fun
                 loadRatsFromDirectory(ratFile, msc, newNode);
@@ -342,7 +342,7 @@ public class RandomUnitGenerator implements Serializable {
                         if (!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) {
                             RatTreeNode subNode = getNodeByPath(node, entryName);
                             try (InputStream zis = zipFile.getInputStream(entry)) {
-                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc); //$NON-NLS-1$
+                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc);
                             }
                         }
                     }
@@ -351,16 +351,14 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
 
-            if (!ratFileNameLC.endsWith(".txt")) { //$NON-NLS-1$
+            if (!ratFileNameLC.endsWith(".txt")) {
                 continue;
             }
 
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
-            } catch (IOException e) {
-                System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
-                System.err.println(e.getMessage());
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Unable to load " + ratFile.getName(), e);
             }
         }
     }
@@ -514,15 +512,11 @@ public class RandomUnitGenerator implements Serializable {
             rug.initializing = true;
             interrupted = false;
             dispose = false;
-            rug.loader = new Thread(new Runnable() {
-                public void run() {
-                    long start = System.currentTimeMillis();
-                    rug.populateUnits();
-                    long end = System.currentTimeMillis();
-                    System.out.println("Loaded Rats in: " + (end - start)
-                            + "ms.");
-                    System.out.flush();
-                }
+            rug.loader = new Thread(() -> {
+                long start = System.currentTimeMillis();
+                rug.populateUnits();
+                long end = System.currentTimeMillis();
+                LogManager.getLogger().info("Loaded Rats in: " + (end - start) + "ms.");
             }, "Random Unit Generator unit populator");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rug.loader.start();
@@ -533,5 +527,4 @@ public class RandomUnitGenerator implements Serializable {
     public boolean isInitialized() {
         return initialized;
     }
-
 }

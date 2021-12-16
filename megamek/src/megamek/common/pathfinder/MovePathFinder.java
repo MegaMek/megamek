@@ -107,7 +107,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public String toString() {
-            return String.format("%s f:%d", coords, facing);  //$NON-NLS-1$
+            return String.format("%s f:%d", coords, facing);
         }
     }
 

@@ -31,6 +31,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -40,10 +41,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
@@ -55,8 +54,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private static final int TAB_FORMATION_BUILDER = 3;
     private static final int TAB_FORCE_GENERATOR   = 4;
     
-    private static final String CARD_PREVIEW    = "card_preview"; //$NON-NLS-1$
-    private static final String CARD_FORCE_TREE = "card_force_tree"; // $NON-NLS-1$
+    private static final String CARD_PREVIEW    = "card_preview";
+    private static final String CARD_FORCE_TREE = "card_force_tree";
     
     private ClientGUI m_clientgui;
     private Client m_client;
@@ -558,10 +557,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         }
                         entities.add(e);
                     } catch (EntityLoadingException ex) {
-                        System.out.println("Unable to load mech: " + //$NON-NLS-1$ 
-                                ms.getSourceFile() + ": " + ms.getEntryName() + //$NON-NLS-1$
-                                ": " + ex.getMessage()); //$NON-NLS-1$ 
-                        ex.printStackTrace();
+                        LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
+                                ms.getSourceFile(), ms.getEntryName()), ex);
                         return;
                     }
                 }
@@ -693,11 +690,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                 if (unit != null) {
                                     unitList.add(unit);
                                     MechSummary unit2 = t.generateUnit(ms -> ms.getChassis().equals(unit.getChassis()));
-                                    if (unit2 != null) {
-                                        unitList.add(unit2);
-                                    } else {
-                                        unitList.add(unit);
-                                    }
+                                    unitList.add(Objects.requireNonNullElse(unit2, unit));
                                 }
                             }
                         }
@@ -958,6 +951,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             data = new ArrayList<>();
         }
 
+        @Override
         public int getRowCount() {
             return data.size();
         }
@@ -967,6 +961,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             fireTableDataChanged();
         }
 
+        @Override
         public int getColumnCount() {
             return N_COL;
         }
@@ -1004,6 +999,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             return false;
         }
 
+        @Override
         public Object getValueAt(int row, int col) {
             MechSummary m = getUnitAt(row);
             String value = "";
@@ -1030,10 +1026,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
      * A table model for displaying a generated RAT
      */
     public class RATTableModel extends AbstractTableModel {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = 7807207311532173654L;
 
         private static final int COL_WEIGHT = 0;
@@ -1041,6 +1033,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         private static final int COL_BV = 2;
         private static final int N_COL = 3;
 
+        @Override
         public int getRowCount() {
             if (generatedRAT == null) {
                 return 0;
@@ -1052,6 +1045,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             fireTableDataChanged();
         }
 
+        @Override
         public int getColumnCount() {
             return N_COL;
         }
@@ -1092,6 +1086,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             return false;
         }
 
+        @Override
         public Object getValueAt(int row, int col) {
             if (generatedRAT != null) {
                 switch (col) {

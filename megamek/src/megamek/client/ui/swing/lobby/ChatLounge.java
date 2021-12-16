@@ -1706,7 +1706,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 Client c = getSelectedClient();
                 if (c == null) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
-                            Messages.getString("ChatLounge.SelectBotOrPlayer"));  //$NON-NLS-2$
+                            Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
                 clientgui.loadListFile(c.getLocalPlayer());

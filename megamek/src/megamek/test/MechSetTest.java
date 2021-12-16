@@ -69,12 +69,12 @@ public class MechSetTest {
             String imageName = null;
             String entryName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("include")) {
                 st.nextToken();
                 name = st.sval;
                 testFile(dir, name);
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("chassis")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("chassis")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -86,7 +86,7 @@ public class MechSetTest {
                     testImageName(dir, imageName, entryName);
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("exact")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();

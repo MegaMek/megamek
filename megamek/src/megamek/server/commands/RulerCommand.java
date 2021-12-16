@@ -58,7 +58,7 @@ public class RulerCommand extends ServerCommand {
                                           buildAttackInfo(start, end, elev1, elev2)).losModifiers(
                     server.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
+                toHit1 = thd.getValue() + " because ";
             }
             toHit1 += thd.getDesc();
 
@@ -66,7 +66,7 @@ public class RulerCommand extends ServerCommand {
                                           buildAttackInfo(end, start, elev2, elev1)).losModifiers(
                     server.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
+                toHit2 = thd.getValue() + " because  ";
             }
             toHit2 += thd.getDesc();
 

@@ -379,7 +379,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
+        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix"));
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
         frame.validate();
@@ -1062,27 +1062,27 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case LOUNGE:
                 component = new ChatLounge(this);
                 chatlounge = (ChatLounge) component;
-                main = "ChatLounge"; //$NON-NLS-1$
+                main = "ChatLounge";
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
-                main = "JLabel-StartingScenario"; //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
+                main = "JLabel-StartingScenario";
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case EXCHANGE:
                 chatlounge.killPreviewBV();
-                component = new JLabel(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
-                main = "JLabel-Exchange"; //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
+                main = "JLabel-Exchange";
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "SelectArtyAutoHitHexDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1092,8 +1092,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case DEPLOY_MINEFIELDS:
                 component = new DeployMinefieldDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "DeployMinefieldDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1103,8 +1103,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case DEPLOYMENT:
                 component = new DeploymentDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "DeploymentDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "DeploymentDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1115,8 +1115,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case TARGETING:
                 component = new TargetingPhaseDisplay(this, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "TargetingPhaseDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1127,8 +1127,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case MOVEMENT:
                 component = new MovementDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "MovementDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "MovementDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1139,8 +1139,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case OFFBOARD:
                 component = new TargetingPhaseDisplay(this, true);
                 ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "OffboardDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "OffboardDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1150,8 +1150,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FIRING:
                 component = new FiringDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "FiringDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "FiringDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1161,8 +1161,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case POINTBLANK_SHOT:
                 component = new PointblankShotDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "PointblankShotDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "PointblankShotDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1172,8 +1172,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case PHYSICAL:
                 component = new PhysicalDisplay(this);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "PhysicalDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "PhysicalDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1183,7 +1183,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case INITIATIVE_REPORT:
                 component = new ReportDisplay(this);
-                main = "ReportDisplay"; //$NON-NLS-1$
+                main = "ReportDisplay";
                 component.setName(main);
                 panMain.add(main, component);
                 break;
@@ -1200,11 +1200,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(GamePhase.INITIATIVE_REPORT);
                 }
-                main = "ReportDisplay"; //$NON-NLS-1$
+                main = "ReportDisplay";
                 break;
             default:
-                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
-                main = "JLabel-Default"; //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
+                main = "JLabel-Default";
                 secondary = main;
                 component.setName(main);
                 panMain.add(main, component);
@@ -1437,7 +1437,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             dlgLoadList.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File dir) {
-                    return (dir.getName().endsWith(".mul") || dir.isDirectory()); //$NON-NLS-1$
+                    return (dir.getName().endsWith(".mul") || dir.isDirectory());
                 }
 
                 @Override
@@ -1446,7 +1446,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 }
             });
             // Default to the player's name.
-            dlgLoadList.setSelectedFile(new File(player.getName() + ".mul")); //$NON-NLS-1$
+            dlgLoadList.setSelectedFile(new File(player.getName() + ".mul"));
         }
 
         int returnVal = dlgLoadList.showOpenDialog(frame);
@@ -1484,7 +1484,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 }
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
+                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage());
             }
         }
 
@@ -1513,7 +1513,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // the name
             String path = fc.getSelectedFile().getParentFile().getPath();
             path = path.replace(" ", "|");
-            client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
+            client.sendChat("/localsave " + file + " " + path);
             return true;
         }
         return false;
@@ -1558,7 +1558,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             dlgSaveList.setFileFilter(filter);
         }
         // Default to the player's name.
-        dlgSaveList.setSelectedFile(new File(filename + ".mul")); //$NON-NLS-1$
+        dlgSaveList.setSelectedFile(new File(filename + ".mul"));
 
         int returnVal = dlgSaveList.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveList.getSelectedFile() == null)) {
@@ -1569,10 +1569,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // Did the player select a file?
         File unitFile = dlgSaveList.getSelectedFile();
         if (unitFile != null) {
-            if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
-                    || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+            if (!(unitFile.getName().toLowerCase().endsWith(".mul")
+                    || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
-                    unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
+                    unitFile = new File(unitFile.getCanonicalPath() + ".mul");
                 } catch (IOException ie) {
                     // nothing needs to be done here
                     return;
@@ -1583,7 +1583,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 EntityListFile.saveTo(unitFile, unitList);
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage());
             }
         }
     }
@@ -1600,7 +1600,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             dlgSaveList.setFileFilter(filter);
         }
         // Default to the player's name.
-        dlgSaveList.setSelectedFile(new File(filename + ".mul")); //$NON-NLS-1$
+        dlgSaveList.setSelectedFile(new File(filename + ".mul"));
 
         int returnVal = dlgSaveList.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveList.getSelectedFile() == null)) {
@@ -1611,10 +1611,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // Did the player select a file?
         File unitFile = dlgSaveList.getSelectedFile();
         if (unitFile != null) {
-            if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
-                    || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+            if (!(unitFile.getName().toLowerCase().endsWith(".mul")
+                    || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
-                    unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
+                    unitFile = new File(unitFile.getCanonicalPath() + ".mul");
                 } catch (IOException ie) {
                     // nothing needs to be done here
                     return;
@@ -1625,7 +1625,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 EntityListFile.saveTo(unitFile, getClient());
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage());
             }
         }
     }
@@ -1792,8 +1792,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
             // Allow players to save their living units to a file.
             // Don't bother asking if none survived.
-            if (!living.isEmpty() && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
+            if (!living.isEmpty() && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
+                    Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
 
                 // Allow the player to save the units to a file.
                 saveVictoryList();
@@ -2035,9 +2035,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         }
                     }
                     //Set up the selection pane
-                    String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
+                    String i18nString = "TeleMissileTargetDialog.message";;
                     msg = Messages.getString(i18nString);
-                    i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
+                    i18nString = "TeleMissileTargetDialog.title";
                     title = Messages.getString(i18nString);
                     String input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,
@@ -2067,9 +2067,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         }
                     }
                     //Set up the selection pane
-                    i18nString = "TAGTargetDialog.message"; //$NON-NLS-1$;
+                    i18nString = "TAGTargetDialog.message";;
                     msg = Messages.getString(i18nString);
-                    i18nString = "TAGTargetDialog.title"; //$NON-NLS-1$
+                    i18nString = "TAGTargetDialog.title";
                     title = Messages.getString(i18nString);
                     input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,

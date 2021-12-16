@@ -1340,6 +1340,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
     
     //Landing mods for partial repairs
+    @Override
     public int getLandingGearPartialRepairs() {
     	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
         return 2;
@@ -1351,6 +1352,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
     
     //Avionics mods for partial repairs
+    @Override
     public int getAvionicsMisreplaced() {
     	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
@@ -1359,6 +1361,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     	}
     }
     
+    @Override
     public int getAvionicsMisrepaired() {
     	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
@@ -1574,6 +1577,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
     }
     
+    @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
             	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -1595,6 +1599,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         currentfuel = gas;
     }
     
+    @Override
     public void setCurrentFuel(int gas) {
     	currentfuel = gas;
     }

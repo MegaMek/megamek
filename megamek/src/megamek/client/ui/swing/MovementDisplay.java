@@ -4757,28 +4757,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.getBoardView().drawMovementData(ce(), cmd);
             butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())
-                && clientgui.doYesNoDialog(Messages
-                        .getString("MovementDisplay.EscapeDialog.title"),
-                        Messages.getString("MovementDisplay" + ".EscapeDialog"
-                                + ".message"))) {
+                && clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.EscapeDialog.title"),
+                        Messages.getString("MovementDisplay.EscapeDialog.message"))) {
            
-            // $NON-NLS-2$
             clear();
             cmd.addStep(MoveStepType.FLEE);
             ready();
         } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd())
-                && clientgui.doYesNoDialog(Messages
-                        .getString("MovementDisplay.FlyOffDialog.title"),
-                        Messages.getString("MovementDisplay" + ".FlyOffDialog"
-                                + ".message"))) {
-           
-            // $NON-NLS-2$
-            // clear();
+                && clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.FlyOffDialog.title"),
+                        Messages.getString("MovementDisplay.FlyOffDialog.message"))) {
             if (opts.booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)
-                    && clientgui
-                            .doYesNoDialog(
-                                    Messages.getString("MovementDisplay.ReturnFly.title"),
-                                    Messages.getString("MovementDisplay.ReturnFly.message"))) {
+                    && clientgui.doYesNoDialog(
+                            Messages.getString("MovementDisplay.ReturnFly.title"),
+                            Messages.getString("MovementDisplay.ReturnFly.message"))) {
                 cmd.addStep(MoveStepType.RETURN);
             } else {
                 cmd.addStep(MoveStepType.OFF);
@@ -4786,21 +4779,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ready();
         } else if (actionCmd.equals(MoveCommand.MOVE_EJECT.getCmd())) {
             if (ce instanceof Tank) {
-                if (clientgui
-                        .doYesNoDialog(
-                                Messages.getString("MovementDisplay.AbandonDialog.title"),
-                                Messages.getString("MovementDisplay.AbandonDialog.message"))) {
-                    // $NON-NLS-2$
+                if (clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.AbandonDialog.title"),
+                        Messages.getString("MovementDisplay.AbandonDialog.message"))) {
                     clear();
                     cmd.addStep(MoveStepType.EJECT);
                     ready();
                 }
             } else if (ce.isLargeCraft()) {
-                if (clientgui
-                        .doYesNoDialog(
-                                Messages.getString("MovementDisplay.AbandonDialog.title"),
-                                Messages.getString("MovementDisplay.AbandonDialog.message"))) {
-                    // $NON-NLS-2$
+                if (clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.AbandonDialog.title"),
+                        Messages.getString("MovementDisplay.AbandonDialog.message"))) {
                     clear();
                     // If we're abandoning while grounded, find a legal position to put an EjectedCrew unit
                     if (!ce.isSpaceborne() && ce.getAltitude() == 0) {
@@ -4977,28 +4966,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             cmd.addStep(MoveStepType.BOOTLEGGER);
             clientgui.getBoardView().drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHUTDOWN.getCmd())) {
-            if (clientgui
-                    .doYesNoDialog(
-                            Messages.getString("MovementDisplay.ShutdownDialog.title"),
-                            Messages.getString("MovementDisplay.ShutdownDialog.message"))) {
+            if (clientgui.doYesNoDialog(
+                    Messages.getString("MovementDisplay.ShutdownDialog.title"),
+                    Messages.getString("MovementDisplay.ShutdownDialog.message"))) {
                 cmd.addStep(MoveStepType.SHUTDOWN);
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_STARTUP.getCmd())) {
-            if (clientgui
-                    .doYesNoDialog(
-                            Messages.getString("MovementDisplay.StartupDialog.title"),
-                            Messages.getString("MovementDisplay.StartupDialog.message"))) {
+            if (clientgui.doYesNoDialog(
+                    Messages.getString("MovementDisplay.StartupDialog.title"),
+                    Messages.getString("MovementDisplay.StartupDialog.message"))) {
                 clear();
                 cmd.addStep(MoveStepType.STARTUP);
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_SELF_DESTRUCT.getCmd())) {
-            if (clientgui
-                    .doYesNoDialog(
-                            Messages.getString("MovementDisplay.SelfDestructDialog.title"),
-                            Messages.getString("MovementDisplay.SelfDestructDialog.message"))) {
-                // $NON-NLS-2$
+            if (clientgui.doYesNoDialog(
+                    Messages.getString("MovementDisplay.SelfDestructDialog.title"),
+                    Messages.getString("MovementDisplay.SelfDestructDialog.message"))) {
                 cmd.addStep(MoveStepType.SELF_DESTRUCT);
                 ready();
             }
@@ -5108,29 +5093,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_OFF.getCmd())) {
             if (ce().isAero()
                     && (null != ((IAero) ce()).hasRoomForHorizontalTakeOff())) {
-                String title = Messages
-                        .getString("MovementDisplay.NoTakeOffDialog.title");
+                String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title");
                 String body = Messages.getString(
                         "MovementDisplay.NoTakeOffDialog.message",
                         new Object[] { ((IAero) ce())
                                 .hasRoomForHorizontalTakeOff() });
                 clientgui.doAlertDialog(title, body);
             } else {
-                if (clientgui
-                        .doYesNoDialog(
-                                Messages.getString("MovementDisplay.TakeOffDialog.title"),
-                                Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
-                    // $NON-NLS-2$
+                if (clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.TakeOffDialog.title"),
+                        Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
                     clear();
                     cmd.addStep(MoveStepType.TAKEOFF);
                     ready();
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_VERT_TAKE_OFF.getCmd())) {
-            if (clientgui
-                    .doYesNoDialog(
-                            Messages.getString("MovementDisplay.TakeOffDialog.title"),
-                            Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
+            if (clientgui.doYesNoDialog(
+                    Messages.getString("MovementDisplay.TakeOffDialog.title"),
+                    Messages.getString("MovementDisplay.TakeOffDialog.message"))) {
                 clear();
                 cmd.addStep(MoveStepType.VTAKEOFF);
                 ready();
@@ -5138,18 +5119,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_LAND.getCmd())) {
             if (ce().isAero()
                     && (null != ((IAero) ce()).hasRoomForHorizontalLanding())) {
-                String title = Messages
-                        .getString("MovementDisplay.NoLandingDialog.title");
-                String body = Messages.getString(
-                        "MovementDisplay.NoLandingDialog.message",
-                        new Object[] { ((IAero) ce())
-                                .hasRoomForHorizontalLanding() });
+                String title = Messages.getString("MovementDisplay.NoLandingDialog.title");
+                String body = Messages.getString("MovementDisplay.NoLandingDialog.message",
+                        ((IAero) ce()).hasRoomForHorizontalLanding());
                 clientgui.doAlertDialog(title, body);
             } else {
-                if (clientgui
-                        .doYesNoDialog(
-                                Messages.getString("MovementDisplay.LandDialog.title"),
-                                Messages.getString("MovementDisplay.LandDialog.message"))) {
+                if (clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.LandDialog.title"),
+                        Messages.getString("MovementDisplay.LandDialog.message"))) {
                     clear();
                     cmd.addStep(MoveStepType.LAND);
                     ready();
@@ -5158,18 +5135,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_VERT_LAND.getCmd())) {
             if (ce().isAero()
                     && (null != ((IAero) ce()).hasRoomForVerticalLanding())) {
-                String title = Messages
-                        .getString("MovementDisplay.NoLandingDialog.title");
-                String body = Messages.getString(
-                        "MovementDisplay.NoLandingDialog.message",
-                        new Object[] { ((IAero) ce())
-                                .hasRoomForVerticalLanding() });
+                String title = Messages.getString("MovementDisplay.NoLandingDialog.title");
+                String body = Messages.getString("MovementDisplay.NoLandingDialog.message",
+                        ((IAero) ce()).hasRoomForVerticalLanding());
                 clientgui.doAlertDialog(title, body);
             } else {
-                if (clientgui
-                        .doYesNoDialog(
-                                Messages.getString("MovementDisplay.LandDialog.title"),
-                                Messages.getString("MovementDisplay.LandDialog.message"))) {
+                if (clientgui.doYesNoDialog(
+                        Messages.getString("MovementDisplay.LandDialog.title"),
+                        Messages.getString("MovementDisplay.LandDialog.message"))) {
                     clear();
                     cmd.addStep(MoveStepType.VLAND);
                     ready();

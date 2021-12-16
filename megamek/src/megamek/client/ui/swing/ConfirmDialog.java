@@ -138,7 +138,7 @@ public class ConfirmDialog extends JDialog{
             }
         };
         butYes = new JButton(yesAction);
-        butYes.setText(Messages.getString("Yes")); //$NON-NLS-1$
+        butYes.setText(Messages.getString("Yes"));
 	butYes.setMnemonic(KeyEvent.VK_Y);
         KeyStroke ks = null;
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
@@ -158,7 +158,7 @@ public class ConfirmDialog extends JDialog{
             }
         };
         butNo = new JButton(noAction);
-        butNo.setText(Messages.getString("No")); //$NON-NLS-1$
+        butNo.setText(Messages.getString("No"));
 	butNo.setMnemonic(KeyEvent.VK_N);
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_N, 0);
         imap = butNo.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -184,7 +184,7 @@ public class ConfirmDialog extends JDialog{
 
         if (useCheckbox) {
             botherCheckbox = new JCheckBox(Messages
-                    .getString("ConfirmDialog.dontBother")); //$NON-NLS-1$
+                    .getString("ConfirmDialog.dontBother"));
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);

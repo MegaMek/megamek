@@ -43,7 +43,7 @@ import java.util.Map;
 @XmlRootElement(name = "entityverifier")
 @XmlAccessorType(XmlAccessType.NONE)
 public class EntityVerifier implements MechSummaryCache.Listener {
-    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
+    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml";
 
     private static MechSummaryCache mechSummaryCache = null;
 

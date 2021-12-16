@@ -116,7 +116,7 @@ public class ChatterBox implements KeyListener {
         history = new LinkedList<String>();
 
         chatArea = new JTextArea(
-                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
+                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
@@ -128,7 +128,7 @@ public class ChatterBox implements KeyListener {
         scrPlayers.setPreferredSize(new Dimension(100,chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$
+        butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
@@ -189,7 +189,7 @@ public class ChatterBox implements KeyListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\nMegaMek: " + message); //$NON-NLS-1$
+        chatArea.append("\nMegaMek: " + message);
         moveToEnd();
     }
 
@@ -224,7 +224,7 @@ public class ChatterBox implements KeyListener {
             } else {
                 systemMessage(client.runCommand(inputField.getText()));
             }
-            inputField.setText(""); //$NON-NLS-1$
+            inputField.setText("");
 
             if (history.size() > MAX_HISTORY) {
                 history.removeLast();
@@ -248,8 +248,8 @@ public class ChatterBox implements KeyListener {
             inputField.setText(history.get(historyBookmark));
             cb2.setMessage(inputField.getText());
         } catch (IndexOutOfBoundsException ioobe) {
-            inputField.setText(""); //$NON-NLS-1$
-            cb2.setMessage(""); //$NON-NLS-1$
+            inputField.setText("");
+            cb2.setMessage("");
             historyBookmark = -1;
         }
     }

@@ -739,6 +739,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     //Landing mods for partial repairs
+    @Override
     public int getLandingGearPartialRepairs() {
     	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
         return 2;
@@ -750,6 +751,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     //Avionics mods for partial repairs
+    @Override
     public int getAvionicsMisreplaced() {
     	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
@@ -758,6 +760,7 @@ public class Aero extends Entity implements IAero, IBomber {
     	}
     }
 
+    @Override
     public int getAvionicsMisrepaired() {
     	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
@@ -826,6 +829,7 @@ public class Aero extends Entity implements IAero, IBomber {
         return fuel;
     }
 
+    @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
         		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -835,6 +839,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
 
+    @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
             	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -850,15 +855,18 @@ public class Aero extends Entity implements IAero, IBomber {
      * @param gas
      *            Number of fuel points.
      */
+    @Override
     public void setFuel(int gas) {
         fuel = gas;
         currentfuel = gas;
     }
 
+    @Override
     public void setCurrentFuel(int gas) {
     	currentfuel = gas;
     }
 
+    @Override
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
             return 80 / primitiveFuelFactor();

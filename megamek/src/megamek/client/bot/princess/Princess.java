@@ -1838,6 +1838,7 @@ public class Princess extends BotClient {
         refreshCrippledUnits();
     }
 
+    @Override
     protected void handlePacket(final Packet c) {
         final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.getCommand());
         try {

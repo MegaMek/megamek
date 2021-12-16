@@ -270,12 +270,11 @@ public class Client implements IClientCommandHandler {
         if (log != null) {
             try {
                 log.close();
-            } catch (IOException e) {
-                System.err.print("Exception closing logfile: "); //$NON-NLS-1$
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to close the logfile", e);
             }
         }
-        System.out.println("client: died"); //$NON-NLS-1$
+        System.out.println("client: died");
         System.out.flush();
     }
 
@@ -288,7 +287,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals("localhost")) { //$NON-NLS-1$
+            if (!host.equals("localhost")) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
@@ -431,22 +430,22 @@ public class Client implements IClientCommandHandler {
                 // We must do this last, as the name and unit generators can create
                 // a new instance if they are running
                 MechSummaryCache.dispose();
-                memDump("entering deployment phase"); //$NON-NLS-1$
+                memDump("entering deployment phase");
                 break;
             case TARGETING:
-                memDump("entering targeting phase"); //$NON-NLS-1$
+                memDump("entering targeting phase");
                 break;
             case MOVEMENT:
-                memDump("entering movement phase"); //$NON-NLS-1$
+                memDump("entering movement phase");
                 break;
             case OFFBOARD:
-                memDump("entering offboard phase"); //$NON-NLS-1$
+                memDump("entering offboard phase");
                 break;
             case FIRING:
-                memDump("entering firing phase"); //$NON-NLS-1$
+                memDump("entering firing phase");
                 break;
             case PHYSICAL:
-                memDump("entering physical phase"); //$NON-NLS-1$
+                memDump("entering physical phase");
                 break;
             case LOUNGE:
                 try {
@@ -945,13 +944,12 @@ public class Client implements IClientCommandHandler {
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Can't find local savegame " + f); //$NON-NLS-1$
+            LogManager.getLogger().error("Can't find the local savegame " + f, e);
         }
     }
 
     public void sendExplodeBuilding(DemolitionCharge charge) {
-        Object data[] = new Object[1];
+        Object[] data = new Object[1];
         data[0] = charge;
         send(new Packet(Packet.COMMAND_BLDG_EXPLODE, data));
     }
@@ -1034,8 +1032,8 @@ public class Client implements IClientCommandHandler {
         // Gather the forces and entities to be deleted
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
-        forceIds.stream().map(id -> forces.getForce(id)).forEach(delForces::add);
-        delForces.stream().map(f -> forces.getFullEntities(f)).forEach(delEntities::addAll);
+        forceIds.stream().map(forces::getForce).forEach(delForces::add);
+        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
 
         forces.deleteForces(delForces);
 
@@ -1370,9 +1368,10 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void handlePacket(Packet c) {
         if (c == null) {
-            System.out.println("client: got null packet"); //$NON-NLS-1$
+            LogManager.getLogger().error("Client: got null packet");
             return;
         }
+
         switch (c.getCommand()) {
             case Packet.COMMAND_CLOSE_CONNECTION:
                 disconnected();
@@ -1748,16 +1747,12 @@ public class Client implements IClientCommandHandler {
      */
     private void memDump(String where) {
         if (PreferenceManager.getClientPreferences().memoryDumpOn()) {
-            StringBuffer buf = new StringBuffer();
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            buf.append("Memory dump ").append(where); //$NON-NLS-1$
-            for (int loop = where.length(); loop < 25; loop++) {
-                buf.append(' ');
-            }
-            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            System.out.println(buf.toString());
+            LogManager.getLogger().error("Memory dump " + where
+                    + " ".repeat(Math.max(0, 25 - where.length())) + ": used (" + used
+                    + ") + free (" + free + ") = " + total);
         }
     }
 

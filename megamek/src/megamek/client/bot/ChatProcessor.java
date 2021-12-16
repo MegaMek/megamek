@@ -97,7 +97,7 @@ public class ChatProcessor {
         }
 
         // Check for end of message.
-        StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
+        StringTokenizer st = new StringTokenizer(ge.getMessage(), ":");
         if (!st.hasMoreTokens()) {
             return;
         }
@@ -138,10 +138,10 @@ public class ChatProcessor {
                         boolean understood = false;
                         // should create a command factory and a
                         // command object...
-                        if (command.equalsIgnoreCase("echo")) { //$NON-NLS-1$
+                        if (command.equalsIgnoreCase("echo")) {
                             understood = true;
                         }
-                        if (command.equalsIgnoreCase("calm down")) { //$NON-NLS-1$
+                        if (command.equalsIgnoreCase("calm down")) {
                             for (Entity entity : tb.getEntitiesOwned()) {
                                 CEntity cen = tb.centities.get(entity);
                                 if (cen.strategy.attack > 1) {
@@ -149,14 +149,14 @@ public class ChatProcessor {
                                 }
                             }
                             understood = true;
-                        } else if (command.equalsIgnoreCase("be aggressive")) { //$NON-NLS-1$
+                        } else if (command.equalsIgnoreCase("be aggressive")) {
                             for (Entity entity : tb.getEntitiesOwned()) {
                                 CEntity cen = tb.centities.get(entity);
                                 cen.strategy.attack = Math.min(
                                         cen.strategy.attack * 1.2, 1.5);
                             }
                             understood = true;
-                        } else if (command.equalsIgnoreCase("attack")) { //$NON-NLS-1$
+                        } else if (command.equalsIgnoreCase("attack")) {
                             int x = Integer.parseInt(st.nextToken().trim());
                             int y = Integer.parseInt(st.nextToken().trim());
                             Entity en = tb.getGame().getFirstEntity(new Coords(
@@ -165,13 +165,12 @@ public class ChatProcessor {
                                 if (en.isEnemyOf(tb.getEntitiesOwned().get(0))) {
                                     CEntity cen = tb.centities.get(en);
                                     cen.strategy.target += 3;
-                                    System.out.println(cen.entity
-                                                               .getShortName()
-                                                       + " " + cen.strategy.target); //$NON-NLS-1$
+                                    LogManager.getLogger().info(cen.entity.getShortName() + " " + cen.strategy.target);
                                     understood = true;
                                 }
                             }
                         }
+
                         if (understood) {
                             tb.sendChat("Understood " + p.getName());
                         }

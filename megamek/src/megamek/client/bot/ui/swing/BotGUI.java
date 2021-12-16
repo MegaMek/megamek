@@ -70,8 +70,8 @@ public class BotGUI implements GameListener {
             WarningShown = true;
             
             JFrame frame = new JFrame();
-            String title = Messages.getString("BotGUI.notifyOfBot.title"); //$NON-NLS-1$
-            String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
+            String title = Messages.getString("BotGUI.notifyOfBot.title");
+            String body = Messages.getString("BotGUI.notifyOfBot.message");
             frame.pack();
             frame.setLocationRelativeTo(null);
             ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);

@@ -52,8 +52,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     private boolean confirm;
 
     private JPanel panButtons = new JPanel();
-    private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butOK = new JButton(Messages.getString("Okay"));
+    private JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     /**
      * The checkboxes for available choices.

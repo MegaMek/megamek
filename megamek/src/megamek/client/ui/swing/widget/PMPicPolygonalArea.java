@@ -98,6 +98,7 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
     }
 
     // PMHotArea interface methods
+    @Override
     public Shape getAreaShape() {
         return this.areaShape;
     }

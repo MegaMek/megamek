@@ -117,37 +117,45 @@ public class PMSimplePolygonArea implements PMHotArea {
     }
 
     // PMHotArea interface methods
+    @Override
     public Shape getAreaShape() {
         return this.areaShape;
     }
 
+    @Override
     public Cursor getCursor() {
         return cursor;
     }
 
+    @Override
     public void setCursor(Cursor c) {
         cursor = c;
     }
 
+    @Override
     public void onMouseClick(MouseEvent e) {
         if (e.getClickCount() == 2) {
             unitDisplay.showSpecificSystem(loc);
         }
     }
 
+    @Override
     public void onMouseOver(MouseEvent e) {
         if (highlight)
             selected = true;
     }
 
+    @Override
     public void onMouseExit(MouseEvent e) {
         if (highlight)
             selected = false;
     }
 
+    @Override
     public void onMouseDown(MouseEvent e) {
     }
 
+    @Override
     public void onMouseUp(MouseEvent e) {
     }
 }

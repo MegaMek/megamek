@@ -28783,7 +28783,7 @@ public class Server implements Runnable {
                     getBoardSizesInDir(query_file, sizes);
                 } else {
                     try {
-                        if (filename.endsWith(".board")) { //$NON-NLS-1$
+                        if (filename.endsWith(".board")) {
                             BoardDimensions size = Board.getSize(query_file);
                             if (size == null) {
                                 throw new Exception();

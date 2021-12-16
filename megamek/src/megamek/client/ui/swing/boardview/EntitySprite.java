@@ -219,7 +219,7 @@ class EntitySprite extends Sprite {
             oldRect = new Rectangle(labelRect);
         
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? Font.ITALIC : Font.PLAIN;
-        labelFont = new Font("SansSerif", face, (int) (10 * Math.max(bv.scale, 0.9))); //$NON-NLS-1$
+        labelFont = new Font("SansSerif", face, (int) (10 * Math.max(bv.scale, 0.9)));
         
         // Check the hexes in directions 2,5,1,4 if they are free of entities
         // and place the label in the direction of the first free hex

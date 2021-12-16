@@ -67,8 +67,10 @@ public class SpheroidMapSet implements DisplayMapSet{
     private Polygon aftArmor = new Polygon (new int[]{0,20,80,100},
             new int[]{150,200,200,150},4);
 
-    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
 
 
@@ -85,14 +87,17 @@ public class SpheroidMapSet implements DisplayMapSet{
     public void setRest() {
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Aero t = (Aero) e;
         int a = 1;
@@ -181,42 +186,42 @@ public class SpheroidMapSet implements DisplayMapSet{
 
         //Labels for Front view
         //Prefer to use message thingy but don't know how
-        labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black,50,20); //$NON-NLS-1$
-        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57); //$NON-NLS-1$
-        labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black,20,90); //$NON-NLS-1$
-//      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
-        labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black,80,90); //$NON-NLS-1$
-//      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106); //$NON-NLS-1$
-        labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black,50,160); //$NON-NLS-1$
-        labels[4] = WidgetUtils.createLabel("SI", fm, Color.black,50,120); //$NON-NLS-1$
-        labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10,210); //$NON-NLS-1$
-        labels[6] = WidgetUtils.createLabel("Engine:", fm, Color.white,10,225); //$NON-NLS-1$
-        labels[7] = WidgetUtils.createLabel("FCS:", fm, Color.white,10,240); //$NON-NLS-1$
-        labels[8] = WidgetUtils.createLabel("Sensors:", fm, Color.white,10,255); //$NON-NLS-1$
-        labels[9] = WidgetUtils.createLabel("L Thrust:", fm, Color.white,90,210); //$NON-NLS-1$
-        labels[10] = WidgetUtils.createLabel("R Thrust:", fm, Color.white,90,225); //$NON-NLS-1$
-        labels[11] = WidgetUtils.createLabel("K-F Boom:", fm, Color.white,90,240); //$NON-NLS-1$
-        labels[12] = WidgetUtils.createLabel("Collar:", fm, Color.white,90,255); //$NON-NLS-1$
+        labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black,50,20);
+        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57);
+        labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black,20,90);
+//      labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106);
+        labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black,80,90);
+//      labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106);
+        labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black,50,160);
+        labels[4] = WidgetUtils.createLabel("SI", fm, Color.black,50,120);
+        labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10,210);
+        labels[6] = WidgetUtils.createLabel("Engine:", fm, Color.white,10,225);
+        labels[7] = WidgetUtils.createLabel("FCS:", fm, Color.white,10,240);
+        labels[8] = WidgetUtils.createLabel("Sensors:", fm, Color.white,10,255);
+        labels[9] = WidgetUtils.createLabel("L Thrust:", fm, Color.white,90,210);
+        labels[10] = WidgetUtils.createLabel("R Thrust:", fm, Color.white,90,225);
+        labels[11] = WidgetUtils.createLabel("K-F Boom:", fm, Color.white,90,240);
+        labels[12] = WidgetUtils.createLabel("Collar:", fm, Color.white,90,255);
 
         //Value labels for all parts of mek
         //front
         fm =  comp.getFontMetrics(FONT_VALUE);   
-        vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm); //$NON-NLS-1$
-        //   vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm); //$NON-NLS-1$
-        vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(20, 105, "", fm); //$NON-NLS-1$
-        //   vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm); //$NON-NLS-1$
-        vLabels[Aero.LOC_RWING] = WidgetUtils.createValueLabel(80, 105, "", fm); //$NON-NLS-1$
-        //   vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm); //$NON-NLS-1$
-        vLabels[Aero.LOC_AFT] = WidgetUtils.createValueLabel(50, 175, "", fm); //$NON-NLS-1$
-        vLabels[4] = WidgetUtils.createValueLabel(50, 135, "", fm); //$NON-NLS-1$
-        vLabels[5] = WidgetUtils.createValueLabel(40, 210, "", fm); //$NON-NLS-1$
-        vLabels[6] = WidgetUtils.createValueLabel(40, 225, "", fm); //$NON-NLS-1$
-        vLabels[7] = WidgetUtils.createValueLabel(40, 240, "", fm); //$NON-NLS-1$
-        vLabels[8] = WidgetUtils.createValueLabel(40, 255, "", fm); //$NON-NLS-1$
-        vLabels[9] = WidgetUtils.createValueLabel(130, 210, "", fm); //$NON-NLS-1$
-        vLabels[10] = WidgetUtils.createValueLabel(130, 225, "", fm); //$NON-NLS-1$
-        vLabels[11] = WidgetUtils.createValueLabel(135, 240, "", fm); //$NON-NLS-1$
-        vLabels[12] = WidgetUtils.createValueLabel(130, 255, "", fm); //$NON-NLS-1$
+        vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm);
+        //   vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm);
+        vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(20, 105, "", fm);
+        //   vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        vLabels[Aero.LOC_RWING] = WidgetUtils.createValueLabel(80, 105, "", fm);
+        //   vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        vLabels[Aero.LOC_AFT] = WidgetUtils.createValueLabel(50, 175, "", fm);
+        vLabels[4] = WidgetUtils.createValueLabel(50, 135, "", fm);
+        vLabels[5] = WidgetUtils.createValueLabel(40, 210, "", fm);
+        vLabels[6] = WidgetUtils.createValueLabel(40, 225, "", fm);
+        vLabels[7] = WidgetUtils.createValueLabel(40, 240, "", fm);
+        vLabels[8] = WidgetUtils.createValueLabel(40, 255, "", fm);
+        vLabels[9] = WidgetUtils.createValueLabel(130, 210, "", fm);
+        vLabels[10] = WidgetUtils.createValueLabel(130, 225, "", fm);
+        vLabels[11] = WidgetUtils.createValueLabel(135, 240, "", fm);
+        vLabels[12] = WidgetUtils.createValueLabel(130, 255, "", fm);
     }
 
     private void setBackGround() {

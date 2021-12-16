@@ -79,93 +79,68 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private boolean isCanceled = true;
     public MechSearchFilter mechFilter = null;
     private Vector<FilterTokens> filterToks;
-    private JButton btnOkay   =
-        new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton btnCancel = new
-    JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton btnOkay   = new JButton(Messages.getString("Okay"));
+    private JButton btnCancel = new JButton(Messages.getString("Cancel"));
 
-    private JButton btnLeftParen =  new JButton("("); //$NON-NLS-1$
-    private JButton btnRightParen =  new JButton(")"); //$NON-NLS-1$
-    private JButton btnAdd =
-            new JButton(Messages.getString("MechSelectorDialog.Search.add"));//$NON-NLS-1$
-    private JButton btnAnd =
-        new JButton(Messages.getString("MechSelectorDialog.Search.and")); //$NON-NLS-1$
-    private JButton btnOr =
-        new JButton(Messages.getString("MechSelectorDialog.Search.or")); //$NON-NLS-1$
-    private JButton btnClear =
-        new JButton(Messages.getString("MechSelectorDialog.Reset")); //$NON-NLS-1$
-    private JButton btnBack =
-        new JButton("Back"); //$NON-NLS-1$
+    private JButton btnLeftParen =  new JButton("(");
+    private JButton btnRightParen =  new JButton(")");
+    private JButton btnAdd = new JButton(Messages.getString("MechSelectorDialog.Search.add"));
+    private JButton btnAnd = new JButton(Messages.getString("MechSelectorDialog.Search.and"));
+    private JButton btnOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
+    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+    private JButton btnBack = new JButton("Back");
 
-    private JLabel  lblEqExpTxt =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression")); //$NON-NLS-1$
-    private JTextArea  txtEqExp =
-        new JTextArea(""); //$NON-NLS-1$
+    private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
+    private JTextArea  txtEqExp = new JTextArea("");
     private JScrollPane expScroller = new JScrollPane(txtEqExp,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-    private JLabel lblWalk =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.Walk")); //$NON-NLS-1$
+    private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
     private JComboBox<String> cWalk = new JComboBox<>();
     private JTextField tWalk = new JTextField(2);
 
-    private JLabel lblJump =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.Jump")); //$NON-NLS-1$
+    private JLabel lblJump = new JLabel(Messages.getString("MechSelectorDialog.Search.Jump"));
     private JComboBox<String> cJump = new JComboBox<>();
     private JTextField tJump = new JTextField(2);
 
-    private JLabel lblArmor =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.Armor")); //$NON-NLS-1$
+    private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
 
-    private JLabel lblTableFilters = new JLabel(
-            Messages.getString("MechSelectorDialog.Search.TableFilters")); //$NON-NLS-1$
-    private JLabel lblUnitType = new JLabel(
-            Messages.getString("MechSelectorDialog.Search.UnitType")); //$NON-NLS-1$
-    private JLabel lblTechClass = new JLabel(
-            Messages.getString("MechSelectorDialog.Search.TechClass")); //$NON-NLS-1$
-    private JLabel lblTechLevel = new JLabel(
-            Messages.getString("MechSelectorDialog.Search.TechLevel")); //$NON-NLS-1$
+    private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
+    private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
+    private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
+    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
     private JComboBox<String> cboUnitType = new JComboBox<>();
     private JComboBox<String> cboTechClass = new JComboBox<>();
     private JComboBox<String> cboTechLevel = new JComboBox<>();
 
-    private JLabel lblWeapons =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons")); //$NON-NLS-1$
+    private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
     private JScrollPane scrTableWeapons = new JScrollPane();
     private MegamekTable tblWeapons;
     private WeaponsTableModel weaponsModel;
     private TableRowSorter<WeaponsTableModel> weaponsSorter;
 
-    private JLabel lblEquipment =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment")); //$NON-NLS-1$
+    private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
     private JScrollPane scrTableEquipment = new JScrollPane();
     private MegamekTable tblEquipment;
     private EquipmentTableModel equipmentModel;
     private TableRowSorter<EquipmentTableModel> equipmentSorter;
 
-    private JLabel lblYear =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.Year")); //$NON-NLS-1$
+    private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
 
-    private JCheckBox cbxEnableCockpitSearch =
-        new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable")); //$NON-NLS-1$
-    private JLabel lblCockpitType =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType")); //$NON-NLS-1$
+    private JCheckBox cbxEnableCockpitSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
+    private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
     private JComboBox<String> cboCockpitType = new JComboBox<>();
 
-    private JCheckBox cbxEnableInternalsSearch =
-        new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable")); //$NON-NLS-1$
-    private JLabel lblInternalsType =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType")); //$NON-NLS-1$
+    private JCheckBox cbxEnableInternalsSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
+    private JLabel lblInternalsType = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
     private JComboBox<String> cboInternalsType = new JComboBox<>();
 
-    private JCheckBox cbxEnableArmorSearch =
-        new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable")); //$NON-NLS-1$
-    private JLabel lblArmorType =
-        new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType")); //$NON-NLS-1$
+    private JCheckBox cbxEnableArmorSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
+    private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
     private JComboBox<String> cboArmorType = new JComboBox<>();
 
     private JComboBox<String> cboQty   = new JComboBox<>();
@@ -181,7 +156,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      * @param frame  Parent frame
      */
     public AdvancedSearchDialog(Frame frame,int yr) {
-        super(frame, Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("AdvancedSearchDialog.title"), true);
 
         gameYear = yr;
 
@@ -201,20 +176,19 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         btnBack.setEnabled(false);
         btnAdd.setEnabled(false);
 
+        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
 
-        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast")); //$NON-NLS-1$
-        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo")); //$NON-NLS-1$
-        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan")); //$NON-NLS-1$
+        cJump.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cJump.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cJump.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
 
-        cJump.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast")); //$NON-NLS-1$
-        cJump.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo")); //$NON-NLS-1$
-        cJump.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan")); //$NON-NLS-1$
-
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any")); //$NON-NLS-1$
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25")); //$NON-NLS-1$
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50")); //$NON-NLS-1$
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75")); //$NON-NLS-1$
-        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90")); //$NON-NLS-1$
+        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
+        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
+        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
+        cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
 
         for (int i = 0; i < EquipmentType.armorNames.length; i++) {
             cboArmorType.addItem(EquipmentType.armorNames[i]);
@@ -313,7 +287,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 column.setPreferredWidth(25);
             }
         }
-        tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         scrTableWeapons.setViewportView(tblWeapons);
 
@@ -347,7 +321,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 column.setPreferredWidth(25);
             }
         }
-        tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         scrTableEquipment.setViewportView(tblEquipment);
 

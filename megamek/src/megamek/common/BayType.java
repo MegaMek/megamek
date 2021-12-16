@@ -151,13 +151,13 @@ public enum BayType implements ITechnologyDelegator {
      * @return The name of the type of bay.
      */
     public String getDisplayName() {
-        return EquipmentMessages.getString("BayType." + name()); //$NON-NLS-1$
+        return EquipmentMessages.getString("BayType." + name());
     }
     
     public static @Nullable BayType parse(String name) {
         if (null != name) {
             for (BayType bt : values()) {
-                if (bt.toString().toLowerCase().equals(name.toLowerCase())) {
+                if (bt.toString().equalsIgnoreCase(name)) {
                     return bt;
                 }
             }

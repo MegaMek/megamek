@@ -159,9 +159,9 @@ public class GAAttack extends GA {
             target = target_array.get(chromArrayList.genes[chromosomeDim - 1]);
         } catch (Exception e) {
             System.out.println(chromosomeDim
-                    + " " + chromArrayList.genes.length); //$NON-NLS-1$
+                    + " " + chromArrayList.genes.length);
             System.out.println(target_array.size());
-            target = target_array.get(valid_target_indexes.get(0).intValue());
+            target = target_array.get(valid_target_indexes.get(0));
         }
         for (int iGene = 0; iGene < (chromosomeDim - 1); iGene++) {
             final int[] genes = chromArrayList.genes;

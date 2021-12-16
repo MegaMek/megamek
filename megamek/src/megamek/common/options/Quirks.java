@@ -36,13 +36,13 @@ import megamek.common.Tank;
  */
 public class Quirks extends AbstractOptions {
     private static final long serialVersionUID = 7618380522964885740L;
-    public static final String POS_QUIRKS = "PosQuirks"; //$NON-NLS-1$
-    public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
+    public static final String POS_QUIRKS = "PosQuirks";
+    public static final String NEG_QUIRKS = "NegQuirks";
 
     @Override
     public synchronized void initialize() {
         //positive quirks
-        IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
+        IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ANIMALISTIC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ATMO_FLYER, false);
@@ -105,7 +105,7 @@ public class Quirks extends AbstractOptions {
         //Compact Mech
 
         // negative quirks
-        IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
+        IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP_IS, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP_CLAN, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
@@ -691,7 +691,7 @@ public class Quirks extends AbstractOptions {
         }
 
         protected QuirksInfo() {
-            super("QuirksInfo"); //$NON-NLS-1$
+            super("QuirksInfo");
         }
     }
 }

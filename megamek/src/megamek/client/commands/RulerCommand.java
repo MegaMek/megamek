@@ -85,7 +85,7 @@ public class RulerCommand extends ClientCommand {
                                                                      getClient().getBoard().getHex(end).floor())).losModifiers(
                     getClient().getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
+                toHit1 = thd.getValue() + " because ";
             }
             toHit1 += thd.getDesc();
 
@@ -95,7 +95,7 @@ public class RulerCommand extends ClientCommand {
                                                                      getClient().getBoard().getHex(start).floor())).losModifiers(
                     getClient().getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
+                toHit2 = thd.getValue() + " because  ";
             }
             toHit2 += thd.getDesc();
 

@@ -25,7 +25,9 @@ import java.awt.image.ColorModel;
  * @author Ben Smith
  */
 public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
-    private int savedWidth, savedHeight, savedPixels[];
+    private int savedWidth;
+    private int savedHeight;
+    private int[] savedPixels;
     private static ColorModel defaultCM = ColorModel.getRGBdefault();
 
     public ImprovedAveragingScaleFilter(int savedWidth, int savedHeight,
@@ -52,13 +54,13 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
 
     @Override
     public void setPixels(int x, int y, int width, int height, ColorModel cm,
-            byte pixels[], int offset, int scansize) {
+                          byte[] pixels, int offset, int scansize) {
         setThePixels(x, y, width, height, cm, pixels, offset, scansize);
     }
 
     @Override
     public void setPixels(int x, int y, int width, int height, ColorModel cm,
-            int pixels[], int offset, int scansize) {
+                          int[] pixels, int offset, int scansize) {
         setThePixels(x, y, width, height, cm, pixels, offset, scansize);
     }
 
@@ -88,7 +90,7 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
             return;
         }
         // get orig image width and height
-        int pixels[] = new int[savedWidth];
+        int[] pixels = new int[savedWidth];
         int position;
         for (int yy = 0; yy < savedHeight; yy++) {
             position = 0;

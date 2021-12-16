@@ -25,9 +25,9 @@ import java.util.*;
 public class Dropship extends SmallCraft {
     private static final long serialVersionUID = 1528728632696989565L;
     
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations: NOS,Left,Right,AFT
-    private int asewAffectedTurns[] = {0,0,0,0};
+    // ASEW Missile Effects, per location
+    // Values correspond to Locations: NOS,Left,Right,AFT
+    private int[] asewAffectedTurns = {0,0,0,0};
     
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
@@ -63,7 +63,7 @@ public class Dropship extends SmallCraft {
             "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
     
-    //Likewise, you can have a prototype or standard K-F Boom
+    // Likewise, you can have a prototype or standard K-F Boom
     public static final int BOOM_STANDARD  = 0;
     public static final int BOOM_PROTOTYPE = 1;
     
@@ -203,7 +203,7 @@ public class Dropship extends SmallCraft {
             return true;
         }
 
-        Object elevs[] = elevations.keySet().toArray();
+        Object[] elevs = elevations.keySet().toArray();
         int elev1 = (Integer) elevs[0];
         int elev2 = (Integer) elevs[1];
         int elevDifference = Math.abs(elev1 - elev2);

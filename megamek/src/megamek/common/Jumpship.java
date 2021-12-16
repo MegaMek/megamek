@@ -134,7 +134,7 @@ public class Jumpship extends Aero {
 
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0};
     
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.

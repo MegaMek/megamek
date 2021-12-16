@@ -323,7 +323,7 @@ class PreferenceStore implements IPreferenceStore {
                 v.addElement(s);
             }
         }
-        String props[] = new String[v.size()];
+        String[] props = new String[v.size()];
         for (int i = 0; i < v.size(); i++) {
             props[i] = v.elementAt(i);
         }

@@ -106,7 +106,7 @@ public class MechSetTest {
                 && imgFile.getCanonicalPath().endsWith(imgFile.getName());
         if (!exactmatch) {
             System.out.print("Error with " + entryName + ": ");
-            String dirFiles[] = imgFile.getParentFile().list();
+            String[] dirFiles = imgFile.getParentFile().list();
             if (dirFiles == null) {
                 System.out.println("File is not a directory! Entry Path: " + imageName);
                 return;

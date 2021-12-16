@@ -169,7 +169,7 @@ public abstract class GA {
     void doGeneticMating() {
         int max = populationDim - 1;
         for (int i = 0; i < max; i += 2) {
-            int indexes[] = selectTwoParents();
+            int[] indexes = selectTwoParents();
 
             chromNextGen[i].copyChromGenes(chromosomes[indexes[0]]);
             chromNextGen[i + 1].copyChromGenes(chromosomes[indexes[1]]);

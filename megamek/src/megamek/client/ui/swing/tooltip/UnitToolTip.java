@@ -362,7 +362,7 @@ public final class UnitToolTip {
                 currentWp.isRapidFire = weapDesc.contains(RAPIDFIRE);
 
                 // Create the ranges String
-                int ranges[];
+                int[] ranges;
                 if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {

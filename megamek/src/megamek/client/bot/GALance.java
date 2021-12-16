@@ -91,7 +91,7 @@ public class GALance extends GA {
             }
         }
         // total damage delt, and rescaling of threat
-        double damages[] = new double[enemy_array.length];
+        double[] damages = new double[enemy_array.length];
         for (int m = 0; m < move_array.length; m++) {
             MoveOption next = (MoveOption) move_array[m];
             next.threat = 0;

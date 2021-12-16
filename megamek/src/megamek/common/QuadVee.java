@@ -23,7 +23,7 @@ public class QuadVee extends QuadMech {
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
     
-    public static final String systemNames[] = { "Life Support", "Sensors",
+    public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
             "Conversion Gear"};

@@ -43,15 +43,15 @@ public class TestBattleArmor extends TestEntity {
     /**
      * Base chassis weight by suit weight class for Inner Sphere suits
      */
-    public static double CHASSIS_WEIGHT_IS[] = { 0.08, 0.1, 0.175, 0.3, 0.55 };
+    public static double[] CHASSIS_WEIGHT_IS = { 0.08, 0.1, 0.175, 0.3, 0.55 };
     /**
      * Base chassis weight by suit weight class for Clan suits
      */
-    public static double CHASSIS_WEIGHT_CLAN[] = { 0.13, 0.15, 0.25, 0.4, 0.7 };
+    public static double[] CHASSIS_WEIGHT_CLAN = { 0.13, 0.15, 0.25, 0.4, 0.7 };
     /**
      * Weight for additional ground MP by suit weight class
      */
-    public static double ADDITIONAL_GROUND_MP_WEIGHT[] = { 0.025, 0.03, 0.04, 0.08, 0.16 };
+    public static double[] ADDITIONAL_GROUND_MP_WEIGHT = { 0.025, 0.03, 0.04, 0.08, 0.16 };
 
     /**
      * BattleArmor can have a variable number of shots per slot of ammo, this
@@ -749,11 +749,11 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
 
-        int critsUsed[][] = new int[ba.getTroopers() + 1]
+        int[][] critsUsed = new int[ba.getTroopers() + 1]
                 [BattleArmor.MOUNT_NUM_LOCS];
-        int numAPWeapons[][] = new int[ba.getTroopers() + 1]
+        int[][] numAPWeapons = new int[ba.getTroopers() + 1]
                 [BattleArmor.MOUNT_NUM_LOCS];
-        int numAMWeapons[][] = new int[ba.getTroopers() + 1]
+        int[][] numAMWeapons = new int[ba.getTroopers() + 1]
                 [BattleArmor.MOUNT_NUM_LOCS];
         int numSSWMs = 0;
         int numGloveMountedAPWeapons = 0;

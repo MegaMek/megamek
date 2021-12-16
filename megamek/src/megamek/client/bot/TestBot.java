@@ -1176,7 +1176,7 @@ public class TestBot extends BotClient {
 
     public GAAttack bestAttack(MoveOption es, CEntity target, int search_level) {
         Entity en = es.getEntity();
-        int attacks[] = new int[4];
+        int[] attacks = new int[4];
         ArrayList<AttackOption> c = new ArrayList<AttackOption>();
         ArrayList<ArrayList<AttackOption>> front = new ArrayList<ArrayList<AttackOption>>();
         ArrayList<ArrayList<AttackOption>> left = new ArrayList<ArrayList<AttackOption>>();
@@ -1811,7 +1811,7 @@ public class TestBot extends BotClient {
         firstPass(cen);
 
         Object[] enemy_array = getEnemyEntities().toArray();
-        MoveOption result[] = calculateMove(entity);
+        MoveOption[] result = calculateMove(entity);
         MoveOption min = null;
         ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
         boolean short_circuit = false;

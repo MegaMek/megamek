@@ -205,8 +205,8 @@ public class TestAdvancedAerospace extends TestAero {
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             slotsPerArc = 20;
         }
-        int weaponsPerArc[] = new int[arcs];
-        double weaponTonnage[] = new double[arcs];
+        int[] weaponsPerArc = new int[arcs];
+        double[] weaponTonnage = new double[arcs];
         boolean hasNC3 = vessel.hasWorkingMisc(MiscType.F_NAVAL_C3);
 
         for (Mounted m : vessel.getEquipment()) {

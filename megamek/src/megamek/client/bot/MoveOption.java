@@ -484,7 +484,7 @@ public class MoveOption extends MovePath {
             }
         }
         boolean aptGunnery = enemy.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        int enemy_firing_arcs[] = { 0, 0, 0};
+        int[] enemy_firing_arcs = { 0, 0, 0};
         enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
                         .getFinalFacing(), MoveStepType.NONE), getFinalCoords());

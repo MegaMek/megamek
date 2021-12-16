@@ -1700,37 +1700,37 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendDominoCFRResponse(MovePath mp) {
-        Object data[] = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
+        Object[] data = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAMSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAPDSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
-        Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
+        Object[] data = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendTelemissileTargetCFRResponse(int index) {
-        Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
+        Object[] data = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
     
     public void sendTAGTargetCFRResponse(int index) {
-        Object data[] = { Packet.COMMAND_CFR_TAG_TARGET, index };
+        Object[] data = { Packet.COMMAND_CFR_TAG_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

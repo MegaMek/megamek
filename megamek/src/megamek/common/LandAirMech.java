@@ -136,7 +136,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int capitalArmor_orig = 2;
     private int fatalThresh = 0;
     private int currentDamage = 0;
-    private Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
+    private Map<String, Integer> weaponGroups = new HashMap<>();
 
     public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
@@ -2098,7 +2098,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void updateSensorOptions() {
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            Vector<Sensor> sensorsToRemove = new Vector<>();
             if (isAero()) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {

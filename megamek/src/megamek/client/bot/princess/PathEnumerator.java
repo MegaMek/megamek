@@ -180,7 +180,7 @@ public class PathEnumerator {
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 
                 // Remove illegal paths.
-                Filter<MovePath> filter = new Filter<MovePath>() {
+                Filter<MovePath> filter = new Filter<>() {
                     @Override
                     public boolean shouldStay(MovePath movePath) {
                         return isLegalAeroMove(movePath);
@@ -277,14 +277,11 @@ public class PathEnumerator {
                 adjustPathsForBridges(paths);
 
                 //filter those paths that end in illegal state
-                Filter<MovePath> filter = new Filter<MovePath>() {
+                Filter<MovePath> filter = new Filter<>() {
                     @Override
                     public boolean shouldStay(MovePath movePath) {
                         boolean isLegal = movePath.isMoveLegal();
-                        return isLegal
-                                && (Compute.stackingViolation(getGame(),
-                                        mover.getId(),
-                                        movePath.getFinalCoords()) == null);
+                        return isLegal && (Compute.stackingViolation(getGame(), mover.getId(), movePath.getFinalCoords()) == null);
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));

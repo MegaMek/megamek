@@ -63,9 +63,9 @@ public class ModelRecord extends AbstractUnitRecord {
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
 		roles = EnumSet.noneOf(MissionRole.class);
-		deployedWith = new ArrayList<String>();
-		requiredUnits = new ArrayList<String>();
-		excludedFactions = new ArrayList<String>();
+		deployedWith = new ArrayList<>();
+		requiredUnits = new ArrayList<>();
+		excludedFactions = new ArrayList<>();
 		networkMask = NETWORK_NONE;
 		flak = 0.0;
 		longRange = 0.0;

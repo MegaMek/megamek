@@ -280,7 +280,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final MoveStepType lType = (last == null) ? null : last.getType();
             final Entity entity = mp.getEntity();
 
-            final ArrayList<MovePath> result = new ArrayList<MovePath>();
+            final ArrayList<MovePath> result = new ArrayList<>();
 
             if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));

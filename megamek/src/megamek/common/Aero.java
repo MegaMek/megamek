@@ -1624,7 +1624,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // subtract for explosive ammo
         double explosivePenalty = 0;
         // FIXME: Consider new AmmoType::equals / BombType::equals
-        Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
+        Map<AmmoType, Boolean> ammos = new HashMap<>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 1;
@@ -2320,8 +2320,8 @@ public class Aero extends Entity implements IAero, IBomber {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -2709,7 +2709,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -4533,7 +4533,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            Vector<Sensor> sensorsToRemove = new Vector<>();
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {

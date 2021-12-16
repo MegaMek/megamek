@@ -82,7 +82,7 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
     
     // this data structure maps a set of coordinates with facing
     // to a map between height and "used MP".
-    private Map<CoordsWithFacing, Map<Integer, Integer>> visitedCoords = new HashMap<CoordsWithFacing, Map<Integer, Integer>>();
+    private Map<CoordsWithFacing, Map<Integer, Integer>> visitedCoords = new HashMap<>();
     /**
      * Determines whether or not the given move path is "redundant".
      * In this situation, "redundant" means "there is already a shorter path that goes to the ending coordinates/facing/height" combo.

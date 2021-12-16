@@ -466,7 +466,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
     };
     
-    private Comparator<FactionRecord> factionSorter = new Comparator<FactionRecord>() {
+    private Comparator<FactionRecord> factionSorter = new Comparator<>() {
         @Override
         public int compare(FactionRecord o1, FactionRecord o2) {
             return o1.getName(ratGenYear).compareTo(o2.getName(ratGenYear));

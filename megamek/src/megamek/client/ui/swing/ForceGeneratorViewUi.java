@@ -211,8 +211,7 @@ public class ForceGeneratorViewUi {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
         }
         
-        List<Entity> entities = new ArrayList<Entity>(
-                modelChosen.allEntities().size());
+        List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         Client c = null;
         if (null != playerName) {
             c = clientGui.getBots().get(playerName);
@@ -401,7 +400,7 @@ public class ForceGeneratorViewUi {
 
         public ForceTreeModel(ForceDescriptor root) {
             this.root = root;
-            listeners = new ArrayList<TreeModelListener>();
+            listeners = new ArrayList<>();
         }
 
         @Override

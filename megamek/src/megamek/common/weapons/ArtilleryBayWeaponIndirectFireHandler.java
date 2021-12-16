@@ -317,7 +317,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         
         //In the case of misses, we'll need to hit multiple hexes
-        List<Coords> targets = new ArrayList<Coords>();
+        List<Coords> targets = new ArrayList<>();
         if (!bMissed) {
             r = new Report(3199);
             r.subject = subjectId;
@@ -517,7 +517,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
             Enumeration<Minefield> minefields = game.getMinefields(targetPos)
                     .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,
@@ -536,7 +536,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear && game.containsMinefield(targetPos)) {
                 Enumeration<Minefield> minefields = game.getMinefields(targetPos)
                         .elements();
-                ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+                ArrayList<Minefield> mfRemoved = new ArrayList<>();
                 while (minefields.hasMoreElements()) {
                     Minefield mf = minefields.nextElement();
                     if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
@@ -562,7 +562,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 if (!mineClear && game.containsMinefield(c)) {
                     Enumeration<Minefield> minefields = game.getMinefields(c)
                             .elements();
-                    ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+                    ArrayList<Minefield> mfRemoved = new ArrayList<>();
                     while (minefields.hasMoreElements()) {
                         Minefield mf = minefields.nextElement();
                         if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {

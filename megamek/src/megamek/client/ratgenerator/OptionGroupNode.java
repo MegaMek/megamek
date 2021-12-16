@@ -32,7 +32,7 @@ public class OptionGroupNode extends RulesetNode {
     protected ArrayList<ValueNode> options; 
 
     protected OptionGroupNode() {
-        options = new ArrayList<ValueNode>();
+        options = new ArrayList<>();
     }
 
     public ValueNode selectOption(ForceDescriptor fd) {
@@ -40,7 +40,7 @@ public class OptionGroupNode extends RulesetNode {
     }
 
     public ValueNode selectOption(ForceDescriptor fd, boolean apply) {
-        ArrayList<ValueNode> list = new ArrayList<ValueNode>();
+        ArrayList<ValueNode> list = new ArrayList<>();
         for (ValueNode o : options) {
             if (o.matches(fd)) {
                 for (int i = 0; i < o.getWeight(); i++) {

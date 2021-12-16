@@ -231,7 +231,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
                 vtolStrafe = opts.booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING);
             }
-            ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
+            ArrayList<MoveCommand> flaggedCmds = new ArrayList<>();
             for (MoveCommand cmd : MoveCommand.values()) {
                 // Check for movements that with disabled game options
                 if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
@@ -317,8 +317,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase"));
 
         // Create all of the buttons
-        buttons = new HashMap<MoveCommand, MegamekButton>(
-                (int) (MoveCommand.values().length * 1.25 + 0.5));
+        buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
             String title = Messages
                     .getString("MovementDisplay." + cmd.getCmd());
@@ -1671,8 +1670,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             final int timeLimit = PreferenceManager.getClientPreferences()
                                                    .getMaxPathfinderTime();
-            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<MovePath>(
-                    timeLimit * 4));
+            lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<>(timeLimit * 4));
 
             lpf.run(cmd);
             MovePath lPath = lpf.getComputedPath(dest);
@@ -2868,7 +2866,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!(ce instanceof Infantry)) {
-            Vector<Integer> bayChoices = new Vector<Integer>();
+            Vector<Integer> bayChoices = new Vector<>();
             for (Transporter t : choice.getTransports()) {
                 if (t.canLoad(ce) && (t instanceof Bay)) {
                     bayChoices.add(((Bay) t).getBayNumber());
@@ -2910,7 +2908,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final Game game = clientgui.getClient().getGame();
         Entity choice = null;
 
-        Vector<Entity> choices = new Vector<Entity>();
+        Vector<Entity> choices = new Vector<>();
         for (Entity other : game.getEntitiesVector(ce().getPosition())) {
             if (other.isLoadableThisTurn() && (ce() != null)
                 && ce().canLoad(other, false)) {
@@ -3025,7 +3023,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final Game game = clientgui.getClient().getGame();
         Entity choice = null;
 
-        List<Entity> choices = new ArrayList<Entity>();
+        List<Entity> choices = new ArrayList<>();
         
         //We have to account for the positions of the whole train when looking to add new trailers
         for (Coords pos : ce().getHitchLocations()) {
@@ -3519,7 +3517,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private TreeMap<Integer, Vector<Integer>> getLaunchedUnits() {
         Entity ce = ce();
-        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<>();
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
@@ -3836,7 +3834,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private int getRecoveryUnit() {
         final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
-        List<Entity> choices = new ArrayList<Entity>();
+        List<Entity> choices = new ArrayList<>();
 
         // collect all possible choices
         Coords loadeePos = cmd.getFinalCoords();
@@ -3921,7 +3919,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private int getUnitJoined() {
         final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
-        List<Entity> choices = new ArrayList<Entity>();
+        List<Entity> choices = new ArrayList<>();
 
         // collect all possible choices
         Coords loadeePos = cmd.getFinalCoords();
@@ -4083,7 +4081,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Get the available choices.
 
         // Convert the choices into a List of targets.
-        ArrayList<Targetable> targets = new ArrayList<Targetable>();
+        ArrayList<Targetable> targets = new ArrayList<>();
         for (Entity ent : game.getEntitiesVector(pos)) {
             if ((ce == null) || !ce.equals(ent)) {
                 targets.add(ent);
@@ -4389,7 +4387,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        Map<Coords, MovePath> mvEnvData = new HashMap<Coords, MovePath>();
+        Map<Coords, MovePath> mvEnvData = new HashMap<>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
         int maxMP;
@@ -4419,8 +4417,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 stepType, en.getGame());
         pf.run(mp);
         mvEnvData = pf.getAllComputedPaths();
-        Map<Coords, Integer> mvEnvMP = new HashMap<Coords, Integer>(
-                (int) ((mvEnvData.size() * 1.25) + 1));
+        Map<Coords, Integer> mvEnvMP = new HashMap<>((int) ((mvEnvData.size() * 1.25) + 1));
         for (Coords c : mvEnvData.keySet()) {
             mvEnvMP.put(c, mvEnvData.get(c).countMp(mvMode == GEAR_JUMP));
         }
@@ -5283,7 +5280,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * dismount at the start of the turn.
      */
     private void unloadStranded() {
-        Vector<Entity> stranded = new Vector<Entity>();
+        Vector<Entity> stranded = new Vector<>();
         String[] names = null;
         Entity entity = null;
         Entity transport = null;

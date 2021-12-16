@@ -357,7 +357,7 @@ public class CEntity {
         double[][] overall_damage = new double[6][MAX_RANGE];
         double[] cur_weapon_damage = new double[MAX_RANGE];
 
-        ArrayList<Integer> cur_weapon_arcs = new ArrayList<Integer>();
+        ArrayList<Integer> cur_weapon_arcs = new ArrayList<>();
         int[][] overall_heat = new int[6][MAX_RANGE];
         int cur_weapon_heat, weapons_count = 0;
         int cur_weapon_arc;
@@ -755,7 +755,7 @@ public class CEntity {
     private ArrayList<Integer> getWeaponArcs(int mounted_arc,
             boolean is_secondary) {
 
-        ArrayList<Integer> arc_list = new ArrayList<Integer>(1);
+        ArrayList<Integer> arc_list = new ArrayList<>(1);
 
         // Weapons which can fire in any direction
         if ((mounted_arc == Compute.ARC_360)
@@ -1073,7 +1073,7 @@ public class CEntity {
     protected MoveOption.Table calculateMoveOptions(MoveOption base,
             Client client) {
         // New array of movement options
-        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> possible = new ArrayList<>();
         MoveOption.Table discovered = new MoveOption.Table();
 
         // Add the seed for jumping if allowed
@@ -1178,7 +1178,7 @@ public class CEntity {
      * find all moves that get into dest
      */
     public ArrayList<MoveOption> findMoves(Coords dest, Client client) {
-        ArrayList<MoveOption> result = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> result = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             for (int j = 1; j < 2; j++) {
                 MoveOption.Key key = new MoveOption.Key(dest, i, j);

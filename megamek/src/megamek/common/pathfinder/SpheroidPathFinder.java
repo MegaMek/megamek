@@ -54,7 +54,7 @@ public class SpheroidPathFinder {
      */
     public void run(MovePath startingEdge) {
         try {
-            spheroidPaths = new ArrayList<MovePath>();
+            spheroidPaths = new ArrayList<>();
 
             // can't do anything if the unit is out of control.
             if (((IAero) startingEdge.getEntity()).isOutControlTotal()) {

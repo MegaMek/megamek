@@ -11793,7 +11793,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public Vector<Integer> getHeading() {
 
-        Vector<Integer> heading = new Vector<Integer>();
+        Vector<Integer> heading = new Vector<>();
         int high = 0;
         int curDir = getFacing();
         for (int dir = 0; dir < 6; dir++) {

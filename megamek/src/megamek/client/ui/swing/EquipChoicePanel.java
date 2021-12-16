@@ -118,7 +118,7 @@ public class EquipChoicePanel extends JPanel {
 
     private JLabel labC3 = new JLabel(
             Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT);
-    private JComboBox<String> choC3 = new JComboBox<String>();
+    private JComboBox<String> choC3 = new JComboBox<>();
 
     ClientGUI clientgui;
     Client client;
@@ -513,9 +513,9 @@ public class EquipChoicePanel extends JPanel {
         panAPMounts.setLayout(gbl);
         
         // Weapons that can be used in an AP Mount
-        ArrayList<WeaponType> apWeapTypes = new ArrayList<WeaponType>(100);
+        ArrayList<WeaponType> apWeapTypes = new ArrayList<>(100);
         // Weapons that can be used in an Armored Glove
-        ArrayList<WeaponType> agWeapTypes = new ArrayList<WeaponType>(100);
+        ArrayList<WeaponType> agWeapTypes = new ArrayList<>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
         int gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
@@ -611,7 +611,7 @@ public class EquipChoicePanel extends JPanel {
 
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
-            ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
+            ArrayList<AmmoType> vTypes = new ArrayList<>();
             Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
                 continue;

@@ -24,7 +24,7 @@ import java.util.Vector;
  */
 
 public class PMAreasGroup implements PMElement {
-    private Vector<PMElement> gr = new Vector<PMElement>();
+    private Vector<PMElement> gr = new Vector<>();
 
     /**
      * Adds area to group

@@ -518,7 +518,7 @@ public class MovePath implements Cloneable, Serializable {
     public void compile(final Game g, final Entity en, boolean clip) {
         setGame(g);
         setEntity(en);
-        final Vector<MoveStep> temp = new Vector<MoveStep>(steps);
+        final Vector<MoveStep> temp = new Vector<>(steps);
         steps.removeAllElements();
         for (int i = 0; i < temp.size(); i++) {
             MoveStep step = temp.elementAt(i);
@@ -1273,13 +1273,11 @@ public class MovePath implements Cloneable, Serializable {
         MovePath bestPath = clone();
 
         // A collection of paths we have already explored
-        final HashMap<MovePath.Key, MovePath> discovered =
-                new HashMap<MovePath.Key, MovePath>();
+        final HashMap<MovePath.Key, MovePath> discovered = new HashMap<>();
         discovered.put(bestPath.getKey(), bestPath);
 
         // A collection of hte possible next-moves
-        final PriorityQueue<MovePath> candidates =
-                new PriorityQueue<MovePath>(110, mpc);
+        final PriorityQueue<MovePath> candidates = new PriorityQueue<>(110, mpc);
         candidates.add(bestPath);
 
         boolean keepLooping = getFinalCoords().distance(dest) > 1;
@@ -1405,7 +1403,7 @@ public class MovePath implements Cloneable, Serializable {
      * such) must be handled elsewhere.
      */
     public List<MovePath> getNextMoves(boolean backward, boolean forward) {
-        final ArrayList<MovePath> result = new ArrayList<MovePath>();
+        final ArrayList<MovePath> result = new ArrayList<>();
         final MoveStep last = getLastStep();
 //        if (isJumping()) {
 //            final MovePath left = clone();
@@ -1511,7 +1509,7 @@ public class MovePath implements Cloneable, Serializable {
     }
     
     protected void copyFields(MovePath copy) {
-        copy.steps = new Vector<MoveStep>(steps);
+        copy.steps = new Vector<>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
         copy.fliesOverEnemy = fliesOverEnemy;

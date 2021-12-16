@@ -183,7 +183,7 @@ public class SharedUtility {
     private static Object doPSRCheck(MovePath md, boolean stringResult) {
 
         StringBuffer nagReport = new StringBuffer();
-        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
+        List<TargetRoll> psrList = new ArrayList<>();
 
         final Entity entity = md.getEntity();
         final Game game = entity.getGame();

@@ -60,7 +60,7 @@ public class HexTarget implements Targetable {
 
     @Override
     public Map<Integer, Coords> getSecondaryPositions() {
-        return new HashMap<Integer, Coords>();
+        return new HashMap<>();
     }
 
     @Override

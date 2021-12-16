@@ -450,7 +450,7 @@ class EntitySprite extends Sprite {
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
             
             // Gather unit conditions
-            ArrayList<Status> stStr = new ArrayList<Status>();
+            ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;
             
             // Determine if the entity has a locked turret,

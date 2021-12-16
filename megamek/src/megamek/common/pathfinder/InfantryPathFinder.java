@@ -35,7 +35,7 @@ public class InfantryPathFinder {
      */
     public void run(MovePath startingEdge) {
         try {
-            infantryPaths = new ArrayList<MovePath>();
+            infantryPaths = new ArrayList<>();
             // add an option to stand still
             infantryPaths.add(startingEdge);
             

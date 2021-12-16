@@ -1430,9 +1430,9 @@ public class Jumpship extends Aero {
 
         // get arc BV and heat
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
-        TreeMap<Integer, Double> arcBVs = new TreeMap<Integer, Double>();
-        TreeMap<Integer, Double> arcHeat = new TreeMap<Integer, Double>();
+        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<>();
+        TreeMap<Integer, Double> arcBVs = new TreeMap<>();
+        TreeMap<Integer, Double> arcHeat = new TreeMap<>();
         
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -1635,8 +1635,8 @@ public class Jumpship extends Aero {
         // According to an email with Welshman, ammo should be now added into
         // each arc BV
         // for the final calculation of BV, including the excessive ammo rule
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             int arc = getWeaponArc(getEquipmentNum(mounted));
             AmmoType atype = (AmmoType) mounted.getType();

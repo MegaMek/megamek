@@ -137,7 +137,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     /**
      * Keeps track of the Coords that are in a strafing run.
      */
-    private ArrayList<Coords> strafingCoords = new ArrayList<Coords>(5);
+    private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
     /**
      * Creates and lays out a new firing phase display for the specified
@@ -1150,7 +1150,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector<EntityAction> newAttacks = new Vector<EntityAction>();
+        Vector<EntityAction> newAttacks = new Vector<>();
         for (EntityAction o : attacks) {
             if (o instanceof ArtilleryAttackAction) {
                 newAttacks.addElement(o);
@@ -1501,7 +1501,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             doSearchlight();
         }
 
-        ArrayList<Targetable> targets = new ArrayList<Targetable>();
+        ArrayList<Targetable> targets = new ArrayList<>();
         if (isStrafing) {
             for (Coords c : strafingCoords) {
                 targets.add(new HexTarget(c, Targetable.TYPE_HEX_CLEAR));

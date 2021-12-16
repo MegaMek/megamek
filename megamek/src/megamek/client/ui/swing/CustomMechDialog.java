@@ -551,7 +551,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     public void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new ArrayList<DialogOptionComponent>();
+        optionComps = new ArrayList<>();
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -643,7 +643,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     public void refreshPartReps() {
         Entity entity = entities.get(0);
         panPartReps.removeAll();
-        partRepsComps = new ArrayList<DialogOptionComponent>();
+        partRepsComps = new ArrayList<>();
         for (Enumeration<IOptionGroup> i = partReps.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
@@ -681,7 +681,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMechDialog.None"));
-            TreeSet<String> uniqueWeapons = new TreeSet<String>();
+            TreeSet<String> uniqueWeapons = new TreeSet<>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted m = entity.getWeaponList().get(i);
                 uniqueWeapons.add(m.getName());

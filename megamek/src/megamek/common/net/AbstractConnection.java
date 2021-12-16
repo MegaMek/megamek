@@ -87,7 +87,7 @@ public abstract class AbstractConnection {
     /**
      * Connection listeners list
      */
-    private Vector<ConnectionListener> connectionListeners = new Vector<ConnectionListener>();
+    private Vector<ConnectionListener> connectionListeners = new Vector<>();
 
     /**
      * Buffer of the last commands sent; Used for debugging purposes.

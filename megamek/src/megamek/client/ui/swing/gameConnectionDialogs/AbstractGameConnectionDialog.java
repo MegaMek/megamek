@@ -141,7 +141,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             }
         } else {
             if (playerNameCombo == null) {
-                playerNameCombo = new JComboBox<String>(playerNames);
+                playerNameCombo = new JComboBox<>(playerNames);
                 Dimension preferredSize = playerNameCombo.getPreferredSize();
                 preferredSize.setSize(180, preferredSize.getHeight());
                 playerNameCombo.setPreferredSize(preferredSize);

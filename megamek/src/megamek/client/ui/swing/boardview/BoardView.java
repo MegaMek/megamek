@@ -296,7 +296,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     protected transient ArrayList<BoardViewListener> boardListeners = new ArrayList<>();
 
     // wreck sprites
-    private ArrayList<WreckSprite> wreckSprites = new ArrayList<WreckSprite>();
+    private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
     private ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
 
     private Coords rulerStart;
@@ -419,7 +419,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         this.game = game;
         this.clientgui = clientgui;
 
-        hexImageCache = new ImageCache<Coords, HexImageCacheEntry>();
+        hexImageCache = new ImageCache<>();
 
         tileManager = new TilesetManager(this);
         ToolTipManager.sharedInstance().registerComponent(this);
@@ -3235,7 +3235,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // Remove sprite for Entity, so it's not displayed while moving
         if (sprite != null) {
-            newSprites = new PriorityQueue<EntitySprite>(entitySprites);
+            newSprites = new PriorityQueue<>(entitySprites);
             newSpriteIds = new HashMap<>(entitySpriteIds);
 
             newSprites.remove(sprite);
@@ -3246,7 +3246,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
         // Remove iso sprite for Entity, so it's not displayed while moving
         if (isoSprite != null) {
-            isoSprites = new PriorityQueue<IsometricSprite>(isometricSprites);
+            isoSprites = new PriorityQueue<>(isometricSprites);
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
             isoSprites.remove(isoSprite);
@@ -3304,7 +3304,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @return
      */
     private List<Integer> getIdAndLoc(Integer entityId, int secondaryLoc) {
-        List<Integer> idLoc = new ArrayList<Integer>(2);
+        List<Integer> idLoc = new ArrayList<>(2);
         idLoc.add(entityId);
         idLoc.add(secondaryLoc);
         return idLoc;
@@ -3493,8 +3493,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int numEntities = game.getNoOfEntities();
         // Prevent IllegalArgumentException
         numEntities = Math.max(1, numEntities);
-        Queue<EntitySprite> newSprites = new PriorityQueue<EntitySprite>(
-                numEntities);
+        Queue<EntitySprite> newSprites = new PriorityQueue<>(numEntities);
         Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(
                 numEntities);
         Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
@@ -3865,7 +3864,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Clears current movement data from the screen
      */
     public void clearMovementData() {
-        pathSprites = new ArrayList<StepSprite>();
+        pathSprites = new ArrayList<>();
         movementTarget = null;
         checkFoVHexImageCacheClear();
         repaint();
@@ -4543,7 +4542,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             if (moveWait > GUIPreferences.getInstance().getInt(
                     "AdvancedMoveStepDelay")) {
 
-                ArrayList<MovingUnit> spent = new ArrayList<MovingUnit>();
+                ArrayList<MovingUnit> spent = new ArrayList<>();
 
                 for (MovingUnit move : movingUnits) {
                     movingSomething = true;
@@ -6090,7 +6089,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 
-        scaledImageCache = new ImageCache<Integer, Image>();
+        scaledImageCache = new ImageCache<>();
 
         cursorSprite.prepare();
         highlightSprite.prepare();
@@ -6399,11 +6398,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) maxrange = 5;
 
         // create the lists of hexes
-        List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);
+        List<Set<Coords>> fieldFire = new ArrayList<>(5);
         int range = 1;
         // for all available range brackets Min/S/M/L/E ...
         for (int bracket = 0; bracket < maxrange; bracket++) {
-            fieldFire.add(new HashSet<Coords>());
+            fieldFire.add(new HashSet<>());
             // Add all hexes up to the weapon range to separate lists
             while (range<=fieldofFireRanges[fieldofFireWpUnderwater][bracket]) {
                 fieldFire.get(bracket).addAll(c.allAtDistance(range));

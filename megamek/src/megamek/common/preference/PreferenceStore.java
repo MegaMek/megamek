@@ -25,7 +25,7 @@ class PreferenceStore implements IPreferenceStore {
     protected Properties properties;
     protected Properties defaultProperties;
 
-    protected Vector<IPreferenceChangeListener> listeners = new Vector<IPreferenceChangeListener>();
+    protected Vector<IPreferenceChangeListener> listeners = new Vector<>();
 
     public PreferenceStore() {
         defaultProperties = new Properties();
@@ -315,7 +315,7 @@ class PreferenceStore implements IPreferenceStore {
 
     @Override
     public String[] getAdvancedProperties() {
-        Vector<String> v = new Vector<String>();
+        Vector<String> v = new Vector<>();
         String s;
         for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
             s = (String) e.nextElement();

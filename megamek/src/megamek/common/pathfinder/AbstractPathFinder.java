@@ -234,7 +234,7 @@ public class AbstractPathFinder<N, C, E> {
         this.adjacencyMap = edgeAdjacencyMap;
         this.comparator = edgeComparator;
 
-        candidates = new PriorityQueue<E>(100, edgeComparator);
+        candidates = new PriorityQueue<>(100, edgeComparator);
     }
 
     /**
@@ -365,7 +365,7 @@ public class AbstractPathFinder<N, C, E> {
         if (comparator == null)
             throw new NullPointerException();
         this.comparator = comparator;
-        this.candidates = new PriorityQueue<E>(100, comparator);
+        this.candidates = new PriorityQueue<>(100, comparator);
     }
 
     /**

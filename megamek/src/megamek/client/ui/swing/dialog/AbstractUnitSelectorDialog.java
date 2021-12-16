@@ -517,7 +517,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 .equals(comboUnitType.getSelectedItem());
         //If current expression doesn't parse, don't update.
         try {
-            unitTypeFilter = new RowFilter<MechTableModel, Integer>() {
+            unitTypeFilter = new RowFilter<>() {
                 @Override
                 public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
@@ -531,23 +531,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         }
                     }
                     if (
-                            /* Year Limits */
+                        /* Year Limits */
                             (!enableYearLimits || (mech.getYear() <= allowedYear))
-                            /* Canon */
-                            && (!canonOnly || mech.isCanon())
-                            /* Invalid units */
-                            && (allowInvalid || !mech.getLevel().equals("F"))
-                            /* Weight */
-                            && ((nClass == EntityWeightClass.SIZE) || (nClass == mech.getWeightClass()))
-                            /* Technology Level */
-                            && (techLevelMatch)
-                            /* Support Vehicles */
-                            && ((nUnit == -1)
-                                    || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
-                                    || (checkSupportVee && mech.isSupport()))
-                            /* Advanced Search */
-                            && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
-                    ) {
+                                    /* Canon */ && (!canonOnly || mech.isCanon())
+                                    /* Invalid units */ && (allowInvalid || !mech.getLevel().equals("F"))
+                                    /* Weight */ && ((nClass == EntityWeightClass.SIZE) || (nClass == mech.getWeightClass()))
+                                    /* Technology Level */ && (techLevelMatch)
+                                    /* Support Vehicles */ && ((nUnit == -1) || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit))) || (checkSupportVee && mech.isSupport()))
+                                    /* Advanced Search */ && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))) {
                         if (textFilter.getText().length() > 0) {
                             String text = textFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());

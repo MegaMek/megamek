@@ -1588,7 +1588,7 @@ public class Tank extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
@@ -1769,8 +1769,8 @@ public class Tank extends Entity {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -2143,7 +2143,7 @@ public class Tank extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -2494,7 +2494,7 @@ public class Tank extends Entity {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        ArrayList<String> left = new ArrayList<String>();
+        ArrayList<String> left = new ArrayList<>();
 
         if (isSupportVehicle()) {
             left.add("Chassis");
@@ -3304,7 +3304,7 @@ public class Tank extends Entity {
         // if ba_grab_bars is on, then we need to add battlearmor handles,
         // otherwise clamp mounts
         // but first clear out whatever we have
-        Vector<Transporter> et = new Vector<Transporter>(getTransports());
+        Vector<Transporter> et = new Vector<>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandlesTank) {
                 removeTransporter(t);
@@ -3393,7 +3393,7 @@ public class Tank extends Entity {
     }
 
     public void resetJammedWeapons() {
-        jammedWeapons = new ArrayList<Mounted>();
+        jammedWeapons = new ArrayList<>();
     }
 
     /**

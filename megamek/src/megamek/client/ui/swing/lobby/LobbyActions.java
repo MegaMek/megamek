@@ -487,7 +487,7 @@ public class LobbyActions {
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
-        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<Entity>());
+        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<>());
     }
     
     /**
@@ -520,7 +520,7 @@ public class LobbyActions {
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
-        client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)), new ArrayList<Entity>());
+        client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)), new ArrayList<>());
     }
     
     /**
@@ -642,7 +642,7 @@ public class LobbyActions {
             return;
         }
         forces.renameForce(name, forceId);
-        var forceList = new ArrayList<Force>(List.of(force)); // must be mutable
+        var forceList = new ArrayList<>(List.of(force)); // must be mutable
         client().sendUpdateForce(forceList);
     }
     
@@ -692,10 +692,7 @@ public class LobbyActions {
         for (Client sender: senders) {
             // Gather the entities for this sending client; 
             // Serialization doesn't like the toList() result, therefore the new ArrayList
-            List<Integer> ids = new ArrayList<Integer>(finalEnDelete.stream()
-                    .filter(e -> correctSender(e).equals(sender))
-                    .map(Entity::getId)
-                    .collect(toList()));
+            List<Integer> ids = new ArrayList<>(finalEnDelete.stream().filter(e -> correctSender(e).equals(sender)).map(Entity::getId).collect(toList()));
             sender.sendDeleteEntities(ids);
         }
         
@@ -1078,8 +1075,7 @@ public class LobbyActions {
             if (sender == null) {
                 continue;
             }
-            sender.sendUpdateEntity(new ArrayList<Entity>(
-                    entities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList())));
+            sender.sendUpdateEntity(new ArrayList<>(entities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList())));
         }
     }
     

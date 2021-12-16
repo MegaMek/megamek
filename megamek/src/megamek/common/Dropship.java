@@ -167,7 +167,7 @@ public class Dropship extends SmallCraft {
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
 
-        HashMap<Integer, Integer> elevations = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
@@ -910,7 +910,7 @@ public class Dropship extends SmallCraft {
             double arcBV = 0.0;
             double arcHeat = 0.0;
             double arcAmmoBV = 0.0;
-            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
+            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<>();
             for (Mounted mounted : getTotalWeaponList()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -1010,8 +1010,8 @@ public class Dropship extends SmallCraft {
                 arcHeat += weaponHeat;
             }
             // now ammo
-            Map<String, Double> ammo = new HashMap<String, Double>();
-            ArrayList<String> keys = new ArrayList<String>();
+            Map<String, Double> ammo = new HashMap<>();
+            ArrayList<String> keys = new ArrayList<>();
             for (Mounted mounted : getAmmo()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -1674,7 +1674,7 @@ public class Dropship extends SmallCraft {
     public String hasRoomForVerticalLanding() {
         // dropships can land just about anywhere they want, unless it is off
         // the map
-        Vector<Coords> positions = new Vector<Coords>();
+        Vector<Coords> positions = new Vector<>();
         positions.add(getPosition());
         for (int i = 0; i < 6; i++) {
             positions.add(getPosition().translated(i));

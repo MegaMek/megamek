@@ -556,19 +556,16 @@ public class RATGeneratorEditor extends JFrame {
 
     private void filterFactionList() {
         RowFilter<FactionListTableModel, Integer> rf;
-        rf = new RowFilter<FactionListTableModel, Integer>() {
+        rf = new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends FactionListTableModel,
-                    ? extends Integer> entry) {
+            public boolean include(Entry<? extends FactionListTableModel, ? extends Integer> entry) {
                 FactionListTableModel model = entry.getModel();
                 FactionRecord rec = model.getFactionRecord(entry.getIdentifier());
-                if (!chkShowSubfactions.isSelected() &&
-                        rec.getKey().contains(".")) {
+                if (!chkShowSubfactions.isSelected() && rec.getKey().contains(".")) {
                     return false;
                 }
 
-                return chkShowMinorFactions.isSelected() ||
-                        rec.getParentFactions() == null;
+                return chkShowMinorFactions.isSelected() || rec.getParentFactions() == null;
             }
         };
         masterFactionListSorter.setRowFilter(rf);
@@ -576,18 +573,15 @@ public class RATGeneratorEditor extends JFrame {
 
     private void filterMasterUnitList() {
         RowFilter<MasterUnitListTableModel, Integer> rf;
-        rf = new RowFilter<MasterUnitListTableModel, Integer>() {
+        rf = new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends MasterUnitListTableModel,
-                    ? extends Integer> entry) {
+            public boolean include(Entry<? extends MasterUnitListTableModel, ? extends Integer> entry) {
                 MasterUnitListTableModel model = entry.getModel();
                 ModelRecord rec = model.getUnitRecord(entry.getIdentifier());
-                if (cbUnitType.getSelectedIndex() > 0 &&
-                        !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
+                if (cbUnitType.getSelectedIndex() > 0 && !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
                     return false;
                 }
-                if (cbMovementType.getSelectedIndex() > 0 &&
-                        (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
+                if (cbMovementType.getSelectedIndex() > 0 && (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
                     return false;
                 }
                 if (txtSearch.getText().length() > 0) {

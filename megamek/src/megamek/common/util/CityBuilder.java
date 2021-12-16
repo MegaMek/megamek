@@ -62,7 +62,7 @@ public class CityBuilder {
         roads = (roads * Math.min(width, height)) / 16; // scale for bigger maps
         String cityType = mapSettings.getCityType();
 
-        cityPlan = new HashSet<Coords>();
+        cityPlan = new HashSet<>();
         if (genericRoad) {
             addGenericRoad();
         }

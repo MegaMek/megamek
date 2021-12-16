@@ -61,7 +61,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private PMSimpleLabel fcsCritLabel;
     private PMSimpleLabel sensorCritLabel;
     private PMSimpleLabel pilotCritLabel;
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     private int stepY = 14;

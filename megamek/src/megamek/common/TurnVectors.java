@@ -195,16 +195,16 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
         this.numSC = scCount;
         this.numTM = tmCount;
         this.numAero = aeroCount;
-        this.normal_turns = new Vector<ITurnOrdered>(normalCount);
-        this.total_turns = new Vector<ITurnOrdered>(this.numTotal);
-        this.even_turns = new Vector<ITurnOrdered>(evenCount);
-        this.space_station_turns = new Vector<ITurnOrdered>(ssCount);
-        this.jumpship_turns = new Vector<ITurnOrdered>(jsCount);
-        this.warship_turns = new Vector<ITurnOrdered>(wsCount);
-        this.dropship_turns = new Vector<ITurnOrdered>(dsCount);
-        this.small_craft_turns = new Vector<ITurnOrdered>(scCount);
-        this.telemissile_turns = new Vector<ITurnOrdered>(tmCount);
-        this.aero_turns = new Vector<ITurnOrdered>(aeroCount);
+        this.normal_turns = new Vector<>(normalCount);
+        this.total_turns = new Vector<>(this.numTotal);
+        this.even_turns = new Vector<>(evenCount);
+        this.space_station_turns = new Vector<>(ssCount);
+        this.jumpship_turns = new Vector<>(jsCount);
+        this.warship_turns = new Vector<>(wsCount);
+        this.dropship_turns = new Vector<>(dsCount);
+        this.small_craft_turns = new Vector<>(scCount);
+        this.telemissile_turns = new Vector<>(tmCount);
+        this.aero_turns = new Vector<>(aeroCount);
         this.min = min;
     }
 

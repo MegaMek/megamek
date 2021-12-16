@@ -265,8 +265,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final Entity en = ce();
 
         if ((en instanceof Dropship) && !en.isAirborne()) {
-            ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
-            ArrayList<Coords> secondaryPositions = new ArrayList<Coords>();
+            ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
+            ArrayList<Coords> secondaryPositions = new ArrayList<>();
             secondaryPositions.add(en.getPosition());
             for (int dir = 0; dir < 6; dir++) {
                 secondaryPositions.add(en.getPosition().translated(dir));
@@ -879,7 +879,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     
     /** Returns a list of the entities that can be loaded into the currently selected entity. */
     private List<Entity> getLoadableEntities() {       
-        ArrayList<Entity> choices = new ArrayList<Entity>();
+        ArrayList<Entity> choices = new ArrayList<>();
         // If current entity is null, nothing to do
         if (ce() == null) {
             return choices;

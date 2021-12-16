@@ -1049,7 +1049,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         public ForceTreeModel(ForceDescriptor root) {
             this.root = root;
-            listeners = new ArrayList<TreeModelListener>();		
+            listeners = new ArrayList<>();
         }
 
         @Override

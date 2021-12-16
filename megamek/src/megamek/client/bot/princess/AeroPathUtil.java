@@ -21,25 +21,25 @@ public class AeroPathUtil
     static {
         // put together a pre-defined array of turns. Indexes correspond to the directional values found in Coords.java
         TURNS = new ArrayList<>();
-        TURNS.add(new ArrayList<MoveStepType>()); // "no turns"
+        TURNS.add(new ArrayList<>()); // "no turns"
         
-        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.add(new ArrayList<>());
         TURNS.get(1).add(MoveStepType.TURN_RIGHT);
         
-        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.add(new ArrayList<>());
         TURNS.get(2).add(MoveStepType.TURN_RIGHT);
         TURNS.get(2).add(MoveStepType.TURN_RIGHT);
         
-        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.add(new ArrayList<>());
         TURNS.get(3).add(MoveStepType.TURN_RIGHT);
         TURNS.get(3).add(MoveStepType.TURN_RIGHT);
         TURNS.get(3).add(MoveStepType.TURN_RIGHT);
         
-        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.add(new ArrayList<>());
         TURNS.get(4).add(MoveStepType.TURN_LEFT);
         TURNS.get(4).add(MoveStepType.TURN_LEFT);
         
-        TURNS.add(new ArrayList<MoveStepType>());
+        TURNS.add(new ArrayList<>());
         TURNS.get(5).add(MoveStepType.TURN_LEFT);
     }
     
@@ -111,7 +111,7 @@ public class AeroPathUtil
      * @return The child paths with all the accelerations this unit possibly can undertake.
      */
     public static Collection<MovePath> generateValidAccelerations(MovePath startingPath, int lowerBound, int upperBound) {
-        Collection<MovePath> paths = new ArrayList<MovePath>();
+        Collection<MovePath> paths = new ArrayList<>();
         
         // sanity check: if we've already done something else with the path, there's no acceleration to be done
         if (startingPath.length() > 0) {
@@ -168,7 +168,7 @@ public class AeroPathUtil
      * @return Collection of generated paths.
      */
     public static List<MovePath> generateValidAltitudeChanges(MovePath path) {
-        List<MovePath> paths = new ArrayList<MovePath>();
+        List<MovePath> paths = new ArrayList<>();
         
         // clone path add UP
         // if path uses more MP than entity has available or altitude higher than 10, stop

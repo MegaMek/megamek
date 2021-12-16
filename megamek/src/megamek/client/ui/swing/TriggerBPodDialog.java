@@ -257,7 +257,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      *         objects that match the user's selections.
      */
     public Enumeration<TriggerBPodAction> getActions() {
-        Vector<TriggerBPodAction> temp = new Vector<TriggerBPodAction>();
+        Vector<TriggerBPodAction> temp = new Vector<>();
 
         // Walk through the list of AP Pod trackers.
         for (TriggerPodTracker pod : trackers) {
@@ -289,7 +289,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         // Get the available choices.
 
         // Convert the choices into a List of targets.
-        List<Targetable> targets = new ArrayList<Targetable>();
+        List<Targetable> targets = new ArrayList<>();
         for (Entity ent : game.getEntitiesVector(pos)) {
             if (!game.getEntity(entityId).equals(choice)
                     && (choice instanceof Infantry)) {

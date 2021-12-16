@@ -70,7 +70,7 @@ public class PreferenceManager {
     }
 
     protected void load() {
-        stores = new Hashtable<String, IPreferenceStore>();
+        stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
                 CFG_FILE_OPTION_NAME,

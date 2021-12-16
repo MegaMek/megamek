@@ -606,7 +606,7 @@ public class Client implements IClientCommandHandler {
      *            - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
-        this.deploy(id, c, nFacing, elevation, new Vector<Entity>(), false);
+        this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
     }
 
     /**
@@ -780,7 +780,7 @@ public class Client implements IClientCommandHandler {
      *            The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
-        ArrayList<Entity> entities = new ArrayList<Entity>(1);
+        ArrayList<Entity> entities = new ArrayList<>(1);
         entities.add(entity);
         sendAddEntity(entities);
     }
@@ -1143,7 +1143,7 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateMinefields(Packet packet) {
         // only update information if you know about the minefield
-        Vector<Minefield> newMines = new Vector<Minefield>();
+        Vector<Minefield> newMines = new Vector<>();
         for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
             if (getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);

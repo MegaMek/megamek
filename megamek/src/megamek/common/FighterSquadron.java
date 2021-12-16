@@ -383,7 +383,7 @@ public class FighterSquadron extends Aero {
             getEquipment(weaponGroups.get(key)).setNWeapons(0);
         }
         // now collect a hash of all the same weapons in each location by id
-        Map<String, Integer> groups = new HashMap<String, Integer>();
+        Map<String, Integer> groups = new HashMap<>();
         for (Entity entity : getActiveSubEntities()) {
             IAero fighter = (IAero) entity;
             if (fighter.getFCSHits() > 2) {
@@ -491,7 +491,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public ArrayList<Mounted> getAmmo() {
-        ArrayList<Mounted> allAmmo = new ArrayList<Mounted>();
+        ArrayList<Mounted> allAmmo = new ArrayList<>();
         for (Entity fighter : getActiveSubEntities()) {
             allAmmo.addAll(fighter.getAmmo());
         }

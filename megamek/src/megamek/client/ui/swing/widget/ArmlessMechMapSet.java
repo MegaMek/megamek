@@ -57,7 +57,7 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     // Heat control area
     private PMPicPolygonalArea heatHotArea;
     // Set of Background Drawers
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     // Main areas group that keeps everything in itself and is passed to PicMap
     // component
     private PMAreasGroup content = new PMAreasGroup();

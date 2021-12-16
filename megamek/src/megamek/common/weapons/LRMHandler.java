@@ -80,7 +80,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
             Enumeration<Minefield> minefields = game.getMinefields(coords)
                     .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,

@@ -268,7 +268,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
      * Hole punchers before crit seekers
      */
     void sortPlan() {
-        this.sort(new Comparator<WeaponFireInfo>() {
+        this.sort(new Comparator<>() {
             @Override
             public int compare(WeaponFireInfo o1, WeaponFireInfo o2) {
                 Mounted weapon1 = o1.getWeapon();
@@ -298,8 +298,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
 
                 if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
                     AmmoType ammoType = (AmmoType) ammo1.getType();
-                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage() ||
-                        AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage() || AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
                         dmg1 = ammoType.getDamagePerShot();
                     }
                 }
@@ -308,8 +307,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
                 }
                 if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
                     AmmoType ammoType = (AmmoType) ammo2.getType();
-                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage() ||
-                        AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage() || AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
                         dmg2 = ammoType.getDamagePerShot();
                     }
                 }

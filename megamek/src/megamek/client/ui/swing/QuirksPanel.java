@@ -48,8 +48,7 @@ public class QuirksPanel extends JPanel {
     private static final long serialVersionUID = -8360885055638738148L;
     private Entity entity;
     private List<DialogOptionComponent> quirkComps;
-    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer,
-            ArrayList<DialogOptionComponent>>();
+    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<>();
     private HashMap<Integer, WeaponQuirks> h_wpnQuirks;
     private Quirks quirks;
     private boolean editable;

@@ -374,7 +374,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.toString()).thenReturn("F F F");
         Mockito.when(mockPath.clone()).thenReturn(mockPath);
         Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
-        Mockito.when(mockPath.getStepVector()).thenReturn(new Vector<MoveStep>());
+        Mockito.when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
         final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);

@@ -87,7 +87,7 @@ public class MoveOption extends MovePath {
         }
 
         public ArrayList<MoveOption> getArray() {
-            return new ArrayList<MoveOption>(values());
+            return new ArrayList<>(values());
         }
     }
 
@@ -127,8 +127,8 @@ public class MoveOption extends MovePath {
     double threat = 0;
 
     private transient CEntity centity;
-    transient ArrayList<String> tv = new ArrayList<String>();
-    transient HashMap<CEntity, DamageInfo> damageInfos = new HashMap<CEntity, DamageInfo>();
+    transient ArrayList<String> tv = new ArrayList<>();
+    transient HashMap<CEntity, DamageInfo> damageInfos = new HashMap<>();
     private Coords pos;
     private int facing;
     private boolean prone;
@@ -147,7 +147,7 @@ public class MoveOption extends MovePath {
         threat = base.threat;
         damage = base.damage;
         movement_threat = base.movement_threat;
-        tv = new ArrayList<String>(base.tv);
+        tv = new ArrayList<>(base.tv);
         self_threat = base.self_threat;
         inDanger = base.inDanger;
         doomed = base.doomed;

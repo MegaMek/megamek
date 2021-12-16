@@ -43,7 +43,7 @@ public class AeroMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[13];
     private PMValueLabel[] vLabels = new PMValueLabel[13];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
     
     private UnitDisplay unitDisplay;

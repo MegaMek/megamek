@@ -805,14 +805,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     }
 
     void filterTables() {
-        RowFilter<WeaponsTableModel, Integer> weaponFilter = null;
-        RowFilter<EquipmentTableModel, Integer> equipmentFilter = null;
+        RowFilter<WeaponsTableModel, Integer> weaponFilter;
+        RowFilter<EquipmentTableModel, Integer> equipmentFilter;
         final int techLevel = cboTechLevel.getSelectedIndex();
         final String techClass = (String) cboTechClass.getSelectedItem();
         final int unitType = cboUnitType.getSelectedIndex() - 1;
         //If current expression doesn't parse, don't update.
         try {
-            weaponFilter = new RowFilter<WeaponsTableModel,Integer>() {
+            weaponFilter = new RowFilter<>() {
                 @Override
                 public boolean include(Entry<? extends WeaponsTableModel, ? extends Integer> entry) {
                     WeaponsTableModel weapModel = entry.getModel();
@@ -831,15 +831,15 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         weaponsSorter.setRowFilter(weaponFilter);
 
         try {
-            equipmentFilter = new RowFilter<EquipmentTableModel, Integer>() {
+            equipmentFilter = new RowFilter<>() {
                 @Override
                 public boolean include(Entry<? extends EquipmentTableModel, ? extends Integer> entry) {
                     EquipmentTableModel eqModel = entry.getModel();
                     EquipmentType eq = eqModel.getEquipmentTypeAt(entry.getIdentifier());
                     String currTechClass = TechConstants.getTechName(eq.getTechLevel(gameYear));
-                    boolean techLvlMatch = matchTechLvl(techLevel,eq.getTechLevel(gameYear));
-                    boolean techClassMatch = matchTechClass(techClass,currTechClass);
-                    boolean unitTypeMatch = matchUnitType(unitType,eq);
+                    boolean techLvlMatch = matchTechLvl(techLevel, eq.getTechLevel(gameYear));
+                    boolean techClassMatch = matchTechClass(techClass, currTechClass);
+                    boolean unitTypeMatch = matchUnitType(unitType, eq);
                     return techLvlMatch && techClassMatch && unitTypeMatch;
                 }
             };

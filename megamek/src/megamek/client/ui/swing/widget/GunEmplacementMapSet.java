@@ -33,7 +33,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class GunEmplacementMapSet implements DisplayMapSet {
 
     private JComponent comp;
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     public GunEmplacementMapSet(JComponent c) {

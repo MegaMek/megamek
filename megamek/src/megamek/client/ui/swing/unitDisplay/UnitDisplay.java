@@ -60,7 +60,7 @@ public class UnitDisplay extends JPanel {
     private ClientGUI clientgui;
 
     private Entity currentlyDisplaying;
-    private ArrayList<MechDisplayListener> eventListeners = new ArrayList<MechDisplayListener>();
+    private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
 
     /**
      * Creates and lays out a new mech display.

@@ -56,7 +56,7 @@ class AttackSprite extends Sprite {
 
     private String targetDesc;
 
-    ArrayList<String> weaponDescs = new ArrayList<String>();
+    ArrayList<String> weaponDescs = new ArrayList<>();
 
     private final Entity ae;
 

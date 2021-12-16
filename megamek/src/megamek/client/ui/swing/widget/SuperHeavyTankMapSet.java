@@ -44,7 +44,7 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
     private PMSimpleLabel[] labels = new PMSimpleLabel[16];
     private PMValueLabel[] vLabels = new PMValueLabel[16];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     // Polygons for all areas

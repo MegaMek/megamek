@@ -737,7 +737,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public boolean correctCriticals(StringBuffer buff) {
-        Vector<Mounted> unallocated = new Vector<Mounted>();
+        Vector<Mounted> unallocated = new Vector<>();
         getUnallocatedEquipment(ba, unallocated);
         boolean correct = true;
 

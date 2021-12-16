@@ -71,7 +71,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see AbstractOptionsInfo()
      */
-    private static HashSet<String> names = new HashSet<String>();
+    private static HashSet<String> names = new HashSet<>();
 
     /**
      * Protected constructor. It is called only by descendants. The name must be

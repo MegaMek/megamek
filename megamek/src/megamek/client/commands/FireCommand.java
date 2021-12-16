@@ -40,7 +40,7 @@ public class FireCommand extends ClientCommand {
      */
     public FireCommand(Client client) {
         super(client, "fire", "used to shoot. See #fire HELP for more details.");
-        attacks = new Vector<AbstractEntityAction>();
+        attacks = new Vector<>();
     }
 
     /*

@@ -425,7 +425,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wSortOrder.setForeground(Color.WHITE);
         add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
-        weapSortOrder = new JComboBox<String>();
+        weapSortOrder = new JComboBox<>();
         for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
             String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
             weapSortOrder.addItem(Messages.getString(entry));
@@ -438,7 +438,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         gridy++;
 
         // weapon list
-        weaponList = new JList<String>(new DefaultListModel<String>());
+        weaponList = new JList<>(new DefaultListModel<>());
         WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
@@ -1870,11 +1870,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         } else {
             m_chAmmo.setEnabled(true);
-            vAmmo = new ArrayList<Mounted>();
+            vAmmo = new ArrayList<>();
             int nCur = -1;
             int i = 0;
             //Ammo sharing between adjacent trailers
-            List<Mounted> fullAmmoList = new ArrayList<Mounted>(entity.getAmmo());
+            List<Mounted> fullAmmoList = new ArrayList<>(entity.getAmmo());
             if (entity.getTowedBy() != Entity.NONE) {
                 Entity ahead = entity.getGame().getEntity(entity.getTowedBy());
                 fullAmmoList.addAll(ahead.getAmmo());

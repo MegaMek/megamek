@@ -377,7 +377,7 @@ public class Compute {
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
         int totalUnits = 1;
-        Vector<Coords> positions = new Vector<Coords>();
+        Vector<Coords> positions = new Vector<>();
         positions.add(dest);
         if (isDropship) {
             for (int dir = 0; dir < 6; dir++) {
@@ -1844,7 +1844,7 @@ public class Compute {
             return attacker;
         }
 
-        ArrayList<Entity> network = new ArrayList<Entity>();
+        ArrayList<Entity> network = new ArrayList<>();
 
         // Compute friends in network
         for (Entity friend : game.getEntitiesVector()) {
@@ -3787,7 +3787,7 @@ public class Compute {
                      + (ae.getEquipment(weaponId).getFacing() % 6);
         }
         Coords aPos = ae.getPosition();
-        Vector<Coords> tPosV = new Vector<Coords>();
+        Vector<Coords> tPosV = new Vector<>();
         Coords tPos = t.getPosition();
         // aeros in the same hex in space may still be able to fire at one
         // another. First I need to translate
@@ -3858,7 +3858,7 @@ public class Compute {
     public static boolean isInArc(Coords src, int facing, Targetable target,
                                   int arc) {
 
-        Vector<Coords> tPosV = new Vector<Coords>();
+        Vector<Coords> tPosV = new Vector<>();
         tPosV.add(target.getPosition());
         // check for secondary positions
         if ((target instanceof Entity)
@@ -3872,7 +3872,7 @@ public class Compute {
     }
 
     public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
-        Vector<Coords> destV = new Vector<Coords>();
+        Vector<Coords> destV = new Vector<>();
         destV.add(dest);
         return isInArc(src, facing, destV, arc);
     }
@@ -4347,7 +4347,7 @@ public class Compute {
      * empty the list. We wouldn't want a dead ship to be providing NC3 data, now would we...
      */
     public static void updateFiringSolutions(Game game, Entity detector) {
-        List<Integer> toRemove = new ArrayList<Integer>();
+        List<Integer> toRemove = new ArrayList<>();
         //Flush the detecting unit's firing solutions if any of these conditions applies
         if (detector.isDestroyed()
                 || detector.isDoomed()
@@ -4400,7 +4400,7 @@ public class Compute {
      * empty the list. We wouldn't want a dead ship to be providing sensor data, now would we...
      */
     public static void updateSensorContacts(Game game, Entity detector) {
-        List<Integer> toRemove = new ArrayList<Integer>();
+        List<Integer> toRemove = new ArrayList<>();
         //Flush the detecting unit's sensor contacts if any of these conditions applies
         if (detector.getPosition() == null
                 || detector.isDestroyed()
@@ -5177,17 +5177,17 @@ public class Compute {
         // and one with booleans indicating that this ghost target was
         // intersected
         // the keys will be the entity id
-        Hashtable<Integer, Boolean> hEnemyGTCrossed = new Hashtable<Integer, Boolean>();
-        Hashtable<Integer, Integer> hEnemyGTMods = new Hashtable<Integer, Integer>();
-        Vector<Coords> vEnemyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECCMRanges = new Vector<Integer>(16);
-        Vector<Double> vEnemyECCMStrengths = new Vector<Double>(16);
-        Vector<Coords> vEnemyGTCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyGTRanges = new Vector<Integer>(16);
-        Vector<Integer> vEnemyGTId = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECMRanges = new Vector<Integer>(16);
-        Vector<Double> vFriendlyECMStrengths = new Vector<Double>(16);
+        Hashtable<Integer, Boolean> hEnemyGTCrossed = new Hashtable<>();
+        Hashtable<Integer, Integer> hEnemyGTMods = new Hashtable<>();
+        Vector<Coords> vEnemyECCMCoords = new Vector<>(16);
+        Vector<Integer> vEnemyECCMRanges = new Vector<>(16);
+        Vector<Double> vEnemyECCMStrengths = new Vector<>(16);
+        Vector<Coords> vEnemyGTCoords = new Vector<>(16);
+        Vector<Integer> vEnemyGTRanges = new Vector<>(16);
+        Vector<Integer> vEnemyGTId = new Vector<>(16);
+        Vector<Coords> vFriendlyECMCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyECMRanges = new Vector<>(16);
+        Vector<Double> vFriendlyECMStrengths = new Vector<>(16);
         for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasGhostTargets(true)
@@ -6086,7 +6086,7 @@ public class Compute {
         Entity tempEntity = null;
         // first, check the hex of the original target
         Iterator<Entity> entities = game.getEntities(coords);
-        Vector<Entity> possibleTargets = new Vector<Entity>();
+        Vector<Entity> possibleTargets = new Vector<>();
         while (entities.hasNext()) {
             tempEntity = entities.next();
             if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
@@ -6543,7 +6543,7 @@ public class Compute {
      */
     public static ArrayList<Entity> getAdjacentEntitiesAlongAttack(Coords aPos,
                                                                    Coords tPos, Game game) {
-        ArrayList<Entity> entities = new ArrayList<Entity>();
+        ArrayList<Entity> entities = new ArrayList<>();
         ArrayList<Coords> coords = Coords.intervening(aPos, tPos);
         // loop through all intervening coords
         for (Coords c : coords) {
@@ -6686,7 +6686,7 @@ public class Compute {
     public static ArrayList<Coords> getAcceptableUnloadPositions(
             List<Coords> ring, Entity unit, Game game, int elev) {
 
-        ArrayList<Coords> acceptable = new ArrayList<Coords>();
+        ArrayList<Coords> acceptable = new ArrayList<>();
 
         for (Coords pos : ring) {
             Hex hex = game.getBoard().getHex(pos);

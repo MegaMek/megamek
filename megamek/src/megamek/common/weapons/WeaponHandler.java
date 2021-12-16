@@ -68,7 +68,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean missed = false;
     protected DamageType damageType;
     protected int generalDamageType = HitData.DAMAGE_NONE;
-    protected Vector<Integer> insertedAttacks = new Vector<Integer>();
+    protected Vector<Integer> insertedAttacks = new Vector<>();
     protected int nweapons; // for capital fighters/fighter squadrons
     protected int nweaponsHit; // for capital fighters/fighter squadrons
     protected boolean secondShot = false;
@@ -531,7 +531,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
             int AMSHits = 0;
             if (ae.isCapitalFighter()) {
-                Vector<Report> throwAwayReport = new Vector<Report>();
+                Vector<Report> throwAwayReport = new Vector<>();
                 // for capital scale fighters, each non-cluster weapon hits a
                 // different location
                 bSalvo = true;
@@ -760,7 +760,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (!cares(phase)) {
             return true;
         }
-        Vector<Report> vPhaseReport = new Vector<Report>();
+        Vector<Report> vPhaseReport = new Vector<>();
 
         boolean heatAdded = false;
         int numAttacks = 1;

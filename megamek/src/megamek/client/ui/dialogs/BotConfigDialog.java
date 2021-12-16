@@ -711,7 +711,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Sets up/Updates the displayed preset list (e.g. after adding or deleting a preset) */
     private void updatePresets() {
-        presets = new ArrayList<String>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
+        presets = new ArrayList<>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
         
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {

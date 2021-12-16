@@ -211,7 +211,7 @@ public class LobbyUtility {
             boardsString = boardsString.substring(MapSettings.BOARD_SURPRISE.length());
         }
         String[] boards = boardsString.split("\n");
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         result.addAll(Arrays.asList(boards));
         return result;
     }

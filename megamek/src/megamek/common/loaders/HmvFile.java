@@ -74,13 +74,13 @@ public class HmvFile implements IMechLoader {
 
     private int artemisType;
 
-    private Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>> equipment = new Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>>();
+    private Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>> equipment = new Hashtable<>();
 
     private double troopSpace = 0;
 
     private String fluff;
 
-    private List<String> failedEquipment = new ArrayList<String>();
+    private List<String> failedEquipment = new ArrayList<>();
 
     private boolean hasTurret = false;
 
@@ -580,7 +580,7 @@ public class HmvFile implements IMechLoader {
     private void addEquipmentType(EquipmentType equipmentType, int weaponCount, HMVWeaponLocation weaponLocation) {
         Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.get(weaponLocation);
         if (equipmentAtLocation == null) {
-            equipmentAtLocation = new Hashtable<EquipmentType, Integer>();
+            equipmentAtLocation = new Hashtable<>();
             equipment.put(weaponLocation, equipmentAtLocation);
         }
         Integer prevCount = equipmentAtLocation.get(equipmentType);
@@ -656,14 +656,14 @@ public class HmvFile implements IMechLoader {
         }
     }
 
-    private static final Hashtable<HMVTechType, Hashtable<Long, String>> EQUIPMENT = new Hashtable<HMVTechType, Hashtable<Long, String>>();
-    private static final Hashtable<HMVTechType, Hashtable<Long, String>> AMMO = new Hashtable<HMVTechType, Hashtable<Long, String>>();
+    private static final Hashtable<HMVTechType, Hashtable<Long, String>> EQUIPMENT = new Hashtable<>();
+    private static final Hashtable<HMVTechType, Hashtable<Long, String>> AMMO = new Hashtable<>();
     static {
         // inner sphere equipment
         // note all weapons should be matched by an ammo entry with the same
         // index
         //
-        Hashtable<Long, String> isEquipment = new Hashtable<Long, String>();
+        Hashtable<Long, String> isEquipment = new Hashtable<>();
         EQUIPMENT.put(HMVTechType.INNER_SPHERE, isEquipment);
         isEquipment.put(Long.valueOf(0x0A), "ISDouble Heat Sink");
         isEquipment.put(Long.valueOf(0x0B), "Jump Jet");
@@ -798,7 +798,7 @@ public class HmvFile implements IMechLoader {
         isEquipment.put(Long.valueOf(0x12C), "ISRocketLauncher15");
         isEquipment.put(Long.valueOf(0x12D), "ISRocketLauncher20");
 
-        Hashtable<Long, String> isAmmo = new Hashtable<Long, String>();
+        Hashtable<Long, String> isAmmo = new Hashtable<>();
         AMMO.put(HMVTechType.INNER_SPHERE, isAmmo);
         isAmmo.put(Long.valueOf(0x3E), "ISAC2 Ammo");
         isAmmo.put(Long.valueOf(0x3F), "ISAC5 Ammo");
@@ -867,7 +867,7 @@ public class HmvFile implements IMechLoader {
 
         // clan criticals
         //
-        Hashtable<Long, String> clanEquipment = new Hashtable<Long, String>();
+        Hashtable<Long, String> clanEquipment = new Hashtable<>();
         EQUIPMENT.put(HMVTechType.CLAN, clanEquipment);
         clanEquipment.put(Long.valueOf(0x0A), "CLDouble Heat Sink");
         clanEquipment.put(Long.valueOf(0x0B), "Jump Jet");
@@ -963,7 +963,7 @@ public class HmvFile implements IMechLoader {
         clanEquipment.put(Long.valueOf(0xFE), "CLATM9");
         clanEquipment.put(Long.valueOf(0xFF), "CLATM12");
 
-        Hashtable<Long, String> clAmmo = new Hashtable<Long, String>();
+        Hashtable<Long, String> clAmmo = new Hashtable<>();
         AMMO.put(HMVTechType.CLAN, clAmmo);
         clAmmo.put(Long.valueOf(0x40), "CLAMS Ammo");
         clAmmo.put(Long.valueOf(0x41), "CLGauss Ammo");
@@ -1014,7 +1014,7 @@ public class HmvFile implements IMechLoader {
         clAmmo.put(Long.valueOf(0xFF), "CLATM12 Ammo");
 
         // mixed *seems* to be the same as IS-base for HMP files
-        Hashtable<Long, String> mixedEquipment = new Hashtable<Long, String>(isEquipment);
+        Hashtable<Long, String> mixedEquipment = new Hashtable<>(isEquipment);
         EQUIPMENT.put(HMVTechType.MIXED, mixedEquipment);
         mixedEquipment.put(Long.valueOf(0x58), "CLERMicroLaser");
         mixedEquipment.put(Long.valueOf(0x5E), "CLLightMG");
@@ -1092,7 +1092,7 @@ public class HmvFile implements IMechLoader {
         mixedEquipment.put(Long.valueOf(0xFF), "CLATM12");
 
         // but ammo *seems* to use the same numbers as the weapon it goes with
-        Hashtable<Long, String> mixedAmmo = new Hashtable<Long, String>(isAmmo);
+        Hashtable<Long, String> mixedAmmo = new Hashtable<>(isAmmo);
         AMMO.put(HMVTechType.MIXED, mixedAmmo);
         mixedAmmo.put(Long.valueOf(0x5E), "CLLightMG Ammo");
         mixedAmmo.put(Long.valueOf(0x5F), "CLHeavyMG Ammo");
@@ -1279,7 +1279,7 @@ abstract class HMVType {
 }
 
 class HMVEngineType extends HMVType {
-    public static final Hashtable<Integer, HMVEngineType> types = new Hashtable<Integer, HMVEngineType>();
+    public static final Hashtable<Integer, HMVEngineType> types = new Hashtable<>();
 
     public static final HMVEngineType ICE = new HMVEngineType("I.C.E.", 0);
     public static final HMVEngineType FUSION = new HMVEngineType("Fusion", 1);
@@ -1298,7 +1298,7 @@ class HMVEngineType extends HMVType {
 }
 
 class HMVArmorType extends HMVType {
-    public static final Hashtable<Integer, HMVArmorType> types = new Hashtable<Integer, HMVArmorType>();
+    public static final Hashtable<Integer, HMVArmorType> types = new Hashtable<>();
 
     public static final HMVArmorType STANDARD = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), 0);
     public static final HMVArmorType FERRO = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), 1);
@@ -1318,7 +1318,7 @@ class HMVArmorType extends HMVType {
 }
 
 class HMVTechType extends HMVType {
-    public static final Hashtable<Integer, HMVTechType> types = new Hashtable<Integer, HMVTechType>();
+    public static final Hashtable<Integer, HMVTechType> types = new Hashtable<>();
 
     public static final HMVTechType INNER_SPHERE = new HMVTechType("Inner Sphere", 0);
     public static final HMVTechType CLAN = new HMVTechType("Clan", 1);
@@ -1335,7 +1335,7 @@ class HMVTechType extends HMVType {
 }
 
 class HMVMovementType extends HMVType {
-    public static final Hashtable<Integer, HMVMovementType> types = new Hashtable<Integer, HMVMovementType>();
+    public static final Hashtable<Integer, HMVMovementType> types = new Hashtable<>();
 
     public static final HMVMovementType TRACKED = new HMVMovementType("Tracked", 8);
     public static final HMVMovementType WHEELED = new HMVMovementType("Wheeled", 16);
@@ -1359,7 +1359,7 @@ class HMVMovementType extends HMVType {
 }
 
 class HMVWeaponLocation extends HMVType {
-    public static final Hashtable<Integer, HMVWeaponLocation> types = new Hashtable<Integer, HMVWeaponLocation>();
+    public static final Hashtable<Integer, HMVWeaponLocation> types = new Hashtable<>();
 
     public static final HMVWeaponLocation TURRET = new HMVWeaponLocation("Turret", 0);
     public static final HMVWeaponLocation FRONT = new HMVWeaponLocation("Front", 1);
@@ -1379,7 +1379,7 @@ class HMVWeaponLocation extends HMVType {
 }
 
 class HMVStructureType extends HMVType {
-    public static final Hashtable<Integer, HMVStructureType> types = new Hashtable<Integer, HMVStructureType>();
+    public static final Hashtable<Integer, HMVStructureType> types = new Hashtable<>();
 
     public static final HMVStructureType STANDARD = new HMVStructureType("Standard", 179);
     public static final HMVStructureType REINFORCED = new HMVStructureType("Reinforced", 193);

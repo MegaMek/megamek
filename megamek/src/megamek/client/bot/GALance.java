@@ -238,7 +238,7 @@ public class GALance extends GA {
 
     public MoveOption getResult() {
         Chromosome r = this.chromosomes[best];
-        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> possible = new ArrayList<>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
             possible.add(new MoveOption(this.moves.get(iGene)[r.genes[iGene]]));
         }

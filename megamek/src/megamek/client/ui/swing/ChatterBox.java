@@ -113,7 +113,7 @@ public class ChatterBox implements KeyListener {
                 }
             }
         });
-        history = new LinkedList<String>();
+        history = new LinkedList<>();
 
         chatArea = new JTextArea(
                 " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
@@ -121,7 +121,7 @@ public class ChatterBox implements KeyListener {
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-        playerList = new JList<String>(new DefaultListModel<String>());
+        playerList = new JList<>(new DefaultListModel<>());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
                 "AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);

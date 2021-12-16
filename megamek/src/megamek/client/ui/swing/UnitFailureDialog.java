@@ -65,7 +65,7 @@ public class UnitFailureDialog extends JDialog implements ActionListener,
         while (failedUnits.hasNext()) {
             failed[i++] = failedUnits.next();
         }
-        failedList = new JList<String>(failed);
+        failedList = new JList<>(failed);
 
         reasonTextArea.setEditable(false);
         reasonTextArea.setOpaque(false);

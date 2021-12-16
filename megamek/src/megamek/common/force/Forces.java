@@ -550,7 +550,7 @@ public final class Forces implements Serializable {
                 }
             }
 
-            var subForceIds = new ArrayList<Integer>(entry.getValue().getSubForces());
+            var subForceIds = new ArrayList<>(entry.getValue().getSubForces());
             for (int subforceId: subForceIds) {
                 // Remove nonexistent subforces
                 if (!contains(subforceId)) {

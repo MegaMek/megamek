@@ -214,7 +214,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
      *         objects that match the user's selections.
      */
     public Enumeration<TriggerAPPodAction> getActions() {
-        Vector<TriggerAPPodAction> temp = new Vector<TriggerAPPodAction>();
+        Vector<TriggerAPPodAction> temp = new Vector<>();
 
         // Walk through the list of AP Pod trackers.
         for (TriggerPodTracker pod : trackers) {

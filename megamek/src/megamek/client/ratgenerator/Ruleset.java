@@ -290,7 +290,7 @@ public class Ruleset {
     }
 
     public HashMap<String,String> getEschelonNames(String unitType) {
-        HashMap<String,String> retVal = new HashMap<String,String>();
+        HashMap<String,String> retVal = new HashMap<>();
         for (ForceNode n : forceNodes) {
             if (n.matchesPredicate(unitType, "ifUnitType")) {
                 retVal.put(n.getEschelonCode(), n.getEschelonName());
@@ -365,7 +365,7 @@ public class Ruleset {
     public static void loadData() {
         initialized = false;
         initializing = true;
-        rulesets = new HashMap<String,Ruleset>();
+        rulesets = new HashMap<>();
 
         File dir = new File(directory);
         if (!dir.exists()) {

@@ -424,7 +424,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         aaa.setOriginalTargetType(target.getTargetType());
         int missileFacing = ae.getPosition().direction(tc);
         Targetable newTarget = null;
-        Vector<Aero> targets = new Vector<Aero>();
+        Vector<Aero> targets = new Vector<>();
         
         // get all entities on the opposing side
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
@@ -448,7 +448,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         assert (newTarget != null);
         
         // Add only targets in arc
-        Vector<Aero> inArc = new Vector<Aero>();
+        Vector<Aero> inArc = new Vector<>();
         for (Aero a : targets) {
             Boolean isInArc = Compute.isInArc(tc, missileFacing, a, Compute.ARC_NOSE);
             if (isInArc) {
@@ -468,7 +468,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         
         // Detection range for targets is based on the range set at firing
-        Vector<Aero> detected = new Vector<Aero>();
+        Vector<Aero> detected = new Vector<>();
         if (detRangeExtreme) {
             for (Aero a : targets) {
                 if (tc.distance(a.getPosition()) <= 25) {
@@ -508,8 +508,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         //If we're using tele-operated missiles, the player gets to select the target
         if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
-            List<Integer> targetIds = new ArrayList<Integer>();
-            List<Integer> toHitValues = new ArrayList<Integer>();
+            List<Integer> targetIds = new ArrayList<>();
+            List<Integer> toHitValues = new ArrayList<>();
             for (Aero target : targets) {
                 setToHit(target);
                 targetIds.add(target.getId());

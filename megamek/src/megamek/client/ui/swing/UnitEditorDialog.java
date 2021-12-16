@@ -344,7 +344,7 @@ public class UnitEditorDialog extends JDialog {
     }
 
     private void initEquipPanel() {
-        equipCrits = new HashMap<Integer, CheckCritPanel>();
+        equipCrits = new HashMap<>();
         panEquip = new JPanel();
         panEquip.setLayout(new GridBagLayout());
         panEquip.setBorder(BorderFactory.createTitledBorder(Messages.getString("UnitEditorDialog.equipment")));
@@ -1531,7 +1531,7 @@ public class UnitEditorDialog extends JDialog {
          */
         private static final long serialVersionUID = 8662728291188274362L;
 
-        private ArrayList<JCheckBox> checks = new ArrayList<JCheckBox>();
+        private ArrayList<JCheckBox> checks = new ArrayList<>();
 
         public CheckCritPanel(int crits, int current) {
             setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));

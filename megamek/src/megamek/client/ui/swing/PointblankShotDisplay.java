@@ -568,7 +568,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector<EntityAction> newAttacks = new Vector<EntityAction>();
+        Vector<EntityAction> newAttacks = new Vector<>();
         for (EntityAction o : attacks) {
             if (o instanceof ArtilleryAttackAction) {
                 newAttacks.addElement(o);

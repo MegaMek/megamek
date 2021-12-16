@@ -27389,7 +27389,7 @@ public class Server implements Runnable {
                                          boolean canSalvage) {
         // can't destroy an entity if it's already been destroyed        
         if (entity.isDestroyed()) {
-            return new Vector<Report>();
+            return new Vector<>();
         }
         
         Vector<Report> vDesc = new Vector<>();
@@ -33529,7 +33529,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
     public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne, Coords pos) {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
         Report r;
 
         // An entity can only eject it's crew once.

@@ -1069,7 +1069,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clearVisibleTargets();
 
         List<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
-        Comparator<Entity> sortComp = new Comparator<Entity>() {
+        Comparator<Entity> sortComp = new Comparator<>() {
             @Override
             public int compare(Entity x, Entity y) {
 

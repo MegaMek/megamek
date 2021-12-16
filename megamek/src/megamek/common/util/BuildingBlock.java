@@ -600,7 +600,7 @@ public class BuildingBlock {
      */
     public Vector<String> makeVector(String[] stringArray) {
 
-        Vector<String> newVect = new Vector<String>();
+        Vector<String> newVect = new Vector<>();
         int c = 0;
 
         try {

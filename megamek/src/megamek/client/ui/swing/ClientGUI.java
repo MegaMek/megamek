@@ -915,8 +915,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (Throwable error) {
-            error.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error(ex);
         }
         client.die();
 
@@ -1483,9 +1483,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     client.sendAddEntity(loadedUnits);
                     addedUnits = true;
                 }
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error(ex);
+                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
             }
         }
 
@@ -1574,7 +1574,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul");
-                } catch (IOException ie) {
+                } catch (IOException ignored) {
                     // nothing needs to be done here
                     return;
                 }
@@ -1582,9 +1582,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error(ex);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
     }
@@ -1616,7 +1616,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul");
-                } catch (IOException ie) {
+                } catch (IOException ignored) {
                     // nothing needs to be done here
                     return;
                 }
@@ -1624,9 +1624,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, getClient());
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error(ex);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
     }
@@ -2162,7 +2162,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());

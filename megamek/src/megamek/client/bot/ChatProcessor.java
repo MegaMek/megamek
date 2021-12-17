@@ -140,8 +140,7 @@ public class ChatProcessor {
                         // command object...
                         if (command.equalsIgnoreCase("echo")) {
                             understood = true;
-                        }
-                        if (command.equalsIgnoreCase("calm down")) {
+                        } else if (command.equalsIgnoreCase("calm down")) {
                             for (Entity entity : tb.getEntitiesOwned()) {
                                 CEntity cen = tb.centities.get(entity);
                                 if (cen.strategy.attack > 1) {
@@ -180,7 +179,7 @@ public class ChatProcessor {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error(ex);
         }
     }
 

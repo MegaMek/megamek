@@ -115,17 +115,15 @@ public class ChatterBox implements KeyListener {
         });
         history = new LinkedList<>();
 
-        chatArea = new JTextArea(
-                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
+        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         playerList = new JList<>(new DefaultListModel<>());
-        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
-                "AdvancedChatboxSize"));
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
-        scrPlayers.setPreferredSize(new Dimension(100,chatArea.getHeight()));
+        scrPlayers.setPreferredSize(new Dimension(100, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
@@ -141,8 +139,6 @@ public class ChatterBox implements KeyListener {
         JPanel subPanel = new JPanel(new BorderLayout());
         subPanel.setPreferredSize(new Dimension(284,100));
         subPanel.setMinimumSize(new Dimension(284,100));
-        //subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
-        //subPanel.add(scrPlayers, BorderLayout.WEST);
         subPanel.add(playerChatSplit, BorderLayout.CENTER);
         subPanel.add(inputField, BorderLayout.SOUTH);
 

@@ -324,8 +324,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     GBC.std());
             panCrew.add(fldCommandInit, GBC.eop());
         }
-        fldCommandInit.setText(Integer.toString(entity.getCrew()
-                .getCommandBonus()));
+        fldCommandInit.setText(Integer.toString(entity.getCrew().getCommandBonus()));
 
         // Set up commanders for commander killed victory condition
         if (clientgui.getClient().getGame().getOptions()
@@ -540,8 +539,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         for (final Object newVar : optionComps) {
             DialogOptionComponent comp = (DialogOptionComponent) newVar;
             option = comp.getOption();
-            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { // NON-NLS-$1
-                entity.getCrew().getOptions().getOption(option.getName()).setValue("None"); // NON-NLS-$1
+            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) {
+                entity.getCrew().getOptions().getOption(option.getName()).setValue("None");
             } else {
                 entity.getCrew().getOptions().getOption(option.getName())
                         .setValue(comp.getValue());
@@ -563,8 +562,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         c.ipadx = 0;
         c.ipady = 0;
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)
@@ -625,12 +623,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         for (final Object newVar : partRepsComps) {
             DialogOptionComponent comp = (DialogOptionComponent) newVar;
             option = comp.getOption();
-            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { // NON-NLS-$1
-                entity.getPartialRepairs().getOption(option.getName())
-                        .setValue("None"); // NON-NLS-$1
+            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) {
+                entity.getPartialRepairs().getOption(option.getName()).setValue("None");
             } else {
-                entity.getPartialRepairs().getOption(option.getName())
-                        .setValue(comp.getValue());
+                entity.getPartialRepairs().getOption(option.getName()).setValue(comp.getValue());
             }
         }
 
@@ -644,13 +640,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         Entity entity = entities.get(0);
         panPartReps.removeAll();
         partRepsComps = new ArrayList<>();
-        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             panPartReps.add(new JLabel(group.getDisplayableName()), GBC.eol());
 
-            for (Enumeration<IOption> j = group.getSortedOptions(); j
-                    .hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 if (!PartialRepairs.isPartRepLegalFor(option, entity)) {

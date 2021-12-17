@@ -79,11 +79,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private boolean isCanceled = true;
     public MechSearchFilter mechFilter = null;
     private Vector<FilterTokens> filterToks;
-    private JButton btnOkay   = new JButton(Messages.getString("Okay"));
+    private JButton btnOkay = new JButton(Messages.getString("Okay"));
     private JButton btnCancel = new JButton(Messages.getString("Cancel"));
 
-    private JButton btnLeftParen =  new JButton("(");
-    private JButton btnRightParen =  new JButton(")");
+    private JButton btnLeftParen = new JButton("(");
+    private JButton btnRightParen = new JButton(")");
     private JButton btnAdd = new JButton(Messages.getString("MechSelectorDialog.Search.add"));
     private JButton btnAnd = new JButton(Messages.getString("MechSelectorDialog.Search.and"));
     private JButton btnOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
@@ -143,7 +143,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
     private JComboBox<String> cboArmorType = new JComboBox<>();
 
-    private JComboBox<String> cboQty   = new JComboBox<>();
+    private JComboBox<String> cboQty = new JComboBox<>();
 
     /**
      * Stores the games current year.

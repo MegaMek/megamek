@@ -171,10 +171,10 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_IENHANCED, false);
         addOption(md, OptionsConstants.MD_PL_EXTRA_LIMBS, false);
         addOption(md, OptionsConstants.MD_PL_TAIL, false);
-        addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
-        addOption(md, OptionsConstants.MD_PL_GLIDER, false); // NON-NLS-1$
-        addOption(md, OptionsConstants.MD_PL_FLIGHT, false); // NON-NLS-1$
-        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);// NON-NLS-1$ 
+        addOption(md, OptionsConstants.MD_PL_MASC, false);
+        addOption(md, OptionsConstants.MD_PL_GLIDER, false);
+        addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
+        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
         
         //TODO - Prototype DNI IO pg 83
     }

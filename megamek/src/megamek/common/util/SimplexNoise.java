@@ -88,12 +88,12 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 
     /** Limit the value to be between the two supplied ones, inclusive */
     private static double limit(double min, double max, double val) {
-        return (val < min) ? min : ((val > max) ? max : val);
+        return (val < min) ? min : (Math.min(val, max));
     }
 
     public static double noiseOctaves(double xin, double yin, int octaves, double scale) {
         if (octaves <= 0) {
-            throw new IllegalArgumentException("Octaves have to be non-null"); // $NON-NLS-0$
+            throw new IllegalArgumentException("Octaves have to be non-null");
         }
         double result = 0.0;
         double overallScale = 0.0;

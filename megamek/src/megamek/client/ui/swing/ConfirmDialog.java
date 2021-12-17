@@ -185,8 +185,7 @@ public class ConfirmDialog extends JDialog{
         c.gridheight = 1;
 
         if (useCheckbox) {
-            botherCheckbox = new JCheckBox(Messages
-                    .getString("ConfirmDialog.dontBother"));
+            botherCheckbox = new JCheckBox(Messages.getString("ConfirmDialog.dontBother"));
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);

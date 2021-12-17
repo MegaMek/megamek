@@ -1662,14 +1662,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
             LongestPathFinder lpf;
             if (ce().isAero()) {
-                lpf = LongestPathFinder.newInstanceOfAeroPath(maxMp, ce()
-                        .getGame());
+                lpf = LongestPathFinder.newInstanceOfAeroPath(maxMp, ce().getGame());
             } else {
-                lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp,
-                                                                 stepType, ce().getGame());
+                lpf = LongestPathFinder.newInstanceOfLongestPath(maxMp, stepType, ce().getGame());
             }
-            final int timeLimit = PreferenceManager.getClientPreferences()
-                                                   .getMaxPathfinderTime();
+            final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
             lpf.addStopCondition(new AbstractPathFinder.StopConditionTimeout<>(timeLimit * 4));
 
             lpf.run(cmd);

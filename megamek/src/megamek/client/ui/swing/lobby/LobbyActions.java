@@ -182,7 +182,7 @@ public class LobbyActions {
         if (forceIds.stream().anyMatch(id -> !forces.contains(id))) {
             return;
         }
-        Set<Force> forceList = forceIds.stream().map(id -> forces.getForce(id)).collect(toSet());
+        Set<Force> forceList = forceIds.stream().map(forces::getForce).collect(toSet());
         if (!areForcesEditable(forceList)) {
             LobbyErrors.showCannotConfigEnemies(frame());
             return;
@@ -862,7 +862,7 @@ public class LobbyActions {
         Set<Entity> updateCandidates = new HashSet<>(entities);
         if (disconnectFirst) { // this is only true when a C3 lance is formed from SSSM
             updateCandidates.addAll(performDisconnect(entities));
-            updateCandidates.addAll(performDisconnect(List.of(master)));
+            updateCandidates.addAll(performDisconnect(Arrays.asList(master)));
         }
         int newC3nodeCount = entities.stream().mapToInt(e -> game().getC3SubNetworkMembers(e).size()).sum();
         int masC3nodeCount = game().getC3NetworkMembers(master).size();
@@ -969,7 +969,7 @@ public class LobbyActions {
             return;
         }
         Entity carrier = CollectionUtil.anyOneElement(entities);
-        if (!validateUpdate(List.of(carrier))) {
+        if (!validateUpdate(Arrays.asList(carrier))) {
             return;
         }
         Bay bay = carrier.getBayById(bayId);

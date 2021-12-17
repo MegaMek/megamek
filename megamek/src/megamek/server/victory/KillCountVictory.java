@@ -42,9 +42,9 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // Stores the number of kills for each team
-        Hashtable<Integer,Integer> killsTeam = new Hashtable<>();
+        Hashtable<Integer, Integer> killsTeam = new Hashtable<>();
         // Stores the number of kills for players no on a team
-        Hashtable<Integer,Integer> killsPlayer = new Hashtable<>();
+        Hashtable<Integer, Integer> killsPlayer = new Hashtable<>();
         
         updateKillTables(game, killsTeam, killsPlayer, game.getWreckedEntities());
         updateKillTables(game, killsTeam, killsPlayer, game.getCarcassEntities());

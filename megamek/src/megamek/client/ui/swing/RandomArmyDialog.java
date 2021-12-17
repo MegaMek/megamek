@@ -820,8 +820,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         createRatTreeNodes(root, ratTree);
         m_treeRAT.setModel(new DefaultTreeModel(root));
         
-        String selectedRATPath = 
-                GUIPreferences.getInstance().getRATSelectedRAT();
+        String selectedRATPath = GUIPreferences.getInstance().getRATSelectedRAT();
         if (!selectedRATPath.isBlank()) {
             String[] nodes = selectedRATPath.replace('[', ' ')
                     .replace(']', ' ').split(",");

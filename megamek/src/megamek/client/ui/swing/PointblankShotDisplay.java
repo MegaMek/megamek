@@ -519,8 +519,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty()
-                && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");

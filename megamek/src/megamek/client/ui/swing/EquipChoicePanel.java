@@ -207,22 +207,18 @@ public class EquipChoicePanel extends JPanel {
         }
         
         // Setup AP mounts
-        if ((entity instanceof BattleArmor) 
-                && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
+        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
             setupAPMounts();
-            panAPMounts.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.APMountPanelTitle"),
+            panAPMounts.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.APMountPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             
             add(panAPMounts,GBC.eop().anchor(GridBagConstraints.CENTER));
         }
         
-        if ((entity instanceof BattleArmor) 
-                && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {            
-            panMEAdaptors.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.MEAPanelTitle"),
+        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {
+            panMEAdaptors.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.MEAPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             // We need to determine how much weight is free, so the user can
             //  pick legal combinations of manipulators
@@ -239,10 +235,8 @@ public class EquipChoicePanel extends JPanel {
                     maxTrooperWeight = trooperWeight;
                 }
             }
-            String freeWeight = Messages
-                    .getString("CustomMechDialog.freeWeight")
-                    + String.format(": %1$.3f/%2$.3f", maxTrooperWeight,
-                            ba.getTrooperWeight());
+            String freeWeight = Messages.getString("CustomMechDialog.freeWeight")
+                    + String.format(": %1$.3f/%2$.3f", maxTrooperWeight, ba.getTrooperWeight());
                         
             setupMEAdaptors(freeWeight);
             add(panMEAdaptors,GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -252,17 +246,15 @@ public class EquipChoicePanel extends JPanel {
         if (!((entity instanceof Infantry) && !((Infantry) entity)
                 .hasFieldGun()) || (entity instanceof BattleArmor)) {
             setupMunitions();
-            panMunitions.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.MunitionsPanelTitle"),
+            panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.MunitionsPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panMunitions,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
             
             setupWeaponAmmoChoice();
-            panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.WeaponSelectionTitle"),
+            panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.WeaponSelectionTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -273,11 +265,9 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up rapidfire mg
-        if (clientgui.getClient().getGame().getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_BURST)) {
+        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)) {
             setupRapidfireMGs();
-            add(panRapidfireMGs,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
+            add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // set up infantry armor
@@ -292,8 +282,7 @@ public class EquipChoicePanel extends JPanel {
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
-            chSearchlight.setEnabled(!entity
-                    .hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+            chSearchlight.setEnabled(!entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
         // Set up mines
@@ -416,10 +405,9 @@ public class EquipChoicePanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
 
-        int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
-                .getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
-        boolean allowNukes = client.getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
+        int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
+                client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        boolean allowNukes = client.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
         m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
@@ -469,8 +457,7 @@ public class EquipChoicePanel extends JPanel {
         panMEAdaptors.setLayout(gbl);
         
         JLabel lblFreeWeight = new JLabel(freeWeight);
-        panMEAdaptors.add(lblFreeWeight,
-                GBC.eol().anchor(GridBagConstraints.CENTER));
+        panMEAdaptors.add(lblFreeWeight, GBC.eol().anchor(GridBagConstraints.CENTER));
 
         ArrayList<MiscType> manipTypes = new ArrayList<>();
         
@@ -575,15 +562,13 @@ public class EquipChoicePanel extends JPanel {
         for (Mounted ag : armoredGloves) {
             if (aGlove == null) {
                 aGlove = ag;
-            } else if ((aGlove.getLinked() == null) 
-                    && (ag.getLinked() != null)) {
+            } else if ((aGlove.getLinked() == null) && (ag.getLinked() != null)) {
                 aGlove = ag;
             } 
             // If both are linked, TestBattleArmor will mark unit as invalid
         }
         if (aGlove != null) {
-            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove,
-                    agWeapTypes);
+            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove, agWeapTypes);
             panAPMounts.add(apcp, GBC.eol());
             m_vAPMounts.add(apcp);
         }

@@ -71,8 +71,7 @@ public class DedicatedServer {
             }
             dedicated = new Server(password, usePort, !announceUrl.isBlank(), announceUrl, mailer);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
-                                      + ex.getMessage() + ").");
+            LogManager.getLogger().error("Error: could not start server at localhost" + ":" + usePort, ex);
             return;
         }
         if (null != saveGameFileName) {

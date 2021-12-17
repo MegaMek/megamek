@@ -1,21 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.test;
 
 import megamek.common.Board;
 import megamek.common.net.*;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -412,8 +412,8 @@ public class PacketTool extends Frame implements Runnable {
                     Board recvBoard = (Board) packet.getObject(0);
                     try (OutputStream os = new FileOutputStream("xmit.board")) {
                         recvBoard.save(os);
-                    } catch (IOException ioErr) {
-                        ioErr.printStackTrace();
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error(ex);
                     }
                     break;
                 case Packet.COMMAND_SENDING_ENTITIES:

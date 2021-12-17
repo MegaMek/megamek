@@ -7417,8 +7417,7 @@ public abstract class Mech extends Entity {
         }
         boolean success = true;
 
-        int[] centerSlots = getEngine().getCenterTorsoCriticalSlots(
-                getGyroType());
+        int[] centerSlots = getEngine().getCenterTorsoCriticalSlots(getGyroType());
         if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
             success = false;
         } else {

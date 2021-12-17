@@ -1,51 +1,26 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
 package megamek.common.loaders;
 
-/* BLOCK_END */
+import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
 import java.util.Objects;
 import java.util.Vector;
-
-import megamek.common.ArmlessMech;
-import megamek.common.BipedMech;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-
-/* BLOCK_END */
 
 /**
  * Based on the hmpread.c program and the MtfFile object. Note that this class
@@ -56,11 +31,7 @@ import megamek.common.WeaponType;
  * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
  *          help from Ian Hamilton.
  */
-public class HmpFile
-/* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
-implements IMechLoader
-/* BLOCK_END */
-{
+public class HmpFile implements IMechLoader {
     private String name;
     private String model;
     private String fluff = null;
@@ -565,7 +536,7 @@ implements IMechLoader
 
             return mech;
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
             throw new EntityLoadingException(e.getMessage());
         }
     }
@@ -1984,7 +1955,7 @@ implements IMechLoader
             try (InputStream is = new FileInputStream(args[i])) {
                 hmpFile = new HmpFile(is);
             } catch (Exception e) {
-                e.printStackTrace();
+                LogManager.getLogger().error(e);
                 return;
             }
             filename = filename.substring(0, filename.lastIndexOf(".hmp"));
@@ -1994,7 +1965,7 @@ implements IMechLoader
                 out = new BufferedWriter(new FileWriter(new File(filename)));
                 out.write(hmpFile.getMtf());
             } catch (Exception e) {
-                e.printStackTrace();
+                LogManager.getLogger().error(e);
             } finally {
                 if (out != null) {
                     try {

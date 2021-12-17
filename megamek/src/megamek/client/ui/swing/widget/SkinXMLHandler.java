@@ -544,9 +544,8 @@ public class SkinXMLHandler {
                 writeUnitDisplaySkinSpec(output);
             }
             output.write(SKIN_FOOTER);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 

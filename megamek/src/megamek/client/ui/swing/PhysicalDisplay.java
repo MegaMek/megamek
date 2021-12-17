@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
@@ -34,20 +33,16 @@ import java.awt.event.*;
 import java.util.*;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3274750006768636001L;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be
+     * This enumeration lists all the possible ActionCommands that can be
      * carried out during the physical phase.  Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
      *
      * @author arlith
      */
-    public static enum PhysicalCommand implements PhaseCommand {
+    public enum PhysicalCommand implements PhaseCommand {
         PHYSICAL_NEXT("next"),
         PHYSICAL_PUNCH("punch"),
         PHYSICAL_KICK("kick"),
@@ -70,9 +65,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         /**
          * Priority that determines this buttons order
          */
-        public int priority;
+        private int priority;
 
-        private PhysicalCommand(String c) {
+        PhysicalCommand(String c) {
             cmd = c;
         }
 
@@ -1439,25 +1434,26 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.PHYSICAL) {
+        if (!clientgui.getClient().getGame().getPhase().isPhysical()) {
+            LogManager.getLogger().error("Got TurnChange event during the "
+                    + clientgui.getClient().getGame().getPhase() + " phase");
+            return;
+        }
 
-            if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
-                    beginMyTurn();
-                }
-                setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn"));
-            } else {
-                endMyTurn();
-                String playerName;
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
-                } else {
-                    playerName = "Unknown";
-                }
-                setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName));
+        if (clientgui.getClient().isMyTurn()) {
+            if (cen == Entity.NONE) {
+                beginMyTurn();
             }
+            setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn"));
         } else {
-            System.err.println("PhysicalDisplay: got turnchange event when it's not the physical attacks phase");
+            endMyTurn();
+            String playerName;
+            if (e.getPlayer() != null) {
+                playerName = e.getPlayer().getName();
+            } else {
+                playerName = "Unknown";
+            }
+            setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName));
         }
     }
 
@@ -1553,8 +1549,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         Entity e = clientgui.getClient().getGame().getEntity(b.getEntityId());
         if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().getMyTurn()
-                    .isValidEntity(e, clientgui.getClient().getGame())) {
+            if (clientgui.getClient().getMyTurn().isValidEntity(e, clientgui.getClient().getGame())) {
                 selectEntity(e.getId());
             }
         } else {
@@ -1736,6 +1731,5 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             aimingAt = icb.getIndex();
             updateTarget();
         }
-
     }
 }

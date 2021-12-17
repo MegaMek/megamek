@@ -1,23 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
-
-/*
- * InitaitiveRoll.java
  *
- * Created on April 25, 2002, 12:21 PM
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -28,18 +21,18 @@ import java.util.Vector;
  * order. Also contains some methods for ordering players by initiative.
  * 
  * @author Ben
- * @version
+ * @since April 25, 2002, 12:21 PM
  */
 public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable {
 
     private static final long serialVersionUID = -1850190415242027657L;
     private Vector<Integer> rolls = new Vector<>();
     private Vector<Integer> originalRolls = new Vector<>();
-    private Vector<Boolean> wasRollReplaced = new Vector<>(); // booleans
+    private Vector<Boolean> wasRollReplaced = new Vector<>();
     private Vector<Integer> bonuses = new Vector<>();
     
     public InitiativeRoll() {
-        //Creates new InitaitiveRoll
+
     }
 
     public void clear() {

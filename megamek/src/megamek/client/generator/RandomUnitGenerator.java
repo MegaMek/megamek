@@ -444,7 +444,7 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
         }
         return units;
     }

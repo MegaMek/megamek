@@ -14,26 +14,13 @@
 
 package megamek.common.loaders;
 
+import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Objects;
-
-import megamek.common.AmmoType;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.TroopSpace;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
+import java.util.*;
 
 /**
  * Based on the hmpread.c program and the MtfFile object. This class can not
@@ -571,23 +558,18 @@ public class HmvFile implements IMechLoader {
 
             return vehicle;
         } catch (Exception e) {
-            // System.out.println(structureType.toString());
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
             throw new EntityLoadingException(e.getMessage());
         }
     }
 
     private void addEquipmentType(EquipmentType equipmentType, int weaponCount, HMVWeaponLocation weaponLocation) {
-        Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.get(weaponLocation);
-        if (equipmentAtLocation == null) {
-            equipmentAtLocation = new Hashtable<>();
-            equipment.put(weaponLocation, equipmentAtLocation);
-        }
+        Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.computeIfAbsent(weaponLocation, k -> new Hashtable<>());
         Integer prevCount = equipmentAtLocation.get(equipmentType);
         if (null != prevCount) {
-            weaponCount += prevCount.intValue();
+            weaponCount += prevCount;
         }
-        equipmentAtLocation.put(equipmentType, Integer.valueOf(weaponCount));
+        equipmentAtLocation.put(equipmentType, weaponCount);
     }
 
     private void addEquipment(Tank tank, HMVWeaponLocation weaponLocation, int location) throws Exception {

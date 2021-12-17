@@ -9,9 +9,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -26,12 +23,9 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class Jumpship extends Aero {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 9154398176617208384L;
     // Additional Jumpship locations (FLS, FRS and ALS override Aero locations)
     public static final int LOC_FLS = 1;
@@ -134,7 +128,7 @@ public class Jumpship extends Aero {
 
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
-    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0};
+    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0 };
     
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
@@ -167,8 +161,7 @@ public class Jumpship extends Aero {
     }
     
     /**
-     * Primitive Jumpships may be constructed with standard docking collars, or with pre-boom collars. 
-     * 
+     * Primitive JumpShips may be constructed with standard docking collars, or with pre-boom collars.
      */
     public static final int COLLAR_STANDARD  = 0;
     public static final int COLLAR_NO_BOOM = 1;

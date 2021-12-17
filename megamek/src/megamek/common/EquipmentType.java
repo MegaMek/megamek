@@ -30,6 +30,7 @@ import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and
@@ -1335,15 +1336,15 @@ public class EquipmentType implements ITechnology {
             }
             w.flush();
             w.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {
         try {
             BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("Megamek Equipment Extended Database");
+            w.write("MegaMek Equipment Extended Database");
             w.newLine();
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
@@ -1435,8 +1436,8 @@ public class EquipmentType implements ITechnology {
             }
             w.flush();
             w.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 

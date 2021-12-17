@@ -39,46 +39,45 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -4948184589134809323L;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be
+     * This enumeration lists all the possible ActionCommands that can be
      * carried out during the select arty auto hit phase.  Each command has a 
      * string for the command plus a flag that determines what unit type it is 
      * appropriate for.
      * @author arlith
      */
-    public static enum ArtyAutoHitCommand implements PhaseCommand {
-    SET_HIT_HEX("setAutoHitHex");
-    
-    String cmd;
-    
+    public enum ArtyAutoHitCommand implements PhaseCommand {
+        SET_HIT_HEX("setAutoHitHex");
+
+        String cmd;
+
         /**
-         * Priority that determines this buttons order
-         */
-       public int priority;
-    
-    private ArtyAutoHitCommand(String c) {
-    cmd = c;
-    }
-    
-    @Override
-    public String getCmd() {
-    return cmd;
-    }
-    
+        * Priority that determines this buttons order
+        */
+        private int priority;
+
+        ArtyAutoHitCommand(String c) {
+            cmd = c;
+        }
+
+        @Override
+        public String getCmd() {
+            return cmd;
+        }
+
         @Override
         public int getPriority() {
             return priority;
         }
-        
+
         @Override
-        public void setPriority(int p) {
-            priority = p;
+        public void setPriority(int priority) {
+            this.priority = priority;
         }
-    
-    @Override
-    public String toString() {
-            return Messages
-                    .getString("SelectArtyAutoHitHexDisplay." + getCmd());
-    }
+
+        @Override
+        public String toString() {
+            return Messages.getString("SelectArtyAutoHitHexDisplay." + getCmd());
+        }
     }
     
     // buttons

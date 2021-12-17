@@ -29,6 +29,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -127,8 +128,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                     "Archer ARC-2W");
             testEntity = new MechFileParser(ms.getSourceFile(),
                     ms.getEntryName()).getEntity();
-        } catch (EntityLoadingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -211,8 +212,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + e);
             die();
@@ -252,7 +253,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + e);
             die();

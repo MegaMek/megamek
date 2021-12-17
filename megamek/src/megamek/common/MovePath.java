@@ -307,8 +307,7 @@ public class MovePath implements Cloneable, Serializable {
             try {
                 step.compile(getGame(), getEntity(), prev, getCachedEntityState());
             } catch (final RuntimeException re) {
-                // // N.B. the pathfinding will try steps off the map.
-                // re.printStackTrace();
+                // N.B. the pathfinding will try steps off the map.
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }

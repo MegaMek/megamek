@@ -179,7 +179,7 @@ public class GALance extends GA {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
         }
         double max = 0;
         // bonuses for endangering or dooming opponent mechs

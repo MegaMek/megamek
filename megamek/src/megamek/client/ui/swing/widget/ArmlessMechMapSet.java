@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -38,7 +37,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * Very cumbersome class that handles set of polygonal areas and labels for
  * PicMap component to represent single mech unit in MechDisplay
  */
-
 public class ArmlessMechMapSet implements DisplayMapSet {
 
     // Because of keeping all areas of single type in one array
@@ -195,18 +193,12 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay,
-                Mech.LOC_HEAD);
-        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay,
-                Mech.LOC_CT);
-        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay,
-                Mech.LOC_RT);
-        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay,
-                Mech.LOC_LT);
-        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay,
-                Mech.LOC_RLEG);
-        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay,
-                Mech.LOC_LLEG);
+        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Mech.LOC_HEAD);
+        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay, Mech.LOC_CT);
+        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay, Mech.LOC_RT);
+        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay, Mech.LOC_LT);
+        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay, Mech.LOC_RLEG);
+        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay, Mech.LOC_LLEG);
         areas[REAR_AREA_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
                 rearCentralTorso, unitDisplay, Mech.LOC_CT);
         areas[REAR_AREA_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
@@ -234,18 +226,18 @@ public class ArmlessMechMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[Mech.LOC_HEAD] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_H"), fm, Color.black, 62, 6);
-        labels[Mech.LOC_LT] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_LT"), fm, Color.black, 41, 52);
-        labels[Mech.LOC_CT] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_CT"), fm, Color.black, 62, 42);
-        labels[Mech.LOC_RT] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_RT"), fm, Color.black, 84, 52);
-        labels[Mech.LOC_LLEG] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_LL"), fm, Color.black, 28, 92);
-        labels[Mech.LOC_RLEG] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_RL"), fm, Color.black, 98, 92);
+        labels[Mech.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_H"),
+                fm, Color.black, 62, 6);
+        labels[Mech.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
+                fm, Color.black, 41, 52);
+        labels[Mech.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CT"),
+                fm, Color.black, 62, 42);
+        labels[Mech.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
+                fm, Color.black, 84, 52);
+        labels[Mech.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LL"),
+                fm, Color.black, 28, 92);
+        labels[Mech.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RL"),
+                fm, Color.black, 98, 92);
         // Labels for Back view
         labels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils.createLabel(
                 Messages.getString("MechMapSet.l_LT"), fm, Color.black, 133, 39);
@@ -347,19 +339,15 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline()).toString());
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER
                 | BackGroundDrawer.HALIGN_CENTER;

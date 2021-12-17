@@ -544,8 +544,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         loadHexImage(hex);
         try {
             tracker.waitForID(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 

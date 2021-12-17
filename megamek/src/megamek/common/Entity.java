@@ -329,7 +329,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
     private OffBoardDirection retreatedDirection = OffBoardDirection.NONE;
 
-    protected int[] vectors = {0, 0, 0, 0, 0, 0};
+    protected int[] vectors = { 0, 0, 0, 0, 0, 0 };
     private int recoveryTurn = 0;
     // need to keep a list of areas that this entity has passed through on the
     // current turn
@@ -725,9 +725,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     // is calculated by getArmorTonnage
     protected double armorTonnage;
 
-    protected static int[] MASC_FAILURE = {3, 5, 7, 11, 13, 13, 13};
-    protected static int[] ALTERNATE_MASC_FAILURE = {0, 3, 5, 7, 11, 13, 13, 13};
-    protected static int[] ALTERNATE_MASC_FAILURE_ENHANCED = {0, 3, 3, 5, 7, 11, 13, 13, 13};
+    protected static int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
+    protected static int[] ALTERNATE_MASC_FAILURE = { 0, 3, 5, 7, 11, 13, 13, 13 };
+    protected static int[] ALTERNATE_MASC_FAILURE_ENHANCED = { 0, 3, 3, 5, 7, 11, 13, 13, 13 };
 
     // MASCLevel is the # of turns MASC has been used previously
     protected int nMASCLevel = 0;
@@ -10576,9 +10576,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
-                } catch (LocationFullException e) {
+                } catch (Exception e) {
                     // can't happen
-                    e.printStackTrace();
+                    LogManager.getLogger().error(e);
                 }
             }
         }
@@ -10598,9 +10598,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
-                } catch (LocationFullException e) {
+                } catch (Exception e) {
                     // can't happen
-                    e.printStackTrace();
+                    LogManager.getLogger().error(e);
                 }
             }
         }
@@ -10621,9 +10621,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
-                } catch (LocationFullException e) {
+                } catch (Exception e) {
                     // can't happen
-                    e.printStackTrace();
+                    LogManager.getLogger().error(e);
                 }
             }
         }
@@ -14039,8 +14039,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 Mounted masc = getMASC();
                 Mounted superCharger = getSuperCharger();
                 bFailure = doMASCCheckFor(masc, vDesc, vCriticals);
-                boolean bSuperChargeFailure = doMASCCheckFor(superCharger,
-                                                             vDesc, vCriticals);
+                boolean bSuperChargeFailure = doMASCCheckFor(superCharger, vDesc, vCriticals);
                 usedMASC = true;
                 return bFailure || bSuperChargeFailure;
             }
@@ -14123,10 +14122,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
                             CriticalSlot cs = getCritical(Mech.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                                && (cs.getIndex() == Mech.SYSTEM_ENGINE)
-                                && cs.isHittable()) {
-                                vCriticals.get(Mech.LOC_CT)
-                                          .add(cs);
+                                    && (cs.getIndex() == Mech.SYSTEM_ENGINE) && cs.isHittable()) {
+                                vCriticals.get(Mech.LOC_CT).add(cs);
                                 hits--;
                             }
                         }
@@ -14134,7 +14131,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         // this must be a Tank
                         Tank tank = (Tank) this;
                         boolean vtolStabilizerHit = (this instanceof VTOL)
-                                                    && tank.isStabiliserHit(VTOL.LOC_ROTOR);
+                                && tank.isStabiliserHit(VTOL.LOC_ROTOR);
                         boolean minorMovementDamage = tank
                                 .hasMinorMovementDamage();
                         boolean moderateMovementDamage = tank
@@ -14150,43 +14147,33 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             if (tank instanceof VTOL) {
                                 if (vtolStabilizerHit) {
                                     vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
-                                                      CriticalSlot.TYPE_SYSTEM,
-                                                      Tank.CRIT_ENGINE));
+                                            CriticalSlot.TYPE_SYSTEM, Tank.CRIT_ENGINE));
                                 } else {
-                                    vCriticals
-                                            .get(VTOL.LOC_ROTOR).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    VTOL.CRIT_FLIGHT_STABILIZER));
+                                    vCriticals.get(VTOL.LOC_ROTOR).add(new CriticalSlot(
+                                            CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_FLIGHT_STABILIZER));
                                     vtolStabilizerHit = true;
                                 }
                             } else {
                                 if (heavyMovementDamage) {
                                     vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
-                                                      CriticalSlot.TYPE_SYSTEM,
-                                                      Tank.CRIT_ENGINE));
+                                            CriticalSlot.TYPE_SYSTEM, Tank.CRIT_ENGINE));
                                 } else if (moderateMovementDamage) {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .get(-1).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM, 3));
+                                    vCriticals.get(-1).add(new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
                                     heavyMovementDamage = true;
                                 } else if (minorMovementDamage) {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .get(-1).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM, 2));
+                                    vCriticals.get(-1).add(new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 2));
                                     moderateMovementDamage = true;
                                 } else {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .get(-1).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM, 1));
+                                    vCriticals.get(-1).add(new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 1));
                                     minorMovementDamage = true;
                                 }
                             }
@@ -14197,8 +14184,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     // do the damage.
                     // random crit on each leg, but MASC is not destroyed
                     for (int loc = 0; loc < locations(); loc++) {
-                        if (locationIsLeg(loc)
-                            && (getHittableCriticals(loc) > 0)) {
+                        if (locationIsLeg(loc) && (getHittableCriticals(loc) > 0)) {
                             CriticalSlot slot;
                             do {
                                 int slotIndex = Compute.randomInt(getNumberOfCriticals(loc));
@@ -15158,8 +15144,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If sort mode is custom, and the custom order is null, create it
         // and make the order the same as default (based on eqId)
-        if ((weaponSortOrder == WeaponSortOrder.CUSTOM)
-            && (customWeapOrder == null)) {
+        if ((weaponSortOrder == WeaponSortOrder.CUSTOM) && (customWeapOrder == null)) {
             customWeapOrder = new HashMap<>();
             for (Mounted weap : weaponList) {
                 int eqId = getEquipmentNum(weap);

@@ -35,6 +35,7 @@ import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -603,8 +604,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             try {
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
-            } catch (PrincessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
             }
         }
     }

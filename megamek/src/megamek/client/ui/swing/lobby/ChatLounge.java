@@ -3278,8 +3278,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (!boards.contains(name)) {
                 try {
                     boards.put(name);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    LogManager.getLogger().error(e);
                 }
             }
         }

@@ -2024,8 +2024,8 @@ public class Infantry extends Entity {
             try {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
             }
         } else if ((spec & TRENCH_ENGINEERS) == 0
                 && (infSpecs & TRENCH_ENGINEERS) > 0) {
@@ -2046,8 +2046,8 @@ public class Infantry extends Entity {
             try {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
             }
         } else if ((spec & DEMO_ENGINEERS) == 0
                 && (infSpecs & DEMO_ENGINEERS) > 0) {

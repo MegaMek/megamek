@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -25,12 +24,7 @@ import java.util.Objects;
  *         entity. This class is immutable. Once it is created, it can not be
  *         changed. An iNarc pod can be targeted for a "brush off" attack.
  */
-
 public class INarcPod implements Serializable, Targetable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3566809840132774242L;
     public static final int HOMING = 1;
     public static final int ECM = 2;
@@ -145,15 +139,13 @@ public class INarcPod implements Serializable, Targetable {
     @Override
     public Coords getPosition() {
         // Hopefully, this will **never** get called.
-        throw new IllegalStateException(
-                "Never ask for the coords of an INarcPod.");
+        throw new IllegalStateException("Never ask for the coords of an INarcPod.");
     }
 
     @Override
     public Map<Integer, Coords> getSecondaryPositions() {
         // Hopefully, this will **never** get called.
-        throw new IllegalStateException(
-                "Never ask for the coords of an INarcPod.");
+        throw new IllegalStateException("Never ask for the coords of an INarcPod.");
     }
 
 

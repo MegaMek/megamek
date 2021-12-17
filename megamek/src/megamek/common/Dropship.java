@@ -27,7 +27,7 @@ public class Dropship extends SmallCraft {
     
     // ASEW Missile Effects, per location
     // Values correspond to Locations: NOS,Left,Right,AFT
-    private int[] asewAffectedTurns = {0,0,0,0};
+    private int[] asewAffectedTurns = { 0, 0, 0, 0 };
     
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile

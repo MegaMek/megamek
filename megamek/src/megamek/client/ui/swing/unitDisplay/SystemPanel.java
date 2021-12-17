@@ -1,12 +1,19 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ChoiceDialog;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -14,65 +21,18 @@ import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChoiceDialog;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.Game;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.WeaponType;
-import megamek.common.enums.GamePhase;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-
 /**
  * This class shows the critical hits and systems for a mech
  */
-class SystemPanel extends PicMap implements ItemListener, ActionListener,
-        ListSelectionListener {
+class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSelectionListener {
     
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
     private static int LOC_SPACER = 2;
     private static int LOC_OFFSET = 3;
-    
-    /**
-     * 
-     */
+
     private final UnitDisplay unitDisplay;
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6660316427898323590L;
 
     private JLabel locLabel;
@@ -453,13 +413,9 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 sb.append(m.pendingMode().getDisplayableName());
                 sb.append(')');
             }
-            if ((m.getType() instanceof MiscType)
-                    && ((MiscType) m.getType()).isShield()) {
-                sb.append(" "
-                        + m.getDamageAbsorption(en, m.getLocation())
-                        + '/'
-                        + m.getCurrentDamageCapacity(en,
-                                m.getLocation()) + ')');
+            if ((m.getType() instanceof MiscType) && ((MiscType) m.getType()).isShield()) {
+                sb.append(" ").append(m.getDamageAbsorption(en, m.getLocation())).append('/')
+                        .append(m.getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
         }
         return sb.toString();
@@ -486,16 +442,14 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
-                                && (clientgui.getClient().getGame()
-                                        .getPhase() != GamePhase.FIRING)) {
+                                && !clientgui.getClient().getGame().getPhase().isFiring()) {
                             clientgui.systemMessage(Messages.getString("MechDisplay.ShieldModePhase"));
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().getGame().getPhase()
-                                != GamePhase.PHYSICAL)) {
+                                && !clientgui.getClient().getGame().getPhase().isPhysical()) {
                             clientgui.systemMessage(Messages.getString("MechDisplay.VibrobladeModePhase"));
                             return;
                         }
@@ -511,8 +465,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         // been fired.
                         if ((m.getType() instanceof MiscType)
                                 && (m.getLinked() != null)
-                                && ((MiscType) m.getType())
-                                        .hasFlag(MiscType.F_PPC_CAPACITOR)
+                                && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
                                 && m.getLinked().isUsedThisRound()
                                 && (nMode == 1)) {
                             clientgui.systemMessage(Messages.getString("MechDisplay.CapacitorCharging"));
@@ -548,8 +501,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
                         if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit()
-                                && (en instanceof Mech)) {
+                                && en.hasEiCockpit() && (en instanceof Mech)) {
                             Mech mech = (Mech) en;
                             mech.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(

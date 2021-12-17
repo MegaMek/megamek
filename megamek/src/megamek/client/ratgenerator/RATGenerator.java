@@ -1256,7 +1256,7 @@ public class RATGenerator {
                 pw.println("</ratgen>");
                 pw.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                LogManager.getLogger().error(e);
             }
         }
     }

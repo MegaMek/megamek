@@ -24,7 +24,6 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
@@ -69,7 +68,7 @@ import java.util.zip.GZIPInputStream;
 
 import static megamek.common.Compute.d6;
 
-public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
+public class MegaMekGUI  implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
@@ -88,8 +87,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
     BufferedImage backgroundIcon = null;
 
-    @Override
-    public void start(String[] args) {
+    public void start() {
         createGUI();
     }
 

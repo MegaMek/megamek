@@ -249,7 +249,7 @@ class ArmorPanel extends PicMap {
         }
 
         if (ams == null) {
-            LogManager.getLogger().error("Thee armor panel is null");
+            LogManager.getLogger().error("The armor panel is null");
             return;
         }
         ams.setEntity(en);

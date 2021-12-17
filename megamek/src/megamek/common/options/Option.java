@@ -135,7 +135,7 @@ public class Option implements IOption, Serializable {
             return (Integer) value > 0;
         }
         if (type == CHOICE || type == STRING) {
-            return !value.equals("None") && !value.isBlank();
+            return !value.equals("None") && !value.equals("");
         }
         return ((Boolean) value);
     }

@@ -825,17 +825,18 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
+            if (!(value instanceof String) || !((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
+                return;
+            }
+            String stringValue = (String) value;
             AvailabilityRating ar;
             int era = ERAS[col - 1];
-            if ((value).isBlank()) {
+            if (stringValue.isBlank()) {
                 ar = null;
-            } else if (!((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
-                return;
             } else {
-                ar = new AvailabilityRating(getUnitKey(), era,
-                        factions.get(row) + ":" + value);
+                ar = new AvailabilityRating(getUnitKey(), era, factions.get(row) + ":" + stringValue);
             }
-            data.get(factions.get(row)).set(col - 1, (String) value);
+            data.get(factions.get(row)).set(col - 1, stringValue);
             if (rg.getChassisRecord(getUnitKey()) != null) {
                 if (ar == null) {
                     rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                

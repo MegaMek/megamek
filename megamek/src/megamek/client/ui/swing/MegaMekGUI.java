@@ -68,7 +68,7 @@ import java.util.zip.GZIPInputStream;
 
 import static megamek.common.Compute.d6;
 
-public class MegaMekGUI  implements IPreferenceChangeListener {
+public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
@@ -101,7 +101,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener {
             Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
             LogManager.getLogger().info("Loaded Font: " + btFont.getName());
             ge.registerFont(btFont);
-        } catch (IOException | FontFormatException e) {
+        } catch (Exception e) {
             LogManager.getLogger().error("Failed to Register BT Classic Font", e);
         }
 

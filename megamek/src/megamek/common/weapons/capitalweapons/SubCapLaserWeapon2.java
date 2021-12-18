@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Jay Lawson
  */
@@ -48,16 +50,18 @@ public class SubCapLaserWeapon2 extends SubCapLaserWeapon {
         this.medAV = 2;
         this.maxRange = RANGE_MED;
         rulesRefs = "343,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
-            .setISAdvancement(3069, 3073, 3145, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setClanAdvancement(DATE_NONE, DATE_NONE, 3091, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_WB,F_CSR)
-            .setProductionFactions(F_WB);
+	    	.setIntroLevel(false)
+	    	.setUnofficial(false)
+	        .setTechRating(RATING_E)
+	        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+	        .setISAdvancement(DATE_NONE, 3068, 3073, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, true, false,false, false)
+	        .setClanAdvancement(DATE_NONE, 3090, 3091, DATE_NONE, DATE_NONE)
+	        .setClanApproximate(false, true, false,false, false)
+	        .setPrototypeFactions(F_WB)
+	        .setProductionFactions(F_WB)
+	        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

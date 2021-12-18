@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.flamers;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
 /**
@@ -51,14 +52,16 @@ public class CLERFlamer extends FlamerWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "312,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(RATING_D)
         .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setClanAdvancement(3065, 3067, 3081, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
+        .setClanAdvancement(DATE_NONE, 3067, 3081, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, true,false, false)
         .setPrototypeFactions(F_CJF)
-        .setProductionFactions(F_CJF);
+        .setProductionFactions(F_CJF)
+        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

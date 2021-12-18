@@ -59,7 +59,7 @@ public class CLArrowIV extends ArtilleryWeapon {
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-            .setClanAdvancement(DATE_NONE, 2844, 2850, DATE_NONE, DATE_NONE)
+            .setClanAdvancement(DATE_NONE, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_CHH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);

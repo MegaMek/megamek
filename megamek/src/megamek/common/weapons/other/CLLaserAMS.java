@@ -18,6 +18,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -62,12 +63,14 @@ public class CLLaserAMS extends LaserWeapon {
         setInstantModeSwitch(false);
         cost = 100000;
         rulesRefs = "322,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setClanAdvancement(3048, 3079, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, true, false,false, false)
+            .setClanAdvancement(DATE_NONE, 3048, 3079, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, true, false, false)
             .setPrototypeFactions(F_CWF)
-            .setProductionFactions(F_CWF);
+            .setProductionFactions(F_CWF)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.PulseLaserWeapon;
 
 /**
@@ -55,14 +56,14 @@ public class CLBAERPulseLaserMedium extends PulseLaserWeapon {
         cost = 150000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258,TM";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
+    	.setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
         .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setClanAdvancement(3057, 3082, 3085, DATE_NONE, DATE_NONE)
+        .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, false, false, false, false)
         .setPrototypeFactions(F_CWF)
-        .setProductionFactions(F_CWF);
+        .setProductionFactions(F_CWF)
+        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

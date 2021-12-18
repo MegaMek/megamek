@@ -17,6 +17,7 @@
 package megamek.common.weapons.flamers;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
 /**
@@ -56,14 +57,16 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         atClass = CLASS_POINT_DEFENSE;
         cost = 11250;
         rulesRefs = "312,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
     	.setTechRating(RATING_C)
     	.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setClanAdvancement(3065, 3067, 3079, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
+        .setClanAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, true, false, false)
         .setPrototypeFactions(F_CJF)
-        .setProductionFactions(F_CJF);
+        .setProductionFactions(F_CJF)
+        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

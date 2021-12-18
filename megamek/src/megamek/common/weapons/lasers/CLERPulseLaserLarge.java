@@ -58,9 +58,11 @@ public class CLERPulseLaserLarge extends PulseLaserWeapon {
         bv = 272;
         cost = 400000;
         rulesRefs = "320,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setClanAdvancement(3057, 3082, 3095).setPrototypeFactions(F_CWF)
-            .setProductionFactions(F_CWF).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setClanAdvancement(DATE_NONE, 3057, 3082, DATE_NONE, DATE_NONE)
+            .setPrototypeFactions(F_CWF)
+            .setProductionFactions(F_CWF).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

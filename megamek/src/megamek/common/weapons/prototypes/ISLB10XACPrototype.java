@@ -19,6 +19,7 @@ package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
 import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -67,7 +68,8 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         .setISApproximate(false, false, false, true, true)
         .setPrototypeFactions(F_TH)
         .setProductionFactions(F_TH)
-        .setReintroductionFactions(F_FS,F_LC);
+        .setReintroductionFactions(F_FS,F_LC)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override

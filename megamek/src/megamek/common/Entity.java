@@ -1235,8 +1235,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             .setPrototypeFactions(F_CCY, F_CSF, F_MERC).setProductionFactions(F_CCY, F_DC)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS   
     protected static final TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true)
+            .setAdvancement(DATE_PS, 3080, DATE_NONE).setApproximate(false, true, false)
             .setTechRating(RATING_A)
             .setAvailability(RATING_E, RATING_D, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -1248,11 +1249,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL)
-            .setISAdvancement(3061, 3082).setClanAdvancement(3061, 3077)
+            .setISAdvancement(3061, 3082,DATE_NONE,DATE_NONE,DATE_NONE)
+            .setISApproximate(false,true,false,false,false)
+            .setClanAdvancement(3061, 3082,DATE_NONE,DATE_NONE,DATE_NONE)
+            .setClanApproximate(false,true,false,false,false)
             .setPrototypeFactions(F_CSF,F_FW).setProductionFactions(F_CJF,F_FW)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     public static TechAdvancement getOmniAdvancement() {
         return getOmniAdvancement(null);

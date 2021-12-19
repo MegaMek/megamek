@@ -348,7 +348,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
-        Dimension size = new Dimension(325,50);
+        Dimension size = new Dimension(325, 50);
         txtEqExp.setPreferredSize(size);
         expScroller.setPreferredSize(size);
         expScroller.setMaximumSize(size);
@@ -371,7 +371,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         panWalk.add(tWalk);
         this.add(panWalk,c);
         c.gridx = 3; c.gridy = 0;
-        c.insets = new Insets(0,40, 0, 0);
+        c.insets = new Insets(0, 40, 0, 0);
         c.weighty = 1;
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
@@ -397,7 +397,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
         c.weighty = 1;
-        c.insets = new Insets(0,40, 0, 0);
+        c.insets = new Insets(0, 40, 0, 0);
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
@@ -415,7 +415,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         this.add(cArmor,c);
         c.gridx = 3;
         c.weighty = 1;
-        c.insets = new Insets(0,40, 0, 0);
+        c.insets = new Insets(0, 40, 0, 0);
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);

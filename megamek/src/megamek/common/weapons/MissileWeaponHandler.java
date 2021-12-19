@@ -495,7 +495,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         } else if (getCounterAV() > 0) {
             // Good for squadron missile fire. This may get divided up against too many missile racks to produce a result.
             // Set a minimum -4 (default AMS mod)
-            return Math.max((getCounterAV() / nweaponsHit),4);
+            return Math.max((getCounterAV() / nweaponsHit), 4);
         }
         return 0;
     }

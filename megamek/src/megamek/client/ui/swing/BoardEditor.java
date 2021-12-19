@@ -204,7 +204,7 @@ public class BoardEditor extends JPanel
     private Game game = new Game();
     private Board board = game.getBoard();
     private BoardView bv;
-    public static final int[] allDirections = { 0, 1, 2,3,4,5 };
+    public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
     boolean isDragging = false;
     private Component bvc;
     private CommonMenuBar menuBar = new CommonMenuBar(this);
@@ -907,15 +907,15 @@ public class BoardEditor extends JPanel
         butExitDown = prepareButton("ButtonEXDN", "Decrease Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
 
         // Arrows and text fields for type and exits
-        JPanel panUP = new JPanel(new GridLayout(1, 0,4,4));
+        JPanel panUP = new JPanel(new GridLayout(1, 0, 4, 4));
         panUP.add(butTerrUp);
         panUP.add(butExitUp);
         panUP.add(butTerrExits);
-        JPanel panTex = new JPanel(new GridLayout(1, 0,4,4));
+        JPanel panTex = new JPanel(new GridLayout(1, 0, 4, 4));
         panTex.add(texTerrainLevel);
         panTex.add(texTerrExits);
         panTex.add(cheTerrExitSpecified);
-        JPanel panDN = new JPanel(new GridLayout(1, 0,4,4));
+        JPanel panDN = new JPanel(new GridLayout(1, 0, 4, 4));
         panDN.add(butTerrDown);
         panDN.add(butExitDown);
         panDN.add(Box.createHorizontalStrut(5));

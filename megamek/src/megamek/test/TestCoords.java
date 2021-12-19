@@ -88,21 +88,21 @@ public class TestCoords {
         correct = "(4,2)";
         System.out.println(String.format(FARFORMAT, origin.toFriendlyString(), dist, dir, correct, neighbor.toFriendlyString()));
 
-        origin = new Coords(10,4);        
+        origin = new Coords(10, 4);        
         dir = 0;
         dist = 2;
         neighbor = origin.translated(dir, dist);
         correct = "(11,3)";
         System.out.println(String.format(FARFORMAT, origin.toFriendlyString(), dist, dir, correct, neighbor.toFriendlyString()));
         
-        origin = new Coords(10,4);        
+        origin = new Coords(10, 4);        
         dir = 3;
         dist = 5;
         neighbor = origin.translated(dir, dist);
         correct = "(11,10)";
         System.out.println(String.format(FARFORMAT, origin.toFriendlyString(), dist, dir, correct, neighbor.toFriendlyString()));
         
-        origin = new Coords(10,4);        
+        origin = new Coords(10, 4);        
         dir = 4;
         dist = 3;
         neighbor = origin.translated(dir, dist);
@@ -111,7 +111,7 @@ public class TestCoords {
         
         
         
-        origin = new Coords(10,4); // displays as 11,5        
+        origin = new Coords(10, 4); // displays as 11,5        
         neighbor = origin.translated(dir, dist);
         correct = "(11, 4); (12, 4); (12, 5); (11, 6); (10, 5); (10, 4)";
         System.out.println("All neighbors of "+origin.toFriendlyString()+": ");

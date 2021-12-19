@@ -313,7 +313,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(true, result);
         
         // Add some Angel ECM to eliminate the ECCM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 0, 1);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -389,7 +389,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(false, result);
         
         // Add in another enemy basic ECM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 1, 0);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -563,7 +563,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(true, result);
         
         // Add some Angel ECM to eliminate the ECCM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 0, 1);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -639,7 +639,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(false, result);
         
         // Add in another enemy basic ECM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 1, 0);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -704,7 +704,7 @@ public class ComputeECMTest {
         
         // Add Entity with ECM
         Entity enemy1 = Mockito.mock(Mech.class);
-        Coords ecm1Pos = new Coords(5,5);
+        Coords ecm1Pos = new Coords(5, 5);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, owner, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -761,7 +761,7 @@ public class ComputeECMTest {
         
         // Attacking Entity
         Entity enemy1 = Mockito.mock(Mech.class);
-        Coords ecm1Pos = new Coords(5,5);
+        Coords ecm1Pos = new Coords(5, 5);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, owner, 0, 1);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);

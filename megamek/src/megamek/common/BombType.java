@@ -58,7 +58,7 @@ public class BombType extends AmmoType {
                                                     "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
                                                     null, "LAAMissile", null, null, "AlamoMissile", null, null };
 
-    public static final int[] bombCosts = { 1, 1, 1, 1, 1,5,6,6,5,5, 1, 2, 1, 1, 10, 1, 2 };
+    public static final int[] bombCosts = { 1, 1, 1, 1, 1, 5,6,6, 5, 5, 1, 2, 1, 1, 10, 1, 2 };
     
     public static final Map<String, Integer> blastRadius;
     private int bombType;

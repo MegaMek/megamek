@@ -192,7 +192,7 @@ public class AeroMapSet implements DisplayMapSet {
         // Labels for Front view
         // Prefer to use message thingy but don't know how
         labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black, 62, 30);
-        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 10,57);
+        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 10, 57);
         labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black, 32, 120);
         //    labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
         labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black, 92, 120);

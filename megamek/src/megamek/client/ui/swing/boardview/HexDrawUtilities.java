@@ -188,7 +188,7 @@ public class HexDrawUtilities {
         return area;        
     }    
     
-    // a border for the facings 0, 1, 2,3; crossing the hex
+    // a border for the facings 0, 1, 2, 3; crossing the hex
     private static Shape getHCLU0123() {
         Path2D.Double border = new Path2D.Double();
         // the 5/8 is chosen arbitrarily
@@ -217,7 +217,7 @@ public class HexDrawUtilities {
         return area;        
     }    
     
-    // a border for the facings 0, 1, 2,3,4; crossing the hex
+    // a border for the facings 0, 1, 2, 3, 4; crossing the hex
     private static Shape getHCLU01234() {
         Path2D.Double border = new Path2D.Double();
         border.moveTo(HEX_UL.x, HEX_UL.y);

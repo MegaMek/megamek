@@ -305,7 +305,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); 
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); 
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); 
-        displayLocale.setMaximumSize(new Dimension(150,40));
+        displayLocale.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(displayLocaleLabel);
         row.add(displayLocale);
@@ -342,7 +342,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         addLineSpacer(comps);
 
         tooltipDelay = new JTextField(4);
-        tooltipDelay.setMaximumSize(new Dimension(150,40));
+        tooltipDelay.setMaximumSize(new Dimension(150, 40));
         JLabel tooltipDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDelay")); 
         row = new ArrayList<>();
         row.add(tooltipDelayLabel);
@@ -350,7 +350,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         comps.add(row);
 
         tooltipDismissDelay = new JTextField(4);
-        tooltipDismissDelay.setMaximumSize(new Dimension(150,40));
+        tooltipDismissDelay.setMaximumSize(new Dimension(150, 40));
         tooltipDismissDelay.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
         JLabel tooltipDismissDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDismissDelay")); 
         tooltipDismissDelayLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
@@ -360,7 +360,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         comps.add(row);
         
         tooltipDistSupression = new JTextField(4);
-        tooltipDistSupression.setMaximumSize(new Dimension(150,40));
+        tooltipDistSupression.setMaximumSize(new Dimension(150, 40));
         tooltipDistSupression.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
         JLabel tooltipDistSupressionLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDistSuppression")); 
         tooltipDistSupressionLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
@@ -377,7 +377,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         JLabel maxPathfinderTimeLabel = new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"));
         maxPathfinderTime = new JTextField(5);
-        maxPathfinderTime.setMaximumSize(new Dimension(150,40));
+        maxPathfinderTime.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(maxPathfinderTimeLabel);
         row.add(maxPathfinderTime);
@@ -422,7 +422,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         unitStartChar.addItem("\u0391, \u0392, \u0393, \u0394..."); 
         // Add option for "alpha, beta, gamma, delta..."
         unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4..."); 
-        unitStartChar.setMaximumSize(new Dimension(150,40));
+        unitStartChar.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(unitStartCharLabel);
         row.add(unitStartChar);
@@ -436,7 +436,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName")); 
         gameLogFilename = new JTextField(15);
-        gameLogFilename.setMaximumSize(new Dimension(250,40));
+        gameLogFilename.setMaximumSize(new Dimension(250, 40));
         row = new ArrayList<>();
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(gameLogFilenameLabel);
@@ -448,7 +448,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat")); 
         stampFormat = new JTextField(15);
-        stampFormat.setMaximumSize(new Dimension(15*13,40));
+        stampFormat.setMaximumSize(new Dimension(15*13, 40));
         row = new ArrayList<>();
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(stampFormatLabel);
@@ -1192,7 +1192,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         outer.add(keyBinds);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
-        gbc.insets = new Insets(0, 10,5, 10);
+        gbc.insets = new Insets(0, 10, 5, 10);
         
         // Create header: labels for describing what each column does
         JLabel headers = new JLabel("Name");

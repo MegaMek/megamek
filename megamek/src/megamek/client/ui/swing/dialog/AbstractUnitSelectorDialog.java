@@ -373,7 +373,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = gridBagConstraints.weighty = 1;
         getContentPane().add(splitPane, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(5, 0,5, 0);
+        gridBagConstraints.insets = new Insets(5, 0, 5, 0);
         gridBagConstraints.weightx = gridBagConstraints.weighty = 0;
         gridBagConstraints.gridy = 1;
         getContentPane().add(panelButtons, gridBagConstraints);

@@ -2022,7 +2022,7 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
         misc.rulesRefs = "225,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3055,3060,3060)
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3055, 3060, 3060)
                 .setClanApproximate(true, false, false).setPrototypeFactions(F_CSJ)
                 .setProductionFactions(F_CSJ).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
@@ -8951,7 +8951,7 @@ public class MiscType extends EquipmentType {
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(DATE_NONE,3061, 3082,DATE_NONE,DATE_NONE).setPrototypeFactions(F_FS)
+                .setISAdvancement(DATE_NONE, 3061, 3082,DATE_NONE,DATE_NONE).setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
@@ -8973,7 +8973,7 @@ public class MiscType extends EquipmentType {
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(DATE_NONE,3067, 3085,DATE_NONE,DATE_NONE)
+                .setISAdvancement(DATE_NONE, 3067, 3085,DATE_NONE,DATE_NONE)
                 .setISApproximate(false, false, true,false,false).setPrototypeFactions(F_LC)
                 .setProductionFactions(F_LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -8997,7 +8997,7 @@ public class MiscType extends EquipmentType {
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setClanAdvancement(DATE_NONE,3073,3085,DATE_NONE,DATE_NONE)
+                .setClanAdvancement(DATE_NONE, 3073, 3085,DATE_NONE,DATE_NONE)
                 .setClanApproximate(false,false,true,false,false)
                 .setPrototypeFactions(F_CWX)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

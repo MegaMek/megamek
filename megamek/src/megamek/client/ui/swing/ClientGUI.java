@@ -353,7 +353,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } else {
             frame.setSize(800, 600);
         }
-        frame.setMinimumSize(new Dimension(640,480));
+        frame.setMinimumSize(new Dimension(640, 480));
         UIUtil.updateWindowBounds(frame);
 
         frame.setBackground(SystemColor.menu);

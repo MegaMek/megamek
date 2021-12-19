@@ -263,8 +263,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {
             try {
-                int red = Integer.parseInt(s.substring(1,3), 16);
-                int grn = Integer.parseInt(s.substring(3,5), 16);
+                int red = Integer.parseInt(s.substring(1, 3), 16);
+                int grn = Integer.parseInt(s.substring(3, 5), 16);
                 int blu = Integer.parseInt(s.substring(5,7), 16);
                 textColor = new Color(red, grn, blu);
             } catch (Exception e) {

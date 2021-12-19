@@ -60,8 +60,8 @@ public class ISMagshotGaussRifle extends GaussWeapon {
     	.setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
-        .setISAdvancement(DATE_NONE, 3072, 3078, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
+        .setISAdvancement(3059, 3072, 3078, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
         .setPrototypeFactions(F_FS)
         .setProductionFactions(F_FS)
         .setStaticTechLevel(SimpleTechLevel.STANDARD);

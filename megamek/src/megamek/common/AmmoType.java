@@ -1734,8 +1734,8 @@ public class AmmoType extends EquipmentType {
 		munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,
 				new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
 						.setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-						.setClanAdvancement(3061, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
-						.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CGS)
+		                .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
+		                .setClanApproximate(false, false, true, false, false).setPrototypeFactions(F_CGS)
 						.setProductionFactions(F_CSF, F_RD).setStaticTechLevel(SimpleTechLevel.ADVANCED),
 				"283,TO"));
 
@@ -2136,8 +2136,8 @@ public class AmmoType extends EquipmentType {
 		munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,
 				new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
 						.setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-						.setClanAdvancement(3061, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
-						.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CGS)
+		                .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
+		                .setClanApproximate(false, false, true, false, false).setPrototypeFactions(F_CGS)
 						.setProductionFactions(F_CSF, F_RD).setStaticTechLevel(SimpleTechLevel.ADVANCED),
 				"283,TO"));
 
@@ -2793,8 +2793,8 @@ public class AmmoType extends EquipmentType {
 		munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,
 				new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
 						.setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-						.setClanAdvancement(3061, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
-						.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CGS)
+		                .setClanAdvancement(DATE_NONE, 3061, 3085, DATE_NONE, DATE_NONE)
+		                .setClanApproximate(false, false, true, false, false).setPrototypeFactions(F_CGS)
 						.setProductionFactions(F_CSF, F_RD).setStaticTechLevel(SimpleTechLevel.ADVANCED),
 				"283,TO"));
 		munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE,
@@ -4890,8 +4890,9 @@ public class AmmoType extends EquipmentType {
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
 		ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
 				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
-				.setISAdvancement(DATE_NONE, 3072, 3078, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS)
+		        .setISAdvancement(3059, 3072, 3078, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false,false, false)
+				.setPrototypeFactions(F_FS)
 				.setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.STANDARD);
 		return ammo;
 	}
@@ -9442,9 +9443,8 @@ public class AmmoType extends EquipmentType {
 		ammo.rulesRefs = "324,TO";
 		ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 				.setTechRating(RATING_B).setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
-				.setISAdvancement(2526, 2531, 3052, 2819, 3043).setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+				.setISAdvancement(2526, 2531, 3052, 2819, 3043)
+				.setISApproximate(true, false, false, false, false)
 				.setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC);
 		return ammo;
 	}
@@ -9467,8 +9467,6 @@ public class AmmoType extends EquipmentType {
 		ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 				.setTechRating(RATING_B).setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
 				.setISAdvancement(2526, 2531, 3052, 2819, 3043).setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 				.setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC);
 		return ammo;
 	}
@@ -9491,8 +9489,6 @@ public class AmmoType extends EquipmentType {
 		ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 				.setTechRating(RATING_B).setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
 				.setISAdvancement(2526, 2531, 3052, 2819, 3043).setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 				.setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC);
 		return ammo;
 	}
@@ -9515,8 +9511,6 @@ public class AmmoType extends EquipmentType {
 		ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 				.setTechRating(RATING_B).setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
 				.setISAdvancement(2526, 2531, 3052, 2819, 3043).setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 				.setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC);
 		return ammo;
 	}

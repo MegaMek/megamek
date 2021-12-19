@@ -2300,6 +2300,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLSuperCharger");
         misc.addLookupName("CL SuperCharger");
         misc.addLookupName("CL Super Charger");
+        misc.addLookupName("Supercharger (Clan)");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
@@ -5873,8 +5874,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "145,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
-                .setISAdvancement(2705, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
+                .setISAdvancement(2700, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH);
 

@@ -91,7 +91,7 @@ public class ComputeECMTest {
             TestCase.fail(e.getMessage());
         }
         
-        Coords pos = new Coords(0,0);
+        Coords pos = new Coords(0, 0);
         archer.setPosition(pos);
         archer.setOwner(mockPlayer);
         archer.setGame(mockGame);
@@ -475,7 +475,7 @@ public class ComputeECMTest {
         // Same Hex Tests
         
         // Attack Entity ECM Info
-        Coords aePos = new Coords(2,2);
+        Coords aePos = new Coords(2, 2);
         ECMInfo aeNullECM = null;
         ECMInfo aeECM = new ECMInfo(6, aePos, mockPlayer, 1, 0);
         ECMInfo aeAngelECM = new ECMInfo(6, aePos, mockPlayer, 0, 1);
@@ -503,7 +503,7 @@ public class ComputeECMTest {
         Mockito.when(ae.getOwner()).thenReturn(mockPlayer);
         Mockito.when(ae.getECMInfo()).thenReturn(aeNullECM);
         
-        Coords targetPos = new Coords(3,20);
+        Coords targetPos = new Coords(3, 20);
         
         /*********************************************************************/
         // Basic ECM Test
@@ -668,7 +668,7 @@ public class ComputeECMTest {
         //  Shoud be affected by ECM, no Angel, no ECCM
         entitiesVector = new Vector<>();
         Entity enemy1 = Mockito.mock(Mech.class);
-        Coords ecm1Pos = new Coords(14,14);
+        Coords ecm1Pos = new Coords(14, 14);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, mockEnemy, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(mockEnemy);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -713,7 +713,7 @@ public class ComputeECMTest {
         
         // Add Entity with ECM out of range
         enemy1 = Mockito.mock(Mech.class);
-        ecm1Pos = new Coords(20,20);
+        ecm1Pos = new Coords(20, 20);
         ecm1 = new ECMInfo(6, ecm1Pos, owner, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -770,7 +770,7 @@ public class ComputeECMTest {
         
         // Add Entity with ECM out of range
         enemy1 = Mockito.mock(Mech.class);
-        ecm1Pos = new Coords(20,20);
+        ecm1Pos = new Coords(20, 20);
         ecm1 = new ECMInfo(6, ecm1Pos, owner, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);

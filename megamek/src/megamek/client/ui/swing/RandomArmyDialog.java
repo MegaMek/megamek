@@ -301,7 +301,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        c.insets = new Insets(0,10,0,0);
+        c.insets = new Insets(0, 10, 0, 0);
         m_pRAT.add(m_ratStatus,c);
 
         c = new GridBagConstraints();

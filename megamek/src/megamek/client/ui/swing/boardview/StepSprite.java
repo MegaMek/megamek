@@ -212,7 +212,7 @@ class StepSprite extends Sprite {
             case BOOTLEGGER:
                 // draw arrows showing them entering the next
                 drawArrowShape(g2D, moveArrow, col);
-                drawMovementCost(step, isLastStep, new Point(0,0), graph, col, true);
+                drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
                 break;
             case LOAD:
                 String load = Messages.getString("BoardView1.Load");

@@ -358,20 +358,20 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         setLayout(new GridBagLayout());
 
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
 
-        c.insets = new Insets(0,10,0,0);
+        c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
         this.add(lblWalk,c);
         c.gridx = 1; c.gridy = 0;
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.anchor = GridBagConstraints.EAST;
         JPanel panWalk = new JPanel();
         panWalk.add(cWalk);
         panWalk.add(tWalk);
         this.add(panWalk,c);
         c.gridx = 3; c.gridy = 0;
-        c.insets = new Insets(0,40,0,0);
+        c.insets = new Insets(0,40, 0, 0);
         c.weighty = 1;
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
@@ -379,15 +379,15 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
         this.add(cockpitPanel,c);
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.weighty = 0;
 
 
         c.gridx = 0; c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0,10,0,0);
+        c.insets = new Insets(0, 10, 0, 0);
         this.add(lblJump,c);
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 1; c.gridy = 1;
         c.anchor = GridBagConstraints.EAST;
         JPanel panJump = new JPanel();
@@ -397,25 +397,25 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
         c.weighty = 1;
-        c.insets = new Insets(0,40,0,0);
+        c.insets = new Insets(0,40, 0, 0);
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
         this.add(internalsPanel,c);
         c.weighty = 0;
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
-        c.insets = new Insets(0,10,0,0);
+        c.insets = new Insets(0, 10, 0, 0);
         this.add(lblArmor,c);
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 1;
         this.add(cArmor,c);
         c.gridx = 3;
         c.weighty = 1;
-        c.insets = new Insets(0,40,0,0);
+        c.insets = new Insets(0,40, 0, 0);
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
@@ -425,10 +425,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         c.anchor = GridBagConstraints.CENTER;
 
-        c.insets = new Insets(16,0,0,0);
+        c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblTableFilters,c);
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
         JPanel cboPanel = new JPanel();
@@ -441,12 +441,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         this.add(cboPanel,c);
         c.gridwidth = 1;
 
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblWeapons,c);
 
 
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeapons,c);
@@ -454,12 +454,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
 
         c.gridwidth = 1;
-        c.insets = new Insets(16,0,0,0);
+        c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblEquipment,c);
 
 
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
         this.add(scrTableEquipment,c);
@@ -479,7 +479,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 1;
 
         // Filter Expression
-        //c.insets = new Insets(50,0,0,0);
+        //c.insets = new Insets(50, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblEqExpTxt,c);
         c.fill = GridBagConstraints.BOTH;
@@ -487,7 +487,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridx = 1;
         this.add(expScroller,c);
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(0,0,0,0);
+        c.insets = new Insets(0, 0, 0, 0);
 
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy++;
@@ -503,10 +503,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 1;
         c.gridx = 2; c.gridy++;
         c.anchor = GridBagConstraints.EAST;
-        c.insets = new Insets(0,20,10,0);
+        c.insets = new Insets(0, 20, 10, 0);
         this.add(btnOkay,c);
         c.gridx = 3;
-        c.insets = new Insets(0,20,10,0);
+        c.insets = new Insets(0, 20, 10, 0);
         c.anchor = GridBagConstraints.WEST;
         this.add(btnCancel,c);
 

@@ -478,18 +478,18 @@ class LobbyMekPopup {
             menu.add(menuItem("Disconnect", LMP_C3DISCONNECT + NOINFO + enToken(entities), enabled, listener));
 
             if (entities.stream().anyMatch(e -> e.hasC3MM() || e.hasC3M())) {
-                boolean allCM = entities.stream().allMatch(e -> e.isC3CompanyCommander());
+                boolean allCM = entities.stream().allMatch(Entity::isC3CompanyCommander);
                 menu.add(menuItem("Set as C3 Company Master", LMP_C3CM + NOINFO + enToken(entities), !allCM, listener));
-                boolean allLM = entities.stream().allMatch(e -> e.isC3IndependentMaster());
+                boolean allLM = entities.stream().allMatch(Entity::isC3IndependentMaster);
                 menu.add(menuItem("Set as C3 Lance Master", LMP_C3LM + NOINFO + enToken(entities), !allLM, listener));
             }
 
             // Special treatment if exactly a C3SSSM is selected
             if (entities.size() == 4) {
-                long countM = entities.stream().filter(e -> e.hasC3M()).count();
-                long countS = entities.stream().filter(e -> e.hasC3S()).count();
+                long countM = entities.stream().filter(Entity::hasC3M).count();
+                long countS = entities.stream().filter(Entity::hasC3S).count();
                 if (countM == 1 && countS == 3) {
-                    Entity master = entities.stream().filter(e -> e.hasC3M()).findAny().get();
+                    Entity master = entities.stream().filter(Entity::hasC3M).findAny().get();
                     menu.add(menuItem("Form C3 Lance", LMP_C3FORMC3 + "|" + master.getId() + enToken(entities), true, listener));
                 }
             }
@@ -502,7 +502,7 @@ class LobbyMekPopup {
                 }
             }
 
-            Entity entity = entities.stream().filter(e -> e.hasAnyC3System()).findAny().get();
+            Entity entity = entities.stream().filter(Entity::hasAnyC3System).findAny().get();
             // ideally, find one slave or C3i/NC3/Nova to get some connection options
             entity = entities.stream().filter(e -> e.hasC3S() || e.hasNhC3()).findAny().orElse(entity);
             Game game = cg.getClient().getGame();
@@ -707,7 +707,7 @@ class LobbyMekPopup {
         if (entities.isEmpty()) {
             return "|-1";
         }
-        List<String> ids = entities.stream().map(e -> e.getId()).map(n -> n.toString()).collect(Collectors.toList());
+        List<String> ids = entities.stream().map(Entity::getId).map(Object::toString).collect(Collectors.toList());
         return "|" + String.join(",", ids);
     }
 
@@ -719,7 +719,7 @@ class LobbyMekPopup {
         if (forces.isEmpty()) {
             return "-1";
         }
-        List<String> ids = forces.stream().map(e -> e.getId()).map(n -> n.toString()).collect(Collectors.toList());
+        List<String> ids = forces.stream().map(Force::getId).map(Object::toString).collect(Collectors.toList());
         return String.join(",", ids);
     }
     

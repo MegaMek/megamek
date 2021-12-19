@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
  *
@@ -238,7 +238,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         MegamekButton quitB;
         JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
                 JLabel.CENTER);
-        labVersion.setPreferredSize(new Dimension(250,15));
+        labVersion.setPreferredSize(new Dimension(250, 15));
         if (skinSpec.fontColors.size() > 0) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }

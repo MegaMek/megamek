@@ -154,7 +154,7 @@ class PlayerTable extends JTable {
         private static final long serialVersionUID = 4947299735765324311L;
 
         public PlayerRenderer() {
-            setLayout(new GridLayout(1,1,5,0));
+            setLayout(new GridLayout(1, 1,5, 0));
             setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         }
 

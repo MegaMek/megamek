@@ -276,7 +276,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_RUN_COLOR, Color.YELLOW);
         setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255, 255, 0));
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
-        setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, new Color(255,0,255));
+        setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, new Color(255, 0, 255));
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, Color.CYAN);
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, Color.CYAN);
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, Color.RED);

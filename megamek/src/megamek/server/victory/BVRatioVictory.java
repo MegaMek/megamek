@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * implements bv-ratio victory checking ratio is defined as
  * friendlybv/enemybv>(bvratiopercent/100)=>win so this comparison is valid for
- * 3 team combat , but you must drop ALL enemies combined to below given ratio.
+ * 3 team combat, but you must drop ALL enemies combined to below given ratio.
  * if multiple players reach this goal at the same time, the result is declared
  * a draw NOTENOTE: this could be improved to take into account ratios which
  * exceed given ratio

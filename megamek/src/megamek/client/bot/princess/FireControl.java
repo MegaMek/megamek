@@ -1376,7 +1376,7 @@ public class FireControl {
             return 0;
         }
         final Entity entity = (Entity) target;
-        return getMaxDamageAtRange(entity,1,false,false);
+        return getMaxDamageAtRange(entity, 1,false,false);
     }
 
     /**

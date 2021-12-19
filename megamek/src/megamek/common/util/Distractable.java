@@ -13,15 +13,14 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.util;
 
 /**
- * This interface represents an event listener that can be "distracted" so as to
- * ignore any event notifications. Created on February 29, 2004
+ * This interface represents an event listener that can be "distracted" to ignore any event
+ * notifications.
  *
  * @author James Damour
- * @version 1
+ * @since February 29, 2004
  */
 public interface Distractable extends java.util.EventListener {
 

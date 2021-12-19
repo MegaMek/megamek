@@ -230,8 +230,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
     
-    private static final Dimension LABEL_SPACER = new Dimension(5,0);
-    private static final Dimension DEPENDENT_INSET = new Dimension(25,0);
+    private static final Dimension LABEL_SPACER = new Dimension(5, 0);
+    private static final Dimension DEPENDENT_INSET = new Dimension(25, 0);
     
     // Save some values to restore them when the dialog is canceled
     private boolean savedFovHighlight;
@@ -1113,7 +1113,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); 
         darkenAlphaLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         row = new ArrayList<>();
-        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(darkenAlphaLabel);
         comps.add(row);
@@ -1139,7 +1139,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
                 Messages.getString("TacticalOverlaySettingsDialog.FovStripes")); 
         numStripesLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         row = new ArrayList<>();
-        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(numStripesLabel);
         comps.add(row);
@@ -1147,7 +1147,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         addSpacer(comps, 1);
         
         row = new ArrayList<>();
-        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(numStripesSlider);
         comps.add(row);
@@ -1158,7 +1158,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         fovGrayscaleEnabled = new JCheckBox(
                 Messages.getString("TacticalOverlaySettingsDialog.FovGrayscale")); 
         fovGrayscaleEnabled.addItemListener(this);
-        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(new Dimension(4, 0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovGrayscaleEnabled);
         comps.add(row);   
@@ -1192,7 +1192,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         outer.add(keyBinds);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
-        gbc.insets = new Insets(0,10,5,10);
+        gbc.insets = new Insets(0, 10,5, 10);
         
         // Create header: labels for describing what each column does
         JLabel headers = new JLabel("Name");
@@ -1469,7 +1469,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             innerpanel.add(subPanel);
         }
         innerpanel.add(Box.createVerticalGlue());
-        innerpanel.setBorder(new EmptyBorder(10,10,10,10));
+        innerpanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         panel.add(innerpanel,BorderLayout.PAGE_START);
         return panel;
     }

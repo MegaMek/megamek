@@ -1,22 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
-/*
- * GameLog.java
- *
- * Created on March 30, 2002, 2:40 PM
- * Renamed from ServerLog to GameLog in July 2005
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
@@ -31,7 +24,8 @@ import megamek.common.util.StringUtil;
 
 /**
  * @author Ben
- * @version
+ * @since March 30, 2002, 2:40 PM
+ * Renamed from ServerLog to GameLog in July 2005
  */
 public class GameLog {
 
@@ -43,8 +37,6 @@ public class GameLog {
 
     /**
      * Creates GameLog named
-     * 
-     * @filename
      */
     public GameLog(String filename) {
         try {

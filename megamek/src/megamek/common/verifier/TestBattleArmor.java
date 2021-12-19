@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -72,8 +72,8 @@ public class TestBattleArmor extends TestEntity {
      *
      */
     public enum BAArmor {
-        STANDARD(EquipmentType.T_ARMOR_BA_STANDARD,0,false),
-        CLAN_STANDARD(EquipmentType.T_ARMOR_BA_STANDARD,0,true),
+        STANDARD(EquipmentType.T_ARMOR_BA_STANDARD, 0,false),
+        CLAN_STANDARD(EquipmentType.T_ARMOR_BA_STANDARD, 0,true),
         STANDARD_PROTOTYPE(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE,4,false),
         STANDARD_ADVANCED(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED,5,false),
         STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC,3,false),

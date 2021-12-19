@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
@@ -784,7 +784,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        g.setColor(new Color(20,20,60));
+        g.setColor(new Color(20, 20,60));
         g.drawPolygon(xPoints, yPoints, 6);
         // Drop in a star
         int dx = (int) (Math.random() * HEX_SIDE[zoom]);

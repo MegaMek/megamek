@@ -1,23 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
-
-/*
- * MMRoll.java
  *
- * Created on July 21, 2004, 7:43 AM
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.util.Collections;
@@ -28,14 +21,14 @@ import java.util.Vector;
  * Subclass of the roll tracker for <code>MMRandom</code> entropy sources.
  * 
  * @author Suvarov454
+ * @since July 21, 2004, 7:43 AM
  */
 public class MMRoll extends Roll {
 
     /**
-     * The running total of all of the rolls of each virtual die.
+     * The running total of all the rolls of each virtual die.
      */
     private int total;
-
 
     /**
      * a vector of the result for each roll of the dice

@@ -1,18 +1,17 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.util.HashMap;
@@ -40,27 +39,26 @@ public class BombType extends AmmoType {
     public static final int B_FAE_LARGE = 16;
     public static final int B_NUM     = 17;
 
-    public static final String[] bombNames = {"HE Bomb","Cluster Bomb","Laser-guided Bomb",
+    public static final String[] bombNames = { "HE Bomb","Cluster Bomb","Laser-guided Bomb",
                                               "Rocket", "TAG", "AAA Missile", "AS Missile",
                                               "ASEW Missile", "Arrow IV Missile",
                                               "Arrow IV Homing Missile", "Inferno Bomb",
                                               "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
-                                              "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)"};
+                                              "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)" };
     
-    public static final String[] bombInternalNames = {"HEBomb","ClusterBomb","LGBomb",
+    public static final String[] bombInternalNames = { "HEBomb","ClusterBomb","LGBomb",
                                                       "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
                                                       "ASMissile Ammo",
                                                       "ASEWMissile Ammo", "ArrowIVMissile Ammo",
                                                       "ArrowIVHomingMissile Ammo", "InfernoBomb",
                                                       "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
-                                                      "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo"};
+                                                      "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo" };
 
-    public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAA Missile",
+    public static final String[] bombWeaponNames = { null, null, null, "BombRL", "BombTAG", "AAA Missile",
                                                     "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
-                                                    null, "LAAMissile", null, null, "AlamoMissile", null, null};
+                                                    null, "LAAMissile", null, null, "AlamoMissile", null, null };
 
-
-    public static final int[] bombCosts = {1,1,1,1,1,5,6,6,5,5,1,2,1,1,10,1,2};
+    public static final int[] bombCosts = { 1, 1, 1, 1, 1,5,6,6,5,5, 1, 2, 1, 1, 10, 1, 2 };
     
     public static final Map<String, Integer> blastRadius;
     private int bombType;

@@ -51,25 +51,25 @@ public class TestCoords {
         neg_coords = new Coords(-668, 42);
         System.out.println(String.format(OUTFORMAT, neg_coords, neg_coords.hashCode()));
         
-        Coords origin = new Coords(0,0);
+        Coords origin = new Coords(0, 0);
         int dir = 2;
         Coords neighbor = origin.translated(dir);
         String correct = "(2,1)";
         System.out.println(String.format(NBFORMAT, origin.toFriendlyString(), dir, correct, neighbor.toFriendlyString()));
         
-        origin = new Coords(1,0);        
+        origin = new Coords(1, 0);        
         dir = 2;
         neighbor = origin.translated(dir);
         correct = "(3,2)";
         System.out.println(String.format(NBFORMAT, origin.toFriendlyString(), dir, correct, neighbor.toFriendlyString()));
         
-        origin = new Coords(2,1);        
+        origin = new Coords(2, 1);        
         dir = 2;
         neighbor = origin.translated(dir);
         correct = "(4,2)";
         System.out.println(String.format(NBFORMAT, origin.toFriendlyString(), dir, correct, neighbor.toFriendlyString()));
         
-        origin = new Coords(0,0);
+        origin = new Coords(0, 0);
         dir = 3;
         neighbor = origin.translated(dir);
         correct = "(1,2)";
@@ -81,7 +81,7 @@ public class TestCoords {
         correct = "(7,-1)";
         System.out.println(String.format(NBFORMAT, origin.toFriendlyString(), dir, correct, neighbor.toFriendlyString()));
         
-        origin = new Coords(0,0);        
+        origin = new Coords(0, 0);        
         dir = 2;
         int dist = 3;
         neighbor = origin.translated(dir, dist);
@@ -133,12 +133,12 @@ public class TestCoords {
         System.out.println(correct);
         
         origin = new Coords(13,6);
-        Coords dest = new Coords(15,1);
+        Coords dest = new Coords(15, 1);
         correct = "6"; 
         System.out.println(String.format(DISTFORMAT, origin.toFriendlyString(), dest.toFriendlyString(), correct, dest.distance(origin)));
         
-        origin = new Coords(12,2);
-        dest = new Coords(9,2);
+        origin = new Coords(12, 2);
+        dest = new Coords(9, 2);
         correct = "3"; 
         System.out.println(String.format(DISTFORMAT, origin.toFriendlyString(), dest.toFriendlyString(), correct, dest.distance(origin)));
         

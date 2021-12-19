@@ -163,7 +163,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                             == Terrains.FIRE_LVL_INFERNO) {
                         //inferno fires should become regular fires
                         currentHex.removeTerrain(Terrains.FIRE);
-                        currentHex.addTerrain(new Terrain(Terrains.FIRE,1));
+                        currentHex.addTerrain(new Terrain(Terrains.FIRE, 1));
                         server.getHexUpdateSet().add(currentCoords);
                     // Check Inferno Bombs
                     } else if (currentHex.terrainLevel(Terrains.FIRE) 

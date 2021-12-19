@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000, 2001, 2002, 2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
  * This program is free software; you can redistribute it and/or modify it 
@@ -135,11 +135,11 @@ public class SpheroidMapSet implements DisplayMapSet{
         	if (ds.isKFBoomDamaged()) {
         		kfboom = 1;
         	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom,1));
+        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
         	if (ds.isDockCollarDamaged()) {
         		collar = 1;
         	}
-        	vLabels[12].setValue(getCriticalHitTally(collar,1));
+        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }

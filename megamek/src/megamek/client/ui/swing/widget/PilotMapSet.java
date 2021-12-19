@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it

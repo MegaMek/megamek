@@ -1,34 +1,27 @@
 /*
 * MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Jun 17, 2007
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class TeleMissile extends Aero {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -5932720323745597199L;
 
-    public static final int        LOC_BODY               = 0;
+    public static final int LOC_BODY = 0;
 
-    private static String[] LOCATION_ABBRS = { "BODY"};
+    private static String[] LOCATION_ABBRS = { "BODY" };
     private static String[] LOCATION_NAMES = { "Body" };
 
     private int originalRideId;
@@ -41,11 +34,14 @@ public class TeleMissile extends Aero {
     
     public TeleMissile() {
         super();
-        damThresh = new int[] {0};
+        damThresh = new int[] { 0 };
     }
-    
+
+    /**
+     * Telemissiles shouldn't get a firing phase
+     * @return false
+     */
     @Override
-    //Telemissiles shouldn't get a firing phase
     public boolean isEligibleForFiring() {
         return false;
     }

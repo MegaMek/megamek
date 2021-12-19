@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
@@ -211,7 +211,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
     private BoardView previewBV;
-    Dimension currentMapButtonSize = new Dimension(0,0);
+    Dimension currentMapButtonSize = new Dimension(0, 0);
     
     private ArrayList<String> invalidBoards = new ArrayList<>();
     private ArrayList<String> serverBoards = new ArrayList<>();
@@ -612,7 +612,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTopRows.add(panMapType);
         panTopRows.add(panSettings);
         
-        JPanel panHelp = new JPanel(new GridLayout(1,1));
+        JPanel panHelp = new JPanel(new GridLayout(1, 1));
         panHelp.add(butHelp);
         
         FixedYPanel panTopRowsHelp = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));

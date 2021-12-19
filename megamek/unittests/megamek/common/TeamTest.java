@@ -63,7 +63,7 @@ public class TeamTest {
 
         // Sanity test
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        Assert.assertEquals(initBonus,0);
+        Assert.assertEquals(initBonus, 0);
 
         Mockito.when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         Mockito.when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);

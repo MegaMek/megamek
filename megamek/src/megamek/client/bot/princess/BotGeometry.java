@@ -113,7 +113,7 @@ public class BotGeometry {
      * ------------------------------
      * Direction is stored as above, but the meaning of 'intercept' depends
      * on the direction.  For directions 0,3, intercept means the y=0 intercept
-     * for directions 1,2,4,5 intercept is the x=0 intercept
+     * for directions 1, 2,4,5 intercept is the x=0 intercept
      */
     public static class HexLine {
         private int intercept;
@@ -179,7 +179,7 @@ public class BotGeometry {
         }
 
         /**
-         * This function only makes sense for directions 1,2,4,5
+         * This function only makes sense for directions 1, 2,4,5
          * Note that the function getXfromY would be multvalued
          */
         public int getYfromX(int x) {

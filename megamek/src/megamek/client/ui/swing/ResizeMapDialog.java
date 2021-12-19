@@ -289,7 +289,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
 
         // A warning notice when the west edge expansion is an odd number and the south expansion < 1
         westNotice.add(new JLabel(Messages.getString("ExpandMapDialog.mapWestField.note")));
-        westNotice.setBorder(new EmptyBorder(10,10,10,10));
+        westNotice.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         return panel;
 

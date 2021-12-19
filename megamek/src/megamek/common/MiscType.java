@@ -1,5 +1,5 @@
 /*
- * * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * * MegaMek - Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur
  * (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -12,13 +12,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * MiscType.java
- *
- * Created on April 2, 2002, 12:15 PM
- */
-
 package megamek.common;
 
 import java.math.BigInteger;
@@ -33,7 +26,7 @@ import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 /**
  * @author Ben
- * @version
+ * @since April 2, 2002, 12:15 PM
  */
 public class MiscType extends EquipmentType {
   

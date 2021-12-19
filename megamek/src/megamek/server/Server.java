@@ -31336,9 +31336,9 @@ public class Server implements Runnable {
                     ConnectionWatchdog w = new ConnectionWatchdog(this, id);
                     watchdogTimer.schedule(w, 1000, 500);
                 }
-            } catch (InterruptedIOException ignored) {
-                // ignore , just SOTimeout blowing..
-            } catch (IOException ignored) { }
+            } catch (Exception ignored) {
+
+            }
         }
     }
 

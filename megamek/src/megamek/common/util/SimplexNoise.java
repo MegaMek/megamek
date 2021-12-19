@@ -127,19 +127,17 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         if (x0 > y0) {
             i1 = 1;
             j1 = 0;
-        } // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+        } // lower triangle, XY order: (0, 0)->(1, 0)->(1, 1)
         else {
             i1 = 0;
             j1 = 1;
-        } // upper triangle, YX order: (0,0)->(0,1)->(1,1)
-          // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
-          // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+        } // upper triangle, YX order: (0, 0)->(0, 1)->(1, 1)
+          // A step of (1, 0) in (i,j) means a step of (1-c,-c) in (x,y), and
+          // a step of (0, 1) in (i,j) means a step of (-c, 1-c) in (x,y), where
           // c = (3-sqrt(3))/6
-        double x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed
-                                  // coords
+        double x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords
         double y1 = y0 - j1 + G2;
-        double x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y)
-                                         // unskewed coords
+        double x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords
         double y2 = y0 - 1.0 + 2.0 * G2;
         // Work out the hashed gradient indices of the three simplex corners
         int ii = i & 255;
@@ -153,8 +151,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
             n0 = 0.0;
         } else {
             t0 *= t0;
-            n0 = t0 * t0 * dot(grad3[gi0], x0, y0); // (x,y) of grad3 used for
-                                                    // 2D gradient
+            n0 = t0 * t0 * dot(grad3[gi0], x0, y0); // (x,y) of grad3 used for 2D gradient
         }
         double t1 = 0.5 - x1 * x1 - y1 * y1;
         if (t1 < 0) {
@@ -171,7 +168,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
             n2 = t2 * t2 * dot(grad3[gi2], x2, y2);
         }
         // Add contributions from each corner to get the final noise value.
-        // The result is scaled to return values in the interval [-1,1].
+        // The result is scaled to return values in the interval [-1, 1].
         return clamp(-1.0, 1.0, 70.0 * (n0 + n1 + n2) / 0.9978893541475 /* sampled correction factor */);
     }
 
@@ -179,8 +176,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     public static double noise(double xin, double yin, double zin) {
         double n0, n1, n2, n3; // Noise contributions from the four corners
         // Skew the input space to determine which simplex cell we're in
-        double s = (xin + yin + zin) * F3; // Very nice and simple skew factor
-                                           // for 3D
+        double s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D
         int i = fastfloor(xin + s);
         int j = fastfloor(yin + s);
         int k = fastfloor(zin + s);
@@ -191,11 +187,9 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
         double x0 = xin - X0; // The x,y,z distances from the cell origin
         double y0 = yin - Y0;
         double z0 = zin - Z0;
-        // For the 3D case, the simplex shape is a slightly irregular
-        // tetrahedron.
+        // For the 3D case, the simplex shape is a slightly irregular tetrahedron.
         // Determine which simplex we are in.
-        int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k)
-                        // coords
+        int i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords
         int i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords
         if (x0 >= y0) {
             if (y0 >= z0) {
@@ -250,12 +244,12 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
                 k2 = 0;
             }
         }
-        // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
-        // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z),
+        // A step of (1, 0, 0) in (i, j, k) means a step of (1 - c, -c, -c) in (x, y, z),
+        // a step of (0, 1, 0) in (i, j, k) means a step of (-c, 1 - c, -c) in (x, y, z),
         // and
-        // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z),
+        // a step of (0, 0, 1) in (i, j, k) means a step of (-c, -c, 1 - c) in (x, y, z),
         // where
-        // c = 1/6.
+        // c = 1 / 6.
         double x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords
         double y1 = y0 - j1 + G3;
         double z1 = z0 - k1 + G3;
@@ -305,7 +299,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
             n3 = t3 * t3 * dot(grad3[gi3], x3, y3, z3);
         }
         // Add contributions from each corner to get the final noise value.
-        // The result is scaled to stay just inside [-1,1]
+        // The result is scaled to stay just inside [-1, 1]
         return clamp(-1.0, 1.0, 32.0 * (n0 + n1 + n2 + n3) / 0.9787095282039 /* sampled correction factor */);
     }
 
@@ -464,7 +458,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
             t4 *= t4;
             n4 = t4 * t4 * dot(grad4[gi4], x4, y4, z4, w4);
         }
-        // Sum up and scale the result to cover the range [-1,1]
+        // Sum up and scale the result to cover the range [-1, 1]
         return 27.0 * (n0 + n1 + n2 + n3 + n4);
     }
 

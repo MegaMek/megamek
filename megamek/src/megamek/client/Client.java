@@ -780,7 +780,7 @@ public class Client implements IClientCommandHandler {
      *            The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
-        ArrayList<Entity> entities = new ArrayList<Entity>(1);
+        ArrayList<Entity> entities = new ArrayList<>(1);
         entities.add(entity);
         sendAddEntity(entities);
     }
@@ -937,7 +937,7 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
+        try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
             game.reset();
             
             XStream xstream = SerializationHelper.getXStream();            
@@ -951,7 +951,7 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendExplodeBuilding(DemolitionCharge charge) {
-        Object data[] = new Object[1];
+        Object[] data = new Object[1];
         data[0] = charge;
         send(new Packet(Packet.COMMAND_BLDG_EXPLODE, data));
     }

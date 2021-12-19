@@ -34,8 +34,6 @@ import megamek.common.actions.WeaponAttackAction;
 class AttackSprite extends Sprite {
     private final BoardView boardView1;
 
-    private ArrayList<AttackAction> attacks = new ArrayList<>();
-
     private Point a;
 
     private Point t;
@@ -56,7 +54,7 @@ class AttackSprite extends Sprite {
 
     private String targetDesc;
 
-    ArrayList<String> weaponDescs = new ArrayList<String>();
+    ArrayList<String> weaponDescs = new ArrayList<>();
 
     private final Entity ae;
 
@@ -65,7 +63,6 @@ class AttackSprite extends Sprite {
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
         this.boardView1 = boardView1;
-        attacks.add(attack);
         entityId = attack.getEntityId();
         targetType = attack.getTargetType();
         targetId = attack.getTargetId();

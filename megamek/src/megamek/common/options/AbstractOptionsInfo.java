@@ -69,10 +69,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * The <code>HashSet</code> used to check if the options info is already
      * registered
-     * 
+     *
      * @see AbstractOptionsInfo()
      */
-    private static HashSet<String> names = new HashSet<String>();
+    private static HashSet<String> names = new HashSet<>();
 
     /**
      * Protected constructor. It is called only by descendants. The name must be
@@ -83,10 +83,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      */
     protected AbstractOptionsInfo(String name) {
         if (names.contains(name)) {
-            throw new IllegalArgumentException(
-                    "OptionsInfo '" + name + "' is already registered"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("OptionsInfo '" + name + "' is already registered");
         }
         this.name = name;
+        names.add(name);
     }
 
     /*
@@ -94,6 +94,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
      */
+    @Override
     public IOptionInfo getOptionInfo(String name) {
         return optionsHash.get(name);
     }
@@ -103,6 +104,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see megamek.common.options.IOptionsInfo#getGroups()
      */
+    @Override
     public Enumeration<IBasicOptionGroup> getGroups() {
         return groups.elements();
     }
@@ -200,26 +202,29 @@ public class AbstractOptionsInfo implements IOptionsInfo {
             this.name = optionName;
         }
 
+        @Override
         public String getDisplayableName() {
             return getOptionDisplayableName(name);
         }
 
+        @Override
         public String getDisplayableNameWithValue() {
             return getOptionDisplayableName(name);
         }
 
+        @Override
         public String getDescription() {
             return getOptionDescription(name);
         }
 
+        @Override
         public int getTextFieldLength() {
             return textFieldLength;
         }
 
+        @Override
         public boolean isLabelBeforeTextField() {
             return labelBeforeTextField;
         }
-
     }
-
 }

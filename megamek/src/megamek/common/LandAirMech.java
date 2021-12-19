@@ -196,7 +196,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
-            return LAM_STRING[LAM_UNKNOWN];
+            MegaMek.getLogger().error("Attempted to get LAM Type string for unknown type " + lamType + " returning standard.");
+            return LAM_STRING[LAM_STANDARD];
         }
         return LAM_STRING[lamType];
     }
@@ -1815,11 +1816,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 loc = LOC_CAPITAL_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
-            if (null == groups.get(key)) {
-                groups.put(key, mounted.getNWeapons());
-            } else {
-                groups.put(key, groups.get(key) + mounted.getNWeapons());
-            }
+            groups.merge(key, mounted.getNWeapons(), Integer::sum);
         }
         return groups;
     }
@@ -1874,7 +1871,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((getGame() != null) && !getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt;

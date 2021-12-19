@@ -82,14 +82,15 @@ public class RACHandler extends UltraWeaponHandler {
             default:
                 break;
         }
-        if (jams && !(ae instanceof Infantry)) {
+
+        if (jams) {
             Report r = new Report(3160);
             r.subject = subjectId;
             r.add(" shot(s)");
             vPhaseReport.addElement(r);
             weapon.setJammed(true);
-            return false;
         }
+
         return false;
     }
 

@@ -1295,7 +1295,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            for (Integer x = 0; x < 6; x++) {
+            for (int x = 0; x < 6; x++) {
                 Coords c = cba.getVertexNum(x);
                 if (c == null) {
                     continue;
@@ -1305,8 +1305,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 p.translate(HEX_W / 2, HEX_H  / 2);
 
                 drawHexBorder(g, p, Color.yellow, 0, 3);
-                String s = x.toString();
-                drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
+                drawCenteredText(g, Integer.toString(x), p, Color.yellow, false);
             }
         }
     }

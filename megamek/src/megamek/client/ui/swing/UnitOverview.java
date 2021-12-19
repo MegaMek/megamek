@@ -539,6 +539,9 @@ public class UnitOverview implements IDisplayable {
         } else if (e instanceof Protomech) {
             String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
+        } else if ((e instanceof Infantry) || (e instanceof Mech) || (e instanceof GunEmplacement)
+                || (e instanceof Aero)) {
+            return adjustString(e.getModel(), metrics);
         } else if (e instanceof Tank) {
             String iconName = e.getShortName();
 
@@ -555,13 +558,9 @@ public class UnitOverview implements IDisplayable {
                 }
             }
             return adjustString(iconName, metrics);
-        } else if ((e instanceof Infantry) || (e instanceof Mech)
-                || (e instanceof GunEmplacement) ||
-                (e instanceof Aero)) {
-            String iconName = e.getModel();
-            return adjustString(iconName, metrics);
+        } else {
+            return "!!Unknown!!";
         }
-        return "!!Unknown!!";
     }
 
     protected String adjustString(String s, FontMetrics metrics) {

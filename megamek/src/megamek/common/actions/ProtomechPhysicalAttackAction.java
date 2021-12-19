@@ -47,15 +47,14 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         // ProtoMech weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
         if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE, MiscType.S_PROTO_QMS)) {
-            toReturn += Math.ceil(entity.getWeight() / 5.0) * 2;
+            toReturn += (int) Math.ceil(entity.getWeight() / 5.0) * 2;
         } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
-            toReturn += Math.ceil(entity.getWeight() / 5.0);
+            toReturn += (int) Math.ceil(entity.getWeight() / 5.0);
         }
 
         if (((Protomech) entity).isEDPCharged() && target.isConventionalInfantry()) {
             toReturn++;
-            // TODO: add another +1 to damage if target is cybernetically
-            // enhanced
+            // TODO: add another +1 to damage if target is cybernetically enhanced
         }
 
         // underwater damage is half, round up (see bug 1110692)

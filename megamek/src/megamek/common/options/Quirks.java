@@ -75,19 +75,19 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_INTERNAL_BOMB, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_POWER_REVERSE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); 	
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_IS,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_IS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
@@ -144,7 +144,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_4, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_5, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_LEGS, false);
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE,false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_OVERSIZED, false);
         

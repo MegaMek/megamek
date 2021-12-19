@@ -714,7 +714,6 @@ class LobbyMekCellFormatter {
             result.append(DOT_SPACER).append("</FONT>");
             
             PlayerColour ownerColour = (owner.getColour() == null) ?
-
                     PlayerColour.FIRE_BRICK : owner.getColour();
             result.append(guiScaledFontHTML(ownerColour.getColour(), size));
             result.append("\u2691 ");

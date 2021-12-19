@@ -163,7 +163,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
                 for (int x = 0; x < w; x += iW) {
                     for (int y = 0; y < h; y += iH) {
-                        g.drawImage(backgroundIcon, x, y,null);
+                        g.drawImage(backgroundIcon, x, y, null);
                     }
                 }
             }

@@ -111,7 +111,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             description.setText(Messages
                     .getString("BombPayloadDialog.FighterBombDesc"));
         }
-        add(description,c);
+        add(description, c);
 
         c.gridwidth = 1;
         c.gridheight = 1;
@@ -160,7 +160,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             c.gridx = 1;
             c.gridy = i+1;
             c.anchor = GridBagConstraints.EAST;
-            add(b_labels[i],c);
+            add(b_labels[i], c);
             c.gridx = 2;
             c.gridy = i+1;
             c.anchor = GridBagConstraints.WEST;

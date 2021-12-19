@@ -48,7 +48,7 @@ public class BombArrowIV extends ArtilleryWeapon {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
                 .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3047)
-                .setISApproximate(true, false, false,true, false)
+                .setISApproximate(true, false, false, true, false)
                 .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_TH)

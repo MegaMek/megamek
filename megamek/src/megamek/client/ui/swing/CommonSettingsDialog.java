@@ -1006,7 +1006,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         // Skin
         skinFiles = new JComboBox<>();
-        skinFiles.setMaximumSize(new Dimension(400,skinFiles.getMaximumSize().height));
+        skinFiles.setMaximumSize(new Dimension(400, skinFiles.getMaximumSize().height));
         JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); 
         row = new ArrayList<>();
         row.add(skinFileLabel);
@@ -1018,7 +1018,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         // Tileset
         JLabel tileSetChoiceLabel = new JLabel(Messages.getString("CommonSettingsDialog.tileset")); 
         tileSetChoice = new JComboBox<>(); 
-        tileSetChoice.setMaximumSize(new Dimension(400,tileSetChoice.getMaximumSize().height));
+        tileSetChoice.setMaximumSize(new Dimension(400, tileSetChoice.getMaximumSize().height));
         row = new ArrayList<>();
         row.add(tileSetChoiceLabel);
         row.add(Box.createHorizontalStrut(15));
@@ -1071,7 +1071,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         row = new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
         fovHighlightRingsRadii.addFocusListener(this);
-        fovHighlightRingsRadii.setMaximumSize(new Dimension(100,fovHighlightRingsRadii.getPreferredSize().height) );
+        fovHighlightRingsRadii.setMaximumSize(new Dimension(100, fovHighlightRingsRadii.getPreferredSize().height) );
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadii);
         comps.add(row);
@@ -1089,7 +1089,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         row = new ArrayList<>();
         fovHighlightRingsColors= new JTextField(50);//      ((3+1)*3+1)*7);
         fovHighlightRingsColors.addFocusListener(this);
-        fovHighlightRingsColors.setMaximumSize(new Dimension(200,fovHighlightRingsColors.getPreferredSize().height) );
+        fovHighlightRingsColors.setMaximumSize(new Dimension(200, fovHighlightRingsColors.getPreferredSize().height) );
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsColors);
         row.add(Box.createHorizontalGlue());

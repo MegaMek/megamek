@@ -40,9 +40,9 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
                 .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, true, false,false, false)
+                .setISApproximate(true, true, false, false, false)
                 .setClanAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false,false, false)
+                .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(F_FW)
                 .setProductionFactions(F_FW);
     }

@@ -53,14 +53,14 @@ public class ISUAC5 extends UACWeapon {
         maxRange = RANGE_LONG;
         rulesRefs = "208,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_D, RATING_F, RATING_D, RATING_D)
-            .setISAdvancement(2635, 2640, 3040, 2915, 3035)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FS);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_F, RATING_D, RATING_D)
+                .setISAdvancement(2635, 2640, 3040, 2915, 3035)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS);
     }
 }

@@ -29,7 +29,7 @@ class FiringSolutionSprite extends HexSprite {
     private static final int fontSizeLarge = 40;
     private static final Color xColor = Color.RED;
 
-    private static final Color hexIconColor = new Color(80,80,80, 140);
+    private static final Color hexIconColor = new Color(80, 80, 80, 140);
     private static final Stroke hexIconStroke = new BasicStroke(1.5f);
 
     private static final Color indirectDashColor1 = new Color(255,  0, 0, 140);

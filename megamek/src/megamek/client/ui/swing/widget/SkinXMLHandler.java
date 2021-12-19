@@ -855,7 +855,7 @@ public class SkinXMLHandler {
     }
 
     public static SkinSpecification getSkin(String component) {
-        return getSkin(component,false, false);
+        return getSkin(component, false, false);
     }
 
     public static SkinSpecification getSkin(String component, boolean defaultToPlain) {

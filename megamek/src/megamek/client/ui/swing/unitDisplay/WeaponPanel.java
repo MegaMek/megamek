@@ -176,7 +176,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
          */
         public void addWeapon(Mounted w) {
             weapons.add(w);
-            fireIntervalAdded(this,weapons.size()-1, weapons.size()-1);
+            fireIntervalAdded(this, weapons.size() - 1, weapons.size() - 1);
         }
 
         /**
@@ -324,21 +324,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
          * @param comparator
          */
         public void sort(Comparator<Mounted> comparator) {
-            Collections.sort(weapons, comparator);
+            weapons.sort(comparator);
             fireContentsChanged(this, 0, weapons.size() - 1);
         }
 
     }
-    
-    
-    /**
-     * 
-     */
+
     private final UnitDisplay unitDisplay;
-    
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -5728839963281503332L;
     private JComboBox<String> weapSortOrder;
     public JList<String> weaponList;

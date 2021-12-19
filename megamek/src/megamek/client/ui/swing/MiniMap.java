@@ -784,7 +784,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        g.setColor(new Color(20, 20,60));
+        g.setColor(new Color(20, 20, 60));
         g.drawPolygon(xPoints, yPoints, 6);
         // Drop in a star
         int dx = (int) (Math.random() * HEX_SIDE[zoom]);
@@ -795,7 +795,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             g.setColor(new Color(c, c / 10, c / 10)); // red star
         } else if (Math.random() < 0.1) {
             int factor = (int) (Math.random()*10) + 1;
-            g.setColor(new Color(c / factor, c / factor,c)); // blue star
+            g.setColor(new Color(c / factor, c / factor, c)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
     }

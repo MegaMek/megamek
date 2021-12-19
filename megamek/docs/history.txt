@@ -4553,7 +4553,7 @@ v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug: Mechs register as crippled after first sensor hit.
 + Bug 3722: NPE error in Princess Precognition in round 2 when Immediate Withdrawal is selected.
 + Bug: Mechs with destroyed side torso not registering as crippled.
-+ Data: Vehicle file fixes,new images,fixed RAT's
++ Data: Vehicle file fixes, new images, fixed RAT's
 + Bug 3733: Battlearmor with UMUs can't use all of their UMU MP
 + Bug 3741: Movement path decals aren't removed with /reset command
 + Updated MechView to display UMU MP separately.  Now uses #/#/#/# for Walk/Cruis/Jump/UMU

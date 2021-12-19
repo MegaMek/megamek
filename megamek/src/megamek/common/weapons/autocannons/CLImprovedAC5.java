@@ -48,10 +48,10 @@ public class CLImprovedAC5 extends ACWeapon {
         ammoType = AmmoType.T_AC_IMP;
         rulesRefs = "96, IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_C, RATING_X, RATING_X)
-            .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
-            .setClanApproximate(false, true, false,false, false)
-            .setProductionFactions(F_CLAN).setReintroductionFactions(F_EI)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setAvailability(RATING_X, RATING_C, RATING_X, RATING_X)
+                .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
+                .setClanApproximate(false, true, false, false, false)
+                .setProductionFactions(F_CLAN).setReintroductionFactions(F_EI)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -1219,7 +1219,7 @@ public class BLKFile {
                     //Add values for collars so they can be parsed and assigned a 'bay' number
                     String numbers = "1.0:0";
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new DockingCollar(1,pbi.getBayNumber()));
+                    e.addTransporter(new DockingCollar(1, pbi.getBayNumber()));
                 }
 
             } // Handle the next transportation component.

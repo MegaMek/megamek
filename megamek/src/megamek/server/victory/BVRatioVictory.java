@@ -55,7 +55,6 @@ public class BVRatioVictory extends AbstractBVVictory {
             }
             fbv = getFriendlyBV(game, player);
             ebv = getEnemyBV(game, player);
-            // eibv=getEnemyInitialBV(game,player);
 
             if (ebv == 0 || (100 * fbv) / ebv >= ratio) {
                 Report r = new Report(7100, Report.PUBLIC);
@@ -70,9 +69,7 @@ public class BVRatioVictory extends AbstractBVVictory {
                 r.add(ebv == 0 ? 9999 : (100 * fbv) / ebv);
                 vr.addReport(r);
             }
-        }// end for
-        if (victory)
-            return vr;
-        return VictoryResult.noResult();
+        }
+        return victory ? vr : VictoryResult.noResult();
     }
 }

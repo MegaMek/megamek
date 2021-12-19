@@ -47,11 +47,11 @@ public class CLArrowIV extends ArtilleryWeapon {
         this.missileArmor = 20;
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-            .setClanAdvancement(DATE_NONE, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setClanAdvancement(DATE_NONE, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_CHH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

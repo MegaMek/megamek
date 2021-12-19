@@ -72,25 +72,25 @@ public class TestBattleArmor extends TestEntity {
      *
      */
     public enum BAArmor {
-        STANDARD(EquipmentType.T_ARMOR_BA_STANDARD, 0,false),
-        CLAN_STANDARD(EquipmentType.T_ARMOR_BA_STANDARD, 0,true),
-        STANDARD_PROTOTYPE(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE, 4,false),
-        STANDARD_ADVANCED(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED, 5,false),
-        STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC, 3,false),
-        CLAN_STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC, 3,true),
-        STEALTH(EquipmentType.T_ARMOR_BA_STEALTH, 4,false),
-        CLAN_STEALTH(EquipmentType.T_ARMOR_BA_STEALTH, 4,true),
-        STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP, 5,false),
-        CLAN_STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP, 5,true),
-        STEALTH_PROTOTYPE(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE, 4,false),
-        FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST, 5,false),
-        CLAN_FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST, 5,true),
-        MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,7,false),
-        CLAN_MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC,7,true),
-        REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE,7,false),
-        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE,7,true),
-        REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE,7,false),
-        CLAN_REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE,7,true);
+        STANDARD(EquipmentType.T_ARMOR_BA_STANDARD, 0, false),
+        CLAN_STANDARD(EquipmentType.T_ARMOR_BA_STANDARD, 0, true),
+        STANDARD_PROTOTYPE(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE, 4, false),
+        STANDARD_ADVANCED(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED, 5, false),
+        STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC, 3, false),
+        CLAN_STEALTH_BASIC(EquipmentType.T_ARMOR_BA_STEALTH_BASIC, 3, true),
+        STEALTH(EquipmentType.T_ARMOR_BA_STEALTH, 4, false),
+        CLAN_STEALTH(EquipmentType.T_ARMOR_BA_STEALTH, 4, true),
+        STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP, 5, false),
+        CLAN_STEALTH_IMPROVED(EquipmentType.T_ARMOR_BA_STEALTH_IMP, 5, true),
+        STEALTH_PROTOTYPE(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE, 4, false),
+        FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST, 5, false),
+        CLAN_FIRE_RESISTANT(EquipmentType.T_ARMOR_BA_FIRE_RESIST, 5, true),
+        MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC, 7, false),
+        CLAN_MIMETIC(EquipmentType.T_ARMOR_BA_MIMETIC, 7, true),
+        REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE, 7, false),
+        CLAN_REFLECTIVE(EquipmentType.T_ARMOR_BA_REFLECTIVE, 7, true),
+        REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE, 7, false),
+        CLAN_REACTIVE(EquipmentType.T_ARMOR_BA_REACTIVE, 7, true);
 
         /**
          * The type, corresponding to types defined in
@@ -172,19 +172,19 @@ public class TestBattleArmor extends TestEntity {
      *
      */
     public enum BAManipulator {
-        NONE(BattleArmor.MANIPULATOR_NONE,false),
-        ARMORED_GLOVE(BattleArmor.MANIPULATOR_ARMORED_GLOVE,false),
-        BASIC(BattleArmor.MANIPULATOR_BASIC,false),
-        BASIC_MINE_CLEARANCE(BattleArmor.MANIPULATOR_BASIC_MINE_CLEARANCE,true),
-        BATTLE(BattleArmor.MANIPULATOR_BATTLE,false),
-        BATTLE_MAGNET(BattleArmor.MANIPULATOR_BATTLE_MAGNET,true),
-        BATTLE_VIBRO(BattleArmor.MANIPULATOR_BATTLE_VIBRO,false),
-        CARGO_LIFTER(BattleArmor.MANIPULATOR_CARGO_LIFTER,true),
-        HEAVY_BATTLE(BattleArmor.MANIPULATOR_HEAVY_BATTLE,false),
-        HEAVY_BATTLE_MAGNET(BattleArmor.MANIPULATOR_HEAVY_BATTLE_MAGNET,true),
-        HEAVY_BATTLE_VIBRO(BattleArmor.MANIPULATOR_HEAVY_BATTLE_VIBRO,false),
-        SALVAGE_ARM(BattleArmor.MANIPULATOR_SALVAGE_ARM,false),
-        DRILL(BattleArmor.MANIPULATOR_INDUSTRIAL_DRILL,false);
+        NONE(BattleArmor.MANIPULATOR_NONE, false),
+        ARMORED_GLOVE(BattleArmor.MANIPULATOR_ARMORED_GLOVE, false),
+        BASIC(BattleArmor.MANIPULATOR_BASIC, false),
+        BASIC_MINE_CLEARANCE(BattleArmor.MANIPULATOR_BASIC_MINE_CLEARANCE, true),
+        BATTLE(BattleArmor.MANIPULATOR_BATTLE, false),
+        BATTLE_MAGNET(BattleArmor.MANIPULATOR_BATTLE_MAGNET, true),
+        BATTLE_VIBRO(BattleArmor.MANIPULATOR_BATTLE_VIBRO, false),
+        CARGO_LIFTER(BattleArmor.MANIPULATOR_CARGO_LIFTER, true),
+        HEAVY_BATTLE(BattleArmor.MANIPULATOR_HEAVY_BATTLE, false),
+        HEAVY_BATTLE_MAGNET(BattleArmor.MANIPULATOR_HEAVY_BATTLE_MAGNET, true),
+        HEAVY_BATTLE_VIBRO(BattleArmor.MANIPULATOR_HEAVY_BATTLE_VIBRO, false),
+        SALVAGE_ARM(BattleArmor.MANIPULATOR_SALVAGE_ARM, false),
+        DRILL(BattleArmor.MANIPULATOR_INDUSTRIAL_DRILL, false);
 
         /**
          * The type, corresponding to types defined in
@@ -398,7 +398,7 @@ public class TestBattleArmor extends TestEntity {
                 }
             } else if (newMount.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                 if ((numAntiPersonnelWeapons + 1) <= 
-                        ba.getNumAllowedAntiPersonnelWeapons(loc,trooper)) {
+                        ba.getNumAllowedAntiPersonnelWeapons(loc, trooper)) {
                     return true;
                 } else {
                     return false;

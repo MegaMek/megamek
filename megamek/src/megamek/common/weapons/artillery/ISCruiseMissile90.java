@@ -41,14 +41,14 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
         this.bv = 1530;
         this.cost = 1250000;
         rulesRefs = "284,TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, true, false,false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, true, false, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

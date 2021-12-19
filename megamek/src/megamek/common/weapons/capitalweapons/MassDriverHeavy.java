@@ -53,9 +53,9 @@ public class MassDriverHeavy extends MassDriverWeapon {
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
             .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
-            .setISApproximate(true, false, false,true, false)
+            .setISApproximate(true, false, false, true, false)
             .setClanAdvancement(2715, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,true, false)
+            .setClanApproximate(true, false, false, true, false)
             .setPrototypeFactions(F_TH).setReintroductionFactions(F_WB)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

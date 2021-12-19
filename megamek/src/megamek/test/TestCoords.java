@@ -121,7 +121,7 @@ public class TestCoords {
         System.out.println("\nShould be: ");
         System.out.println(correct);
         
-        origin = new Coords(13,6); // displays as 14,7        
+        origin = new Coords(13, 6); // displays as 14, 7        
         dist = 3;
         neighbor = origin.translated(dir, dist);
         correct = "(14, 4); (17, 6); (17, 9); (14, 10); (11, 9); (11, 6)";
@@ -132,7 +132,7 @@ public class TestCoords {
         System.out.println("\nShould be: ");
         System.out.println(correct);
         
-        origin = new Coords(13,6);
+        origin = new Coords(13, 6);
         Coords dest = new Coords(15, 1);
         correct = "6"; 
         System.out.println(String.format(DISTFORMAT, origin.toFriendlyString(), dest.toFriendlyString(), correct, dest.distance(origin)));

@@ -809,7 +809,7 @@ public class Engine implements Serializable, ITechnology {
     
     private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false,true,false,false,false)
+            .setISApproximate(false, true, false, false, false)
             .setTechRating(RATING_F)
             .setPrototypeFactions(F_FS).setProductionFactions(F_LC)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
@@ -817,7 +817,7 @@ public class Engine implements Serializable, ITechnology {
     
     private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false,true,false,false,false)
+            .setClanApproximate(false, true, false, false, false)
             .setTechRating(RATING_F)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)

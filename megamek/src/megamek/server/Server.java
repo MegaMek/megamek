@@ -6375,7 +6375,7 @@ public class Server implements Runnable {
                         legalPos = step.getTargetPosition();
                     }
                 }
-                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()),legalPos));
+                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()), legalPos));
                 //If we're grounded or destroyed by crew loss, end movement
                 if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
                     return;
@@ -18359,7 +18359,7 @@ public class Server implements Runnable {
                     addReport(r);
                 } else if (attackerLocation2 == Entity.LOC_NONE) {
                     addReport(damageEntity(attacker, new HitData(attackerLocation), 2, false,
-                            DamageType.NONE,false, false, false));
+                            DamageType.NONE, false, false, false));
                 } else {
                     addReport(damageEntity(attacker, new HitData(attackerLocation), 1, false,
                             DamageType.NONE, false, false, false));
@@ -28549,7 +28549,7 @@ public class Server implements Runnable {
      * @param roll     - the <code>TargetRoll</code> for the ignition roll
      * @param bInferno - <code>true</code> if the fire is an inferno fire. If this
      *                 value is <code>false</code> the hex will be lit only if it
-     *                 contains Woods,jungle or a Building.
+     *                 contains Woods, jungle or a Building.
      * @param entityId - the entityId responsible for the ignite attempt. If the
      *                 value is Entity.NONE, then the roll attempt will not be
      *                 included in the report.
@@ -33607,7 +33607,7 @@ public class Server implements Runnable {
                 r.add(nEscaped);
                 vDesc.addElement(r);
             }
-            EscapePods pods = new EscapePods(entity,totalLaunched,isPod);
+            EscapePods pods = new EscapePods(entity, totalLaunched, isPod);
             entity.addEscapeCraft(pods.getExternalIdAsString());
             //Update the personnel numbers
             
@@ -33624,7 +33624,7 @@ public class Server implements Runnable {
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                 pods.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
-                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                vDesc.addAll(damageCrew(entity, entity.getCrew().calculateHits()));
                 if (entity.getCrew().getHits() >= Crew.DEATH) {
                     //Then we've finished ejecting
                     entity.getCrew().setEjected(true);
@@ -33696,7 +33696,7 @@ public class Server implements Runnable {
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                 crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
-                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                vDesc.addAll(damageCrew(entity, entity.getCrew().calculateHits()));
                 if (entity.getCrew().getHits() >= Crew.DEATH) {
                     //Then we've finished ejecting
                     entity.getCrew().setEjected(true);
@@ -33745,9 +33745,8 @@ public class Server implements Runnable {
             // Sent entity info to clients
             entityUpdate(crew.getId());
             // Check if the crew lands in a minefield
-            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
-                    entity.getPosition(), entity.getPosition(),
-                    entity.getElevation()));
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew, entity.getPosition(),
+                    entity.getPosition(), entity.getElevation()));
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
@@ -33759,8 +33758,8 @@ public class Server implements Runnable {
         return vDesc;
     }
 
-    public static PilotingRollData getEjectModifiers(Game game,
-            Entity entity, int crewPos, boolean autoEject) {
+    public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos,
+                                                     boolean autoEject) {
         int facing = entity.getFacing();
         if (entity.isPartOfFighterSquadron()) {
             // Because the components of a squadron have no position and will pass the next test
@@ -33773,8 +33772,7 @@ public class Server implements Runnable {
             return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
         }
         Coords targetCoords = entity.getPosition().translated((facing + 3) % 6);
-        return getEjectModifiers(game, entity, crewPos, autoEject, targetCoords,
-                "ejecting");
+        return getEjectModifiers(game, entity, crewPos, autoEject, targetCoords, "ejecting");
     }
 
     public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos,
@@ -33801,11 +33799,8 @@ public class Server implements Runnable {
             rollTarget.addModifier(entity.getCrew().getHits(), "Crew hits");
         }
         if ((entity instanceof Mech)
-                && (entity.getInternal(Mech.LOC_HEAD) < entity
-                        .getOInternal(Mech.LOC_HEAD))) {
-            rollTarget.addModifier(
-                    entity.getOInternal(Mech.LOC_HEAD)
-                            - entity.getInternal(Mech.LOC_HEAD),
+                && (entity.getInternal(Mech.LOC_HEAD) < entity.getOInternal(Mech.LOC_HEAD))) {
+            rollTarget.addModifier(entity.getOInternal(Mech.LOC_HEAD) - entity.getInternal(Mech.LOC_HEAD),
                     "Head Internal Structure Damage");
         }
         Hex targetHex = game.getBoard().getHex(targetCoords);
@@ -33843,11 +33838,11 @@ public class Server implements Runnable {
             }
         }
         if (!entity.isSpaceborne()) {
-            //At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
-            //That's a fix for another day, probably when I get around to space terrain and 'weather'
+            // At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
+            // That's a fix for another day, probably when I get around to space terrain and 'weather'
             if (game.getPlanetaryConditions().getGravity() == 0) {
                 rollTarget.addModifier(3, "Zero-G");
-            } else if (game.getPlanetaryConditions().getGravity() < .8) {
+            } else if (game.getPlanetaryConditions().getGravity() < 0.8) {
                 rollTarget.addModifier(2, "Low-G");
             } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
                 rollTarget.addModifier(2, "High-G");

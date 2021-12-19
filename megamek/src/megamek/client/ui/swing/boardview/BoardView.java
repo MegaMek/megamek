@@ -1362,7 +1362,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             mask = config.createCompatibleImage(orig.getWidth(this)+4, orig.getHeight(this)+4,
                     Transparency.TRANSLUCENT);
             Graphics g = mask.getGraphics();
-            g.drawImage(orig, 2, 2,null);
+            g.drawImage(orig, 2, 2, null);
             g.dispose();
             mask = createShadowMask(mask);
             mask = blurOp.filter(mask, null);
@@ -3068,10 +3068,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Point2D p2 = new Point2D.Double(41.5, 8.0 + ldiff);
 
         AffineTransform t = new AffineTransform();
-        t.scale(scale,scale);
+        t.scale(scale, scale);
         t.rotate(Math.toRadians(direction * 60), 41.5, 35.5);
-        t.transform(p1,p1);
-        t.transform(p2,p2);
+        t.transform(p1, p1);
+        t.transform(p2, p2);
 
         return(new GradientPaint(p1, c1, p2, c2));
     }
@@ -3160,11 +3160,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // checking at most 3 hexes would be sufficient
         // but which ones? This is failsafer.
         Coords cc = new Coords(x, y);
-        if (!HexDrawUtilities.getHexFull(getHexLocation(cc),scale).contains(p)) {
+        if (!HexDrawUtilities.getHexFull(getHexLocation(cc), scale).contains(p)) {
             boolean hasMatch = false;
             for (int dir = 0; dir < 6 && !hasMatch; dir++) {
                 Coords cn = cc.translated(dir);
-                if (HexDrawUtilities.getHexFull(getHexLocation(cn),scale).contains(p)) {
+                if (HexDrawUtilities.getHexFull(getHexLocation(cn), scale).contains(p)) {
                     cc = cn;
                     hasMatch = true;
                 }
@@ -3186,7 +3186,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     for (int dx = -1; dx < 2; dx++) {
                         Coords c1 = new Coords(x + dx, i);
                         Hex hexAlt = game.getBoard().getHex(c1);
-                        if (HexDrawUtilities.getHexFull(getHexLocation(c1),scale).contains(p)
+                        if (HexDrawUtilities.getHexFull(getHexLocation(c1), scale).contains(p)
                                 && (hexAlt != null)
                                 && (hexAlt.getLevel() == elev)) {
                             // Return immediately with highest hex found.
@@ -3693,10 +3693,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public void centerOnPointRel(double xrel, double yrel) {
         // restrict both values to between 0 and 1
-        xrel = Math.max(0,xrel);
-        xrel = Math.min(1,xrel);
-        yrel = Math.max(0,yrel);
-        yrel = Math.min(1,yrel);
+        xrel = Math.max(0, xrel);
+        xrel = Math.min(1, xrel);
+        yrel = Math.max(0, yrel);
+        yrel = Math.min(1, yrel);
         Point p = new Point(
                 (int) (boardSize.getWidth() * xrel) + HEX_W,
                 (int) (boardSize.getHeight() * yrel) + HEX_H);
@@ -3962,7 +3962,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // get text shape and position it
         GlyphVector gv = g2D.getFont().createGlyphVector(g2D.getFontRenderContext(), text);
         Shape shape = gv.getOutline();
-        shape = AffineTransform.getTranslateInstance(cx,cy).createTransformedShape(shape);
+        shape = AffineTransform.getTranslateInstance(cx, cy).createTransformedShape(shape);
 
         // text area fill
         if (translucent) {
@@ -6397,7 +6397,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 int dist = (rangeend + rangebegin) / 2;
                 // translate to the middle of the range bracket
                 Coords mark = c.translated((dir[0] + fac) % 6,(dist + 1) / 2)
-                        .translated((dir[1] + fac) % 6,dist / 2);
+                        .translated((dir[1] + fac) % 6, dist / 2);
                 // traverse back to the unit until a hex is onboard
                 while (!game.getBoard().contains(mark)) {
                     mark = Coords.nextHex(mark, c);

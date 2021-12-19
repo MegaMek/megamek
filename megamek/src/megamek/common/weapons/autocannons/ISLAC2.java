@@ -49,13 +49,13 @@ public class ISLAC2 extends LACWeapon {
         medAV = 2;
         rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_C)
-            .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_C)
+                .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS);
     }
 }

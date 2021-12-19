@@ -186,7 +186,7 @@ class EntitySprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         // Start with the hex and add the label
-        bounds = new Rectangle(0, 0,bv.hex_size.width, bv.hex_size.height);
+        bounds = new Rectangle(0, 0, bv.hex_size.width, bv.hex_size.height);
         updateLabel();
         bounds.add(labelRect);
         // Add space for 4 little status boxes

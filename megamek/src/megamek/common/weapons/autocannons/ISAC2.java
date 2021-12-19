@@ -55,9 +55,9 @@ public class ISAC2 extends ACWeapon {
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
                 .setISAdvancement(2290, 2300, 2305, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false,false, false)
+                .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2290, 2300, 2305, 2850, DATE_NONE)
-                .setClanApproximate(false, false, false,true, false)
+                .setClanApproximate(false, false, false, true, false)
                 .setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TA);
     }

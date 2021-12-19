@@ -227,7 +227,7 @@ public class ComputeECMTest {
         // Same Hex Tests
         
         // Attack Entity ECM Info
-        Coords aePos = new Coords(6,6);
+        Coords aePos = new Coords(6, 6);
         ECMInfo aeNullECM = null;
         ECMInfo aeECM = new ECMInfo(6, aePos, mockPlayer, 1, 0);
         ECMInfo aeAngelECM = new ECMInfo(6, aePos, mockPlayer, 0, 1);

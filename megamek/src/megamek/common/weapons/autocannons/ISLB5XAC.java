@@ -48,7 +48,7 @@ public class ISLB5XAC extends LBXACWeapon {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false,false, false)
+                .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS);
     }

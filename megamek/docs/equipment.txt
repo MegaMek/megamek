@@ -658,7 +658,7 @@ W,2720-Inner Sphere2713-Inner Sphere2750-Inner Sphere,2720-IS_Advanced2713-IS_Ex
 W,1950-Inner Sphere,1950-IS_TW_Non_Box,Submachine Gun,InfantrySMG,Submachinegun,
 W,2593-Inner Sphere2605-Inner Sphere,2593-IS_Experimental2605-IS_Advanced,InfantryTAG,Infantry TAG,
 W,2100-Inner Sphere,2100-IS_Experimental,Prosthetic Laser,ProstheticLaser,
-W,2100-Inner Sphere,2100-IS_Experimental,Prosthetic Ballistic,ProstheticBallastic,
+W,2100-Inner Sphere,2100-IS_Experimental,Prosthetic Ballistic,ProstheticBallistic,
 W,2100-Inner Sphere,2100-IS_Experimental,Prosthetic Dart Gun,ProstheticDartGun,
 W,2505-Inner Sphere,2505-IS_Experimental,Prosthetic Needler,Prosthetic Needler,
 W,2100-Inner Sphere,2100-IS_Experimental,Prosthetic Shotgun,Prosthetic Shotgun,

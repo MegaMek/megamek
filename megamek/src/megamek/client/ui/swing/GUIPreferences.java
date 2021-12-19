@@ -343,7 +343,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
-        store.setDefault(FIRING_SOLUTIONS,true);
+        store.setDefault(FIRING_SOLUTIONS, true);
         store.setDefault(GUI_SCALE, 1);
         store.setDefault(SHOW_UNIT_DISPLAY, true);
         store.setDefault(LOBBY_MEKTABLE_UNIT_WIDTH, 170);
@@ -400,7 +400,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_SPRINT, true);
         store.setDefault(NAG_FOR_OVERHEAT, true);
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
-        store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE,true);
+        store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE, true);
         store.setDefault(NAG_FOR_DOOMED, true);
         store.setDefault(NAG_FOR_WIGE_LANDING, true);
 
@@ -1052,19 +1052,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setFiringSolutions(boolean state) {
-        store.setValue(FIRING_SOLUTIONS,state);
+        store.setValue(FIRING_SOLUTIONS, state);
     }
     
     public void setMoveEnvelope(boolean state) {
-        store.setValue(MOVE_ENVELOPE,state);
+        store.setValue(MOVE_ENVELOPE, state);
     }   
 
     public void setFovHighlight(boolean state) {
-        store.setValue(FOV_HIGHLIGHT,state);
+        store.setValue(FOV_HIGHLIGHT, state);
     }
 
     public void setFovHighlightAlpha(int i) {
-        store.setValue(FOV_HIGHLIGHT_ALPHA,i);
+        store.setValue(FOV_HIGHLIGHT_ALPHA, i);
     }
 
     public void setFovHighlightRingsRadii(String s) {
@@ -1076,15 +1076,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setFovDarken(boolean state) {
-        store.setValue(FOV_DARKEN,state);
+        store.setValue(FOV_DARKEN, state);
     }
 
     public void setFovDarkenAlpha(int i) {
-        store.setValue(FOV_DARKEN_ALPHA,i);
+        store.setValue(FOV_DARKEN_ALPHA, i);
     }
     
     public void setFovStripes(int i) {
-        store.setValue(FOV_STRIPES,i);
+        store.setValue(FOV_STRIPES, i);
     }
     
     public void setFovGrayscale(boolean state) {
@@ -1128,15 +1128,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMechSelectorUnitType(int unitType) {
-        store.setValue(MECH_SELECTOR_UNIT_TYPE,unitType);
+        store.setValue(MECH_SELECTOR_UNIT_TYPE, unitType);
     }
 
     public void setMechSelectorWeightClass(int weightClass) {
-        store.setValue(MECH_SELECTOR_WEIGHT_CLASS,weightClass);
+        store.setValue(MECH_SELECTOR_WEIGHT_CLASS, weightClass);
     }
 
     public void setMechSelectorRulesLevels(String rulesLevels) {
-        store.setValue(MECH_SELECTOR_RULES_LEVELS,rulesLevels);
+        store.setValue(MECH_SELECTOR_RULES_LEVELS, rulesLevels);
     }
 
     public void setMechSelectorSortColumn(int columnId) {
@@ -1236,7 +1236,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMouseWheelZoomFlip(boolean b) {
-        store.setValue(MOUSE_WHEEL_ZOOM_FLIP,b);
+        store.setValue(MOUSE_WHEEL_ZOOM_FLIP, b);
     }
 
     public void setNagForBotReadme(boolean b) {
@@ -1244,7 +1244,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setNagForCrushingBuildings(boolean b) {
-        store.setValue(NAG_FOR_CRUSHING_BUILDINGS,b);
+        store.setValue(NAG_FOR_CRUSHING_BUILDINGS, b);
     }
 
     public void setNagForMapEdReadme(boolean b) {
@@ -1280,11 +1280,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setNagForMechanicalJumpFallDamage(boolean b) {
-        store.setValue(NAG_FOR_MECHANICAL_FALL_DAMAGE,b);
+        store.setValue(NAG_FOR_MECHANICAL_FALL_DAMAGE, b);
     }
 
     public void setNagForDoomed(boolean b) {
-        store.setValue(NAG_FOR_DOOMED,b);
+        store.setValue(NAG_FOR_DOOMED, b);
     }
     
     public void setNagForWiGELanding(boolean b) {

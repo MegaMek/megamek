@@ -2995,15 +2995,14 @@ public abstract class Mech extends Entity {
     @Override
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
-        addEquipment(mounted,loc,rearMounted,-1);
+        addEquipment(mounted, loc, rearMounted, -1);
     }
 
     /**
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted,
-            int critSlot)
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted, int critSlot)
             throws LocationFullException {
         // if there's no actual location or this is a LAM capital fighter weapons group,
         // or ammo for a LAM bomb weapon then don't add criticals

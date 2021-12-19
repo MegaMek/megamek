@@ -38,7 +38,7 @@ public class ProbabilityCalculator {
     /**
      * returns the probability that hit_location (from class mech) is hit when the mech is attacked with weapons fire from facing attackedfrom_facing, with 0 defined as forward
      */
-    static double getHitProbability(int attackedfrom_facing,int hit_location) {
+    static double getHitProbability(int attackedfrom_facing, int hit_location) {
         if ((attackedfrom_facing == 5) || (attackedfrom_facing == 0) || (attackedfrom_facing == 1) || (attackedfrom_facing == 3)) {
             return hit_probabilities_front[hit_location];
         }
@@ -52,7 +52,7 @@ public class ProbabilityCalculator {
     /**
      * returns the probability that hit_location (from class mech) is hit when the mech is attacked with a punch from facing attackedfrom_facing, with 0 defined as forward
      */
-    static double getHitProbability_Punch(int attackedfrom_facing,int hit_location) {
+    static double getHitProbability_Punch(int attackedfrom_facing, int hit_location) {
         if ((attackedfrom_facing == 5) || (attackedfrom_facing == 0) || (attackedfrom_facing == 1) || (attackedfrom_facing == 3)) {
             return hit_probabilities_punch_front[hit_location];
         }
@@ -66,7 +66,7 @@ public class ProbabilityCalculator {
     /**
      * returns the probability that hit_location (from class mech) is hit when the mech is attacked with a kick from facing attackedfrom_facing, with 0 defined as forward
      */
-    static double getHitProbability_Kick(int attackedfrom_facing,int hit_location) {
+    static double getHitProbability_Kick(int attackedfrom_facing, int hit_location) {
         if ((attackedfrom_facing == 5) || (attackedfrom_facing == 0) || (attackedfrom_facing == 1) || (attackedfrom_facing == 3)) {
             return hit_probabilities_kick_front[hit_location];
         }

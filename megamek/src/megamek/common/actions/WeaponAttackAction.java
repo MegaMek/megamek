@@ -3140,11 +3140,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Follow-the-leader LRMs
         if (bFTL) {
-            toHit.addModifier(2,atype.getSubMunitionName()
+            toHit.addModifier(2, atype.getSubMunitionName()
                     + Messages.getString("WeaponAttackAction.AmmoMod"));
         }
         
-        // Heat Seeking Missles
+        // Heat Seeking Missiles
         if (bHeatSeeking) {
             Hex hexTarget = game.getBoard().getHex(target.getPosition());
             // -2 bonus if shooting at burning hexes or buildings
@@ -3155,9 +3155,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // -2 bonus if the target is on fire
                 if (te.infernos.isStillBurning()) {
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AmmoMod"));
+
                 }
-                if ((te.isAirborne())
-                        && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
+                if ((te.isAirborne()) && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
                     // -2 bonus if shooting an Aero through the rear arc
                     toHit.addModifier(-2, atype.getSubMunitionName()
                             + Messages.getString("WeaponAttackAction.AmmoMod"));
@@ -3174,8 +3174,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // +2 penalty if shooting into or through a burning hex
-            if (LosEffects.hasFireBetween(ae.getPosition(),
-                    target.getPosition(), game)) {
+            if (LosEffects.hasFireBetween(ae.getPosition(), target.getPosition(), game)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.HsmThruFire"));
             }
         }

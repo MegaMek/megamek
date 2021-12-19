@@ -320,7 +320,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
             }
 
             if (!smokeToAdd.isEmpty()) {
-                smokeCloudData.put(cloud,smokeToAdd);
+                smokeCloudData.put(cloud, smokeToAdd);
             }
         }
 

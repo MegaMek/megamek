@@ -1358,7 +1358,7 @@ public class Client implements IClientCommandHandler {
      * send all buffered packets on their way this should be called after
      * everything which causes us to wait for a reply. For example "done" button
      * presses etc. to make stuff more efficient, this should only be called
-     * after a batch of packets is sent,not separately for each packet
+     * after a batch of packets is sent, not separately for each packet
      */
     protected void flushConn() {
         if (connection != null) {

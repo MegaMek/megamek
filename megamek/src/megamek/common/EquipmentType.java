@@ -1141,7 +1141,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @deprecated Use {@link #calcEraAvailability(int,boolean) calcEraAvailability to get availability
+     * @deprecated Use {@link #calcEraAvailability(int, boolean) calcEraAvailability to get availability
      *      for IS/Clan in a given year, or {@link #getBaseAvailability(int) getBaseAvailability}
      *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
      */
@@ -1151,7 +1151,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @deprecated Use {@link #getYearAvailabilityName(int,boolean) getYearAvailabilityName}
+     * @deprecated Use {@link #getYearAvailabilityName(int, boolean) getYearAvailabilityName}
      *      to get availability for IS or Clan in a specific year,
      *      or {@link #getEraAvailabilityName(int) getEraAvailabilityName to get code(s) for the era.
      */

@@ -200,17 +200,16 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(infOption.printOptions());
 
         int failures = 0;
-        Map<Integer,Integer> failedByType = new HashMap<>();
+        Map<Integer, Integer> failedByType = new HashMap<>();
         for (int i = 0; i < ms.length; i++) {
             int unitType = UnitType.determineUnitTypeCode(ms[i].getUnitType());
             if (unitType != UnitType.GUN_EMPLACEMENT) {
-                Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
-                        .getEntryName());
+                Entity entity = loadEntity(ms[i].getSourceFile(), ms[i].getEntryName());
                 if (entity == null) {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
-                        loadingVerbosity,entity.getTechLevel(),failsOnly)) {
+                        loadingVerbosity, entity.getTechLevel(), failsOnly)) {
                     failures++;
                     failedByType.merge(unitType, 1, Integer::sum);
                 }
@@ -218,16 +217,16 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         }
         System.out.println("Total Failures: " + failures);
         System.out.println("\t Failed Meks: " + failedByType.getOrDefault(UnitType.MEK, 0));
-        System.out.println("\t Failed Protomeks: " + failedByType.getOrDefault(UnitType.PROTOMEK, 0));
+        System.out.println("\t Failed ProtoMeks: " + failedByType.getOrDefault(UnitType.PROTOMEK, 0));
         System.out.println("\t Failed Tanks: " + failedByType.getOrDefault(UnitType.TANK, 0));
         System.out.println("\t Failed VTOLs: " + failedByType.getOrDefault(UnitType.VTOL, 0));
         System.out.println("\t Failed Naval: " + failedByType.getOrDefault(UnitType.NAVAL, 0));
         System.out.println("\t Failed ASFs: " + failedByType.getOrDefault(UnitType.AERO, 0));
         System.out.println("\t Failed CFs: " + failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0));
         System.out.println("\t Failed Small Craft: " + failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0));
-        System.out.println("\t Failed Dropships: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
-        System.out.println("\t Failed Jumpships: " + failedByType.getOrDefault(UnitType.JUMPSHIP, 0));
-        System.out.println("\t Failed Warships: " + failedByType.getOrDefault(UnitType.WARSHIP, 0));
+        System.out.println("\t Failed DropShips: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
+        System.out.println("\t Failed JumpShips: " + failedByType.getOrDefault(UnitType.JUMPSHIP, 0));
+        System.out.println("\t Failed WarShips: " + failedByType.getOrDefault(UnitType.WARSHIP, 0));
         System.out.println("\t Failed Space Stations: " + failedByType.getOrDefault(UnitType.SPACE_STATION, 0));
         System.out.println("\t Failed BA: " + failedByType.getOrDefault(UnitType.BATTLE_ARMOR, 0));
         System.out.println("\t Failed Infantry: " + failedByType.getOrDefault(UnitType.INFANTRY, 0));
@@ -283,9 +282,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             Entity entity;
             try {
                 entity = new MechFileParser(f, entityName).getEntity();
-            } catch (megamek.common.loaders.EntityLoadingException e) {
-                System.err.println("Exception: " + e.toString());
-                System.err.println("Exception: " + e.getMessage());
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
                 return;
             }
             EntityVerifier.getInstance(config).checkEntity(entity, f.toString(), true);

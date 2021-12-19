@@ -31,8 +31,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private static final int borderOpac = 120;
     // colors for Min,S,M,L,E ranges
     public static final Color[] fieldofFireColors = { new Color(255, 100, 100),
-        new Color(100, 255, 100), new Color(80, 200,80), 
-        new Color(60, 150,60), new Color(40, 100, 40)
+        new Color(100, 255, 100), new Color(80, 200, 80), 
+        new Color(60, 150, 60), new Color(40, 100, 40)
     };
     
     // thin line
@@ -46,13 +46,13 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     // across a hex instead of along its borders
     private static final int[] bDir = {
         0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0,
-        0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5,6, 5, 1, 5,
+        0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5, 6, 5, 1, 5,
         0, 5, 2, 5, 2, 2, 1, 5, 4, 4, 4, 4, 4, 4, 1, 4, 3, 3, 3, 3, 2, 2, 1, 0
     };
     private static final int[] bTypes = {
-        0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0,6, 1,7, 2, 3, 0, 0, 0,7,
-        0, 1,6, 5, 1,6,7, 4, 2, 5, 3,8, 0, 1, 4, 2,6,6,7, 3,
-        0,7, 2, 5,6, 4, 5,8, 1, 2,6, 3,7, 5, 4,8, 2, 3, 5,8, 3,8,8, 0
+        0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 6, 1, 7, 2, 3, 0, 0, 0, 7,
+        0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
+        0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
     };
     
     // in this sprite type, the images are very repetitive

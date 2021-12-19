@@ -54,12 +54,12 @@ public class CLLB5XAC extends LBXACWeapon {
         this.maxRange = RANGE_LONG;
         rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
-        .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, true, false,false, false)
-        .setPrototypeFactions(F_CCY)
-        .setProductionFactions(F_CCY);
+                .setIntroLevel(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+                .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, true, false, false, false)
+                .setPrototypeFactions(F_CCY)
+                .setProductionFactions(F_CCY);
     }
 }

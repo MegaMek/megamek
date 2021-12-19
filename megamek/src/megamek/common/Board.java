@@ -470,7 +470,7 @@ public class Board implements Serializable {
     }
     
     /** 
-     * Checks all hex edges of the hex at (x,y) if automatically handled 
+     * Checks all hex edges of the hex at (x, y) if automatically handled 
      * terrains such as inclines must be placed or removed.
      * @param x The hex X-coord.
      * @param y The hex Y-coord.

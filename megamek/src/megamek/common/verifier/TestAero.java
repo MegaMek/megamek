@@ -668,13 +668,11 @@ public class TestAero extends TestEntity {
      */
     public boolean correctArmor(StringBuffer buff) {
         boolean correct = true;
-        int maxArmorPoints = maxArmorPoints(aero,aero.getWeight());
+        int maxArmorPoints = maxArmorPoints(aero, aero.getWeight());
         int armorTotal = 0;
         for (int loc = 0; loc < aero.locations(); loc++) {
             if (aero.getOArmor(loc) > maxArmorPoints) {
-                buff.append(printArmorLocation(loc))
-                        .append(printArmorLocProp(loc,
-                                maxArmorPoints)).append("\n");
+                buff.append(printArmorLocation(loc)).append(printArmorLocProp(loc, maxArmorPoints)).append("\n");
                 correct = false;
             }
             armorTotal += aero.getOArmor(loc);

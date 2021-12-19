@@ -145,7 +145,7 @@ public class WarshipMapSet implements DisplayMapSet {
         vLabels[11].setValue(getCriticalHitTally(t.getLeftThrustHits(), 3));
         vLabels[12].setValue(getCriticalHitTally(t.getRightThrustHits(), 3));
         vLabels[13].setValue(collarDamageString);
-        vLabels[14].setValue(getCriticalHitTally(t.getTotalDamagedGravDeck(),t.getTotalGravDeck()));
+        vLabels[14].setValue(getCriticalHitTally(t.getTotalDamagedGravDeck(), t.getTotalGravDeck()));
         vLabels[15].setValue(kfDamageString);
         vLabels[16].setValue(sailDamageString);
 

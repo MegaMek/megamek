@@ -52,13 +52,13 @@ public class ISUAC10 extends UACWeapon {
         this.explosionDamage = damage;
         rulesRefs = "208,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_FW)
-            .setProductionFactions(F_FW);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FW)
+                .setProductionFactions(F_FW);
     }
 }

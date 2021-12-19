@@ -1868,17 +1868,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         msg = "MovementDisplay.AirmechRamDialog.message";
                     }
                     // Ask the player if they want to charge.
-                    if (clientgui
-                            .doYesNoDialog(Messages.getString(title, new Object[] { target.getDisplayName() }),
-                                    Messages.getString(msg,new Object[] {
-                                            toHit.getValueAsString(),
-                                            Double.valueOf(
-                                                    Compute.oddsAbove(toHit
-                                                            .getValue())),
-                                            toHit.getDesc(),
-                                            toDefender,
-                                            toHit.getTableDesc(),
-                                            Integer.valueOf(toAttacker) }))) {
+                    if (clientgui.doYesNoDialog(Messages.getString(title, target.getDisplayName()),
+                            Messages.getString(msg, toHit.getValueAsString(),
+                                    Compute.oddsAbove(toHit.getValue()), toHit.getDesc(), toDefender,
+                                    toHit.getTableDesc(), toAttacker))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1889,8 +1882,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     return;
                 }
                 // if not valid, tell why
-                clientgui.doAlertDialog(
-                        Messages.getString("MovementDisplay.CantCharge"),
+                clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"),
                         toHit.getDesc());
                 clear();
                 computeMovementEnvelope(ce);

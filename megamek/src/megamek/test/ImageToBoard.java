@@ -132,7 +132,7 @@ public class ImageToBoard {
                 for (int i = 0; i < hexWidth; i++) {
                     for (int j = 0; j < hexHeight; j++) {
                         if (hexTemplate.getRGB(i, j) == black) {
-                            hexImg.setRGB(i,j, transparent);
+                            hexImg.setRGB(i, j, transparent);
                         }
                     }
                 }

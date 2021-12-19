@@ -1,19 +1,15 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
 /*
- * Created on Oct 20, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
 package megamek.common.weapons.mgs;
 
@@ -22,17 +18,11 @@ import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
+ * @since Oct 20, 2004
  */
 public class CLHeavyMG extends MGWeapon {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3031880020233816652L;
 
-    /**
-     * 
-     */
     public CLHeavyMG() {
         super();
 
@@ -55,16 +45,15 @@ public class CLHeavyMG extends MGWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "228,TM";
+        rulesRefs = "228, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CSJ);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+                .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CHH)
+                .setProductionFactions(F_CSJ);
     }
-
 }

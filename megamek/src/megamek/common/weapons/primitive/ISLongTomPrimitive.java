@@ -47,7 +47,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
                 .setISAdvancement(2445, DATE_NONE, DATE_NONE, 2500, DATE_NONE)
-                .setISApproximate(false, false, false,true, false)
+                .setISApproximate(false, false, false, true, false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

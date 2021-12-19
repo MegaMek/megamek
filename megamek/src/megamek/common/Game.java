@@ -1551,7 +1551,7 @@ public class Game implements Serializable {
      * Returns an Enumeration of the active entities at the given coordinates.
      */
     public Iterator<Entity> getEntities(Coords c, boolean ignore) {
-        return getEntitiesVector(c,ignore).iterator();
+        return getEntitiesVector(c, ignore).iterator();
     }
 
     /**

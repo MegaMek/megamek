@@ -543,11 +543,10 @@ public class RATGenerator {
                     /* Go through the weight class groups and adjust the table weights so the
                      * total of each group corresponds to the distribution for this faction. */
                     for (int i : weightGroups.keySet()) {
-                        double totalWeight = weightGroups.get(i).stream()
-                                .mapToDouble(unitWeights::get).sum();
+                        double totalWeight = weightGroups.get(i).stream().mapToDouble(unitWeights::get).sum();
                         if (totalWeight > 0) {
                             double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
-                            weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x,y) -> x*y));
+                            weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x, y) -> x * y));
                         }
                     }
                 }

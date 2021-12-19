@@ -64,7 +64,7 @@ public class GameTurn implements Serializable {
      *         <code>false</code> if the entity is not valid for this turn.
      */
     public boolean isValidEntity(Entity entity, Game game) {
-        return isValidEntity(entity,game,true);
+        return isValidEntity(entity, game, true);
     }
     
     /**

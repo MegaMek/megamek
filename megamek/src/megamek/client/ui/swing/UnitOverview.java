@@ -176,7 +176,7 @@ public class UnitOverview implements IDisplayable {
                     ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
                     : game.getTurn();
 
-            if ((turn != null) && turn.isValidEntity(e,game)) {
+            if ((turn != null) && turn.isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
@@ -184,10 +184,8 @@ public class UnitOverview implements IDisplayable {
                 graph.setColor(oldColor);
             }
             
-            Entity se = clientgui == null ? null : clientgui.getClient()
-                    .getEntity(clientgui.getSelectedEntityNum());
-            if ((e == se) && (game.getTurn() != null) &&
-                    game.getTurn().isValidEntity(e,game)) {
+            Entity se = clientgui == null ? null : clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
+            if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));

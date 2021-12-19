@@ -50,7 +50,7 @@ public class CLUAC5 extends UACWeapon {
                 .setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C)
                 .setClanAdvancement(2825, 2827, 2829, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, true, false,false, false)
+                .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(F_CLAN)
                 .setProductionFactions(F_CLAN);
     }

@@ -92,7 +92,7 @@ public class MechViewPanel extends JPanel {
 
     public void setMech(Entity entity, boolean useAlternateCost) {
         MechView mechView = new MechView(entity, false, useAlternateCost);
-        setMech(entity,mechView);
+        setMech(entity, mechView);
     }
 
     private void setFluffImage(Entity entity) {

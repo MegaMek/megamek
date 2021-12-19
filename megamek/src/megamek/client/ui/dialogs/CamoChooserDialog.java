@@ -75,7 +75,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
             }));
         }
         panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText", this::cancelActionPerformed));
-        panel.add(new MMButton("btnRefresh",resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
+        panel.add(new MMButton("btnRefresh", resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
                 evt -> getChooser().refreshDirectory()));
 
         return panel;

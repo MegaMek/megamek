@@ -1248,9 +1248,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(3061, 3082,DATE_NONE,DATE_NONE,DATE_NONE)
-            .setISApproximate(false,true,false,false,false)
+            .setISApproximate(false, true, false, false, false)
             .setClanAdvancement(3061, 3082,DATE_NONE,DATE_NONE,DATE_NONE)
-            .setClanApproximate(false,true,false,false,false)
+            .setClanApproximate(false, true, false, false, false)
             .setPrototypeFactions(F_CSF,F_FW).setProductionFactions(F_CJF,F_FW)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -5059,7 +5059,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Does the mech have an active shield This should only be called by
-     * hasActiveShield(location,rear)
+     * hasActiveShield(location, rear)
      */
     public boolean hasActiveShield(int location) {
         return false;
@@ -5075,7 +5075,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Does the mech have a passive shield This should only be called by
-     * hasPassiveShield(location,rear)
+     * hasPassiveShield(location, rear)
      */
     public boolean hasPassiveShield(int location) {
         return false;
@@ -6163,8 +6163,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Active Mek Stealth prevents entity from participating in C3.
         // Turn off the stealth, and your back in the network.
-        if (((this instanceof Mech) || (this instanceof Tank))
-            && isStealthActive()) {
+        if (((this instanceof Mech) || (this instanceof Tank)) && isStealthActive()) {
             return false;
         }
         if (((e instanceof Mech) || (e instanceof Tank)) && e.isStealthActive()) {
@@ -6177,16 +6176,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (ignoreECM) {
                 return true;
             }
-            return !(ComputeECM.isAffectedByECM(e, e.getPosition(),
-                                                e.getPosition()))
-                   && !(ComputeECM.isAffectedByECM(this, getPosition(),
-                                                   getPosition()));
+            return !(ComputeECM.isAffectedByECM(e, e.getPosition(), e.getPosition()))
+                   && !(ComputeECM.isAffectedByECM(this, getPosition(), getPosition()));
         }
 
         // NC3 is easy too - if they both have NC3, and their net ID's match,
         // they're on the same network!
         if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
-            int distance = Compute.effectiveDistance(game,this,e,false);
+            int distance = Compute.effectiveDistance(game, this, e, false);
             //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
             if (game.getRoundCount() > 0) {
                 if (distance > 60) {

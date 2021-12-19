@@ -51,8 +51,8 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(BOARD_HEIGHT, 17);
         store.setDefault(MAP_WIDTH, 1);
         store.setDefault(MAP_HEIGHT, 1);
-        store.setDefault(DEBUG_OUTPUT_ON,false);
-        store.setDefault(MEMORY_DUMP_ON,false);
+        store.setDefault(DEBUG_OUTPUT_ON, false);
+        store.setDefault(MEMORY_DUMP_ON, false);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();

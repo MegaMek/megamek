@@ -939,7 +939,7 @@ public class BattleArmor extends Infantry {
             }
             int runMP = getWalkMP(false, false, true, true, false);
             int umuMP = getActiveUMUCount();
-            int tmmRan = Compute.getTargetMovementModifier(Math.max(runMP,umuMP), false, false,
+            int tmmRan = Compute.getTargetMovementModifier(Math.max(runMP, umuMP), false, false,
                     game).getValue();
             // get jump MP, ignoring burden
             int rawJump = getJumpMP(false, true, true);

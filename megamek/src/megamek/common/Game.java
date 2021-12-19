@@ -1491,22 +1491,20 @@ public class Game implements Serializable {
         entityIds.clear();
         lastEntityId = 0;
 
-        if (entities != null) {
-            // Add these entities to the game.
-            for (Entity entity : entities) {
-                final int id = entity.getId();
-                entityIds.put(id, entity);
+        // Add these entities to the game.
+        for (Entity entity : entities) {
+            final int id = entity.getId();
+            entityIds.put(id, entity);
 
-                if (id > lastEntityId) {
-                    lastEntityId = id;
-                }
+            if (id > lastEntityId) {
+                lastEntityId = id;
             }
-            // We need to ensure that each entity has the propery Game reference
-            //  however, the entityIds Hashmap must be fully formed before this
-            //  is called, since setGame also calls setGame for loaded Entities
-            for (Entity entity : entities) {
-                entity.setGame(this);
-            }
+        }
+        // We need to ensure that each entity has the proper Game reference
+        // however, the entityIds Hashmap must be fully formed before this
+        // is called, since setGame also calls setGame for loaded Entities
+        for (Entity entity : entities) {
+            entity.setGame(this);
         }
     }
 
@@ -1577,8 +1575,7 @@ public class Game implements Serializable {
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         //checkPositionCacheConsistency();
         // Make sure the look-up is initialized
-        if (entityPosLookup == null
-                || (entityPosLookup.size() < 1 && entities.size() > 0)) {
+        if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
             resetEntityPositionLookup();
         }
         Set<Integer> posEntities = entityPosLookup.get(c);

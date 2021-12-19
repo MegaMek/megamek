@@ -196,7 +196,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
-            return LAM_STRING[LAM_UNKNOWN];
+            LogManager.getLogger().error("Attempted to get LAM Type string for unknown type " + lamType + " returning standard.");
+            return LAM_STRING[LAM_STANDARD];
         }
         return LAM_STRING[lamType];
     }
@@ -1479,6 +1480,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             // normal front hits
             switch (roll) {
                 case 2:
+                case 7:
                 case 12:
                     return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
                 case 3:
@@ -1487,8 +1489,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 case 4:
                 case 5:
                     return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
-                case 7:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
                 case 8:
                 case 11:
                     return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
@@ -1727,8 +1727,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int getFuelUsed(int thrust) {
         int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
-        int used = safeThrust + (2 * overThrust);
-        return used;
+        return safeThrust + (2 * overThrust);
     }
 
     @Override
@@ -1821,11 +1820,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 loc = LOC_CAPITAL_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
-            if (null == groups.get(key)) {
-                groups.put(key, mounted.getNWeapons());
-            } else {
-                groups.put(key, groups.get(key) + mounted.getNWeapons());
-            }
+            groups.merge(key, mounted.getNWeapons(), Integer::sum);
         }
         return groups;
     }
@@ -1839,7 +1834,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         // Check for critical threshold and if so damage one facing of the
         // fighter completely.
         if (isDestroyed() || isDoomed()) {
-            // Note starting armor + internal so we can compute how many damage
+            // Note starting armor + internal, so we can compute how many damage
             // points were allocated
             // in this step.
             int start = getTotalArmor() + getTotalInternal();
@@ -1880,7 +1875,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((getGame() != null) && !getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt;
@@ -2096,7 +2091,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     @Override
     public void updateSensorOptions() {
-        //Remove everything but Radar if we're not in space
+        // Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
             Vector<Sensor> sensorsToRemove = new Vector<>();
             if (isAero()) {
@@ -2111,10 +2106,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             setNextSensor(getSensors().firstElement());
             }
         }
-        //If we are in space, add them back...
+        // If we are in space, add them back...
         if (isSpaceborne()) {
             if (isAero()) {
-                //ASFs and small craft get thermal/optical sensors
+                // ASFs and small craft get thermal/optical sensors
                 getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
                 setNextSensor(getSensors().firstElement());
             }

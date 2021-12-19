@@ -937,7 +937,7 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
+        try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
             game.reset();
             
             XStream xstream = SerializationHelper.getXStream();            

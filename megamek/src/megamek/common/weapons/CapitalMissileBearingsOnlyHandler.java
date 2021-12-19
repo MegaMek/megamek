@@ -438,10 +438,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 targets.add(a);
             }            
         }
-        if (targets.size() == 0) {
+        if (targets.isEmpty()) {
             //We're not dealing with targets in arc or in range yet.
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no valid targets in play");
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no valid targets in play");
             return;
         }
 
@@ -450,12 +449,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Add only targets in arc
         Vector<Aero> inArc = new Vector<>();
         for (Aero a : targets) {
-            Boolean isInArc = Compute.isInArc(tc, missileFacing, a, Compute.ARC_NOSE);
+            boolean isInArc = Compute.isInArc(tc, missileFacing, a, Compute.ARC_NOSE);
             if (isInArc) {
                 inArc.add(a);
             }
         }
-        if (inArc.size() == 0) {
+        if (inArc.isEmpty()) {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets detected within the missile's nose arc");
@@ -463,9 +462,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         //Empty out the targets vector and only put valid targets in arc back in
         targets.removeAllElements();
-        for (Aero a : inArc) {
-            targets.add(a);
-        }
+        targets.addAll(inArc);
         
         // Detection range for targets is based on the range set at firing
         Vector<Aero> detected = new Vector<>();
@@ -494,7 +491,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 }
             }
         }
-        if (detected.size() == 0) {
+        if (detected.isEmpty()) {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets detected within the missile's detection range");
@@ -502,9 +499,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         //Empty out the targets vector and only put valid targets in range back in
         targets.removeAllElements();
-        for (Aero a : detected) {
-            targets.add(a);
-        }
+        targets.addAll(detected);
 
         //If we're using tele-operated missiles, the player gets to select the target
         if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {

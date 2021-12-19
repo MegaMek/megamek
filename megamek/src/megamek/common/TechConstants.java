@@ -616,17 +616,19 @@ public class TechConstants {
                     if (isClan) {
                         if (year <= 3055) {
                             return T_CLAN_UNOFFICIAL;
+                        } else if (year < 3070) {
+                            return T_CLAN_ADVANCED;
+                        } else {
+                            return T_CLAN_TW;
                         }
-                        return T_CLAN_EXPERIMENTAL;
-                    }
-                    if (year <= 3053) {
-                        return T_IS_UNOFFICIAL;
-                    } else if (year <= 3075) {
-                        return T_IS_EXPERIMENTAL;
-                    } else if (year <= 3100) {
-                        return T_IS_ADVANCED;
                     } else {
-                        return T_IS_TW_NON_BOX;
+                        if (year <= 3053) {
+                            return T_IS_UNOFFICIAL;
+                        } else if (year <= 3070) {
+                            return T_IS_ADVANCED;
+                        } else {
+                            return T_IS_TW_NON_BOX;
+                        }
                     }
                 case Mech.COCKPIT_INTERFACE: // Clan Version
                     if (isClan) {

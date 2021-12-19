@@ -675,7 +675,7 @@ public class VTOL extends Tank implements IBomber {
         return new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(DATE_PS, 3079, 3080).setApproximate(false, true, false)
                 .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override

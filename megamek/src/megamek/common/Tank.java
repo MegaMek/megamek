@@ -239,9 +239,10 @@ public class Tank extends Entity {
     //Advanced turrets
     public static TechAdvancement getDualTurretTA() {
         return new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, 3080, 3080).setApproximate(false, true, false)
+                .setAdvancement(DATE_PS, DATE_NONE, 3080)
+                .setApproximate(false, false, true)
                 .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

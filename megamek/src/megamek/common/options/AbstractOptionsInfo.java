@@ -24,7 +24,6 @@ import java.util.Vector;
  * the Singleton pattern
  */
 public class AbstractOptionsInfo implements IOptionsInfo {
-
     protected static final String GROUP_SUFFIX = ".group.";
     protected static final String OPTION_SUFFIX = ".option.";
     protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName";
@@ -55,7 +54,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     private Vector<IBasicOptionGroup> groups = new Vector<>();
 
     /**
-     * Flag that indicates that this filling the the options info data is
+     * Flag that indicates that this filling the options info data is
      * completed. <code>addGroup</code> and <code>addOptionInfo</code> will
      * have no effect if it's <code>true</code>
      * 
@@ -68,7 +67,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * The <code>HashSet</code> used to check if the options info is already
      * registered
-     * 
+     *
      * @see AbstractOptionsInfo()
      */
     private static HashSet<String> names = new HashSet<>();
@@ -82,10 +81,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      */
     protected AbstractOptionsInfo(String name) {
         if (names.contains(name)) {
-            throw new IllegalArgumentException(
-                    "OptionsInfo '" + name + "' is already registered");
+            throw new IllegalArgumentException("OptionsInfo '" + name + "' is already registered");
         }
         this.name = name;
+        names.add(name);
     }
 
     /*
@@ -141,7 +140,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     }
 
     /**
-     * Returns the user friendly NLS dependent name suitable for displaying in
+     * Returns the user-friendly NLS dependent name suitable for displaying in
      * the options editor dialogs etc.
      * 
      * @param groupName
@@ -175,13 +174,11 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     }
 
     private String getOptionDisplayableName(String optionName) {
-        return Messages.getString(name + OPTION_SUFFIX + optionName
-                + DISPLAYABLE_NAME_SUFFIX);
+        return Messages.getString(name + OPTION_SUFFIX + optionName + DISPLAYABLE_NAME_SUFFIX);
     }
 
     private String getOptionDescription(String optionName) {
-        return Messages.getString(name + OPTION_SUFFIX + optionName
-                + DESCRIPTION_SUFFIX);
+        return Messages.getString(name + OPTION_SUFFIX + optionName + DESCRIPTION_SUFFIX);
     }
 
     /**
@@ -191,7 +188,6 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * @see getOptionInfo
      */
     private class OptionInfo implements IOptionInfo {
-
         private String name;
         private int textFieldLength = 3;
 
@@ -225,7 +221,5 @@ public class AbstractOptionsInfo implements IOptionsInfo {
         public boolean isLabelBeforeTextField() {
             return labelBeforeTextField;
         }
-
     }
-
 }

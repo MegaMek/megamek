@@ -41,8 +41,15 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
 		cost = 18000;
 		bv = 6.45;
 		tonnage = .012;
-		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
-		infantryDamage = 0.90;
+		flags = flags.or(F_INFERNO).or(F_INF_BURST).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
+		/*Errata
+		 * https://bg.battletech.com/forums/index.php?topic=60038.msg1377699#msg1377699
+		 * No Primary Infantry Weapon may have a Damage Value greater than 0.60. 
+		 * If the weapon selected has a Damage Value greater than 0.60, then reduce it's Damage Value to 0.60 
+		 * when determining final damage values (pg.152). Platoons that have their primary weapon damage reduced 
+		 * in this way automatically gain the Heavy Burst Weapon special feature
+		*/
+		infantryDamage = 0.60;  //was .90
 		infantryRange = 3;
 		ammoWeight = 0.0003;
 		shots = 6;

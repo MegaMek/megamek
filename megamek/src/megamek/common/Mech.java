@@ -3314,11 +3314,13 @@ public abstract class Mech extends Entity {
     }
 
     public static TechAdvancement getFullHeadEjectAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3020, 3023, 3100)
-                .setClanAdvancement(DATE_NONE, 3052, 3100).setPrototypeFactions(F_LC)
+        return new TechAdvancement(TECH_BASE_ALL)
+        		.setISAdvancement(DATE_NONE, 3020, 3023,DATE_NONE, DATE_NONE)
+        		.setISApproximate(false, true, false, false, false)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC)
                 .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

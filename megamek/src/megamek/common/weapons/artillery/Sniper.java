@@ -59,7 +59,7 @@ public class Sniper extends ArtilleryWeapon {
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-            .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }

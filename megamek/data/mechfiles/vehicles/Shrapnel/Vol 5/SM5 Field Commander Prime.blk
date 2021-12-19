@@ -78,7 +78,7 @@ Clan Ultra AC/20 Ammo:OMNI
 Clan Ultra AC/20 Ammo:OMNI
 Clan Ultra AC/20 Ammo:OMNI
 Clan Ultra AC/20 Ammo:OMNI
-Supercharger (Clan)
+Supercharger
 </Body Equipment>
 
 <Front Equipment>
@@ -98,14 +98,6 @@ CLUltraAC20:OMNI
 CLERMediumLaser:OMNI
 ISTAG:OMNI
 </Turret Equipment>
-
-<source>
-Shrapnel 6 - ilClan
-</source>
-
-<tonnage>
-50.0
-</tonnage>
 
 <capabilities>
 The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit.[5] The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
@@ -137,4 +129,12 @@ ARMOR:Durallex Ballistic-Reinforced
 COMMUNICATIONS:Unit 2J2 “Basher”
 TARGETING:Able-Seven Sensor Suite
 </systemManufacturers>
+
+<source>
+Shrapnel 6 - ilClan
+</source>
+
+<tonnage>
+50.0
+</tonnage>
 

@@ -38,7 +38,7 @@ VERSION HISTORY:
 + PR #3307: Log4j2 2.17.0 Swapover From Log4j1 1.2.17
 + Data: Tech Progression update. Merging the tables from TRO Prototypes and 3145 NTNU. Moves
 	Static tech levels for lots of equipment to 3145 per those table. 
-
++ PR #3315: LGTM Code Issues: Fixes Round 2
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

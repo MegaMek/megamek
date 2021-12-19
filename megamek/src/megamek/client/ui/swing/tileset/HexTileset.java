@@ -48,13 +48,13 @@ public class HexTileset implements BoardListener {
     
     private Game game;
 
-    private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
-    private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
-    private ArrayList<HexEntry> orthos = new ArrayList<HexEntry>();
-    private Set<String> themes = new TreeSet<String>();
-    private ImageCache<Hex, Image> basesCache = new ImageCache<Hex, Image>();
-    private ImageCache<Hex, List<Image>> supersCache = new ImageCache<Hex, List<Image>>();
-    private ImageCache<Hex, List<Image>> orthosCache = new ImageCache<Hex, List<Image>>();
+    private ArrayList<HexEntry> bases = new ArrayList<>();
+    private ArrayList<HexEntry> supers = new ArrayList<>();
+    private ArrayList<HexEntry> orthos = new ArrayList<>();
+    private Set<String> themes = new TreeSet<>();
+    private ImageCache<Hex, Image> basesCache = new ImageCache<>();
+    private ImageCache<Hex, List<Image>> supersCache = new ImageCache<>();
+    private ImageCache<Hex, List<Image>> orthosCache = new ImageCache<>();
 
     /**
      * Creates new HexTileset
@@ -74,9 +74,9 @@ public class HexTileset implements BoardListener {
 
     /** Clears the image cache for all hexes. */
     public synchronized void clearAllHexes() {
-        basesCache = new ImageCache<Hex, Image>();
-        supersCache = new ImageCache<Hex, List<Image>>();
-        orthosCache = new ImageCache<Hex, List<Image>>();
+        basesCache = new ImageCache<>();
+        supersCache = new ImageCache<>();
+        orthosCache = new ImageCache<>();
     }
     
     /**
@@ -138,7 +138,7 @@ public class HexTileset implements BoardListener {
      * a copy of the original to this function.
      */
     private List<Image> orthoFor(Hex hex, Component comp) {
-        ArrayList<Image> matches = new ArrayList<Image>();
+        ArrayList<Image> matches = new ArrayList<>();
 
         // find orthographic image matches
         for (HexEntry entry : orthos) {
@@ -167,7 +167,7 @@ public class HexTileset implements BoardListener {
      * of the original to this function.
      */
     private List<Image> supersFor(Hex hex, Component comp) {
-        ArrayList<Image> matches = new ArrayList<Image>();
+        ArrayList<Image> matches = new ArrayList<>();
 
         // find superimposed image matches
         for (HexEntry entry : supers) {
@@ -250,10 +250,10 @@ public class HexTileset implements BoardListener {
             String theme = null;
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && (st.sval.equals("base") || st.sval.equals("super") || st.sval.equals("ortho"))) { //$NON-NLS-3$ //$NON-NLS-2$
-                boolean bas = st.sval.equals("base"); //$NON-NLS-1$
-                boolean sup = st.sval.equals("super"); //$NON-NLS-1$
-                boolean ort = st.sval.equals("ortho"); //$NON-NLS-1$
+                    && (st.sval.equals("base") || st.sval.equals("super") || st.sval.equals("ortho"))) {
+                boolean bas = st.sval.equals("base");
+                boolean sup = st.sval.equals("super");
+                boolean ort = st.sval.equals("ortho");
 
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int) st.nval;
@@ -332,7 +332,7 @@ public class HexTileset implements BoardListener {
     }
 
     public Set<String> getThemes() {
-        return new TreeSet<String>(themes);
+        return new TreeSet<>(themes);
     }
 
     /**
@@ -389,7 +389,7 @@ public class HexTileset implements BoardListener {
             return 0.0;
 
         // check terrain
-        int cTerrainTypes[] = com.getTerrainTypes();
+        int[] cTerrainTypes = com.getTerrainTypes();
         for (int i = 0; i < cTerrainTypes.length; i++) {
             int cTerrType = cTerrainTypes[i];
             Terrain cTerr = com.getTerrain(cTerrType);
@@ -436,7 +436,7 @@ public class HexTileset implements BoardListener {
             return 0.0;
 
         // check terrain
-        int cTerrainTypes[] = com.getTerrainTypes();
+        int[] cTerrainTypes = com.getTerrainTypes();
         for (int i = 0; i < cTerrainTypes.length; i++) {
             int cTerrType = cTerrainTypes[i];
             Terrain cTerr = com.getTerrain(cTerrType);
@@ -540,7 +540,7 @@ public class HexTileset implements BoardListener {
 
         public HexEntry(Hex hex, String imageFile) {
             this.hex = hex;
-            filenames = StringUtil.splitString(imageFile, ";"); //$NON-NLS-1$
+            filenames = StringUtil.splitString(imageFile, ";");
         }
 
         public Hex getHex() {
@@ -566,7 +566,7 @@ public class HexTileset implements BoardListener {
         }
 
         public void loadImage(Component c2) {
-            images = new Vector<Image>();
+            images = new Vector<>();
             for (String filename: filenames) {
                 File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString());

@@ -329,11 +329,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
     private OffBoardDirection retreatedDirection = OffBoardDirection.NONE;
 
-    protected int[] vectors = {0, 0, 0, 0, 0, 0};
+    protected int[] vectors = { 0, 0, 0, 0, 0, 0 };
     private int recoveryTurn = 0;
     // need to keep a list of areas that this entity has passed through on the
     // current turn
-    private Vector<Coords> passedThrough = new Vector<Coords>();
+    private Vector<Coords> passedThrough = new Vector<>();
     private List<Integer> passedThroughFacing = new ArrayList<>();
     /**
      * Stores the player selected hex ground to air targeting.
@@ -403,51 +403,51 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
      */
-    protected ArrayList<Mounted> equipmentList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> equipmentList = new ArrayList<>();
 
     /**
      * A list of all mounted weapons. This only includes regular weapons, not
      * bay mounts or grouped weapon mounts.
      */
-    protected ArrayList<Mounted> weaponList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> weaponList = new ArrayList<>();
 
     /**
      * A list of all mounted weapon bays
      */
-    protected ArrayList<Mounted> weaponBayList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> weaponBayList = new ArrayList<>();
 
     /**
      * A list of all mounted weapon groups
      */
-    protected ArrayList<Mounted> weaponGroupList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> weaponGroupList = new ArrayList<>();
 
     /**
      * A list of every weapon mount, including bay mounts and weapon group
      * mounts
      */
-    protected ArrayList<Mounted> totalWeaponList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> totalWeaponList = new ArrayList<>();
 
     /**
      * A list of all mounted ammo.
      */
-    protected ArrayList<Mounted> ammoList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> ammoList = new ArrayList<>();
 
     /**
      * A list of all mounted bombs.
      */
-    protected ArrayList<Mounted> bombList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> bombList = new ArrayList<>();
 
     /**
      * A list of all remaining equipment.
      */
-    protected ArrayList<Mounted> miscList = new ArrayList<Mounted>();
+    protected ArrayList<Mounted> miscList = new ArrayList<>();
 
-    protected ArrayList<INarcPod> pendingINarcPods = new ArrayList<INarcPod>();
-    protected ArrayList<INarcPod> iNarcPods = new ArrayList<INarcPod>();
-    protected ArrayList<NarcPod> pendingNarcPods = new ArrayList<NarcPod>();
-    protected ArrayList<NarcPod> narcPods = new ArrayList<NarcPod>();
+    protected ArrayList<INarcPod> pendingINarcPods = new ArrayList<>();
+    protected ArrayList<INarcPod> iNarcPods = new ArrayList<>();
+    protected ArrayList<NarcPod> pendingNarcPods = new ArrayList<>();
+    protected ArrayList<NarcPod> narcPods = new ArrayList<>();
 
-    protected ArrayList<String> failedEquipmentList = new ArrayList<String>();
+    protected ArrayList<String> failedEquipmentList = new ArrayList<>();
 
     // which teams have NARCd us? a long allows for 64 teams.
     protected long m_lNarcedBy = 0;
@@ -485,18 +485,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * The components of this entity that can transport other entities.
      */
-    private Vector<Transporter> transports = new Vector<Transporter>();
+    private Vector<Transporter> transports = new Vector<>();
 
     /**
      * The components of this entity that can transport other entities and occupy
      * pod space of an omni unit.
      */
-    private Vector<Transporter> omniPodTransports = new Vector<Transporter>();
+    private Vector<Transporter> omniPodTransports = new Vector<>();
 
     /**
      * The ids of the MechWarriors this entity has picked up
      */
-    private Vector<Integer> pickedUpMechWarriors = new Vector<Integer>();
+    private Vector<Integer> pickedUpMechWarriors = new Vector<>();
 
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
@@ -637,7 +637,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @see megamek.common.Entity#hitBySwarmsWeapon
      */
-    private Vector<Integer> hitBySwarmsEntity = new Vector<Integer>();
+    private Vector<Integer> hitBySwarmsEntity = new Vector<>();
 
     /**
      * A vector that stores from which launcher we where hit by a swarm weapon
@@ -645,7 +645,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @see megamek.common.Entity#hitBySwarmsEntity
      */
-    private Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
+    private Vector<Integer> hitBySwarmsWeapon = new Vector<>();
 
     /**
      * True if and only if this is a canon (published) unit.
@@ -673,7 +673,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * a vector of currently active sensors that might be able to check range
      */
-    private Vector<Sensor> sensors = new Vector<Sensor>();
+    private Vector<Sensor> sensors = new Vector<>();
     // the currently selected sensor
     private Sensor activeSensor;
     // the sensor chosen for next turn
@@ -725,11 +725,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     // is calculated by getArmorTonnage
     protected double armorTonnage;
 
-    protected static int[] MASC_FAILURE = {3, 5, 7, 11, 13, 13, 13};
-    protected static int[] ALTERNATE_MASC_FAILURE = {0, 3, 5, 7, 11, 13, 13,
-                                                     13};
-    protected static int[] ALTERNATE_MASC_FAILURE_ENHANCED = {0, 3, 3, 5, 7,
-                                                              11, 13, 13, 13};
+    protected static int[] MASC_FAILURE = { 3, 5, 7, 11, 13, 13, 13 };
+    protected static int[] ALTERNATE_MASC_FAILURE = { 0, 3, 5, 7, 11, 13, 13, 13 };
+    protected static int[] ALTERNATE_MASC_FAILURE_ENHANCED = { 0, 3, 3, 5, 7, 11, 13, 13, 13 };
 
     // MASCLevel is the # of turns MASC has been used previously
     protected int nMASCLevel = 0;
@@ -781,8 +779,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected boolean useReducedOverheatModifierBV = false;
 
-    private final Set<Integer> attackedByThisTurn =
-            Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Determines the sort order for weapons in the UnitDisplay weapon list.
@@ -854,23 +851,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         locationBlownOffThisPhase = new boolean[locations()];
         setC3NetId(this);
         quirks.initialize();
-        secondaryPositions = new HashMap<Integer, Coords>();
+        secondaryPositions = new HashMap<>();
         fluff = new EntityFluff();
         impThisTurn = 0;
         impLastTurn = 0;
 
-        weaponSortOrder = WeaponSortOrder.values()[GUIPreferences.getInstance()
-                .getDefaultWeaponSortOrder()];
+        weaponSortOrder = WeaponSortOrder.values()[GUIPreferences.getInstance().getDefaultWeaponSortOrder()];
 
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
-        //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
+        //and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
     }
 
     /**
-     * @see {@link UnitType}
+     * @see UnitType
      */
     public abstract int getUnitType();
 
@@ -1366,6 +1362,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if this unit is a clan unit.
      * @see megamek.common.Entity#setTechLevel(int)
      */
+    @Override
     public boolean isClan() {
         return ((techLevel == TechConstants.T_CLAN_TW)
                 || (techLevel == TechConstants.T_CLAN_ADVANCED)
@@ -1392,6 +1389,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return isClan() ? TECH_BASE_CLAN : TECH_BASE_IS;
     }
 
+    @Override
     public boolean isMixedTech() {
         return mixedTech;
     }
@@ -1501,6 +1499,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * reliable than Player.isEnemyOf since it knows that an entity will never
      * be an enemy of itself.
      */
+    @Override
     public boolean isEnemyOf(Entity other) {
         if (null == other) {
             return false;
@@ -1556,6 +1555,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param marines The number of marines to add/subtract
      */
     public void setNMarines(int marines) {
+
     }
 
     /**
@@ -1641,7 +1641,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * This method should <strong>only</stong> be called when needed to remove a
+     * This method should <strong>only</strong> be called when needed to remove a
      * dead swarmer's game turn.
      */
     public void setUnloaded(boolean unloaded) {
@@ -1894,7 +1894,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public HashSet<Coords> getOccupiedCoords() {
-        HashSet<Coords> positions = new HashSet<Coords>();
+        HashSet<Coords> positions = new HashSet<>();
         if ((getSecondaryPositions() != null)
             && (getSecondaryPositions().size() != 0)) {
             for (int key : getSecondaryPositions().keySet()) {
@@ -2388,10 +2388,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech)
                     || (this instanceof Infantry)) {
-                    if ((assumedAlt >= (hex.getLevel() - hex.depth(true)))
-                        && (assumedAlt <= hex.ceiling())) {
-                        return true;
-                    }
+                    return (assumedAlt >= (hex.getLevel() - hex.depth(true))) && (assumedAlt <= hex.ceiling());
                 }
             }
         }
@@ -3037,7 +3034,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the the given board is prohibited
+     * Returns true if the given board is prohibited
      */
     public boolean isBoardProhibited(int mapType) {
 
@@ -4131,7 +4128,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         Mounted oldammo = mounted.getLinked();
 
         if ((oldammo != null) && (oldammo.getType() instanceof AmmoType)
-                && !((AmmoType) oldammo.getType()).equals(atype)) {
+                && !oldammo.getType().equals(atype)) {
             return false;
         }
 
@@ -4146,7 +4143,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean weaponFired() {
         boolean fired = false;
         for (int loc = 0; (loc < locations()) && !fired; loc++) {
-            fired |= weaponFiredFrom(loc);
+            fired = weaponFiredFrom(loc);
         }
         return fired;
     }
@@ -4186,7 +4183,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Vector<Mounted> getBombs(BigInteger flag) {
-        Vector<Mounted> bombs = new Vector<Mounted>();
+        Vector<Mounted> bombs = new Vector<>();
         for (Mounted bomb : getBombs()) {
             BombType btype = (BombType) bomb.getType();
             if (!bomb.isInoperable() && (bomb.getUsableShotsLeft() > 0)
@@ -4344,16 +4341,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 i.remove();
             }
         }
-        for (Iterator<Mounted> i = ammoList.iterator(); i.hasNext(); ) {
-            Mounted m = i.next();
-            if (m.getType() instanceof BombType) {
-                i.remove();
-            }
-        }
+        ammoList.removeIf(m -> m.getType() instanceof BombType);
     }
 
     public List<Mounted> getClubs() {
-        List<Mounted> rv = new ArrayList<Mounted>();
+        List<Mounted> rv = new ArrayList<>();
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_CLUB)) {
                 rv.add(m);
@@ -5231,13 +5223,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Does the mech have a functioning ECM unit, tuned to ghost target
-     * generation?
-     */
-
-    /**
-     * Does the mech have a functioning ECM unit, tuned to ghost target
-     * generation?
+     * Does the mech have a functioning ECM unit, tuned to ghost target generation?
      */
     public boolean hasGhostTargets(boolean active) {
         // no Ghost Targets in space unless strat op option enabled
@@ -5655,11 +5641,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
                 // this unit does not have a lance master computer.
-                if (C3MasterIs(this)
-                    && (c3CompanyMasterIndex == getEquipmentNum(m))) {
-                    return false;
-                }
-                return true;
+                return !C3MasterIs(this) || (c3CompanyMasterIndex != getEquipmentNum(m));
             }
         }
         return false;
@@ -6138,7 +6120,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             // integrity.
             for (Entity e : game.getEntitiesVector()) {
                 if (e.C3MasterIs(this) && !equals(e)) {
-                    e.setC3Master(NONE, reset);
+                    e.setC3Master(NONE, true);
                 }
             }
         }
@@ -6369,8 +6351,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         doNewRoundIMP();
 
         // reset hexes passed through
-        setPassedThrough(new Vector<Coords>());
-        setPassedThroughFacing(new ArrayList<Integer>());
+        setPassedThrough(new Vector<>());
+        setPassedThroughFacing(new ArrayList<>());
         if (playerPickedPassThrough == null) {
             playerPickedPassThrough = new HashMap<>();
         } else {
@@ -7065,9 +7047,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is getting up. If so, returns the target roll for
      * the piloting skill check.
      */
-    public PilotingRollData checkGetUp(MoveStep step,
-            EntityMovementType moveType) {
-
+    public PilotingRollData checkGetUp(MoveStep step, EntityMovementType moveType) {
         if ((step == null)
             || ((step.getType() != MoveStepType.GET_UP)
                     && (step.getType() != MoveStepType.CAREFUL_STAND))) {
@@ -7511,7 +7491,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         boolean enteringRubble = true;
-        addPilotingModifierForTerrain(roll, curPos, enteringRubble);
+        addPilotingModifierForTerrain(roll, curPos, true);
 
         if (!lastPos.equals(curPos)
                 && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
@@ -7762,7 +7742,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int mod = 0;
         String desc;
 
-        if (why.equals("")) {
+        if (why.isBlank()) {
             desc = "moving through ";
         } else {
             desc = why + " ";
@@ -7777,6 +7757,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     mod = 1;
                     desc = "Medium";
                 }
+
                 if (bldg.getBldgClass() >= Building.FORTRESS) {
                     mod = 2;
                     desc = desc + " Fortress";
@@ -7789,14 +7770,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     mod = 1;
                     desc = desc + " Hangar";
                 }
+
                 if (bldg.getBldgClass() == Building.FORTRESS) {
                     mod = 3;
                     desc = desc + " Fortress";
                 }
-                // if (bldg.getBldgClass() == Building.CASTLE_BRIAN) {
-                // mod = 4;
-                // desc = desc + " Castle Brian";
-                // }
                 break;
             case Building.HARDENED:
                 mod = 5;
@@ -8016,7 +7994,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * only be called during construction.
      */
     public void removeAllTransporters() {
-        transports = new Vector<Transporter>();
+        transports = new Vector<>();
         omniPodTransports.clear();
     }
 
@@ -8200,7 +8178,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         String bayType = "none";
 
         Vector<Bay> potential;
-        potential = new Vector<Bay>();
+        potential = new Vector<>();
 
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
@@ -8214,8 +8192,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (potential.size() > 0) {
-            Bay chosenBay = potential.elementAt(Compute.randomInt(potential
-                                                                          .size()));
+            Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
             bayType = chosenBay.getType();
@@ -8247,11 +8224,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Damages a randomly determined docking collar on the entity, if one exists
      */
     public boolean damageDockCollar() {
-
         boolean result = false;
 
         Vector<DockingCollar> potential;
-        potential = new Vector<DockingCollar>();
+        potential = new Vector<>();
 
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
@@ -8265,8 +8241,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (potential.size() > 0) {
-            DockingCollar chosenDC = potential.elementAt(Compute
-                                                                 .randomInt(potential.size()));
+            DockingCollar chosenDC = potential.elementAt(Compute.randomInt(potential.size()));
             chosenDC.setDamaged(true);
             result = true;
         }
@@ -8288,7 +8263,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     @Override
     public List<Entity> getLoadedUnits() {
-        List<Entity> result = new ArrayList<Entity>();
+        List<Entity> result = new ArrayList<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8337,7 +8312,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public Vector<Entity> getBayLoadedUnits() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8447,7 +8422,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * recovery)
      */
     public Vector<Entity> getLaunchableFighters() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8470,7 +8445,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return only entities in that can be combat dropped
      */
     public Vector<Entity> getDroppableUnits() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8493,7 +8468,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return only entities in that can be unloaded on ground
      */
     public Vector<Entity> getUnitsUnloadableFromBays() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8537,25 +8512,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return get the bays separately
      */
     public Vector<Bay> getFighterBays() {
-        Vector<Bay> result = new Vector<Bay>();
+        Vector<Bay> result = new Vector<>();
 
         for (Transporter next : transports) {
             if (((next instanceof ASFBay) || (next instanceof SmallCraftBay))
-                && (((Bay) next).getCurrentDoors() > 0)) {
+                    && (((Bay) next).getCurrentDoors() > 0)) {
                 result.addElement((Bay) next);
             }
         }
 
         // Return the list.
         return result;
-
     }
 
     /**
      * @return get the bays separately
      */
     public Vector<DockingCollar> getDockingCollars() {
-        Vector<DockingCollar> result = new Vector<DockingCollar>();
+        Vector<DockingCollar> result = new Vector<>();
 
         for (Transporter next : transports) {
             if (next instanceof DockingCollar) {
@@ -8565,7 +8539,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Return the list.
         return result;
-
     }
 
     /**
@@ -8582,8 +8555,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Vector<Bay> getTransportBays() {
-
-        Vector<Bay> result = new Vector<Bay>();
+        Vector<Bay> result = new Vector<>();
 
         for (Transporter next : transports) {
             if (next instanceof Bay) {
@@ -8599,7 +8571,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * do any damage to bay doors
      */
     public void resetBayDoors() {
-
         for (Transporter next : transports) {
             if (next instanceof Bay) {
                 ((Bay) next).resetDoors();
@@ -8632,7 +8603,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Vector<Entity> getLoadedSmallCraft() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8650,7 +8621,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Vector<Entity> getLaunchableSmallCraft() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8669,7 +8640,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Vector<Entity> getLoadedDropships() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8686,7 +8657,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Vector<Entity> getLaunchableDropships() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -8707,7 +8678,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * get the bays separately
      */
     public Vector<SmallCraftBay> getSmallCraftBays() {
-        Vector<SmallCraftBay> result = new Vector<SmallCraftBay>();
+        Vector<SmallCraftBay> result = new Vector<>();
 
         for (Transporter next : transports) {
             if ((next instanceof SmallCraftBay)
@@ -8718,7 +8689,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Return the list.
         return result;
-
     }
 
     /**
@@ -8917,7 +8887,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public ArrayList<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>();
+        ArrayList<Entity> rv = new ArrayList<>();
         for (Transporter t : transports) {
             rv.addAll(t.getExternalUnits());
         }
@@ -9330,11 +9300,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * This returns a textual description of the entity for visualy impaired
-     * users.
+     * This returns a textual description of the entity for visually impaired users.
      */
     public String statusToString() {
-        // should include additional information like imobile.
+        // should include additional information like immobile.
         String str = "Entity [" + getDisplayName() + ", " + getId() + "]:";
         if (getPosition() != null) {
             str = str + "Location: (" + (getPosition().getX() + 1) + ", "
@@ -9766,28 +9735,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public Enumeration<Entity> getKills() {
         final int killer = id;
-        return game.getSelectedOutOfGameEntities(new EntitySelector() {
-            @Override
-            public boolean accept(Entity entity) {
-                if (killer == entity.killerId) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        return game.getSelectedOutOfGameEntities(entity -> killer == entity.killerId);
     }
 
     public int getKillNumber() {
         final int killer = id;
-        return game.getSelectedOutOfGameEntityCount(new EntitySelector() {
-            @Override
-            public boolean accept(Entity entity) {
-                if (killer == entity.killerId) {
-                    return true;
-                }
-                return false;
-            }
-        });
+        return game.getSelectedOutOfGameEntityCount(entity -> killer == entity.killerId);
     }
 
     public void addKill(Entity kill) {
@@ -10106,15 +10059,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return true;
             }
-            //Bearings-only capital missiles fire during the targeting phase
-            if ((wtype instanceof TeleOperatedMissileBayWeapon)
-                    || (wtype instanceof CapitalMissileBayWeapon)
-                    || (wtype instanceof AR10BayWeapon)) {
+            // Bearings-only capital missiles fire during the targeting phase
+            if ((wtype instanceof CapitalMissileBayWeapon) || (wtype instanceof AR10BayWeapon)) {
                 if (mounted.isInBearingsOnlyMode()) {
                     return true;
                 }
             }
-            //Surface to surface capital missiles count as artillery
+
+            // Surface to surface capital missiles count as artillery
             if (this.getAltitude() == 0
                     && wtype instanceof CapitalMissileWeapon) {
                 return true;
@@ -10439,7 +10391,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Set wether this Enity is stuck in a swamp or not
+     * Set whether this Entity is stuck in a swamp or not
      *
      * @param arg the <code>boolean</code> value to assign
      */
@@ -10455,11 +10407,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
 
     public String destroy(String reason, boolean survivable, boolean canSalvage) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
         if (!canSalvage) {
-            setSalvage(canSalvage);
+            setSalvage(false);
             condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
 
@@ -10475,11 +10427,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         Enumeration<Integer> iter = getPickedUpMechWarriors().elements();
         while (iter.hasMoreElements()) {
             Integer mechWarriorId = iter.nextElement();
-            Entity mw = game.getEntity(mechWarriorId.intValue());
+            Entity mw = game.getEntity(mechWarriorId);
             mw.setDestroyed(true);
             game.removeEntity(mw.getId(), condition);
-            sb.append("\n*** ").append(
-                    mw.getDisplayName() + " died in the wreckage. ***\n");
+            sb.append("\n*** ").append(mw.getDisplayName()).append(" died in the wreckage. ***\n");
         }
         return sb.toString();
     }
@@ -10506,8 +10457,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (int i = 0; i < hitBySwarmsEntity.size(); i++) {
             Integer entityIdToTest = hitBySwarmsEntity.elementAt(i);
             Integer weaponIdToTest = hitBySwarmsWeapon.elementAt(i);
-            if ((entityId == entityIdToTest.intValue())
-                && (weaponId == weaponIdToTest.intValue())) {
+            if ((entityId == entityIdToTest) && (weaponId == weaponIdToTest)) {
                 return true;
             }
         }
@@ -10595,9 +10545,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getLOSRangeModifier() {
-        int mod = 8;
-
-        return mod;
+        return 8;
     }
 
     public void setArmorType(int armType) {
@@ -10624,8 +10572,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setArmorType(String armType) {
         if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
-            armType = TechConstants.isClan(getArmorTechLevel(0)) ? "Clan "
-                                                                   + armType : "IS " + armType;
+            armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
         EquipmentType et = EquipmentType.get(armType);
         if (et == null) {
@@ -10636,9 +10583,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
-                } catch (LocationFullException e) {
+                } catch (Exception e) {
                     // can't happen
-                    e.printStackTrace();
+                    LogManager.getLogger().error(e);
                 }
             }
         }
@@ -10647,8 +10594,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setArmorType(String armType, int loc) {
         if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
-            armType = TechConstants.isClan(getArmorTechLevel(0)) ? "Clan "
-                                                                   + armType : "IS " + armType;
+            armType = (TechConstants.isClan(getArmorTechLevel(0)) ? "Clan " : "IS ") + armType;
         }
         EquipmentType et = EquipmentType.get(armType);
         if (et == null) {
@@ -10659,9 +10605,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
-                } catch (LocationFullException e) {
+                } catch (Exception e) {
                     // can't happen
-                    e.printStackTrace();
+                    LogManager.getLogger().error(e);
                 }
             }
         }
@@ -10670,7 +10616,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setStructureType(String strucType) {
         if (!(strucType.startsWith("Clan ") || strucType.startsWith("IS "))) {
-            strucType = isClan() ? "Clan " + strucType : "IS " + strucType;
+            strucType = (isClan() ? "Clan " : "IS ") + strucType;
         }
         EquipmentType et = EquipmentType.get(strucType);
         setStructureType(EquipmentType.getStructureType(et));
@@ -10682,9 +10628,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
-                } catch (LocationFullException e) {
+                } catch (Exception e) {
                     // can't happen
-                    e.printStackTrace();
+                    LogManager.getLogger().error(e);
                 }
             }
         }
@@ -10743,7 +10689,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns a multiplier that combines multiplicative construction cost modifiers for this Entity.
      *
      * This includes only modifiers that apply to an Entity's final, total cost (e.g. - the 1.25x modifier for being
-     * an omni-unit, or the 32.0x for being an aerodyne dropship). It does NOT include multipliers that only apply to
+     * an omni-unit, or the 32.0x for being an aerodyne DropShip). It does NOT include multipliers that only apply to
      * a sub-part of the unit (e.g. the weight based multiplier that applies to a vehicle's internal structure cost).
      *
      * This allows MekHQ to scale the price of a Unit's Parts in a more appropriate manner.
@@ -10752,7 +10698,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public double getPriceMultiplier() {
         return 1.0;
-    };
+    }
 
     public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
         long cost = 0;
@@ -11038,13 +10984,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean canLayMine() {
-        for (Object oMount : miscList) {
-            Mounted mount = (Mounted) oMount;
-            EquipmentType type = mount.getType();
-            if (!mount.isMissing()
-                && (type.hasFlag(MiscType.F_MINE) || type
-                    .hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER))
-                && !isLayingMines()) {
+        for (Mounted mounted : miscList) {
+            EquipmentType type = mounted.getType();
+            if (!mounted.isMissing() && !isLayingMines()
+                    && (type.hasFlag(MiscType.F_MINE) || type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER))) {
                 return true;
             }
         }
@@ -11065,8 +11008,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return sideTable(src, usePrior, face, getPosition());
     }
 
-    public int sideTable(Coords src, boolean usePrior, int face,
-                         Coords effectivePos) {
+    public int sideTable(Coords src, boolean usePrior, int face, Coords effectivePos) {
         if (usePrior) {
             effectivePos = getPriorPosition();
         }
@@ -11298,17 +11240,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean itemOppositeTech(String s) {
         if (isClan()) { // Clan base
-            if ((s.toLowerCase().indexOf("(is)") != -1)
-                || (s.toLowerCase().indexOf("inner sphere") != -1)) {
-                return true;
-            }
-            return false;
+            return s.toLowerCase().contains("(is)") || s.toLowerCase().contains("inner sphere");
+        } else {
+            return s.toLowerCase().contains("(c)") || s.toLowerCase().contains("clan");
         }
-        if ((s.toLowerCase().indexOf("(c)") != -1)
-            || (s.toLowerCase().indexOf("clan") != -1)) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -11342,7 +11277,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @returns whether or not the unit is suffering from Electromagnetic
+     * @return whether the unit is suffering from Electromagnetic
      * Interference
      */
     public boolean isSufferingEMI() {
@@ -11385,7 +11320,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Checks if the unit is hardened agaist nuclear strikes.
+     * Checks if the unit is hardened against nuclear strikes.
      *
      * @return true if this is a hardened unit.
      */
@@ -11669,6 +11604,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Helper function to test whether an entity should be treated as an Aero unit (includes
      * LAMs in fighter mode)
      */
+    @Override
     public boolean isAero() {
         return false;
     }
@@ -11864,7 +11800,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public Vector<Integer> getHeading() {
 
-        Vector<Integer> heading = new Vector<Integer>();
+        Vector<Integer> heading = new Vector<>();
         int high = 0;
         int curDir = getFacing();
         for (int dir = 0; dir < 6; dir++) {
@@ -12108,7 +12044,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setGameOptions() {
-
         if (game == null) {
             return;
         }
@@ -12140,18 +12075,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
-                && (this instanceof Aero || this instanceof LandAirMech)
-                && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                ArrayList<String> modes = new ArrayList<String>();
+                    && (this instanceof Aero || this instanceof LandAirMech)
+                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                ArrayList<String> modes = new ArrayList<>();
                 String[] stringArray = {};
                 modes.add("Short");
                 modes.add("Medium");
-                ((MiscType) misc.getType())
-                        .setModes(modes.toArray(stringArray));
-                ((MiscType) misc.getType()).setInstantModeSwitch(false);
+                misc.getType().setModes(modes.toArray(stringArray));
+                misc.getType().setInstantModeSwitch(false);
             }
             if (misc.getType().hasFlag(MiscType.F_ECM)) {
-                ArrayList<String> modes = new ArrayList<String>();
+                ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
                 String[] stringArray = {};
                 if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
@@ -12176,8 +12110,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         modes.add("Ghost Targets");
                     }
                 }
-                ((MiscType) misc.getType())
-                        .setModes(modes.toArray(stringArray));
+                misc.getType().setModes(modes.toArray(stringArray));
             }
         }
 
@@ -12940,13 +12873,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Check for unstalling of this Entity's engine (only used for ICE-powered
-     * 'Mechs).
+     * Check for unstalling of this Entity's engine (only used for ICE-powered 'Mechs).
      *
      * @param vPhaseReport the <code>Vector<Report></code> containing the phase reports
      */
     public void checkUnstall(Vector<Report> vPhaseReport) {
-        return;
+
     }
 
     public boolean hasArmoredEngine() {
@@ -13526,7 +13458,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Used by small craft, dropships, jumpships, and warships to compute heat for a specific firing arc
+     * Used by Small Craft, DropShips, JumpShips, and WarShips to compute heat for a specific firing arc
      *
      * @param location
      * @return
@@ -14114,8 +14046,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 Mounted masc = getMASC();
                 Mounted superCharger = getSuperCharger();
                 bFailure = doMASCCheckFor(masc, vDesc, vCriticals);
-                boolean bSuperChargeFailure = doMASCCheckFor(superCharger,
-                                                             vDesc, vCriticals);
+                boolean bSuperChargeFailure = doMASCCheckFor(superCharger, vDesc, vCriticals);
                 usedMASC = true;
                 return bFailure || bSuperChargeFailure;
             }
@@ -14159,8 +14090,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 r.choose(false);
                 vDesc.addElement(r);
 
-                if (((MiscType) (masc.getType()))
-                        .hasSubType(MiscType.S_SUPERCHARGER)) {
+                if (masc.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
                     // do the damage - engine crits
                     int hits = 0;
                     int roll = Compute.d6(2);
@@ -14195,15 +14125,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         vDesc.addElement(r);
                     }
                     if (this instanceof Mech) {
-                        vCriticals.put(Mech.LOC_CT,
-                                       new LinkedList<CriticalSlot>());
+                        vCriticals.put(Mech.LOC_CT, new LinkedList<>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
                             CriticalSlot cs = getCritical(Mech.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                                && (cs.getIndex() == Mech.SYSTEM_ENGINE)
-                                && cs.isHittable()) {
-                                vCriticals.get(Mech.LOC_CT)
-                                          .add(cs);
+                                    && (cs.getIndex() == Mech.SYSTEM_ENGINE) && cs.isHittable()) {
+                                vCriticals.get(Mech.LOC_CT).add(cs);
                                 hits--;
                             }
                         }
@@ -14211,7 +14138,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         // this must be a Tank
                         Tank tank = (Tank) this;
                         boolean vtolStabilizerHit = (this instanceof VTOL)
-                                                    && tank.isStabiliserHit(VTOL.LOC_ROTOR);
+                                && tank.isStabiliserHit(VTOL.LOC_ROTOR);
                         boolean minorMovementDamage = tank
                                 .hasMinorMovementDamage();
                         boolean moderateMovementDamage = tank
@@ -14227,43 +14154,33 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             if (tank instanceof VTOL) {
                                 if (vtolStabilizerHit) {
                                     vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
-                                                      CriticalSlot.TYPE_SYSTEM,
-                                                      Tank.CRIT_ENGINE));
+                                            CriticalSlot.TYPE_SYSTEM, Tank.CRIT_ENGINE));
                                 } else {
-                                    vCriticals
-                                            .get(VTOL.LOC_ROTOR).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    VTOL.CRIT_FLIGHT_STABILIZER));
+                                    vCriticals.get(VTOL.LOC_ROTOR).add(new CriticalSlot(
+                                            CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_FLIGHT_STABILIZER));
                                     vtolStabilizerHit = true;
                                 }
                             } else {
                                 if (heavyMovementDamage) {
                                     vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
-                                                      CriticalSlot.TYPE_SYSTEM,
-                                                      Tank.CRIT_ENGINE));
+                                            CriticalSlot.TYPE_SYSTEM, Tank.CRIT_ENGINE));
                                 } else if (moderateMovementDamage) {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .get(-1).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM, 3));
+                                    vCriticals.get(-1).add(new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 3));
                                     heavyMovementDamage = true;
                                 } else if (minorMovementDamage) {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .get(-1).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM, 2));
+                                    vCriticals.get(-1).add(new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 2));
                                     moderateMovementDamage = true;
                                 } else {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .get(-1).add(new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM, 1));
+                                    vCriticals.get(-1).add(new CriticalSlot(CriticalSlot.TYPE_SYSTEM, 1));
                                     minorMovementDamage = true;
                                 }
                             }
@@ -14274,12 +14191,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     // do the damage.
                     // random crit on each leg, but MASC is not destroyed
                     for (int loc = 0; loc < locations(); loc++) {
-                        if (locationIsLeg(loc)
-                            && (getHittableCriticals(loc) > 0)) {
-                            CriticalSlot slot = null;
+                        if (locationIsLeg(loc) && (getHittableCriticals(loc) > 0)) {
+                            CriticalSlot slot;
                             do {
-                                int slotIndex = Compute
-                                        .randomInt(getNumberOfCriticals(loc));
+                                int slotIndex = Compute.randomInt(getNumberOfCriticals(loc));
                                 slot = getCritical(loc, slotIndex);
                             } while ((slot == null) || !slot.isHittable());
                             vCriticals.put(loc, new LinkedList<>());
@@ -14522,8 +14437,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Indicates if a unit was physically struck (punch, kick, DFA, etc).
-     *
-     * @return
      */
     public void setStruck(boolean struck) {
         this.struck = struck;
@@ -14540,8 +14453,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Indicates if a unit has falling in the current phase.
-     *
-     * @return
      */
     public void setFallen(boolean fell) {
         this.fell = fell;
@@ -15054,7 +14965,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * The max weapons range of this entity, taking into account whether or not
+     * The max weapons range of this entity, taking into account whether
      * we're on an air/space map, using extreme range. Assumes target is not airborne
      * if we are on a ground map.
      * @return
@@ -15064,9 +14975,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     /**
-     * The max weapons range of this entity, taking into account whether or not
-     * we're on an air/space map, using extreme range, and whether or not the target is
-     * air borne.
+     * The max weapons range of this entity, taking into account whether
+     * we're on an air/space map, using extreme range, and whether the target is
+     * airborne.
      * @param targetIsAirborne
      * @return
      */
@@ -15147,7 +15058,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         hasFiredTsemp = hasFiredTSEMP;
     }
 
-    /*
+    /**
      * Sets the number of rounds that the entity is affected by an ASEW missile
      * @param turns - integer specifying the number of end phases that the effects last through
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
@@ -15156,8 +15067,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         asewAffectedTurns = turns;
     }
 
-    /*
-     * Returns the number of rounds that the entity is affected by an ASEW missile
+    /**
+     * @return the number of rounds that the entity is affected by an ASEW missile
      */
     public int getASEWAffected() {
         return asewAffectedTurns;
@@ -15240,9 +15151,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If sort mode is custom, and the custom order is null, create it
         // and make the order the same as default (based on eqId)
-        if ((weaponSortOrder == WeaponSortOrder.CUSTOM)
-            && (customWeapOrder == null)) {
-            customWeapOrder = new HashMap<Integer, Integer>();
+        if ((weaponSortOrder == WeaponSortOrder.CUSTOM) && (customWeapOrder == null)) {
+            customWeapOrder = new HashMap<>();
             for (Mounted weap : weaponList) {
                 int eqId = getEquipmentNum(weap);
                 customWeapOrder.put(eqId, eqId);
@@ -15265,11 +15175,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return eqId;
         }
         Integer order = customWeapOrder.get(eqId);
-        if (order == null) {
-            return -1;
-        } else {
-            return order;
-        }
+        return Objects.requireNonNullElse(order, -1);
     }
 
     public void setCustomWeaponOrder(Mounted weapon, int order) {
@@ -15298,8 +15204,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Flag that determines if the Entity is a support vehicle.
-     * @return
+     * @return the flag that determines if the Entity is a support vehicle
      */
     public boolean isSupportVehicle() {
         return false;
@@ -15321,20 +15226,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the base engine value for support vehicles, see TM pg 120.  Non
-     * support vehicle Entities will return 0.
-     *
-     * @return
+     * @return the base engine value for support vehicles, see TM pg 120. Non-support vehicle
+     * entities will return 0.
      */
     public double getBaseEngineValue() {
         return 0;
     }
 
     /**
-     * Returns the base chassis value for support vehicles, see TM pg 120.  Non
-     * support vehicle Entities will return 0.
-     *
-     * @return
+     * @return the base chassis value for support vehicles, see TM pg 120. Non-support vehicle
+     * entities will return 0.
      */
     public double getBaseChassisValue() {
         return 0;
@@ -15438,8 +15339,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other
      * types.
-     *
-     * @return
      */
     public int getSpriteDrawPriority() {
         return 0;
@@ -15457,8 +15356,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Used to determine if this vehicle can be towed by a tractor
-     *
-     * @return
      */
     public boolean isTrailer() {
         return false;
@@ -15467,22 +15364,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Used to determine if this vehicle can be the engine/tractor
      * for a bunch of trailers
-     *
-     * @return
      */
     public boolean isTractor() {
         return false;
     }
 
     /**
-     * Returns a list of Coords that need to be checked for entities that can be towed
+     * @return a list of Coords that need to be checked for entities that can be towed
      * This accounts for the hexes occupied by each entity in the 'train', plus hexes
      * in front of or behind each trailer hitch
-     *
-     * @return
      */
     public Set<Coords> getHitchLocations() {
-        Set<Coords> trailerPos = new HashSet<Coords>();
+        Set<Coords> trailerPos = new HashSet<>();
         //First, set up a list of all the entities in this train
         ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(this);
@@ -15511,7 +15404,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Matches up a trailer hitch transporter with its Id #
      *
      * @param bayNumber - the index of the transporter we're trying to find.
-     * @returns the trailerhitch corresponding to the passed-in value
+     * @return the trailerhitch corresponding to the passed-in value
      */
     public TankTrailerHitch getHitchById(int bayNumber) {
         Transporter transporter = transports.get(bayNumber);
@@ -15526,7 +15419,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Hitches move around in Transports on loading a saved game
      *
      * @param id - the id of the loaded Entity we're trying to find
-     * @returns the trailerhitch corresponding to the passed-in value
+     * @return the trailerhitch corresponding to the passed-in value
      */
     public TankTrailerHitch getHitchCarrying(int id) {
         for (Transporter next : transports) {
@@ -15601,7 +15494,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean result = false;
 
         //First, set up a list of all the entities in this train
-        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(this);
         for (int id : getAllTowedUnits()) {
             Entity tr = game.getEntity(id);
@@ -15646,9 +15539,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int isTowing = Entity.NONE;
 
     /**
-     * Returns the entity to be towed
-     *
-     * @return
+     * @return the entity to be towed
      */
     public int getTowing() {
         return isTowing;
@@ -15671,9 +15562,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int tractor = Entity.NONE;
 
     /**
-     * Returns the tractor towing the train this entity is part of
-     *
-     * @return
+     * @return the tractor towing the train this entity is part of
      */
     public int getTractor() {
         return tractor;
@@ -15695,9 +15584,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int towedBy = Entity.NONE;
 
     /**
-     * Returns the Entity that is directly towing this one
-     *
-     * @return
+     * @return the Entity that is directly towing this one
      */
     public int getTowedBy() {
         return towedBy;
@@ -15718,12 +15605,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Used to ensure all following trailers are disconnected if the train
      * is broken at this entity.
      */
-    private List<Integer> connectedUnits = new ArrayList<Integer>();
+    private List<Integer> connectedUnits = new ArrayList<>();
 
     /**
-     * Returns the entities towed behind this entity
-     *
-     * @return
+     * @return the entities towed behind this entity
      */
     public List<Integer> getConnectedUnits() {
         return Collections.unmodifiableList(connectedUnits);
@@ -15803,12 +15688,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * Use this for the tractor/engine/tug
      */
-    private List<Integer> isTractorFor = new ArrayList<Integer>();
+    private List<Integer> isTractorFor = new ArrayList<>();
 
     /**
-     * Returns a list of all entities towed behind this tractor.
-     *
-     * @return
+     * @return a list of all entities towed behind this tractor.
      */
     public List<Integer> getAllTowedUnits() {
         return Collections.unmodifiableList(isTractorFor);
@@ -15825,7 +15708,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Removes an entity from this tractor's train
      */
     public void removeTowedUnit(int id) {
-        isTractorFor.remove(isTractorFor.indexOf(id));
+        isTractorFor.remove((Integer) id);
         if (getTowing() == id) {
             setTowing(Entity.NONE);
         }
@@ -15836,13 +15719,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      * list will never be <code>null</code>, but it may be empty. The
-     * returned <code>List</code> is independant from the under- lying
+     * returned <code>List</code> is independent from the under- lying
      * data structure; modifying one does not affect the other.
      *
      * This will only return loaded trailers
      */
     public List<Entity> getLoadedTrailers() {
-        List<Entity> result = new ArrayList<Entity>();
+        List<Entity> result = new ArrayList<>();
 
         // Walk through this entity's transport components;
         // add any trailers we find there
@@ -15967,7 +15850,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     
-    //Getters and setters for sensor contacts and firing solutions. Currently only used in space combat
+    //Getters and setters for sensor contacts and firing solutions. Currently, only used in space combat
     /**
      * Retrieves the IDs of all entities that this entity has detected with sensors
      * @return the contents of this entity's sensorContacts set

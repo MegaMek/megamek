@@ -31,7 +31,7 @@ public class PlayerListDialog extends JDialog {
     private Client client;
 
     public PlayerListDialog(JFrame parent, Client client) {
-        super(parent, Messages.getString("PlayerListDialog.title"), false); //$NON-NLS-1$
+        super(parent, Messages.getString("PlayerListDialog.title"), false);
         this.client = client;
         
         add(playerList, BorderLayout.CENTER);
@@ -80,17 +80,13 @@ public class PlayerListDialog extends JDialog {
             }
 
             if (player.isGhost()) {
-                playerDisplay.append(Messages
-                        .getString("PlayerListDialog.player_ghost")); //$NON-NLS-1$
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_ghost"));
             } else if (player.isObserver()) {
-                playerDisplay.append(Messages
-                        .getString("PlayerListDialog.player_observer")); //$NON-NLS-1$
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_observer"));
             } else if (player.isDone()) {
-                playerDisplay.append(Messages
-                        .getString("PlayerListDialog.player_done")); //$NON-NLS-1$
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_done"));
             }
-            ((DefaultListModel<String>) playerList.getModel())
-                    .addElement(playerDisplay.toString());
+            ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());
         }
     }
 

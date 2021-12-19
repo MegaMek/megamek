@@ -889,7 +889,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     || waa.isAirToAir(game)
                     || waa.isAirToGround(game)) {
             // Ensures single AMS state is properly updated
-            getAMSHitsMod(new Vector<Report>());
+            getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];

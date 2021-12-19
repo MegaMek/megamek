@@ -30,7 +30,7 @@ public class CollectionUtil {
      * do anything else (e.g. remove duplicate entries). 
      */
     public static final <T> List<T> union(List<T> c1, List<T> c2) {
-        List<T> result = new ArrayList<T>(c1);
+        List<T> result = new ArrayList<>(c1);
         result.addAll(c2);
         return result;
     }

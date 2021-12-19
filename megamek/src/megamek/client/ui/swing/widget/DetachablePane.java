@@ -93,6 +93,7 @@ public class DetachablePane extends JComponent {
         this.title.setAlignmentX(0.0f);
 
         this.detach = new AbstractAction("D") {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     detachPane();
                 }
@@ -101,6 +102,7 @@ public class DetachablePane extends JComponent {
         this.detach.putValue(Action.SHORT_DESCRIPTION, "Detach this pane");
 
         this.attach = new AbstractAction("A") {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     attachPane();
                 }

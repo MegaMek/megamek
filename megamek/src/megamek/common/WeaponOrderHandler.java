@@ -215,19 +215,15 @@ public class WeaponOrderHandler {
                 Element orderListElement = (Element) unitList
                         .getElementsByTagName(ORDER_LIST).item(0);
                 if (orderListElement == null) {
-                    log.append("\n\tMissing <" + ORDER_LIST + "> element #")
-                            .append(unitCount);
+                    log.append("\n\tMissing <" + ORDER_LIST + "> element #").append(unitCount);
                     continue;
                 }
 
                 WeaponOrder weapOrder = new WeaponOrder();
-                weapOrder.orderType = WeaponSortOrder.valueOf(orderTypeElement
-                        .getTextContent());
+                weapOrder.orderType = WeaponSortOrder.valueOf(orderTypeElement.getTextContent());
                 if (weapOrder.orderType == WeaponSortOrder.CUSTOM) {
-                    String weaponList[] =
-                            weaponListElement.getTextContent().split(",");
-                    String orderList[] =
-                            orderListElement.getTextContent().split(",");
+                    String[] weaponList = weaponListElement.getTextContent().split(",");
+                    String[] orderList = orderListElement.getTextContent().split(",");
                     assert (weaponList.length == orderList.length);
                     for (int i = 0; i < weaponList.length; i++) {
                         weapOrder.customWeaponOrderMap.put(
@@ -241,7 +237,7 @@ public class WeaponOrderHandler {
         } catch (Exception e) {
             throw new IOException(e);
         } finally {
-            System.out.println(log);
+            LogManager.getLogger().info(log);
         }
     }
 
@@ -254,15 +250,13 @@ public class WeaponOrderHandler {
      *         unit. If the unit is not in the list, a NULL value is returned.
      */
     @Nullable
-    public static synchronized WeaponOrder getWeaponOrder(
-            String chassis, String model) {
+    public static synchronized WeaponOrder getWeaponOrder(String chassis, String model) {
         if (!initialized.get() || (null == weaponOrderMap)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
-            } catch (IOException e) {
-                System.out.println("Failed to load custom weapon order file!");
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to load custom weapon order file", e);
                 return null;
             }
         }
@@ -278,8 +272,7 @@ public class WeaponOrderHandler {
                 final WeaponOrder storedOrder = weaponOrderMap.get(unitId);
                 newWeapOrder.orderType = storedOrder.orderType;
                 if (storedOrder.customWeaponOrderMap != null) {
-                    newWeapOrder.customWeaponOrderMap
-                            .putAll(storedOrder.customWeaponOrderMap);
+                    newWeapOrder.customWeaponOrderMap.putAll(storedOrder.customWeaponOrderMap);
                 }
                 return newWeapOrder;
             } else {
@@ -299,15 +292,15 @@ public class WeaponOrderHandler {
      * @param type
      * @param customWeapOrder
      */
-    public synchronized static void setWeaponOrder(String chassis,
-            String model, WeaponSortOrder type, Map<Integer, Integer> customWeapOrder) {
+    public synchronized static void setWeaponOrder(String chassis, String model,
+                                                   WeaponSortOrder type,
+                                                   Map<Integer, Integer> customWeapOrder) {
         if (!initialized.get() || (null == weaponOrderMap)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
-            } catch (IOException e) {
-                System.out.println("Failed to load custom weapon order file!");
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to load custom weapon order file", e);
             }
         }
 

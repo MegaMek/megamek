@@ -219,7 +219,7 @@ class EntitySprite extends Sprite {
             oldRect = new Rectangle(labelRect);
         
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? Font.ITALIC : Font.PLAIN;
-        labelFont = new Font("SansSerif", face, (int) (10 * Math.max(bv.scale, 0.9))); //$NON-NLS-1$
+        labelFont = new Font("SansSerif", face, (int) (10 * Math.max(bv.scale, 0.9)));
         
         // Check the hexes in directions 2,5,1,4 if they are free of entities
         // and place the label in the direction of the first free hex
@@ -280,7 +280,7 @@ class EntitySprite extends Sprite {
             if (color.equals(Color.RED)) criticalStatus = true;
         }
 
-        Status(Color c, String s, Object objs[]) {
+        Status(Color c, String s, Object[] objs) {
             color = c;
             status = Messages.getString("BoardView1."+s, objs);
             small = false;
@@ -450,7 +450,7 @@ class EntitySprite extends Sprite {
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
             
             // Gather unit conditions
-            ArrayList<Status> stStr = new ArrayList<Status>();
+            ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;
             
             // Determine if the entity has a locked turret,
@@ -843,6 +843,7 @@ class EntitySprite extends Sprite {
         return isSelected;
     }
 
+    @Override
     protected int getSpritePriority() {
         return entity.getSpriteDrawPriority();
     }

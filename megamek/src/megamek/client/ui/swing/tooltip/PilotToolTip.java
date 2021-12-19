@@ -86,10 +86,10 @@ public final class PilotToolTip {
                 continue;
             }
 
-            if ((crew.getNickname(i) != null) && !crew.getNickname(i).equals("")) {
+            if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 result.append(guiScaledFontHTML(UIUtil.uiNickColor()) + "<B>'" 
                         + crew.getNickname(i).toUpperCase() + "'</B></FONT>");
-            } else if ((crew.getName(i) != null) && !crew.getName(i).equals("")) {
+            } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 result.append(crew.getName(i));
             } else {
                 result.append("Pilot");

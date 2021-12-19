@@ -70,9 +70,9 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
 
-    private ArrayList<String> boardsSelected = new ArrayList<String>();
-    private ArrayList<String> boardsAvailable = new ArrayList<String>();
-    private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<BuildingTemplate>();
+    private ArrayList<String> boardsSelected = new ArrayList<>();
+    private ArrayList<String> boardsAvailable = new ArrayList<>();
+    private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
     /**
      * Parameters for the Map Generator Parameters refer to a default map siz 16
@@ -1601,9 +1601,8 @@ public class MapSettings implements Serializable {
             JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
 
             marshaller.marshal(element, os);
-        } catch (JAXBException ex) {
-            System.err.println("Error writing XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to write map settings xml", ex);
         }
     }
 }

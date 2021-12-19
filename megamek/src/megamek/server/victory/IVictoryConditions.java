@@ -46,7 +46,7 @@ public interface IVictoryConditions {
      *            between executions if such feature is absolutely required.. as
      *            a key you should use something atleast class- specific to
      *            limit namespace collisions
-     * @return a result with true if victory occured, false if not must not
+     * @return a result with true if victory occurred, false if not must not
      *         return null MUST NOT modify game state!
      */
     VictoryResult victory(Game game, Map<String, Object> context);

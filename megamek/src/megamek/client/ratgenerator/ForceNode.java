@@ -364,13 +364,13 @@ public class ForceNode extends RulesetNode {
                 case "flags":
                 case "changeEschelon":
                     if (currentRuleGroup == null) {
-                        currentRuleGroup = new ArrayList<OptionGroupNode>();
+                        currentRuleGroup = new ArrayList<>();
                         ruleGroups.add(currentRuleGroup);
                     }
                     ruleGroups.get(0).add(OptionGroupNode.createFromXml(wn));
                     break;
                 case "ruleGroup":
-                    currentRuleGroup = new ArrayList<OptionGroupNode>();
+                    currentRuleGroup = new ArrayList<>();
                     ruleGroups.add(currentRuleGroup);
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);

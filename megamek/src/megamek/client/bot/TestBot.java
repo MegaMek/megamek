@@ -65,6 +65,7 @@ public class TestBot extends BotClient {
             this.entity = entity;
         }
 
+        @Override
         public void run() {
             result = calculateMove(entity);
         }
@@ -108,7 +109,7 @@ public class TestBot extends BotClient {
             }
         } else {
             enemies_moved = initiative;
-            ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
+            ArrayList<MoveOption[]> possible = new ArrayList<>();
 
             for (Entity entity : game.getEntitiesVector()) {
 
@@ -303,8 +304,7 @@ public class TestBot extends BotClient {
 
     public MoveOption[] calculateMove(Entity entity) {
         List<Entity> enemy_array = myEnemies(entity);
-        ArrayList<Entity> entities = new ArrayList<Entity>(
-                game.getEntitiesVector());
+        ArrayList<Entity> entities = new ArrayList<>(game.getEntitiesVector());
         CEntity self = centities.get(entity);
         MoveOption[] move_array;
         int friends = entities.size() - enemy_array.size();
@@ -378,7 +378,7 @@ public class TestBot extends BotClient {
 
     private List<Entity> myEnemies(Entity me) {
         List<Entity> possibles = game.getValidTargets(me);
-        List<Entity> retVal = new ArrayList<Entity>();
+        List<Entity> retVal = new ArrayList<>();
         for (Entity ent : possibles) {
             if (ent.isEnemyOf(me)) {
                 retVal.add(ent);
@@ -779,7 +779,7 @@ public class TestBot extends BotClient {
             // engage in speculation on "best choices" when you loose iniative
             if (enemy.canMove()) {
                 ArrayList<MoveOption> enemy_move_array = enemy.pass.getArray();
-                ArrayList<MoveOption> to_check = new ArrayList<MoveOption>();
+                ArrayList<MoveOption> to_check = new ArrayList<>();
                 // check some enemy moves
                 for (MoveOption element : move_array) {
                     MoveOption option = null;
@@ -788,7 +788,7 @@ public class TestBot extends BotClient {
                     option.setState();
                     // check for damning hexes specifically
                     // could also look at intervening defensive
-                    ArrayList<Coords> coord = new ArrayList<Coords>();
+                    ArrayList<Coords> coord = new ArrayList<>();
                     Coords back = option.getFinalCoords().translated(
                             (option.getFinalFacing() + 3) % 6);
                     coord.add(back);
@@ -1062,8 +1062,7 @@ public class TestBot extends BotClient {
 
     @Override
     protected void initFiring() {
-        ArrayList<Entity> entities = new ArrayList<Entity>(
-                game.getEntitiesVector());
+        ArrayList<Entity> entities = new ArrayList<>(game.getEntitiesVector());
         for (int i = 0; i < entities.size(); i++) {
             Entity entity = entities.get(i);
             CEntity centity = centities.get(entity);
@@ -1086,7 +1085,7 @@ public class TestBot extends BotClient {
         int weaponID = en.getEquipmentNum(mw);
         int spin_mode = 0;
         int starg_mod;
-        ArrayList<AttackOption> result = new ArrayList<AttackOption>();
+        ArrayList<AttackOption> result = new ArrayList<>();
         List<Entity> ents = myEnemies(en);
         WeaponAttackAction wep_test;
         WeaponType spinner;
@@ -1175,12 +1174,12 @@ public class TestBot extends BotClient {
 
     public GAAttack bestAttack(MoveOption es, CEntity target, int search_level) {
         Entity en = es.getEntity();
-        int attacks[] = new int[4];
-        ArrayList<AttackOption> c = new ArrayList<AttackOption>();
-        ArrayList<ArrayList<AttackOption>> front = new ArrayList<ArrayList<AttackOption>>();
-        ArrayList<ArrayList<AttackOption>> left = new ArrayList<ArrayList<AttackOption>>();
-        ArrayList<ArrayList<AttackOption>> right = new ArrayList<ArrayList<AttackOption>>();
-        ArrayList<ArrayList<AttackOption>> rear = new ArrayList<ArrayList<AttackOption>>();
+        int[] attacks = new int[4];
+        ArrayList<AttackOption> c = new ArrayList<>();
+        ArrayList<ArrayList<AttackOption>> front = new ArrayList<>();
+        ArrayList<ArrayList<AttackOption>> left = new ArrayList<>();
+        ArrayList<ArrayList<AttackOption>> right = new ArrayList<>();
+        ArrayList<ArrayList<AttackOption>> rear = new ArrayList<>();
         GAAttack result = null;
         int o_facing = en.getFacing();
         double front_la_dmg = 0;
@@ -1308,7 +1307,7 @@ public class TestBot extends BotClient {
         fireOrPhysicalCheck(best_front_po, en, front, front_la_dmg,
                             front_ra_dmg);
 
-        ArrayList<ArrayList<ArrayList<AttackOption>>> arcs = new ArrayList<ArrayList<ArrayList<AttackOption>>>();
+        ArrayList<ArrayList<ArrayList<AttackOption>>> arcs = new ArrayList<>();
         arcs.add(front);
         if (!es.getFinalProne() && en.canChangeSecondaryFacing()) {
             fireOrPhysicalCheck(best_left_po, en, left, left_la_dmg,
@@ -1455,14 +1454,13 @@ public class TestBot extends BotClient {
             entity_num = game.getNextEntityNum(getMyTurn(), entity_num);
         } while ((entity_num != first_entity) && (entity_num != -1));
 
-        Vector<EntityAction> av = new Vector<EntityAction>();
+        Vector<EntityAction> av = new Vector<>();
         // maximum already selected (or default)
         Entity en = game.getEntity(best_entity);
         if (results != null) {
             Entity primary_target = game.getEntitiesVector().get(
                     results[results.length - 1]);
-            TreeSet<AttackOption> tm = new TreeSet<AttackOption>(
-                    new AttackOption.Sorter(centities.get(primary_target)));
+            TreeSet<AttackOption> tm = new TreeSet<>(new AttackOption.Sorter(centities.get(primary_target)));
             for (int i = 0; i < (results.length - 1); i++) {
                 if (winner != null) {
                     AttackOption a = winner.get(i).get(results[i]);
@@ -1537,11 +1535,10 @@ public class TestBot extends BotClient {
         old_moves = null;
         enemies_moved = 0;
         double max_modifier = 1.4;
-        ArrayList<Entity> entities = new ArrayList<Entity>(
-                game.getEntitiesVector());
+        ArrayList<Entity> entities = new ArrayList<>(game.getEntitiesVector());
         double num_entities = Math.sqrt(entities.size()) / 100;
-        ArrayList<CEntity> friends = new ArrayList<CEntity>();
-        ArrayList<CEntity> foes = new ArrayList<CEntity>();
+        ArrayList<CEntity> friends = new ArrayList<>();
+        ArrayList<CEntity> foes = new ArrayList<>();
         double friend_sum = 0;
         double foe_sum = 0;
         double max_foe_bv = 0;
@@ -1810,9 +1807,9 @@ public class TestBot extends BotClient {
         firstPass(cen);
 
         Object[] enemy_array = getEnemyEntities().toArray();
-        MoveOption result[] = calculateMove(entity);
+        MoveOption[] result = calculateMove(entity);
         MoveOption min = null;
-        ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
+        ArrayList<MoveOption[]> possible = new ArrayList<>();
         boolean short_circuit = false;
 
         if (result.length < 6) {
@@ -1931,7 +1928,7 @@ public class TestBot extends BotClient {
 
     @Override
     protected Vector<Minefield> calculateMinefieldDeployment() {
-        Vector<Minefield> deployedMinefields = new Vector<Minefield>();
+        Vector<Minefield> deployedMinefields = new Vector<>();
 
         deployMinefields(deployedMinefields, getLocalPlayer()
                 .getNbrMFConventional(), 0);
@@ -1945,7 +1942,7 @@ public class TestBot extends BotClient {
 
     @Override
     protected PlayerIDandList<Coords> calculateArtyAutoHitHexes() {
-        PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
+        PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
         artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
         return artyAutoHitHexes;
     }
@@ -2033,7 +2030,7 @@ public class TestBot extends BotClient {
 
         // For each attack action
 
-        target_id_list = new Vector<Integer>();
+        target_id_list = new Vector<>();
         for (EntityAction aea : atk_action_list) {
 
             if (aea instanceof WeaponAttackAction) {

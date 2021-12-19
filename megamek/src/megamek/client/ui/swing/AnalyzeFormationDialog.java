@@ -214,7 +214,8 @@ public class AnalyzeFormationDialog extends JDialog {
             
             getContentPane().setPreferredSize(panAvailable.getPreferredSize());
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
-               public void run() { 
+               @Override
+               public void run() {
                    scroll.getVerticalScrollBar().setValue(0);
                }
             });

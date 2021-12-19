@@ -1069,7 +1069,7 @@ public class Game implements Serializable {
                 // If this is the first entity at this position,
                 // create the vector and add it to the map.
                 if (atPos == null) {
-                    atPos = new Vector<Entity>();
+                    atPos = new Vector<>();
                     positionMap.put(coords, atPos);
                 }
 
@@ -2453,7 +2453,7 @@ public class Game implements Serializable {
      */
     public void resetPSRs(Entity entity) {
         PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<Integer>();
+        Vector<Integer> rollsToRemove = new Vector<>();
         int i = 0;
 
         // first, find all the rolls belonging to the target entity
@@ -2482,7 +2482,7 @@ public class Game implements Serializable {
      */
     public void resetExtremeGravityPSRs(Entity entity) {
         PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<Integer>();
+        Vector<Integer> rollsToRemove = new Vector<>();
         int i = 0;
 
         // first, find all the rolls belonging to the target entity
@@ -2728,12 +2728,13 @@ public class Game implements Serializable {
         // that selects entities in this game.
         else {
             final EntitySelector entry = selector;
-            retVal = new Iterator<Entity>() {
+            retVal = new Iterator<>() {
                 private EntitySelector entitySelector = entry;
                 private Entity current = null;
                 private Iterator<Entity> iter = getEntities();
 
                 // Do any more entities meet the selection criteria?
+                @Override
                 public boolean hasNext() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
@@ -2750,6 +2751,7 @@ public class Game implements Serializable {
                 }
 
                 // Get the next entity that meets the selection criteria.
+                @Override
                 public Entity next() {
                     // Pre-approve an entity.
                     if (!hasNext()) {
@@ -2834,12 +2836,13 @@ public class Game implements Serializable {
         // that selects entities in this game.
         else {
             final EntitySelector entry = selector;
-            retVal = new Enumeration<Entity>() {
+            retVal = new Enumeration<>() {
                 private EntitySelector entitySelector = entry;
                 private Entity current = null;
                 private Enumeration<Entity> iter = vOutOfGame.elements();
 
                 // Do any more entities meet the selection criteria?
+                @Override
                 public boolean hasMoreElements() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
@@ -2856,6 +2859,7 @@ public class Game implements Serializable {
                 }
 
                 // Get the next entity that meets the selection criteria.
+                @Override
                 public Entity nextElement() {
                     // Pre-approve an entity.
                     if (!hasMoreElements()) {

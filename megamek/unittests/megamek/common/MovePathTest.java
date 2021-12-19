@@ -35,7 +35,7 @@ public class MovePathTest {
         Game mockGame = Mockito.mock(Game.class);
         Entity mockMech = Mockito.mock(BipedMech.class);
 
-        Vector<MoveStep> stepVector = new Vector<MoveStep>();
+        Vector<MoveStep> stepVector = new Vector<>();
 
         MoveStep mockStep1 = Mockito.mock(MoveStep.class);
         stepVector.add(mockStep1);

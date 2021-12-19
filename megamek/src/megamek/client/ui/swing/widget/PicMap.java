@@ -55,7 +55,7 @@ public abstract class PicMap extends JComponent {
      */
     private static final long serialVersionUID = -1718106533001806675L;
     // Vector of Background Drawers
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     // Group of other areas which does not implement PMHotArea or PMLAbel
     private PMAreasGroup otherAreas = new PMAreasGroup();
     // Hot areas

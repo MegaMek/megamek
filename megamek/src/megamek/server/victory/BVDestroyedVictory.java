@@ -34,6 +34,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         this.destroyedPercent = destroyedPercent;
     }
 
+    @Override
     public VictoryResult victory(Game game, Map<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);

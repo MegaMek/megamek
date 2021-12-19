@@ -251,6 +251,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
         return new BasicOption(option.getName(), getValue());
     }
 
+    @Override
     public void itemStateChanged(ItemEvent itemEvent) {
         dialogOptionListener.optionClicked(this, option, checkbox.isSelected());
     }
@@ -260,6 +261,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
         return option.getDisplayableName().compareTo(doc.option.getDisplayableName());
     }
 
+    @Override
     public String toString() {
         return option.getDisplayableName();
     }

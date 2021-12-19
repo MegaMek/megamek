@@ -597,9 +597,9 @@ public class TestMech extends TestEntity {
     }
 
     public boolean correctCriticals(StringBuffer buff) {
-        Vector<Mounted> unallocated = new Vector<Mounted>();
-        Vector<Serializable> allocation = new Vector<Serializable>();
-        Vector<Integer> heatSinks = new Vector<Integer>();
+        Vector<Mounted> unallocated = new Vector<>();
+        Vector<Serializable> allocation = new Vector<>();
+        Vector<Integer> heatSinks = new Vector<>();
         boolean correct = checkCriticalSlotsForEquipment(mech, unallocated, allocation,
                 heatSinks, buff);
         /*

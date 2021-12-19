@@ -235,7 +235,7 @@ public final class ImageUtil {
             if (null == c || c.isEmpty()) {
                 return null;
             }
-            String[] elements = c.split(",", -1); //$NON-NLS-1$
+            String[] elements = c.split(",", -1);
             if (elements.length != 2) {
                 return null;
             }

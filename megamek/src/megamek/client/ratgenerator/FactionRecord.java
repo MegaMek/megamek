@@ -795,6 +795,7 @@ public class FactionRecord {
         return sj.toString();
     }
 
+    @Override
     public String toString() {
         return key;
     }

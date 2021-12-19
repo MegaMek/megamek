@@ -114,6 +114,7 @@ public class NavalRepairFacility extends Bay {
         return sb.toString();
     }
 
+    @Override
     public boolean canLoad(Entity unit) {
         if (unit.getWeight() > currentSpace) {
             return false;
@@ -154,6 +155,7 @@ public class NavalRepairFacility extends Bay {
      * Sets the bay location
      * @param facing The armor facing (location) of the bay
      */
+    @Override
     public void setFacing(int facing) {
         this.facing = facing;
     }

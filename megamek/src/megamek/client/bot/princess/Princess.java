@@ -1838,6 +1838,7 @@ public class Princess extends BotClient {
         refreshCrippledUnits();
     }
 
+    @Override
     protected void handlePacket(final Packet c) {
         final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.getCommand());
         try {
@@ -1852,6 +1853,7 @@ public class Princess extends BotClient {
     /**
      * sends a load game file to the server
      */
+    @Override
     public void sendLoadGame(final File f) {
         precognition.resetGame();
         super.sendLoadGame(f);
@@ -1862,6 +1864,7 @@ public class Princess extends BotClient {
         send(packet);
     }
     
+    @Override
     protected void disconnected() {
         if (null != precognition) {
             precognition.signalDone();

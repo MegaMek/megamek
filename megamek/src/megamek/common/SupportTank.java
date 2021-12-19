@@ -326,6 +326,7 @@ public class SupportTank extends Tank {
     
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information
+    @Override
     public double getBaseChassisValue() {
         switch (movementMode) {
             case HOVER:
@@ -374,6 +375,7 @@ public class SupportTank extends Tank {
     }
 
     //Support Vee Engine Information
+    @Override
     public double getBaseEngineValue() {
         switch (movementMode) {
             case AIRSHIP:
@@ -460,6 +462,7 @@ public class SupportTank extends Tank {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
 
+    @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
     }

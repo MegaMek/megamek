@@ -493,6 +493,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
      */
+    @Override
     protected boolean canEngageCapitalMissile(Mounted counter) {
         if (counter.getBayWeapons().size() < 2) {
             return false;

@@ -38,6 +38,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -192,7 +193,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
             return ImageUtil.failStandardImage();
         }
     }
@@ -380,7 +381,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             }
         } catch (Exception e) {
             // Fall back to the default colors
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -435,6 +436,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private final Runnable drawMapable = new Runnable() {
         private final int redrawDelay = 0;
 
+        @Override
         public void run() {
             try {
                 if ((System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {
@@ -974,7 +976,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 } else if (entity.getWeightClass() < 6) {
                     s = STRAT_WEIGHTS[entity.getWeightClass()];
                 }
-                if (!s.equals("")) {
+                if (!s.isBlank()) {
                     var fontContext = new FontRenderContext(null, true, true);
                     var font = new Font("SansSerif", Font.BOLD, 100);
                     FontMetrics currentMetrics = getFontMetrics(font);

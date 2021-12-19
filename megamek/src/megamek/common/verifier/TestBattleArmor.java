@@ -2,21 +2,16 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * Author: Jay Lawson (Taharqa)
- */
-
 package megamek.common.verifier;
 
 import java.util.ArrayList;
@@ -28,6 +23,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+/**
+ * @author Jay Lawson (Taharqa)
+ */
 public class TestBattleArmor extends TestEntity {
 
     /**
@@ -43,15 +41,15 @@ public class TestBattleArmor extends TestEntity {
     /**
      * Base chassis weight by suit weight class for Inner Sphere suits
      */
-    public static double CHASSIS_WEIGHT_IS[] = { 0.08, 0.1, 0.175, 0.3, 0.55 };
+    public static double[] CHASSIS_WEIGHT_IS = { 0.08, 0.1, 0.175, 0.3, 0.55 };
     /**
      * Base chassis weight by suit weight class for Clan suits
      */
-    public static double CHASSIS_WEIGHT_CLAN[] = { 0.13, 0.15, 0.25, 0.4, 0.7 };
+    public static double[] CHASSIS_WEIGHT_CLAN = { 0.13, 0.15, 0.25, 0.4, 0.7 };
     /**
      * Weight for additional ground MP by suit weight class
      */
-    public static double ADDITIONAL_GROUND_MP_WEIGHT[] = { 0.025, 0.03, 0.04, 0.08, 0.16 };
+    public static double[] ADDITIONAL_GROUND_MP_WEIGHT = { 0.025, 0.03, 0.04, 0.08, 0.16 };
 
     /**
      * BattleArmor can have a variable number of shots per slot of ammo, this
@@ -73,7 +71,7 @@ public class TestBattleArmor extends TestEntity {
      * @author arlith
      *
      */
-    public static enum BAArmor {
+    public enum BAArmor {
         STANDARD(EquipmentType.T_ARMOR_BA_STANDARD,0,false),
         CLAN_STANDARD(EquipmentType.T_ARMOR_BA_STANDARD,0,true),
         STANDARD_PROTOTYPE(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE,4,false),
@@ -128,7 +126,7 @@ public class TestBattleArmor extends TestEntity {
          *            The armor type.
          * @param c
          *            Whether this armor type is Clan or not.
-         * @return The <code>BAArmor</code> that correspondes to the given type
+         * @return The <code>BAArmor</code> that corresponds to the given type
          *         or null if no match was found.
          */
         public static BAArmor getArmor(int t, boolean c) {
@@ -173,7 +171,7 @@ public class TestBattleArmor extends TestEntity {
      * @author arlith
      *
      */
-    public static enum BAManipulator {
+    public enum BAManipulator {
         NONE(BattleArmor.MANIPULATOR_NONE,false),
         ARMORED_GLOVE(BattleArmor.MANIPULATOR_ARMORED_GLOVE,false),
         BASIC(BattleArmor.MANIPULATOR_BASIC,false),
@@ -224,7 +222,7 @@ public class TestBattleArmor extends TestEntity {
          *
          * @param name
          *            The internal name.
-         * @return The <code>BAManipulator</code> that correspondes to the given
+         * @return The <code>BAManipulator</code> that corresponds to the given
          *         internal name or null if no match was found.
          */
         public static BAManipulator getManipulator(String name) {
@@ -737,7 +735,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public boolean correctCriticals(StringBuffer buff) {
-        Vector<Mounted> unallocated = new Vector<Mounted>();
+        Vector<Mounted> unallocated = new Vector<>();
         getUnallocatedEquipment(ba, unallocated);
         boolean correct = true;
 
@@ -749,12 +747,9 @@ public class TestBattleArmor extends TestEntity {
             correct = false;
         }
 
-        int critsUsed[][] = new int[ba.getTroopers() + 1]
-                [BattleArmor.MOUNT_NUM_LOCS];
-        int numAPWeapons[][] = new int[ba.getTroopers() + 1]
-                [BattleArmor.MOUNT_NUM_LOCS];
-        int numAMWeapons[][] = new int[ba.getTroopers() + 1]
-                [BattleArmor.MOUNT_NUM_LOCS];
+        int[][] critsUsed = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int[][] numAPWeapons = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
+        int[][] numAMWeapons = new int[ba.getTroopers() + 1][BattleArmor.MOUNT_NUM_LOCS];
         int numSSWMs = 0;
         int numGloveMountedAPWeapons = 0;
         Mounted squadSupportWeapon = null;

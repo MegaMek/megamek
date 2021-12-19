@@ -97,18 +97,22 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             cmd = c;
         }
 
+        @Override
         public String getCmd() {
             return cmd;
         }
 
+        @Override
         public int getPriority() {
             return priority;
         }
 
+        @Override
         public void setPriority(int p) {
             priority = p;
         }
 
+        @Override
         public String toString() {
             return Messages.getString("TargetingPhaseDisplay." + getCmd());
         }
@@ -442,6 +446,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
     }
 
+    @Override
     protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
         TargetingCommand[] commands = TargetingCommand.values();
@@ -1064,7 +1069,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clearVisibleTargets();
 
         List<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
-        Comparator<Entity> sortComp = new Comparator<Entity>() {
+        Comparator<Entity> sortComp = new Comparator<>() {
+            @Override
             public int compare(Entity x, Entity y) {
 
                 int rangeToX = ce().getPosition().distance(x.getPosition());
@@ -1366,6 +1372,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
@@ -1530,6 +1537,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.weaponList.removeListSelectionListener(this);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

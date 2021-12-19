@@ -33,6 +33,7 @@ import java.util.zip.GZIPOutputStream;
 import megamek.common.net.marshall.PacketMarshaller;
 import megamek.common.net.marshall.PacketMarshallerFactory;
 import megamek.common.util.CircularIntegerBuffer;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Generic bidirectional connection between client and server
@@ -86,7 +87,7 @@ public abstract class AbstractConnection {
     /**
      * Connection listeners list
      */
-    private Vector<ConnectionListener> connectionListeners = new Vector<ConnectionListener>();
+    private Vector<ConnectionListener> connectionListeners = new Vector<>();
 
     /**
      * Buffer of the last commands sent; Used for debugging purposes.
@@ -198,14 +199,8 @@ public abstract class AbstractConnection {
                 if (socket != null) {
                     socket.close();
                 }
-            } catch (IOException e) {
-                System.err.print("Error closing connection #"); //$NON-NLS-1$
-                System.err.print(getId());
-                System.err.print(": "); //$NON-NLS-1$
-                System.err.println(e.getMessage());
-                // We don't need a full stack trace... we're
-                // just closing the connection anyway.
-                // e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed closing connection " + getId(), e);
             }
             socket = null;
         }
@@ -384,11 +379,11 @@ public abstract class AbstractConnection {
     protected void reportLastCommands(boolean sent) {
         CircularIntegerBuffer buf = sent ? debugLastFewCommandsSent
                 : debugLastFewCommandsReceived;
-        System.err.print("    Last "); //$NON-NLS-1$
+        System.err.print("    Last ");
         System.err.print(buf.length());
-        System.err.print(" commands that were "); //$NON-NLS-1$
-        System.err.print(sent ? "sent" : "received"); //$NON-NLS-1$
-        System.err.print(" (oldest first): "); //$NON-NLS-1$
+        System.err.print(" commands that were ");
+        System.err.print(sent ? "sent" : "received");
+        System.err.print(" (oldest first): ");
         System.err.println(buf);
     }
 
@@ -399,7 +394,7 @@ public abstract class AbstractConnection {
      * @return
      */
     protected String getConnectionTypeAbbrevation() {
-        return isServer() ? "s:" : "c:"; //$NON-NLS-1$ //$NON-NLS-2$
+        return isServer() ? "s:" : "c:";
     }
 
     /**
@@ -621,14 +616,17 @@ public abstract class AbstractConnection {
             }
         }
 
+        @Override
         public int getMarshallingType() {
             return marshallingType;
         }
 
+        @Override
         public byte[] getData() {
             return data;
         }
 
+        @Override
         public boolean isCompressed() {
             return zipped;
         }

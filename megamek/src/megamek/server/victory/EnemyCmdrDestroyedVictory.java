@@ -31,6 +31,7 @@ public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializab
 
     }
 
+    @Override
     public VictoryResult victory(Game game, Map<String, Object> ctx) {
         VictoryResult vr = new VictoryResult(true);
         // check all players/teams for killing enemy commanders

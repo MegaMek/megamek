@@ -73,6 +73,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             }
         });
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowOpened(WindowEvent e) {
                 coordsField.requestFocus();
             }

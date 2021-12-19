@@ -405,6 +405,7 @@ public class TripodMech extends Mech {
      * @param location (LOC_RARM or LOC_LARM)
      * @return True/False
      */
+    @Override
     public boolean hasClaw(int location) {
         // only arms have claws.
         if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {

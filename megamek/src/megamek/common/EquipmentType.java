@@ -30,6 +30,7 @@ import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and
@@ -153,7 +154,7 @@ public class EquipmentType implements ITechnology {
 
     protected String internalName = null;
 
-    private Vector<String> namesVector = new Vector<String>();
+    private Vector<String> namesVector = new Vector<>();
 
     protected double tonnage = 0;
     protected int criticals = 0;
@@ -195,7 +196,7 @@ public class EquipmentType implements ITechnology {
      * instantly In that case, the specific end of turn mode names can be added
      * here
      */
-    public Vector<String> endTurnModes = new Vector<String>();
+    public Vector<String> endTurnModes = new Vector<>();
 
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
@@ -297,14 +298,17 @@ public class EquipmentType implements ITechnology {
         return techLevel;
     }
 
+    @Override
     public int getTechLevel(int date) {
         return techAdvancement.getTechLevel(date);
     }
     
+    @Override
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
     }
     
+    @Override
     public SimpleTechLevel getStaticTechLevel() {
         if (null != techAdvancement.getStaticTechLevel()) {
             return techAdvancement.getStaticTechLevel();
@@ -568,11 +572,13 @@ public class EquipmentType implements ITechnology {
             return modes.elements();
         }
 
-        return new Enumeration<EquipmentMode>() {
+        return new Enumeration<>() {
+            @Override
             public boolean hasMoreElements() {
                 return false;
             }
 
+            @Override
             public EquipmentMode nextElement() {
                 return null;
             }
@@ -590,7 +596,7 @@ public class EquipmentType implements ITechnology {
      */
     protected void setModes(String[] modes) {
         assert ((modes != null) && (modes.length > 0)) : "List of modes must not be null or empty";
-        Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
+        Vector<EquipmentMode> newModes = new Vector<>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));
         }
@@ -620,7 +626,7 @@ public class EquipmentType implements ITechnology {
      */
     public boolean addMode(String mode) {
         if (modes == null) {
-            modes = new Vector<EquipmentMode>();
+            modes = new Vector<>();
         }
         if (!modes.contains(EquipmentMode.getMode(mode))) {
             return modes.add(EquipmentMode.getMode(mode));
@@ -714,8 +720,8 @@ public class EquipmentType implements ITechnology {
 
     public static void initializeTypes() {
         if (null == EquipmentType.allTypes) {
-            EquipmentType.allTypes = new Vector<EquipmentType>();
-            EquipmentType.lookupHash = new Hashtable<String, EquipmentType>();
+            EquipmentType.allTypes = new Vector<>();
+            EquipmentType.lookupHash = new Hashtable<>();
 
             WeaponType.initializeTypes();
             AmmoType.initializeTypes();
@@ -1129,6 +1135,7 @@ public class EquipmentType implements ITechnology {
         return techAdvancement;
     }
 
+    @Override
     public int getTechRating() {
         return techAdvancement.getTechRating();
     }
@@ -1153,14 +1160,17 @@ public class EquipmentType implements ITechnology {
         return getEraAvailabilityName(era);
     }
 
+    @Override
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }
     
+    @Override
     public boolean isMixedTech() {
         return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
     
+    @Override
     public int getTechBase() {
         return techAdvancement.getTechBase();
     }
@@ -1326,15 +1336,15 @@ public class EquipmentType implements ITechnology {
             }
             w.flush();
             w.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 
     public static void writeEquipmentExtendedDatabase(File f) {
         try {
             BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("Megamek Equipment Extended Database");
+            w.write("MegaMek Equipment Extended Database");
             w.newLine();
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
@@ -1426,8 +1436,8 @@ public class EquipmentType implements ITechnology {
             }
             w.flush();
             w.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 

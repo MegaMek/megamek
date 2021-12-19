@@ -1142,7 +1142,7 @@ public class RATGenerator {
 
         file = new File(dir + "/factions.xml");
         try {
-            pw = new PrintWriter(file, "UTF-8");
+            pw = new PrintWriter(file, StandardCharsets.UTF_8);
         } catch (Exception e1) {
             e1.printStackTrace();
             return;
@@ -1256,7 +1256,7 @@ public class RATGenerator {
                 pw.println("</ratgen>");
                 pw.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                LogManager.getLogger().error(e);
             }
         }
     }

@@ -154,6 +154,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
                         public Targetable targ = target;
 
+                        @Override
                         public boolean accept(Entity entity) {
                             Integer id = entity.getId();
                             if ((player == entity.getOwnerId())

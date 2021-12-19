@@ -85,40 +85,40 @@ public class EquipChoicePanel extends JPanel {
     private JPanel panBombs = new JPanel();
 
     private JLabel labAutoEject = new JLabel(
-            Messages.getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT);
     private JCheckBox chAutoEject = new JCheckBox();
 
     private JLabel labCondEjectAmmo = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Ammo"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Ammo"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectAmmo = new JCheckBox();
 
     private JLabel labCondEjectEngine = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Engine"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectEngine = new JCheckBox();
 
     private JLabel labCondEjectCTDest = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labConditional_Ejection_CT_Destroyed"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectCTDest = new JCheckBox();
 
     private JLabel labCondEjectHeadshot = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Headshot"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectHeadshot = new JCheckBox();
     
     private JLabel labCondEjectFuel = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labConditional_Ejection_Fuel"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectFuel = new JCheckBox();
 
     private JLabel labCondEjectSIDest = new JLabel(
-            Messages.getString("CustomMechDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labConditional_Ejection_SI_Destroyed"), SwingConstants.RIGHT);
     private JCheckBox chCondEjectSIDest = new JCheckBox();
 
     private JLabel labSearchlight = new JLabel(
-            Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
+            Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT);
     private JCheckBox chSearchlight = new JCheckBox();
 
     private JLabel labC3 = new JLabel(
-            Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JComboBox<String> choC3 = new JComboBox<String>();
+            Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT);
+    private JComboBox<String> choC3 = new JComboBox<>();
 
     ClientGUI clientgui;
     Client client;
@@ -160,7 +160,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && hasEjectSeat) { // $NON-NLS-1$
+                    && hasEjectSeat) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
@@ -187,7 +187,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && hasEjectSeat) { // $NON-NLS-1$
+                    && hasEjectSeat) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
@@ -207,22 +207,18 @@ public class EquipChoicePanel extends JPanel {
         }
         
         // Setup AP mounts
-        if ((entity instanceof BattleArmor) 
-                && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
+        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
             setupAPMounts();
-            panAPMounts.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.APMountPanelTitle"),
+            panAPMounts.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.APMountPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             
             add(panAPMounts,GBC.eop().anchor(GridBagConstraints.CENTER));
         }
         
-        if ((entity instanceof BattleArmor) 
-                && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {            
-            panMEAdaptors.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.MEAPanelTitle"),
+        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {
+            panMEAdaptors.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.MEAPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             // We need to determine how much weight is free, so the user can
             //  pick legal combinations of manipulators
@@ -239,10 +235,8 @@ public class EquipChoicePanel extends JPanel {
                     maxTrooperWeight = trooperWeight;
                 }
             }
-            String freeWeight = Messages
-                    .getString("CustomMechDialog.freeWeight")
-                    + String.format(": %1$.3f/%2$.3f", maxTrooperWeight,
-                            ba.getTrooperWeight());
+            String freeWeight = Messages.getString("CustomMechDialog.freeWeight")
+                    + String.format(": %1$.3f/%2$.3f", maxTrooperWeight, ba.getTrooperWeight());
                         
             setupMEAdaptors(freeWeight);
             add(panMEAdaptors,GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -252,17 +246,15 @@ public class EquipChoicePanel extends JPanel {
         if (!((entity instanceof Infantry) && !((Infantry) entity)
                 .hasFieldGun()) || (entity instanceof BattleArmor)) {
             setupMunitions();
-            panMunitions.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.MunitionsPanelTitle"),
+            panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.MunitionsPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panMunitions,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
             
             setupWeaponAmmoChoice();
-            panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), Messages
-                    .getString("CustomMechDialog.WeaponSelectionTitle"),
+            panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    Messages.getString("CustomMechDialog.WeaponSelectionTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -273,11 +265,9 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up rapidfire mg
-        if (clientgui.getClient().getGame().getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_BURST)) { //$NON-NLS-1$
+        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)) {
             setupRapidfireMGs();
-            add(panRapidfireMGs,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
+            add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // set up infantry armor
@@ -292,8 +282,7 @@ public class EquipChoicePanel extends JPanel {
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
-            chSearchlight.setEnabled(!entity
-                    .hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+            chSearchlight.setEnabled(!entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
         // Set up mines
@@ -416,10 +405,9 @@ public class EquipChoicePanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
 
-        int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
-                .getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL)); //$NON-NLS-1$
-        boolean allowNukes = client.getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
+        int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
+                client.getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        boolean allowNukes = client.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES);
         m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
@@ -469,8 +457,7 @@ public class EquipChoicePanel extends JPanel {
         panMEAdaptors.setLayout(gbl);
         
         JLabel lblFreeWeight = new JLabel(freeWeight);
-        panMEAdaptors.add(lblFreeWeight,
-                GBC.eol().anchor(GridBagConstraints.CENTER));
+        panMEAdaptors.add(lblFreeWeight, GBC.eol().anchor(GridBagConstraints.CENTER));
 
         ArrayList<MiscType> manipTypes = new ArrayList<>();
         
@@ -513,9 +500,9 @@ public class EquipChoicePanel extends JPanel {
         panAPMounts.setLayout(gbl);
         
         // Weapons that can be used in an AP Mount
-        ArrayList<WeaponType> apWeapTypes = new ArrayList<WeaponType>(100);
+        ArrayList<WeaponType> apWeapTypes = new ArrayList<>(100);
         // Weapons that can be used in an Armored Glove
-        ArrayList<WeaponType> agWeapTypes = new ArrayList<WeaponType>(100);
+        ArrayList<WeaponType> agWeapTypes = new ArrayList<>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
         int gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
@@ -575,15 +562,13 @@ public class EquipChoicePanel extends JPanel {
         for (Mounted ag : armoredGloves) {
             if (aGlove == null) {
                 aGlove = ag;
-            } else if ((aGlove.getLinked() == null) 
-                    && (ag.getLinked() != null)) {
+            } else if ((aGlove.getLinked() == null) && (ag.getLinked() != null)) {
                 aGlove = ag;
             } 
             // If both are linked, TestBattleArmor will mark unit as invalid
         }
         if (aGlove != null) {
-            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove,
-                    agWeapTypes);
+            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove, agWeapTypes);
             panAPMounts.add(apcp, GBC.eol());
             m_vAPMounts.add(apcp);
         }
@@ -611,7 +596,7 @@ public class EquipChoicePanel extends JPanel {
 
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
-            ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
+            ArrayList<AmmoType> vTypes = new ArrayList<>();
             Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
                 continue;
@@ -650,7 +635,7 @@ public class EquipChoicePanel extends JPanel {
                 // to be combined to other munition types.
                 long muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
-                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS) //$NON-NLS-1$
+                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)
                         && entity.isClan()
                         && ((muniType == AmmoType.M_SEMIGUIDED)
                                 || (muniType == AmmoType.M_SWARM_I)
@@ -678,7 +663,7 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) && //$NON-NLS-1$
+                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
                         AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
@@ -710,10 +695,8 @@ public class EquipChoicePanel extends JPanel {
                 }
             }
             if ((vTypes.size() < 1)
-                    && !client.getGame().getOptions()
-                            .booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)
-                    && !client.getGame().getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
+                    && !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)
+                    && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                 continue;
             }
             MunitionChoicePanel mcp;
@@ -755,11 +738,8 @@ public class EquipChoicePanel extends JPanel {
             MineChoicePanel(Mounted m) {
                 m_mounted = m;
                 m_choice = new JComboBox<>();
-                m_choice.addItem(Messages
-                        .getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
-                m_choice.addItem(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
-                // m_choice.add("Messages.getString("CustomMechDialog.Command-detonated"));
-                // //$NON-NLS-1$
+                m_choice.addItem(Messages.getString("CustomMechDialog.Conventional"));
+                m_choice.addItem(Messages.getString("CustomMechDialog.Vibrabomb"));
                 int loc;
                 loc = m.getLocation();
                 String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
@@ -1114,7 +1094,7 @@ public class EquipChoicePanel extends JPanel {
                 add(m_num_shots, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
+                        OptionsConstants.BASE_LOBBY_AMMO_DUMP)) {
                     add(labDump, GBC.std());
                     add(chDump, GBC.eol());
                     if (clientgui.getClient().getGame().getOptions().booleanOption(
@@ -1318,9 +1298,6 @@ public class EquipChoicePanel extends JPanel {
         }
 
         class RapidfireMGPanel extends JPanel {
-            /**
-             *
-             */
             private static final long serialVersionUID = 5261919826318225201L;
 
             private Mounted m_mounted;
@@ -1330,9 +1307,8 @@ public class EquipChoicePanel extends JPanel {
             RapidfireMGPanel(Mounted m) {
                 m_mounted = m;
                 int loc = m.getLocation();
-                String sDesc = Messages
-                        .getString(
-                                "CustomMechDialog.switchToRapidFire", new Object[] { entity.getLocationAbbr(loc) }); //$NON-NLS-1$
+                String sDesc = Messages.getString("CustomMechDialog.switchToRapidFire",
+                        entity.getLocationAbbr(loc));
                 JLabel labRapid = new JLabel(sDesc);
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
@@ -1352,349 +1328,322 @@ public class EquipChoicePanel extends JPanel {
             }
         }
 
-        class InfantryArmorPanel extends JPanel {
-            /**
-             *
-             */
-            private static final long serialVersionUID = -909995917737642853L;
+    class InfantryArmorPanel extends JPanel {
+        private static final long serialVersionUID = -909995917737642853L;
 
-            private Infantry inf;
-            JLabel labArmor = new JLabel(
-                    Messages.getString("CustomMechDialog.labInfantryArmor"));
-            JLabel labDivisor = new JLabel(
-                    Messages.getString("CustomMechDialog.labDamageDivisor"));
-            JLabel labEncumber = new JLabel(
-                    Messages.getString("CustomMechDialog.labEncumber"));
-            JLabel labSpaceSuit = new JLabel(
-                    Messages.getString("CustomMechDialog.labSpaceSuit"));
-            JLabel labDEST = new JLabel(
-                    Messages.getString("CustomMechDialog.labDEST"));
-            JLabel labSneakCamo = new JLabel(
-                    Messages.getString("CustomMechDialog.labSneakCamo"));
-            JLabel labSneakIR = new JLabel(
-                    Messages.getString("CustomMechDialog.labSneakIR"));
-            JLabel labSneakECM = new JLabel(
-                    Messages.getString("CustomMechDialog.labSneakECM"));
-            JLabel labSpec = new JLabel(
-                    Messages.getString("CustomMechDialog.labInfSpec"));
-            private JComboBox<String> cbArmorKit = new JComboBox<>();
-            private JTextField fldDivisor = new JTextField(3);
-            JCheckBox chEncumber = new JCheckBox();
-            JCheckBox chSpaceSuit = new JCheckBox();
-            JCheckBox chDEST = new JCheckBox();
-            JCheckBox chSneakCamo = new JCheckBox();
-            JCheckBox chSneakIR = new JCheckBox();
-            JCheckBox chSneakECM = new JCheckBox();
-            List<JCheckBox> chSpecs = new ArrayList<>(
-                    Infantry.NUM_SPECIALIZATIONS);
+        private Infantry inf;
+        JLabel labArmor = new JLabel(Messages.getString("CustomMechDialog.labInfantryArmor"));
+        JLabel labDivisor = new JLabel(Messages.getString("CustomMechDialog.labDamageDivisor"));
+        JLabel labEncumber = new JLabel(Messages.getString("CustomMechDialog.labEncumber"));
+        JLabel labSpaceSuit = new JLabel(Messages.getString("CustomMechDialog.labSpaceSuit"));
+        JLabel labDEST = new JLabel(Messages.getString("CustomMechDialog.labDEST"));
+        JLabel labSneakCamo = new JLabel(Messages.getString("CustomMechDialog.labSneakCamo"));
+        JLabel labSneakIR = new JLabel(Messages.getString("CustomMechDialog.labSneakIR"));
+        JLabel labSneakECM = new JLabel(Messages.getString("CustomMechDialog.labSneakECM"));
+        JLabel labSpec = new JLabel(Messages.getString("CustomMechDialog.labInfSpec"));
+        private JComboBox<String> cbArmorKit = new JComboBox<>();
+        private JTextField fldDivisor = new JTextField(3);
+        JCheckBox chEncumber = new JCheckBox();
+        JCheckBox chSpaceSuit = new JCheckBox();
+        JCheckBox chDEST = new JCheckBox();
+        JCheckBox chSneakCamo = new JCheckBox();
+        JCheckBox chSneakIR = new JCheckBox();
+        JCheckBox chSneakECM = new JCheckBox();
+        List<JCheckBox> chSpecs = new ArrayList<>(Infantry.NUM_SPECIALIZATIONS);
+        
+        List<EquipmentType> armorKits = new ArrayList<>();
+
+        InfantryArmorPanel() {
+            for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                int spec = 1 << i;
+                JCheckBox newSpec = new JCheckBox();
+                newSpec.setText(Infantry.getSpecializationName(spec));
+                newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
+                chSpecs.add(newSpec);
+            }
             
-            List<EquipmentType> armorKits = new ArrayList<>();
+            GridBagLayout g = new GridBagLayout();
+            setLayout(g);
+            add(labArmor, GBC.std());
+            add(cbArmorKit, GBC.eol());
+            add(labDivisor, GBC.std());
+            add(fldDivisor, GBC.eol());
+            add(labEncumber, GBC.std());
+            add(chEncumber, GBC.eol());
+            add(labSpaceSuit, GBC.std());
+            add(chSpaceSuit, GBC.eol());
+            add(labDEST, GBC.std());
+            add(chDEST, GBC.eol());
+            add(labSneakCamo, GBC.std());
+            add(chSneakCamo, GBC.eol());
+            add(labSneakIR, GBC.std());
+            add(chSneakIR, GBC.eol());
+            add(labSneakECM, GBC.std());
+            add(chSneakECM, GBC.eol());
+            add(Box.createVerticalStrut(10), GBC.eol());
+            add(labSpec, GBC.eol());
+            for (JCheckBox spec : chSpecs) {
+                add(spec, GBC.eol());
+            }
+        }
 
-            InfantryArmorPanel() {
-                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
-                    int spec = 1 << i;
-                    JCheckBox newSpec = new JCheckBox();
-                    newSpec.setText(Infantry.getSpecializationName(spec));
-                    newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
-                    chSpecs.add(newSpec);
-                }
-                
-                GridBagLayout g = new GridBagLayout();
-                setLayout(g);
-                add(labArmor, GBC.std());
-                add(cbArmorKit, GBC.eol());
-                add(labDivisor, GBC.std());
-                add(fldDivisor, GBC.eol());
-                add(labEncumber, GBC.std());
-                add(chEncumber, GBC.eol());
-                add(labSpaceSuit, GBC.std());
-                add(chSpaceSuit, GBC.eol());
-                add(labDEST, GBC.std());
-                add(chDEST, GBC.eol());
-                add(labSneakCamo, GBC.std());
-                add(chSneakCamo, GBC.eol());
-                add(labSneakIR, GBC.std());
-                add(chSneakIR, GBC.eol());
-                add(labSneakECM, GBC.std());
-                add(chSneakECM, GBC.eol());
-                add(Box.createVerticalStrut(10), GBC.eol());
-                add(labSpec, GBC.eol());
-                for (JCheckBox spec : chSpecs) {
-                    add(spec, GBC.eol());
+        public void initialize() {
+            inf = (Infantry) entity;
+            
+            SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(client.getGame());
+            int year = client.getGame().getOptions().intOption("year");
+            for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
+                final EquipmentType et = e.nextElement();
+                if (et.hasFlag(MiscType.F_ARMOR_KIT)
+                        && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech())) {
+                    armorKits.add(et);
                 }
             }
+            armorKits.sort(Comparator.comparing(EquipmentType::getName));
 
-            public void initialize() {
-                inf = (Infantry) entity;
-                
-                SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(client.getGame());
-                int year = client.getGame().getOptions().intOption("year");
-                for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
-                    final EquipmentType et = e.nextElement();
-                    if (et.hasFlag(MiscType.F_ARMOR_KIT)
-                            && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech())) {
-                        armorKits.add(et);
-                    }
-                }
-                Collections.sort(armorKits, (et1, et2) -> et1.getName().compareTo(et2.getName()));
-
-                cbArmorKit.addItem(Messages.getString("CustomMechDialog.Custom"));
-                armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
-                EquipmentType kit = inf.getArmorKit();
-                if (kit == null) {
-                    cbArmorKit.setSelectedIndex(0);
-                } else {
-                    cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
-                }
-                fldDivisor.setText(Double.toString(inf.calcDamageDivisor()));
-                chEncumber.setSelected(inf.isArmorEncumbering());
-                chSpaceSuit.setSelected(inf.hasSpaceSuit());
-                chDEST.setSelected(inf.hasDEST());
-                chSneakCamo.setSelected(inf.hasSneakCamo());
-                chSneakIR.setSelected(inf.hasSneakIR());
-                chSneakECM.setSelected(inf.hasSneakECM());
+            cbArmorKit.addItem(Messages.getString("CustomMechDialog.Custom"));
+            armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
+            EquipmentType kit = inf.getArmorKit();
+            if (kit == null) {
+                cbArmorKit.setSelectedIndex(0);
+            } else {
+                cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
+            }
+            fldDivisor.setText(Double.toString(inf.calcDamageDivisor()));
+            chEncumber.setSelected(inf.isArmorEncumbering());
+            chSpaceSuit.setSelected(inf.hasSpaceSuit());
+            chDEST.setSelected(inf.hasDEST());
+            chSneakCamo.setSelected(inf.hasSneakCamo());
+            chSneakIR.setSelected(inf.hasSneakIR());
+            chSneakECM.setSelected(inf.hasSneakECM());
+            armorStateChanged();
+            cbArmorKit.addActionListener(e -> {
                 armorStateChanged();
-                cbArmorKit.addActionListener(e -> {
-                    armorStateChanged();
-                    updateArmorValues();
-                });
-                chDEST.addItemListener(e -> armorStateChanged());
+                updateArmorValues();
+            });
+            chDEST.addItemListener(e -> armorStateChanged());
 
-                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
-                    int spec = 1 << i;
-                    chSpecs.get(i).setSelected(inf.hasSpecialization(spec));
-                }
-            }
-            
-            public void armorStateChanged() {
-                fldDivisor.setEnabled(cbArmorKit.getSelectedIndex() == 0);
-                chEncumber.setEnabled(cbArmorKit.getSelectedIndex() == 0);
-                chSpaceSuit.setEnabled(cbArmorKit.getSelectedIndex() == 0);
-                chDEST.setEnabled(cbArmorKit.getSelectedIndex() == 0);
-                chSneakCamo.setEnabled(cbArmorKit.getSelectedIndex() == 0
-                        && !chDEST.isSelected());
-                chSneakIR.setEnabled(cbArmorKit.getSelectedIndex() == 0
-                        && !chDEST.isSelected());
-                chSneakECM.setEnabled(cbArmorKit.getSelectedIndex() == 0
-                        && !chDEST.isSelected());
-            }
-
-            public void updateArmorValues() {
-                if (cbArmorKit.getSelectedIndex() > 0) {
-                    EquipmentType kit = armorKits.get(cbArmorKit.getSelectedIndex() - 1);
-                    fldDivisor.setText(Double.toString(((MiscType) kit).getDamageDivisor()));
-                    chEncumber.setSelected((kit.getSubType() & MiscType.S_ENCUMBERING) != 0);
-                    chSpaceSuit.setSelected((kit.getSubType() & MiscType.S_SPACE_SUIT) != 0);
-                    chDEST.setSelected((kit.getSubType() & MiscType.S_DEST) != 0);
-                    chSneakCamo.setSelected((kit.getSubType() & MiscType.S_SNEAK_CAMO) != 0);
-                    chSneakIR.setSelected((kit.getSubType() & MiscType.S_SNEAK_IR) != 0);
-                    chSneakECM.setSelected((kit.getSubType() & MiscType.S_SNEAK_ECM) != 0);
-                }
-            }
-
-            public void applyChoice() {
-                if (cbArmorKit.getSelectedIndex() > 0) {
-                    inf.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
-                } else {
-                    inf.setArmorKit(null);
-                    inf.setArmorDamageDivisor(Double.valueOf(fldDivisor.getText()));
-                    inf.setArmorEncumbering(chEncumber.isSelected());
-                    inf.setSpaceSuit(chSpaceSuit.isSelected());
-                    inf.setDEST(chDEST.isSelected());
-                    if (!chDEST.isSelected()) {
-                        inf.setSneakCamo(chSneakCamo.isSelected());
-                        inf.setSneakIR(chSneakIR.isSelected());
-                        inf.setSneakECM(chSneakECM.isSelected());
-                    }
-                }
-                int spec = 0;
-                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
-                    if (chSpecs.get(i).isSelected()) {
-                        spec |= 1 << i;
-                    }
-                }
-                inf.setSpecializations(spec);
-            }
-
-            @Override
-            public void setEnabled(boolean enabled) {
-                cbArmorKit.setEnabled(enabled);
-                if (enabled) {
-                    armorStateChanged();
-                } else {
-                    fldDivisor.setEnabled(enabled);
-                    chEncumber.setEnabled(enabled);
-                    chSpaceSuit.setEnabled(enabled);
-                    chDEST.setEnabled(enabled);
-                    chSneakCamo.setEnabled(enabled);
-                    chSneakIR.setEnabled(enabled);
-                    chSneakECM.setEnabled(enabled);
-                }
-                for (JCheckBox spec : chSpecs) {
-                    spec.setEnabled(enabled);
-                }
-            }
-        }
-
-        private void disableMunitionEditing() {
-            for (int i = 0; i < m_vMunitions.size(); i++) {
-                m_vMunitions.get(i).setEnabled(false);
+            for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                int spec = 1 << i;
+                chSpecs.get(i).setSelected(inf.hasSpecialization(spec));
             }
         }
         
-        private void disableAPMEditing() {
-            for (int i = 0; i < m_vAPMounts.size(); i++) {
-                m_vAPMounts.get(i).setEnabled(false);
-            }
-        }
-        
-        private void disableMEAEditing() {
-            for (int i = 0; i < m_vMEAdaptors.size(); i++) {
-                m_vMEAdaptors.get(i).setEnabled(false);
-            }
-        }
-
-        private void disableMGSetting() {
-            for (int i = 0; i < m_vMGs.size(); i++) {
-                m_vMGs.get(i).setEnabled(false);
-            }
+        public void armorStateChanged() {
+            fldDivisor.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            chEncumber.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            chSpaceSuit.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            chDEST.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            chSneakCamo.setEnabled(cbArmorKit.getSelectedIndex() == 0
+                    && !chDEST.isSelected());
+            chSneakIR.setEnabled(cbArmorKit.getSelectedIndex() == 0
+                    && !chDEST.isSelected());
+            chSneakECM.setEnabled(cbArmorKit.getSelectedIndex() == 0
+                    && !chDEST.isSelected());
         }
 
-        private void disableMineSetting() {
-            for (int i = 0; i < m_vMines.size(); i++) {
-                m_vMines.get(i).setEnabled(false);
+        public void updateArmorValues() {
+            if (cbArmorKit.getSelectedIndex() > 0) {
+                EquipmentType kit = armorKits.get(cbArmorKit.getSelectedIndex() - 1);
+                fldDivisor.setText(Double.toString(((MiscType) kit).getDamageDivisor()));
+                chEncumber.setSelected((kit.getSubType() & MiscType.S_ENCUMBERING) != 0);
+                chSpaceSuit.setSelected((kit.getSubType() & MiscType.S_SPACE_SUIT) != 0);
+                chDEST.setSelected((kit.getSubType() & MiscType.S_DEST) != 0);
+                chSneakCamo.setSelected((kit.getSubType() & MiscType.S_SNEAK_CAMO) != 0);
+                chSneakIR.setSelected((kit.getSubType() & MiscType.S_SNEAK_IR) != 0);
+                chSneakECM.setSelected((kit.getSubType() & MiscType.S_SNEAK_ECM) != 0);
             }
         }
 
-        private void refreshC3() {
-            choC3.removeAllItems();
-            int listIndex = 0;
-            entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
-
-            if (entity.hasC3i() || entity.hasNavalC3()) {
-                choC3.addItem(Messages
-                        .getString("CustomMechDialog.CreateNewNetwork")); //$NON-NLS-1$
-                if (entity.getC3Master() == null) {
-                    choC3.setSelectedIndex(listIndex);
+        public void applyChoice() {
+            if (cbArmorKit.getSelectedIndex() > 0) {
+                inf.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
+            } else {
+                inf.setArmorKit(null);
+                inf.setArmorDamageDivisor(Double.parseDouble(fldDivisor.getText()));
+                inf.setArmorEncumbering(chEncumber.isSelected());
+                inf.setSpaceSuit(chSpaceSuit.isSelected());
+                inf.setDEST(chDEST.isSelected());
+                if (!chDEST.isSelected()) {
+                    inf.setSneakCamo(chSneakCamo.isSelected());
+                    inf.setSneakIR(chSneakIR.isSelected());
+                    inf.setSneakECM(chSneakECM.isSelected());
                 }
-                entityCorrespondance[listIndex++] = entity.getId();
-            } else if (entity.hasC3MM()) {
-                int mNodes = entity.calculateFreeC3MNodes();
-                int sNodes = entity.calculateFreeC3Nodes();
-
-                choC3.addItem(Messages
-                        .getString(
-                                "CustomMechDialog.setCompanyMaster", new Object[] { Integer.valueOf(mNodes), Integer.valueOf(sNodes) })); //$NON-NLS-1$
-
-                if (entity.C3MasterIs(entity)) {
-                    choC3.setSelectedIndex(listIndex);
-                }
-                entityCorrespondance[listIndex++] = entity.getId();
-
-                choC3.addItem(Messages
-                        .getString(
-                                "CustomMechDialog.setIndependentMaster", new Object[] { Integer.valueOf(sNodes) })); //$NON-NLS-1$
-                if (entity.getC3Master() == null) {
-                    choC3.setSelectedIndex(listIndex);
-                }
-                entityCorrespondance[listIndex++] = -1;
-
-            } else if (entity.hasC3M()) {
-                int nodes = entity.calculateFreeC3Nodes();
-
-                choC3.addItem(Messages
-                        .getString(
-                                "CustomMechDialog.setCompanyMaster1", new Object[] { Integer.valueOf(nodes) })); //$NON-NLS-1$
-                if (entity.C3MasterIs(entity)) {
-                    choC3.setSelectedIndex(listIndex);
-                }
-                entityCorrespondance[listIndex++] = entity.getId();
-
-                choC3.addItem(Messages
-                        .getString(
-                                "CustomMechDialog.setIndependentMaster", new Object[] { Integer.valueOf(nodes) })); //$NON-NLS-1$
-                if (entity.getC3Master() == null) {
-                    choC3.setSelectedIndex(listIndex);
-                }
-                entityCorrespondance[listIndex++] = -1;
-
             }
-            for (Entity e : client.getEntitiesVector()) {
-                // ignore enemies or self
-                if (entity.isEnemyOf(e) || entity.equals(e)) {
-                    continue;
+            int spec = 0;
+            for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                if (chSpecs.get(i).isSelected()) {
+                    spec |= 1 << i;
                 }
-                // c3i only links with c3i
-                if (entity.hasC3i() != e.hasC3i()) {
-                    continue;
-                }
-                // NC3 only links with NC3
-                if (entity.hasNavalC3() != e.hasNavalC3()) {
-                    continue;
-                }
-                // likewise can't connect c3 to nova
-                if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
-                    continue;
-                }
-                // maximum depth of a c3 network is 2 levels.
-                Entity eCompanyMaster = e.getC3Master();
-                if ((eCompanyMaster != null)
-                        && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
-                    continue;
-                }
-                int nodes = e.calculateFreeC3Nodes();
-                if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
-                    nodes = e.calculateFreeC3MNodes();
-                }
-                if (entity.C3MasterIs(e) && !entity.equals(e)) {
-                    nodes++;
-                }
-                if ((entity.hasC3i() || entity.hasNavalC3())
-                        && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
-                    nodes++;
-                }
-                if (nodes == 0) {
-                    continue;
-                }
-                if (e.hasC3i() || e.hasNavalC3()) {
-                    if (entity.onSameC3NetworkAs(e)) {
-                        choC3.addItem(Messages
-                                .getString(
-                                        "CustomMechDialog.join1", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes - 1) })); //$NON-NLS-1$
-                        choC3.setSelectedIndex(listIndex);
-                    } else {
-                        choC3.addItem(Messages
-                                .getString(
-                                        "CustomMechDialog.join2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
-                    }
-                    entityCorrespondance[listIndex++] = e.getId();
-                } else if (e.C3MasterIs(e) && e.hasC3MM()) {
-                    // Company masters with 2 computers can have
-                    // *both* sub-masters AND slave units.
-                    choC3.addItem(Messages
-                            .getString(
-                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
-                    entityCorrespondance[listIndex] = e.getId();
-                    if (entity.C3MasterIs(e)) {
-                        choC3.setSelectedIndex(listIndex);
-                    }
-                    listIndex++;
-                } else if (e.C3MasterIs(e) != entity.hasC3M()) {
-                    // If we're a slave-unit, we can only connect to sub-masters,
-                    // not main masters likewise, if we're a master unit, we can
-                    // only connect to main master units, not sub-masters.
-                } else if (entity.C3MasterIs(e)) {
-                    choC3.addItem(Messages
-                            .getString(
-                                    "CustomMechDialog.connect1", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes - 1) })); //$NON-NLS-1$
+            }
+            inf.setSpecializations(spec);
+        }
+
+        @Override
+        public void setEnabled(boolean enabled) {
+            cbArmorKit.setEnabled(enabled);
+            if (enabled) {
+                armorStateChanged();
+            } else {
+                fldDivisor.setEnabled(enabled);
+                chEncumber.setEnabled(enabled);
+                chSpaceSuit.setEnabled(enabled);
+                chDEST.setEnabled(enabled);
+                chSneakCamo.setEnabled(enabled);
+                chSneakIR.setEnabled(enabled);
+                chSneakECM.setEnabled(enabled);
+            }
+            for (JCheckBox spec : chSpecs) {
+                spec.setEnabled(enabled);
+            }
+        }
+    }
+
+    private void disableMunitionEditing() {
+        for (int i = 0; i < m_vMunitions.size(); i++) {
+            m_vMunitions.get(i).setEnabled(false);
+        }
+    }
+    
+    private void disableAPMEditing() {
+        for (int i = 0; i < m_vAPMounts.size(); i++) {
+            m_vAPMounts.get(i).setEnabled(false);
+        }
+    }
+    
+    private void disableMEAEditing() {
+        for (int i = 0; i < m_vMEAdaptors.size(); i++) {
+            m_vMEAdaptors.get(i).setEnabled(false);
+        }
+    }
+
+    private void disableMGSetting() {
+        for (int i = 0; i < m_vMGs.size(); i++) {
+            m_vMGs.get(i).setEnabled(false);
+        }
+    }
+
+    private void disableMineSetting() {
+        for (int i = 0; i < m_vMines.size(); i++) {
+            m_vMines.get(i).setEnabled(false);
+        }
+    }
+
+    private void refreshC3() {
+        choC3.removeAllItems();
+        int listIndex = 0;
+        entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
+
+        if (entity.hasC3i() || entity.hasNavalC3()) {
+            choC3.addItem(Messages.getString("CustomMechDialog.CreateNewNetwork"));
+            if (entity.getC3Master() == null) {
+                choC3.setSelectedIndex(listIndex);
+            }
+            entityCorrespondance[listIndex++] = entity.getId();
+        } else if (entity.hasC3MM()) {
+            int mNodes = entity.calculateFreeC3MNodes();
+            int sNodes = entity.calculateFreeC3Nodes();
+
+            choC3.addItem(Messages.getString("CustomMechDialog.setCompanyMaster", mNodes, sNodes));
+
+            if (entity.C3MasterIs(entity)) {
+                choC3.setSelectedIndex(listIndex);
+            }
+            entityCorrespondance[listIndex++] = entity.getId();
+
+            choC3.addItem(Messages.getString("CustomMechDialog.setIndependentMaster", sNodes));
+            if (entity.getC3Master() == null) {
+                choC3.setSelectedIndex(listIndex);
+            }
+            entityCorrespondance[listIndex++] = -1;
+
+        } else if (entity.hasC3M()) {
+            int nodes = entity.calculateFreeC3Nodes();
+
+            choC3.addItem(Messages.getString("CustomMechDialog.setCompanyMaster1", nodes));
+            if (entity.C3MasterIs(entity)) {
+                choC3.setSelectedIndex(listIndex);
+            }
+            entityCorrespondance[listIndex++] = entity.getId();
+
+            choC3.addItem(Messages.getString("CustomMechDialog.setIndependentMaster", nodes));
+            if (entity.getC3Master() == null) {
+                choC3.setSelectedIndex(listIndex);
+            }
+            entityCorrespondance[listIndex++] = -1;
+
+        }
+        for (Entity e : client.getEntitiesVector()) {
+            // ignore enemies or self
+            if (entity.isEnemyOf(e) || entity.equals(e)) {
+                continue;
+            }
+            // c3i only links with c3i
+            if (entity.hasC3i() != e.hasC3i()) {
+                continue;
+            }
+            // NC3 only links with NC3
+            if (entity.hasNavalC3() != e.hasNavalC3()) {
+                continue;
+            }
+            // likewise can't connect c3 to nova
+            if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
+                continue;
+            }
+            // maximum depth of a c3 network is 2 levels.
+            Entity eCompanyMaster = e.getC3Master();
+            if ((eCompanyMaster != null)
+                    && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
+                continue;
+            }
+            int nodes = e.calculateFreeC3Nodes();
+            if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
+                nodes = e.calculateFreeC3MNodes();
+            }
+            if (entity.C3MasterIs(e) && !entity.equals(e)) {
+                nodes++;
+            }
+            if ((entity.hasC3i() || entity.hasNavalC3())
+                    && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
+                nodes++;
+            }
+            if (nodes == 0) {
+                continue;
+            }
+            if (e.hasC3i() || e.hasNavalC3()) {
+                if (entity.onSameC3NetworkAs(e)) {
+                    choC3.addItem(Messages.getString("CustomMechDialog.join1",
+                            e.getDisplayName(), e.getC3NetId(), nodes - 1));
                     choC3.setSelectedIndex(listIndex);
-                    entityCorrespondance[listIndex++] = e.getId();
                 } else {
-                    choC3.addItem(Messages
-                            .getString(
-                                    "CustomMechDialog.connect2", new Object[] { e.getDisplayName(), e.getC3NetId(), Integer.valueOf(nodes) })); //$NON-NLS-1$
-                    entityCorrespondance[listIndex++] = e.getId();
+                    choC3.addItem(Messages.getString("CustomMechDialog.join2",
+                            e.getDisplayName(), e.getC3NetId(), nodes));
                 }
+                entityCorrespondance[listIndex++] = e.getId();
+            } else if (e.C3MasterIs(e) && e.hasC3MM()) {
+                // Company masters with 2 computers can have
+                // *both* sub-masters AND slave units.
+                choC3.addItem(Messages.getString("CustomMechDialog.connect2",
+                        e.getDisplayName(), e.getC3NetId(), nodes));
+                entityCorrespondance[listIndex] = e.getId();
+                if (entity.C3MasterIs(e)) {
+                    choC3.setSelectedIndex(listIndex);
+                }
+                listIndex++;
+            } else if (e.C3MasterIs(e) != entity.hasC3M()) {
+                // If we're a slave-unit, we can only connect to sub-masters,
+                // not main masters likewise, if we're a master unit, we can
+                // only connect to main master units, not sub-masters.
+            } else if (entity.C3MasterIs(e)) {
+                choC3.addItem(Messages.getString("CustomMechDialog.connect1",
+                        e.getDisplayName(), e.getC3NetId(), nodes - 1));
+                choC3.setSelectedIndex(listIndex);
+                entityCorrespondance[listIndex++] = e.getId();
+            } else {
+                choC3.addItem(Messages.getString("CustomMechDialog.connect2",
+                        e.getDisplayName(), e.getC3NetId(), nodes));
+                entityCorrespondance[listIndex++] = e.getId();
             }
         }
+    }
 }

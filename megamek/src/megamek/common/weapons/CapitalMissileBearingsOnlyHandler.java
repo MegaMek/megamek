@@ -424,7 +424,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         aaa.setOriginalTargetType(target.getTargetType());
         int missileFacing = ae.getPosition().direction(tc);
         Targetable newTarget = null;
-        Vector<Aero> targets = new Vector<Aero>();
+        Vector<Aero> targets = new Vector<>();
         
         // get all entities on the opposing side
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
@@ -856,6 +856,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * Used for Aero Sanity. This is done in calcAttackValue() otherwise
      *
      */
+    @Override
     protected int initializeCapMissileArmor() {
         int armor = 0;
         for (int wId : weapon.getBayWeapons()) {

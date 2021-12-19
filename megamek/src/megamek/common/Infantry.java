@@ -210,6 +210,7 @@ public class Infantry extends Entity {
         return UnitType.INFANTRY;
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -1389,7 +1390,7 @@ public class Infantry extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -1479,9 +1480,10 @@ public class Infantry extends Entity {
      * roll for the piloting skill check. now includes the level 3 terains which
      * can bog down
      */
+    @Override
     public PilotingRollData checkBogDown(MoveStep step,
-            EntityMovementType moveType, Hex curHex, Coords lastPos,
-            Coords curPos, int lastElev, boolean isPavementStep) {
+                                         EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                         Coords curPos, int lastElev, boolean isPavementStep) {
         return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
     }
 
@@ -2022,8 +2024,8 @@ public class Infantry extends Entity {
             try {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
             }
         } else if ((spec & TRENCH_ENGINEERS) == 0
                 && (infSpecs & TRENCH_ENGINEERS) > 0) {
@@ -2044,8 +2046,8 @@ public class Infantry extends Entity {
             try {
                 EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
             }
         } else if ((spec & DEMO_ENGINEERS) == 0
                 && (infSpecs & DEMO_ENGINEERS) > 0) {
@@ -2660,6 +2662,7 @@ public class Infantry extends Entity {
 
     }
     
+    @Override
     public boolean isConventionalInfantry() {
         return true;
     }
@@ -2669,6 +2672,7 @@ public class Infantry extends Entity {
         return Entity.ETYPE_INFANTRY;
     }
 
+    @Override
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -2736,6 +2740,7 @@ public class Infantry extends Entity {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 1;
     }

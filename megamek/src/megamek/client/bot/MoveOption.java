@@ -56,6 +56,7 @@ public class MoveOption extends MovePath {
             damage_weight = damage;
         }
 
+        @Override
         public int compare(MoveOption e0, MoveOption e1) {
             if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) > ((damage_weight
                     * e1.damage) - (utility_weight * e1.getUtility()))) {
@@ -86,12 +87,13 @@ public class MoveOption extends MovePath {
         }
 
         public ArrayList<MoveOption> getArray() {
-            return new ArrayList<MoveOption>(values());
+            return new ArrayList<>(values());
         }
     }
 
     public static class DistanceComparator implements Comparator<MoveOption> {
 
+        @Override
         public int compare(MoveOption e0, MoveOption e1) {
             return e0.getDistUtility() < e1.getDistUtility() ? -1 : 1;
         }
@@ -125,8 +127,8 @@ public class MoveOption extends MovePath {
     double threat = 0;
 
     private transient CEntity centity;
-    transient ArrayList<String> tv = new ArrayList<String>();
-    transient HashMap<CEntity, DamageInfo> damageInfos = new HashMap<CEntity, DamageInfo>();
+    transient ArrayList<String> tv = new ArrayList<>();
+    transient HashMap<CEntity, DamageInfo> damageInfos = new HashMap<>();
     private Coords pos;
     private int facing;
     private boolean prone;
@@ -145,7 +147,7 @@ public class MoveOption extends MovePath {
         threat = base.threat;
         damage = base.damage;
         movement_threat = base.movement_threat;
-        tv = new ArrayList<String>(base.tv);
+        tv = new ArrayList<>(base.tv);
         self_threat = base.self_threat;
         inDanger = base.inDanger;
         doomed = base.doomed;
@@ -482,7 +484,7 @@ public class MoveOption extends MovePath {
             }
         }
         boolean aptGunnery = enemy.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        int enemy_firing_arcs[] = { 0, 0, 0};
+        int[] enemy_firing_arcs = { 0, 0, 0};
         enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
                         .getFinalFacing(), MoveStepType.NONE), getFinalCoords());

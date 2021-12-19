@@ -23,7 +23,7 @@ import megamek.common.*;
 public class PartialRepairs extends AbstractOptions {
     private static final long serialVersionUID =  7618380522964885742L;
     public static final String PART_REPAIRS  = "PartRepairs"; 
-//    public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
+//    public static final String NEG_QUIRKS = "NegQuirks";
 
     public PartialRepairs() {
         super();
@@ -32,30 +32,30 @@ public class PartialRepairs extends AbstractOptions {
     @Override
     public void initialize() {
         //partial repairs
-        IBasicOptionGroup partRep = addGroup("part_repairs", PART_REPAIRS); //$NON-NLS-1$
-        addOption(partRep, "mech_reactor_3_crit", false); //$NON-NLS-1$
-        addOption(partRep, "mech_reactor_2_crit", false); //$NON-NLS-1$
-        addOption(partRep, "mech_reactor_1_crit", false); //$NON-NLS-1$
-        addOption(partRep, "mech_gyro_1_crit", false); //$NON-NLS-1$
-        addOption(partRep, "mech_gyro_2_crit", false); //$NON-NLS-1$
-        addOption(partRep, "sensors_1_crit", false); //$NON-NLS-1$
-        addOption(partRep, "mech_sensors_2_crit", false); //$NON-NLS-1$
-        addOption(partRep, "veh_stabilizer_crit", false); //$NON-NLS-1$
-        addOption(partRep, "veh_locked_turret", false); //$NON-NLS-1$
-        addOption(partRep, "mech_engine_replace", false); //$NON-NLS-1$
-        addOption(partRep, "mech_gyro_replace", false); //$NON-NLS-1$
-        addOption(partRep, "aero_avionics_replace", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_cic_fcs_replace", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_gear_replace", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_sensor_replace", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_avionics_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_cic_fcs_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_collar_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_engine_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_asf_fueltank_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_fueltank_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_gear_crit", false); //$NON-NLS-1$ 
-        }
+        IBasicOptionGroup partRep = addGroup("part_repairs", PART_REPAIRS);
+        addOption(partRep, "mech_reactor_3_crit", false);
+        addOption(partRep, "mech_reactor_2_crit", false);
+        addOption(partRep, "mech_reactor_1_crit", false);
+        addOption(partRep, "mech_gyro_1_crit", false);
+        addOption(partRep, "mech_gyro_2_crit", false);
+        addOption(partRep, "sensors_1_crit", false);
+        addOption(partRep, "mech_sensors_2_crit", false);
+        addOption(partRep, "veh_stabilizer_crit", false);
+        addOption(partRep, "veh_locked_turret", false);
+        addOption(partRep, "mech_engine_replace", false);
+        addOption(partRep, "mech_gyro_replace", false);
+        addOption(partRep, "aero_avionics_replace", false); 
+        addOption(partRep, "aero_cic_fcs_replace", false); 
+        addOption(partRep, "aero_gear_replace", false); 
+        addOption(partRep, "aero_sensor_replace", false); 
+        addOption(partRep, "aero_avionics_crit", false); 
+        addOption(partRep, "aero_cic_fcs_crit", false); 
+        addOption(partRep, "aero_collar_crit", false); 
+        addOption(partRep, "aero_engine_crit", false); 
+        addOption(partRep, "aero_asf_fueltank_crit", false); 
+        addOption(partRep, "aero_fueltank_crit", false); 
+        addOption(partRep, "aero_gear_crit", false); 
+    }
 
     /*
      * (non-Javadoc)

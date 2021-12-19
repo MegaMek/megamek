@@ -9,37 +9,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
+import java.text.NumberFormat;
+import java.util.*;
+
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class Dropship extends SmallCraft {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1528728632696989565L;
     
-    
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations: NOS,Left,Right,AFT
-    private int asewAffectedTurns[] = {0,0,0,0};
+    // ASEW Missile Effects, per location
+    // Values correspond to Locations: NOS,Left,Right,AFT
+    private int[] asewAffectedTurns = { 0, 0, 0, 0 };
     
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
@@ -65,8 +53,7 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
-     * 
+     * Primitive DropShips may be constructed with no docking collar, or with a pre-boom collar.
      */
     public static final int COLLAR_STANDARD  = 0;
     public static final int COLLAR_PROTOTYPE = 1;
@@ -76,7 +63,7 @@ public class Dropship extends SmallCraft {
             "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
     
-    //Likewise, you can have a prototype or standard K-F Boom
+    // Likewise, you can have a prototype or standard K-F Boom
     public static final int BOOM_STANDARD  = 0;
     public static final int BOOM_PROTOTYPE = 1;
     
@@ -99,6 +86,7 @@ public class Dropship extends SmallCraft {
         return UnitType.DROPSHIP;
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
@@ -144,6 +132,7 @@ public class Dropship extends SmallCraft {
         this.boomType = boomType;
     }
 
+    @Override
     public String getCritDamageString() {
         StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
         boolean first = toReturn.length() == 0;
@@ -178,7 +167,7 @@ public class Dropship extends SmallCraft {
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
 
-        HashMap<Integer, Integer> elevations = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
@@ -214,7 +203,7 @@ public class Dropship extends SmallCraft {
             return true;
         }
 
-        Object elevs[] = elevations.keySet().toArray();
+        Object[] elevs = elevations.keySet().toArray();
         int elev1 = (Integer) elevs[0];
         int elev2 = (Integer) elevs[1];
         int elevDifference = Math.abs(elev1 - elev2);
@@ -921,7 +910,7 @@ public class Dropship extends SmallCraft {
             double arcBV = 0.0;
             double arcHeat = 0.0;
             double arcAmmoBV = 0.0;
-            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
+            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<>();
             for (Mounted mounted : getTotalWeaponList()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -1021,8 +1010,8 @@ public class Dropship extends SmallCraft {
                 arcHeat += weaponHeat;
             }
             // now ammo
-            Map<String, Double> ammo = new HashMap<String, Double>();
-            ArrayList<String> keys = new ArrayList<String>();
+            Map<String, Double> ammo = new HashMap<>();
+            ArrayList<String> keys = new ArrayList<>();
             for (Mounted mounted : getAmmo()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -1685,7 +1674,7 @@ public class Dropship extends SmallCraft {
     public String hasRoomForVerticalLanding() {
         // dropships can land just about anywhere they want, unless it is off
         // the map
-        Vector<Coords> positions = new Vector<Coords>();
+        Vector<Coords> positions = new Vector<>();
         positions.add(getPosition());
         for (int i = 0; i < 6; i++) {
             positions.add(getPosition().translated(i));

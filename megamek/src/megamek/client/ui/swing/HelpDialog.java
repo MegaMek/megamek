@@ -50,6 +50,7 @@ public class HelpDialog extends JDialog {
 
         //Listen for the user clicking on hyperlinks.
         mainView.addHyperlinkListener(new HyperlinkListener() {
+            @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 try {
                     if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {

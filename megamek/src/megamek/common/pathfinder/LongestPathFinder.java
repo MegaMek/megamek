@@ -344,7 +344,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @return the shortest move path to hex at given coordinates
      */
     public MovePath getComputedPath(Coords coords) {
-        Deque<MovePath> q = getCost(coords, new Comparator<Deque<MovePath>>() {
+        Deque<MovePath> q = getCost(coords, new Comparator<>() {
             @Override
             public int compare(Deque<MovePath> q1, Deque<MovePath> q2) {
                 MovePath mp1 = q1.getLast(), mp2 = q2.getLast();

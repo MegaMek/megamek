@@ -131,14 +131,14 @@ public interface IBomber {
                                                         
                         }
                     } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
+
                     }
                 } else {
                     try {
                         ((Entity) this).addEquipment(EquipmentType.get(BombType
                                 .getBombInternalName(type)), loc, false);
                     } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
+
                     }
                 }
             }

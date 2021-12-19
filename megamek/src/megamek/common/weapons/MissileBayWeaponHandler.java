@@ -208,8 +208,9 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      * check for special munitions and their effect on av 
      * 
      */
+    @Override
     protected double updateAVforAmmo(double current_av, AmmoType atype,
-            WeaponType bayWType, int range, int wId) {
+                                     WeaponType bayWType, int range, int wId) {
         Mounted bayW = ae.getEquipment(wId);
         Mounted mLinker = bayW.getLinkedBy();
         int bonus = 0;

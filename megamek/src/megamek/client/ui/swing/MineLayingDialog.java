@@ -41,12 +41,9 @@ import megamek.common.Mounted;
  * unit.
  */
 public class MineLayingDialog extends JDialog implements ActionListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -1067865530113792340L;
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butOkay = new JButton(Messages.getString("Okay"));
+    private JButton butCancel = new JButton(Messages.getString("Cancel"));
     private JLabel labMessage;
     private boolean okay = true;
 
@@ -54,8 +51,8 @@ public class MineLayingDialog extends JDialog implements ActionListener {
      * The <code>int</code> ID of the entity that lays the mine.
      */
     private Entity entity;
-    private JComboBox<String> chMines = new JComboBox<String>();
-    private ArrayList<Mounted> vMines = new ArrayList<Mounted>();
+    private JComboBox<String> chMines = new JComboBox<>();
+    private ArrayList<Mounted> vMines = new ArrayList<>();
 
     /**
      * Display a dialog that shows the mines on the entity, and allows the
@@ -65,13 +62,11 @@ public class MineLayingDialog extends JDialog implements ActionListener {
      * @param entity the <code>Entity</code> that carries the mines.
      */
     public MineLayingDialog(JFrame parent, Entity entity) {
-        super(parent, Messages.getString("MineLayingDialog.title"), true); //$NON-NLS-1$
+        super(parent, Messages.getString("MineLayingDialog.title"), true);
         this.entity = entity;
 
-        labMessage = new JLabel(
-                Messages
-                        .getString(
-                                "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
+        labMessage = new JLabel(Messages.getString("MineLayingDialog.selectMineToLay",
+                entity.getDisplayName()));
 
         // Walk through the entity's misc equipment, looking for mines.
         for (Mounted mount : entity.getMisc()) {
@@ -143,6 +138,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
                 + parent.getSize().height / 2 - size.height / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butCancel)) {
             okay = false;

@@ -29,6 +29,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -127,8 +128,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                     "Archer ARC-2W");
             testEntity = new MechFileParser(ms.getSourceFile(),
                     ms.getEntryName()).getEntity();
-        } catch (EntityLoadingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -140,7 +141,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
      * Initializes a number of things about this frame.
      */
     private void initializeFrame() {
-        frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
+        frame = new JFrame(Messages.getString("ClientGUI.title"));
         frame.setJMenuBar(menuBar);
 
         var prefs = GUIPreferences.getInstance();
@@ -189,8 +190,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$
-                + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
+        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label")
+                + Messages.getString("ClientGUI.clientTitleSuffix"));
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
         frame.validate();
@@ -211,10 +212,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
-        } catch (IOException e) {
-            e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
+                    Messages.getString("ClientGUI.FatalError.message") + e);
             die();
         }
         switchPanel(GamePhase.MOVEMENT);
@@ -252,9 +253,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception e) {
-            e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), //$NON-NLS-1$
-                    Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
+            LogManager.getLogger().error(e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
+                    Messages.getString("ClientGUI.FatalError.message") + e);
             die();
         }
 
@@ -272,7 +273,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         skinSpecEditor = new SkinSpecEditor(this);
 
         skinSpecEditorD = new JDialog(frame,
-                Messages.getString("SkinEditor.SkinEditorDialog.Title"), false); //$NON-NLS-1$
+                Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);
 
         var prefs = GUIPreferences.getInstance();
         skinSpecEditorD.setLocation(
@@ -305,6 +306,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     /**
      * Implement the <code>ActionListener</code> interface.
      */
+    @Override
     public void actionPerformed(ActionEvent event) {
     }
 
@@ -463,28 +465,26 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         switch (phase) {
             case LOUNGE:
                 component = new ChatLounge(null);
-                main = "ChatLounge"; //$NON-NLS-1$
+                main = "ChatLounge";
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(
-                        Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
-                main = "JLabel-StartingScenario"; //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
+                main = "JLabel-StartingScenario";
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case EXCHANGE:
-                component = new JLabel(
-                        Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
-                main = "JLabel-Exchange"; //$NON-NLS-1$
+                component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
+                main = "JLabel-Exchange";
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(null);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "SelectArtyAutoHitHexDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -494,8 +494,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 break;
             case DEPLOY_MINEFIELDS:
                 component = new DeployMinefieldDisplay(null);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "DeployMinefieldDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -505,8 +505,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 break;
             case DEPLOYMENT:
                 component = new DeploymentDisplay(null);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "DeploymentDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "DeploymentDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -517,8 +517,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case TARGETING:
                 component = new TargetingPhaseDisplay(null, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "TargetingPhaseDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -528,8 +528,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 break;
             case MOVEMENT:
                 component = new MovementDisplay(null);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "MovementDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "MovementDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -540,8 +540,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case OFFBOARD:
                 component = new TargetingPhaseDisplay(null, true);
                 ((TargetingPhaseDisplay) component).initializeListeners();
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "OffboardDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "OffboardDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -551,8 +551,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 break;
             case FIRING:
                 component = new FiringDisplay(null);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "FiringDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "FiringDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -562,8 +562,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 break;
             case PHYSICAL:
                 component = new PhysicalDisplay(null);
-                main = "BoardView"; //$NON-NLS-1$
-                secondary = "PhysicalDisplay"; //$NON-NLS-1$
+                main = "BoardView";
+                secondary = "PhysicalDisplay";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -573,7 +573,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 break;
             case INITIATIVE_REPORT:
                 component = new ReportDisplay(null);
-                main = "ReportDisplay"; //$NON-NLS-1$
+                main = "ReportDisplay";
                 component.setName(main);
                 panMain.add(main, component);
                 break;
@@ -590,11 +590,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(GamePhase.INITIATIVE_REPORT);
                 }
-                main = "ReportDisplay"; //$NON-NLS-1$
+                main = "ReportDisplay";
                 break;
             default:
                 component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer"));
-                main = "JLabel-Default"; //$NON-NLS-1$
+                main = "JLabel-Default";
                 secondary = main;
                 component.setName(main);
                 panMain.add(main, component);
@@ -743,10 +743,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setState(Frame.NORMAL);
     }
 
+    @Override
     public void windowIconified(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowOpened(WindowEvent windowEvent) {
         // ignored
     }
@@ -791,14 +793,17 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         // ignored
     }
 
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
         // ignored
     }
 
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
         // ignored
     }

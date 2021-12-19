@@ -88,12 +88,10 @@ public class UnitDisplaySpecPanel extends JPanel {
                     BorderFactory.createEmptyBorder(), elementName,
                     TitledBorder.LEFT, TitledBorder.TOP));
 
-            pathLbl = new JButton(
-                    Messages.getString("SkinEditor.Path")); //$NON-NLS-1$
+            pathLbl = new JButton(Messages.getString("SkinEditor.Path"));
             pathLbl.setMargin(new Insets(1, 1, 1, 1));
-            pathLbl.setToolTipText(Messages.getString(
-                    "SkinEditor.PathToolTip", //$NON-NLS-1$
-                    new Object[] { Configuration.widgetsDir().getPath() }));
+            pathLbl.setToolTipText(Messages.getString("SkinEditor.PathToolTip",
+                    Configuration.widgetsDir().getPath()));
             pathLbl.addActionListener(this);
             path = new JTextField(imgPath, TEXTFIELD_COLS);
             path.getDocument().addDocumentListener(this);
@@ -274,17 +272,17 @@ public class UnitDisplaySpecPanel extends JPanel {
         // borderPanel.setLayout(new BoxLayout(borderPanel, BoxLayout.Y_AXIS));
         tabsPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.BLACK),
-                Messages.getString("SkinEditor.TabImages"), TitledBorder.TOP, //$NON-NLS-1$
+                Messages.getString("SkinEditor.TabImages"), TitledBorder.TOP,
                 TitledBorder.DEFAULT_POSITION));
 
         // General Tab
         generalTabIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.generalTabIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.generalTabIdle"),
                 udSpec.getGeneralTabIdle());
         tabsPanel.add(generalTabIdle, gbc);
         gbc.gridx++;
         generalTabActive = new BorderElement(this,
-                Messages.getString("SkinEditor.generalTabActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.generalTabActive"),
                 udSpec.getGeneralTabActive());
         tabsPanel.add(generalTabActive, gbc);
         gbc.gridx = 0;
@@ -292,12 +290,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Pilot Tab
         pilotTabIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.pilotTabIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.pilotTabIdle"),
                 udSpec.getPilotTabIdle());
         tabsPanel.add(pilotTabIdle, gbc);
         gbc.gridx++;
         pilotTabActive = new BorderElement(this,
-                Messages.getString("SkinEditor.pilotTabActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.pilotTabActive"),
                 udSpec.getPilotTabActive());
         tabsPanel.add(pilotTabActive, gbc);
         gbc.gridx = 0;
@@ -305,12 +303,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Pilot Tab
         armorTabIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.armorTabIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.armorTabIdle"),
                 udSpec.getArmorTabIdle());
         tabsPanel.add(armorTabIdle, gbc);
         gbc.gridx++;
         armorTabActive = new BorderElement(this,
-                Messages.getString("SkinEditor.armorTabActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.armorTabActive"),
                 udSpec.getArmorTabActive());
         tabsPanel.add(armorTabActive, gbc);
         gbc.gridx = 0;
@@ -318,12 +316,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Systems Tab
         systemsTabIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.systemsTabIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.systemsTabIdle"),
                 udSpec.getSystemsTabIdle());
         tabsPanel.add(systemsTabIdle, gbc);
         gbc.gridx++;
         systemsTabActive = new BorderElement(this,
-                Messages.getString("SkinEditor.systemsTabActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.systemsTabActive"),
                 udSpec.getSystemsTabActive());
         tabsPanel.add(systemsTabActive, gbc);
         gbc.gridx = 0;
@@ -331,12 +329,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Weapons Tab
         weaponsTabIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.weaponsTabIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.weaponsTabIdle"),
                 udSpec.getWeaponsTabIdle());
         tabsPanel.add(weaponsTabIdle, gbc);
         gbc.gridx++;
         weaponsTabActive = new BorderElement(this,
-                Messages.getString("SkinEditor.weaponsTabActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.weaponsTabActive"),
                 udSpec.getWeaponsTabActive());
         tabsPanel.add(weaponsTabActive, gbc);
         gbc.gridx = 0;
@@ -344,12 +342,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Extras Tab
         extrasTabIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.extrasTabIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.extrasTabIdle"),
                 udSpec.getExtrasTabIdle());
         tabsPanel.add(extrasTabIdle, gbc);
         gbc.gridx++;
         extraTabActive = new BorderElement(this,
-                Messages.getString("SkinEditor.extraTabActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.extraTabActive"),
                 udSpec.getExtraTabActive());
         tabsPanel.add(extraTabActive, gbc);
         gbc.gridx = 0;
@@ -357,12 +355,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // General Tab
         cornerIdle = new BorderElement(this,
-                Messages.getString("SkinEditor.cornerIdle"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.cornerIdle"),
                 udSpec.getCornerIdle());
         tabsPanel.add(cornerIdle, gbc);
         gbc.gridx++;
         cornerActive = new BorderElement(this,
-                Messages.getString("SkinEditor.cornerActive"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.cornerActive"),
                 udSpec.getCornerActive());
         tabsPanel.add(cornerActive, gbc);
         gbc.gridx = 0;
@@ -372,19 +370,19 @@ public class UnitDisplaySpecPanel extends JPanel {
         JPanel borderPanel = new JPanel(new GridBagLayout());
         borderPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.BLACK),
-                Messages.getString("SkinEditor.Borders"), TitledBorder.TOP, //$NON-NLS-1$
+                Messages.getString("SkinEditor.Borders"), TitledBorder.TOP,
                 TitledBorder.DEFAULT_POSITION));
 
         gbc.gridx = gbc.gridy = 0;
 
         // Top Corners Tab
         topLeftCorner = new BorderElement(this,
-                Messages.getString("SkinEditor.topLeftCorner"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.topLeftCorner"),
                 udSpec.getTopLeftCorner());
         borderPanel.add(topLeftCorner, gbc);
         gbc.gridx++;
         topRightCorner = new BorderElement(this,
-                Messages.getString("SkinEditor.topRightCorner"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.topRightCorner"),
                 udSpec.getTopRightCorner());
         borderPanel.add(topRightCorner, gbc);
         gbc.gridx = 0;
@@ -392,12 +390,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Bottom Corners Tab
         bottomLeftCorner = new BorderElement(this,
-                Messages.getString("SkinEditor.bottomLeftCorner"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.bottomLeftCorner"),
                 udSpec.getBottomLeftCorner());
         borderPanel.add(bottomLeftCorner, gbc);
         gbc.gridx++;
         bottomRightCorner = new BorderElement(this,
-                Messages.getString("SkinEditor.bottomRightCorner"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.bottomRightCorner"),
                 udSpec.getBottomRightCorner());
         borderPanel.add(bottomRightCorner, gbc);
         gbc.gridx = 0;
@@ -405,12 +403,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Top/Bottom Lines
         topLine = new BorderElement(this,
-                Messages.getString("SkinEditor.topLine"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.topLine"),
                 udSpec.getTopLine());
         borderPanel.add(topLine, gbc);
         gbc.gridx++;
         bottomLine = new BorderElement(this,
-                Messages.getString("SkinEditor.bottomLine"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.bottomLine"),
                 udSpec.getBottomLine());
         borderPanel.add(bottomLine, gbc);
         gbc.gridx = 0;
@@ -418,12 +416,12 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         // Left/Right Lines
         leftLine = new BorderElement(this,
-                Messages.getString("SkinEditor.leftLine"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.leftLine"),
                 udSpec.getLeftLine());
         borderPanel.add(leftLine, gbc);
         gbc.gridx++;
         rightLine = new BorderElement(this,
-                Messages.getString("SkinEditor.rightLine"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.rightLine"),
                 udSpec.getRightLine());
         borderPanel.add(rightLine, gbc);
         gbc.gridx = 0;
@@ -432,7 +430,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         // Background Image
         gbc.gridwidth = 2;
         backgroundTile = new BorderElement(this,
-                Messages.getString("SkinEditor.backgroundTile"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.backgroundTile"),
                 udSpec.getBackgroundTile());
         borderPanel.add(backgroundTile, gbc);
         gbc.gridwidth = 1;
@@ -441,7 +439,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         // Mech Outline
         gbc.gridwidth = 2;
         mechOutline = new BorderElement(this,
-                Messages.getString("SkinEditor.mechOutline"), //$NON-NLS-1$
+                Messages.getString("SkinEditor.mechOutline"),
                 udSpec.getMechOutline());
         borderPanel.add(mechOutline, gbc);
         gbc.gridwidth = 1;

@@ -58,6 +58,7 @@ public class BotGUI implements GameListener {
      * 
      * @see megamek.common.GameListener#gamePhaseChange(megamek.common.GamePhaseChangeEvent)
      */
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         if (bot.getGame().getPhase() == GamePhase.LOUNGE
                 || bot.getGame().getPhase() == GamePhase.STARTING_SCENARIO) {
@@ -70,8 +71,8 @@ public class BotGUI implements GameListener {
             WarningShown = true;
             
             JFrame frame = new JFrame();
-            String title = Messages.getString("BotGUI.notifyOfBot.title"); //$NON-NLS-1$
-            String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
+            String title = Messages.getString("BotGUI.notifyOfBot.title");
+            String body = Messages.getString("BotGUI.notifyOfBot.message");
             frame.pack();
             frame.setLocationRelativeTo(null);
             ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
@@ -108,36 +109,47 @@ public class BotGUI implements GameListener {
     public void gameTurnChange(GameTurnChangeEvent e) {
     }
 
+    @Override
     public void gameReport(GameReportEvent e) {
     }
 
+    @Override
     public void gameEnd(GameEndEvent e) {
     }
 
+    @Override
     public void gameBoardNew(GameBoardNewEvent e) {
     }
 
+    @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
     }
 
+    @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
     }
 
+    @Override
     public void gameMapQuery(GameMapQueryEvent e) {
     }
 
+    @Override
     public void gameEntityNew(GameEntityNewEvent e) {
     }
 
+    @Override
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
     }
 
+    @Override
     public void gameEntityChange(GameEntityChangeEvent e) {
     }
 
+    @Override
     public void gameNewAction(GameNewActionEvent e) {
     }
 
+    @Override
     public void gameEntityRemove(GameEntityRemoveEvent e) {
     }
     

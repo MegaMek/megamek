@@ -76,57 +76,57 @@ public class SkinXMLHandler {
     public static String NAME = "name";
 
     // Skin Specification XML Tags
-    public static final String FONT_COLOR = "font_color"; //$NON-NLS-1$
-    public static final String BORDER = "border"; //$NON-NLS-1$
-    public static final String PLAIN = "plain"; //$NON-NLS-1$
-    public static final String NO_BORDER = "no_border"; //$NON-NLS-1$
-    public static final String TILE_BACKGROUND = "tile_background"; //$NON-NLS-1$
-    public static final String TR_CORNER = "corner_top_right"; //$NON-NLS-1$
-    public static final String TL_CORNER = "corner_top_left"; //$NON-NLS-1$
-    public static final String BR_CORNER = "corner_bottom_right"; //$NON-NLS-1$
-    public static final String BL_CORNER = "corner_bottom_left"; //$NON-NLS-1$
-    public static final String EDGE = "edge"; //$NON-NLS-1$
-    public static final String EDGE_NAME = "edgeName"; //$NON-NLS-1$
-    public static final String EDGE_ICON = "edgeIcon"; //$NON-NLS-1$
-    public static final String ICON = "icon"; //$NON-NLS-1$
-    public static final String TILED = "tiled"; //$NON-NLS-1$
-    public static final String TOP_LINE = "line_top"; //$NON-NLS-1$
-    public static final String BOTTOM_LINE = "line_bottom"; //$NON-NLS-1$
-    public static final String RIGHT_LINE = "line_right"; //$NON-NLS-1$
-    public static final String LEFT_LINE = "line_left"; //$NON-NLS-1$
-    public static final String BACKGROUND_IMAGE = "background_image"; //$NON-NLS-1$
-    public static final String SHOW_SCROLL_BARS = "show_scroll_bars"; //$NON-NLS-1$
-    public static final String SHOULD_BOLD = "should_bold_mouseover"; //$NON-NLS-1$
-    public static final String FONT_NAME = "font_name"; //$NON-NLS-1$
-    public static final String FONT_SIZE = "font_size"; //$NON-NLS-1$
+    public static final String FONT_COLOR = "font_color";
+    public static final String BORDER = "border";
+    public static final String PLAIN = "plain";
+    public static final String NO_BORDER = "no_border";
+    public static final String TILE_BACKGROUND = "tile_background";
+    public static final String TR_CORNER = "corner_top_right";
+    public static final String TL_CORNER = "corner_top_left";
+    public static final String BR_CORNER = "corner_bottom_right";
+    public static final String BL_CORNER = "corner_bottom_left";
+    public static final String EDGE = "edge";
+    public static final String EDGE_NAME = "edgeName";
+    public static final String EDGE_ICON = "edgeIcon";
+    public static final String ICON = "icon";
+    public static final String TILED = "tiled";
+    public static final String TOP_LINE = "line_top";
+    public static final String BOTTOM_LINE = "line_bottom";
+    public static final String RIGHT_LINE = "line_right";
+    public static final String LEFT_LINE = "line_left";
+    public static final String BACKGROUND_IMAGE = "background_image";
+    public static final String SHOW_SCROLL_BARS = "show_scroll_bars";
+    public static final String SHOULD_BOLD = "should_bold_mouseover";
+    public static final String FONT_NAME = "font_name";
+    public static final String FONT_SIZE = "font_size";
 
     // Unit Display Skin Specification XML tags
-    public static final String GeneralTabIdle = "tab_general_idle"; //$NON-NLS-1$
-    public static final String PilotTabIdle = "tab_pilot_idle"; //$NON-NLS-1$
-    public static final String ArmorTabIdle = "tab_armor_idle"; //$NON-NLS-1$
-    public static final String SystemsTabIdle = "tab_systems_idle"; //$NON-NLS-1$
-    public static final String WeaponsTabIdle = "tab_weapon_idle"; //$NON-NLS-1$
-    public static final String ExtrasTabIdle = "tab_extras_idle"; //$NON-NLS-1$
-    public static final String GeneralTabActive = "tab_general_active"; //$NON-NLS-1$
-    public static final String PilotTabActive = "tab_pilot_active"; //$NON-NLS-1$
-    public static final String ArmorTabActive = "tab_armor_active"; //$NON-NLS-1$
-    public static final String SystemsTabActive = "tab_systems_active"; //$NON-NLS-1$
-    public static final String WeaponsTabActive = "tab_weapon_active"; //$NON-NLS-1$
-    public static final String ExtraTabActive = "tab_extras_active"; //$NON-NLS-1$
-    public static final String CornerIdle = "idle_corner"; //$NON-NLS-1$
-    public static final String CornerActive = "active_corner"; //$NON-NLS-1$
+    public static final String GeneralTabIdle = "tab_general_idle";
+    public static final String PilotTabIdle = "tab_pilot_idle";
+    public static final String ArmorTabIdle = "tab_armor_idle";
+    public static final String SystemsTabIdle = "tab_systems_idle";
+    public static final String WeaponsTabIdle = "tab_weapon_idle";
+    public static final String ExtrasTabIdle = "tab_extras_idle";
+    public static final String GeneralTabActive = "tab_general_active";
+    public static final String PilotTabActive = "tab_pilot_active";
+    public static final String ArmorTabActive = "tab_armor_active";
+    public static final String SystemsTabActive = "tab_systems_active";
+    public static final String WeaponsTabActive = "tab_weapon_active";
+    public static final String ExtraTabActive = "tab_extras_active";
+    public static final String CornerIdle = "idle_corner";
+    public static final String CornerActive = "active_corner";
 
-    public static final String BackgroundTile = "background_tile"; //$NON-NLS-1$
-    public static final String TopLine = "top_line"; //$NON-NLS-1$
-    public static final String BottomLine = "bottom_line"; //$NON-NLS-1$
-    public static final String LeftLine = "left_line"; //$NON-NLS-1$
-    public static final String RightLine = "right_line"; //$NON-NLS-1$
-    public static final String TopLeftCorner = "tl_corner"; //$NON-NLS-1$
-    public static final String BottomLeftCorner = "bl_corner"; //$NON-NLS-1$
-    public static final String TopRightCorner = "tr_corner"; //$NON-NLS-1$
-    public static final String BottomRightCorner = "br_corner"; //$NON-NLS-1$
+    public static final String BackgroundTile = "background_tile";
+    public static final String TopLine = "top_line";
+    public static final String BottomLine = "bottom_line";
+    public static final String LeftLine = "left_line";
+    public static final String RightLine = "right_line";
+    public static final String TopLeftCorner = "tl_corner";
+    public static final String BottomLeftCorner = "bl_corner";
+    public static final String TopRightCorner = "tr_corner";
+    public static final String BottomRightCorner = "br_corner";
 
-    public static final String MechOutline = "mech_outline"; //$NON-NLS-1$
+    public static final String MechOutline = "mech_outline";
 
     private static Map<String, SkinSpecification> skinSpecs;
 
@@ -544,9 +544,8 @@ public class SkinXMLHandler {
                 writeUnitDisplaySkinSpec(output);
             }
             output.write(SKIN_FOOTER);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -895,7 +894,7 @@ public class SkinXMLHandler {
         SkinSpecification spec = skinSpecs.get(component);
         if (spec == null) {
             if (defaultToPlain) {
-                spec = new SkinSpecification("Plain"); //$NON-NLS-1$
+                spec = new SkinSpecification("Plain");
             } else if (isBtn) {
                 spec = skinSpecs.get(UIComponents.DefaultButton.getComp());
             } else {

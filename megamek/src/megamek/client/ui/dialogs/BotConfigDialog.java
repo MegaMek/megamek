@@ -35,6 +35,7 @@ import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -503,6 +504,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         savePrincessProperties();
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addTargetButton) {
             var dlg = new BotConfigTargetHexDialog(getFrame(), clientGui);
@@ -602,8 +604,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             try {
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
-            } catch (PrincessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error(e);
             }
         }
     }
@@ -710,7 +712,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Sets up/Updates the displayed preset list (e.g. after adding or deleting a preset) */
     private void updatePresets() {
-        presets = new ArrayList<String>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
+        presets = new ArrayList<>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
         
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {

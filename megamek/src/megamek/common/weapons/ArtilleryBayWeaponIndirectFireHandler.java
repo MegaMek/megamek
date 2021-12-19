@@ -42,8 +42,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
      * @param w
      * @param g
      */
-    public ArtilleryBayWeaponIndirectFireHandler(ToHitData t,
-            WeaponAttackAction w, Game g, Server s) {
+    public ArtilleryBayWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -53,12 +52,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(GamePhase phase) {
-        if ((phase == GamePhase.OFFBOARD)
-                || (phase == GamePhase.TARGETING)) {
-            return true;
-        }
-        return false;
+    public boolean cares(final GamePhase phase) {
+        return phase.isOffboard() || phase.isTargeting();
     }
         
     @Override
@@ -146,6 +141,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return true;
         }
+
         if (aaa.getTurnsTilHit() > 0) {
             aaa.decrementTurnsTilHit();
             return true;
@@ -168,12 +164,12 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
-            Iterator<Entity> spottersAfter = game
-                    .getSelectedEntities(new EntitySelector() {
+            Iterator<Entity> spottersAfter = game.getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
                         public Targetable targ = target;
 
+                        @Override
                         public boolean accept(Entity entity) {
                             Integer id = entity.getId();
                             if ((player == entity.getOwnerId())
@@ -223,27 +219,19 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         // Is the attacker still alive and we're not shooting FLAK?
         // then adjust the target
         if (!isFlak) {
-
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
             if (roll >= toHit.getValue()) {
-                ae.aTracker
-                        .setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
-            }
-            // If the shot missed, but was adjusted by a
-            // spotter, future shots are more likely to hit.
+                ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+            } else if (null != bestSpotter) {
+                // If the shot missed, but was adjusted by a spotter, future shots are more likely
+                // to hit.
+                // Note: Because artillery fire is adjusted on a per-unit basis, this can result in
+                // a unit firing multiple artillery weapons at the same hex getting this bonus more
+                // than once per turn. Since the Artillery Modifiers Table on TacOps p. 180 lists a
+                // -1 per shot (not salvo!) previously fired at the target hex, this would in fact
+                // appear to be correct.
 
-            // Note: Because artillery fire is adjusted on a per-unit basis,
-            // this
-            // can result in a unit firing multiple artillery weapons at the
-            // same
-            // hex getting this bonus more than once per turn. Since the
-            // Artillery
-            // Modifiers Table on TacOps p. 180 lists a -1 per shot (not salvo!)
-            // previously fired at the target hex, this would in fact appear to
-            // be
-            // correct.
-            else if (null != bestSpotter) {
                 // only add mods if it's not an automatic success
                 if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
                     if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
@@ -251,7 +239,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     }
                     ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
                 }
-
             }
         }
 
@@ -312,7 +299,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (!handledAmmoAndReport) {
             addHeat();
         }
-        
+
         // In the case of misses, we'll need to hit multiple hexes
         List<Coords> targets = new ArrayList<>();
         if (!bMissed) {
@@ -328,11 +315,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             artyMsg = "Artillery hit here on round " + game.getRoundCount() 
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
-            game.getBoard().addSpecialHexDisplay(
-                    targetPos,
+            game.getBoard().addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                            game.getRoundCount(), game.getPlayer(aaa
-                                    .getPlayerId()), artyMsg));
+                            game.getRoundCount(), game.getPlayer(aaa.getPlayerId()), artyMsg));
         } else {
             Coords origPos = targetPos;
             int moF = toHit.getMoS();
@@ -349,13 +334,9 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             artyMsg = "Artillery missed here on round "
                     + game.getRoundCount() + ", fired by "
                     + game.getPlayer(aaa.getPlayerId()).getName();
-            game.getBoard().addSpecialHexDisplay(
-                    origPos,
-                    new SpecialHexDisplay(
-                            SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                    .getRoundCount(), game
-                                    .getPlayer(aaa.getPlayerId()),
-                                    artyMsg));
+            game.getBoard().addSpecialHexDisplay(origPos,
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(),
+                            game.getPlayer(aaa.getPlayerId()), artyMsg));
             while (nweaponsHit > 0) {
                 //We'll generate a new report and scatter for each weapon fired
                 targetPos = Compute.scatterDirectArty(targetPos, moF);
@@ -458,15 +439,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
-                server.deliverThunderVibraMinefield(targetPos, ae.getOwner()
-                        .getId(), atype.getRackSize(), waa.getOtherAttackInfo(), ae
-                        .getId());
+                server.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(),
+                        atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
-                    server.deliverThunderVibraMinefield(c, ae.getOwner()
-                            .getId(), atype.getRackSize(), waa.getOtherAttackInfo(), ae
-                            .getId());
+                    server.deliverThunderVibraMinefield(c, ae.getOwner().getId(),
+                            atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
                 }
             }
             return false;
@@ -503,9 +482,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         // check to see if this is a mine clearing attack
         // According to the RAW you have to hit the right hex to hit even if the
         // scatter hex has minefields
-        
-        if (mineClear && game.containsMinefield(targetPos) && !isFlak
-                && !bMissed) {
+        if (mineClear && game.containsMinefield(targetPos) && !isFlak && !bMissed) {
             r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
@@ -565,9 +542,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         server.removeMinefield(mf);
                     }
                 }
-                server.artilleryDamageArea(c, aaa.getCoords(), atype,
-                        subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                        asfFlak, -1);
+                server.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
+                        altitude, mineClear, vPhaseReport, asfFlak, -1);
             }
             
         }

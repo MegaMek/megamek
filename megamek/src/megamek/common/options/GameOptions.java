@@ -95,7 +95,8 @@ public class GameOptions extends AbstractOptions {
         IBasicOptionGroup allowed = addGroup("allowedUnits"); 
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false); 
         addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150); 
-        addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); 
+        addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE,
+                TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false); 
         addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); 
@@ -152,68 +153,68 @@ public class GameOptions extends AbstractOptions {
         
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); 
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE, false); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RANGE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE, false);
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS1, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BURST, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VTOL_STRAFING, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UNJAM_UAC, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UAC_TWOROLLS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CLUBS_PUNCH, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE, 5); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE, 1088); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT, 15); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false); // $NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS1, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BURST, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VTOL_STRAFING, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UNJAM_UAC, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UAC_TWOROLLS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CLUBS_PUNCH, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE, 5);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE, 1088);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT, 15);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false);
     
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false); 
@@ -301,7 +302,7 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false); 
         addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); 
         
-        IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
+        IBasicOptionGroup rpg = addGroup("rpg");
         addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); 
         addOption(rpg, OptionsConstants.EDGE, false); 
         addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false); 
@@ -312,10 +313,7 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false); 
         addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false); 
         addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false); 
-        addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false); 
-
-        //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); 
-
+        addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 
     public Vector<IOption> loadOptions() {
@@ -363,32 +361,25 @@ public class GameOptions extends AbstractOptions {
                             case IOption.CHOICE:
                                 tempOption.setValue((String) value);
                                 break;
-
                             case IOption.BOOLEAN:
-                                tempOption.setValue(Boolean.valueOf(value
-                                        .toString()));
+                                tempOption.setValue(Boolean.valueOf(value.toString()));
                                 break;
-
                             case IOption.INTEGER:
-                                tempOption.setValue(Integer.valueOf(value
-                                        .toString()));
+                                tempOption.setValue(Integer.valueOf(value.toString()));
                                 break;
-
                             case IOption.FLOAT:
-                                tempOption.setValue(Float.valueOf(value
-                                        .toString()));
+                                tempOption.setValue(Float.valueOf(value.toString()));
                                 break;
                         }
+
                         if (print) {
-                            System.out.println("Set option '" + name 
-                                    + "' to '" + value + "'.");  //$NON-NLS-2$
+                            LogManager.getLogger().info(String.format("Set option '%s' to '%s'.", name, value));
                         }
 
                         option = tempOption;
-                    } catch (IllegalArgumentException iaEx) {
-                        System.out.println("Error trying to load option '"
-                                + name + "' with a value of '" + value
-                                + "'.");  //$NON-NLS-2$ //$NON-NLS-3$
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error(String.format(
+                                "Error trying to load option '%s' with a value of '%s'.", name, value));
                     }
                 }
             } else {
@@ -427,9 +418,8 @@ public class GameOptions extends AbstractOptions {
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
             
             marshaller.marshal(element, new File(file));
-        } catch (JAXBException ex) {
-            System.err.println("Error writing XML for game options: " + ex.getMessage()); 
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed writing Game Options XML", ex);
         }
     }
 

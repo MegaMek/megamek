@@ -115,7 +115,7 @@ class LobbyMekPopup {
         boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
 
         // A set of all selected entities and all entities in selected forces and their subforces
-        Set<Entity> joinedEntities = new HashSet<Entity>(entities);
+        Set<Entity> joinedEntities = new HashSet<>(entities);
         for (Force force: forces) {
             joinedEntities.addAll(game.getForces().getFullEntities(force));
         }  
@@ -506,7 +506,7 @@ class LobbyMekPopup {
             // ideally, find one slave or C3i/NC3/Nova to get some connection options
             entity = entities.stream().filter(e -> e.hasC3S() || e.hasNhC3()).findAny().orElse(entity);
             Game game = cg.getClient().getGame();
-            ArrayList<String> usedNetIds = new ArrayList<String>();
+            ArrayList<String> usedNetIds = new ArrayList<>();
             
             for (Entity other : cg.getClient().getEntitiesVector()) {
                 // ignore enemies and self; only link the same type of C3

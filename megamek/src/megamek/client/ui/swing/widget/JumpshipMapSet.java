@@ -48,30 +48,32 @@ public class JumpshipMapSet implements DisplayMapSet{
 
     //private static final int INT_STR_OFFSET = 4;
     //Polygons for all areas
-    private Polygon noseArmor = new Polygon( new int[]{0,20,80,100,100,80,20,0},
-            new int[]{20,0,0,20,40,60,60,40}, 8);
+    private Polygon noseArmor = new Polygon( new int[] { 0, 20, 80, 100, 100, 80, 20, 0 },
+            new int[] { 20, 0, 0, 20, 40, 60, 60, 40 }, 8);
     //front internal structure
-    private Polygon Structure = new Polygon(new int[]{40,60,60,40},
-            new int[]{60,60,160,160},4);
+    private Polygon Structure = new Polygon(new int[] { 40, 60, 60, 40 },
+            new int[] { 60, 60, 160, 160 }, 4);
     //Left front armor
-    private Polygon leftFSArmor = new Polygon(new int[]{20,40,40,20},
-            new int[]{60,60,120,120},4);  
+    private Polygon leftFSArmor = new Polygon(new int[] { 20, 40, 40, 20 },
+            new int[] { 60, 60, 120, 120 }, 4);
     //Left aft armor
-    private Polygon leftASArmor = new Polygon(new int[]{20,40,40,20},
-            new int[]{120,120,160,160},4);  
+    private Polygon leftASArmor = new Polygon(new int[] { 20, 40, 40, 20 },
+            new int[] { 120, 120, 160, 160 }, 4);
 
-    private Polygon rightFSArmor = new Polygon(new int[]{60,80,80,60},
-            new int[]{60,60,120,120},4);  
+    private Polygon rightFSArmor = new Polygon(new int[] { 60, 80, 80, 60 },
+            new int[] { 60, 60, 120, 120 }, 4);
     //right aft armor
-    private Polygon rightASArmor = new Polygon(new int[]{60,80,80,60},
-            new int[]{120,120,160,160},4);  
+    private Polygon rightASArmor = new Polygon(new int[] { 60, 80, 80, 60 },
+            new int[] { 120, 120, 160, 160 }, 4);
 
     //Rear armor
-    private Polygon aftArmor = new Polygon (new int[]{20,0,40,40,60,60,100,80},
-            new int[]{160,200,190,200,200,190,200,160},8);
+    private Polygon aftArmor = new Polygon (new int[] { 20, 0, 40, 40, 60, 60, 100, 80 },
+            new int[] { 160, 200, 190, 200, 200, 190, 200, 160 }, 8);
 
-    private static final Font       FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font       FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
 
 
@@ -81,7 +83,6 @@ public class JumpshipMapSet implements DisplayMapSet{
         setAreas();
         setLabels();
         setBackGround();
-        translateAreas();
         setContent();
     }
 
@@ -89,14 +90,17 @@ public class JumpshipMapSet implements DisplayMapSet{
 
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Jumpship t = (Jumpship) e;
         int a = 1;
@@ -183,20 +187,13 @@ public class JumpshipMapSet implements DisplayMapSet{
     }
 
     private void setAreas() {
-        areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor,
-                unitDisplay, Jumpship.LOC_NOSE);
-        areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor,
-                unitDisplay, Jumpship.LOC_FLS);
-        areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor,
-                unitDisplay, Jumpship.LOC_FRS);
-        areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor,
-                unitDisplay, Jumpship.LOC_ALS);
-        areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor,
-                unitDisplay, Jumpship.LOC_ARS);
-        areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor,
-                unitDisplay, Jumpship.LOC_AFT);
-        areas[6] = new PMSimplePolygonArea(Structure, unitDisplay,
-                Jumpship.LOC_NOSE);
+        areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay, Jumpship.LOC_NOSE);
+        areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor, unitDisplay, Jumpship.LOC_FLS);
+        areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor, unitDisplay, Jumpship.LOC_FRS);
+        areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor, unitDisplay, Jumpship.LOC_ALS);
+        areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor, unitDisplay, Jumpship.LOC_ARS);
+        areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplay, Jumpship.LOC_AFT);
+        areas[6] = new PMSimplePolygonArea(Structure, unitDisplay, Jumpship.LOC_NOSE);
     }
 
     private void setLabels() {
@@ -204,126 +201,111 @@ public class JumpshipMapSet implements DisplayMapSet{
 
         //Labels for Front view
         //Prefer to use message thingy but don't know how
-        labels[Jumpship.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black,50,20); //$NON-NLS-1$
-        //labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57); //$NON-NLS-1$
-        labels[Jumpship.LOC_FLS] = WidgetUtils.createLabel("FLS", fm, Color.black,30,80); //$NON-NLS-1$
-        //labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
-        labels[Jumpship.LOC_FRS] = WidgetUtils.createLabel("FRS", fm, Color.black,70,80); //$NON-NLS-1$
-        labels[Jumpship.LOC_ALS] = WidgetUtils.createLabel("ALS", fm, Color.black,30,130); //$NON-NLS-1$
-        labels[Jumpship.LOC_ARS] = WidgetUtils.createLabel("ARS", fm, Color.black,70,130); //$NON-NLS-1$
-        labels[Jumpship.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black,50,170); //$NON-NLS-1$
-        labels[6] = WidgetUtils.createLabel("SI", fm, Color.black,50,110); //$NON-NLS-1$
-        labels[7] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10,210); //$NON-NLS-1$
-        labels[8] = WidgetUtils.createLabel("CIC:", fm, Color.white,10,225); //$NON-NLS-1$
-        labels[9] = WidgetUtils.createLabel("Engine:", fm, Color.white,10,240); //$NON-NLS-1$
-        labels[10] = WidgetUtils.createLabel("Sensors:", fm, Color.white,10,255); //$NON-NLS-1$
-        labels[11] = WidgetUtils.createLabel("L Thrust:", fm, Color.white,90,210); //$NON-NLS-1$
-        labels[12] = WidgetUtils.createLabel("R Thrust:", fm, Color.white,90,225); //$NON-NLS-1$
-        labels[13] = WidgetUtils.createLabel("Collars:", fm, Color.white,90,240); //$NON-NLS-1$
-        labels[14] = WidgetUtils.createLabel("Grav Decks:", fm, Color.white,90,255); //$NON-NLS-1$
-        labels[15] = WidgetUtils.createLabel("K-F Drive:", fm, Color.white,10,270); //$NON-NLS-1$
-        labels[16] = WidgetUtils.createLabel("Jump Sail:", fm, Color.white,10,285); //$NON-NLS-1$
+        labels[Jumpship.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black, 50, 20);
+        //labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 10, 57);
+        labels[Jumpship.LOC_FLS] = WidgetUtils.createLabel("FLS", fm, Color.black, 30, 80);
+        //labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
+        labels[Jumpship.LOC_FRS] = WidgetUtils.createLabel("FRS", fm, Color.black, 70, 80);
+        labels[Jumpship.LOC_ALS] = WidgetUtils.createLabel("ALS", fm, Color.black, 30, 130);
+        labels[Jumpship.LOC_ARS] = WidgetUtils.createLabel("ARS", fm, Color.black, 70, 130);
+        labels[Jumpship.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black, 50, 170);
+        labels[6] = WidgetUtils.createLabel("SI", fm, Color.black, 50, 110);
+        labels[7] = WidgetUtils.createLabel("Avionics:", fm, Color.white, 10, 210);
+        labels[8] = WidgetUtils.createLabel("CIC:", fm, Color.white, 10, 225);
+        labels[9] = WidgetUtils.createLabel("Engine:", fm, Color.white, 10, 240);
+        labels[10] = WidgetUtils.createLabel("Sensors:", fm, Color.white, 10, 255);
+        labels[11] = WidgetUtils.createLabel("L Thrust:", fm, Color.white, 90, 210);
+        labels[12] = WidgetUtils.createLabel("R Thrust:", fm, Color.white, 90, 225);
+        labels[13] = WidgetUtils.createLabel("Collars:", fm, Color.white, 90, 240);
+        labels[14] = WidgetUtils.createLabel("Grav Decks:", fm, Color.white, 90, 255);
+        labels[15] = WidgetUtils.createLabel("K-F Drive:", fm, Color.white, 10, 270);
+        labels[16] = WidgetUtils.createLabel("Jump Sail:", fm, Color.white, 10, 285);
 
         //Value labels for all parts of the ship
         //front
         fm =  comp.getFontMetrics(FONT_VALUE);   
-        vLabels[Jumpship.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm); //$NON-NLS-1$
-        //vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm); //$NON-NLS-1$
-        vLabels[Jumpship.LOC_FLS] = WidgetUtils.createValueLabel(30, 95, "", fm); //$NON-NLS-1$
-        //vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm); //$NON-NLS-1$
-        vLabels[Jumpship.LOC_FRS] = WidgetUtils.createValueLabel(70, 95, "", fm); //$NON-NLS-1$
-        vLabels[Jumpship.LOC_ALS] = WidgetUtils.createValueLabel(30, 145, "", fm); //$NON-NLS-1$
-        vLabels[Jumpship.LOC_ARS] = WidgetUtils.createValueLabel(70, 145, "", fm); //$NON-NLS-1$
-        //vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm); //$NON-NLS-1$
-        vLabels[Jumpship.LOC_AFT] = WidgetUtils.createValueLabel(50, 185, "", fm); //$NON-NLS-1$
-        vLabels[6] = WidgetUtils.createValueLabel(50, 135, "", fm); //$NON-NLS-1$
-        vLabels[7] = WidgetUtils.createValueLabel(40, 210, "", fm); //$NON-NLS-1$
-        vLabels[8] = WidgetUtils.createValueLabel(40, 225, "", fm); //$NON-NLS-1$
-        vLabels[9] = WidgetUtils.createValueLabel(40, 240, "", fm); //$NON-NLS-1$
-        vLabels[10] = WidgetUtils.createValueLabel(40, 255, "", fm); //$NON-NLS-1$
-        vLabels[11] = WidgetUtils.createValueLabel(130, 210, "", fm); //$NON-NLS-1$
-        vLabels[12] = WidgetUtils.createValueLabel(130, 225, "", fm); //$NON-NLS-1$
-        vLabels[13] = WidgetUtils.createValueLabel(130, 240, "", fm); //$NON-NLS-1$
-        vLabels[14] = WidgetUtils.createValueLabel(130, 255, "", fm); //$NON-NLS-1$
-        vLabels[15] = WidgetUtils.createValueLabel(60, 270, "", fm); //$NON-NLS-1$
-        vLabels[16] = WidgetUtils.createValueLabel(60, 285, "", fm); //$NON-NLS-1$
+        vLabels[Jumpship.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm);
+        //vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm);
+        vLabels[Jumpship.LOC_FLS] = WidgetUtils.createValueLabel(30, 95, "", fm);
+        //vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        vLabels[Jumpship.LOC_FRS] = WidgetUtils.createValueLabel(70, 95, "", fm);
+        vLabels[Jumpship.LOC_ALS] = WidgetUtils.createValueLabel(30, 145, "", fm);
+        vLabels[Jumpship.LOC_ARS] = WidgetUtils.createValueLabel(70, 145, "", fm);
+        //vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        vLabels[Jumpship.LOC_AFT] = WidgetUtils.createValueLabel(50, 185, "", fm);
+        vLabels[6] = WidgetUtils.createValueLabel(50, 135, "", fm);
+        vLabels[7] = WidgetUtils.createValueLabel(40, 210, "", fm);
+        vLabels[8] = WidgetUtils.createValueLabel(40, 225, "", fm);
+        vLabels[9] = WidgetUtils.createValueLabel(40, 240, "", fm);
+        vLabels[10] = WidgetUtils.createValueLabel(40, 255, "", fm);
+        vLabels[11] = WidgetUtils.createValueLabel(130, 210, "", fm);
+        vLabels[12] = WidgetUtils.createValueLabel(130, 225, "", fm);
+        vLabels[13] = WidgetUtils.createValueLabel(130, 240, "", fm);
+        vLabels[14] = WidgetUtils.createValueLabel(130, 255, "", fm);
+        vLabels[15] = WidgetUtils.createValueLabel(60, 270, "", fm);
+        vLabels[16] = WidgetUtils.createValueLabel(60, 285, "", fm);
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+        tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-    }
-    private void translateAreas() {
-
     }
 
     private String getCriticalHitTally(int tally, int max) {
@@ -345,5 +327,4 @@ public class JumpshipMapSet implements DisplayMapSet{
 
         return marks;
     }
-
 }

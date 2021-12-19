@@ -320,7 +320,7 @@ public class MULParser {
 
     public void parse(Element element) {
         String version = element.getAttribute(VERSION);
-        if (version.equals("")) {
+        if (version.isBlank()) {
             warning.append("Warning: No version specified, correct parsing ")
                     .append("not guaranteed!\n");
         }
@@ -1320,7 +1320,7 @@ public class MULParser {
                     locAmmoCount = parseSlot(currEle, entity, loc, locAmmoCount);
                 } else if (nodeName.equalsIgnoreCase(STABILIZER)) {
                     String hit = currEle.getAttribute(IS_HIT);
-                    if (!hit.equals("")) {
+                    if (!hit.isBlank()) {
                         ((Tank) entity).setStabiliserHit(loc);
                     }
                 }
@@ -1424,7 +1424,7 @@ public class MULParser {
         String capacity = slotTag.getAttribute(CAPACITY);
         String hit = slotTag.getAttribute(IS_HIT);
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
-        String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
+        String repairable = (slotTag.getAttribute(IS_REPAIRABLE).isBlank() ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
         String standard = slotTag.getAttribute(STANDARD);
         String inferno = slotTag.getAttribute(INFERNO);

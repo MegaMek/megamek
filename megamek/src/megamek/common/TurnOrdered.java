@@ -13,15 +13,9 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
 import megamek.common.options.OptionsConstants;
+
+import java.util.*;
 
 public abstract class TurnOrdered implements ITurnOrdered {
     private static final long serialVersionUID = 4131468442031773195L;
@@ -73,7 +67,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int turns = 0;
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            turns_multi = new HashMap<Integer, Integer>();
+            turns_multi = new HashMap<>();
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER);
@@ -158,14 +152,9 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void incrementMultiTurns(int entityClass) {
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            turns_multi = new HashMap<Integer, Integer>();
+            turns_multi = new HashMap<>();
         }
-        Integer classCount = turns_multi.get(entityClass);
-        if (classCount == null) {
-            turns_multi.put(entityClass, 1);
-        } else {
-            turns_multi.put(entityClass, classCount + 1);
-        }
+        turns_multi.merge(entityClass, 1, Integer::sum);
     }
 
     @Override
@@ -217,7 +206,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void resetMultiTurns() {
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            turns_multi = new HashMap<Integer, Integer>();
+            turns_multi = new HashMap<>();
         } else {
             turns_multi.clear();
         }
@@ -442,14 +431,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
         ITurnOrdered[] order = new ITurnOrdered[v.size()];
         int orderedItems = 0;
 
-        ArrayList<ITurnOrdered> plist = new ArrayList<ITurnOrdered>(v.size());
+        ArrayList<ITurnOrdered> plist = new ArrayList<>(v.size());
         plist.addAll(v);
 
-        Collections.sort(plist, new Comparator<ITurnOrdered>() {
-            public int compare(ITurnOrdered o1, ITurnOrdered o2) {
-                return o1.getInitiative().compareTo(o2.getInitiative());
-            }
-        });
+        plist.sort(Comparator.comparing(ITurnOrdered::getInitiative));
 
         // Walk through the ordered items.
         for (Iterator<ITurnOrdered> i = plist.iterator(); i.hasNext(); orderedItems++) {
@@ -794,10 +779,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
         return turns;
     }
 
+    @Override
     public int getInitCompensationBonus() {
         return 0;
     }
 
+    @Override
     public void setInitCompensationBonus(int newBonus) {
     }
 }

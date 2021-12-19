@@ -55,8 +55,7 @@ public class ComputeECMTest {
         // Mock the game
         Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
-        Mockito.when(mockGame.getSmokeCloudList()).thenReturn(
-                new ArrayList<SmokeCloud>());
+        Mockito.when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
         Mockito.when(mockGame.getPlayer(Mockito.anyInt())).thenReturn(mockPlayer);
         
@@ -214,8 +213,7 @@ public class ComputeECMTest {
         // Mock the game
         Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
-        Mockito.when(mockGame.getSmokeCloudList()).thenReturn(
-                new ArrayList<SmokeCloud>());
+        Mockito.when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
         
         // Create a list of enemies, owned by the mockEnemy
@@ -463,8 +461,7 @@ public class ComputeECMTest {
         // Mock the game
         Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
-        Mockito.when(mockGame.getSmokeCloudList()).thenReturn(
-                new ArrayList<SmokeCloud>());
+        Mockito.when(mockGame.getSmokeCloudList()).thenReturn(new ArrayList<>());
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
         
         // Create a list of enemies, owned by the mockEnemy
@@ -669,7 +666,7 @@ public class ComputeECMTest {
         // Basic ECCM for Player
         //  Enemy has ECM, Player has ECCM, Enemy ECM outside range of ECCM
         //  Shoud be affected by ECM, no Angel, no ECCM
-        entitiesVector = new Vector<Entity>();
+        entitiesVector = new Vector<>();
         Entity enemy1 = Mockito.mock(Mech.class);
         Coords ecm1Pos = new Coords(14,14);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, mockEnemy, 1, 0);
@@ -703,7 +700,7 @@ public class ComputeECMTest {
      */
     private static Vector<Entity> createECMEnemy(Player owner, 
             Game mockGame) {
-        Vector<Entity> entitiesVector = new Vector<Entity>();
+        Vector<Entity> entitiesVector = new Vector<>();
         
         // Add Entity with ECM
         Entity enemy1 = Mockito.mock(Mech.class);

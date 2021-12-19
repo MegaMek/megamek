@@ -52,8 +52,8 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
     private boolean confirm;
 
     private JPanel panButtons = new JPanel();
-    private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butOK = new JButton(Messages.getString("Okay"));
+    private JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     /**
      * The checkboxes for available choices.
@@ -199,6 +199,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         initialize(parent, question, choices);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         // No choices, no selection.
         if (checkboxes == null) {
@@ -270,9 +271,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
             boolean isVTOL, int distance, Game game, MovePath mp) {
         for (int type = 0; type < ManeuverType.MAN_SIZE; type++) {
             checkboxes[type].setEnabled(
-                    ManeuverType.canPerform(type, velocity, altitude, ceiling,
-                                            isVTOL, distance,game,mp));
+                    ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance, game, mp));
         }
     }
-
-} // End public class ChoiceDialog
+}

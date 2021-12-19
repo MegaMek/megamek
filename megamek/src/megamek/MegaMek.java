@@ -653,8 +653,7 @@ public class MegaMek {
                             bw.write(Integer.toString(unit.getJumpMp()));
                         } else {
                             bw.write(unit.getChassis()
-                                    + (unit.getModel().equals("") ? "|" : " "
-                                    + unit.getModel() + "|"));
+                                    + (unit.getModel().isBlank() ? "|" : " " + unit.getModel() + "|"));
                         }
                         bw.newLine();
                     }

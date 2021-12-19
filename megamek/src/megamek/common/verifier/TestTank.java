@@ -310,6 +310,7 @@ public class TestTank extends TestEntity {
         return super.getWeightCarryingSpace() + tank.getExtraCrewSeats() * 0.5;
     }
 
+    @Override
     public String printWeightCarryingSpace() {
         if (tank.getExtraCrewSeats() > 0) {
             return super.printWeightCarryingSpace()

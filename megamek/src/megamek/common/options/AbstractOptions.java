@@ -258,6 +258,7 @@ public abstract class AbstractOptions implements Serializable {
          *
          * @see java.util.Enumeration#hasMoreElements()
          */
+        @Override
         public boolean hasMoreElements() {
             return groups.hasMoreElements();
         }
@@ -267,6 +268,7 @@ public abstract class AbstractOptions implements Serializable {
          *
          * @see java.util.Enumeration#nextElement()
          */
+        @Override
         public IOptionGroup nextElement() {
             return new GroupProxy(groups.nextElement());
         }
@@ -279,27 +281,33 @@ public abstract class AbstractOptions implements Serializable {
                 this.group = group;
             }
 
+            @Override
             public String getKey() {
                 return group.getKey();
             }
 
+            @Override
             public String getName() {
                 return group.getName();
             }
 
+            @Override
             public String getDisplayableName() {
                 return getOptionsInfoImp().getGroupDisplayableName(
                         group.getName());
             }
 
+            @Override
             public Enumeration<String> getOptionNames() {
                 return group.getOptionNames();
             }
 
+            @Override
             public Enumeration<IOption> getOptions() {
                 return new OptionsEnumeration();
             }
 
+            @Override
             public Enumeration<IOption> getSortedOptions() {
                 OptionsEnumeration oe = new OptionsEnumeration();
                 oe.sortOptions();
@@ -319,6 +327,7 @@ public abstract class AbstractOptions implements Serializable {
                  *
                  * @see java.util.Enumeration#hasMoreElements()
                  */
+                @Override
                 public boolean hasMoreElements() {
                     return optionNames.hasMoreElements();
                 }
@@ -328,6 +337,7 @@ public abstract class AbstractOptions implements Serializable {
                  *
                  * @see java.util.Enumeration#nextElement()
                  */
+                @Override
                 public IOption nextElement() {
                     return getOption(optionNames.nextElement());
                 }

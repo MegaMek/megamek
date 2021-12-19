@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 public class UnitRoleHandler {
     
-    private static final String FILE_LOC = "unit_roles.txt"; //$NON-NLS-1$
+    private static final String FILE_LOC = "unit_roles.txt";
     
     private static final UnitRoleHandler instance = new UnitRoleHandler();
     
@@ -112,10 +113,10 @@ public class UnitRoleHandler {
         BufferedReader reader = null;
         try {
             is = new FileInputStream(f);
-            reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String line = null;
             while (null != (line = reader.readLine())) {
-                if (line.startsWith("#")) { //$NON-NLS-1$
+                if (line.startsWith("#")) {
                     continue;
                 }
                 int delimiter = line.lastIndexOf(":");

@@ -128,7 +128,7 @@ public class BoardsTagger {
     /** Recursively scans the supplied file/directory for any boards and auto-tags them. */
     private static void scanForBoards(File file) throws IOException {
         if (file.isDirectory()) {
-            String fileList[] = file.list();
+            String[] fileList = file.list();
             for (String filename : fileList) {
                 File filepath = new File(file, filename);
                 if (filepath.isDirectory()) {

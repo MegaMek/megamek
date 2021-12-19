@@ -692,7 +692,7 @@ public class MoveStep implements Serializable {
 
         // Checks for landed dropships collapsing buildings
         if ((entity instanceof Dropship) && !entity.isAirborne()) {
-            ArrayList<Coords> secondaryPositions = new ArrayList<Coords>();
+            ArrayList<Coords> secondaryPositions = new ArrayList<>();
             secondaryPositions.add(getPosition());
             for (int dir = 0; dir < 6; dir++) {
                 secondaryPositions.add(getPosition().translated(dir));

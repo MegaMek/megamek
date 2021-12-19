@@ -42,7 +42,7 @@ public class ScenarioLoaderTest {
             public void write(int b) throws IOException {
                 if (b == '\n') {
                     String s = line.toString();
-                    if (!s.startsWith("MMRandom: generating RNG")) { //$NON-NLS-1$
+                    if (!s.startsWith("MMRandom: generating RNG")) {
                         errCache.add(s);
                     }
                     line.setLength(0);
@@ -64,7 +64,7 @@ public class ScenarioLoaderTest {
             }
         }
         
-        File baseDir = new File("data/scenarios"); //$NON-NLS-1$
+        File baseDir = new File("data/scenarios");
         checkScenarioFile(baseDir, errorAccumulator);
         System.setOut(originalOut);
         System.setErr(originalErr);
@@ -78,11 +78,11 @@ public class ScenarioLoaderTest {
         if (null == file) {
             return;
         }
-        if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) { //$NON-NLS-1$
+        if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
                 Game game = loader.createGame();
-                Server server = new Server("test", port + 1); //$NON-NLS-1$
+                Server server = new Server("test", port + 1);
                 server.setGame(game);
                 loader.applyDamage(server);
                 server.die();
@@ -91,8 +91,8 @@ public class ScenarioLoaderTest {
             }
             
             if (errCache.size() > 0) {
-                errorAccumulator.add("ERROR in " + file.getPath()); //$NON-NLS-1$
-                originalErr.println("ERROR in " + file.getPath()); //$NON-NLS-1$
+                errorAccumulator.add("ERROR in " + file.getPath());
+                originalErr.println("ERROR in " + file.getPath());
                 for (String line : errCache) {
                     errorAccumulator.add(line);
                     originalErr.println(line);

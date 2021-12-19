@@ -81,6 +81,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
             butDone.addActionListener(new AbstractAction() {
                 private static final long serialVersionUID = -5034474968902280850L;
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (isIgnoringEvents()) {
                         return;
@@ -150,6 +151,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
      *
      * @return <code>true</code> if the listener is ignoring events.
      */
+    @Override
     public boolean isIgnoringEvents() {
         return distracted.isIgnoringEvents();
     }
@@ -163,6 +165,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
      *            again. Events that occurred while the listener was distracted
      *            NOT going to be processed.
      */
+    @Override
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
     }
@@ -170,34 +173,42 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
         //noaction default
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         //noaction default
     }
 
+    @Override
     public void hexCursor(BoardViewEvent b) {
         //noaction default
     }
 
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
         //noaction default
     }
 
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
         //noaction default
     }
 
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
         //noaction default
     }
 
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         //noaction default
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
         //noaction default
     }
@@ -205,70 +216,87 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     // GameListener
     //
 
+    @Override
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
         //noaction default
     }
 
+    @Override
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
         //noaction default
     }
 
+    @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
         //noaction default
     }
 
+    @Override
     public void gamePlayerChat(GamePlayerChatEvent e) {
         //noaction default
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameReport(GameReportEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameEnd(GameEndEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameBoardNew(GameBoardNewEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameMapQuery(GameMapQueryEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameEntityNew(GameEntityNewEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameEntityRemove(GameEntityRemoveEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameEntityChange(GameEntityChangeEvent e) {
         //noaction default
     }
 
+    @Override
     public void gameNewAction(GameNewActionEvent e) {
         //noaction default
     }

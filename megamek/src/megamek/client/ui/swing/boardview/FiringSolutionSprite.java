@@ -34,7 +34,7 @@ class FiringSolutionSprite extends HexSprite {
 
     private static final Color indirectDashColor1 = new Color(255,  0, 0, 140);
     private static final Color indirectDashColor2 = new Color(255,255, 0, 140);
-    private static final float dashPeriod[] = { 10.0f };
+    private static final float[] dashPeriod = { 10.0f };
     private static final BasicStroke indirectStroke1 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 0.0f);
     private static final BasicStroke indirectStroke2 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,

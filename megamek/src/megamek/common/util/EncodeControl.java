@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
  * The actual overridden class has been copied here with the encoding change from the borrowed coded added.
  */
 public class EncodeControl extends ResourceBundle.Control {
+    @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {
         String bundleName = this.toBundleName(baseName, locale);
@@ -71,6 +72,7 @@ public class EncodeControl extends ResourceBundle.Control {
 
             try {
                 stream = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+                    @Override
                     public InputStream run() throws IOException {
                         InputStream is = null;
                         if (reloadFlag) {

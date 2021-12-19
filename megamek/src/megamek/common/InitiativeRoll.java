@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -85,6 +85,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         if (size() != other.size()) {
             return false;
         }
+
         for (int i = 0; i < size(); i++) {
             if (getRoll(i) != other.getRoll(i)) {
                 return false;

@@ -168,7 +168,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         });
-        LogManager.getLogger().error("Windchild C");
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
@@ -192,7 +191,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Show the window.
         frame.setVisible(true);
-        LogManager.getLogger().error("Windchild D");
 
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {

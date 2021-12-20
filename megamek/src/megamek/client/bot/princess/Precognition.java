@@ -421,7 +421,7 @@ public class Precognition implements Runnable {
                 if (event == null) {
                     continue;
                 }
-                LogManager.getLogger().debug("Processing " + event.toString());
+                LogManager.getLogger().debug("Processing " + event);
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // Ignore entity changes that don't happen during movement

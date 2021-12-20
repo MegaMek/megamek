@@ -3560,24 +3560,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         if ((choice / aerosPerDoor) >= (doors - 1)) {
                             modifier += remainder;
                         }
-                        modifier += currentFighters.get(choice).getCrew()
-                                                   .getPiloting();
-                        String damageMsg = Messages
-                                .getString(
-                                        "MovementDisplay.LaunchFighterDialog.controlroll",
-                                       
-                                        new Object[]{names[choice], modifier});
+                        modifier += currentFighters.get(choice).getCrew().getPiloting();
+                        String damageMsg = Messages.getString(
+                                "MovementDisplay.LaunchFighterDialog.controlroll", names[choice], modifier);
                         psrs.append("\t" + damageMsg + "\n");
                     }
                     ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                          Messages.getString("MovementDisplay.areYouSure"),
-                                                          Messages.getString("MovementDisplay.ConfirmLaunch")
-                                                          + psrs.toString(), true);
+                            Messages.getString("MovementDisplay.areYouSure"),
+                            Messages.getString("MovementDisplay.ConfirmLaunch") + psrs,
+                            true);
                     nag.setVisible(true);
                     doIt = nag.getAnswer();
                     if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance()
-                                      .setNagForLaunchDoors(false);
+                        GUIPreferences.getInstance().setNagForLaunchDoors(false);
                     }
                 } else {
                     doIt = true;

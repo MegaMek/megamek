@@ -1232,7 +1232,7 @@ public class RATGenerator {
                                             StringJoiner sj = new StringJoiner(",");
                                             mr.getDeployedWith().forEach(sj::add);
                                             mr.getRequiredUnits().forEach(s -> sj.add("req:" + s));
-                                            pw.print(sj.toString());
+                                            pw.print(sj);
                                             pw.println("</deployedWith>");
                                         }
                                         pw.print("\t\t\t<availability>");

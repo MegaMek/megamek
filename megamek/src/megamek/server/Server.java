@@ -506,7 +506,7 @@ public class Server implements Runnable {
         motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMekConstants.VERSION)
                 .append(", build date ");
         if (MegaMek.TIMESTAMP > 0L) {
-            motd.append(new Date(MegaMek.TIMESTAMP).toString());
+            motd.append(new Date(MegaMek.TIMESTAMP));
         } else {
             motd.append("unknown");
         }
@@ -14968,7 +14968,7 @@ public class Server implements Runnable {
                 }
             } else {
                 LogManager.getLogger().error("Removing duplicate phys attack for id#" + entityId
-                                + "\n\t\taction was " + action.toString());
+                        + "\n\t\taction was " + action);
             }
         }
 
@@ -31817,7 +31817,7 @@ public class Server implements Runnable {
                 numLoads++;
             }
             if (numLoads < 1) {
-                LogManager.getLogger().error("Check for collapse: hex " + coords.toString() 
+                LogManager.getLogger().error("Check for collapse: hex " + coords
                         + " has no bridge or building");
                 return false;
             }

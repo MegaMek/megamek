@@ -109,7 +109,7 @@ public abstract class Roll {
         System.out.print(roll.getIntValue());
         System.out.println(".");
         System.out.print("The string total is ");
-        System.out.print(roll.toString());
+        System.out.print(roll);
         System.out.println(".");
         System.out.print("The string report is ");
         System.out.print(roll.getReport());

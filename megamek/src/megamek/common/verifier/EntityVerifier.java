@@ -170,8 +170,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         Entity entity = null;
         try {
             entity = new MechFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString());
+        } catch (Exception e) {
+            LogManager.getLogger().error(e);
         }
         return entity;
     }

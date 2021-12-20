@@ -44,15 +44,12 @@ public class GameLog {
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            // maxFilesize = maxSize;
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
             logfile = new File(LOG_DIR + File.separator + filename);
-            // writer = new BufferedWriter(new FileWriter(LOG_DIR +
-            // File.separator + filename, append));
             writer = new BufferedWriter(new FileWriter(logfile));
-            append("Log file opened " + LocalDate.now().toString());
+            append("Log file opened " + LocalDate.now());
         } catch (IOException ex) {
             writer = null;
             System.err.println("GameLog:" + ex.getMessage());
@@ -60,22 +57,20 @@ public class GameLog {
     }
 
     public void append(String toLog) {
-        // if (writer == null || logfile.length() > maxFilesize) {
         if (writer == null) {
             return;
         }
         
         try {
-            writer.write("<pre>"+toLog+"</pre>");
+            writer.write("<pre>" + toLog + "</pre>");
             writer.newLine();
             writer.flush();
-        } catch (IOException ex) {
-            // duhhhh...
+        } catch (Exception ex) {
             writer = null;
         }
     }
 
-    public void close() throws java.io.IOException {
+    public void close() throws Exception {
         if (writer != null) {
             writer.close();
         }

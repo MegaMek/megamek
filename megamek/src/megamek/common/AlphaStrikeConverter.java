@@ -26,6 +26,7 @@ import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.missiles.MissileWeapon;
+import megamek.common.weapons.other.CLFussilade;
 
 import static megamek.common.ASUnitType.*;
 import static megamek.common.BattleForceElement.*;
@@ -281,11 +282,13 @@ public final class AlphaStrikeConverter {
     private static LinkedHashMap<String, Integer> getMovementForNonInfantry(Entity entity) {
         var result = new LinkedHashMap<String, Integer>();
         double walkMP = entity.getOriginalWalkMP();
-        //System.out.println("Original: "+walkMP);
+        System.out.println("Original: "+walkMP);
+
         int jumpMove = entity.getJumpMP() * 2;
         if (hasSupercharger(entity) && hasMechMASC(entity)) {
             walkMP *= 1.5;
-        } else if (hasSupercharger(entity) || hasMechMASC(entity) || hasJetBooster(entity)) {
+        } else if (hasSupercharger(entity) || hasMechMASC(entity)
+                || hasJetBooster(entity) || hasMyomerBooster(entity)) {
             walkMP *= 1.25;
         }
         walkMP = Math.round(walkMP);
@@ -312,6 +315,10 @@ public final class AlphaStrikeConverter {
             if (jumpMove > 0) {
                 result.put("j", jumpMove);
             }
+        }
+
+        if ((entity instanceof Protomech) && ((Protomech) entity).isGlider()) {
+            result.put("", entity.getWalkMP());
         }
         addUMUMovement(result, entity);
         return result;
@@ -355,6 +362,11 @@ public final class AlphaStrikeConverter {
         return entity.getMisc().stream()
                 .map(m -> (MiscType) m.getType())
                 .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JETBOOSTER)));
+    }
+
+    /** Returns true if the given entity has a ProtoMek Myomer Booster. */
+    private static boolean hasMyomerBooster(Entity entity) {
+        return (entity instanceof Protomech) && entity.hasWorkingMisc(EquipmentTypeLookup.PROTOMECH_MYOMER_BOOSTER);
     }
 
     /** Returns true if the given entity is a Mech and has MASC, regardless of its state (convert as if undamaged). */
@@ -450,8 +462,9 @@ public final class AlphaStrikeConverter {
             if ((entity.getBARRating(0) < 9) && (entity.getArmorType(loc) != EquipmentType.T_ARMOR_COMMERCIAL)) {
                 armorMod *= 0.1 * entity.getBARRating(0);
             }
-            
-            armorPoints += armorMod * entity.getArmor(loc);
+
+            // Some empty locations report -1 armor!
+            armorPoints += Math.max(0, armorMod * entity.getArmor(loc));
             if (entity.hasRearArmor(loc)) {
                 armorPoints += armorMod * entity.getArmor(loc, true);
             }
@@ -468,7 +481,6 @@ public final class AlphaStrikeConverter {
         if (entity.isCapitalScale()) {
             return (int)Math.round(armorPoints * 0.33);
         }
-
         return (int) Math.round(armorPoints / 30);
     }
     
@@ -792,11 +804,9 @@ public final class AlphaStrikeConverter {
                     // RACs and UACs require 60 / 20 shots per weapon
                     int divisor = 1;
                     for (Mounted ammo : entity.getAmmo()) {
-    
                         AmmoType at = (AmmoType) ammo.getType();
-                        if ((at.getAmmoType() == weapon.getAmmoType())
-                                && (at.getRackSize() == weapon.getRackSize())) {
-                            ammoCount += at.getShots();
+                        if ((at.getAmmoType() == weapon.getAmmoType()) && (at.getRackSize() == weapon.getRackSize())) {
+                            ammoCount += ammo.getUsableShotsLeft();
                             if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
                                 divisor = 6;
                             } else if (at.getAmmoType() == AmmoType.T_AC_ULTRA
@@ -805,6 +815,7 @@ public final class AlphaStrikeConverter {
                             }
                         }
                     }
+                    System.out.println("Ammo " + weapon.getName() + ammoCount + " / " + weaponsForAmmo);
     
                     ammoForWeapon.put(weapon.getName(), (ammoCount / weaponsForAmmo / divisor) >= 10);
                 }
@@ -813,7 +824,8 @@ public final class AlphaStrikeConverter {
                 }
             }
 
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
+            // Fussilade launchers have a low ammo multiplier already pre-applied to their value
+            if (weapon.hasFlag(WeaponType.F_ONESHOT) && !(weapon instanceof CLFussilade)) {
                 damageModifier *= .1;
             }
             
@@ -872,7 +884,7 @@ public final class AlphaStrikeConverter {
                 }
                 for (int r = 0; r < result.rangeBands; r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
-//                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".substring(r, r+1) + ": " + dam + " Mul: " + damageModifier);
+                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".substring(r, r+1) + ": " + dam + " Mul: " + damageModifier);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
                         result.weaponLocations[loc].addDamage(r, dam);
@@ -1220,6 +1232,8 @@ public final class AlphaStrikeConverter {
             } else if (m.getType().hasFlag(MiscType.F_BULLDOZER)) {
                 element.addSPA(ENG);
             } else if (m.getType().hasFlag(MiscType.F_HAND_WEAPON)) {
+                element.addSPA(MEL);
+            } else if (m.getType().getInternalName().equals("ProtoQuadMeleeSystem")) {
                 element.addSPA(MEL);
             } else if (m.getType().hasFlag(MiscType.F_TALON)) {
                 element.addSPA(MEL);
@@ -1947,14 +1961,10 @@ public final class AlphaStrikeConverter {
     
     private static int getPointValue(Entity entity, AlphaStrikeElement element) {
         if (element.isGround()) {
-            int dmgS = element.getDmgS();
-            int dmgM = element.getDmgM();
-            int dmgL = element.getDmgL();
-            double offensiveValue = dmgS + dmgM + dmgM + dmgL;
-            offensiveValue += element.isMinimalDmgS() ? 0.5 : 0;
-            offensiveValue += element.isMinimalDmgM() ? 1 : 0;
-            offensiveValue += element.isMinimalDmgL() ? 0.5 : 0;
-            
+            double offensiveValue = getPointValueSDamage(element)
+                    + getPointValueMDamage(element) * 2
+                    + getPointValueLDamage(element);
+
             if (element.isAnyTypeOf(BM, PM)) {
                 offensiveValue += 0.5 * element.getSize();
             }
@@ -1973,6 +1983,8 @@ public final class AlphaStrikeConverter {
             defensiveValue += getGroundDefensiveSPAMod(element);
             defensiveValue += getDefensiveDIR(element);
             double subTotal = offensiveValue + defensiveValue;
+//            System.out.println(offensiveValue);
+//            System.out.println(defensiveValue);
             double bonus = agileBonus(element);
             bonus += c3Bonus(element) ? 0.05 * subTotal : 0;
             bonus -= subTotal * brawlerMalus(element);
@@ -2152,6 +2164,7 @@ public final class AlphaStrikeConverter {
         result += element.getStructure() * getStructureMult(element);
         result *= getDefenseFactor(element);
         result = 0.5 * Math.round(result * 2);
+//        System.out.println("DIR: " + result);
         return result;
     }
     
@@ -2236,9 +2249,9 @@ public final class AlphaStrikeConverter {
         if (move >= 2 && !element.hasAnySPAOf(BT, ARTS, C3BSM, C3BSS, C3EM, 
                 C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
                 ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)) {
-            int dmgS = element.standardDamage.S.damage;
-            int dmgM = element.standardDamage.M.damage;
-            int dmgL = element.standardDamage.L.damage;
+            double dmgS = getPointValueSDamage(element);
+            double dmgM = getPointValueMDamage(element);
+            double dmgL = getPointValueLDamage(element);
             
             boolean onlyShortRange = (dmgM + dmgL) == 0 && (dmgS > 0);
             boolean onlyShortMediumRange = (dmgL == 0) && (dmgS + dmgM > 0);
@@ -2258,7 +2271,7 @@ public final class AlphaStrikeConverter {
         double result = 0;
         if (element.getTMM() >= 2) {
             double dmgS = element.isMinimalDmgS() ? 0.5 : element.getDmgS();
-            double dmgM = element.isMinimalDmgM() ? 0.5 : element.getDmgM();
+            double dmgM = element.isMinimalDmgM() ? 1 : element.getDmgM();
             if (dmgM > 0) {
                 result = (element.getTMM() - 1) * dmgM;
             } else if (element.getTMM() >= 3) {
@@ -2285,6 +2298,18 @@ public final class AlphaStrikeConverter {
         result += element.hasSPA(RCN) ? 2 : 0;
         result += element.hasSPA(TRN) ? 2 : 0;
         return result;
+    }
+
+    private static double getPointValueSDamage(AlphaStrikeElement element) {
+        return element.isMinimalDmgS() ? 0.5 : element.getDmgS();
+    }
+
+    private static double getPointValueMDamage(AlphaStrikeElement element) {
+        return element.isMinimalDmgM() ? 1 : element.getDmgM();
+    }
+
+    private static double getPointValueLDamage(AlphaStrikeElement element) {
+        return element.isMinimalDmgL() ? 0.5 : element.getDmgL();
     }
     
     private static double roundToHalf(double number) {

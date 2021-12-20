@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * MegaMek - Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur
  * (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -28,13 +28,10 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/3/13 8:48 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class ComputeECMTest {
     
     @Test

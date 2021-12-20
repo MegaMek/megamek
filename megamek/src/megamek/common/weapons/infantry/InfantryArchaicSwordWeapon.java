@@ -44,7 +44,7 @@ public class InfantryArchaicSwordWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.07;
         infantryRange = 0;
-        rulesRefs =" 272,TM";
+        rulesRefs ="272, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
 				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);

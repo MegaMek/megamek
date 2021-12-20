@@ -1,6 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
- * (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -20,12 +19,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-
 /**
- * 
- *
- * @version $Id$
- * @lastEditBy Nicholas Walczak (walczak@cs.umn.edu)
+ * @author Nicholas Walczak (walczak@cs.umn.edu)
  * @since 06/10/14
  */
 @RunWith(JUnit4.class)

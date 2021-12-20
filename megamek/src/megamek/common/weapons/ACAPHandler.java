@@ -30,7 +30,7 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
- * Created on Sep 25, 2004
+ * @since Sep 25, 2004
  */
 public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
@@ -44,7 +44,6 @@ public class ACAPHandler extends ACWeaponHandler {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
-
 
     /*
      * (non-Javadoc)

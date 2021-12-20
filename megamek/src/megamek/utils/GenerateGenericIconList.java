@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,7 @@ import megamek.common.Warship;
 import org.apache.logging.log4j.LogManager;
 
 /**
- * This program will generate a list of all of the units that use the default
+ * This program will generate a list of all the units that use the default
  * (generic) icons.
  * 
  * @author arlith

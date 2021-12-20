@@ -1461,13 +1461,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (unitFile != null) {
             try {
                 // Read the units from the file.
-                Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile);
+                final Vector<Entity> loadedUnits = new MULParser(unitFile,
+                        getClient().getGame().getOptions()).getEntities();
 
                 // Add the units from the file.
                 for (Entity entity : loadedUnits) {
                     entity.setOwner(player);
                     if (reinforce) {
-                        entity.setDeployRound(client.getGame().getRoundCount()+1);
+                        entity.setDeployRound(client.getGame().getRoundCount() + 1);
                         entity.setGame(client.getGame());
                         // Set these to true, otherwise units reinforced in
                         // the movement turn are considered selectable

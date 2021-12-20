@@ -26,7 +26,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
@@ -56,6 +56,7 @@ public class MoveOption extends MovePath {
             damage_weight = damage;
         }
 
+        @Override
         public int compare(MoveOption e0, MoveOption e1) {
             if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) > ((damage_weight
                     * e1.damage) - (utility_weight * e1.getUtility()))) {
@@ -86,12 +87,13 @@ public class MoveOption extends MovePath {
         }
 
         public ArrayList<MoveOption> getArray() {
-            return new ArrayList<MoveOption>(values());
+            return new ArrayList<>(values());
         }
     }
 
     public static class DistanceComparator implements Comparator<MoveOption> {
 
+        @Override
         public int compare(MoveOption e0, MoveOption e1) {
             return e0.getDistUtility() < e1.getDistUtility() ? -1 : 1;
         }
@@ -125,8 +127,8 @@ public class MoveOption extends MovePath {
     double threat = 0;
 
     private transient CEntity centity;
-    transient ArrayList<String> tv = new ArrayList<String>();
-    transient HashMap<CEntity, DamageInfo> damageInfos = new HashMap<CEntity, DamageInfo>();
+    transient ArrayList<String> tv = new ArrayList<>();
+    transient HashMap<CEntity, DamageInfo> damageInfos = new HashMap<>();
     private Coords pos;
     private int facing;
     private boolean prone;
@@ -145,7 +147,7 @@ public class MoveOption extends MovePath {
         threat = base.threat;
         damage = base.damage;
         movement_threat = base.movement_threat;
-        tv = new ArrayList<String>(base.tv);
+        tv = new ArrayList<>(base.tv);
         self_threat = base.self_threat;
         inDanger = base.inDanger;
         doomed = base.doomed;
@@ -197,8 +199,8 @@ public class MoveOption extends MovePath {
         }
 
         //Don't jump onto a building with CF < weight
-        IHex h = getGame().getBoard().getHex(getFinalCoords());
-        if((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
+        Hex h = getGame().getBoard().getHex(getFinalCoords());
+        if ((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
             if (cf < getEntity().getWeight()) {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -228,23 +230,24 @@ public class MoveOption extends MovePath {
         int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType(true)) {
-        case MOVE_WALK:
-        case MOVE_VTOL_WALK:
-            move = 1;
-            break;
-        case MOVE_RUN:
-        case MOVE_VTOL_RUN:
-            move = 2;
-            break;
-        case MOVE_SPRINT:
-        case MOVE_VTOL_SPRINT:
-            move = 3;
-            break;
-        case MOVE_JUMP:
-            move = getEntity().getJumpHeat(last.getMpUsed());
-            break;
-        default:
-            move = 1000;
+            case MOVE_WALK:
+            case MOVE_VTOL_WALK:
+                move = 1;
+                break;
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+                move = 2;
+                break;
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                move = 3;
+                break;
+            case MOVE_JUMP:
+                move = getEntity().getJumpHeat(last.getMpUsed());
+                break;
+            default:
+                move = 1000;
+                break;
         }
         return heat + move; // illegal?
     }
@@ -346,20 +349,20 @@ public class MoveOption extends MovePath {
         }
         toHitd.append(Compute.getAttackerTerrainModifier(getGame(), te.getId()));
 
-        IHex attHex = getGame().getBoard().getHex(ae.getPosition());
-        if (attHex.containsTerrain(Terrains.WATER) && (attHex.surface() > attEl)) {
+        Hex attHex = getGame().getBoard().getHex(ae.getPosition());
+        if (attHex.containsTerrain(Terrains.WATER) && (attHex.getLevel() > attEl)) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
             toHitd.addModifier(TargetRoll.IMPOSSIBLE,
                     "Defender in depth 2+ water");
-        } else if ((attHex.surface() == attEl) && (ae.height() > 0)) {
+        } else if ((attHex.getLevel() == attEl) && (ae.height() > 0)) {
             apc = true;
         }
-        IHex targHex = getGame().getBoard().getHex(te.getPosition());
+        Hex targHex = getGame().getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
-            if ((targHex.surface() == targEl) && (te.height() > 0)) {
+            if ((targHex.getLevel() == targEl) && (te.height() > 0)) {
                 pc = true;
-            } else if (targHex.surface() > targEl) {
+            } else if (targHex.getLevel() > targEl) {
                 toHita.addModifier(TargetRoll.IMPOSSIBLE,
                         "Attacker in depth 2+ water");
                 toHitd.addModifier(TargetRoll.IMPOSSIBLE,
@@ -481,7 +484,7 @@ public class MoveOption extends MovePath {
             }
         }
         boolean aptGunnery = enemy.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        int enemy_firing_arcs[] = { 0, 0, 0};
+        int[] enemy_firing_arcs = { 0, 0, 0};
         enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
                         .getFinalFacing(), MoveStepType.NONE), getFinalCoords());
@@ -513,8 +516,8 @@ public class MoveOption extends MovePath {
         max *= mod;
         if (!enemy.getFinalProne() && (distance == 1)
                 && (enemy_firing_arcs[0] != ToHitData.SIDE_REAR)) {
-            IHex h = getGame().getBoard().getHex(getFinalCoords());
-            IHex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
+            Hex h = getGame().getBoard().getHex(getFinalCoords());
+            Hex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getLevel() - h1.getLevel()) < 2) {
                 max += ((((((h1.getLevel() - h.getLevel()) == 1) || getFinalProne()) ? 5
                         : 1)

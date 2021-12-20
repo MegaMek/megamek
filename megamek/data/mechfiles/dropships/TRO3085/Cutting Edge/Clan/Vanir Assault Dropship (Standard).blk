@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -64,6 +64,10 @@ smallcraftbay:3.0:2:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 19
@@ -240,6 +244,50 @@ ISSmallNavalCommScannerSuite
 25
 </structural_integrity>
 
+<capabilities>
+The ship's protection includes 90 tons of Ferro-Aluminum Armor which provides considerable protection from attacks by capital grade weaponry. The ship has been equipped with a small Naval Comm-Scanner Suite, which gives the ship considerable sensor detection abilities. The Vanir is designed with a wide array of standard and some sub-capital weaponry.
+</capabilities>
+
+<overview>
+The Vanir Class Assault DropShip is one of two similar ships designed during the Jihad for Clan Ghost Bear. Sister to the Aesir Fighter-Carrier, together the ships were designed to provide escort to convoys and the Clan's remaining WarShip assets.
+</overview>
+
+<history>
+The Vanir entered production in 3077 at two of the Clan's shipyards located at Rasalhague and Alshain. The Vanir primarily acts as a fleet defender, using its weapon bays of Sub-Capital Missiles launchers. Prior to the events of the Liberation of Terra, some of the ships were gifted to Clan Nova Cat as part of a secret agreement between the Bears and the Allied Coalition leader, Devlin Stone. The Vanirs that were given to the Nova Cats were taken from heavy escort forces for the Leviathan-Class Heavy Battleship, Great Bear. The WarShip was later lost during the liberation in 3078, seeding resentment among the Clan Ghost Bear people. After the war, the ship remained in limited production, with few examples of the design seen outside the Ghost Bears' touman.
+</history>
+
+<manufacturer>
+Alshain Naval Yards (Military), Gorton, Kingsley and Thorpe
+</manufacturer>
+
+<primaryFactory>
+Alshain,Rasalhague
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault DropShip
+</use>
+
+<length>
+110 meters
+</length>
+
+<width>
+100 meters
+</width>
+
+<height>
+150 meters
+</height>
+
 <source>
 TRO 3085 - Jihad
 </source>
@@ -257,7 +305,7 @@ TRO 3085 - Jihad
 </crew>
 
 <officers>
-9
+10
 </officers>
 
 <gunners>
@@ -287,3 +335,4 @@ TRO 3085 - Jihad
 <escape_pod>
 10
 </escape_pod>
+

@@ -152,7 +152,7 @@ public class TankTrailerHitch implements Transporter {
     @Override
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
-        Vector<Entity> units = new Vector<Entity>(1);
+        Vector<Entity> units = new Vector<>(1);
         if (towed != Entity.NONE) {
             Entity entity = game.getEntity(towed);
             
@@ -200,7 +200,7 @@ public class TankTrailerHitch implements Transporter {
 
     @Override
     public double getUnused() {
-        if (towed == Entity.NONE){
+        if (towed == Entity.NONE) {
             return 1;
         } else {
             return 0;
@@ -257,7 +257,7 @@ public class TankTrailerHitch implements Transporter {
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>(1);
+        ArrayList<Entity> rv = new ArrayList<>(1);
         if (towed != Entity.NONE) {
             rv.add(game.getEntity(towed));
         }

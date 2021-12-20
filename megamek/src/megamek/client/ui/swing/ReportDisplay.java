@@ -65,6 +65,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("doneButton")) {
                     ready();
@@ -76,16 +77,16 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
 
-        Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
+        Font tabPanelFont = new Font("Dialog", Font.BOLD,
                 GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setFont(tabPanelFont);
 
         resetTabs();
 
-        butDone.setText(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
+        butDone.setText(Messages.getString("ReportDisplay.Done"));
 
-        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll")); //$NON-NLS-1$
-        rerollInitiativeB.setActionCommand("reroll_initiative"); //$NON-NLS-1$
+        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll"));
+        rerollInitiativeB.setActionCommand("reroll_initiative");
         rerollInitiativeB.addActionListener(this);
 
         // layout screen
@@ -95,7 +96,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
         for (int padding = 0; padding < 6; padding++) {
-            panButtons.add(new JLabel("")); //$NON-NLS-1$
+            panButtons.add(new JLabel(""));
         }
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
@@ -253,8 +254,9 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) { //$NON-NLS-1$
+        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
             rerollInitiative();
         }
     }
@@ -272,6 +274,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         rerolled = false;
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 int phaseTab = tabs.indexOfTab("Phase");
                 if (phaseTab > 0) {
@@ -291,6 +294,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         GUIPreferences.getInstance().removePreferenceChangeListener(this);

@@ -18,10 +18,11 @@
  */
 package megamek.server;
 
-import java.util.*;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
+
+import java.util.*;
 
 /**
  * This class contains computations carried out by the Server class.
@@ -40,13 +41,13 @@ public class ServerHelper {
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
-    public static boolean infantryInOpen(Entity te, IHex te_hex, Game game, 
+    public static boolean infantryInOpen(Entity te, Hex te_hex, Game game, 
             boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
         	
-        	if(te_hex == null) {
+        	if (te_hex == null) {
         		te_hex = game.getBoard().getHex(te.getPosition());
         	}
         	
@@ -403,11 +404,11 @@ public class ServerHelper {
      * hex it's currently in.
      */
     public static void sinkToBottom(Entity entity) {
-        if((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
+        if ((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
             return;
         }
         
-        IHex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
+        Hex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
         int waterDepth = 0;
         
         // we're going hull down, we still sink to the bottom if appropriate
@@ -424,7 +425,7 @@ public class ServerHelper {
         }
     }
     
-    public static void checkAndApplyMagmaCrust(IHex hex, int elevation, Entity entity, Coords curPos,
+    public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
             boolean jumpLanding, Vector<Report> vPhaseReport, Server server) {
         
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
@@ -527,6 +528,108 @@ public class ServerHelper {
         }
         
         return minefieldDetected;
+    }
+    
+    /**
+     * Checks to see if any units can detected hidden units.
+     */
+    public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
+            Vector<Report> vPhaseReport, Server server) {
+        // If hidden units aren't on, nothing to do
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+            return false;
+        }
+        
+        // Units without a position won't be able to detect
+        // check for this before calculating BAP range, as that's expensive
+        if ((detector.getPosition() == null) || (detectorCoords == null)) {
+            return false;
+        }
+       
+        int probeRange = detector.getBAPRange();
+        
+        // if no probe, save ourselves a few loops
+        if (probeRange <= 0) {
+            return false;
+        }
+                
+        // Get all hidden units in probe range
+        List<Entity> hiddenUnits = new ArrayList<>();
+        for (Coords coords : detectorCoords.allAtDistanceOrLess(probeRange)) {
+            for (Entity entity : game.getEntitiesVector(coords, true)) {
+                if (entity.isHidden() && entity.isEnemyOf(detector)) {
+                    hiddenUnits.add(entity);
+                }
+            }
+        }
+
+        // If no one is hidden, there's nothing to do
+        if (hiddenUnits.isEmpty()) {
+            return false;
+        }
+
+        Set<Integer> reportPlayers = new HashSet<>();
+
+        boolean detectorHasBloodhound = detector.hasWorkingMisc(MiscType.F_BLOODHOUND);
+        boolean hiddenUnitFound = false;
+        
+        for (Entity detected : hiddenUnits) {            
+            // Can only detect units within the probes range
+            int dist = detector.getPosition().distance(detected.getPosition());
+            boolean beyondPointBlankRange = dist > 1;
+
+            // Check for Void/Null Sig - only detected by Bloodhound probes
+            if (beyondPointBlankRange && (detected instanceof Mech)) {
+                Mech m = (Mech) detected;
+                if ((m.isVoidSigActive() || m.isNullSigActive()) && !detectorHasBloodhound) {
+                    continue;
+                }
+            }
+
+            // Check for Infantry stealth armor
+            if (beyondPointBlankRange && (detected instanceof BattleArmor)) {
+                BattleArmor ba = (BattleArmor) detected;
+                // Need Bloodhound to detect BA stealth armor
+                if (ba.isStealthy() && !detectorHasBloodhound) {
+                    continue;
+                }
+            } else if (beyondPointBlankRange && (detected instanceof Infantry)) {
+                Infantry inf = (Infantry) detected;
+                // Can't detect sneaky infantry
+                if (inf.isStealthy()) {
+                    continue;
+                }
+                // Need bloodhound to detect non-sneaky inf
+                if (!detectorHasBloodhound) {
+                    continue;
+                }
+            }
+
+            LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(), false);
+            if (los.canSee() || !beyondPointBlankRange) {
+                detected.setHidden(false);
+                server.entityUpdate(detected.getId());
+                Report r = new Report(9960);
+                r.addDesc(detector);
+                r.subject = detector.getId();
+                r.add(detected.getPosition().getBoardNum());
+                vPhaseReport.addElement(r);
+                Report.addNewline(vPhaseReport);
+                reportPlayers.add(detector.getOwnerId());
+                reportPlayers.add(detected.getOwnerId());
+                
+                hiddenUnitFound = true;
+            }
+        }
+
+        if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
+                && ((game.getTurnIndex() + 1) < game.getTurnVector().size())) {
+            for (Integer playerId : reportPlayers) {
+                server.send(playerId, server.createSpecialReportPacket());
+            }
+        }
+        
+        return hiddenUnitFound;
     }
     
     /**

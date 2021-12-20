@@ -1,40 +1,33 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 24, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.infantry;
 
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
+ * @since Sept 24, 2004
  */
 public class InfantryWeaponHandler extends WeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1425176802065536326L;
 
     /**
@@ -123,7 +116,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
-        if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
+        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
         }
         // this doesn't work...
@@ -156,10 +149,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
     }
 
     //we need to figure out AV damage to aeros for AA weapons
+    @Override
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }
 
+    @Override
     protected int calcAttackValue() {
         int av;
         //Sigh, another rules oversight - nobody bothered to figure this out
@@ -188,7 +183,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                MegaMek.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
+                LogManager.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
                                 ae.getShortName(), weapon.getName()));
                 return;
             }

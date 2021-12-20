@@ -13,7 +13,6 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.logging.FakeLogger;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.junit.Assert;
@@ -34,19 +33,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
- *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 8/19/13 6:30 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class BehaviorSettingsTest {
 
     @Test
     public void testSetDescription() throws PrincessException {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
 
         // Test a normal description.
         String description = "Test behavior";
@@ -75,10 +70,9 @@ public class BehaviorSettingsTest {
     @Test
     public void testStrategicBuildingTargets() {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         final String goodHexTarget = "1234";
         final String goodHexTarget2 = "4567";
-        Set<String> expectedTargets = new HashSet<String>(2);
+        Set<String> expectedTargets = new HashSet<>(2);
         expectedTargets.add(goodHexTarget);
 
         // Test adding a normal hex target.
@@ -132,7 +126,6 @@ public class BehaviorSettingsTest {
     @Test
     public void testPreferredUnitTargets() {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         final int goodUnitTarget = 1;
         final int goodUnitTarget2 = 4;
         Set<Integer> expectedTargets = new HashSet<>(2);
@@ -200,7 +193,6 @@ public class BehaviorSettingsTest {
         Set<Integer> expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -226,7 +218,6 @@ public class BehaviorSettingsTest {
         expectedTargets = new HashSet<>(0);
         expectedUnits = new HashSet<>(0);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -255,7 +246,6 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals("null", behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -284,7 +274,6 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         try {
             behaviorSettings.fromXml(testBehaviorElement);
             Assert.fail("Should have thrown an error!");
@@ -302,9 +291,8 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
-        Assert.assertTrue(behaviorSettings.getRetreatEdge() == CardinalEdge.NONE);
+        Assert.assertSame(behaviorSettings.getRetreatEdge(), CardinalEdge.NONE);
 
         // Test loading behavior settings w/ a NULL forced withdrawal.
         reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL.toCharArray());
@@ -316,12 +304,11 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
-        Assert.assertEquals(false, behaviorSettings.isForcedWithdrawal());
+        Assert.assertFalse(behaviorSettings.isForcedWithdrawal());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_AUTO_FLEE, behaviorSettings.shouldAutoFlee());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
@@ -344,14 +331,13 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_DESTINATION_EDGE, behaviorSettings.getDestinationEdge());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_FORCED_WITHDRAWAL,
                 behaviorSettings.isForcedWithdrawal());
-        Assert.assertEquals(false, behaviorSettings.shouldAutoFlee());
+        Assert.assertFalse(behaviorSettings.shouldAutoFlee());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_FALL_SHAME_INDEX, behaviorSettings.getFallShameIndex());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HYPER_AGGRESSION_INDEX,
                 behaviorSettings.getHyperAggressionIndex());
@@ -374,7 +360,6 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -404,7 +389,6 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -431,7 +415,6 @@ public class BehaviorSettingsTest {
         expectedTargets.add("null");
         expectedUnits = new HashSet<>(0);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -457,7 +440,6 @@ public class BehaviorSettingsTest {
         expectedTargets = new HashSet<>(0);
         expectedUnits = new HashSet<>(0);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());

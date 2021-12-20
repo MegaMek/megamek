@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.prototypes;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Sebastian Brocks
  */
@@ -54,7 +56,8 @@ public class PrototypeRL10 extends PrototypeRLWeapon {
             .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false,false, false)
             .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
-            .setClanApproximate(true, false, false, true, false);
+            .setClanApproximate(true, false, false, true, false)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }
 

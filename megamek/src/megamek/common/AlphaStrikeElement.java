@@ -36,11 +36,11 @@ public class AlphaStrikeElement extends BattleForceElement {
         
         static ASUnitType getUnitType(Entity en) {
             if (en instanceof Mech) {
-                return ((Mech)en).isIndustrial()? IM : BM;
+                return ((Mech) en).isIndustrial() ? IM : BM;
             } else if (en instanceof Protomech) {
                 return PM;
             } else if (en instanceof Tank) {
-                return en.isSupportVehicle()?SV : CV;
+                return en.isSupportVehicle() ? SV : CV;
             } else if (en instanceof BattleArmor) {
                 return BA;
             } else if (en instanceof Infantry) {
@@ -52,7 +52,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             } else if (en instanceof Jumpship) {
                 return JS;
             } else if (en instanceof Dropship) {
-                return ((Dropship)en).isSpheroid()? DS : DA;
+                return ((Dropship) en).isSpheroid() ? DS : DA;
             } else if (en instanceof SmallCraft) {
                 return SC;
             } else if (en instanceof FixedWingSupport) {
@@ -73,19 +73,20 @@ public class AlphaStrikeElement extends BattleForceElement {
         asUnitType = ASUnitType.getUnitType(en);
         if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
             double divisor = ((Infantry) en).calcDamageDivisor();
-            if (((Infantry)en).isMechanized()) {
+            if (((Infantry) en).isMechanized()) {
                 divisor /= 2.0;
             }
             armor *= divisor;
         }
         //Armored Glove counts as an additional AP mounted weapon
         if (en instanceof BattleArmor && en.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) {
-            double apDamage = AP_MOUNT_DAMAGE * (TROOP_FACTOR[Math.min(((BattleArmor)en).getShootingStrength(), 30)] + 0.5);
+            double apDamage = AP_MOUNT_DAMAGE * (TROOP_FACTOR[Math.min(((BattleArmor) en).getShootingStrength(), 30)] + 0.5);
             weaponLocations[0].addDamage(0, apDamage);
             weaponLocations[0].addDamage(WeaponType.BFCLASS_STANDARD, 0, apDamage);
         }
     }
 
+    @Override
     protected void initWeaponLocations(Entity en) {
         weaponLocations = new WeaponLocation[en.getNumAlphaStrikeWeaponsLocations()];
         locationNames = new String[weaponLocations.length];
@@ -98,6 +99,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
     }
     
+    @Override
     protected double locationMultiplier(Entity en, int loc, Mounted mount) {
     	return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
@@ -110,7 +112,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     @Override
     public String getMovementAsString() {
     	return movement.entrySet().stream()
-    			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
+    			.map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
     					+ "\"" + e.getKey())
     			.collect(Collectors.joining("/"));    	
     }
@@ -192,7 +194,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             }
         }
         if (weaponLocations[loc].getIF() >= 0.5) {
-            str.append(";IF").append((int)Math.round(weaponLocations[loc].getIF()));
+            str.append(";IF").append((int) Math.round(weaponLocations[loc].getIF()));
         }
         if (locationNames[loc].length() > 0) {
             str.append(")");
@@ -210,9 +212,9 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write("\t");
         w.write(getMovementAsString());
         w.write("\t");
-        w.write(Integer.toString((int)Math.round(armor)));
+        w.write(Integer.toString((int) Math.round(armor)));
         if (threshold >= 0) {
-            w.write("-" + (int)Math.ceil(threshold));//TODO: threshold
+            w.write("-" + (int) Math.ceil(threshold));//TODO: threshold
         }
         w.write("\t");
         w.write(Integer.toString(structure));
@@ -235,7 +237,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         sj = new StringJoiner(", ");
         for (int loc = 0; loc < weaponLocations.length; loc++) {
             if (weaponLocations[loc].getOverheat() >= 1) {
-                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat())));
+                sj.add(locationNames[loc] + Math.max(4, (int) Math.round(weaponLocations[loc].getOverheat())));
             }
         }
         if (sj.length() > 0) {
@@ -249,11 +251,12 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write(specialAbilities.keySet().stream()
                 .filter(spa -> spa.usedByAlphaStrike()
                         && !spa.isDoor())
-                .map(spa -> formatSPAString(spa))
+                .map(this::formatSPAString)
                 .collect(Collectors.joining(", ")));
         w.newLine();
     }
     
+    @Override
     protected String formatSPAString(BattleForceSPA spa) {
         /* BOMB rating for ASFs and CFs is one less than for BF */
         if (spa.equals(BattleForceSPA.BOMB)
@@ -261,7 +264,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             return spa.toString() + (specialAbilities.get(spa) - 1);
         }
         if (spa.equals(BattleForceSPA.HT)) {
-            return spa.toString()
+            return spa
                     + IntStream.range(0, rangeBands)
                     .mapToObj(String::valueOf).collect(Collectors.joining("/"));
         }

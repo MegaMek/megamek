@@ -24,7 +24,7 @@ package megamek.common;
 public interface ITechManager {
     
     /**
-     * @return The maximimum intro date for the tech; any tech that appears after this date
+     * @return The maximum intro date for the tech; any tech that appears after this date
      *         will be excluded.
      */
     int getTechIntroYear();

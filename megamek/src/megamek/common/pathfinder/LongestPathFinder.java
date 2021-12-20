@@ -37,8 +37,6 @@ import megamek.common.Tank;
  * multiple times. For example longest path searches.
  *
  * @author Saginatio
- *
- *
  */
 public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     private boolean aero = false;
@@ -119,18 +117,13 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     public static class MovePathMinefieldAvoidanceMinMPMaxDistanceComparator extends MovePathMinMPMaxDistanceComparator {
         @Override
         public int compare(MovePath first, MovePath second) {
-            Double firstMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(first.getLastStep(), 
+            double firstMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(first.getLastStep(),
                     first.getEntity(), first.isJumping(), false);
-            Double secondMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(second.getLastStep(), 
+            double secondMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(second.getLastStep(),
                     second.getEntity(), second.isJumping(), false);
                
-            int s = secondMinefieldScore.compareTo(firstMinefieldScore);
-            
-            if (s == 0) {
-                return super.compare(first, second);
-            } else {
-                return s;
-            }
+            return (Double.compare(secondMinefieldScore, firstMinefieldScore) == 0)
+                    ? super.compare(first, second) : 0;
         }
     }
 
@@ -138,9 +131,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Relaxer for longest path movement. Current implementation needs
      * Comparator that preserves MovePathMinMPMaxDistanceComparator contract.
      *
-     * It adds a path to 'interesting' paths in a hex when candidate travelled
-     * more hexes.
-     *
+     * It adds a path to 'interesting' paths in a hex when candidate travelled more hexes.
      */
     static public class LongestPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         @Override
@@ -353,7 +344,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @return the shortest move path to hex at given coordinates
      */
     public MovePath getComputedPath(Coords coords) {
-        Deque<MovePath> q = getCost(coords, new Comparator<Deque<MovePath>>() {
+        Deque<MovePath> q = getCost(coords, new Comparator<>() {
             @Override
             public int compare(Deque<MovePath> q1, Deque<MovePath> q2) {
                 MovePath mp1 = q1.getLast(), mp2 = q2.getLast();

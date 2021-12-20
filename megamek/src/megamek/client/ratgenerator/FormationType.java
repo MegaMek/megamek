@@ -1,39 +1,6 @@
-/**
- * 
- */
 package megamek.client.ratgenerator;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.IntSummaryStatistics;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.MechSummary;
-import megamek.common.MiscType;
-import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
-import megamek.common.UnitType;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
@@ -42,11 +9,17 @@ import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
 
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * Campaign Operations rules for force generation.
  * 
  * @author Neoancient
- *
  */
 public class FormationType {
     
@@ -207,21 +180,21 @@ public class FormationType {
         List<Integer> retVal = new ArrayList<>();
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
             if (EquipmentType.get(ms.getEquipmentNames().get(i)) instanceof WeaponType) {
-                final WeaponType weapon = (WeaponType)EquipmentType.get(ms.getEquipmentNames().get(i));
+                final WeaponType weapon = (WeaponType) EquipmentType.get(ms.getEquipmentNames().get(i));
                 if (weapon.getLongRange() < range) {
                     continue;
                 }
                 int damage = 0;
                 if (weapon.getAmmoType() != AmmoType.T_NA) {
                     Optional<EquipmentType> ammo = ms.getEquipmentNames().stream()
-                        .map(name -> EquipmentType.get(name))
+                        .map(EquipmentType::get)
                         .filter(eq -> eq instanceof AmmoType
-                                && ((AmmoType)eq).getAmmoType() == weapon.getAmmoType()
-                                && ((AmmoType)eq).getRackSize() == weapon.getRackSize())
+                                && ((AmmoType) eq).getAmmoType() == weapon.getAmmoType()
+                                && ((AmmoType) eq).getRackSize() == weapon.getRackSize())
                         .findFirst();
                     if (ammo.isPresent()) {
-                        damage = ((AmmoType)ammo.get()).getDamagePerShot()
-                                * Math.max(1, ((AmmoType)ammo.get()).getRackSize());
+                        damage = ((AmmoType) ammo.get()).getDamagePerShot()
+                                * Math.max(1, ((AmmoType) ammo.get()).getRackSize());
                     }
                 } else {
                     damage = weapon.getDamage(range);
@@ -285,7 +258,7 @@ public class FormationType {
         
         List<Integer> wcs = IntStream.rangeClosed(minWeightClass,
                 Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY))
-                .mapToObj(Integer::valueOf)
+                .boxed()
                 .collect(Collectors.toList());
         List<Integer> airWcs = wcs.stream().filter(wc -> wc < EntityWeightClass.WEIGHT_ASSAULT)
                 .collect(Collectors.toList()); 
@@ -400,7 +373,7 @@ public class FormationType {
         }
         /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         
-        int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
+        int cUnits = numUnits.stream().mapToInt(Integer::intValue).sum();
 
         /* Simple case: all units have the same requirements. */
         if (otherCriteria.isEmpty() && useGrouping == null
@@ -473,12 +446,12 @@ public class FormationType {
         }
         int networkEligible = 0;
         for (int i = 0; i < params.size(); i++) {
-        	if ((validNetworkUnits & (1 << params.get(i).getUnitType())) != 0) {
-        		networkEligible += numUnits.get(i);
-        	}
+            if ((validNetworkUnits & (1 << params.get(i).getUnitType())) != 0) {
+                networkEligible += numUnits.get(i);
+            }
         }
         if (numNetworked > networkEligible) {
-        	numNetworked = networkEligible;
+            numNetworked = networkEligible;
         }
         
         /* General case:
@@ -505,213 +478,213 @@ public class FormationType {
          */
         
         do {
-	        List<Map<Integer,Integer>> combinations;
-	        /* We can get here with an empty otherCriteria if there is a groupingConstraint,
-	         * which is the case with the Order formation.
-	         */
-	        if (otherCriteria.isEmpty()) {
-	        	Map<Integer,Integer> combo = new HashMap<>();
-	        	combo.put(0, cUnits);
-	        	combinations = new ArrayList<>();
-	        	combinations.add(combo);
-	        } else {
-	        	combinations = findCombinations(cUnits);
-	        }
-	        //Group units by param index so they can be returned in the order requested.
-	        Map<Integer,List<MechSummary>> list = new TreeMap<>();
-	        final int POS_C3S = 0;
-	        final int POS_C3M = 1;
-	        final int POS_C3MM = 2;
-	        final int POS_C3_NUM = 3;
-	        while (combinations.size() > 0) {
-	        	int index = Compute.randomInt(combinations.size());
-	        	Map<Integer,Integer> baseCombo = combinations.get(index);
-	
-	        	int[] networkGroups = new int[POS_C3_NUM];
-	        	networkGroups[POS_C3S] = Math.max(0, numNetworked - numMasters);
-	        	if ((networkMask & ModelRecord.NETWORK_COMPANY_COMMAND) == 0) {
-	        		networkGroups[POS_C3M] = Math.max(0, numMasters);
-	        	} else {
-	        		networkGroups[POS_C3MM] = Math.max(0, numMasters);
-	        	}
-	        	List<Map<Integer,Integer>> networkGroupings = findGroups(baseCombo, networkGroups,
-	        			otherCriteria.size());
-	        	if (altNumMasters > 0) {
-	        		networkGroups[POS_C3S] = Math.max(0, numNetworked - altNumMasters);
-	        		networkGroups[POS_C3M] = Math.max(0, altNumMasters);
-	        		networkGroups[POS_C3MM] = 0;
-	            	networkGroupings.addAll(findGroups(baseCombo, networkGroups, otherCriteria.size()));
-	        	}
-	        	while (networkGroupings.size() > 0) {
-	        		list.clear();
-	        		int networkIndex = Compute.randomInt(networkGroupings.size());
-	        		Map<Integer,Integer> combo = networkGroupings.get(networkIndex);
-	
-	        		int[] unitsPerGroup = new int[params.size()];
-	        		for (int i = 0; i < numUnits.size(); i++) {
-	        			unitsPerGroup[i] = numUnits.get(i);
-	        		}
-	        		List<Map<Integer,Integer>> unitTypeGroupings = findGroups(combo, unitsPerGroup,
-	        				otherCriteria.size() + POS_C3_NUM);
-	        		while (unitTypeGroupings.size() > 0) {
-	        			list.clear();
-	        			int utIndex = Compute.randomInt(unitTypeGroupings.size());
-	        			combo = unitTypeGroupings.get(utIndex);
-	
-	        			if (useGrouping != null
-	        					&& params.stream().anyMatch(p -> useGrouping.appliesTo(p.getUnitType()))) {
-	        				/* Create a temporary map that only includes units that have a grouping criterion */
-	        				Map<Integer,Integer> groupedUnits = new LinkedHashMap<>();
-	        				for (int p = 0; p < params.size(); p++) {
-	        					if (useGrouping.appliesTo(params.get(p).getUnitType())) {
-	        						for (Integer i : combo.keySet()) {
-	        							if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
-	        								groupedUnits.merge(i, combo.get(i), Integer::sum);
-	        							}
-	        						}
-	    						}
-	    					}
-	    					List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
-	
-	    					while (groups.size() > 0) {
-	    						int gIndex = Compute.randomInt(groups.size());
-	    						list.clear();
-    							Map<Integer,List<MechSummary>> found = new TreeMap<>();
-	    						Map<Integer,Integer> workingCombo = new HashMap<>(combo);
-	    						for (Map<Integer,Integer> g : groups.get(gIndex)) {
-	    							/* The first unit selected may lead to a dead end, if the constraints
-	    							 * for the other group members cannot be met in a unit that matches the
-	    							 * base. To deal with this we make a second attempt if necessary
-	    							 * subjecting all members of the group to all constraints assigned
-	    							 * to any group member. */
-	    							int extraCriteria = 0;
-	    							int attempts = 0;
-	    							while (attempts < 2) {
-	    								found.clear();
-		    							MechSummary base = null;
-		    							for (int i : combo.keySet()) {
-		    								if (g.containsKey(i)) {
-		    									// Decode unit type
-		    									int tableIndex = 0;
-		    									if (params.size() > 0) {
-		    										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-		    										while (tmp != 0 && (tmp & 1) == 0) {
-		    											tableIndex++;
-		    											tmp >>= 1;
-		    										}
-		    									}
-		    									final Predicate<MechSummary> filter = getFilterFromIndex(i | extraCriteria,
-		    											slaveType, masterType);
-		    									for (int j = 0; j < g.get(i); j++) {
-		    										if (base == null) {
-		    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-		    											if (base != null) {
+            List<Map<Integer,Integer>> combinations;
+            /* We can get here with an empty otherCriteria if there is a groupingConstraint,
+             * which is the case with the Order formation.
+             */
+            if (otherCriteria.isEmpty()) {
+                Map<Integer,Integer> combo = new HashMap<>();
+                combo.put(0, cUnits);
+                combinations = new ArrayList<>();
+                combinations.add(combo);
+            } else {
+                combinations = findCombinations(cUnits);
+            }
+            //Group units by param index so they can be returned in the order requested.
+            Map<Integer,List<MechSummary>> list = new TreeMap<>();
+            final int POS_C3S = 0;
+            final int POS_C3M = 1;
+            final int POS_C3MM = 2;
+            final int POS_C3_NUM = 3;
+            while (combinations.size() > 0) {
+                int index = Compute.randomInt(combinations.size());
+                Map<Integer,Integer> baseCombo = combinations.get(index);
+
+                int[] networkGroups = new int[POS_C3_NUM];
+                networkGroups[POS_C3S] = Math.max(0, numNetworked - numMasters);
+                if ((networkMask & ModelRecord.NETWORK_COMPANY_COMMAND) == 0) {
+                    networkGroups[POS_C3M] = Math.max(0, numMasters);
+                } else {
+                    networkGroups[POS_C3MM] = Math.max(0, numMasters);
+                }
+                List<Map<Integer,Integer>> networkGroupings = findGroups(baseCombo, networkGroups,
+                        otherCriteria.size());
+                if (altNumMasters > 0) {
+                    networkGroups[POS_C3S] = Math.max(0, numNetworked - altNumMasters);
+                    networkGroups[POS_C3M] = Math.max(0, altNumMasters);
+                    networkGroups[POS_C3MM] = 0;
+                    networkGroupings.addAll(findGroups(baseCombo, networkGroups, otherCriteria.size()));
+                }
+                while (networkGroupings.size() > 0) {
+                    list.clear();
+                    int networkIndex = Compute.randomInt(networkGroupings.size());
+                    Map<Integer,Integer> combo = networkGroupings.get(networkIndex);
+
+                    int[] unitsPerGroup = new int[params.size()];
+                    for (int i = 0; i < numUnits.size(); i++) {
+                        unitsPerGroup[i] = numUnits.get(i);
+                    }
+                    List<Map<Integer,Integer>> unitTypeGroupings = findGroups(combo, unitsPerGroup,
+                            otherCriteria.size() + POS_C3_NUM);
+                    while (unitTypeGroupings.size() > 0) {
+                        list.clear();
+                        int utIndex = Compute.randomInt(unitTypeGroupings.size());
+                        combo = unitTypeGroupings.get(utIndex);
+
+                        if (useGrouping != null
+                                && params.stream().anyMatch(p -> useGrouping.appliesTo(p.getUnitType()))) {
+                            /* Create a temporary map that only includes units that have a grouping criterion */
+                            Map<Integer,Integer> groupedUnits = new LinkedHashMap<>();
+                            for (int p = 0; p < params.size(); p++) {
+                                if (useGrouping.appliesTo(params.get(p).getUnitType())) {
+                                    for (Integer i : combo.keySet()) {
+                                        if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
+                                            groupedUnits.merge(i, combo.get(i), Integer::sum);
+                                        }
+                                    }
+                                }
+                            }
+                            List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
+
+                            while (groups.size() > 0) {
+                                int gIndex = Compute.randomInt(groups.size());
+                                list.clear();
+                                Map<Integer,List<MechSummary>> found = new TreeMap<>();
+                                Map<Integer,Integer> workingCombo = new HashMap<>(combo);
+                                for (Map<Integer,Integer> g : groups.get(gIndex)) {
+                                    /* The first unit selected may lead to a dead end, if the constraints
+                                     * for the other group members cannot be met in a unit that matches the
+                                     * base. To deal with this we make a second attempt if necessary
+                                     * subjecting all members of the group to all constraints assigned
+                                     * to any group member. */
+                                    int extraCriteria = 0;
+                                    int attempts = 0;
+                                    while (attempts < 2) {
+                                        found.clear();
+                                        MechSummary base = null;
+                                        for (int i : combo.keySet()) {
+                                            if (g.containsKey(i)) {
+                                                // Decode unit type
+                                                int tableIndex = 0;
+                                                if (params.size() > 0) {
+                                                    int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+                                                    while (tmp != 0 && (tmp & 1) == 0) {
+                                                        tableIndex++;
+                                                        tmp >>= 1;
+                                                    }
+                                                }
+                                                final Predicate<MechSummary> filter = getFilterFromIndex(i | extraCriteria,
+                                                        slaveType, masterType);
+                                                for (int j = 0; j < g.get(i); j++) {
+                                                    if (base == null) {
+                                                        base = tables.get(tableIndex).generateUnit(filter::test);
+                                                        if (base != null) {
                                                             found.putIfAbsent(tableIndex, new ArrayList<>());
                                                             found.get(tableIndex).add(base);
-		    											}
-		    										} else {
-		    											final MechSummary b = base;
-		    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
-		    													&& useGrouping.matches(ms, b));
-		    											if (unit != null) {
-		    											    found.putIfAbsent(tableIndex, new ArrayList<>());
+                                                        }
+                                                    } else {
+                                                        final MechSummary b = base;
+                                                        MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
+                                                                && useGrouping.matches(ms, b));
+                                                        if (unit != null) {
+                                                            found.putIfAbsent(tableIndex, new ArrayList<>());
                                                             found.get(tableIndex).add(unit);
-		    											}
-		    										}
-		    									}
-		    								}
-		    							}
-		    							if (found.values().stream().mapToInt(List::size).sum()
-		    							        < g.values().stream().mapToInt(Integer::intValue).sum()) {
-		    								found.clear();
-		    								base = null;
-		    								int mask = (1 << otherCriteria.size()) - 1;
-		    								extraCriteria = 0;
-		    								for (int k : g.keySet()) {
-		    									extraCriteria |= k & mask;
-		    								}
-		    								attempts++;
-		    							} else {
-		    								break;
-		    							}
-	    							}
-	    							for (Map.Entry<Integer, List<MechSummary>> e : found.entrySet()) {
-	    							    list.putIfAbsent(e.getKey(), new ArrayList<>());
-	    							    list.get(e.getKey()).addAll(e.getValue());
-	    							}
-		    						for (Integer k : g.keySet()) {
-		    							workingCombo.merge(k, -g.get(k), Integer::sum);
-		    						}
-	    						}
-	    						for (int i : workingCombo.keySet()) {
-	    							if (workingCombo.get(i) > 0) {
-	    								// Decode unit type
-	    								int tableIndex = 0;
-	    								if (params.size() > 0) {
-											int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-	        								while (tmp != 0 && (tmp & 1) == 0) {
-	        									tableIndex++;
-	        									tmp >>= 1;
-	        								}
-	    								}
-	    								final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
-	    								for (int j = 0; j < workingCombo.get(i); j++) {
-	    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-	    									if (unit != null) {
-	    									    list.putIfAbsent(tableIndex, new ArrayList<>());
-	    										list.get(tableIndex).add(unit);
-	    									}
-	    								}
-	    							}
-	    						}
-	    						List<MechSummary> retVal = list.values().stream()
-	    						        .flatMap(l -> l.stream()).collect(Collectors.toList());
-	    						if (retVal.size() < cUnits) {
-	    							groups.remove(gIndex);
-	    						} else {
-	    							return retVal;
-	    						}
-	    					}
-	    				} else {
-	    					for (int i : combo.keySet()) {
-    							// Decode unit type
-    							int tableIndex = 0;
-    							if (params.size() > 0) {
-									int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-    								while (tmp != 0 && (tmp & 1) == 0) {
-    									tableIndex++;
-    									tmp >>= 1;
-    								}
-    							}
-    							final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
-    							for (int j = 0; j < combo.get(i); j++) {
-    								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-    								if (unit != null) {
-    								    list.putIfAbsent(tableIndex, new ArrayList<>());
-    									list.get(tableIndex).add(unit);
-    								}
-    							}
-	    					}
-	    				}
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (found.values().stream().mapToInt(List::size).sum()
+                                                < g.values().stream().mapToInt(Integer::intValue).sum()) {
+                                            found.clear();
+                                            base = null;
+                                            int mask = (1 << otherCriteria.size()) - 1;
+                                            extraCriteria = 0;
+                                            for (int k : g.keySet()) {
+                                                extraCriteria |= k & mask;
+                                            }
+                                            attempts++;
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                    for (Map.Entry<Integer, List<MechSummary>> e : found.entrySet()) {
+                                        list.putIfAbsent(e.getKey(), new ArrayList<>());
+                                        list.get(e.getKey()).addAll(e.getValue());
+                                    }
+                                    for (Integer k : g.keySet()) {
+                                        workingCombo.merge(k, -g.get(k), Integer::sum);
+                                    }
+                                }
+                                for (int i : workingCombo.keySet()) {
+                                    if (workingCombo.get(i) > 0) {
+                                        // Decode unit type
+                                        int tableIndex = 0;
+                                        if (params.size() > 0) {
+                                            int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+                                            while (tmp != 0 && (tmp & 1) == 0) {
+                                                tableIndex++;
+                                                tmp >>= 1;
+                                            }
+                                        }
+                                        final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
+                                        for (int j = 0; j < workingCombo.get(i); j++) {
+                                            MechSummary unit = tables.get(tableIndex).generateUnit(filter::test);
+                                            if (unit != null) {
+                                                list.putIfAbsent(tableIndex, new ArrayList<>());
+                                                list.get(tableIndex).add(unit);
+                                            }
+                                        }
+                                    }
+                                }
+                                List<MechSummary> retVal = list.values().stream()
+                                        .flatMap(Collection::stream).collect(Collectors.toList());
+                                if (retVal.size() < cUnits) {
+                                    groups.remove(gIndex);
+                                } else {
+                                    return retVal;
+                                }
+                            }
+                        } else {
+                            for (int i : combo.keySet()) {
+                                // Decode unit type
+                                int tableIndex = 0;
+                                if (params.size() > 0) {
+                                    int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+                                    while (tmp != 0 && (tmp & 1) == 0) {
+                                        tableIndex++;
+                                        tmp >>= 1;
+                                    }
+                                }
+                                final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
+                                for (int j = 0; j < combo.get(i); j++) {
+                                    MechSummary unit = tables.get(tableIndex).generateUnit(filter::test);
+                                    if (unit != null) {
+                                        list.putIfAbsent(tableIndex, new ArrayList<>());
+                                        list.get(tableIndex).add(unit);
+                                    }
+                                }
+                            }
+                        }
                         List<MechSummary> retVal = list.values().stream()
-                                .flatMap(l -> l.stream()).collect(Collectors.toList());
+                                .flatMap(Collection::stream).collect(Collectors.toList());
                         if (retVal.size() < cUnits) {
                             unitTypeGroupings.remove(utIndex);
                         } else {
                             return retVal;
                         }
-	    			}
+                    }
                     List<MechSummary> retVal = list.values().stream()
-                            .flatMap(l -> l.stream()).collect(Collectors.toList());
+                            .flatMap(Collection::stream).collect(Collectors.toList());
                     if (retVal.size() < cUnits) {
-						networkGroupings.remove(networkIndex);
-					} else {
-						return retVal;
-					}
-	    		}
-	    		combinations.remove(index);
-	        }
-	        numNetworked--;
+                        networkGroupings.remove(networkIndex);
+                    } else {
+                        return retVal;
+                    }
+                }
+                combinations.remove(index);
+            }
+            numNetworked--;
         } while (numNetworked >= 0);        
         
         List<MechSummary> onRole = tryIdealRole(params, numUnits);
@@ -722,28 +695,28 @@ public class FormationType {
     }
     
     private Predicate<MechSummary> getFilterFromIndex(int index, int slaveType, int masterType) {
-    	Predicate<MechSummary> retVal = mainCriteria;
-    	int mask = 1 << (otherCriteria.size() - 1);
-    	for (Constraint c : otherCriteria) {
-    		if ((index & mask) != 0) {
-    			retVal = retVal.and(c.criterion);
-    		}
-    		mask >>= 1;
-    	}
-    	mask = 1 << otherCriteria.size();
-    	if (slaveType > 0 && (mask & index) != 0) {
-    		retVal = retVal.and(ms -> (getNetworkMask(ms) & slaveType) != 0);
-    	}
-    	mask <<= 1;
-	    if (masterType > 0 && (mask & index) != 0) {
-	    	retVal = retVal.and(ms -> (getNetworkMask(ms) & masterType) != 0);
-	    }
-	    mask <<= 1;
-	    if (masterType > 0 && (mask & index) != 0) {
-	    	retVal = retVal.and(ms -> (getNetworkMask(ms)
-	    			& (masterType | ModelRecord.NETWORK_COMPANY_COMMAND)) != 0);
-	    }
-    	return retVal;
+        Predicate<MechSummary> retVal = mainCriteria;
+        int mask = 1 << (otherCriteria.size() - 1);
+        for (Constraint c : otherCriteria) {
+            if ((index & mask) != 0) {
+                retVal = retVal.and(c.criterion);
+            }
+            mask >>= 1;
+        }
+        mask = 1 << otherCriteria.size();
+        if (slaveType > 0 && (mask & index) != 0) {
+            retVal = retVal.and(ms -> (getNetworkMask(ms) & slaveType) != 0);
+        }
+        mask <<= 1;
+        if (masterType > 0 && (mask & index) != 0) {
+            retVal = retVal.and(ms -> (getNetworkMask(ms) & masterType) != 0);
+        }
+        mask <<= 1;
+        if (masterType > 0 && (mask & index) != 0) {
+            retVal = retVal.and(ms -> (getNetworkMask(ms)
+                    & (masterType | ModelRecord.NETWORK_COMPANY_COMMAND)) != 0);
+        }
+        return retVal;
     }
     
     /**
@@ -754,7 +727,7 @@ public class FormationType {
             return null;
         }
         List<UnitTable.Parameters> tmpParams = params.stream()
-                .map(p -> p.copy()).collect(Collectors.toList());
+                .map(UnitTable.Parameters::copy).collect(Collectors.toList());
         tmpParams.forEach(p -> p.getWeightClasses().clear());
         List<MechSummary> retVal = new ArrayList<>();
         for (int i = 0; i < tmpParams.size(); i++) {
@@ -775,88 +748,88 @@ public class FormationType {
      * the number of units that must meet the constraint.
      */
     private List<Map<Integer,Integer>> findCombinations(int numUnits) {
-    	/* This list is remade with each additional constraint, building on the previous values */
-    	List<Map<Integer,Integer>> frequencies = new ArrayList<>();
+        /* This list is remade with each additional constraint, building on the previous values */
+        List<Map<Integer,Integer>> frequencies = new ArrayList<>();
 
-    	for (Constraint c : otherCriteria) {
-    		int req = c.getMinimum(numUnits);
-    		/* If this is the first pass, we simply need to initialize the frequencies list */
-    		if (frequencies.isEmpty()) {
-    			Map<Integer,Integer> freq = new LinkedHashMap<>();
-    			freq.put(0, numUnits - req);
-    			freq.put(1, req);
-    			frequencies.add(freq);
-    		} else {
-    			/* Create a new list to hold the values built off the previous one */
-    			List<Map<Integer,Integer>> newFrequencies = new ArrayList<>();
-    			/* Iterate through all the values from the previous pass and extend them */
-    			for (Map<Integer,Integer> freq : frequencies) {
-    				/* We need to be able to access the keys by position */
-    				List<Integer> keyList = new ArrayList<>(freq.keySet());
-    				/* For each position, note how many total slots there are in later positions */
-    				int[] remaining = new int[freq.size()];
-    				int rem = 0;
-    				for (int i = keyList.size() - 1; i >= 0; i--) {
-    					rem += freq.get(keyList.get(i));
-    					remaining[i] = rem;
-    				}
-    				int index = 0;
-    				int toAllocate = req;
-    				/* current holds the number of units at each index of the previous iteration
-    				 * that will meet the current constraint */
-    				int[] current = new int[keyList.size()];
-    				outer: while (remaining[index] >= toAllocate) {
-    					current[index] = Math.min(freq.get(keyList.get(index)), toAllocate);
-    					toAllocate -= current[index];
-    					index++;
-    					if (index == keyList.size()) {
-    						if (c.isPairedWithPrevious()) {
-    							Map<Integer,Integer> prevValues = new LinkedHashMap<>();
-    							for (int i : freq.keySet()) {
-    								prevValues.put(i << 1, freq.get(i));
-    							}
-    							newFrequencies.add(prevValues);
-    						}
-    						Map<Integer,Integer> result = new LinkedHashMap<>();
-    						for (int i = 0; i < current.length; i++) {
-    							int key = keyList.get(i);
-    							if (c.isPairedWithPrevious()) {
-    								key &= ~1;
-    							}
-    							if (freq.get(keyList.get(i)) > current[i]) {
-    								result.merge(key << 1, freq.get(keyList.get(i)) - current[i], Integer::sum);
-    							}
-    							if (current[i] > 0) {
-    								result.merge((key << 1) + 1, current[i], Integer::sum);
-    							}
-    						}
-    						newFrequencies.add(result);
-    						index--;
-    						/* Keep backing up until we find one we can decrease or we reach the beginning.
-    						 * We can decrease if the current value is > 0 and the remaining slots are
-    						 * big enough to hold toAllocate + 1.
-    						 */
-    						while (index >= 0) {
-    							if (current[index] == 0 || index + 1 == current.length
-    									|| remaining[index + 1] <= toAllocate
-    									) {
-        							toAllocate += current[index];
-        							index--;    								
-    							} else {
-    								current[index]--;
-    								toAllocate++;
-    								index++;
-    								continue outer;
-    							}
-    						}
-    						break outer;
-    					}
-    				}
-    			}
-	    		frequencies = newFrequencies;
-    		}
-    	}
-    	return frequencies;
+        for (Constraint c : otherCriteria) {
+            int req = c.getMinimum(numUnits);
+            /* If this is the first pass, we simply need to initialize the frequencies list */
+            if (frequencies.isEmpty()) {
+                Map<Integer,Integer> freq = new LinkedHashMap<>();
+                freq.put(0, numUnits - req);
+                freq.put(1, req);
+                frequencies.add(freq);
+            } else {
+                /* Create a new list to hold the values built off the previous one */
+                List<Map<Integer,Integer>> newFrequencies = new ArrayList<>();
+                /* Iterate through all the values from the previous pass and extend them */
+                for (Map<Integer,Integer> freq : frequencies) {
+                    /* We need to be able to access the keys by position */
+                    List<Integer> keyList = new ArrayList<>(freq.keySet());
+                    /* For each position, note how many total slots there are in later positions */
+                    int[] remaining = new int[freq.size()];
+                    int rem = 0;
+                    for (int i = keyList.size() - 1; i >= 0; i--) {
+                        rem += freq.get(keyList.get(i));
+                        remaining[i] = rem;
+                    }
+                    int index = 0;
+                    int toAllocate = req;
+                    /* current holds the number of units at each index of the previous iteration
+                     * that will meet the current constraint */
+                    int[] current = new int[keyList.size()];
+                    outer: while (remaining[index] >= toAllocate) {
+                        current[index] = Math.min(freq.get(keyList.get(index)), toAllocate);
+                        toAllocate -= current[index];
+                        index++;
+                        if (index == keyList.size()) {
+                            if (c.isPairedWithPrevious()) {
+                                Map<Integer,Integer> prevValues = new LinkedHashMap<>();
+                                for (int i : freq.keySet()) {
+                                    prevValues.put(i << 1, freq.get(i));
+                                }
+                                newFrequencies.add(prevValues);
+                            }
+                            Map<Integer,Integer> result = new LinkedHashMap<>();
+                            for (int i = 0; i < current.length; i++) {
+                                int key = keyList.get(i);
+                                if (c.isPairedWithPrevious()) {
+                                    key &= ~1;
+                                }
+                                if (freq.get(keyList.get(i)) > current[i]) {
+                                    result.merge(key << 1, freq.get(keyList.get(i)) - current[i], Integer::sum);
+                                }
+                                if (current[i] > 0) {
+                                    result.merge((key << 1) + 1, current[i], Integer::sum);
+                                }
+                            }
+                            newFrequencies.add(result);
+                            index--;
+                            /* Keep backing up until we find one we can decrease or we reach the beginning.
+                             * We can decrease if the current value is > 0 and the remaining slots are
+                             * big enough to hold toAllocate + 1.
+                             */
+                            while (index >= 0) {
+                                if (current[index] == 0 || index + 1 == current.length
+                                        || remaining[index + 1] <= toAllocate
+                                        ) {
+                                    toAllocate += current[index];
+                                    index--;
+                                } else {
+                                    current[index]--;
+                                    toAllocate++;
+                                    index++;
+                                    continue outer;
+                                }
+                            }
+                            break outer;
+                        }
+                    }
+                }
+                frequencies = newFrequencies;
+            }
+        }
+        return frequencies;
     }    
     
     /**
@@ -871,95 +844,93 @@ public class FormationType {
      * 						the number of units in that group.
      * @return	A map the same format as <code>combination</code> in which higher order bits
      * 			in the key indicate a group. For example: in a formation with two criteria, 
-	 *			<code>combination.length</code> == 2^2. If there are three additional groups,
-	 *			the return value will be 2 ^ (2+3). The value mapped to 11 (== 01011) will be the
-	 *			number of units that are in the second group and fulfill both formation criteria.
+     *			<code>combination.length</code> == 2^2. If there are three additional groups,
+     *			the return value will be 2 ^ (2+3). The value mapped to 11 (== 01011) will be the
+     *			number of units that are in the second group and fulfill both formation criteria.
      */
     private List<Map<Integer,Integer>> findGroups(Map<Integer,Integer> combination, int[] itemsPerGroup, int indexBits) {
-    	List<Integer> keyList = new ArrayList<>(combination.keySet());
-    	
-    	List<int[][]> list = new ArrayList<>();
-    	int[][] initialVal = new int[1][keyList.size()];
-    	list.add(initialVal);
-    	
-    	/* Compute distribution for each group sequentially, building on previously calculated
-    	 * distributions for each successive group. */
-    	for (int group = 0; group < itemsPerGroup.length; group++) {
-    		/* Create a new list that we will fill out by copying the current values and adding
-    		 * the next group calculated during this iteration. */
-    		List<int[][]> newList = new ArrayList<>();
-    		/* Cycle through all previous combinations and add all combinations for current group */
-    		for (int[][] prev : list) {
-    			/* Initialize array with the number of units at each position that have already been
-    			 * assigned to groups. */
-    			int[] total = new int[keyList.size()];
-    			for (int g = 0; g < prev.length; g++) {
-    				for (int p = 0; p < prev[g].length; p++) {
-    					total[p] += prev[g][p];
-    				}
-    			}
-    			/* Create an array to track attempted distribution of the current group */
-    			int[] dist = new int[keyList.size()];
-    			dist[0] = itemsPerGroup[group];
-    			/* Shift values through the array until they are all in the final position */
-    			while (dist[dist.length - 1] <= itemsPerGroup[group]) {
-    				/* Test whether there is room for the current distribution, and if so add it to
-    				 * the list */
-    				boolean hasRoom = true;
-    				for (int i = 0; i < dist.length; i++) {
-    					if (total[i] + dist[i] > combination.get(keyList.get(i))) {
-    						hasRoom = false;
-    						break;
-    					}
-    				}
-    				if (hasRoom) {
-    					int[][] newVal = new int[group + 1][];
-    					for (int j = 0; j < group; j++) {
-    						newVal[j] = prev[j];
-    					}
-    					newVal[group] = new int[dist.length];
-    					System.arraycopy(dist, 0, newVal[group], 0, dist.length);
-    					newList.add(newVal);
-    				}
-    				/* Shift the values in the current distribution. Find the value > 0 closest to the
-    				 * end (not counting the final position), decrease it by 1, and set the value in
-    				 * the next position to 1 plus whatever was in the tail position (which becomes 0
-    				 * prior to incrementing */
-    				if (dist[dist.length - 1] == itemsPerGroup[group]) {
-    					break;
-    				}
-    				int tail = dist[dist.length - 1];
-    				dist[dist.length - 1] = 0;
-    				for (int i = dist.length - 2; i >= 0; i--) {
-    					if (dist[i] > 0) {
-    						dist[i]--;
-    						dist[i + 1] = tail + 1;
-    						break;
-    					}
-    				}
-    			}
-	    	}
-    		/* Replace the old list with one from this iteration */
-        	list = newList;
-    	}
-    	/* Use generated distributions to produce a new combination list */
-    	List<Map<Integer,Integer>> retVal = new ArrayList<>();
-    	for (int[][] val : list) {
-    		Map<Integer,Integer> newVal = new LinkedHashMap<>(combination);
-    		for (int g = 0; g < val.length; g++) {
-    			for (int i = 0; i < val[g].length; i++) {
-    				if (val[g][i] > 0) {
-    					newVal.put((1 << (g + indexBits)) + keyList.get(i), val[g][i]);
-    					newVal.merge(keyList.get(i), - val[g][i], Integer::sum);
-    					if (newVal.get(keyList.get(i)) <= 0) {
-    						newVal.remove(keyList.get(i));
-    					}
-    				}
-    			}
-    		}
-    		retVal.add(newVal);
-    	}
-    	return retVal;
+        List<Integer> keyList = new ArrayList<>(combination.keySet());
+
+        List<int[][]> list = new ArrayList<>();
+        int[][] initialVal = new int[1][keyList.size()];
+        list.add(initialVal);
+
+        /* Compute distribution for each group sequentially, building on previously calculated
+         * distributions for each successive group. */
+        for (int group = 0; group < itemsPerGroup.length; group++) {
+            /* Create a new list that we will fill out by copying the current values and adding
+             * the next group calculated during this iteration. */
+            List<int[][]> newList = new ArrayList<>();
+            /* Cycle through all previous combinations and add all combinations for current group */
+            for (int[][] prev : list) {
+                /* Initialize array with the number of units at each position that have already been
+                 * assigned to groups. */
+                int[] total = new int[keyList.size()];
+                for (int g = 0; g < prev.length; g++) {
+                    for (int p = 0; p < prev[g].length; p++) {
+                        total[p] += prev[g][p];
+                    }
+                }
+                /* Create an array to track attempted distribution of the current group */
+                int[] dist = new int[keyList.size()];
+                dist[0] = itemsPerGroup[group];
+                /* Shift values through the array until they are all in the final position */
+                while (dist[dist.length - 1] <= itemsPerGroup[group]) {
+                    /* Test whether there is room for the current distribution, and if so add it to
+                     * the list */
+                    boolean hasRoom = true;
+                    for (int i = 0; i < dist.length; i++) {
+                        if (total[i] + dist[i] > combination.get(keyList.get(i))) {
+                            hasRoom = false;
+                            break;
+                        }
+                    }
+                    if (hasRoom) {
+                        int[][] newVal = new int[group + 1][];
+                        System.arraycopy(prev, 0, newVal, 0, group);
+                        newVal[group] = new int[dist.length];
+                        System.arraycopy(dist, 0, newVal[group], 0, dist.length);
+                        newList.add(newVal);
+                    }
+                    /* Shift the values in the current distribution. Find the value > 0 closest to the
+                     * end (not counting the final position), decrease it by 1, and set the value in
+                     * the next position to 1 plus whatever was in the tail position (which becomes 0
+                     * prior to incrementing */
+                    if (dist[dist.length - 1] == itemsPerGroup[group]) {
+                        break;
+                    }
+                    int tail = dist[dist.length - 1];
+                    dist[dist.length - 1] = 0;
+                    for (int i = dist.length - 2; i >= 0; i--) {
+                        if (dist[i] > 0) {
+                            dist[i]--;
+                            dist[i + 1] = tail + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            /* Replace the old list with one from this iteration */
+            list = newList;
+        }
+        /* Use generated distributions to produce a new combination list */
+        List<Map<Integer,Integer>> retVal = new ArrayList<>();
+        for (int[][] val : list) {
+            Map<Integer,Integer> newVal = new LinkedHashMap<>(combination);
+            for (int g = 0; g < val.length; g++) {
+                for (int i = 0; i < val[g].length; i++) {
+                    if (val[g][i] > 0) {
+                        newVal.put((1 << (g + indexBits)) + keyList.get(i), val[g][i]);
+                        newVal.merge(keyList.get(i), - val[g][i], Integer::sum);
+                        if (newVal.get(keyList.get(i)) <= 0) {
+                            newVal.remove(keyList.get(i));
+                        }
+                    }
+                }
+            }
+            retVal.add(newVal);
+        }
+        return retVal;
     }
     
     /**
@@ -972,109 +943,108 @@ public class FormationType {
      */
     private List<List<Map<Integer,Integer>>> findMatchedGroups(Map<Integer,Integer> combination,
             GroupingConstraint groupingCriteria) {
-    	int numUnits = combination.values().stream().mapToInt(Integer::intValue).sum();
+        int numUnits = combination.values().stream().mapToInt(Integer::intValue).sum();
         int size = Math.min(groupingCriteria.getGroupSize(), numUnits);
-    	int numGroups = Math.max(groupingCriteria.getNumGroups(), 1);
-    	if (groupingCriteria.getGroupSize() == 0 && groupingCriteria.getNumGroups() > 0) {
-    	    numGroups = groupingCriteria.getNumGroups();
-    	    size = Math.max(1, numUnits / numGroups);
-    	} else if (groupingCriteria.getNumGroups() == 0 && groupingCriteria.getGroupSize() > 0) {
+        int numGroups = Math.max(groupingCriteria.getNumGroups(), 1);
+        if (groupingCriteria.getGroupSize() == 0 && groupingCriteria.getNumGroups() > 0) {
+            numGroups = groupingCriteria.getNumGroups();
+            size = Math.max(1, numUnits / numGroups);
+        } else if (groupingCriteria.getNumGroups() == 0 && groupingCriteria.getGroupSize() > 0) {
             size = groupingCriteria.getGroupSize();
             numGroups = Math.max(1, numUnits / size);
-    	}
-    	List<Integer> keyList = new ArrayList<>(combination.keySet());
-    	
-    	List<int[][]> list = new ArrayList<>();
-    	int[][] initialVal = new int[1][keyList.size()];
-    	list.add(initialVal);
-    	
-    	/* Compute distribution for each group sequentially, building on previously calculated
-    	 * distributions for each successive group. */
-    	for (int group = 0; group < numGroups; group++) {
-    		/* Create a new list that we will fill out by copying the current values and adding
-    		 * the next group calculated during this iteration. */
-    		List<int[][]> newList = new ArrayList<>();
-    		/* Cycle through all previous combinations and add all combinations for current group */
-    		for (int[][] prev : list) {
-    			/* Initialize array with the number of units at each position that have already been
-    			 * assigned to groups. */
-    			int[] total = new int[keyList.size()];
-    			for (int g = 0; g < prev.length; g++) {
-    				for (int p = 0; p < prev[g].length; p++) {
-    					total[p] += prev[g][p];
-    				}
-    			}
-    			/* Find the starting position for the current group. We don't want to start earlier
-    			 * that the first position that has been assigned to a group; that will be a permutation
-    			 * of a result that has already been calculated. */
+        }
+        List<Integer> keyList = new ArrayList<>(combination.keySet());
 
-    			int startPos = -1;
-    			for (int i = 0; i < total.length; i++) {
-    				if (total[i] > 0) {
-    					startPos = i;
-    					break;
-    				}
-    			}
-    			startPos = Math.max(0, startPos);
-    			
-    			/* Create an array to track attempted distribution of the current group */
-    			int[] dist = new int[keyList.size()];
-    			dist[startPos] = size;
-    			/* Shift values through the array until they are all in the final position */
-    			while (dist[dist.length - 1] <= size) {
-    				/* Test whether there is room for the current distribution, and if so add it to
-    				 * the list */
-    				boolean hasRoom = true;
-    				for (int i = 0; i < dist.length; i++) {
-    					if (total[i] + dist[i] > combination.get(keyList.get(i))) {
-    						hasRoom = false;
-    						break;
-    					}
-    				}
-    				if (hasRoom) {
-    					int[][] newVal = new int[group + 1][];
-    					for (int j = 0; j < group; j++) {
-    						newVal[j] = prev[j];
-    					}
-    					newVal[group] = new int[dist.length];
-    					System.arraycopy(dist, 0, newVal[group], 0, dist.length);
-    					newList.add(newVal);
-    				}
-    				/* Shift the values in the current distribution. Find the value > 0 closest to the
-    				 * end (not counting the final position), decrease it by 1, and set the value in
-    				 * the next position to 1 plus whatever was in the tail position (which becomes 0
-    				 * prior to incrementing */
-    				if (dist[dist.length - 1] == size) {
-    					break;
-    				}
-    				int tail = dist[dist.length - 1];
-    				dist[dist.length - 1] = 0;
-    				for (int i = dist.length - 2; i >= 0; i--) {
-    					if (dist[i] > 0) {
-    						dist[i]--;
-    						dist[i + 1] = tail + 1;
-    						break;
-    					}
-    				}
-    			}
-	    	}
-    		/* Replace the old list with one from this iteration */
-        	list = newList;
-    	}
-    	List<List<Map<Integer,Integer>>> retVal = new ArrayList<>();
-    	for (int[][] grouping : list) {
-    		List<Map<Integer,Integer>> newGrouping = new ArrayList<>();
-    		for (int g = 0; g < grouping.length; g++) {
-    			Map<Integer,Integer> map = new HashMap<>();
-    			for (int p = 0; p < grouping[g].length; p++) {
-    				map.put(keyList.get(p), grouping[g][p]);
-    			}
-    			newGrouping.add(map);
-    		}
-    		retVal.add(newGrouping);
-    	}
-    	
-    	return retVal;
+        List<int[][]> list = new ArrayList<>();
+        int[][] initialVal = new int[1][keyList.size()];
+        list.add(initialVal);
+
+        /* Compute distribution for each group sequentially, building on previously calculated
+         * distributions for each successive group. */
+        for (int group = 0; group < numGroups; group++) {
+            /* Create a new list that we will fill out by copying the current values and adding
+             * the next group calculated during this iteration. */
+            List<int[][]> newList = new ArrayList<>();
+            /* Cycle through all previous combinations and add all combinations for current group */
+            for (int[][] prev : list) {
+                /* Initialize array with the number of units at each position that have already been
+                 * assigned to groups. */
+                int[] total = new int[keyList.size()];
+                for (int g = 0; g < prev.length; g++) {
+                    for (int p = 0; p < prev[g].length; p++) {
+                        total[p] += prev[g][p];
+                    }
+                }
+                /* Find the starting position for the current group. We don't want to start earlier
+                 * that the first position that has been assigned to a group; that will be a permutation
+                 * of a result that has already been calculated. */
+
+                int startPos = -1;
+                for (int i = 0; i < total.length; i++) {
+                    if (total[i] > 0) {
+                        startPos = i;
+                        break;
+                    }
+                }
+                startPos = Math.max(0, startPos);
+
+                /* Create an array to track attempted distribution of the current group */
+                int[] dist = new int[keyList.size()];
+                dist[startPos] = size;
+                /* Shift values through the array until they are all in the final position */
+                while (dist[dist.length - 1] <= size) {
+                    /* Test whether there is room for the current distribution, and if so add it to
+                     * the list */
+                    boolean hasRoom = true;
+                    for (int i = 0; i < dist.length; i++) {
+                        if (total[i] + dist[i] > combination.get(keyList.get(i))) {
+                            hasRoom = false;
+                            break;
+                        }
+                    }
+
+                    if (hasRoom) {
+                        int[][] newVal = new int[group + 1][];
+                        System.arraycopy(prev, 0, newVal, 0, group);
+                        newVal[group] = new int[dist.length];
+                        System.arraycopy(dist, 0, newVal[group], 0, dist.length);
+                        newList.add(newVal);
+                    }
+                    /* Shift the values in the current distribution. Find the value > 0 closest to the
+                     * end (not counting the final position), decrease it by 1, and set the value in
+                     * the next position to 1 plus whatever was in the tail position (which becomes 0
+                     * prior to incrementing */
+                    if (dist[dist.length - 1] == size) {
+                        break;
+                    }
+                    int tail = dist[dist.length - 1];
+                    dist[dist.length - 1] = 0;
+                    for (int i = dist.length - 2; i >= 0; i--) {
+                        if (dist[i] > 0) {
+                            dist[i]--;
+                            dist[i + 1] = tail + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            /* Replace the old list with one from this iteration */
+            list = newList;
+        }
+        List<List<Map<Integer,Integer>>> retVal = new ArrayList<>();
+        for (int[][] grouping : list) {
+            List<Map<Integer,Integer>> newGrouping = new ArrayList<>();
+            for (int g = 0; g < grouping.length; g++) {
+                Map<Integer,Integer> map = new HashMap<>();
+                for (int p = 0; p < grouping[g].length; p++) {
+                    map.put(keyList.get(p), grouping[g][p]);
+                }
+                newGrouping.add(map);
+            }
+            retVal.add(newGrouping);
+        }
+
+        return retVal;
     }
     
     /**
@@ -1084,66 +1054,66 @@ public class FormationType {
      * @return		Whether the list of units meets the qualifications for this formation.
      */
     public boolean qualifies(List<MechSummary> units) {
-    	if (units.stream().anyMatch(ms -> !isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType())))) {
-    		return false;
-    	}
-    	if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-    		if (units.stream().allMatch(ms -> idealRole.equals(UnitRoleHandler.getRoleFor(ms)))) {
-    			return true;
-    		}
-    	}
-    	for (MechSummary ms : units) {
-    		if (!mainCriteria.test(ms)
-    				|| ms.getWeightClass() < minWeightClass
-    				|| ms.getWeightClass() > maxWeightClass) {
-    			return false;
-    		}
-    	}
-    	for (int i = 0; i < otherCriteria.size(); i++) {
-    		final Constraint c = otherCriteria.get(i);
-    		if (c.isPairedWithPrevious()) {
-    			continue;
-    		}
-			long matches = units.stream().filter(ms -> c.matches(ms)).count();
-			if (matches < c.getMinimum(units.size())) {
-				if (c.isPairedWithNext() && i + 1 < otherCriteria.size()) {
-					i++;
-				} else {
-					return false;
-				}
-			}
-    	}
-		if (groupingCriteria != null) {
-			/* First group by chassis, then test whether each group fulfills the requirement.
-			 * If not, regroup by name. */
-			List<MechSummary> groupedUnits = units.stream()
-					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
-					.collect(Collectors.toList());
-			if (groupedUnits.size() > 0) {
-				Map<String,List<MechSummary>> groups = groupedUnits.stream()
-						.collect(Collectors.groupingBy(ms -> ms.getChassis()));
-				GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
-					for (int i = 0; i < group.size() - 1; i++) {
-						for (int j = i + 1; j < group.size(); j++) {
-							if (!groupingCriteria.matches(group.get(i), group.get(j))) {
-								groups = groupedUnits.stream()
-										.collect(Collectors.groupingBy(ms -> ms.getName()));
-								break GROUP_LOOP;
-							}
-						}
-					}
-				}
-				int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
-		    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
-		    	/* Allow for the possibility that two or more groups may be identical */
-		    	int groupCount = 0;
-		    	for (List<MechSummary> g : groups.values()) {
-		    		groupCount += g.size() / groupSize;
-		    	}
-		    	return groupCount >= numGroups;
-			}
-		}
-		return true;    	
+        if (units.stream().anyMatch(ms -> !isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType())))) {
+            return false;
+        }
+        if (!idealRole.equals(UnitRole.UNDETERMINED)) {
+            if (units.stream().allMatch(ms -> idealRole.equals(UnitRoleHandler.getRoleFor(ms)))) {
+                return true;
+            }
+        }
+        for (MechSummary ms : units) {
+            if (!mainCriteria.test(ms)
+                    || ms.getWeightClass() < minWeightClass
+                    || ms.getWeightClass() > maxWeightClass) {
+                return false;
+            }
+        }
+        for (int i = 0; i < otherCriteria.size(); i++) {
+            final Constraint c = otherCriteria.get(i);
+            if (c.isPairedWithPrevious()) {
+                continue;
+            }
+            long matches = units.stream().filter(c::matches).count();
+            if (matches < c.getMinimum(units.size())) {
+                if (c.isPairedWithNext() && i + 1 < otherCriteria.size()) {
+                    i++;
+                } else {
+                    return false;
+                }
+            }
+        }
+        if (groupingCriteria != null) {
+            /* First group by chassis, then test whether each group fulfills the requirement.
+             * If not, regroup by name. */
+            List<MechSummary> groupedUnits = units.stream()
+                    .filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
+                    .collect(Collectors.toList());
+            if (groupedUnits.size() > 0) {
+                Map<String,List<MechSummary>> groups = groupedUnits.stream()
+                        .collect(Collectors.groupingBy(MechSummary::getChassis));
+                GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
+                    for (int i = 0; i < group.size() - 1; i++) {
+                        for (int j = i + 1; j < group.size(); j++) {
+                            if (!groupingCriteria.matches(group.get(i), group.get(j))) {
+                                groups = groupedUnits.stream()
+                                        .collect(Collectors.groupingBy(MechSummary::getName));
+                                break GROUP_LOOP;
+                            }
+                        }
+                    }
+                }
+                int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+                int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
+                /* Allow for the possibility that two or more groups may be identical */
+                int groupCount = 0;
+                for (List<MechSummary> g : groups.values()) {
+                    groupCount += g.size() / groupSize;
+                }
+                return groupCount >= numGroups;
+            }
+        }
+        return true;
     }
     
     /**
@@ -1153,163 +1123,169 @@ public class FormationType {
      * @return		Whether the list of units meets the qualifications for this formation.
      */
     public String qualificationReport(List<MechSummary> units) {
-    	List<MechSummary> wrongUnits = new ArrayList<>();
-    	List<MechSummary> ideal = new ArrayList<>();
-    	List<MechSummary> weight = new ArrayList<>();
-    	List<MechSummary> main = new ArrayList<>();
-    	List<List<MechSummary>> other = new ArrayList<>();
-    	for (int i = 0; i < otherCriteria.size(); i++) {
-    		other.add(new ArrayList<>());
-    	}
-    			
-    	for (MechSummary ms : units) {
-    		if (!isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType()))) {
-    			wrongUnits.add(ms);
-    		}
-    		if (!idealRole.equals(UnitRole.UNDETERMINED)
-    				&& idealRole.equals(UnitRoleHandler.getRoleFor(ms))) {
-    			ideal.add(ms);
-    		}
-    		if (ms.getWeightClass() >= minWeightClass
-    				&& ms.getWeightClass() <= maxWeightClass) {
-    			weight.add(ms);
-    		}
-    		if (mainCriteria.test(ms)) {
-    			main.add(ms);
-    		}
-    		for (int i = 0; i < otherCriteria.size(); i++) {
-    			if (otherCriteria.get(i).matches(ms)) {
-    				other.get(i).add(ms);
-    			}
-    		}
-    	}
-    	StringBuilder sb = new StringBuilder("<html>");
-    	if (wrongUnits.size() > 0) {
-    		sb.append("<font color='red'>Wrong unit type:</font>\n\t");
-    		sb.append(wrongUnits.stream().map(ms -> ms.getName()).collect(Collectors.joining("\n\t")))
-    			.append("<br/><br/>\n");
-    	}
-    	sb.append("Unit Roles:<br/>\n&nbsp;&nbsp;&nbsp;");
-    	sb.append(units.stream().map(ms -> ms.getName() + ": " + UnitRoleHandler.getRoleFor(ms))
-    		.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
-    	if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-    		sb.append("Ideal role: ").append(idealRole.toString()).append("<br/><br/>\n");
-    	}
-    	if (weight.size() < units.size()) {
-    		sb.append("<font color='red'>");
-    	}
-    	sb.append("Weight class ")
-    		.append(EntityWeightClass.getClassName(Math.max(minWeightClass, EntityWeightClass.WEIGHT_LIGHT)))
-    		.append("-")
-    		.append(EntityWeightClass.getClassName(Math.min(maxWeightClass, EntityWeightClass.WEIGHT_ASSAULT)))
-    		.append("<br/>\n");
-    	if (weight.size() < units.size()) {
-    		sb.append("</font>");
-    	}
-    	if (weight.size() > 0) {
-    		sb.append("&nbsp;&nbsp;&nbsp;").append(weight.stream().map(ms -> ms.getName() + ": "
-    				+ EntityWeightClass.getClassName(ms.getWeightClass()))
-    				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
-    	} else {
-    		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
-    	}
-    	if (mainDescription != null) {
-        	if (main.size() < units.size()) {
-        		sb.append("<font color='red'>");
-        	}
-        	sb.append(mainDescription).append(" (").append(units.size()).append(")<br/>\n");
-        	if (main.size() < units.size()) {
-        		sb.append("</font>");
-        	}
-        	if (main.size() > 0) {
-        		sb.append("&nbsp;&nbsp;&nbsp;").append("\t").append(main.stream().map(ms -> ms.getName())
-        				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
-        	} else {
-        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
-        	}
-    	}
-    	for (int i = 0; i < otherCriteria.size(); i++) {
-    		boolean isShort = false;
-    		if (other.get(i).size() < otherCriteria.get(i).getMinimum(units.size())) {
-    			if (otherCriteria.get(i).isPairedWithNext()) {
-    				isShort = i + 1 < otherCriteria.size()
-    						&& other.get(i + 1).size() < otherCriteria.get(i + 1).getMinimum(units.size());
-    			} else if (otherCriteria.get(i).isPairedWithPrevious()) {
-    				isShort = i - 1 > 0
-    						&& other.get(i - 1).size() < otherCriteria.get(i - 1).getMinimum(units.size());
-    			} else {
-    				isShort = true;
-    			}
-    		}
-        	if (isShort) {
-        		sb.append("<font color='red'>");
-        	}
-        	if (otherCriteria.get(i).isPairedWithPrevious()) {
-        		sb.append("<b>or</b> ");
-        	}
-    		sb.append(otherCriteria.get(i).description).append(" (")
-    			.append(otherCriteria.get(i).getMinimum(units.size())).append(")");
-    		sb.append("<br />\n");
-        	if (isShort) {
-        		sb.append("</font>");
-        	}
-        	if (other.get(i).size() > 0) {
-        		sb.append("&nbsp;&nbsp;&nbsp;").append(other.get(i).stream().map(ms -> ms.getName())
-        				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
-        	} else {
-        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
-        	}
-    	}
-    	if (groupingCriteria != null) {
-			List<MechSummary> groupedUnits = units.stream()
-					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
-					.collect(Collectors.toList());
-			if (groupedUnits.size() > 0) {
-				Map<String,List<MechSummary>> groups = groupedUnits.stream()
-						.collect(Collectors.groupingBy(ms -> ms.getChassis()));
-				GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
-					for (int i = 0; i < group.size() - 1; i++) {
-						for (int j = i + 1; j < group.size(); j++) {
-							if (!groupingCriteria.matches(group.get(i), group.get(j))) {
-								groups = groupedUnits.stream()
-										.collect(Collectors.groupingBy(ms -> ms.getName()));
-								break GROUP_LOOP;
-							}
-						}
-					}
-				}
-				int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
-		    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
-		    	/* Allow for the possibility that two or more groups may be identical */
-		    	int groupCount = 0;
-		    	for (List<MechSummary> g : groups.values()) {
-		    		groupCount += g.size() / groupSize;
-		    	}
-		    	if (groupCount < numGroups) {
-		    		sb.append("<font color='red'>");
-		    	}
-		    	sb.append(groupingCriteria.getDescription()).append(" (").append(numGroups)
-		    		.append("x").append(groupSize).append(")");
-		    	if (groupCount < numGroups) {
-		    		sb.append("</font>");
-		    	}
-		    	sb.append("<br/>\n");
-		    	if (groupCount > 0) {
-			    	for (String groupName : groups.keySet()) {
-			    		int size = groups.get(groupName).size();
-			    		while (size >= groupSize) {
-			    			sb.append("&nbsp;&nbsp;&nbsp;").append(groupName)
-			    				.append(" (").append(groupSize).append(")<br/>\n");
-			    			size -= groupSize;
-			    		}
-			    	}
-	        	} else {
-	        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
-		    	}
-			}
-    	}
-    	sb.append("</html>");
-    	return sb.toString();
+        List<MechSummary> wrongUnits = new ArrayList<>();
+        List<MechSummary> weight = new ArrayList<>();
+        List<MechSummary> main = new ArrayList<>();
+        List<List<MechSummary>> other = new ArrayList<>();
+        for (int i = 0; i < otherCriteria.size(); i++) {
+            other.add(new ArrayList<>());
+        }
+
+        for (MechSummary ms : units) {
+            if (!isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType()))) {
+                wrongUnits.add(ms);
+            }
+
+            if (ms.getWeightClass() >= minWeightClass
+                    && ms.getWeightClass() <= maxWeightClass) {
+                weight.add(ms);
+            }
+
+            if (mainCriteria.test(ms)) {
+                main.add(ms);
+            }
+
+            for (int i = 0; i < otherCriteria.size(); i++) {
+                if (otherCriteria.get(i).matches(ms)) {
+                    other.get(i).add(ms);
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder("<html>");
+        if (!wrongUnits.isEmpty()) {
+            sb.append("<font color='red'>Wrong unit type:</font>\n\t");
+            sb.append(wrongUnits.stream().map(MechSummary::getName).collect(Collectors.joining("\n\t")))
+                .append("<br/><br/>\n");
+        }
+        sb.append("Unit Roles:<br/>\n&nbsp;&nbsp;&nbsp;");
+        sb.append(units.stream().map(ms -> ms.getName() + ": " + UnitRoleHandler.getRoleFor(ms))
+            .collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
+        if (!idealRole.equals(UnitRole.UNDETERMINED)) {
+            sb.append("Ideal role: ").append(idealRole).append("<br/><br/>\n");
+        }
+
+        if (weight.size() < units.size()) {
+            sb.append("<font color='red'>");
+        }
+        sb.append("Weight class ")
+            .append(EntityWeightClass.getClassName(Math.max(minWeightClass, EntityWeightClass.WEIGHT_LIGHT)))
+            .append("-")
+            .append(EntityWeightClass.getClassName(Math.min(maxWeightClass, EntityWeightClass.WEIGHT_ASSAULT)))
+            .append("<br/>\n");
+        if (weight.size() < units.size()) {
+            sb.append("</font>");
+        }
+
+        if (!weight.isEmpty()) {
+            sb.append("&nbsp;&nbsp;&nbsp;").append(weight.stream().map(ms -> ms.getName() + ": "
+                    + EntityWeightClass.getClassName(ms.getWeightClass()))
+                    .collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
+        } else {
+            sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
+        }
+
+        if (mainDescription != null) {
+            if (main.size() < units.size()) {
+                sb.append("<font color='red'>");
+            }
+            sb.append(mainDescription).append(" (").append(units.size()).append(")<br/>\n");
+            if (main.size() < units.size()) {
+                sb.append("</font>");
+            }
+
+            if (!main.isEmpty()) {
+                sb.append("&nbsp;&nbsp;&nbsp;").append("\t").append(main.stream().map(MechSummary::getName)
+                        .collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
+            } else {
+                sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
+            }
+        }
+
+        for (int i = 0; i < otherCriteria.size(); i++) {
+            boolean isShort = false;
+            if (other.get(i).size() < otherCriteria.get(i).getMinimum(units.size())) {
+                if (otherCriteria.get(i).isPairedWithNext()) {
+                    isShort = i + 1 < otherCriteria.size()
+                            && other.get(i + 1).size() < otherCriteria.get(i + 1).getMinimum(units.size());
+                } else if (otherCriteria.get(i).isPairedWithPrevious()) {
+                    isShort = i - 1 > 0
+                            && other.get(i - 1).size() < otherCriteria.get(i - 1).getMinimum(units.size());
+                } else {
+                    isShort = true;
+                }
+            }
+            if (isShort) {
+                sb.append("<font color='red'>");
+            }
+
+            if (otherCriteria.get(i).isPairedWithPrevious()) {
+                sb.append("<b>or</b> ");
+            }
+            sb.append(otherCriteria.get(i).description).append(" (")
+                .append(otherCriteria.get(i).getMinimum(units.size())).append(")");
+            sb.append("<br />\n");
+            if (isShort) {
+                sb.append("</font>");
+            }
+
+            if (other.get(i).size() > 0) {
+                sb.append("&nbsp;&nbsp;&nbsp;").append(other.get(i).stream().map(MechSummary::getName)
+                        .collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
+            } else {
+                sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
+            }
+        }
+
+        if (groupingCriteria != null) {
+            List<MechSummary> groupedUnits = units.stream()
+                    .filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
+                    .collect(Collectors.toList());
+            if (groupedUnits.size() > 0) {
+                Map<String,List<MechSummary>> groups = groupedUnits.stream()
+                        .collect(Collectors.groupingBy(MechSummary::getChassis));
+                GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
+                    for (int i = 0; i < group.size() - 1; i++) {
+                        for (int j = i + 1; j < group.size(); j++) {
+                            if (!groupingCriteria.matches(group.get(i), group.get(j))) {
+                                groups = groupedUnits.stream()
+                                        .collect(Collectors.groupingBy(MechSummary::getName));
+                                break GROUP_LOOP;
+                            }
+                        }
+                    }
+                }
+                int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+                int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
+                /* Allow for the possibility that two or more groups may be identical */
+                int groupCount = 0;
+                for (List<MechSummary> g : groups.values()) {
+                    groupCount += g.size() / groupSize;
+                }
+                if (groupCount < numGroups) {
+                    sb.append("<font color='red'>");
+                }
+                sb.append(groupingCriteria.getDescription()).append(" (").append(numGroups)
+                    .append("x").append(groupSize).append(")");
+                if (groupCount < numGroups) {
+                    sb.append("</font>");
+                }
+                sb.append("<br/>\n");
+                if (groupCount > 0) {
+                    for (String groupName : groups.keySet()) {
+                        int size = groups.get(groupName).size();
+                        while (size >= groupSize) {
+                            sb.append("&nbsp;&nbsp;&nbsp;").append(groupName)
+                                .append(" (").append(groupSize).append(")<br/>\n");
+                            size -= groupSize;
+                        }
+                    }
+                } else {
+                    sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
+                }
+            }
+        }
+        sb.append("</html>");
+        return sb.toString();
     }
 
     public static void createFormationTypes() {
@@ -1380,10 +1356,10 @@ public class FormationType {
         c.setPairedWithNext(true);
         ft.otherCriteria.add(c);
         c = new CountConstraint(2, ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.SNIPER),
-        		"Sniper");
+                "Sniper");
         c.setPairedWithPrevious(true);
         ft.otherCriteria.add(c);
-        ft.reportMetrics.put("Armor", ms -> ms.getTotalArmor());
+        ft.reportMetrics.put("Armor", MechSummary::getTotalArmor);
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1396,7 +1372,7 @@ public class FormationType {
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
         ft.mainDescription = "Armor 40+";
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ACWeapon
                             || eq instanceof LBXACWeapon
                             || eq instanceof UACWeapon
@@ -1510,7 +1486,7 @@ public class FormationType {
                 ms -> ms.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY,
                 "Medium, Heavy"));
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ACWeapon
                             || eq instanceof LBXACWeapon
                             || eq instanceof UACWeapon), //UAC includes RAC
@@ -1854,11 +1830,10 @@ public class FormationType {
         FormationType ft = new FormationType("Electronic Warfare Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
-                ms -> ms.getEquipmentNames().stream().map(en -> EquipmentType.get(en))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                 .anyMatch(et -> et instanceof TAGWeapon ||  
                         (et instanceof MiscType &&
-                            (((MiscType)et).hasFlag(MiscType.F_BAP)
-                            || ((MiscType)et).hasFlag(MiscType.F_ECM)))),
+                            (et.hasFlag(MiscType.F_BAP) || et.hasFlag(MiscType.F_ECM)))),
                 "Probe, ECM, TAG"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
@@ -1959,6 +1934,7 @@ public class FormationType {
         public String getDescription() {
             return description;
         }
+
         public boolean matches(MechSummary ms) {
             return criterion.test(ms);
         }
@@ -1969,19 +1945,19 @@ public class FormationType {
          * appropriate flag.
          */
         public boolean isPairedWithPrevious() {
-        	return pairedWithPrevious;
+            return pairedWithPrevious;
         }
         
         public void setPairedWithPrevious(boolean paired) {
-        	pairedWithPrevious = paired;
+            pairedWithPrevious = paired;
         }
 
         public boolean isPairedWithNext() {
-        	return pairedWithNext;
+            return pairedWithNext;
         }
         
         public void setPairedWithNext(boolean paired) {
-        	pairedWithNext = paired;
+            pairedWithNext = paired;
         }
     }
     
@@ -2002,7 +1978,7 @@ public class FormationType {
     private static class MaxCountConstraint extends CountConstraint {
         
         public MaxCountConstraint(int max, Predicate<MechSummary> criterion, String description) {
-            super(max, ms -> !criterion.test(ms), description);
+            super(max, criterion.negate(), description);
         }
         
         @Override
@@ -2021,21 +1997,7 @@ public class FormationType {
         
         @Override
         public int getMinimum(int unitSize) {
-            return (int)Math.ceil(pct * unitSize);
-        }
-    }
-    
-    @SuppressWarnings("unused")
-    private static class MaxPercentConstraint extends PercentConstraint {
-        
-        public MaxPercentConstraint(double max, Predicate<MechSummary> criterion,
-                String description) {
-            super(max, ms -> !criterion.test(ms), description);
-        }
-        
-        @Override
-        public int getMinimum(int unitSize) {
-            return unitSize - (int)Math.ceil(pct * unitSize);
+            return (int) Math.ceil(pct * unitSize);
         }
     }
     
@@ -2088,6 +2050,7 @@ public class FormationType {
             return groupSize;
         }
         
+        @Override
         public boolean matches(MechSummary ms) {
             return criterion == null || criterion.test(ms);
         }

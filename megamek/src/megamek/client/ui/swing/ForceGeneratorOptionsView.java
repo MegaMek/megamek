@@ -1,18 +1,23 @@
-/**
- * 
- */
 package megamek.client.ui.swing;
 
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import megamek.client.ratgenerator.*;
+import megamek.client.ui.Messages;
+import megamek.common.*;
+import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -20,53 +25,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.ProgressMonitor;
-import javax.swing.SwingWorker;
-import javax.swing.UIManager;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-
-import megamek.MegaMek;
-import megamek.client.ratgenerator.AbstractUnitRecord;
-import megamek.client.ratgenerator.CrewDescriptor;
-import megamek.client.ratgenerator.FactionRecord;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.ForceNode;
-import megamek.client.ratgenerator.MissionRole;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.client.ratgenerator.TOCNode;
-import megamek.client.ratgenerator.ValueNode;
-import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.UnitType;
-import megamek.common.options.OptionsConstants;
-
 /**
  * Controls to set options for force generator.
  * 
  * @author Neoancient
- *
  */
-
-
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
-
     private static final long serialVersionUID = 5269823128861856001L;
 
     private int currentYear;
@@ -159,79 +123,79 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc);
         txtYear = new JTextField();
         txtYear.setEditable(true);
         txtYear.setText(Integer.toString(currentYear));
-        txtYear.setToolTipText(Messages.getString("ForceGeneratorDialog.year.tooltip")); //$NON-NLS-1$
+        txtYear.setToolTipText(Messages.getString("ForceGeneratorDialog.year.tooltip"));
         gbc.gridx = 1;
         gbc.gridy = y++;
         add(txtYear, gbc);
         txtYear.addFocusListener(this);
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
         cbFaction = new JComboBox<>();
         cbFaction.setRenderer(factionRenderer);
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbFaction, gbc);
-        cbFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.faction.tooltip")); //$NON-NLS-1$
+        cbFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.faction.tooltip"));
         cbFaction.addActionListener(this);
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc);
         cbSubfaction = new JComboBox<>();
         cbSubfaction.setRenderer(factionRenderer);
         gbc.gridx = 3;
         gbc.gridy = y++;
         add(cbSubfaction, gbc);
-        cbSubfaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip")); //$NON-NLS-1$
+        cbSubfaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip"));
         cbSubfaction.addActionListener(this);
 
         gbc.gridx = 0;
         gbc.gridy = y;
         add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
-        cbUnitType = new JComboBox<Integer>();
-        cbUnitType.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.combined"), //$NON-NLS-1$
-                ut -> UnitType.getTypeName(ut)));
+        cbUnitType = new JComboBox<>();
+        cbUnitType.setRenderer(new CBRenderer<>(Messages.getString("ForceGeneratorDialog.combined"),
+                UnitType::getTypeName));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbUnitType, gbc);
-        cbUnitType.setToolTipText(Messages.getString("ForceGeneratorDialog.unitType.tooltip")); //$NON-NLS-1$
+        cbUnitType.setToolTipText(Messages.getString("ForceGeneratorDialog.unitType.tooltip"));
         cbUnitType.addActionListener(this);
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc);
         cbFormation = new JComboBox<>();
-        cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"), //$NON-NLS-1$
+        cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
                 f -> formationDisplayNames.get(f)));
         gbc.gridx = 3;
         gbc.gridy = y++;
         add(cbFormation, gbc);
-        cbFormation.setToolTipText(Messages.getString("ForceGeneratorDialog.formation.tooltip")); //$NON-NLS-1$
+        cbFormation.setToolTipText(Messages.getString("ForceGeneratorDialog.formation.tooltip"));
         cbFormation.addActionListener(this);
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
         cbRating = new JComboBox<>();
-        cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"), //$NON-NLS-1$
+        cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
                 r -> ratingDisplayNames.get(r)));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbRating, gbc);
-        cbRating.setToolTipText(Messages.getString("ForceGeneratorDialog.rating.tooltip")); //$NON-NLS-1$
+        cbRating.setToolTipText(Messages.getString("ForceGeneratorDialog.rating.tooltip"));
         cbRating.addActionListener(this);
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.weight")), gbc); //$NON-NLS-1$
-        cbWeightClass = new JComboBox<Integer>();
-        cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"), //$NON-NLS-1$
-                wc -> EntityWeightClass.getClassName(wc)));
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.weight")), gbc);
+        cbWeightClass = new JComboBox<>();
+        cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
+                EntityWeightClass::getClassName));
         cbWeightClass.addItem(null);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_LIGHT);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_MEDIUM);
@@ -240,41 +204,40 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 3;
         gbc.gridy = y++;
         add(cbWeightClass, gbc);
-        cbWeightClass.setToolTipText(Messages.getString("ForceGeneratorDialog.weight.tooltip")); //$NON-NLS-1$
+        cbWeightClass.setToolTipText(Messages.getString("ForceGeneratorDialog.weight.tooltip"));
         cbWeightClass.addActionListener(this);
 
         gbc.gridx = 0;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.other")), gbc); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.other")), gbc);
         cbFlags = new JComboBox<>();
-        cbFlags.setRenderer(new CBRenderer<String>("---",
-                f -> flagDisplayNames.get(f)));
+        cbFlags.setRenderer(new CBRenderer<String>("---", f -> flagDisplayNames.get(f)));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(cbFlags, gbc);
-        cbFlags.setToolTipText(Messages.getString("ForceGeneratorDialog.other.tooltip")); //$NON-NLS-1$
+        cbFlags.setToolTipText(Messages.getString("ForceGeneratorDialog.other.tooltip"));
         cbFlags.addActionListener(this);
 
         gbc.gridx = 2;
         gbc.gridy = y;
-        add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc); //$NON-NLS-1$
-        cbExperience = new JComboBox<String>();
-        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random")); //$NON-NLS-1$
-        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green")); //$NON-NLS-1$
-        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular")); //$NON-NLS-1$
-        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran")); //$NON-NLS-1$
-        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite")); //$NON-NLS-1$
+        add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc);
+        cbExperience = new JComboBox<>();
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random"));
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green"));
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular"));
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran"));
+        cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite"));
         gbc.gridx = 3;
         gbc.gridy = y++;
         add(cbExperience, gbc);
-        cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip")); //$NON-NLS-1$
+        cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip"));
         cbExperience.addActionListener(this);
 
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.gridwidth = 2;
-        chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces")); //$NON-NLS-1$
-        chkAttachments.setToolTipText(Messages.getString("ForceGeneratorDialog.includeSupportForces.tooltip")); //$NON-NLS-1$
+        chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces"));
+        chkAttachments.setToolTipText(Messages.getString("ForceGeneratorDialog.includeSupportForces.tooltip"));
         chkAttachments.setSelected(true);
         add(chkAttachments, gbc);
 
@@ -300,14 +263,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridy = y++;
 
         JPanel panTransport = new JPanel(new GridLayout(3, 2));
-        txtDropshipPct = new JTextField("0"); //$NON-NLS-1$
-        txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip")); //$NON-NLS-1$
-        txtJumpshipPct = new JTextField("0"); //$NON-NLS-1$
-        txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip")); //$NON-NLS-1$
+        txtDropshipPct = new JTextField("0");
+        txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip"));
+        txtJumpshipPct = new JTextField("0");
+        txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip"));
         txtCargo = new JTextField("0");
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage"))); //$NON-NLS-1$
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
         panTransport.add(txtDropshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage"))); //$NON-NLS-1$
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
         // Cargo needs more work to select cargo dropships.
         //        panTransport.add(new JLabel("Cargo Tonnage:"));
@@ -315,11 +278,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
-        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport"))); //$NON-NLS-1$
+        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
         add(panTransport, gbc);
 
-        btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate")); //$NON-NLS-1$
-        btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip")); //$NON-NLS-1$
+        btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
+        btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip"));
         gbc.gridx = 0;
         gbc.gridy = y;
         gbc.gridwidth = 1;
@@ -327,16 +290,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         add(btnGenerate, gbc);
         btnGenerate.addActionListener(this);
 
-        btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL")); //$NON-NLS-1$
-        btnExportMUL.setToolTipText(Messages.getString("ForceGeneratorDialog.exportMUL.tooltip")); //$NON-NLS-1$
+        btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
+        btnExportMUL.setToolTipText(Messages.getString("ForceGeneratorDialog.exportMUL.tooltip"));
         gbc.gridx = 1;
         gbc.gridy = y;
         add(btnExportMUL, gbc);
         btnExportMUL.addActionListener(this);
         btnExportMUL.setEnabled(false);
 
-        btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear")); //$NON-NLS-1$
-        btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip")); //$NON-NLS-1$
+        btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear"));
+        btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip"));
         gbc.gridx = 2;
         gbc.gridy = y;
         gbc.weighty = 1.0;
@@ -498,77 +461,80 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         fd.setAttachments(chkAttachments.isSelected());
         if (forceDesc.getUnitType() != null) {
             switch (forceDesc.getUnitType()) {
-            case UnitType.MEK:case UnitType.TANK:
-                if (chkRoleRecon.isSelected()) {
-                    fd.getRoles().add(MissionRole.RECON);
-                }
-                if (chkRoleFireSupport.isSelected()) {
-                    fd.getRoles().add(MissionRole.FIRE_SUPPORT);
-                }
-                if (chkRoleUrban.isSelected()) {
-                    fd.getRoles().add(MissionRole.URBAN);
-                }
-                if (chkRoleInfantrySupport.isSelected()) {
-                    fd.getRoles().add(MissionRole.INF_SUPPORT);
-                }
-                if (chkRoleCavalry.isSelected()) {
-                    fd.getRoles().add(MissionRole.CAVALRY);
-                }
-                if (chkRoleRaider.isSelected()) {
-                    fd.getRoles().add(MissionRole.RAIDER);
-                }
-                if (chkRoleIncindiary.isSelected()) {
-                    fd.getRoles().add(MissionRole.INCENDIARY);
-                }
-                if (chkRoleAntiAircraft.isSelected()) {
-                    fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
-                }
-                if (chkRoleAntiInfantry.isSelected()) {
-                    fd.getRoles().add(MissionRole.ANTI_INFANTRY);
-                }			
-                if (chkRoleArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.ARTILLERY);
-                }
-                if (chkRoleMissileArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                }
-                if (chkRoleTransport.isSelected()) {
-                    fd.getRoles().add(MissionRole.CARGO);
-                }
-                if (chkRoleEngineer.isSelected()) {
-                    fd.getRoles().add(MissionRole.ENGINEER);
-                }
-                break;
-            case UnitType.INFANTRY:
-            case UnitType.BATTLE_ARMOR:
-                if (chkRoleFieldGun.isSelected()) {
-                    fd.getRoles().add(MissionRole.FIELD_GUN);
-                }
-                if (chkRoleFieldArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.ARTILLERY);
-                }
-                if (chkRoleFieldMissileArtillery.isSelected()) {
-                    fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
-                }
-                break;
-            case UnitType.AERO:
-                if (chkRoleAirRecon.isSelected()) {
-                    fd.getRoles().add(MissionRole.RECON);
-                }
-                if (chkRoleGroundSupport.isSelected()) {
-                    fd.getRoles().add(MissionRole.GROUND_SUPPORT);
-                }
-                if (chkRoleInterceptor.isSelected()) {
-                    fd.getRoles().add(MissionRole.INTERCEPTOR);
-                }
-                if (chkRoleAssault.isSelected()) {
-                    fd.getRoles().add(MissionRole.ASSAULT);
-                }
-                if (chkRoleAirTransport.isSelected()) {
-                    fd.getRoles().add(MissionRole.CARGO);
-                }
+                case UnitType.MEK:
+                case UnitType.TANK:
+                    if (chkRoleRecon.isSelected()) {
+                        fd.getRoles().add(MissionRole.RECON);
+                    }
+                    if (chkRoleFireSupport.isSelected()) {
+                        fd.getRoles().add(MissionRole.FIRE_SUPPORT);
+                    }
+                    if (chkRoleUrban.isSelected()) {
+                        fd.getRoles().add(MissionRole.URBAN);
+                    }
+                    if (chkRoleInfantrySupport.isSelected()) {
+                        fd.getRoles().add(MissionRole.INF_SUPPORT);
+                    }
+                    if (chkRoleCavalry.isSelected()) {
+                        fd.getRoles().add(MissionRole.CAVALRY);
+                    }
+                    if (chkRoleRaider.isSelected()) {
+                        fd.getRoles().add(MissionRole.RAIDER);
+                    }
+                    if (chkRoleIncindiary.isSelected()) {
+                        fd.getRoles().add(MissionRole.INCENDIARY);
+                    }
+                    if (chkRoleAntiAircraft.isSelected()) {
+                        fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);
+                    }
+                    if (chkRoleAntiInfantry.isSelected()) {
+                        fd.getRoles().add(MissionRole.ANTI_INFANTRY);
+                    }
+                    if (chkRoleArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.ARTILLERY);
+                    }
+                    if (chkRoleMissileArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
+                    }
+                    if (chkRoleTransport.isSelected()) {
+                        fd.getRoles().add(MissionRole.CARGO);
+                    }
+                    if (chkRoleEngineer.isSelected()) {
+                        fd.getRoles().add(MissionRole.ENGINEER);
+                    }
+                    break;
+                case UnitType.INFANTRY:
+                case UnitType.BATTLE_ARMOR:
+                    if (chkRoleFieldGun.isSelected()) {
+                        fd.getRoles().add(MissionRole.FIELD_GUN);
+                    }
+                    if (chkRoleFieldArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.ARTILLERY);
+                    }
+                    if (chkRoleFieldMissileArtillery.isSelected()) {
+                        fd.getRoles().add(MissionRole.MISSILE_ARTILLERY);
+                    }
+                    break;
+                case UnitType.AERO:
+                    if (chkRoleAirRecon.isSelected()) {
+                        fd.getRoles().add(MissionRole.RECON);
+                    }
+                    if (chkRoleGroundSupport.isSelected()) {
+                        fd.getRoles().add(MissionRole.GROUND_SUPPORT);
+                    }
+                    if (chkRoleInterceptor.isSelected()) {
+                        fd.getRoles().add(MissionRole.INTERCEPTOR);
+                    }
+                    if (chkRoleAssault.isSelected()) {
+                        fd.getRoles().add(MissionRole.ASSAULT);
+                    }
+                    if (chkRoleAirTransport.isSelected()) {
+                        fd.getRoles().add(MissionRole.CARGO);
+                    }
+                    break;
             }
         }
+
         try {
             fd.setDropshipPct(Double.parseDouble(txtDropshipPct.getText()) * 0.01);
         } catch (NumberFormatException ex) {
@@ -608,13 +574,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshFactions() {
-        FactionRecord oldFaction = (FactionRecord)cbFaction.getSelectedItem();
+        FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
         List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList()
                 .stream().filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
                 .collect(Collectors.toList());
-        sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
+        sorted.sort(Comparator.comparing(fr -> fr.getName(currentYear)));
         sorted.forEach(fr -> cbFaction.addItem(fr));
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
@@ -627,16 +593,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private void refreshSubfactions() {
-        FactionRecord oldFaction = (FactionRecord)cbSubfaction.getSelectedItem();
+        FactionRecord oldFaction = (FactionRecord) cbSubfaction.getSelectedItem();
         cbSubfaction.removeActionListener(this);
         cbSubfaction.removeAllItems();
-        String currentFaction = ((FactionRecord)cbFaction.getSelectedItem()).getKey();
+        String currentFaction = ((FactionRecord) cbFaction.getSelectedItem()).getKey();
         if (currentFaction != null) {
             List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList().stream()
                     .filter(fr -> fr.getKey().startsWith(currentFaction + ".")
                             && fr.isActiveInYear(currentYear))
+                    .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
                     .collect(Collectors.toList());
-            sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
             cbSubfaction.addItem(null);
             sorted.forEach(fr -> cbSubfaction.addItem(fr));
         }
@@ -673,7 +639,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                MegaMek.getLogger().warning("No unit type node found.");
+                LogManager.getLogger().warn("No unit type node found.");
                 cbUnitType.addItem(null);
             }
         } else {
@@ -686,7 +652,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
             Integer unitType = rs.getDefaultUnitType(forceDesc);
             if (unitType == null && cbUnitType.getItemCount() > 0) {
-                unitType = (Integer)cbUnitType.getItemAt(0);
+                unitType = cbUnitType.getItemAt(0);
             }
             cbUnitType.setSelectedItem(unitType);
             forceDesc.setUnitType(unitType);
@@ -698,7 +664,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void refreshFormations() {
         cbFormation.removeActionListener(this);
         if (cbUnitType.getSelectedItem() != null) {
-            Integer unitType = (Integer)cbUnitType.getSelectedItem();
+            Integer unitType = (Integer) cbUnitType.getSelectedItem();
             if (unitType != null) {
                 panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
                 panInfRole.setVisible(unitType == UnitType.INFANTRY
@@ -709,7 +675,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
 
         TOCNode tocNode = findTOCNode();
-        String currentFormation = (String)cbFormation.getSelectedItem();
+        String currentFormation = (String) cbFormation.getSelectedItem();
         boolean hasCurrent = false;
         Ruleset ruleset = Ruleset.findRuleset(forceDesc);
         cbFormation.removeAllItems();
@@ -733,7 +699,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                             }
                         }
                     } while (fn == null && rs != null);
-                    String formName = (fn != null)?fn.getEschelonName() : formation;
+                    String formName = (fn != null) ? fn.getEschelonName() : formation;
                     if (formation.endsWith("+")) {
                         formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
                     }
@@ -748,7 +714,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            MegaMek.getLogger().warning("No eschelon node found.");
+            LogManager.getLogger().warn("No eschelon node found.");
         }
 
         if (hasCurrent) {
@@ -758,7 +724,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             String esch = rs.getDefaultEschelon(forceDesc);
             if ((esch == null || !formationDisplayNames.containsKey(esch)
                     && cbFormation.getItemCount() > 0)) {
-                esch = (String)cbFormation.getItemAt(0);
+                esch = cbFormation.getItemAt(0);
             }
             if (esch != null) {
                 cbFormation.setSelectedItem(esch);
@@ -792,7 +758,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                MegaMek.getLogger().warning("No rating found.");
+                LogManager.getLogger().warn("No rating found.");
             }
         }
 
@@ -816,7 +782,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private void refreshFlags() {
         cbFlags.removeActionListener(this);
         TOCNode tocNode = findTOCNode();
-        String currentFlag = (String)cbFlags.getSelectedItem();
+        String currentFlag = (String) cbFlags.getSelectedItem();
         boolean hasCurrent = false;
         cbFlags.removeAllItems();
         cbFlags.addItem(null);
@@ -843,7 +809,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         forceDesc.getFlags().clear();
         if (cbFlags.getSelectedItem() != null) {
-            forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
+            forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
         }
         cbFlags.addActionListener(this);
     }
@@ -871,27 +837,27 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource() == cbFaction) {
             if (cbFaction.getSelectedItem() != null) {
-                forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshSubfactions();
         } else if (ev.getSource() == cbSubfaction) {
             if (cbSubfaction.getSelectedItem() != null) {
-                forceDesc.setFaction(((FactionRecord)cbSubfaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) cbSubfaction.getSelectedItem()).getKey());
             } else {
-                forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
+                forceDesc.setFaction(((FactionRecord) cbFaction.getSelectedItem()).getKey());
             }
             refreshUnitTypes();
         } else if (ev.getSource() == cbUnitType) {
-            forceDesc.setUnitType((Integer)cbUnitType.getSelectedItem());
+            forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
         } else if (ev.getSource() == cbFormation) {
-            String esch = (String)cbFormation.getSelectedItem();
+            String esch = (String) cbFormation.getSelectedItem();
             if (esch != null) {
                 setFormation(esch);
             }
             refreshRatings();
         } else if (ev.getSource() == cbRating) {
-            forceDesc.setRating((String)cbRating.getSelectedItem());
+            forceDesc.setRating((String) cbRating.getSelectedItem());
             refreshFlags();
         } else if (ev.getSource() == cbExperience) {
             if (cbExperience.getSelectedIndex() == 0) {
@@ -903,7 +869,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else if (ev.getSource() == cbFlags) {
             forceDesc.getFlags().clear();
             if (cbFlags.getSelectedItem() != null) {
-                forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
+                forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
             }
         } else if (ev.getSource() == cbWeightClass) {
             if (cbWeightClass.getSelectedIndex() < 1) {
@@ -1070,7 +1036,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (entry == null) {
                 setText(nullVal);
             } else {
-                setText(toString.apply((T)entry));
+                setText(toString.apply((T) entry));
             }
             return this;
         }
@@ -1083,7 +1049,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         public ForceTreeModel(ForceDescriptor root) {
             this.root = root;
-            listeners = new ArrayList<TreeModelListener>();		
+            listeners = new ArrayList<>();
         }
 
         @Override
@@ -1096,7 +1062,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         public Object getChild(Object parent, int index) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().get(index);
+                return ((ForceDescriptor) parent).getAllChildren().get(index);
             }
             return null;
         }
@@ -1104,7 +1070,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         public int getChildCount(Object parent) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().size();
+                return ((ForceDescriptor) parent).getAllChildren().size();
             }
             return 0;
         }
@@ -1112,7 +1078,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         @Override
         public int getIndexOfChild(Object parent, Object child) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().indexOf(child);
+                return ((ForceDescriptor) parent).getAllChildren().indexOf(child);
             }
             return 0;
         }
@@ -1124,8 +1090,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         @Override
         public boolean isLeaf(Object node) {
-            return ((ForceDescriptor)node).getEschelon() == 0
-                    || (node instanceof ForceDescriptor && getChildCount(node) == 0);
+            return (node instanceof ForceDescriptor) && (((ForceDescriptor) node).getEschelon() == 0)
+                    || (getChildCount(node) == 0);
         }
 
         @Override
@@ -1160,12 +1126,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     hasFocus);
             setBackground(UIManager.getColor("Tree.textBackground"));
             setForeground(UIManager.getColor("Tree.textForeground"));
-            if(sel) {
+            if (sel) {
                 setBackground(UIManager.getColor("Tree.selectionBackground"));
                 setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
-            ForceDescriptor fd = (ForceDescriptor)value;
+            ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
                 String uname = "";
@@ -1241,7 +1207,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 this.progress += progress;
                 this.message = message;
 
-                progressPercent = Math.min((int)Math.round(this.progress * 100.0), 100);
+                progressPercent = Math.min((int) Math.round(this.progress * 100.0), 100);
             }
 
             setProgress(progressPercent);

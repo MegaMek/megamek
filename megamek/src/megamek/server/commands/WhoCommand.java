@@ -2,24 +2,23 @@
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *         - Copyright (C) 2021 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.server.commands;
 
-import java.util.Enumeration;
-
-import megamek.common.net.IConnection;
+import megamek.common.net.AbstractConnection;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
+
+import java.util.Enumeration;
 
 /**
  * Lists all the players connected and some info about them.
@@ -39,15 +38,15 @@ public class WhoCommand extends ServerCommand {
                 connId, "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
 
         final boolean includeIPAddress = PreferenceManager.getClientPreferences().getShowIPAddressesInChat();
-        for (Enumeration<IConnection> i = server.getConnections(); i.hasMoreElements();) {
-            IConnection conn = i.nextElement();
+        for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
+            AbstractConnection conn = i.nextElement();
             server.sendServerChat(connId, getConnectionDescription(conn, includeIPAddress));
         }
 
         server.sendServerChat(connId, "end list");
     }
 
-    private String getConnectionDescription(IConnection conn, boolean includeIPAddress) {
+    private String getConnectionDescription(AbstractConnection conn, boolean includeIPAddress) {
         StringBuilder cb = new StringBuilder();
         cb.append(conn.getId()).append(" : ");
         cb.append(server.getPlayer(conn.getId()).getName()).append(", ");

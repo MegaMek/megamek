@@ -14,14 +14,13 @@
  */
 package megamek.common.loaders;
 
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * Created on Jun 2, 2005
- *
  * @author Andrew Hunter
+ * @since June 2, 2005
  */
 public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
     public BLKSupportVTOLFile(BuildingBlock bb) {
@@ -201,7 +200,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                MegaMek.getLogger().error("While loading " + t.getShortNameRaw()
+                LogManager.getLogger().error("While loading " + t.getShortNameRaw()
                                 + ": Could not parse ICE fuel type "
                                 + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);

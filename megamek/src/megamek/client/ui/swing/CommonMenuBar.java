@@ -475,13 +475,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public void preferenceChange(PreferenceChangeEvent e) {
         // Adapt the menu checkboxes to a new state where necessary
         if (e.getName().equals(GUIPreferences.USE_ISOMETRIC)) {
-            toggleIsometric.setSelected((Boolean)e.getNewValue());
+            toggleIsometric.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_FIELD_OF_FIRE)) {
-            toggleFieldOfFire.setSelected((Boolean)e.getNewValue());
+            toggleFieldOfFire.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
-            viewKeybindsOverlay.setSelected((Boolean)e.getNewValue());
+            viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
-            viewUnitOverview.setSelected((Boolean)e.getNewValue());
+            viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {

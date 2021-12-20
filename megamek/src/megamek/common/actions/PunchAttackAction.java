@@ -19,7 +19,7 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -115,8 +115,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         if (ae.isHullDown()) {
             attackerHeight--;
@@ -196,8 +196,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
                                     + targHex.getLevel(); // The absolute level of the target's arms
@@ -259,7 +259,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
         
-        if(zweihandering) {
+        if (zweihandering) {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
@@ -356,7 +356,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         
         //CamOps, pg. 82
-        if(zweihandering) {
+        if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 

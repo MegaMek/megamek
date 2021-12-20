@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.options;
 
 import java.util.Enumeration;
@@ -30,7 +29,7 @@ public interface IBasicOptionGroup {
      * @see megamek.common.options.IOptionGroup#getDisplayableName()
      * @return group name
      */
-    public abstract String getName();
+    String getName();
 
     /**
      * Returns the the <code>String</code> key that can be used by clients to
@@ -38,12 +37,11 @@ public interface IBasicOptionGroup {
      * 
      * @return group key which can be an empty <code>String</code>
      */
-    public abstract String getKey();
+    String getKey();
 
     /**
      * @return the <code>Enumeration</code> of the names of the options that
      *         in this group
      */
-    public abstract Enumeration<String> getOptionNames();
-
+    Enumeration<String> getOptionNames();
 }

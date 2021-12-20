@@ -68,11 +68,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
         }
         int clusterRoll = 7;
         if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {
+            if (fcs.getType().hasFlag(MiscType.F_ARTEMIS)) {
                 clusterRoll = 9;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
+            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                 clusterRoll = 10;
             }
         }

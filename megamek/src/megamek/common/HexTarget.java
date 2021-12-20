@@ -37,44 +37,53 @@ public class HexTarget implements Targetable {
      * the board parameter is ignored.
      */
     @Deprecated
-    public HexTarget(Coords c, IBoard board, int nType) {
+    public HexTarget(Coords c, Board board, int nType) {
         m_coords = c;
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
 
+    @Override
     public int getTargetType() {
         return m_type;
     }
 
+    @Override
     public int getTargetId() {
         return HexTarget.coordsToId(m_coords);
     }
 
+    @Override
     public Coords getPosition() {
         return m_coords;
     }
 
+    @Override
     public Map<Integer, Coords> getSecondaryPositions() {
-        return new HashMap<Integer, Coords>();
+        return new HashMap<>();
     }
 
+    @Override
     public int relHeight() {
         return getHeight() + getElevation();
     }
 
+    @Override
     public int getHeight() {
         return 0;
     }
 
+    @Override
     public int getElevation() {
         return 0;
     }
 
+    @Override
     public boolean isImmobile() {
         return ((m_type != Targetable.TYPE_HEX_BOMB) && (m_type != Targetable.TYPE_HEX_AERO_BOMB));
     }
 
+    @Override
     public String getDisplayName() {
         String name = "";
         switch (m_type) {
@@ -134,10 +143,12 @@ public class HexTarget implements Targetable {
         return new Coords(id - (y * 100000), y);
     }
 
+    @Override
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
 
+    @Override
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -146,6 +157,7 @@ public class HexTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
      */
+    @Override
     public boolean isOffBoard() {
         return false;
     }
@@ -154,6 +166,7 @@ public class HexTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
      */
+    @Override
     public boolean isAirborne() {
         return false;
     }
@@ -162,14 +175,17 @@ public class HexTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
      */
+    @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
 
+    @Override
     public int getAltitude() {
         return 0;
     }
     
+    @Override
     public boolean isEnemyOf(Entity other) {
         return true;
     }

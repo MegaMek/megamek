@@ -43,14 +43,12 @@ import megamek.common.Tank;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This panel contains the armor readout display.
  */
 class ArmorPanel extends PicMap {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
     private MechMapSet mech;
@@ -249,14 +247,14 @@ class ArmorPanel extends PicMap {
             minBottomMargin = minAeroTopMargin;
             minRightMargin = minAeroLeftMargin;
         }
+
         if (ams == null) {
-            System.err.println("The armor panel is null."); //$NON-NLS-1$
+            LogManager.getLogger().error("The armor panel is null");
             return;
         }
         ams.setEntity(en);
         addElement(ams.getContentGroup());
-        Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers()
-                                                .elements();
+        Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers().elements();
         while (iter.hasMoreElements()) {
             addBgDrawer(iter.nextElement());
         }

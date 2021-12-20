@@ -43,6 +43,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -66,7 +67,7 @@ public class Client implements IClientCommandHandler {
     // we need these to communicate with the server
     private String name;
 
-    private IConnection connection;
+    private AbstractConnection connection;
 
     // the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<>();
@@ -122,6 +123,7 @@ public class Client implements IClientCommandHandler {
             shouldStop = true;
         }
 
+        @Override
         public void run() {
             while (!shouldStop) {
                 // Write any queued packets
@@ -137,7 +139,7 @@ public class Client implements IClientCommandHandler {
 
     private Thread connThread;
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -180,7 +182,7 @@ public class Client implements IClientCommandHandler {
      * @param port
      *            the host port
      */
-    public Client(String name, String host, int port){
+    public Client(String name, String host, int port) {
         // construct new client
         this.name = name;
         this.host = host;
@@ -224,7 +226,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-    public void setBoardView(BoardView bv){
+    public void setBoardView(BoardView bv) {
         this.bv = bv;
     }
 
@@ -269,12 +271,11 @@ public class Client implements IClientCommandHandler {
         if (log != null) {
             try {
                 log.close();
-            } catch (IOException e) {
-                System.err.print("Exception closing logfile: "); //$NON-NLS-1$
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to close the logfile", e);
             }
         }
-        System.out.println("client: died"); //$NON-NLS-1$
+        System.out.println("client: died");
         System.out.flush();
     }
 
@@ -287,7 +288,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals("localhost")) { //$NON-NLS-1$
+            if (!host.equals("localhost")) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
@@ -323,7 +324,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Return an enumeration of the players in the game
      */
-    public Enumeration<IPlayer> getPlayers() {
+    public Enumeration<Player> getPlayers() {
         return game.getPlayers();
     }
 
@@ -334,14 +335,14 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns the individual player assigned the index parameter.
      */
-    public IPlayer getPlayer(int idx) {
+    public Player getPlayer(int idx) {
         return game.getPlayer(idx);
     }
 
     /**
      * Return the local player
      */
-    public IPlayer getLocalPlayer() {
+    public Player getLocalPlayer() {
         return getPlayer(localPlayerNumber);
     }
 
@@ -391,7 +392,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Shortcut to game.board
      */
-    public IBoard getBoard() {
+    public Board getBoard() {
         return game.getBoard();
     }
 
@@ -430,28 +431,28 @@ public class Client implements IClientCommandHandler {
                 // We must do this last, as the name and unit generators can create
                 // a new instance if they are running
                 MechSummaryCache.dispose();
-                memDump("entering deployment phase"); //$NON-NLS-1$
+                memDump("entering deployment phase");
                 break;
             case TARGETING:
-                memDump("entering targeting phase"); //$NON-NLS-1$
+                memDump("entering targeting phase");
                 break;
             case MOVEMENT:
-                memDump("entering movement phase"); //$NON-NLS-1$
+                memDump("entering movement phase");
                 break;
             case OFFBOARD:
-                memDump("entering offboard phase"); //$NON-NLS-1$
+                memDump("entering offboard phase");
                 break;
             case FIRING:
-                memDump("entering firing phase"); //$NON-NLS-1$
+                memDump("entering firing phase");
                 break;
             case PHYSICAL:
-                memDump("entering physical phase"); //$NON-NLS-1$
+                memDump("entering physical phase");
                 break;
             case LOUNGE:
                 try {
                     QuirksHandler.initQuirksList();
-                } catch (IOException e) {
-                    MegaMek.getLogger().error(e);
+                } catch (Exception e) {
+                    LogManager.getLogger().error("Error initializing quirks", e);
                 }
                 UnitRoleHandler.initialize();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
@@ -595,7 +596,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Maintain backwards compatability.
+     * Maintain backwards compatibility.
      *
      * @param id
      *            - the <code>int</code> ID of the deployed entity
@@ -605,7 +606,7 @@ public class Client implements IClientCommandHandler {
      *            - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
-        this.deploy(id, c, nFacing, elevation, new Vector<Entity>(), false);
+        this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
     }
 
     /**
@@ -742,7 +743,7 @@ public class Client implements IClientCommandHandler {
      * Sends the info associated with the local player.
      */
     public void sendPlayerInfo() {
-        IPlayer player = game.getPlayer(localPlayerNumber);
+        Player player = game.getPlayer(localPlayerNumber);
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
 
@@ -754,7 +755,7 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendEntityWeaponOrderUpdate(Entity entity) {
-        Object data[];
+        Object[] data;
         if (entity.getWeaponSortOrder() == Entity.WeaponSortOrder.CUSTOM) {
             data = new Object[3];
             data[2] = entity.getCustomWeaponOrder();
@@ -779,7 +780,7 @@ public class Client implements IClientCommandHandler {
      *            The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
-        ArrayList<Entity> entities = new ArrayList<Entity>(1);
+        ArrayList<Entity> entities = new ArrayList<>(1);
         entities.add(entity);
         sendAddEntity(entities);
     }
@@ -848,7 +849,7 @@ public class Client implements IClientCommandHandler {
      * Sends a packet containing multiple entity updates. Should only be used 
      * in the lobby phase.
      */
-    public void sendChangeTeam(Collection<IPlayer> players, int newTeamId) {
+    public void sendChangeTeam(Collection<Player> players, int newTeamId) {
         send(new Packet(Packet.COMMAND_PLAYER_TEAMCHANGE, new Object[] { players, newTeamId }));
     }
 
@@ -856,7 +857,7 @@ public class Client implements IClientCommandHandler {
      * Sends an "update entity" packet
      */
     public void sendDeploymentUnload(Entity loader, Entity loaded) {
-        Object data[] = { loader.getId(), loaded.getId() };
+        Object[] data = { loader.getId(), loaded.getId() };
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY_UNLOAD, data));
     }
     
@@ -906,7 +907,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "update custom initiative" packet
      */
-    public void sendCustomInit(IPlayer player) {
+    public void sendCustomInit(Player player) {
         send(new Packet(Packet.COMMAND_CUSTOM_INITIATIVE, player));
     }
 
@@ -914,7 +915,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "delete entity" packet
      */
     public void sendDeleteEntity(int id) {
-        ArrayList<Integer> ids = new ArrayList<Integer>(1);
+        ArrayList<Integer> ids = new ArrayList<>(1);
         ids.add(id);
         sendDeleteEntities(ids);
     }
@@ -936,7 +937,7 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
+        try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
             game.reset();
             
             XStream xstream = SerializationHelper.getXStream();            
@@ -944,13 +945,12 @@ public class Client implements IClientCommandHandler {
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Can't find local savegame " + f); //$NON-NLS-1$
+            LogManager.getLogger().error("Can't find the local savegame " + f, e);
         }
     }
 
     public void sendExplodeBuilding(DemolitionCharge charge) {
-        Object data[] = new Object[1];
+        Object[] data = new Object[1];
         data[0] = charge;
         send(new Packet(Packet.COMMAND_BLDG_EXPLODE, data));
     }
@@ -960,7 +960,7 @@ public class Client implements IClientCommandHandler {
      */
     protected void receivePlayerInfo(Packet c) {
         int pindex = c.getIntValue(0);
-        IPlayer newPlayer = (IPlayer) c.getObject(1);
+        Player newPlayer = (Player) c.getObject(1);
         if (getPlayer(newPlayer.getId()) == null) {
             game.addPlayer(pindex, newPlayer);
         } else {
@@ -999,12 +999,12 @@ public class Client implements IClientCommandHandler {
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
-            for(Entity e: newOutOfGame) {
+            for (Entity e: newOutOfGame) {
                 cacheImgTag(e);
             }
         }
         //cache the image data for the entities
-        for(Entity e: newEntities) {
+        for (Entity e: newEntities) {
             cacheImgTag(e);
         }
     }
@@ -1033,8 +1033,8 @@ public class Client implements IClientCommandHandler {
         // Gather the forces and entities to be deleted
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
-        forceIds.stream().map(id -> forces.getForce(id)).forEach(delForces::add);
-        delForces.stream().map(f -> forces.getFullEntities(f)).forEach(delEntities::addAll);
+        forceIds.stream().map(forces::getForce).forEach(delForces::add);
+        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
 
         forces.deleteForces(delForces);
 
@@ -1092,7 +1092,7 @@ public class Client implements IClientCommandHandler {
         @SuppressWarnings("unchecked")
         List<Force> forces = (List<Force>) packet.getObject(2);
         //create a final image for the entity
-        for(int id: entityIds) {
+        for (int id: entityIds) {
             cacheImgTag(game.getEntity(id));
         }
         for (Force force: forces) {
@@ -1109,8 +1109,8 @@ public class Client implements IClientCommandHandler {
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
-            e.setWhoCanSee((Vector<IPlayer>) packet.getObject(4));
-            e.setWhoCanDetect((Vector<IPlayer>) packet.getObject(5));
+            e.setWhoCanSee((Vector<Player>) packet.getObject(4));
+            e.setWhoCanDetect((Vector<Player>) packet.getObject(5));
             // this next call is only needed sometimes, but we'll just
             // call it everytime
             game.processGameEvent(new GameEntityChangeEvent(this, e));
@@ -1143,7 +1143,7 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateMinefields(Packet packet) {
         // only update information if you know about the minefield
-        Vector<Minefield> newMines = new Vector<Minefield>();
+        Vector<Minefield> newMines = new Vector<>();
         for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
             if (getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);
@@ -1218,23 +1218,23 @@ public class Client implements IClientCommandHandler {
             report.append(r.getText());
         }
 
-        Set<Integer> set = new HashSet<Integer>();
+        Set<Integer> set = new HashSet<>();
         //find id stored in spans and extract it
         Pattern p = Pattern.compile("<s(.*?)n>");
         Matcher m = p.matcher(report.toString());
 
         //add all instances to a hashset to prevent duplicates
-        while(m.find()){
+        while (m.find()) {
             String cleanedText = m.group(1).replaceAll("\\D", "");
-            if(cleanedText.length() > 0) {
+            if (cleanedText.length() > 0) {
                 set.add(Integer.parseInt(cleanedText));
             }
         }
 
         String updatedReport = report.toString();
-        //loop through the hashset of unique ids and replace the ids with img tags
+        // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
-            if(getCachedImgTag(i) != null) {
+            if (getCachedImgTag(i) != null) {
                 updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
@@ -1244,7 +1244,7 @@ public class Client implements IClientCommandHandler {
     /**
      * returns the stored <img> tag for given unit id
      */
-    private String getCachedImgTag(int id){
+    private String getCachedImgTag(int id) {
         if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
                 || (imgCache == null) || !imgCache.containsKey(id)) {
             return null;
@@ -1256,19 +1256,19 @@ public class Client implements IClientCommandHandler {
      * Hashtable for storing <img> tags containing base64Text src.
      */
     protected void cacheImgTag(Entity entity) {
-        if(entity == null) {
+        if (entity == null) {
             return;
         }
 
+        // remove images that should be refreshed
         if (imgCache == null) {
             imgCache = new Hashtable<>();
-        } else if (imgCache.containsKey(entity.getId())) {
-            //remove images that should be refreshed
+        } else {
             imgCache.remove(entity.getId());
         }
 
         if (getTargetImage(entity) != null) {
-            //convert image to base64, add to to <img> tag and store in cache
+            //convert image to base64, add to the <img> tag and store in cache
             Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             try {
                 String base64Text;
@@ -1288,7 +1288,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Gets the current mech image
      */
-    private Image getTargetImage(Entity e){
+    private Image getTargetImage(Entity e) {
         if (bv == null) {
             return null;
         } else if (e.isDestroyed()) {
@@ -1317,7 +1317,7 @@ public class Client implements IClientCommandHandler {
             fw.flush();
             fw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -1369,313 +1369,314 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void handlePacket(Packet c) {
         if (c == null) {
-            System.out.println("client: got null packet"); //$NON-NLS-1$
+            LogManager.getLogger().error("Client: got null packet");
             return;
         }
+
         switch (c.getCommand()) {
-        case Packet.COMMAND_CLOSE_CONNECTION:
-            disconnected();
-            break;
-        case Packet.COMMAND_SERVER_VERSION_CHECK:
-            send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, new Object[] {
-                    MegaMekConstants.VERSION, MegaMek.getMegaMekSHA256() }));
-            break;
-        case Packet.COMMAND_SERVER_GREETING:
-            connected = true;
-            send(new Packet(Packet.COMMAND_CLIENT_NAME, new Object[] { name, isBot() }));
-            if (this instanceof Princess) {
-                ((Princess) this).sendPrincessSettings();
-            }
-            break;
-        case Packet.COMMAND_ILLEGAL_CLIENT_VERSION:
-            final Version serverVersion = (Version) c.getObject(0);
-            final String message = String.format(
-                    "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
-                    getHost(), serverVersion, MegaMekConstants.VERSION);
-            JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
-                    JOptionPane.ERROR_MESSAGE);
-            MegaMek.getLogger().error(message);
-            disconnected();
-            break;
-        case Packet.COMMAND_SERVER_CORRECT_NAME:
-            correctName(c);
-            break;
-        case Packet.COMMAND_LOCAL_PN:
-            localPlayerNumber = c.getIntValue(0);
-            break;
-        case Packet.COMMAND_PLAYER_UPDATE:
-            receivePlayerInfo(c);
-            break;
-        case Packet.COMMAND_PLAYER_READY:
-            IPlayer player = getPlayer(c.getIntValue(0));
-            
-            if (player != null) {
-                player.setDone(c.getBooleanValue(1));
-            }
-            break;
-        case Packet.COMMAND_PRINCESS_SETTINGS:
-            game.setBotSettings((Map<String, BehaviorSettings>)c.getObject(0));
-            break;
-        case Packet.COMMAND_PLAYER_ADD:
-            receivePlayerInfo(c);
-            break;
-        case Packet.COMMAND_PLAYER_REMOVE:
-            for (Iterator<Client> botIterator = bots.values().iterator(); botIterator.hasNext();) {
-                Client bot = botIterator.next();
-                if (bot.localPlayerNumber == c.getIntValue(0)) {
-                    botIterator.remove();
+            case Packet.COMMAND_CLOSE_CONNECTION:
+                disconnected();
+                break;
+            case Packet.COMMAND_SERVER_VERSION_CHECK:
+                send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, new Object[] {
+                        MegaMekConstants.VERSION, MegaMek.getMegaMekSHA256() }));
+                break;
+            case Packet.COMMAND_SERVER_GREETING:
+                connected = true;
+                send(new Packet(Packet.COMMAND_CLIENT_NAME, new Object[] { name, isBot() }));
+                if (this instanceof Princess) {
+                    ((Princess) this).sendPrincessSettings();
                 }
-            }
-            game.removePlayer(c.getIntValue(0));
-            break;
-        case Packet.COMMAND_CHAT:
-            if (log == null) {
-                initGameLog();
-            }
-            if ((log != null) && keepGameLog()) {
-                log.append((String) c.getObject(0));
-            }
-            game.processGameEvent(new GamePlayerChatEvent(this, null, (String) c.getObject(0)));
-            break;
-        case Packet.COMMAND_ENTITY_ADD:
-            receiveEntityAdd(c);
-            break;
-        case Packet.COMMAND_ENTITY_UPDATE:
-            receiveEntityUpdate(c);
-            break;
-        case Packet.COMMAND_ENTITY_MULTIUPDATE:
-            receiveEntitiesUpdate(c);
-            break;
-        case Packet.COMMAND_ENTITY_REMOVE:
-            receiveEntityRemove(c);
-            break;
-        case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
-            receiveEntityVisibilityIndicator(c);
-            break;
-        case Packet.COMMAND_FORCE_UPDATE:
-            receiveForceUpdate(c);
-            break;
-        case Packet.COMMAND_FORCE_DELETE:
-            receiveForcesDelete(c);
-            break;
-        case Packet.COMMAND_SENDING_MINEFIELDS:
-            receiveSendingMinefields(c);
-            break;
-        case Packet.COMMAND_SENDING_ILLUM_HEXES:
-            receiveIlluminatedHexes(c);
-            break;
-        case Packet.COMMAND_CLEAR_ILLUM_HEXES:
-            game.clearIlluminatedPositions();
-            break;
-        case Packet.COMMAND_UPDATE_MINEFIELDS:
-            receiveUpdateMinefields(c);
-            break;
-        case Packet.COMMAND_DEPLOY_MINEFIELDS:
-            receiveDeployMinefields(c);
-            break;
-        case Packet.COMMAND_REVEAL_MINEFIELD:
-            receiveRevealMinefield(c);
-            break;
-        case Packet.COMMAND_REMOVE_MINEFIELD:
-            receiveRemoveMinefield(c);
-            break;
-        case Packet.COMMAND_ADD_SMOKE_CLOUD:
-            SmokeCloud cloud = (SmokeCloud) c.getObject(0);
-            game.addSmokeCloud(cloud);
-            break;
-        case Packet.COMMAND_CHANGE_HEX:
-            game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
-            break;
-        case Packet.COMMAND_CHANGE_HEXES:
-            List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
-            List<IHex> hexes = new ArrayList<>((Set<IHex>) c.getObject(1));
-            game.getBoard().setHexes(coords, hexes);
-            break;
-        case Packet.COMMAND_BLDG_UPDATE:
-            receiveBuildingUpdate(c);
-            break;
-        case Packet.COMMAND_BLDG_COLLAPSE:
-            receiveBuildingCollapse(c);
-            break;
-        case Packet.COMMAND_PHASE_CHANGE:
-            changePhase((GamePhase) c.getObject(0));
-            break;
-        case Packet.COMMAND_TURN:
-            changeTurnIndex(c.getIntValue(0), c.getIntValue(1));
-            break;
-        case Packet.COMMAND_ROUND_UPDATE:
-            game.setRoundCount(c.getIntValue(0));
-            break;
-        case Packet.COMMAND_SENDING_TURNS:
-            receiveTurns(c);
-            break;
-        case Packet.COMMAND_SENDING_BOARD:
-            receiveBoard(c);
-            break;
-        case Packet.COMMAND_SENDING_ENTITIES:
-            receiveEntities(c);
-            break;
-        case Packet.COMMAND_SENDING_REPORTS:
-        case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
-            phaseReport = receiveReport((Vector<Report>) c.getObject(0));
-            if (keepGameLog()) {
-                if ((log == null) && (game.getRoundCount() == 1)) {
-                    initGameLog();
+                break;
+            case Packet.COMMAND_ILLEGAL_CLIENT_VERSION:
+                final Version serverVersion = (Version) c.getObject(0);
+                final String message = String.format(
+                        "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
+                        getHost(), serverVersion, MegaMekConstants.VERSION);
+                JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
+                        JOptionPane.ERROR_MESSAGE);
+                LogManager.getLogger().error(message);
+                disconnected();
+                break;
+            case Packet.COMMAND_SERVER_CORRECT_NAME:
+                correctName(c);
+                break;
+            case Packet.COMMAND_LOCAL_PN:
+                localPlayerNumber = c.getIntValue(0);
+                break;
+            case Packet.COMMAND_PLAYER_UPDATE:
+                receivePlayerInfo(c);
+                break;
+            case Packet.COMMAND_PLAYER_READY:
+                Player player = getPlayer(c.getIntValue(0));
+
+                if (player != null) {
+                    player.setDone(c.getBooleanValue(1));
                 }
-                if (log != null) {
-                    log.append(phaseReport);
-                }
-            }
-            game.addReports((Vector<Report>) c.getObject(0));
-            roundReport = receiveReport(game.getReports(game.getRoundCount()));
-            if (c.getCommand() == Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
-                game.processGameEvent(new GameReportEvent(this, roundReport));
-            }
-            break;
-        case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
-            game.processGameEvent(new GameReportEvent(this, receiveReport((Vector<Report>) c.getObject(0))));
-            break;
-        case Packet.COMMAND_SENDING_REPORTS_ALL:
-            Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
-            game.setAllReports(allReports);
-            if (keepGameLog()) {
-                // Re-write gamelog.txt from scratch
-                initGameLog();
-                if (log != null) {
-                    for (int i = 0; i < allReports.size(); i++) {
-                        log.append(receiveReport(allReports.elementAt(i)));
+                break;
+            case Packet.COMMAND_PRINCESS_SETTINGS:
+                game.setBotSettings((Map<String, BehaviorSettings>) c.getObject(0));
+                break;
+            case Packet.COMMAND_PLAYER_ADD:
+                receivePlayerInfo(c);
+                break;
+            case Packet.COMMAND_PLAYER_REMOVE:
+                for (Iterator<Client> botIterator = bots.values().iterator(); botIterator.hasNext();) {
+                    Client bot = botIterator.next();
+                    if (bot.localPlayerNumber == c.getIntValue(0)) {
+                        botIterator.remove();
                     }
                 }
-            }
-            roundReport = receiveReport(game.getReports(game.getRoundCount()));
-            // We don't really have a copy of the phase report at
-            // this point, so I guess we'll just use the round report
-            // until the next phase actually completes.
-            phaseReport = roundReport;
-            break;
-        case Packet.COMMAND_ENTITY_ATTACK:
-            receiveAttack(c);
-            break;
-        case Packet.COMMAND_SENDING_GAME_SETTINGS:
-            game.setOptions((GameOptions) c.getObject(0));
-            break;
-        case Packet.COMMAND_SENDING_MAP_SETTINGS:
-            mapSettings = (MapSettings) c.getObject(0);
-            mapSettings.adjustPathSeparator();
-            GameSettingsChangeEvent evt = new GameSettingsChangeEvent(this);
-            evt.setMapSettingsOnlyChange(true);
-            game.processGameEvent(evt);
-            break;
-        case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
-            game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
-            game.processGameEvent(new GameSettingsChangeEvent(this));
-            break;
-        case Packet.COMMAND_SENDING_TAGINFO:
-            Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
-            for (TagInfo ti : vti) {
-                game.addTagInfo(ti);
-            }
-            break;
-        case Packet.COMMAND_RESET_TAGINFO:
-            game.resetTagInfo();
-            break;
-        case Packet.COMMAND_END_OF_GAME:
-            String sEntityStatus = (String) c.getObject(0);
-            game.end(c.getIntValue(1), c.getIntValue(2));
-            // save victory report
-            saveEntityStatus(sEntityStatus);
-            break;
-        case Packet.COMMAND_SENDING_ARTILLERYATTACKS:
-            Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c.getObject(0);
-            game.setArtilleryVector(v);
-            break;
-        case Packet.COMMAND_SENDING_FLARES:
-            Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
-            game.setFlares(v2);
-            break;
-        case Packet.COMMAND_SEND_SAVEGAME:
-            String sFinalFile = (String) c.getObject(0);
-            String sLocalPath = (String) c.getObject(2);
-            String localFile = sLocalPath + File.separator + sFinalFile;
-            try {
-                File sDir = new File(sLocalPath);
-                if (!sDir.exists()) {
-                    sDir.mkdir();
+                game.removePlayer(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_CHAT:
+                if (log == null) {
+                    initGameLog();
                 }
-            } catch (Exception e) {
-                System.err.println("Unable to create savegames directory");
-            }
-            try {
+                if ((log != null) && keepGameLog()) {
+                    log.append((String) c.getObject(0));
+                }
+                game.processGameEvent(new GamePlayerChatEvent(this, null, (String) c.getObject(0)));
+                break;
+            case Packet.COMMAND_ENTITY_ADD:
+                receiveEntityAdd(c);
+                break;
+            case Packet.COMMAND_ENTITY_UPDATE:
+                receiveEntityUpdate(c);
+                break;
+            case Packet.COMMAND_ENTITY_MULTIUPDATE:
+                receiveEntitiesUpdate(c);
+                break;
+            case Packet.COMMAND_ENTITY_REMOVE:
+                receiveEntityRemove(c);
+                break;
+            case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
+                receiveEntityVisibilityIndicator(c);
+                break;
+            case Packet.COMMAND_FORCE_UPDATE:
+                receiveForceUpdate(c);
+                break;
+            case Packet.COMMAND_FORCE_DELETE:
+                receiveForcesDelete(c);
+                break;
+            case Packet.COMMAND_SENDING_MINEFIELDS:
+                receiveSendingMinefields(c);
+                break;
+            case Packet.COMMAND_SENDING_ILLUM_HEXES:
+                receiveIlluminatedHexes(c);
+                break;
+            case Packet.COMMAND_CLEAR_ILLUM_HEXES:
+                game.clearIlluminatedPositions();
+                break;
+            case Packet.COMMAND_UPDATE_MINEFIELDS:
+                receiveUpdateMinefields(c);
+                break;
+            case Packet.COMMAND_DEPLOY_MINEFIELDS:
+                receiveDeployMinefields(c);
+                break;
+            case Packet.COMMAND_REVEAL_MINEFIELD:
+                receiveRevealMinefield(c);
+                break;
+            case Packet.COMMAND_REMOVE_MINEFIELD:
+                receiveRemoveMinefield(c);
+                break;
+            case Packet.COMMAND_ADD_SMOKE_CLOUD:
+                SmokeCloud cloud = (SmokeCloud) c.getObject(0);
+                game.addSmokeCloud(cloud);
+                break;
+            case Packet.COMMAND_CHANGE_HEX:
+                game.getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
+                break;
+            case Packet.COMMAND_CHANGE_HEXES:
+                List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
+                List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
+                game.getBoard().setHexes(coords, hexes);
+                break;
+            case Packet.COMMAND_BLDG_UPDATE:
+                receiveBuildingUpdate(c);
+                break;
+            case Packet.COMMAND_BLDG_COLLAPSE:
+                receiveBuildingCollapse(c);
+                break;
+            case Packet.COMMAND_PHASE_CHANGE:
+                changePhase((GamePhase) c.getObject(0));
+                break;
+            case Packet.COMMAND_TURN:
+                changeTurnIndex(c.getIntValue(0), c.getIntValue(1));
+                break;
+            case Packet.COMMAND_ROUND_UPDATE:
+                game.setRoundCount(c.getIntValue(0));
+                break;
+            case Packet.COMMAND_SENDING_TURNS:
+                receiveTurns(c);
+                break;
+            case Packet.COMMAND_SENDING_BOARD:
+                receiveBoard(c);
+                break;
+            case Packet.COMMAND_SENDING_ENTITIES:
+                receiveEntities(c);
+                break;
+            case Packet.COMMAND_SENDING_REPORTS:
+            case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
+                phaseReport = receiveReport((Vector<Report>) c.getObject(0));
+                if (keepGameLog()) {
+                    if ((log == null) && (game.getRoundCount() == 1)) {
+                        initGameLog();
+                    }
+                    if (log != null) {
+                        log.append(phaseReport);
+                    }
+                }
+                game.addReports((Vector<Report>) c.getObject(0));
+                roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                if (c.getCommand() == Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
+                    game.processGameEvent(new GameReportEvent(this, roundReport));
+                }
+                break;
+            case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
+                game.processGameEvent(new GameReportEvent(this, receiveReport((Vector<Report>) c.getObject(0))));
+                break;
+            case Packet.COMMAND_SENDING_REPORTS_ALL:
+                Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
+                game.setAllReports(allReports);
+                if (keepGameLog()) {
+                    // Re-write gamelog.txt from scratch
+                    initGameLog();
+                    if (log != null) {
+                        for (int i = 0; i < allReports.size(); i++) {
+                            log.append(receiveReport(allReports.elementAt(i)));
+                        }
+                    }
+                }
+                roundReport = receiveReport(game.getReports(game.getRoundCount()));
+                // We don't really have a copy of the phase report at
+                // this point, so I guess we'll just use the round report
+                // until the next phase actually completes.
+                phaseReport = roundReport;
+                break;
+            case Packet.COMMAND_ENTITY_ATTACK:
+                receiveAttack(c);
+                break;
+            case Packet.COMMAND_SENDING_GAME_SETTINGS:
+                game.setOptions((GameOptions) c.getObject(0));
+                break;
+            case Packet.COMMAND_SENDING_MAP_SETTINGS:
+                mapSettings = (MapSettings) c.getObject(0);
+                mapSettings.adjustPathSeparator();
+                GameSettingsChangeEvent evt = new GameSettingsChangeEvent(this);
+                evt.setMapSettingsOnlyChange(true);
+                game.processGameEvent(evt);
+                break;
+            case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
+                game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
+                game.processGameEvent(new GameSettingsChangeEvent(this));
+                break;
+            case Packet.COMMAND_SENDING_TAGINFO:
+                Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
+                for (TagInfo ti : vti) {
+                    game.addTagInfo(ti);
+                }
+                break;
+            case Packet.COMMAND_RESET_TAGINFO:
+                game.resetTagInfo();
+                break;
+            case Packet.COMMAND_END_OF_GAME:
+                String sEntityStatus = (String) c.getObject(0);
+                game.end(c.getIntValue(1), c.getIntValue(2));
+                // save victory report
+                saveEntityStatus(sEntityStatus);
+                break;
+            case Packet.COMMAND_SENDING_ARTILLERYATTACKS:
+                Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c.getObject(0);
+                game.setArtilleryVector(v);
+                break;
+            case Packet.COMMAND_SENDING_FLARES:
+                Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
+                game.setFlares(v2);
+                break;
+            case Packet.COMMAND_SEND_SAVEGAME:
+                String sFinalFile = (String) c.getObject(0);
+                String sLocalPath = (String) c.getObject(2);
+                String localFile = sLocalPath + File.separator + sFinalFile;
+                try {
+                    File sDir = new File(sLocalPath);
+                    if (!sDir.exists()) {
+                        sDir.mkdir();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Unable to create savegames directory");
+                }
+                try {
 
-                BufferedOutputStream fout = new BufferedOutputStream(new FileOutputStream(localFile));
-                ArrayList<Integer> data = (ArrayList<Integer>) c.getObject(1);
-                for (Integer d : data) {
-                    fout.write(d);
+                    BufferedOutputStream fout = new BufferedOutputStream(new FileOutputStream(localFile));
+                    ArrayList<Integer> data = (ArrayList<Integer>) c.getObject(1);
+                    for (Integer d : data) {
+                        fout.write(d);
+                    }
+                    fout.flush();
+                    fout.close();
+                } catch (Exception e) {
+                    System.err.println("Unable to save file: " + sFinalFile);
+                    e.printStackTrace();
                 }
-                fout.flush();
-                fout.close();
-            } catch (Exception e) {
-                System.err.println("Unable to save file: " + sFinalFile);
-                e.printStackTrace();
-            }
-            break;
-        case Packet.COMMAND_LOAD_SAVEGAME:
-            String loadFile = (String) c.getObject(0);
-            try {
-                File f = new File("savegames", loadFile);
-                sendLoadGame(f);
-            } catch (Exception e) {
-                System.err.println("Unable to find the file: " + loadFile);
-            }
-            break;
-        case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
-            game.getBoard()
-                    .setSpecialHexDisplayTable((Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
-            game.processGameEvent(new GameBoardChangeEvent(this));
-            break;
-        case Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES:
-            availableSizes = (Set<BoardDimensions>) c.getObject(0);
-            game.processGameEvent(new GameSettingsChangeEvent(this));
-            break;
-        case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
-            receiveEntityNovaNetworkModeChange(c);
-            break;
-        case Packet.COMMAND_CLIENT_FEEDBACK_REQUEST:
-            int cfrType = (int) c.getData()[0];
-            GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
-            switch (cfrType) {
-            case (Packet.COMMAND_CFR_DOMINO_EFFECT):
-                cfrEvt.setEntityId((int) c.getData()[1]);
                 break;
-            case Packet.COMMAND_CFR_AMS_ASSIGN:
-                cfrEvt.setEntityId((int) c.getData()[1]);
-                cfrEvt.setAmsEquipNum((int) c.getData()[2]);
-                cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+            case Packet.COMMAND_LOAD_SAVEGAME:
+                String loadFile = (String) c.getObject(0);
+                try {
+                    File f = new File("savegames", loadFile);
+                    sendLoadGame(f);
+                } catch (Exception e) {
+                    System.err.println("Unable to find the file: " + loadFile);
+                }
                 break;
-            case Packet.COMMAND_CFR_APDS_ASSIGN:
-                cfrEvt.setEntityId((int) c.getData()[1]);
-                cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
-                cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+            case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
+                game.getBoard()
+                        .setSpecialHexDisplayTable((Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
+                game.processGameEvent(new GameBoardChangeEvent(this));
                 break;
-            case Packet.COMMAND_CFR_HIDDEN_PBS:
-                cfrEvt.setEntityId((int) c.getObject(1));
-                cfrEvt.setTargetId((int) c.getObject(2));
+            case Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES:
+                availableSizes = (Set<BoardDimensions>) c.getObject(0);
+                game.processGameEvent(new GameSettingsChangeEvent(this));
                 break;
-            case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                cfrEvt.setTeleguidedMissileTargets((List<Integer>)c.getObject(1));
-                cfrEvt.setTmToHitValues((List<Integer>)c.getObject(2));
+            case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
+                receiveEntityNovaNetworkModeChange(c);
                 break;
-            case Packet.COMMAND_CFR_TAG_TARGET:
-                cfrEvt.setTAGTargets((List<Integer>)c.getObject(1));
-                cfrEvt.setTAGTargetTypes((List<Integer>)c.getObject(2));
+            case Packet.COMMAND_CLIENT_FEEDBACK_REQUEST:
+                int cfrType = (int) c.getData()[0];
+                GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
+                switch (cfrType) {
+                    case (Packet.COMMAND_CFR_DOMINO_EFFECT):
+                        cfrEvt.setEntityId((int) c.getData()[1]);
+                        break;
+                    case Packet.COMMAND_CFR_AMS_ASSIGN:
+                        cfrEvt.setEntityId((int) c.getData()[1]);
+                        cfrEvt.setAmsEquipNum((int) c.getData()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                        break;
+                    case Packet.COMMAND_CFR_APDS_ASSIGN:
+                        cfrEvt.setEntityId((int) c.getData()[1]);
+                        cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                        break;
+                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                        cfrEvt.setEntityId((int) c.getObject(1));
+                        cfrEvt.setTargetId((int) c.getObject(2));
+                        break;
+                    case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                        cfrEvt.setTeleguidedMissileTargets((List<Integer>) c.getObject(1));
+                        cfrEvt.setTmToHitValues((List<Integer>) c.getObject(2));
+                        break;
+                    case Packet.COMMAND_CFR_TAG_TARGET:
+                        cfrEvt.setTAGTargets((List<Integer>) c.getObject(1));
+                        cfrEvt.setTAGTargetTypes((List<Integer>) c.getObject(2));
+                        break;
+                }
+                game.processGameEvent(cfrEvt);
                 break;
-            }
-            game.processGameEvent(cfrEvt);
-            break;
-        case Packet.COMMAND_GAME_VICTORY_EVENT:
-            GameVictoryEvent gve = new GameVictoryEvent(this, game);
-            game.processGameEvent(gve);
-            break;
+            case Packet.COMMAND_GAME_VICTORY_EVENT:
+                GameVictoryEvent gve = new GameVictoryEvent(this, game);
+                game.processGameEvent(gve);
+                break;
         }
     }
 
@@ -1699,37 +1700,37 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendDominoCFRResponse(MovePath mp) {
-        Object data[] = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
+        Object[] data = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAMSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAPDSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
-        Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
+        Object[] data = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendTelemissileTargetCFRResponse(int index) {
-        Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
+        Object[] data = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
     
     public void sendTAGTargetCFRResponse(int index) {
-        Object data[] = { Packet.COMMAND_CFR_TAG_TARGET, index };
+        Object[] data = { Packet.COMMAND_CFR_TAG_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
@@ -1747,16 +1748,12 @@ public class Client implements IClientCommandHandler {
      */
     private void memDump(String where) {
         if (PreferenceManager.getClientPreferences().memoryDumpOn()) {
-            StringBuffer buf = new StringBuffer();
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            buf.append("Memory dump ").append(where); //$NON-NLS-1$
-            for (int loop = where.length(); loop < 25; loop++) {
-                buf.append(' ');
-            }
-            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            System.out.println(buf.toString());
+            LogManager.getLogger().error("Memory dump " + where
+                    + " ".repeat(Math.max(0, 25 - where.length())) + ": used (" + used
+                    + ") + free (" + free + ") = " + total);
         }
     }
 
@@ -1846,6 +1843,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Registers a new command in the client command table
      */
+    @Override
     public void registerCommand(ClientCommand command) {
         //Warning, the special direction commands are registered seperatly
         commandsHash.put(command.getName(), command);
@@ -1896,7 +1894,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Set the Current Hex, used by client commands for the visually impaired
      */
-    public void setCurrentHex(IHex hex) {
+    public void setCurrentHex(Hex hex) {
         if (hex != null) {
             currentHex = hex.getCoords();
         }
@@ -1907,7 +1905,7 @@ public class Client implements IClientCommandHandler {
     }
     
     /** Returns true when the player is a bot added/controlled by this client. */
-    public boolean isLocalBot(IPlayer player) {
+    public boolean isLocalBot(Player player) {
         return bots.containsKey(player.getName());
     }
     
@@ -1915,7 +1913,7 @@ public class Client implements IClientCommandHandler {
      * Returns the Client associated with the given local bot player. If
      * the player is not a local bot, returns null. 
      */
-    public Client getBotClient(IPlayer player) {
+    public Client getBotClient(Player player) {
         return bots.get(player.getName());
     }
 }

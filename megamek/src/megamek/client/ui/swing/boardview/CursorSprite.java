@@ -89,6 +89,7 @@ class CursorSprite extends Sprite {
         this.color = color;
     }
     
+    @Override
     public boolean isHidden() {
         return hidden || isOffScreen();
     }

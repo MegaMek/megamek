@@ -33,10 +33,10 @@ public class DefaultsNode extends RulesetNode {
     protected ArrayList<ValueNode> ratingNodes;
 
     protected DefaultsNode() {
-        unitTypeNodes = new ArrayList<ValueNode>();
-        eschelonNodes = new ArrayList<ValueNode>();
-        rankSystemNodes = new ArrayList<ValueNode>();
-        ratingNodes = new ArrayList<ValueNode>();
+        unitTypeNodes = new ArrayList<>();
+        eschelonNodes = new ArrayList<>();
+        rankSystemNodes = new ArrayList<>();
+        ratingNodes = new ArrayList<>();
     }
 
     public void apply(ForceDescriptor fd) {

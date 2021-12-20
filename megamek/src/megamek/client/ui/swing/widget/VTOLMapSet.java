@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000,2001,2002,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -34,10 +33,9 @@ import megamek.common.VTOL;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to represent Tank unit in
- * MechDsiplay.ArmorPanel class.
+ * Class which keeps set of all areas required to represent VTOL unit in
+ * MechDisplay.ArmorPanel class.
  */
-
 public class VTOLMapSet implements DisplayMapSet {
     
     public static final int LABEL_NONE          = 0;
@@ -68,7 +66,7 @@ public class VTOLMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
     private PMSimpleLabel[] labels = new PMSimpleLabel[25];
     private PMValueLabel[] vLabels = new PMValueLabel[LABEL_LOC_NUMBER+1];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     // Polygons for all areas
@@ -119,10 +117,10 @@ public class VTOLMapSet implements DisplayMapSet {
     private Polygon rotorIS = new Polygon(new int[] { 45, 45, 105, 105 },
             new int[] { 90, 75, 75, 90 }, 4);
 
-    private static final Font FONT_LABEL = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public VTOLMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -137,14 +135,17 @@ public class VTOLMapSet implements DisplayMapSet {
     public void setRest() {
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         VTOL vtol = (VTOL) e;
         int armor = 1;
@@ -210,7 +211,7 @@ public class VTOLMapSet implements DisplayMapSet {
             areas[LABEL_CHIN_TU_IS].setVisible(false);
         }
         if ((vtol instanceof SupportVTOL) && !vtol.hasPatchworkArmor()) {
-            vLabels[LABEL_BAR_RATING].setValue(String.valueOf(((SupportVTOL)vtol).getBARRating(1)));
+            vLabels[LABEL_BAR_RATING].setValue(String.valueOf(vtol.getBARRating(1)));
         } else {
             labels[LABEL_BAR_RATING+6].setVisible(false);
             vLabels[LABEL_BAR_RATING].setVisible(false);
@@ -252,84 +253,83 @@ public class VTOLMapSet implements DisplayMapSet {
         int mod = 1;
         
         // Labels for Front view
-        labels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.chinTurretArmor"), fm, Color.black, 68, -37); //$NON-NLS-1$
-        labels[LABEL_FRONT_ARMOR] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.FrontArmor"), fm, Color.black, 68, 20); //$NON-NLS-1$
-        labels[LABEL_RIGHT_ARMOR_1] = WidgetUtils.createLabel(
-                Messages.getString("VTOLMapSet.RS"), fm, Color.black, 104, 50); //$NON-NLS-1$
-        labels[LABEL_RIGHT_ARMOR_2] = WidgetUtils.createLabel(
-                Messages.getString("VTOLMapSet.RS"), fm, Color.black, 104, 100); //$NON-NLS-1$
-        labels[LABEL_LEFT_ARMOR_1] = WidgetUtils.createLabel(
-                Messages.getString("VTOLMapSet.LS"), fm, Color.black, 44, 50); //$NON-NLS-1$
-        labels[LABEL_LEFT_ARMOR_2] = WidgetUtils.createLabel(
-                Messages.getString("VTOLMapSet.LS"), fm, Color.black, 44, 100); //$NON-NLS-1$
-        labels[LABEL_REAR_ARMOR] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RearArmor1"), fm, Color.black, 76, 185); //$NON-NLS-1$
-        labels[LABEL_REAR_ARMOR+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RearArmor2"), fm, Color.black, 76, 195); //$NON-NLS-1$
-        labels[LABEL_ROTOR_ARMOR_1+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RotorArmor"), fm, Color.black, 18, 82); //$NON-NLS-1$
-        labels[LABEL_ROTOR_ARMOR_2+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RotorArmor"), fm, Color.black, 123, 82); //$NON-NLS-1$
-        labels[LABEL_CHIN_TU_IS+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.chinTurretIS"), fm, Color.black, 75, -20); //$NON-NLS-1$
-        labels[LABEL_FRONT_IS+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.FrontIS"), fm, Color.black, 68, 35); //$NON-NLS-1$
-        labels[LABEL_RIGHT_IS_1+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RIS1"), fm, Color.black, 84, 48); //$NON-NLS-1$
-        labels[LABEL_RIGHT_IS_2+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RIS2"), fm, Color.black, 84, 57); //$NON-NLS-1$
+        labels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.chinTurretArmor"),
+                fm, Color.black, 68, -37);
+        labels[LABEL_FRONT_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontArmor"),
+                fm, Color.black, 68, 20);
+        labels[LABEL_RIGHT_ARMOR_1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"),
+                fm, Color.black, 104, 50);
+        labels[LABEL_RIGHT_ARMOR_2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RS"),
+                fm, Color.black, 104, 100);
+        labels[LABEL_LEFT_ARMOR_1] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"),
+                fm, Color.black, 44, 50);
+        labels[LABEL_LEFT_ARMOR_2] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LS"),
+                fm, Color.black, 44, 100);
+        labels[LABEL_REAR_ARMOR] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor1"),
+                fm, Color.black, 76, 185);
+        labels[LABEL_REAR_ARMOR+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearArmor2"),
+                fm, Color.black, 76, 195);
+        labels[LABEL_ROTOR_ARMOR_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"),
+                fm, Color.black, 18, 82);
+        labels[LABEL_ROTOR_ARMOR_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorArmor"),
+                fm, Color.black, 123, 82);
+        labels[LABEL_CHIN_TU_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.chinTurretIS"),
+                fm, Color.black, 75, -20);
+        labels[LABEL_FRONT_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.FrontIS"),
+                fm, Color.black, 68, 35);
+        labels[LABEL_RIGHT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"),
+                fm, Color.black, 84, 48);
+        labels[LABEL_RIGHT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"),
+                fm, Color.black, 84, 57);
         mod += 2; // Increment modifier since we're continuing to shift, at +3 now
-        labels[LABEL_RIGHT_IS_1+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RIS1"), fm, Color.black, 84, 100); //$NON-NLS-1$
-        labels[LABEL_RIGHT_IS_2+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RIS2"), fm, Color.black, 84, 110); //$NON-NLS-1$
-        labels[LABEL_LEFT_IS_1+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.LIS1"), fm, Color.black, 68, 48); //$NON-NLS-1$
-        labels[LABEL_LEFT_IS_2+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.LIS2"), fm, Color.black, 68, 57); //$NON-NLS-1$
+        labels[LABEL_RIGHT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS1"),
+                fm, Color.black, 84, 100);
+        labels[LABEL_RIGHT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RIS2"),
+                fm, Color.black, 84, 110);
+        labels[LABEL_LEFT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"),
+                fm, Color.black, 68, 48);
+        labels[LABEL_LEFT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"),
+                fm, Color.black, 68, 57);
         mod += 2; // Increment modifier since we're continuing to shift, at +5 now
-        labels[LABEL_LEFT_IS_1+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.LIS1"), fm, Color.black, 68, 100); //$NON-NLS-1$
-        labels[LABEL_LEFT_IS_2+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.LIS2"), fm, Color.black, 68, 110); //$NON-NLS-1$
-        labels[LABEL_REAR_IS+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RearIS1"), fm, Color.black, 76, 152); //$NON-NLS-1$
+        labels[LABEL_LEFT_IS_1+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS1"),
+                fm, Color.black, 68, 100);
+        labels[LABEL_LEFT_IS_2+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.LIS2"),
+                fm, Color.black, 68, 110);
+        labels[LABEL_REAR_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS1"),
+                fm, Color.black, 76, 152);
         mod++; // Increment modifier since we're continuing to shift, at +6 now
-        labels[LABEL_REAR_IS+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RearIS2"), fm, Color.black, 76, 161); //$NON-NLS-1$
-        labels[LABEL_ROTOR_IS+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.RotorIS"), fm, Color.black, 73, 82); //$NON-NLS-1$
-        labels[LABEL_BAR_RATING+mod] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.BARRating"), fm, Color.white, 65, 198); //$NON-NLS-1$
+        labels[LABEL_REAR_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RearIS2"),
+                fm, Color.black, 76, 161);
+        labels[LABEL_ROTOR_IS+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.RotorIS"),
+                fm, Color.black, 73, 82);
+        labels[LABEL_BAR_RATING+mod] = WidgetUtils.createLabel(Messages.getString("VTOLMapSet.BARRating"),
+                fm, Color.white, 65, 198);
 
         // Value labels for all parts of mek
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createValueLabel(92, -36, "", fm); //$NON-NLS-1$ Chin TU
-        vLabels[LABEL_FRONT_ARMOR] = WidgetUtils.createValueLabel(101, 22, "", fm); //$NON-NLS-1$ Front
-        vLabels[LABEL_RIGHT_ARMOR_1] = WidgetUtils.createValueLabel(105, 65, "", fm); //$NON-NLS-1$ RS
-        vLabels[LABEL_RIGHT_ARMOR_2] = WidgetUtils.createValueLabel(105, 115, "", fm); //$NON-NLS-1$ RS
-        vLabels[LABEL_LEFT_ARMOR_1] = WidgetUtils.createValueLabel(44, 65, "", fm); //$NON-NLS-1$ LS
-        vLabels[LABEL_LEFT_ARMOR_2] = WidgetUtils.createValueLabel(44, 115, "", fm); //$NON-NLS-1$ LS
-        vLabels[LABEL_REAR_ARMOR] = WidgetUtils.createValueLabel(76, 207, "", fm); //$NON-NLS-1$ Rear
-        vLabels[LABEL_ROTOR_ARMOR_1] = WidgetUtils.createValueLabel(38, 83, "", fm); //$NON-NLS-1$ Rotor
-        vLabels[LABEL_ROTOR_ARMOR_2] = WidgetUtils.createValueLabel(143, 83, "", fm); //$NON-NLS-1$ Rotor
-        vLabels[LABEL_CHIN_TU_IS] = WidgetUtils.createValueLabel(75, -8, "", fm); //$NON-NLS-1$ Chin TU
-        vLabels[LABEL_FRONT_IS] = WidgetUtils.createValueLabel(94, 37, "", fm); //$NON-NLS-1$ Front
-        vLabels[LABEL_RIGHT_IS_1] = WidgetUtils.createValueLabel(84, 68, "", fm); //$NON-NLS-1$ RS
-        vLabels[LABEL_RIGHT_IS_2] = WidgetUtils.createValueLabel(84, 122, "", fm); //$NON-NLS-1$ RS
-        vLabels[LABEL_LEFT_IS_1] = WidgetUtils.createValueLabel(68, 68, "", fm); //$NON-NLS-1$ LS
-        vLabels[LABEL_LEFT_IS_2] = WidgetUtils.createValueLabel(68, 122, "", fm); //$NON-NLS-1$ LS
-        vLabels[LABEL_REAR_IS] = WidgetUtils.createValueLabel(76, 172, "", fm); //$NON-NLS-1$ Rear
-        vLabels[LABEL_ROTOR_IS] = WidgetUtils.createValueLabel(98, 83, "", fm); //$NON-NLS-1$ Rotor
-        vLabels[LABEL_BAR_RATING] = WidgetUtils.createValueLabel(100, 200, "", fm); //$NON-NLS-1$
+        vLabels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createValueLabel(92, -36, "", fm);
+        vLabels[LABEL_FRONT_ARMOR] = WidgetUtils.createValueLabel(101, 22, "", fm);
+        vLabels[LABEL_RIGHT_ARMOR_1] = WidgetUtils.createValueLabel(105, 65, "", fm);
+        vLabels[LABEL_RIGHT_ARMOR_2] = WidgetUtils.createValueLabel(105, 115, "", fm);
+        vLabels[LABEL_LEFT_ARMOR_1] = WidgetUtils.createValueLabel(44, 65, "", fm);
+        vLabels[LABEL_LEFT_ARMOR_2] = WidgetUtils.createValueLabel(44, 115, "", fm);
+        vLabels[LABEL_REAR_ARMOR] = WidgetUtils.createValueLabel(76, 207, "", fm);
+        vLabels[LABEL_ROTOR_ARMOR_1] = WidgetUtils.createValueLabel(38, 83, "", fm);
+        vLabels[LABEL_ROTOR_ARMOR_2] = WidgetUtils.createValueLabel(143, 83, "", fm);
+        vLabels[LABEL_CHIN_TU_IS] = WidgetUtils.createValueLabel(75, -8, "", fm);
+        vLabels[LABEL_FRONT_IS] = WidgetUtils.createValueLabel(94, 37, "", fm);
+        vLabels[LABEL_RIGHT_IS_1] = WidgetUtils.createValueLabel(84, 68, "", fm);
+        vLabels[LABEL_RIGHT_IS_2] = WidgetUtils.createValueLabel(84, 122, "", fm);
+        vLabels[LABEL_LEFT_IS_1] = WidgetUtils.createValueLabel(68, 68, "", fm);
+        vLabels[LABEL_LEFT_IS_2] = WidgetUtils.createValueLabel(68, 122, "", fm);
+        vLabels[LABEL_REAR_IS] = WidgetUtils.createValueLabel(76, 172, "", fm);
+        vLabels[LABEL_ROTOR_IS] = WidgetUtils.createValueLabel(98, 83, "", fm);
+        vLabels[LABEL_BAR_RATING] = WidgetUtils.createValueLabel(100, 200, "", fm);
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
                 .getImage(

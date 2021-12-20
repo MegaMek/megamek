@@ -22,7 +22,7 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Report;
@@ -100,7 +100,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
@@ -129,7 +129,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             

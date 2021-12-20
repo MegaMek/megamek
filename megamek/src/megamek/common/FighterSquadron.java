@@ -11,19 +11,14 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
@@ -128,8 +123,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return getActiveSubEntities().stream()
                 .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat)).min()
                 .orElse(0);
@@ -173,8 +167,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions()
-                .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
                 || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
@@ -216,7 +209,7 @@ public class FighterSquadron extends Aero {
         // according to personal communication with Welshman, the normal crit
         // penalties are added up across the fighter squadron
         fighters.stream().map(fid -> game.getEntity(fid))
-            .filter(ACTIVE_CHECK).map(ent -> (IAero)ent).forEachOrdered(
+            .filter(ACTIVE_CHECK).map(ent -> (IAero) ent).forEachOrdered(
             ent -> {
                 int avihits = ent.getAvionicsHits();
                 if ((avihits > 0) && (avihits < 3)) {
@@ -227,11 +220,11 @@ public class FighterSquadron extends Aero {
                 }
 
                 // life support (only applicable to non-ASFs)
-                if(!ent.hasLifeSupport()) {
+                if (!ent.hasLifeSupport()) {
                     prd.addModifier(2, "No life support");
                 }
 
-                if(((Entity)ent).hasModularArmor()) {
+                if (((Entity) ent).hasModularArmor()) {
                     prd.addModifier(1, "Modular Armor");
                 }
             });
@@ -280,8 +273,8 @@ public class FighterSquadron extends Aero {
     }
     
     @Override
-    public int getHeatCapacity(boolean includeRadicalHeatSink){
-        if (includeRadicalHeatSink){
+    public int getHeatCapacity(boolean includeRadicalHeatSink) {
+        if (includeRadicalHeatSink) {
             return heatcap;
         } else {
             return heatcapNoRHS;
@@ -319,7 +312,8 @@ public class FighterSquadron extends Aero {
      * Fighter Squadron units can only get hit in undestroyed fighters.
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         List<Entity> activeFighters = getActiveSubEntities();
         
         // If this squadron is doomed or is of size 1 then just return the first one
@@ -334,7 +328,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     @Override
@@ -389,7 +383,7 @@ public class FighterSquadron extends Aero {
             getEquipment(weaponGroups.get(key)).setNWeapons(0);
         }
         // now collect a hash of all the same weapons in each location by id
-        Map<String, Integer> groups = new HashMap<String, Integer>();
+        Map<String, Integer> groups = new HashMap<>();
         for (Entity entity : getActiveSubEntities()) {
             IAero fighter = (IAero) entity;
             if (fighter.getFCSHits() > 2) {
@@ -434,7 +428,7 @@ public class FighterSquadron extends Aero {
                         newmount.setNWeapons(groups.get(key));
                         weaponGroups.put(key, getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        MegaMek.getLogger().error("Unable to compile weapon groups.", ex);
+                        LogManager.getLogger().error("Unable to compile weapon groups.", ex);
                         return;
                     }
                 } else if (name != "0") {
@@ -467,7 +461,7 @@ public class FighterSquadron extends Aero {
      */
     public void updateSkills() {
         List<Entity> activeFighters = getActiveSubEntities();
-        if(activeFighters.isEmpty()) {
+        if (activeFighters.isEmpty()) {
             return;
         }
         int pilotingTotal = 0;
@@ -475,7 +469,7 @@ public class FighterSquadron extends Aero {
         int gunneryLTotal = 0;
         int gunneryMTotal = 0;
         int gunneryBTotal = 0;
-        for(Entity fighter : activeFighters) {
+        for (Entity fighter : activeFighters) {
             pilotingTotal += fighter.getCrew().getPiloting();
             gunneryTotal += fighter.getCrew().getGunnery();
             if (fighter.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
@@ -497,7 +491,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public ArrayList<Mounted> getAmmo() {
-        ArrayList<Mounted> allAmmo = new ArrayList<Mounted>();
+        ArrayList<Mounted> allAmmo = new ArrayList<>();
         for (Entity fighter : getActiveSubEntities()) {
             allAmmo.addAll(fighter.getAmmo());
         }
@@ -683,7 +677,7 @@ public class FighterSquadron extends Aero {
     @Override
     public boolean canLoad(Entity unit, boolean checkFalse) {
         // We must have enough space for the new fighter.
-        if(!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < getMaxSize())) {
+        if (!unit.isEnemyOf(this) && unit.isFighter() && (fighters.size() < getMaxSize())) {
             return true;
         }
         // fighter squadrons can also load other fighter squadrons provided
@@ -892,7 +886,7 @@ public class FighterSquadron extends Aero {
         EntityMovementMode moveMode = entities.get(0).getMovementMode();
         for (Entity fighter : entities) {
             if (moveMode != fighter.getMovementMode()) {
-                MegaMek.getLogger().error("Error: Fighter squadron movement mode doesn't agree!");
+                LogManager.getLogger().error("Error: Fighter squadron movement mode doesn't agree!");
                 return EntityMovementMode.NONE;
             }
         }

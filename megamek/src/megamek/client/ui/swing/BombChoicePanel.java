@@ -97,7 +97,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
                 maxNumBombs = 0;
             }
             
-            if(typeMax != null) {
+            if (typeMax != null) {
                 if (maxNumBombs > 0 && maxNumBombs > typeMax[type]) maxNumBombs = typeMax[type];
             }
             
@@ -136,6 +136,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void itemStateChanged(ItemEvent ie) {
 
@@ -154,7 +155,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             int maxNumBombs = Math.round(availBombPoints
                     / BombType.getBombCost(type))
                     + current[type];
-            if(typeMax != null) {
+            if (typeMax != null) {
                 if (maxNumBombs > 0 && maxNumBombs > typeMax[type]) maxNumBombs = typeMax[type];
             }
             for (int x = 0; x <= maxNumBombs; x++) {

@@ -1,28 +1,27 @@
 /*
  *  MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
+
+import megamek.common.UnitType;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
 
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.w3c.dom.Node;
-import org.apache.commons.text.StringEscapeUtils;
-
-import megamek.MegaMek;
-import megamek.common.UnitType;
 
 /**
  * Stores data about factions used for building RATs, including
@@ -52,16 +51,16 @@ public class FactionRecord {
          */
         TechCategory fallthrough() {
             switch (this) {
-            case OMNI_AERO:
-                return OMNI;
-            case CLAN_AERO:
-            case CLAN_VEE:
-                return CLAN;
-            case IS_ADVANCED_AERO:
-            case IS_ADVANCED_VEE:
-                return IS_ADVANCED;
-            default:
-                return null;
+                case OMNI_AERO:
+                    return OMNI;
+                case CLAN_AERO:
+                case CLAN_VEE:
+                    return CLAN;
+                case IS_ADVANCED_AERO:
+                case IS_ADVANCED_VEE:
+                    return IS_ADVANCED;
+                default:
+                    return null;
             }
         }
     }
@@ -126,7 +125,7 @@ public class FactionRecord {
     @Override
     public boolean equals(Object other) {
         return other instanceof FactionRecord
-                && ((FactionRecord)other).getKey().equals(getKey());
+                && ((FactionRecord) other).getKey().equals(getKey());
     }
 
     public String getKey() {
@@ -294,7 +293,7 @@ public class FactionRecord {
                         retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
                     }
                 } else {
-                    MegaMek.getLogger().debug("RATGenerator: could not locate salvage faction " + pKey
+                    LogManager.getLogger().debug("RATGenerator: could not locate salvage faction " + pKey
                             + " for " + key);
                 }
             }
@@ -342,7 +341,7 @@ public class FactionRecord {
             }
         }
         if (count > 0) {
-            return (int)((total / count + 0.5));
+            return (int) ((total / count + 0.5));
         } else {
             return null;
         }
@@ -373,7 +372,7 @@ public class FactionRecord {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
-                    MegaMek.getLogger().error("While loading faction data for " + key);
+                    LogManager.getLogger().error("While loading faction data for " + key);
                 }
             }
         }
@@ -501,7 +500,7 @@ public class FactionRecord {
                 try {
                     retVal.setYears(wn.getTextContent());
                 } catch (ParseException ex) {
-                    MegaMek.getLogger().error(ex);
+                    LogManager.getLogger().error(ex);
                 }
             } else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
                 retVal.setRatings(wn.getTextContent());
@@ -515,69 +514,69 @@ public class FactionRecord {
     public void loadEra(Node node, int era) {
         for (int i = 0; i < node.getChildNodes().getLength(); i++) {
             Node wn = node.getChildNodes().item(i);
-            switch(wn.getNodeName()) {
-            case "pctOmni":
-                if (wn.getAttributes().getNamedItem("unitType") != null
-                        && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-                    setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
-                } else {
-                    setPctTech(TechCategory.OMNI, era, wn.getTextContent());
-                }
-                break;
-            case "pctClan":
-                if (wn.getAttributes().getNamedItem("unitType") != null
-                        && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-                    setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
-                } else if (wn.getAttributes().getNamedItem("unitType") != null
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
-                    setPctTech(TechCategory.CLAN_VEE, era, wn.getTextContent());
-                } else {
-                    setPctTech(TechCategory.CLAN, era, wn.getTextContent());
-                }
-                break;
-            case "pctSL":
-                if (wn.getAttributes().getNamedItem("unitType") != null
-                        && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-                    setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
-                } else if (wn.getAttributes().getNamedItem("unitType") != null
-                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
-                    setPctTech(TechCategory.IS_ADVANCED_VEE, era, wn.getTextContent());
-                } else {
-                    setPctTech(TechCategory.IS_ADVANCED, era, wn.getTextContent());
-                }
-                break;
-            case "omniMargin":
-                omniMargin.put(era, Integer.parseInt(wn.getTextContent()));
-                break;
-            case "techMargin":
-                techMargin.put(era, Integer.parseInt(wn.getTextContent()));
-                break;
-            case "upgradeMargin":
-                upgradeMargin.put(era, Integer.parseInt(wn.getTextContent()));
-                break;
-            case "salvage":
-                pctSalvage.put(era,
-                        Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
-                salvage.put(era, new HashMap<>());
-                String [] fields = wn.getTextContent().trim().split(",");
-                for (String field : fields) {
-                    if (field.length() > 0) {
-                        String[] subfields = field.split(":");
-                        if (subfields.length == 2) {
-                            salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
+            switch (wn.getNodeName()) {
+                case "pctOmni":
+                    if (wn.getAttributes().getNamedItem("unitType") != null
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                        setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
+                    } else {
+                        setPctTech(TechCategory.OMNI, era, wn.getTextContent());
+                    }
+                    break;
+                case "pctClan":
+                    if (wn.getAttributes().getNamedItem("unitType") != null
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                        setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
+                    } else if (wn.getAttributes().getNamedItem("unitType") != null
+                                && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
+                        setPctTech(TechCategory.CLAN_VEE, era, wn.getTextContent());
+                    } else {
+                        setPctTech(TechCategory.CLAN, era, wn.getTextContent());
+                    }
+                    break;
+                case "pctSL":
+                    if (wn.getAttributes().getNamedItem("unitType") != null
+                            && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+                        setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
+                    } else if (wn.getAttributes().getNamedItem("unitType") != null
+                                && wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
+                        setPctTech(TechCategory.IS_ADVANCED_VEE, era, wn.getTextContent());
+                    } else {
+                        setPctTech(TechCategory.IS_ADVANCED, era, wn.getTextContent());
+                    }
+                    break;
+                case "omniMargin":
+                    omniMargin.put(era, Integer.parseInt(wn.getTextContent()));
+                    break;
+                case "techMargin":
+                    techMargin.put(era, Integer.parseInt(wn.getTextContent()));
+                    break;
+                case "upgradeMargin":
+                    upgradeMargin.put(era, Integer.parseInt(wn.getTextContent()));
+                    break;
+                case "salvage":
+                    pctSalvage.put(era,
+                            Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
+                    salvage.put(era, new HashMap<>());
+                    String[] fields = wn.getTextContent().trim().split(",");
+                    for (String field : fields) {
+                        if (field.length() > 0) {
+                            String[] subfields = field.split(":");
+                            if (subfields.length == 2) {
+                                salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
+                            }
                         }
                     }
-                }
-                break;
-            case "weightDistribution":
-                try {
-                    int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
-                    setWeightDistribution(era, unitType, wn.getTextContent());
-                } catch (Exception ex) {
-                    MegaMek.getLogger().error("RATGenerator: error parsing weight distributions for " + key
-                            + ", " + era);
-                }
-                break;
+                    break;
+                case "weightDistribution":
+                    try {
+                        int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
+                        setWeightDistribution(era, unitType, wn.getTextContent());
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error("RATGenerator: error parsing weight distributions for " + key
+                                + ", " + era);
+                    }
+                    break;
             }
         }
     }
@@ -719,7 +718,7 @@ public class FactionRecord {
             }
         }
         
-        if(factionRecordBuilder.length() > 0) {
+        if (factionRecordBuilder.length() > 0) {
             pw.println("\t<faction key='" + key + "'>");
             pw.println(factionRecordBuilder.toString().replaceFirst("\\n$", ""));
             pw.println("\t</faction>");
@@ -796,6 +795,7 @@ public class FactionRecord {
         return sj.toString();
     }
 
+    @Override
     public String toString() {
         return key;
     }

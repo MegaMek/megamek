@@ -11,20 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author njrkrynn
- * @version
- */
 package megamek.common.loaders;
 
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
@@ -40,8 +29,13 @@ import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.loaders.BLKFile;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author njrkrynn
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKMechFile extends BLKFile implements IMechLoader {
 
     // armor locatioms
@@ -61,12 +55,11 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
     public static final int RT = 6;
     public static final int LT = 2;
 
-    //
-
     public BLKMechFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Entity getEntity() throws EntityLoadingException {
 
@@ -218,7 +211,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         }
 
         // load equipment stuff...
-        Vector<String>[] criticals = new Vector[8];
+        List<String>[] criticals = new Vector[8];
 
         criticals[Mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
         criticals[Mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
@@ -276,7 +269,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     critName = critName.substring(0, critName.length() - 4).trim();
                 }
-                if (critName.indexOf("Engine") != -1) {
+                if (critName.contains("Engine")) {
                     mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {

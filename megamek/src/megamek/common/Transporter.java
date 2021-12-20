@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -24,7 +23,6 @@ import java.util.List;
  * vehicle garages. Other possible classes include cargo bays and Dropship
  * docks.
  */
-
 public interface Transporter extends Serializable {
 
     /**
@@ -35,12 +33,12 @@ public interface Transporter extends Serializable {
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
-    public boolean canLoad(Entity unit);
+    boolean canLoad(Entity unit);
     
     /**
      * Determines if this transporter can tow the given unit. By default, no.
      */
-    public default boolean canTow(Entity unit) { return false; }
+    default boolean canTow(Entity unit) { return false; }
 
     /**
      * Load the given unit.
@@ -50,7 +48,7 @@ public interface Transporter extends Serializable {
      *                <code>IllegalArgumentException</code> exception will be
      *                thrown.
      */
-    public void load(Entity unit) throws IllegalArgumentException;
+    void load(Entity unit) throws IllegalArgumentException;
 
     /**
      * Get a <code>Vector</code> of the units currently loaded into this
@@ -62,7 +60,7 @@ public interface Transporter extends Serializable {
      *         under- lying data structure; modifying one does not affect the
      *         other.
      */
-    public List<Entity> getLoadedUnits();
+    List<Entity> getLoadedUnits();
 
     /**
      * Unload the given unit.
@@ -71,21 +69,21 @@ public interface Transporter extends Serializable {
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
      */
-    public boolean unload(Entity unit);
+    boolean unload(Entity unit);
 
     /**
      * Returns the number of unused spaces in this transporter.
      *
      * @return
      */
-    public double getUnused();
+    double getUnused();
 
     /**
      * Return a string that identifies the unused capacity of this transporter.
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString();
+    String getUnusedString();
 
     /**
      * Determine if transported units prevent a weapon in the given location
@@ -98,7 +96,7 @@ public interface Transporter extends Serializable {
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
-    public boolean isWeaponBlockedAt(int loc, boolean isRear);
+    boolean isWeaponBlockedAt(int loc, boolean isRear);
 
     /**
      * If a unit is being transported on the outside of the transporter, it can
@@ -114,29 +112,27 @@ public interface Transporter extends Serializable {
      *         that location. This value will be <code>null</code> if no unit
      *         is transported on the outside at that location.
      */
-    public Entity getExteriorUnitAt(int loc, boolean isRear);
+    Entity getExteriorUnitAt(int loc, boolean isRear);
 
     /**
      * @return list of all units carried externally by this transporter
      */
-    public List<Entity> getExternalUnits();
+    List<Entity> getExternalUnits();
 
     /**
      * @return the MP reduction due to cargo carried by this transporter
      */
-    public int getCargoMpReduction(Entity carrier);
+    int getCargoMpReduction(Entity carrier);
 
-    public void setGame(Game game);
+    void setGame(Game game);
     
     /**
      * clear out all troops listed in the transporter. Used by MHQ to reset units after game
      */
-    public void resetTransporter();
+    void resetTransporter();
     
     /**
      * @return THe number of docking hardpoints this transporter counts as toward the limit.
      */
-    public int hardpointCost();
-
-} // End public interface Transporter
-
+    int hardpointCost();
+}

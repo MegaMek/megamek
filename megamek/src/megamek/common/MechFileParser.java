@@ -25,10 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.zip.ZipFile;
 
@@ -74,7 +71,7 @@ import megamek.common.weapons.ppc.ISSnubNosePPC;
 public class MechFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
-    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; //$NON-NLS-1$
+    public static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt";
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
@@ -84,7 +81,7 @@ public class MechFileParser {
             throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
-            try(InputStream is = new FileInputStream(f.getAbsolutePath())) {
+            try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
                 parse(is, f.getName());
             } catch (Exception ex) {
                 System.out.println("Error parsing " + entryName + "!");
@@ -581,23 +578,19 @@ public class MechFileParser {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     //Handle weapon bays
-                    if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))){
-                        for (int wId : mWeapon.getBayWeapons())
-                        {
+                    if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))) {
+                        for (int wId : mWeapon.getBayWeapons()) {
                             Mounted bayMountedWeapon = ent.getEquipment(wId);
-                            WeaponType bayWeapType =
-                                    (WeaponType)bayMountedWeapon.getType();
+                            WeaponType bayWeapType = (WeaponType) bayMountedWeapon.getType();
 
                             // Check for PPC that isn't crosslinked
                             if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
-                                    (bayMountedWeapon.getCrossLinkedBy() != null)){
+                                    (bayMountedWeapon.getCrossLinkedBy() != null)) {
                                 continue;
                             }
 
                             // check location
-                            if (bayMountedWeapon.getLocation() ==
-                                    m.getLocation()) {
-
+                            if (bayMountedWeapon.getLocation() == m.getLocation()) {
                                 // Only Legal IS PPC's are allowed.
                                 if ((bayWeapType instanceof ISPPC)
                                         || (bayWeapType instanceof ISLightPPC)
@@ -636,27 +629,22 @@ public class MechFileParser {
                     }
                 }
 
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "No available PPC to match Capacitor for "+ent.getShortName()+"!");
-                }
+                // huh. this shouldn't happen
+                Objects.requireNonNull(m.getLinked(), "No available PPC to match Capacitor for " + ent.getShortName() + "!");
 
-            } // End crossLink-PPC Capacitor
-
+            }
         } // Check the next piece of equipment.
 
         // For BattleArmor, we have to ensure that all ammo that is DWP mounted
         //  is linked to it's DWP mounted weapon, so that TestBattleArmor
         //  can properly account for DWP mounted ammo
-        if (ent instanceof BattleArmor){
-            for (Mounted ammo : ent.getAmmo()){
-                if (ammo.isDWPMounted()){
+        if (ent instanceof BattleArmor) {
+            for (Mounted ammo : ent.getAmmo()) {
+                if (ammo.isDWPMounted()) {
                     // First, make sure every valid DWP weapon has ammo
-                    for (Mounted weapon : ent.getWeaponList()){
+                    for (Mounted weapon : ent.getWeaponList()) {
                         if (weapon.isDWPMounted() && (weapon.getLinked() == null)
-                                && AmmoType.isAmmoValid(ammo,
-                                        (WeaponType)weapon.getType())){
+                                && AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())) {
                             weapon.setLinked(ammo);
                             break;
                         }
@@ -664,10 +652,9 @@ public class MechFileParser {
                     // If we didn't find a match, we can link to a weapon with
                     //  already linked ammo.
                     if (ammo.getLinkedBy() == null) {
-                        for (Mounted weapon : ent.getWeaponList()){
+                        for (Mounted weapon : ent.getWeaponList()) {
                             if (weapon.isDWPMounted()
-                                    && AmmoType.isAmmoValid(ammo,
-                                            (WeaponType)weapon.getType())){
+                                    && AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())) {
                                 weapon.setLinked(ammo);
                                 break;
                             }
@@ -699,7 +686,7 @@ public class MechFileParser {
                         .countWorkingMisc(MiscType.F_BATTLE_CLAW);
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
-                for (Mounted m : ent.getWeaponList()){
+                for (Mounted m : ent.getWeaponList()) {
                     if (m.getType().getInternalName()
                             .equals(Infantry.SWARM_WEAPON_MEK)) {
                         hasSwarm = true;
@@ -813,9 +800,9 @@ public class MechFileParser {
         ent.setCanon(false);// Guilty until proven innocent
         try {
             if (canonUnitNames == null) {
-                canonUnitNames = new Vector<String>();
+                canonUnitNames = new Vector<>();
                 // init the list.
-                try(BufferedReader br = new BufferedReader(new FileReader(new MegaMekFile(
+                try (BufferedReader br = new BufferedReader(new FileReader(new MegaMekFile(
                             Configuration.docsDir(), FILENAME_OFFICIAL_UNITS).getFile()))) {
                     String s;
                     String name;
@@ -839,7 +826,7 @@ public class MechFileParser {
         }        
         ent.initMilitary();
 
-    } // End private void postLoadInit(Entity) throws EntityLoadingException
+    }
 
     /**
      * Links machine gun arrays to their machine guns using the bayWeapon list.
@@ -888,21 +875,15 @@ public class MechFileParser {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out
-                    .println("Files in a supported MegaMek file format can be specified on");
-            System.out
-                    .println("the command line.  Multiple files may be processed at once.");
+            System.out.println("Files in a supported MegaMek file format can be specified on");
+            System.out.println("the command line. Multiple files may be processed at once.");
             System.out.println("The supported formats are:");
-            System.out
-                    .println("\t.mtf    The native MegaMek format that your file will be converted into");
+            System.out.println("\t.mtf    The native MegaMek format that your file will be converted into");
             System.out.println("\t.blk    Another native MegaMek format");
-            System.out.println("\t.hmp    Heavy Metal Pro (c)RCW Enterprises");
-            System.out
-                    .println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
-            System.out
-                    .println("\t.xml    The Drawing Board (c)Blackstone Interactive");
-            System.out
-                    .println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
+            System.out.println("\t.hmp    Heavy Metal Pro (c) RCW Enterprises");
+            System.out.println("\t.mep    MechEngineer Pro (c) Howling Moon SoftWorks");
+            System.out.println("\t.xml    The Drawing Board (c) Blackstone Interactive");
+            System.out.println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MechFileParser.getResponse("Press <enter> to exit...");
             return;
         }
@@ -919,8 +900,7 @@ public class MechFileParser {
                     outFilename += ".mtf";
                     File outFile = new File(outFilename);
                     if (outFile.exists()) {
-                        if (!MechFileParser
-                                .getResponse("File already exists, overwrite? ")) {
+                        if (!MechFileParser.getResponse("File already exists, overwrite? ")) {
                             return;
                         }
                     }

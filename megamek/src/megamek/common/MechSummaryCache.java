@@ -2,42 +2,28 @@
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.*;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import megamek.MegaMek;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.*;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
 
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
@@ -47,9 +33,6 @@ import megamek.common.verifier.*;
  * @author Others...
  */
 public class MechSummaryCache {
-    
-    private static final LogLevel LOGLVL = LogLevel.WARNING;
-
     public interface Listener {
         void doneLoading();
     }
@@ -162,7 +145,6 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         m_nameMap = new HashMap<>();
         m_fileNameMap = new HashMap<>();
-        MegaMek.getLogger().setLogLevel(LOGLVL);
     }
 
     public MechSummary[] getAllMechs() {
@@ -252,7 +234,7 @@ public class MechSummaryCache {
             } catch (Exception e) {
                 loadReport.append("  Unable to load unit cache: ")
                         .append(e.getMessage()).append("\n");
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error(e);
             }
         }
 
@@ -324,7 +306,7 @@ public class MechSummaryCache {
                     .append(" units failed to load...\n");
         }
 
-        MegaMek.getLogger().info(loadReport.toString());
+        LogManager.getLogger().info(loadReport.toString());
     }
 
     private void done() {
@@ -355,7 +337,7 @@ public class MechSummaryCache {
             }
         } catch (Exception e) {
             loadReport.append(" Unable to save mech cache\n");
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
     }
 
@@ -416,10 +398,10 @@ public class MechSummaryCache {
                     TechConstants.T_IS_EXPERIMENTAL });
         }
         ms.setTons(e.getWeight());
-        if (e instanceof BattleArmor){
-            ms.setTOweight(((BattleArmor)e).getAlternateWeight());
+        if (e instanceof BattleArmor) {
+            ms.setTOweight(((BattleArmor) e).getAlternateWeight());
             ms.setTWweight(e.getWeight());
-            ms.setSuitWeight(((BattleArmor)e).getTrooperWeight());
+            ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());
         e.setUseGeometricBV(true);
@@ -510,18 +492,18 @@ public class MechSummaryCache {
         }
 
         ms.setGyroType(e.getGyroType());
-        if (e.hasEngine()){
+        if (e.hasEngine()) {
             ms.setEngineName(e.getEngine().getEngineName());
         } else {
             ms.setEngineName("None");
         }
 
-        if (e instanceof Mech){
+        if (e instanceof Mech) {
             if (((Mech) e).hasTSM(false)) {
                 ms.setMyomerName("Triple-Strength");
             } else if (((Mech) e).hasTSM(true)) {
                     ms.setMyomerName("Prototype Triple-Strength");
-            } else if (((Mech)e).hasIndustrialTSM()) {
+            } else if (((Mech) e).hasIndustrialTSM()) {
                 ms.setMyomerName("Industrial Triple-Strength");
             } else {
                 ms.setMyomerName("Standard");
@@ -688,7 +670,7 @@ public class MechSummaryCache {
                     zFile.close();
                     return false;
                 } catch (IOException e) {
-                    MegaMek.getLogger().error(e);
+                    LogManager.getLogger().error(e);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -747,7 +729,7 @@ public class MechSummaryCache {
         try {
             zFile.close();
         } catch (Exception ex) {
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
         }
 
         loadReport.append("  ...loaded ").append(thisZipFileCount)
@@ -781,7 +763,7 @@ public class MechSummaryCache {
                     }
                 }
             } catch (IOException ex) {
-                MegaMek.getLogger().error(ex);
+                LogManager.getLogger().error(ex);
             }
         }
     }

@@ -326,7 +326,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     public void updateFactionChoice() {
-        FactionRecord old = (FactionRecord)cbFaction.getSelectedItem();
+        FactionRecord old = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
         List<FactionRecord> recs = new ArrayList<>();
@@ -349,10 +349,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     public void updateSubfactionChoice() {
-        FactionRecord old = (FactionRecord)cbSubfaction.getSelectedItem();
+        FactionRecord old = (FactionRecord) cbSubfaction.getSelectedItem();
         cbSubfaction.removeActionListener(this);
         cbSubfaction.removeAllItems();
-        FactionRecord selectedFaction = (FactionRecord)cbFaction.getSelectedItem();
+        FactionRecord selectedFaction = (FactionRecord) cbFaction.getSelectedItem();
         if (selectedFaction != null) {
             List<FactionRecord> recs = new ArrayList<>();
             for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
@@ -466,7 +466,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
     };
     
-    private Comparator<FactionRecord> factionSorter = new Comparator<FactionRecord>() {
+    private Comparator<FactionRecord> factionSorter = new Comparator<>() {
         @Override
         public int compare(FactionRecord o1, FactionRecord o2) {
             return o1.getName(ratGenYear).compareTo(o2.getName(ratGenYear));
@@ -515,6 +515,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             }
         }
         
+        @Override
         public void optionsChanged() {
             ((CardLayout) getLayout()).show(this, (String) cbUnitType.getSelectedItem());
         }
@@ -538,7 +539,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         
         @Override
         public List<?> getListVal(String key) {
-            switch(key) {
+            switch (key) {
                 case "weightClasses":
                     return currentCard().getSelectedWeights();
                 case "motiveTypes":
@@ -550,6 +551,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             }
         }
 
+        @Override
         public void updateGeneratedUnits(List<MechSummary> list) {
 
         }
@@ -609,7 +611,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             JPanel panMotive = new JPanel();
             add(panMotive, BorderLayout.NORTH);
             
-            switch(unitType) {
+            switch (unitType) {
                 case UnitType.MEK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
                             EntityWeightClass.WEIGHT_COLOSSAL, false);
@@ -884,6 +886,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             add(airCard, "Air");
         }
         
+        @Override
         public void optionsChanged() {
             if (getUnitType() != null) {
                 ((CardLayout) getLayout()).show(this, (getUnitType() < UnitType.CONV_FIGHTER)
@@ -1195,7 +1198,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             List<UnitTable.Parameters> params = new ArrayList<>();
             FormationType ft = FormationType.getFormationType(getFormation());
             Parameters p = new UnitTable.Parameters(getFaction(),
-                    getUnitType(), ratGenYear, (String)cbRating.getSelectedItem(),
+                    getUnitType(), ratGenYear, (String) cbRating.getSelectedItem(),
                     IntStream.rangeClosed(ft.getMinWeightClass(), ft.getMaxWeightClass())
                     .boxed().collect(Collectors.toList()),
                     ModelRecord.NETWORK_NONE, EnumSet.noneOf(EntityMovementMode.class),

@@ -21,7 +21,7 @@ package megamek.client.ui.swing.lobby.sorters;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) transported units 3) ID. */
 public class PlayerTransportIDSorter implements MekTableSorter {
@@ -47,9 +47,9 @@ public class PlayerTransportIDSorter implements MekTableSorter {
     public int compare(final Entity a, final Entity b) {
         // entity.getOwner() does not work properly because teams are
         // not updated for entities when the user switches teams
-        final IPlayer p_a = clientGui.getClient().getGame().getPlayer(a.getOwnerId());
-        final IPlayer p_b = clientGui.getClient().getGame().getPlayer(b.getOwnerId());
-        final IPlayer localPlayer = clientGui.getClient().getLocalPlayer();
+        final Player p_a = clientGui.getClient().getGame().getPlayer(a.getOwnerId());
+        final Player p_b = clientGui.getClient().getGame().getPlayer(b.getOwnerId());
+        final Player localPlayer = clientGui.getClient().getLocalPlayer();
         final int t_a = p_a.getTeam();
         final int t_b = p_b.getTeam();
         final int tr_a = a.getTransportId();

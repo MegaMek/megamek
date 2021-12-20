@@ -48,6 +48,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -96,18 +97,22 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             cmd = c;
         }
 
+        @Override
         public String getCmd() {
             return cmd;
         }
 
+        @Override
         public int getPriority() {
             return priority;
         }
 
+        @Override
         public void setPriority(int p) {
             priority = p;
         }
 
+        @Override
         public String toString() {
             return Messages.getString("TargetingPhaseDisplay." + getCmd());
         }
@@ -441,6 +446,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
     }
 
+    @Override
     protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
         TargetingCommand[] commands = TargetingCommand.values();
@@ -539,7 +545,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         Game game = clientgui.getClient().getGame();
-        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
@@ -992,15 +998,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             Mounted m = ce().getEquipment(weaponId);
 
             int targetDistance = ce().getPosition().distance(target.getPosition()); 
-            boolean isArtilleryAttack = ((WeaponType) m.getType()).hasFlag(WeaponType.F_ARTILLERY)
+            boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
                     // For other weapons that can make artillery attacks
                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;            
             
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
-                    cen, target, weaponId, Entity.LOC_NONE, 0, false);
+                    cen, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
             
             String flightTimeText = ""; 
-            if(isArtilleryAttack) {
+            if (isArtilleryAttack) {
                 ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
                         target.getTargetId(), weaponId, clientgui.getClient().getGame());
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
@@ -1063,7 +1069,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clearVisibleTargets();
 
         List<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
-        Comparator<Entity> sortComp = new Comparator<Entity>() {
+        Comparator<Entity> sortComp = new Comparator<>() {
+            @Override
             public int compare(Entity x, Entity y) {
 
                 int rangeToX = ce().getPosition().distance(x.getPosition());
@@ -1249,8 +1256,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // Convert the choices into a List of targets.
-        List<Targetable> targets = new ArrayList<Targetable>();
-        final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        List<Targetable> targets = new ArrayList<>();
+        final Player localPlayer = clientgui.getClient().getLocalPlayer();
         while (choices.hasNext()) {
             Targetable t = choices.next();
             boolean isSensorReturn = false;
@@ -1365,6 +1372,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
@@ -1529,6 +1537,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.weaponList.removeListSelectionListener(this);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

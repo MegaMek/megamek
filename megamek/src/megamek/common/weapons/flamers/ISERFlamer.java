@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.flamers;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
 /**
@@ -52,13 +53,15 @@ public class ISERFlamer extends FlamerWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "312,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(DATE_NONE, 3070, 3081, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setProductionFactions(F_FS);
+            .setISApproximate(false, true, false,false, false)
+            .setProductionFactions(F_FS)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

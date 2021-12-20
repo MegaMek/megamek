@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,15 +21,15 @@ STU-K5b2
 </Model>
 
 <year>
-2709
+2751
 </year>
 
 <originalBuildYear>
-2709
+2751
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <armor>
@@ -107,6 +107,42 @@ IS Ammo AC/20
 IS Ammo AC/20
 </Fuselage Equipment>
 
+<capabilities>
+Though somewhat outgunned by some medium fighters, it has 15 tons of armoring which gives it superior protection, and its Monitor 200 guidance system gives it the maneuverability of a medium fighter.
+</capabilities>
+
+<overview>
+First designed in 2530 for the Star League Defense Force, the Stuka is meant for prolonged battle, boasting 30 heat sinks that allow it to stay in the fight longer.
+</overview>
+
+<deployment>
+This variant kept only the medium lasers in the rear arc. To provide long range hitting power, the large lasers were replaced with a pair of ER PPCs in each wing. It replaced the rest of the standard weapon loadout with a nose-mounted Autocannon/20 and medium laser to deal with enemies who came in close. Three tons of autocannon ammunition kept this version in the fight for a long time before it needed to return to base to reload. To keep heat levels manageable, the heat sinks were upgraded to double strength models.
+</deployment>
+
+<history>
+Mostly used by House Davion forces thanks to their monopoly on its construction, the Stukas have proven a thorn in the side of House Kurita forces on many occasions. Lycomb-Davion IntroTech originally manufactured the Stuka from their facilities on Demeter along with a number of other designs, and the Capellan Confederation struck at and destroyed the facilities on Demeter in an attempt to deny the Armed Forces of the Federated Suns supplies of Stukas. While the Capellan Confederation Armed Forces strike was successful, the Confederation's overall goal wasn't met - unknown to the Confederation, Lycomb-Davion IntroTech were constructing a second manufacturing facility on New Avalon when the Demeter facilities were attacked, and the New Avalon plant was already well on its way to being complete. Because of similarities in its design, the Stuka has on occasion been mistaken for a Lightning, a mistake which has often proven deadly.
+</history>
+
+<manufacturer>
+Lycomb-Davion IntroTech, Lycomb IntraTechnologies
+</manufacturer>
+
+<primaryFactory>
+New Avalon, Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lycomb 11
+ENGINE:GM 300ATF
+ARMOR:AeroScale Plus
+COMMUNICATIONS:O/P 9000AT
+TARGETING:O/P 2500TGFD
+</systemManufacturers>
+
+<notes>
+This variant is unique to the MUL as it has the ER PPCs. But I've adjusted the dates to make things work.
+</notes>
+
 <source>
 H:Operation Klondyke - Star League
 </source>
@@ -114,3 +150,4 @@ H:Operation Klondyke - Star League
 <tonnage>
 100.0
 </tonnage>
+

@@ -3,25 +3,21 @@
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.verifier;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import megamek.common.*;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -29,24 +25,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.Protomech;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.UnitType;
-import megamek.utils.MegaMekXmlUtil;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Performs verification of the validity of different types of 
@@ -58,7 +43,7 @@ import megamek.utils.MegaMekXmlUtil;
 @XmlRootElement(name = "entityverifier")
 @XmlAccessorType(XmlAccessType.NONE)
 public class EntityVerifier implements MechSummaryCache.Listener {
-    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
+    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml";
 
     private static MechSummaryCache mechSummaryCache = null;
 
@@ -100,7 +85,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             InputStream is = new FileInputStream(config);
             ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
+            LogManager.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
 
             ev = new EntityVerifier();
         }

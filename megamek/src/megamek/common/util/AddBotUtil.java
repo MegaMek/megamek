@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.util;
 
@@ -20,21 +20,13 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.common.Game;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/9/13 8:41 AM
  */
 public class AddBotUtil {
@@ -73,7 +65,6 @@ public class AddBotUtil {
         StringBuilder botName = new StringBuilder("TestBot");
         StringBuilder configName = new StringBuilder();
         StringBuilder playerName = new StringBuilder();
-        LogLevel verbosity = null;
 
         if (2 == args.length) {
             playerName = new StringBuilder(args[1]);
@@ -103,18 +94,6 @@ public class AddBotUtil {
                 parsingBot = false;
                 parsingConfig = false;
                 parsingPlayer = true;
-            } else if (arg.toLowerCase().startsWith("v:")) {
-                final String verbose = arg.replaceFirst("v:", "").trim();
-                verbosity = LogLevel.getLogLevel(verbose);
-                if (null == verbosity) {
-                    results.add("Invalid Verbosity: '" + verbose + "'.  " +
-                            "Defaulting to " + LogLevel.WARNING + ".");
-                    verbosity = LogLevel.WARNING;
-                }
-                results.add("Verbosity set to '" + verbosity + "'.");
-                parsingBot = false;
-                parsingConfig = false;
-                parsingPlayer = false;
             } else if (parsingBot) {
                 botName.append("-").append(arg);
             } else if (parsingConfig) {
@@ -129,13 +108,12 @@ public class AddBotUtil {
             argLine = argLine.replaceFirst("/replacePlayer", "");
             argLine = argLine.replaceFirst("-b:" + botName, "");
             argLine = argLine.replaceFirst("-c:" + configName, "");
-            argLine = argLine.replaceFirst("-v:" + verbosity, "");
             playerName = new StringBuilder(argLine.trim());
         }
 
-        IPlayer target = null;
-        for (final Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
+        Player target = null;
+        for (final Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
+            final Player player = i.nextElement();
             if (player.getName().equals(playerName.toString())) {
                 target = player;
             }
@@ -154,14 +132,11 @@ public class AddBotUtil {
 
         final BotClient botClient;
         if ("Princess".equalsIgnoreCase(botName.toString())) {
-            botClient = makeNewPrincessClient(target, verbosity, host, port);
+            botClient = makeNewPrincessClient(target, host, port);
             if (!StringUtil.isNullOrEmpty(configName)) {
                 final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
                         .getBehavior(configName.toString());
                 if (null != behavior) {
-                    if (null != verbosity) {
-                        behavior.setVerbosity(verbosity);
-                    }
                     ((Princess) botClient).setBehaviorSettings(behavior);
                 } else {
                     results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
@@ -189,9 +164,7 @@ public class AddBotUtil {
         final StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");
         if (botClient instanceof Princess) {
-            result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription()).append
-            (".");
-            result.append("  Verbosity: ").append(((Princess) botClient).getVerbosity()).append(".");
+            result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription()).append(".");
         }
         results.add(result.toString());
         return concatResults();
@@ -203,7 +176,7 @@ public class AddBotUtil {
         Objects.requireNonNull(behavior);
         Objects.requireNonNull(game);
 
-        Optional<IPlayer> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersVector().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -213,8 +186,8 @@ public class AddBotUtil {
             return null;
         }
         
-        final IPlayer target = possible.get();
-        final Princess princess = new Princess(target.getName(), host, port, behavior.getVerbosity());
+        final Player target = possible.get();
+        final Princess princess = new Princess(target.getName(), host, port);
         princess.setBehaviorSettings(behavior);
         princess.getGame().addGameListener(new BotGUI(princess));
         try {
@@ -227,16 +200,11 @@ public class AddBotUtil {
         return princess;
     }
 
-    BotClient makeNewPrincessClient(final IPlayer target,
-            final LogLevel verbosity,
-            final String host,
-            final int port) {
-        return new Princess(target.getName(), host, port, (null == verbosity ? LogLevel.WARNING : verbosity));
+    BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
+        return new Princess(target.getName(), host, port);
     }
 
-    BotClient makeNewTestBotClient(final IPlayer target,
-            final String host,
-            final int port) {
+    BotClient makeNewTestBotClient(final Player target, final String host, final int port) {
         return new TestBot(target.getName(), host, port);
     }
 }

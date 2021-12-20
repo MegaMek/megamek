@@ -35,6 +35,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         BattleArmor t = new BattleArmor();
@@ -140,7 +141,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
         
-        if (dataFile.exists("armor_type")){
+        if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         }
         
@@ -192,16 +193,16 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
                 int mountLoc = BattleArmor.MOUNT_LOC_NONE;
-                if  (saEquip[x].contains(":Body")){
+                if (saEquip[x].contains(":Body")) {
                     mountLoc = BattleArmor.MOUNT_LOC_BODY;
                     saEquip[x] = saEquip[x].replace(":Body", "");
-                } else if  (saEquip[x].contains(":LA")){
+                } else if (saEquip[x].contains(":LA")) {
                     mountLoc = BattleArmor.MOUNT_LOC_LARM;
                     saEquip[x] = saEquip[x].replace(":LA", "");
-                } else if  (saEquip[x].contains(":RA")){
+                } else if (saEquip[x].contains(":RA")) {
                     mountLoc = BattleArmor.MOUNT_LOC_RARM;
                     saEquip[x] = saEquip[x].replace(":RA", "");
-                } else if  (saEquip[x].contains(":TU")){
+                } else if (saEquip[x].contains(":TU")) {
                     mountLoc = BattleArmor.MOUNT_LOC_TURRET;
                     saEquip[x] = saEquip[x].replace(":TU", "");
                 }
@@ -216,7 +217,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                 saEquip[x] = saEquip[x].replace(":APM", "");
                 
                 int numShots = 0;
-                if (saEquip[x].contains(":Shots")){
+                if (saEquip[x].contains(":Shots")) {
                     String shotString = saEquip[x].substring(
                             saEquip[x].indexOf(":Shots"),
                             saEquip[x].indexOf("#")+1);
@@ -244,7 +245,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     try {
                         Mounted m = t.addEquipment(etype, nLoc, false, 
                                 mountLoc, dwpMounted);
-                        if (numShots != 0 && (m.getType() instanceof AmmoType)){
+                        if (numShots != 0 && (m.getType() instanceof AmmoType)) {
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
@@ -272,7 +273,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }

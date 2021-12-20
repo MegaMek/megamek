@@ -13,18 +13,16 @@
 */  
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.net.URL;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/4/13 9:20 PM
  */
 public class HelpDialog extends JDialog {
@@ -52,6 +50,7 @@ public class HelpDialog extends JDialog {
 
         //Listen for the user clicking on hyperlinks.
         mainView.addHyperlinkListener(new HyperlinkListener() {
+            @Override
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 try {
                     if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
@@ -72,7 +71,7 @@ public class HelpDialog extends JDialog {
     }
 
     private void handleError(String methName, Throwable t, boolean quiet) {
-        MegaMek.getLogger().error(t);
+        LogManager.getLogger().error(t);
 
         if (quiet) return;
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);

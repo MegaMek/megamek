@@ -229,6 +229,7 @@ public class MegamekButton extends JButton implements MouseListener {
         }
     }
 
+    @Override
     protected void processMouseEvent(MouseEvent e) {
         if (e.getID() == MouseEvent.MOUSE_EXITED) {
             isMousedOver = false;
@@ -243,6 +244,7 @@ public class MegamekButton extends JButton implements MouseListener {
         super.processMouseEvent(e);
     }
 
+    @Override
     protected void paintComponent(Graphics g) {
         // Call super, so this components plays well with Swing
         super.paintComponent(g);
@@ -318,6 +320,7 @@ public class MegamekButton extends JButton implements MouseListener {
         textLabel.paint(g);
     }
 
+    @Override
     public String toString() {
         return getActionCommand();
     }

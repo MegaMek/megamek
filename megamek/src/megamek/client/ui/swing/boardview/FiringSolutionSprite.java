@@ -34,7 +34,7 @@ class FiringSolutionSprite extends HexSprite {
 
     private static final Color indirectDashColor1 = new Color(255,  0, 0, 140);
     private static final Color indirectDashColor2 = new Color(255,255, 0, 140);
-    private static final float dashPeriod[] = { 10.0f };
+    private static final float[] dashPeriod = { 10.0f };
     private static final BasicStroke indirectStroke1 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 0.0f);
     private static final BasicStroke indirectStroke2 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
@@ -87,7 +87,7 @@ class FiringSolutionSprite extends HexSprite {
         
         // create image for buffer
         image = createNewHexImage();
-        Graphics2D graph = (Graphics2D)image.getGraphics();
+        Graphics2D graph = (Graphics2D) image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
         
         // scale the following draws according to board zoom
@@ -101,7 +101,7 @@ class FiringSolutionSprite extends HexSprite {
         
         if (noHitPossible) {  
             // write big red X
-            graph.setFont(new Font(fontName, fontStyle, (int)(fontSizeLarge)));
+            graph.setFont(new Font(fontName, fontStyle, fontSizeLarge));
             if (bv.scale > 0.7) {
                 // better translucent, the X is so big
                 bv.drawOutlineText(graph, "X", centerHex, 

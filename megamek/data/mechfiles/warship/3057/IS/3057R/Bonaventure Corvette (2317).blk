@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -131,6 +131,42 @@ IS Ammo AC/10:80
 36
 </structural_integrity>
 
+<capabilities>
+The Bonaventure was poorly armed, even compared with vessels of similar size dating from the Terran Alliance. Only against AeroSpace Fighters was the Bonaventure not severely under-gunned. For naval engagements, the vessel boasted only a single pair of naval lasers. Against smaller targets, the Bonaventure could hold its own with an array of lasers, autocannons and long-range missiles. The Bonaventure-class was not intended for transportation and boasted no DropShip collars. The vessel did possess three cargo bays, one for a pair of small craft, one for a single squadron of fighters, and a last bay capable of storing 53,926 tons of supplies.
+</capabilities>
+
+<overview>
+Among contemporary naval vessels of the day, the Bonaventure-class was superb. The class boasted one of the most (if not the most) sophisticated sensor suites to have been designed by the beginning of the twenty-fifth century.
+</overview>
+
+<history>
+The designing of the Bonaventure-class corvette was one of the last acts of the failing Terran Alliance. While Admiral James McKenna was staging his political coup and removing corrupt politicians from the Alliance government, he ordered the design of the Bonaventure as insurance and a means of consolidating his growing power base. Indeed, the Bonaventure-class was instrumental in consolidating the Terran Hegemony after the reorganization that occured in the wake of the McKenna Coup. However, compared with most other vessels, the Bonaventure was not well armed. The weakness of the Bonaventure became apparent after Hegemony operations over Capella. Thereafter, the Bonaventure was relegated to squadron formations of four Bonaventures, or surveillance squadrons composed of paired pairs of Bonaventures and Vigilants. These surveillance squadrons would patrol shipping routes in and out of the Hegemony. Bonaventures were also deployed as picket vessels to garrison the Terran Hegemony border. The Bonaventure-class was replaced in service from 2432 with the introduction of the Vincent Mk. 39-class corvette. During the Star League era the Terran hegemony sold or gifted away a number of outdated warships to the various member states; the Rim Worlds Republic was one beneficiary of this practice, and as at April 2765 had thirty-two Bonaventure-class corvettes openly in service. The Republic's fleet of Bonaventures were primarily manufactured and supported by the Roe Weapon Systems (RWS) production facilities in the Finmark system, along with the Republic's fleet of Pinto-class corvettes.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+486 meters
+</length>
+
 <source>
 TRO 3057R - Age of War
 </source>
@@ -156,7 +192,7 @@ TRO 3057R - Age of War
 </crew>
 
 <officers>
-17
+18
 </officers>
 
 <gunners>
@@ -182,3 +218,4 @@ TRO 3057R - Age of War
 <escape_pod>
 17
 </escape_pod>
+

@@ -12,40 +12,29 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.util;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Map;
-import java.util.Vector;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
+import org.apache.logging.log4j.LogManager;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.internet.AddressException;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import megamek.MegaMek;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.Report;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class EmailService {
-
-
     private static class RoundReportMessage extends MimeMessage {
 
 
         private RoundReportMessage(InternetAddress from,
-                                   IPlayer to,
+                                   Player to,
                                    Game game,
                                    Vector<Report> reports,
                                    int sequenceNumber,
@@ -92,12 +81,13 @@ public class EmailService {
             setText(body.toString(), "UTF-8", "html");
         }
 
+        @Override
         protected void updateMessageID() throws MessagingException {
             // no-op, we have already set it in the ctor
         }
 
         private static String newMessageId(InternetAddress from,
-                                           IPlayer to,
+                                           Player to,
                                            Game game,
                                            int actualSequenceNumber) {
             final var address = from.getAddress();
@@ -115,7 +105,7 @@ public class EmailService {
 
 
     private InternetAddress from;
-    private Map<IPlayer,Integer> messageSequences = new HashMap<>();
+    private Map<Player, Integer> messageSequences = new HashMap<>();
     private Properties mailProperties;
     private Session mailSession;
 
@@ -135,6 +125,7 @@ public class EmailService {
         var password = mailProperties.getProperty("megamek.smtp.password", "").trim();
         if (login.length() > 0 && password.length() > 0) {
             auth = new Authenticator() {
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(login, password);
                     }
@@ -144,6 +135,7 @@ public class EmailService {
         mailSession = Session.getInstance(mailProperties, auth);
 
         mailWorker = new Thread() {
+                @Override
                 public void run() {
                     workerMain();
                 }
@@ -151,12 +143,11 @@ public class EmailService {
         mailWorker.start();
     }
 
-    public Vector<IPlayer> getEmailablePlayers(Game game) {
-        Vector<IPlayer> emailable = new Vector<>();
+    public Vector<Player> getEmailablePlayers(Game game) {
+        Vector<Player> emailable = new Vector<>();
         for (var player: game.getPlayersVector()) {
-            if (!StringUtil.isNullOrEmpty(player.getEmail()) &&
-                !player.isBot() &&
-                !player.isObserver()) {
+            if (!StringUtil.isNullOrEmpty(player.getEmail()) && !player.isBot()
+                    && !player.isObserver()) {
                 emailable.add(player);
             }
         }
@@ -165,7 +156,7 @@ public class EmailService {
 
     public Message newReportMessage(Game game,
                                     Vector<Report> reports,
-                                    IPlayer player) throws Exception {
+                                    Player player) throws Exception {
         int nextSequence = 0;
         synchronized (messageSequences) {
             var messageSequence = messageSequences.get(player);
@@ -217,7 +208,7 @@ public class EmailService {
                 // All good, just shut down
                 running = false;
             } catch (Exception ex) {
-                MegaMek.getLogger().error("Error sending email", ex);
+                LogManager.getLogger().error("Error sending email", ex);
             }
         }
     }

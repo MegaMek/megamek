@@ -10,34 +10,23 @@
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
 * details.  
-*/  
-
+*/
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.RangeType;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.ServerHelper;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is intended to help the bot calculate firing plans for infantry
  * units.
  * 
  * @author NickAragua
- *
  */
 public class InfantryFireControl extends FireControl {
 
@@ -70,7 +59,7 @@ public class InfantryFireControl extends FireControl {
         double maxInfantryWeaponDamage = 0;
         Entity shooter = shooterPath.getEntity();
         Entity target = targetPath.getEntity();
-        IHex targetHex = target.getGame().getBoard().getHex(targetPath.getFinalCoords());
+        Hex targetHex = target.getGame().getBoard().getHex(targetPath.getFinalCoords());
 
         // some preliminary computations
         // whether the target is an infantry platoon
@@ -183,16 +172,16 @@ public class InfantryFireControl extends FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard()
                 || !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return bestPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return bestPlan;
         }
         
         // if it's not infantry, then we shouldn't be here, let's redirect to the base method.
-        if(!(shooter instanceof Infantry)) {
+        if (!(shooter instanceof Infantry)) {
             return super.guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
         }
         
@@ -262,7 +251,7 @@ public class InfantryFireControl extends FireControl {
 
         // cycle through my field guns
         for (final Mounted weapon : shooter.getWeaponList()) {
-            if(weaponIsAppropriate(weapon, firingPlanType)) {
+            if (weaponIsAppropriate(weapon, firingPlanType)) {
                 final WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon,
                         game, true);
 
@@ -287,17 +276,17 @@ public class InfantryFireControl extends FireControl {
         boolean weaponIsLegAttack = (weapon.getType()).getInternalName().equals(Infantry.LEG_ATTACK);
         boolean weaponIsFieldGuns = weapon.getLocation() == Infantry.LOC_FIELD_GUNS;
         
-        switch(firingPlanType) {
-        case FieldGuns:
-            return weaponIsFieldGuns;
-        case Swarm:
-            return weaponIsSwarm;
-        case Leg:
-            return weaponIsLegAttack;
-        case Standard:
-            return !weaponIsFieldGuns && !weaponIsSwarm && !weaponIsLegAttack;
-        default:
-            return false;
+        switch (firingPlanType) {
+            case FieldGuns:
+                return weaponIsFieldGuns;
+            case Swarm:
+                return weaponIsSwarm;
+            case Leg:
+                return weaponIsLegAttack;
+            case Standard:
+                return !weaponIsFieldGuns && !weaponIsSwarm && !weaponIsLegAttack;
+            default:
+                return false;
         }
     }
 }

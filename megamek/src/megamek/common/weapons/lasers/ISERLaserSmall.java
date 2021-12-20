@@ -53,13 +53,15 @@ public class ISERLaserSmall extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         rulesRefs = "226,TM";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        //December 2021 - Errata request to change common date
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
             .setISAdvancement(3052, 3058, 3062, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
+            .setISApproximate(false, false, true,false, false)
             .setPrototypeFactions(F_FW,F_WB)
             .setProductionFactions(F_FW);
     }

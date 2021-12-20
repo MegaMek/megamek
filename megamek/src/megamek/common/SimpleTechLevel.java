@@ -65,18 +65,18 @@ public enum SimpleTechLevel {
      */
     public int getCompoundTechLevel(boolean clan) {
         switch (this) {
-        case INTRO:
-            return TechConstants.T_INTRO_BOXSET;
-        case STANDARD:
-            return clan? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
-        case ADVANCED:
-            return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
-        case EXPERIMENTAL:
-            return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
-        case UNOFFICIAL:
-            return clan? TechConstants.T_CLAN_UNOFFICIAL: TechConstants.T_IS_UNOFFICIAL;
-        default:
-            return TechConstants.T_INTRO_BOXSET;
+            case INTRO:
+                return TechConstants.T_INTRO_BOXSET;
+            case STANDARD:
+                return clan? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
+            case ADVANCED:
+                return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
+            case EXPERIMENTAL:
+                return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
+            case UNOFFICIAL:
+                return clan? TechConstants.T_CLAN_UNOFFICIAL: TechConstants.T_IS_UNOFFICIAL;
+            default:
+                return TechConstants.T_INTRO_BOXSET;
         }
     }
 

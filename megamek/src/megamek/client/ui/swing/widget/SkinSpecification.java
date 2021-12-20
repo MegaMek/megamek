@@ -219,26 +219,26 @@ public class SkinSpecification {
      */
     public boolean shouldBoldMouseOver = true;
 
-    public SkinSpecification(String compName){
+    public SkinSpecification(String compName) {
         this.compName = compName;
         tl_corner = tr_corner = bl_corner = br_corner = "";
-        topEdge = new ArrayList<String>();
-        rightEdge = new ArrayList<String>();
-        bottomEdge = new ArrayList<String>();
-        leftEdge = new ArrayList<String>();
-        backgrounds = new ArrayList<String>();
-        topShouldTile = new ArrayList<Boolean>();
-        rightShouldTile = new ArrayList<Boolean>();
-        bottomShouldTile = new ArrayList<Boolean>();
-        leftShouldTile = new ArrayList<Boolean>();
+        topEdge = new ArrayList<>();
+        rightEdge = new ArrayList<>();
+        bottomEdge = new ArrayList<>();
+        leftEdge = new ArrayList<>();
+        backgrounds = new ArrayList<>();
+        topShouldTile = new ArrayList<>();
+        rightShouldTile = new ArrayList<>();
+        bottomShouldTile = new ArrayList<>();
+        leftShouldTile = new ArrayList<>();
         fontColors = new ArrayList<>();
         fontColors.add(Color.black);
     }
     
     public boolean hasBorder() {
         // Return false if any corner doesn't exsit
-        if (tl_corner.equals("") || tr_corner.equals("")
-                || bl_corner.equals("") || br_corner.equals("")) {
+        if (tl_corner.isBlank() || tr_corner.isBlank()
+                || bl_corner.isBlank() || br_corner.isBlank()) {
             return false;
         }
         
@@ -250,25 +250,25 @@ public class SkinSpecification {
         
         // Make sure edges don't contain empty strings
         for (String edge : topEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
         
         for (String edge : rightEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
         
         for (String edge : bottomEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
         
         for (String edge : leftEdge) {
-            if (edge.equals("")) {
+            if (edge.isBlank()) {
                 return false;
             }
         }
@@ -282,13 +282,14 @@ public class SkinSpecification {
         }
         
         for (String bg : backgrounds) {
-            if (bg.equals("")) {
+            if (bg.isBlank()) {
                 return false;
             }
         }
         return true;
     }
 
+    @Override
     public String toString() {
         return "SkinSpec for " + compName;
     }

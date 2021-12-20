@@ -11,8 +11,6 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +19,6 @@ import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 2/27/14 3:23 PM
  */
 @RunWith(JUnit4.class)
@@ -31,9 +28,7 @@ public class PhysicalInfoTest {
 
     @Test
     public void testInitDamage() {
-        MMLogger fakeLogger = new FakeLogger();
         Princess mockPrincess = Mockito.mock(Princess.class);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         FireControl mockFireControl = Mockito.mock(FireControl.class);
         Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);

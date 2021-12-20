@@ -9,37 +9,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
+import java.text.NumberFormat;
+import java.util.*;
+
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class Dropship extends SmallCraft {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1528728632696989565L;
     
-    
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations: NOS,Left,Right,AFT
-    private int asewAffectedTurns[] = {0,0,0,0};
+    // ASEW Missile Effects, per location
+    // Values correspond to Locations: NOS,Left,Right,AFT
+    private int[] asewAffectedTurns = { 0, 0, 0, 0 };
     
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
@@ -65,8 +53,7 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
-     * 
+     * Primitive DropShips may be constructed with no docking collar, or with a pre-boom collar.
      */
     public static final int COLLAR_STANDARD  = 0;
     public static final int COLLAR_PROTOTYPE = 1;
@@ -76,7 +63,7 @@ public class Dropship extends SmallCraft {
             "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
     
-    //Likewise, you can have a prototype or standard K-F Boom
+    // Likewise, you can have a prototype or standard K-F Boom
     public static final int BOOM_STANDARD  = 0;
     public static final int BOOM_PROTOTYPE = 1;
     
@@ -99,6 +86,7 @@ public class Dropship extends SmallCraft {
         return UnitType.DROPSHIP;
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
@@ -144,6 +132,7 @@ public class Dropship extends SmallCraft {
         this.boomType = boomType;
     }
 
+    @Override
     public String getCritDamageString() {
         StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
         boolean first = toReturn.length() == 0;
@@ -166,7 +155,7 @@ public class Dropship extends SmallCraft {
 
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (isAirborne()) {
             if (hex.containsTerrain(Terrains.IMPASSABLE)) {
                 return true;
@@ -178,11 +167,11 @@ public class Dropship extends SmallCraft {
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
 
-        HashMap<Integer, Integer> elevations = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
-            IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
+            Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
             if (secondaryHex == null) {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
@@ -214,7 +203,7 @@ public class Dropship extends SmallCraft {
             return true;
         }
 
-        Object elevs[] = elevations.keySet().toArray();
+        Object[] elevs = elevations.keySet().toArray();
         int elev1 = (Integer) elevs[0];
         int elev2 = (Integer) elevs[1];
         int elevDifference = Math.abs(elev1 - elev2);
@@ -235,7 +224,7 @@ public class Dropship extends SmallCraft {
         int numAdjacencies = 0;
         int centralElev = hex.getLevel();
         int secondElev = centralElev;
-        IHex currHex = game.getBoard().getHex(c.translated(5));
+        Hex currHex = game.getBoard().getHex(c.translated(5));
         // Ensure we aren't trying to deploy off the board
         if (currHex == null) {
             return true;
@@ -244,7 +233,7 @@ public class Dropship extends SmallCraft {
             if (currHex.getLevel() != centralElev) {
                 secondElev = currHex.getLevel();
             }
-            IHex nextHex = game.getBoard().getHex(c.translated(dir));
+            Hex nextHex = game.getBoard().getHex(c.translated(dir));
             // Ensure we aren't trying to deploy off the board
             if (nextHex == null) {
                 return true;
@@ -265,7 +254,7 @@ public class Dropship extends SmallCraft {
      * Worker function that checks if a given hex contains terrain onto which a grounded dropship
      * cannot deploy. 
      */
-    private boolean hexContainsProhibitedTerrain(IHex hex) {
+    private boolean hexContainsProhibitedTerrain(Hex hex) {
         return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
                 || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
                 || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
@@ -370,7 +359,7 @@ public class Dropship extends SmallCraft {
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
+        return isPrimitive() ? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
     }
     
     @Override
@@ -921,7 +910,7 @@ public class Dropship extends SmallCraft {
             double arcBV = 0.0;
             double arcHeat = 0.0;
             double arcAmmoBV = 0.0;
-            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
+            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<>();
             for (Mounted mounted : getTotalWeaponList()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -1021,8 +1010,8 @@ public class Dropship extends SmallCraft {
                 arcHeat += weaponHeat;
             }
             // now ammo
-            Map<String, Double> ammo = new HashMap<String, Double>();
-            ArrayList<String> keys = new ArrayList<String>();
+            Map<String, Double> ammo = new HashMap<>();
+            ArrayList<String> keys = new ArrayList<>();
             for (Mounted mounted : getAmmo()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -1515,96 +1504,24 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * find the adjacent firing arc on this vessel clockwise
-     */
-    public int getAdjacentArcCW(int arc) {
-        switch (arc) {
-        case Compute.ARC_NOSE:
-            if (isSpheroid()) {
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            }
-            return Compute.ARC_RWING;
-        case Compute.ARC_LWING:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_RWING:
-            return Compute.ARC_RWINGA;
-        case Compute.ARC_LWINGA:
-            return Compute.ARC_LWING;
-        case Compute.ARC_RWINGA:
-            return Compute.ARC_AFT;
-        case Compute.ARC_LEFTSIDE_SPHERE:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_RIGHTSIDE_SPHERE:
-            return Compute.ARC_RIGHTSIDEA_SPHERE;
-        case Compute.ARC_LEFTSIDEA_SPHERE:
-            return Compute.ARC_LEFTSIDE_SPHERE;
-        case Compute.ARC_RIGHTSIDEA_SPHERE:
-            return Compute.ARC_AFT;
-        case Compute.ARC_AFT:
-            if (isSpheroid()) {
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            }
-            return Compute.ARC_LWINGA;
-        default:
-            return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * find the adjacent firing arc on this vessel counter-clockwise
-     */
-    public int getAdjacentArcCCW(int arc) {
-        switch (arc) {
-        case Compute.ARC_NOSE:
-            if (isSpheroid()) {
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            }
-            return Compute.ARC_LWING;
-        case Compute.ARC_LWING:
-            return Compute.ARC_LWINGA;
-        case Compute.ARC_RWING:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_LWINGA:
-            return Compute.ARC_AFT;
-        case Compute.ARC_RWINGA:
-            return Compute.ARC_RWING;
-        case Compute.ARC_LEFTSIDE_SPHERE:
-            return Compute.ARC_LEFTSIDEA_SPHERE;
-        case Compute.ARC_RIGHTSIDE_SPHERE:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_LEFTSIDEA_SPHERE:
-            return Compute.ARC_AFT;
-        case Compute.ARC_RIGHTSIDEA_SPHERE:
-            return Compute.ARC_RWING;
-        case Compute.ARC_AFT:
-            if (isSpheroid()) {
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            }
-            return Compute.ARC_RWINGA;
-        default:
-            return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
      * find the adjacent firing arc location on this vessel clockwise
      */
     public int getAdjacentLocCW(int loc) {
         switch (loc) {
-        case LOC_NOSE:
-            return LOC_RWING;
-        case LOC_LWING:
-            return LOC_NOSE;
-        case LOC_RWING:
-            return (LOC_RWING + 3);
-        case LOC_AFT:
-            return (LOC_LWING + 3);
-        case 4:
-            return LOC_LWING;
-        case 5:
-            return LOC_AFT;
-        default:
-            return Integer.MIN_VALUE;
+            case LOC_NOSE:
+                return LOC_RWING;
+            case LOC_LWING:
+                return LOC_NOSE;
+            case LOC_RWING:
+                return (LOC_RWING + 3);
+            case LOC_AFT:
+                return (LOC_LWING + 3);
+            case 4:
+                return LOC_LWING;
+            case 5:
+                return LOC_AFT;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -1613,20 +1530,20 @@ public class Dropship extends SmallCraft {
      */
     public int getAdjacentLocCCW(int loc) {
         switch (loc) {
-        case LOC_NOSE:
-            return LOC_LWING;
-        case LOC_LWING:
-            return (LOC_LWING + 3);
-        case LOC_RWING:
-            return LOC_NOSE;
-        case LOC_AFT:
-            return (LOC_RWING + 3);
-        case 4:
-            return LOC_AFT;
-        case 5:
-            return LOC_RWING;
-        default:
-            return Integer.MIN_VALUE;
+            case LOC_NOSE:
+                return LOC_LWING;
+            case LOC_LWING:
+                return (LOC_LWING + 3);
+            case LOC_RWING:
+                return LOC_NOSE;
+            case LOC_AFT:
+                return (LOC_RWING + 3);
+            case 4:
+                return LOC_AFT;
+            case 5:
+                return LOC_RWING;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -1635,20 +1552,20 @@ public class Dropship extends SmallCraft {
      */
     public int getOppositeLoc(int loc) {
         switch (loc) {
-        case LOC_NOSE:
-            return LOC_AFT;
-        case LOC_LWING:
-            return (LOC_RWING + 3);
-        case LOC_RWING:
-            return (LOC_LWING + 3);
-        case LOC_AFT:
-            return LOC_NOSE;
-        case 4:
-            return LOC_RWING;
-        case 5:
-            return LOC_LWING;
-        default:
-            return Integer.MIN_VALUE;
+            case LOC_NOSE:
+                return LOC_AFT;
+            case LOC_LWING:
+                return (LOC_RWING + 3);
+            case LOC_RWING:
+                return (LOC_LWING + 3);
+            case LOC_AFT:
+                return LOC_NOSE;
+            case 4:
+                return LOC_RWING;
+            case 5:
+                return LOC_LWING;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -1757,13 +1674,13 @@ public class Dropship extends SmallCraft {
     public String hasRoomForVerticalLanding() {
         // dropships can land just about anywhere they want, unless it is off
         // the map
-        Vector<Coords> positions = new Vector<Coords>();
+        Vector<Coords> positions = new Vector<>();
         positions.add(getPosition());
         for (int i = 0; i < 6; i++) {
             positions.add(getPosition().translated(i));
         }
         for (Coords pos : positions) {
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             hex = game.getBoard().getHex(pos);
             // if the hex is null, then we are offboard. Don't let units
             // land offboard.
@@ -1797,75 +1714,75 @@ public class Dropship extends SmallCraft {
             if (side == ToHitData.SIDE_LEFT) {
                 // normal left-side hits
                 switch (roll) {
-                case 2:
-                    setPotCrit(CRIT_GEAR);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 3:
-                    setPotCrit(CRIT_LIFE_SUPPORT);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 4:
-                    setPotCrit(CRIT_DOCK_COLLAR);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 5:
-                    setPotCrit(CRIT_LEFT_THRUSTER);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 6:
-                    setPotCrit(CRIT_CARGO);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 7:
-                    setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 8:
-                    setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_LEFT_THRUSTER);
-                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-                case 10:
-                    setPotCrit(CRIT_AVIONICS);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 11:
-                    setPotCrit(CRIT_ENGINE);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 12:
-                    setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 2:
+                        setPotCrit(CRIT_GEAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 3:
+                        setPotCrit(CRIT_LIFE_SUPPORT);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 4:
+                        setPotCrit(CRIT_DOCK_COLLAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 5:
+                        setPotCrit(CRIT_LEFT_THRUSTER);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 6:
+                        setPotCrit(CRIT_CARGO);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 7:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 8:
+                        setPotCrit(CRIT_DOOR);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 9:
+                        setPotCrit(CRIT_LEFT_THRUSTER);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 10:
+                        setPotCrit(CRIT_AVIONICS);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 11:
+                        setPotCrit(CRIT_ENGINE);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 12:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 }
             } else {
                 switch (roll) {
-                case 2:
-                    setPotCrit(CRIT_GEAR);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 3:
-                    setPotCrit(CRIT_LIFE_SUPPORT);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 4:
-                    setPotCrit(CRIT_DOCK_COLLAR);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 5:
-                    setPotCrit(CRIT_RIGHT_THRUSTER);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 6:
-                    setPotCrit(CRIT_CARGO);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 7:
-                    setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 8:
-                    setPotCrit(CRIT_DOOR);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 9:
-                    setPotCrit(CRIT_RIGHT_THRUSTER);
-                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-                case 10:
-                    setPotCrit(CRIT_AVIONICS);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 11:
-                    setPotCrit(CRIT_ENGINE);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                case 12:
-                    setPotCrit(CRIT_WEAPON);
-                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 2:
+                        setPotCrit(CRIT_GEAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 3:
+                        setPotCrit(CRIT_LIFE_SUPPORT);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 4:
+                        setPotCrit(CRIT_DOCK_COLLAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 5:
+                        setPotCrit(CRIT_RIGHT_THRUSTER);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 6:
+                        setPotCrit(CRIT_CARGO);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 7:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 8:
+                        setPotCrit(CRIT_DOOR);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 9:
+                        setPotCrit(CRIT_RIGHT_THRUSTER);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 10:
+                        setPotCrit(CRIT_AVIONICS);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 11:
+                        setPotCrit(CRIT_ENGINE);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 12:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                 }
             }
             return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -1892,7 +1809,7 @@ public class Dropship extends SmallCraft {
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         if (getNCrew() >= 30) {
-            specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 60.0));
+            specialAbilities.put(BattleForceSPA.CRW, (int) Math.round(getNCrew() / 60.0));
         }
     }
     

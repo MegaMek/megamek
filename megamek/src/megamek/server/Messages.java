@@ -5,11 +5,10 @@ import java.util.ResourceBundle;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 public class Messages {
-    private static final String BUNDLE_NAME = "megamek.server.messages"; //$NON-NLS-1$
-
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME,
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.server.messages",
         PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
 
     private Messages() {}
@@ -17,8 +16,8 @@ public class Messages {
     public static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
-        } catch(MissingResourceException e) {
-            System.out.println("Missing i18n entry: " + key); //$NON-NLS-1$
+        } catch (MissingResourceException e) {
+            LogManager.getLogger().error("Missing i18n entry with key " + key);
             return '!' + key + '!';
         }
     }

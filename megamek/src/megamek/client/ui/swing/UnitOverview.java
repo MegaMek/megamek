@@ -116,6 +116,7 @@ public class UnitOverview implements IDisplayable {
         visible = GUIPreferences.getInstance().getShowUnitOverview();
     }
 
+    @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
         if (!visible) {
             return;
@@ -215,6 +216,7 @@ public class UnitOverview implements IDisplayable {
 
     }
 
+    @Override
     public boolean isHit(Point p, Dimension size) {
         if (!visible) {
             return false;
@@ -273,6 +275,7 @@ public class UnitOverview implements IDisplayable {
         return false;
     }
 
+    @Override
     public boolean isDragged(Point p, Dimension size) {
         int x = p.x;
         int y = p.y;
@@ -287,6 +290,7 @@ public class UnitOverview implements IDisplayable {
         }
     }
 
+    @Override
     public boolean isReleased() {
         if (!visible) {
             return false;
@@ -390,14 +394,12 @@ public class UnitOverview implements IDisplayable {
         g.drawString(s, x, y);
     }
 
-    private void drawConditionStrings(Graphics graph, Entity entity, int x,
-            int y) {
+    private void drawConditionStrings(Graphics graph, Entity entity, int x, int y) {
+        // out of control conditions for ASF
+        if (entity.isAero()) {
+            IAero a = (IAero) entity;
 
-//      out of control conditions for ASF
-        if(entity.isAero()) {
-            IAero a = (IAero)entity;
-
-            if(a.isRolled()) {
+            if (a.isRolled()) {
                 // draw "rolled"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29);
@@ -405,12 +407,12 @@ public class UnitOverview implements IDisplayable {
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28);
             }
 
-            if(a.isOutControlTotal() && a.isRandomMove()) {
+            if (a.isOutControlTotal() && a.isRandomMove()) {
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24);
                 graph.setColor(Color.red);
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23);
-            } else if(a.isOutControlTotal()) {
+            } else if (a.isOutControlTotal()) {
                 // draw "CONTROL"
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24);
@@ -419,7 +421,7 @@ public class UnitOverview implements IDisplayable {
             }
 
             //is the unit evading? - can't evade and be out of control so just draw on top
-            if(entity.isEvading()) {
+            if (entity.isEvading()) {
                 //draw evasion
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
@@ -528,7 +530,6 @@ public class UnitOverview implements IDisplayable {
     }
 
     protected String getIconName(Entity e, FontMetrics metrics) {
-
         if (e instanceof BattleArmor) {
             String iconName = e.getShortName();
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
@@ -542,6 +543,9 @@ public class UnitOverview implements IDisplayable {
         } else if (e instanceof Protomech) {
             String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
+        } else if ((e instanceof Infantry) || (e instanceof Mech) || (e instanceof GunEmplacement)
+                || (e instanceof Aero)) {
+            return adjustString(e.getModel(), metrics);
         } else if (e instanceof Tank) {
             String iconName = e.getShortName();
 
@@ -558,13 +562,9 @@ public class UnitOverview implements IDisplayable {
                 }
             }
             return adjustString(iconName, metrics);
-        } else if ((e instanceof Infantry) || (e instanceof Mech)
-                || (e instanceof GunEmplacement) ||
-                (e instanceof Aero)) {
-            String iconName = e.getModel();
-            return adjustString(iconName, metrics);
+        } else {
+            return "!!Unknown!!";
         }
-        return "!!Unknown!!";
     }
 
     protected String adjustString(String s, FontMetrics metrics) {

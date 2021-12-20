@@ -15,16 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Coords;
-import megamek.common.CriticalSlot;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Report;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -61,17 +52,15 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
-            int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon
-                    .getFacing() : 0)) % 6;
+            int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon.getFacing() : 0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
-            IBoard board = game.getBoard();
-            IHex currentHex = board.getHex(src);
+            Board board = game.getBoard();
+            Hex currentHex = board.getHex(src);
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;
-            } else if (board.getHex(rearCoords).getLevel() > currentHex
-                    .getLevel() + 4) {
+            } else if (board.getHex(rearCoords).getLevel() > currentHex.getLevel() + 4) {
                 rearCoords = src;
             } else if ((board.getBuildingAt(rearCoords) != null)
                     && (board.getHex(rearCoords).terrainLevel(

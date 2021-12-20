@@ -125,6 +125,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         return dmg;
     }
 
+    @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {

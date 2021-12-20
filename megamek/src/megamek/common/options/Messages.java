@@ -1,17 +1,16 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.options;
 
 import java.text.MessageFormat;
@@ -22,11 +21,9 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 class Messages {
-    private static final String BUNDLE_NAME = "megamek.common.options.messages";//$NON-NLS-1$
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
-                    .getLocale(), new EncodeControl());
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.common.options.messages",
+            PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
 
     private Messages() {
     }
@@ -46,8 +43,7 @@ class Messages {
      * @param args the message arguments
      * @return the string
      */
-    public static String getString(String key, Object[] args) {
+    public static String getString(String key, Object... args) {
         return MessageFormat.format(getString(key), args);
     }
-
 }

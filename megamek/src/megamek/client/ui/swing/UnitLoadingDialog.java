@@ -30,21 +30,13 @@ import megamek.client.ui.Messages;
 import megamek.common.MechSummaryCache;
 
 public class UnitLoadingDialog extends JDialog {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3454307876761238915L;
-    private JLabel lLoading = new JLabel(Messages
-            .getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
-    private JLabel lCacheText = new JLabel(Messages
-            .getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$
+    private JLabel lLoading = new JLabel(Messages.getString("UnitLoadingDialog.LoadingUnits"));
+    private JLabel lCacheText = new JLabel(Messages.getString("UnitLoadingDialog.fromCache"));
     private JLabel lCacheCount = new JLabel();
-    private JLabel lFileText = new JLabel(Messages
-            .getString("UnitLoadingDialog.fromFiles")); //$NON-NLS-1$
+    private JLabel lFileText = new JLabel(Messages.getString("UnitLoadingDialog.fromFiles"));
     private JLabel lFileCount = new JLabel();
-    private JLabel lZipText = new JLabel(Messages
-            .getString("UnitLoadingDialog.fromZips")); //$NON-NLS-1$
+    private JLabel lZipText = new JLabel(Messages.getString("UnitLoadingDialog.fromZips"));
     private JLabel lZipCount = new JLabel();
 
     // Determines how often to update the loading dialog.
@@ -53,16 +45,13 @@ public class UnitLoadingDialog extends JDialog {
     
     boolean loadingDone = false;
     
-    private MechSummaryCache.Listener mechSummaryCacheListener = 
-        new MechSummaryCache.Listener() {
-            public void doneLoading() {
-                loadingDone = true;
-                setVisible(false);
-        }
+    private MechSummaryCache.Listener mechSummaryCacheListener = () -> {
+        loadingDone = true;
+        setVisible(false);
     };
 
     public UnitLoadingDialog(JFrame frame) {
-        super(frame, Messages.getString("UnitLoadingDialog.pleaseWait")); //$NON-NLS-1$
+        super(frame, Messages.getString("UnitLoadingDialog.pleaseWait"));
 
         getContentPane().setLayout(new GridBagLayout());
         getContentPane().add(lLoading, GBC.eol());
@@ -80,30 +69,24 @@ public class UnitLoadingDialog extends JDialog {
         // move to middle of screen
         setLocationRelativeTo(frame);
 
-        Runnable r = new Runnable() {
-            public void run() {
-                while (!loadingDone && 
-                        !MechSummaryCache.getInstance().isInitialized()) {
-                    updateCounts();
-                    try {
-                        Thread.sleep(UPDATE_FREQUENCY);
-                    } catch (InterruptedException e) {
-                        // not supposed to come here
-                    }
+        Runnable r = () -> {
+            while (!loadingDone && !MechSummaryCache.getInstance().isInitialized()) {
+                updateCounts();
+                try {
+                    Thread.sleep(UPDATE_FREQUENCY);
+                } catch (InterruptedException e) {
+                    // not supposed to come here
                 }
             }
         };
         MechSummaryCache.getInstance().addListener(mechSummaryCacheListener);
-        Thread t = new Thread(r, "Unit Loader Dialog"); //$NON-NLS-1$
+        Thread t = new Thread(r, "Unit Loader Dialog");
         t.start();
     }
 
     void updateCounts() {
-        lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance()
-                .getCacheCount()));
-        lFileCount.setText(String.valueOf(MechSummaryCache.getInstance()
-                .getFileCount()));
-        lZipCount.setText(String.valueOf(MechSummaryCache.getInstance()
-                .getZipCount()));
+        lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
+        lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
+        lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
     }
 }

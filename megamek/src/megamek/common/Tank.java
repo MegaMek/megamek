@@ -13,22 +13,16 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * You know what tanks are, silly.
@@ -179,6 +173,7 @@ public class Tank extends Entity {
      */
     private FuelType fuelType = FuelType.PETROCHEMICALS;
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -244,11 +239,13 @@ public class Tank extends Entity {
     //Advanced turrets
     public static TechAdvancement getDualTurretTA() {
         return new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, 3080, 3080).setApproximate(false, true, false)
+                .setAdvancement(DATE_PS, DATE_NONE, 3080)
+                .setApproximate(false, false, true)
                 .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
+    @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
         if (!hasNoDualTurret()) {
@@ -553,7 +550,7 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -568,7 +565,7 @@ public class Tank extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -646,7 +643,7 @@ public class Tank extends Entity {
             case HYDROFOIL:
                 // Can only deploy under a bridge if there is sufficient clearance.
                 if (hex.containsTerrain(Terrains.BRIDGE)
-                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.surface())) {
+                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.getLevel())) {
                     return true;
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
@@ -925,8 +922,8 @@ public class Tank extends Entity {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
@@ -982,9 +979,7 @@ public class Tank extends Entity {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -1201,8 +1196,7 @@ public class Tank extends Entity {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     /**
@@ -1595,7 +1589,7 @@ public class Tank extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
@@ -1776,8 +1770,8 @@ public class Tank extends Entity {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -1804,15 +1798,13 @@ public class Tank extends Entity {
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
                     || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
+                Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP != null) {
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
-                            && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e
-                                .hasMoreElements();) {
+                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
+                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
@@ -2126,7 +2118,7 @@ public class Tank extends Entity {
         }
 
         // are we wheeled and in light snow?
-        IHex hex = game.getBoard().getHex(getPosition());
+        Hex hex = game.getBoard().getHex(getPosition());
         if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                 && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
@@ -2152,7 +2144,7 @@ public class Tank extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -2503,7 +2495,7 @@ public class Tank extends Entity {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        ArrayList<String> left = new ArrayList<String>();
+        ArrayList<String> left = new ArrayList<>();
 
         if (isSupportVehicle()) {
             left.add("Chassis");
@@ -2546,7 +2538,7 @@ public class Tank extends Entity {
 
             if (l == 7) {
                 getWeaponsAndEquipmentCost(true);
-            }else {
+            } else {
                 if (left.get(l).equals("Final Structural Cost")) {
                     bvText.append(startRow);
                     bvText.append(startColumn);
@@ -2662,7 +2654,7 @@ public class Tank extends Entity {
 
         // Engine Costs
         double engineCost = 0.0;
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isSupportVehicle()) {
                 engineCost = 5000 * getEngine().getWeightEngine(this)
                         * Engine.getSVCostMultiplier(getEngine().getEngineType());
@@ -2740,16 +2732,16 @@ public class Tank extends Entity {
         if (!isSupportVehicle()) {
             double diveTonnage;
             switch (movementMode) {
-            case HOVER:
-            case HYDROFOIL:
-            case VTOL:
-            case SUBMARINE:
-            case WIGE:
-                diveTonnage = Math.ceil(weight / 5.0) / 2.0;
-                break;
-            default:
-                diveTonnage = 0.0;
-                break;
+                case HOVER:
+                case HYDROFOIL:
+                case VTOL:
+                case SUBMARINE:
+                case WIGE:
+                    diveTonnage = Math.ceil(weight / 5.0) / 2.0;
+                    break;
+                default:
+                    diveTonnage = 0.0;
+                    break;
             }
             if (movementMode != EntityMovementMode.VTOL) {
                 costs[i++] = diveTonnage * 20000;
@@ -2950,7 +2942,7 @@ public class Tank extends Entity {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
-        IHex occupiedHex = game.getBoard().getHex(getPosition());
+        Hex occupiedHex = game.getBoard().getHex(getPosition());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }
@@ -3176,7 +3168,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3270,7 +3262,7 @@ public class Tank extends Entity {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3313,7 +3305,7 @@ public class Tank extends Entity {
         // if ba_grab_bars is on, then we need to add battlearmor handles,
         // otherwise clamp mounts
         // but first clear out whatever we have
-        Vector<Transporter> et = new Vector<Transporter>(getTransports());
+        Vector<Transporter> et = new Vector<>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandlesTank) {
                 removeTransporter(t);
@@ -3402,7 +3394,7 @@ public class Tank extends Entity {
     }
 
     public void resetJammedWeapons() {
-        jammedWeapons = new ArrayList<Mounted>();
+        jammedWeapons = new ArrayList<>();
     }
 
     /**
@@ -3886,7 +3878,7 @@ public class Tank extends Entity {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 2;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 3;
         } else {
             return 4;
@@ -3916,26 +3908,26 @@ public class Tank extends Entity {
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
-        case 0:
-            if (location > LOC_BODY && location < LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 1:
-            if (location == LOC_REAR) {
-                return 1.0;
-            }
-            break;
-        case 2:
-            if (location == LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 3:
-            if (location == LOC_TURRET_2) {
-                return 1.0;
-            }
-            break;
+            case 0:
+                if (location > LOC_BODY && location < LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 1:
+                if (location == LOC_REAR) {
+                    return 1.0;
+                }
+                break;
+            case 2:
+                if (location == LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 3:
+                if (location == LOC_TURRET_2) {
+                    return 1.0;
+                }
+                break;
         }
         return 0; 
     }
@@ -3951,6 +3943,7 @@ public class Tank extends Entity {
     	return getBattleForceLocationMultiplier(index, location, rearMounted);
     }
     
+    @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         if (!isSupportVehicle()) {
@@ -4045,25 +4038,25 @@ public class Tank extends Entity {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -4077,7 +4070,7 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -4087,11 +4080,11 @@ public class Tank extends Entity {
     public boolean isDmgHeavy() {
         // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
         if (((double) getMotiveDamage() / getOriginalWalkMP()) >= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
@@ -4116,7 +4109,7 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgModerate() {
         if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.67.");
             return true;
@@ -4143,11 +4136,11 @@ public class Tank extends Entity {
     public boolean isDmgLight() {
         // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
         if (getMotiveDamage() > 0) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.8.");
             return true;
@@ -4372,6 +4365,7 @@ public class Tank extends Entity {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 4;
     }

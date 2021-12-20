@@ -18,6 +18,7 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.util.List;
 
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
@@ -404,6 +405,7 @@ public class TripodMech extends Mech {
      * @param location (LOC_RARM or LOC_LARM)
      * @return True/False
      */
+    @Override
     public boolean hasClaw(int location) {
         // only arms have claws.
         if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
@@ -996,18 +998,16 @@ public class TripodMech extends Mech {
      * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-                                   int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-            && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
 
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                                   true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
 

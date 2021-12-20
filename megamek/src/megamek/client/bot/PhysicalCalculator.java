@@ -23,7 +23,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -184,8 +184,7 @@ public final class PhysicalCalculator {
                 pod_ranking = 0.0;
                 Iterator<INarcPod> pod_list = entity.getINarcPodsAttached();
                 best_pod = pod_list.next();
-                for (pod_list = entity.getINarcPodsAttached(); pod_list
-                        .hasNext(); ) {
+                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasNext(); ) {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
@@ -325,7 +324,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         
@@ -572,7 +571,7 @@ public final class PhysicalCalculator {
 
         // Conventional infantry in the open suffer double damage.
         if (to.isConventionalInfantry()) {
-            IHex e_hex = game.getBoard().getHex(to.getPosition());
+            Hex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 bestDmg *= 2.0;
@@ -612,7 +611,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         

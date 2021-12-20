@@ -36,10 +36,10 @@ public class CityBuilder {
     static final int E = 7;
 
     private MapSettings mapSettings;
-    private IBoard board;
+    private Board board;
     private HashSet<Coords> cityPlan;
 
-    public CityBuilder(MapSettings mapSettings, IBoard board) {
+    public CityBuilder(MapSettings mapSettings, Board board) {
         super();
         // Auto-generated constructor stub
 
@@ -62,7 +62,7 @@ public class CityBuilder {
         roads = (roads * Math.min(width, height)) / 16; // scale for bigger maps
         String cityType = mapSettings.getCityType();
 
-        cityPlan = new HashSet<Coords>();
+        cityPlan = new HashSet<>();
         if (genericRoad) {
             addGenericRoad();
         }
@@ -76,7 +76,7 @@ public class CityBuilder {
         else if (cityType.equalsIgnoreCase("TOWN"))
             return buildTown(width, height, roads, mapSettings.getTownSize());
         else
-            return new ArrayList<BuildingTemplate>();
+            return new ArrayList<>();
 
         return placeBuildings(0);
     }
@@ -84,10 +84,10 @@ public class CityBuilder {
     public ArrayList<BuildingTemplate> placeBuildings(int radius) {
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
-        ArrayList<BuildingTemplate> buildingList = new ArrayList<BuildingTemplate>();
-        HashSet<Coords> buildingUsed = new HashSet<Coords>();
+        ArrayList<BuildingTemplate> buildingList = new ArrayList<>();
+        HashSet<Coords> buildingUsed = new HashSet<>();
 
-        ArrayList<Coords> coordList = new ArrayList<Coords>();
+        ArrayList<Coords> coordList = new ArrayList<>();
 
         Coords centre = new Coords(width / 2, height / 2);
         double falloff = (double) mapSettings.getCityDensity()
@@ -113,7 +113,7 @@ public class CityBuilder {
                 if (Compute.randomInt(100) > localdensity) {
                     continue; // empty lot
                 }
-                coordList = new ArrayList<Coords>();
+                coordList = new ArrayList<>();
                 coordList.add(coord);
                 buildingUsed.add(coord);
                 while (Compute.randomInt(100) < localdensity) {
@@ -189,7 +189,7 @@ public class CityBuilder {
         int midX = maxX / 2;
         int midY = maxY / 2;
 
-        Vector<Integer> directions = new Vector<Integer>(8);
+        Vector<Integer> directions = new Vector<>(8);
 
         directions.add(N);
         directions.add(NE);
@@ -212,8 +212,7 @@ public class CityBuilder {
             if (dir < 8) {
                 x = midX;
                 y = midY;
-                baseDirection = directions.remove(Compute.randomInt(directions
-                        .size()));
+                baseDirection = directions.remove(Compute.randomInt(directions.size()));
             } else {
                 switch (Compute.randomInt(4)) {
                     case 1:
@@ -326,7 +325,7 @@ public class CityBuilder {
      * @param hex
      * @return true if it is reasonable to build on this hex
      */
-    private boolean isHexBuildable(IHex hex) {
+    private boolean isHexBuildable(Hex hex) {
         if (hex.containsTerrain(Terrains.WATER)
                 || hex.containsTerrain(Terrains.IMPASSABLE)
                 || hex.containsTerrain(Terrains.MAGMA)
@@ -343,7 +342,7 @@ public class CityBuilder {
      * @param hex
      * @return true if the hex needs a bridge to cross
      */
-    private boolean hexNeedsBridge(IHex hex) {
+    private boolean hexNeedsBridge(Hex hex) {
         if (hex.containsTerrain(Terrains.ROAD)
                 || hex.containsTerrain(Terrains.BRIDGE))
             return false;
@@ -351,7 +350,7 @@ public class CityBuilder {
                 .containsTerrain(Terrains.MAGMA));
     }
 
-    private void addRoad(IHex hex, int exitDirection, int type) {
+    private void addRoad(Hex hex, int exitDirection, int type) {
         if (hex.containsTerrain(Terrains.WATER)) {
             hex.removeTerrain(Terrains.WATER);
             hex.addTerrain(new Terrain(Terrains.WATER, 0));
@@ -361,7 +360,7 @@ public class CityBuilder {
                 (1 << exitDirection) & 63));
     }
 
-    private void addBridge(IHex hex, int exits, int altitude, int cf) {
+    private void addBridge(Hex hex, int exits, int altitude, int cf) {
         int bridgeElevation = altitude - hex.getLevel();
 
         hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf), true, (exits & 63)));
@@ -371,7 +370,7 @@ public class CityBuilder {
 
     private void connectHexes(Coords src, Coords dest, int roadStyle) {
         if (board.contains(src)) {
-            IHex hex = board.getHex(src);
+            Hex hex = board.getHex(src);
             Terrain t = hex.getTerrain(Terrains.ROAD);
             if (t == null) {
                 t = hex.getTerrain(Terrains.BRIDGE);

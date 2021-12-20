@@ -1,47 +1,40 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-
+import megamek.client.generator.RandomNameGenerator;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import megamek.MegaMek;
-import megamek.client.generator.RandomNameGenerator;
-import megamek.utils.MegaMekXmlUtil;
+import javax.xml.parsers.DocumentBuilder;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Container for all the rule nodes for a faction. Has methods for processing the rules to
  * fill out a ForceDescriptor.
  * 
  * @author Neoancient
- *
  */
 public class Ruleset {
 
@@ -215,7 +208,7 @@ public class Ruleset {
                 }				
             } else {
                 applied = fn.apply(fd);
-                MegaMek.getLogger().debug("Selecting force node " + fn.show()
+                LogManager.getLogger().debug("Selecting force node " + fn.show()
                         + " from ruleset " + rs.getFaction());
             }
         } while (rs != null && (fn == null || !applied));
@@ -298,7 +291,7 @@ public class Ruleset {
     }
 
     public HashMap<String,String> getEschelonNames(String unitType) {
-        HashMap<String,String> retVal = new HashMap<String,String>();
+        HashMap<String,String> retVal = new HashMap<>();
         for (ForceNode n : forceNodes) {
             if (n.matchesPredicate(unitType, "ifUnitType")) {
                 retVal.put(n.getEschelonCode(), n.getEschelonName());
@@ -351,33 +344,32 @@ public class Ruleset {
         InputStream is;
         try {
             is = new FileInputStream(f);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is,
-                    Charset.forName("UTF-8")));
-            String line = null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("#") && line.contains(":")) {
                     String[] fields = line.split(":");
                     try {
                         constants.put(fields[0], fields[1]);
                     } catch (NumberFormatException e) {
-                        MegaMek.getLogger().error("Malformed line in force generator constants file: " + line);
+                        LogManager.getLogger().error("Malformed line in force generator constants file: " + line);
                     }
                 }
             }
             reader.close();
         } catch (IOException e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
     }
 
     public static void loadData() {
         initialized = false;
         initializing = true;
-        rulesets = new HashMap<String,Ruleset>();
+        rulesets = new HashMap<>();
 
         File dir = new File(directory);
         if (!dir.exists()) {
-            MegaMek.getLogger().error("Could not locate force generator faction rules.");
+            LogManager.getLogger().error("Could not locate force generator faction rules.");
             initializing = false;
             return;
         }
@@ -403,7 +395,7 @@ public class Ruleset {
                     rulesets.put(rs.getFaction(), rs);
                 }
             } catch (IllegalArgumentException ex) {
-                MegaMek.getLogger().error("While parsing file " + f.toString() + ": " + ex.getMessage());
+                LogManager.getLogger().error("While parsing file " + f.toString() + ": " + ex.getMessage());
             }
         }
         initialized = true;
@@ -420,7 +412,7 @@ public class Ruleset {
             xmlDoc = db.parse(fis);
             fis.close();
         } catch (Exception e) {
-            MegaMek.getLogger().error("While loading force template from file " + f.getName() + ": "
+            LogManager.getLogger().error("While loading force template from file " + f.getName() + ": "
                     + e.getMessage());
             return null;
         }
@@ -429,13 +421,13 @@ public class Ruleset {
 
         Element elem = xmlDoc.getDocumentElement();
         if (!elem.getNodeName().equals("ruleset")) {
-            MegaMek.getLogger().error("Could not find ruleset element in file " + f.getName());
+            LogManager.getLogger().error("Could not find ruleset element in file " + f.getName());
             return null;
         }
         if (elem.getAttribute("faction").length() > 0) {
             retVal.faction = elem.getAttribute("faction");
         } else {
-            MegaMek.getLogger().error("Faction is not declared in ruleset file " + f.getName());
+            LogManager.getLogger().error("Faction is not declared in ruleset file " + f.getName());
             return null;
         }
         if (elem.getAttribute("parent").length() > 0) {
@@ -513,7 +505,7 @@ public class Ruleset {
                     try {
                         fn = ForceNode.createFromXml(wn);
                     } catch (IllegalArgumentException ex) {
-                        MegaMek.getLogger().error("In file " + f.getName() + " while processing force node" 
+                        LogManager.getLogger().error("In file " + f.getName() + " while processing force node" 
                                 + ((wn.getAttributes().getNamedItem("eschName") == null) ? "" : " " 
                                         + wn.getAttributes().getNamedItem("eschName")) 
                                 + ": " + ex.getMessage());

@@ -94,6 +94,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     /**
      * @return - the experimental tech date range, formatted as a string
      */
+    @Override
     public String getExperimentalRange() {
         if (experimental == null) {
             return "-";
@@ -110,6 +111,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     /**
      * @return - the advanced tech date range, formatted as a string
      */
+    @Override
     public String getAdvancedRange() {
         if (advanced == null) {
             return "-";
@@ -124,6 +126,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     /**
      * @return - the standard tech date range, formatted as a string
      */
+    @Override
     public String getStandardRange() {
         if (standard == null) {
             return "-";
@@ -189,7 +192,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             if (experimental == null) {
                 if (advanced != null && prodDate > advanced) {
                     experimental = advanced;
-                } else if (standard != null && prodDate > standard){
+                } else if (standard != null && prodDate > standard) {
                     experimental = standard;
                     advanced = null;
                 }
@@ -248,6 +251,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param year
      * @return - the TechConstants tech level for a particular year
      */
+    @Override
     public int getTechLevel(int year) {
         if (getStaticTechLevel() == SimpleTechLevel.UNOFFICIAL) {
             return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
@@ -364,7 +368,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     
     @Override
     public int getTechBase() {
-        return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
+        return isClan() ? TECH_BASE_CLAN : TECH_BASE_IS;
     }
 
     @Override

@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
@@ -92,39 +91,31 @@ public class Ruler extends JDialog implements BoardViewListener {
 
     private void jbInit() {
         buttonPanel = new JPanel();
-        butFlip.setText(Messages.getString("Ruler.flip")); //$NON-NLS-1$
-        butFlip.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                butFlip_actionPerformed();
-            }
-        });
+        butFlip.setText(Messages.getString("Ruler.flip"));
+        butFlip.addActionListener(e -> butFlip_actionPerformed());
         getContentPane().setLayout(gridBagLayout1);
-        jLabel1 = new JLabel(Messages.getString("Ruler.Start"), SwingConstants.RIGHT); //$NON-NLS-1$
+        jLabel1 = new JLabel(Messages.getString("Ruler.Start"), SwingConstants.RIGHT);
         tf_start.setEditable(false);
         tf_start.setColumns(16);
-        jLabel2 = new JLabel(Messages.getString("Ruler.End"), SwingConstants.RIGHT); //$NON-NLS-1$
+        jLabel2 = new JLabel(Messages.getString("Ruler.End"), SwingConstants.RIGHT);
         tf_end.setEditable(false);
         tf_end.setColumns(16);
-        jLabel3 = new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.RIGHT); //$NON-NLS-1$
+        jLabel3 = new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.RIGHT);
         tf_distance.setEditable(false);
         tf_distance.setColumns(5);
-        jLabel4 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT); //$NON-NLS-1$ //$NON-NLS-2$
+        jLabel4 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT);
         jLabel4.setForeground(startColor);
         tf_los1.setEditable(false);
         tf_los1.setColumns(30);
-        jLabel5 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT); //$NON-NLS-1$
+        jLabel5 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT);
         jLabel5.setForeground(endColor);
         tf_los2.setEditable(false);
         tf_los2.setColumns(30);
-        butClose.setText(Messages.getString("Ruler.Close")); //$NON-NLS-1$
-        butClose.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                butClose_actionPerformed();
-            }
-        });
-        heightLabel1 = new JLabel(Messages.getString("Ruler.Height1"), SwingConstants.RIGHT); //$NON-NLS-1$
+        butClose.setText(Messages.getString("Ruler.Close"));
+        butClose.addActionListener(e -> butClose_actionPerformed());
+        heightLabel1 = new JLabel(Messages.getString("Ruler.Height1"), SwingConstants.RIGHT);
         heightLabel1.setForeground(startColor);
-        height1.setText("1"); //$NON-NLS-1$
+        height1.setText("1");
         height1.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -132,17 +123,11 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height1.setColumns(5);
-        cboIsMech1.addItemListener(new ItemListener(){
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                checkBoxSelectionChanged();
-            }
-            
-        });
+        cboIsMech1.addItemListener(e -> checkBoxSelectionChanged());
         
-        heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT); //$NON-NLS-1$
+        heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT);
         heightLabel2.setForeground(endColor);
-        height2.setText("1"); //$NON-NLS-1$
+        height2.setText("1");
         height2.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -150,13 +135,7 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height2.setColumns(5);
-        cboIsMech2.addItemListener(new ItemListener(){
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                checkBoxSelectionChanged();
-            }
-            
-        });
+        cboIsMech2.addItemListener(e -> checkBoxSelectionChanged());
         
         //need to set all the minimum sizes to prevent jtextfield going to zero size
         //on dialog resize.setColumns(16);
@@ -233,13 +212,11 @@ public class Ruler extends JDialog implements BoardViewListener {
 
         c.gridx = 0;
         c.gridy = 5;
-      //  c.weightx = 0.0;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel4, c);
         getContentPane().add(jLabel4); 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-       // c.weightx = 1.0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_los1, c);
@@ -344,7 +321,7 @@ public class Ruler extends JDialog implements BoardViewListener {
             return;
         }
         
-        String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
+        String toHit1 = "", toHit2 = "";
         ToHitData thd;
         if (flip) {
             thd = LosEffects.calculateLos(client.getGame(),
@@ -356,7 +333,7 @@ public class Ruler extends JDialog implements BoardViewListener {
                             cboIsMech1.isSelected())).losModifiers(client.getGame());
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-            toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
+            toHit1 = thd.getValue() + " = ";
         }
         toHit1 += thd.getDesc();
 
@@ -370,13 +347,13 @@ public class Ruler extends JDialog implements BoardViewListener {
                             cboIsMech2.isSelected())).losModifiers(client.getGame());
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-            toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
+            toHit2 = thd.getValue() + " = ";
         }
         toHit2 += thd.getDesc();
 
         tf_start.setText(start.toString());
         tf_end.setText(end.toString());
-        tf_distance.setText("" + distance); //$NON-NLS-1$
+        tf_distance.setText("" + distance);
         tf_los1.setText(toHit1);
         // tf_los1.setCaretPosition(0);
         tf_los2.setText(toHit2);
@@ -406,6 +383,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         return ai;
     }
 
+    @Override
     public void hexMoused(BoardViewEvent b) {
         if ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
@@ -416,22 +394,27 @@ public class Ruler extends JDialog implements BoardViewListener {
         bv.drawRuler(start, end, startColor, endColor);
     }
 
+    @Override
     public void hexCursor(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
         //ignored
     }
@@ -473,15 +456,17 @@ public class Ruler extends JDialog implements BoardViewListener {
         setVisible(true);
     }
     
-    void checkBoxSelectionChanged(){
+    void checkBoxSelectionChanged() {
         setText();
         setVisible(true);
     }
 
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         //ignored
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
         //ignored
     }

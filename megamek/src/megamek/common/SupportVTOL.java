@@ -122,6 +122,7 @@ public class SupportVTOL extends VTOL {
         return 3;
     }
 
+    @Override
     public double getBaseEngineValue() {
         if (getWeight() < 5) {
             return 0.002;
@@ -132,6 +133,7 @@ public class SupportVTOL extends VTOL {
         }
     }
 
+    @Override
     public double getBaseChassisValue() {
         if (getWeight() < 5) {
             return 0.2;
@@ -158,10 +160,12 @@ public class SupportVTOL extends VTOL {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
     
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL | Entity.ETYPE_SUPPORT_VTOL;
     }
     
+    @Override
     public boolean isSupportVehicle() {
         return true;
     }

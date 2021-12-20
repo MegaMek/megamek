@@ -64,22 +64,24 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return 0;
     }
     
+    @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
         ae.setFiredTsempThisTurn(true);
         ae.setHasFiredTsemp(true);
 
-        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE){
+        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE) {
             ae.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
         }
 
         return super.handle(phase, vPhaseReport);
     }
 
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+                                      int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
                 nCluster, bldgAbsorbs);
         
@@ -106,24 +108,24 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         
         // Determine roll modifiers
         int tsempModifiers = 0;
-        if (entityTarget.getWeight() >= 200){
+        if (entityTarget.getWeight() >= 200) {
             // No Effect
             r = new Report(7416);
             r.subject = entityTarget.getId();
             r.indent(3);
             vPhaseReport.add(r);
             return;
-        } else if (entityTarget.getWeight() >= 100){
+        } else if (entityTarget.getWeight() >= 100) {
             tsempModifiers -= 2;
         }
         
         if (entityTarget.getEngine() != null &&
                 entityTarget.getEngine().getEngineType() == 
-                    Engine.COMBUSTION_ENGINE){
+                    Engine.COMBUSTION_ENGINE) {
             tsempModifiers -= 1;
         } else if (entityTarget.getEngine() != null &&
                 entityTarget.getEngine().getEngineType() == 
-                Engine.STEAM){
+                Engine.STEAM) {
             tsempModifiers -= 2;
         }
         
@@ -135,40 +137,40 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
         int interferenceTarget = 13;
-        if (entityTarget instanceof Mech){
-            if (((Mech) entityTarget).isIndustrial()){
+        if (entityTarget instanceof Mech) {
+            if (((Mech) entityTarget).isIndustrial()) {
                 interferenceTarget = 6;
                 shutdownTarget = 8;
             } else {
                 interferenceTarget = 7;
                 shutdownTarget = 9;
             }            
-        } else if (entityTarget instanceof SupportTank){
+        } else if (entityTarget instanceof SupportTank) {
             interferenceTarget = 5;
             shutdownTarget = 7;
-        } else if (entityTarget instanceof Tank){
+        } else if (entityTarget instanceof Tank) {
             interferenceTarget = 6;
             shutdownTarget = 8;
-        } else if (entityTarget instanceof BattleArmor){
+        } else if (entityTarget instanceof BattleArmor) {
             interferenceTarget = 6;
             shutdownTarget = 8;
-        } else if (entityTarget instanceof Protomech){
+        } else if (entityTarget instanceof Protomech) {
             interferenceTarget = 6;
             shutdownTarget = 9;
-        } else if (entityTarget instanceof ConvFighter){
+        } else if (entityTarget instanceof ConvFighter) {
             interferenceTarget = 6;
             shutdownTarget = 8;
-        } else if (entityTarget instanceof Aero){
+        } else if (entityTarget instanceof Aero) {
             interferenceTarget = 7;
             shutdownTarget = 9;
         }
 
         // Create the effect report
-        if (tsempModifiers == 0){
+        if (tsempModifiers == 0) {
             r = new Report(7411);
         } else {
             r = new Report(7412);
-            if (tsempModifiers >= 0){
+            if (tsempModifiers >= 0) {
                 r.add("+" + tsempModifiers);
             } else {
                 r.add(tsempModifiers);
@@ -181,11 +183,11 @@ public class TSEMPHandler extends EnergyWeaponHandler {
 
         // Determine the effect
         Report baShutdownReport = null;
-        if (tsempRoll >= shutdownTarget){
+        if (tsempRoll >= shutdownTarget) {
             entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
             tsempEffect = 
                     "<font color='C00000'><b>Shutdown!</b></font>";
-            if (entityTarget instanceof BattleArmor){
+            if (entityTarget instanceof BattleArmor) {
                 baShutdownReport = new Report(3706);
                 baShutdownReport.addDesc(entityTarget);
                 baShutdownReport.indent(4);
@@ -201,7 +203,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             } else {
                 entityTarget.setShutDown(true);
             }
-        } else if (tsempRoll >= interferenceTarget){
+        } else if (tsempRoll >= interferenceTarget) {
             int targetEffect = entityTarget.getTsempEffect();
             if (targetEffect != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
                 entityTarget.setTsempEffect(
@@ -214,7 +216,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         }
         r.add(tsempEffect);
         vPhaseReport.add(r); 
-        if (baShutdownReport != null){
+        if (baShutdownReport != null) {
             vPhaseReport.add(baShutdownReport);
         }
     }

@@ -18,6 +18,7 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -74,7 +75,8 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
             .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
             .setISApproximate(false, false, false, true, false)
             .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
+            .setProductionFactions(F_TH)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

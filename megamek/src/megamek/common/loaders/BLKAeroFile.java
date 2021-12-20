@@ -293,7 +293,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : Aero.LOC_FUSELAGE;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
@@ -314,7 +314,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }
@@ -329,25 +329,4 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             }
         }
     }
-
-    /*
-     * protected void organizeIntoGroups(Aero a) throws EntityLoadingException {
-     * //collect a hash of all the same weapons in each location by id
-     * Map<String, Integer> groups = new HashMap<String, Integer>(); for
-     * (Mounted mounted : a.getTotalWeaponList()) { int loc =
-     * mounted.getLocation(); if(loc == Aero.LOC_RWING || loc == Aero.LOC_LWING)
-     * { loc = Aero.LOC_WINGS; } if(mounted.isRearMounted()) { loc =
-     * Aero.LOC_AFT; } String key = mounted.getType().getInternalName() + ":" +
-     * loc; if(null == groups.get(key)) { groups.put(key, 1); } else {
-     * groups.put(key, groups.get(key) + 1); } } //now we just need to traverse
-     * the hash and add this new equipment Set<String> set= groups.keySet();
-     * Iterator<String> iter = set.iterator(); while(iter.hasNext()) { String
-     * key = iter.next(); String name = key.split(":")[0]; int loc =
-     * Integer.parseInt(key.split(":")[1]); EquipmentType etype =
-     * EquipmentType.get(name); Mounted newmount; if (etype != null) { try {
-     * newmount = a.addWeaponGroup(etype, loc);
-     * newmount.setNWeapons(groups.get(key)); } catch (LocationFullException ex)
-     * { throw new EntityLoadingException(ex.getMessage()); } } else if(name !=
-     * "0"){ a.addFailedEquipment(name); } } }
-     */
 }

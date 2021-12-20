@@ -276,7 +276,7 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        return (proto.getWeight() > MAX_STD_TONNAGE)? 0.75 : 0.5;
+        return (proto.getWeight() > MAX_STD_TONNAGE) ? 0.75 : 0.5;
     }
 
     @Override
@@ -680,7 +680,7 @@ public class TestProtomech extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        return Math.max(1, (int)(moveFactor * tonnage));
+        return Math.max(1, (int) (moveFactor * tonnage));
     }
     
     /**
@@ -721,7 +721,7 @@ public class TestProtomech extends TestEntity {
      * @return      The number of equipment slots in the location
      */
     public static int maxSlotsByLocation(int loc, boolean quad, boolean ultra) {
-        switch(loc) {
+        switch (loc) {
             case Protomech.LOC_TORSO: {
                 int slots = 2;
                 if (ultra) {
@@ -734,9 +734,9 @@ public class TestProtomech extends TestEntity {
             }
             case Protomech.LOC_LARM:
             case Protomech.LOC_RARM:
-                return quad? 0 : 1;
+                return quad ? 0 : 1;
             case Protomech.LOC_MAINGUN:
-                return (quad && ultra)? 2 : 1;
+                return (quad && ultra) ? 2 : 1;
             case Protomech.LOC_HEAD:
             case Protomech.LOC_LEG:
             default:
@@ -764,7 +764,7 @@ public class TestProtomech extends TestEntity {
      * @return      The weight limit for that location, in tons.
      */
     public static double maxWeightByLocation(int loc, boolean quad, boolean ultra) {
-        switch(loc) {
+        switch (loc) {
             case Protomech.LOC_TORSO:
                 if (quad) {
                     return ultra? 8.0 : 5.0;
@@ -786,7 +786,7 @@ public class TestProtomech extends TestEntity {
         }
     }
     
-    private static final int MAX_ARMOR_FACTOR[] = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
+    private static final int[] MAX_ARMOR_FACTOR = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
     
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
@@ -809,7 +809,7 @@ public class TestProtomech extends TestEntity {
         final int weightIndex = Math.max(0, (int) weight - 2);
         int base = MAX_ARMOR_FACTOR[Math.min(weightIndex, MAX_ARMOR_FACTOR.length - 1)];
         if (mainGun) {
-            return base + ((weight > MAX_STD_TONNAGE)? 6 : 3);
+            return base + ((weight > MAX_STD_TONNAGE) ? 6 : 3);
         }
         return base;
     }

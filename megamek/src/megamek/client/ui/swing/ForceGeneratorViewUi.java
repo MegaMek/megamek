@@ -1,54 +1,18 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeModelListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
@@ -58,6 +22,23 @@ import megamek.common.Entity;
 import megamek.common.UnitType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
@@ -230,8 +211,7 @@ public class ForceGeneratorViewUi {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
         }
         
-        List<Entity> entities = new ArrayList<Entity>(
-                modelChosen.allEntities().size());
+        List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         Client c = null;
         if (null != playerName) {
             c = clientGui.getBots().get(playerName);
@@ -420,7 +400,7 @@ public class ForceGeneratorViewUi {
 
         public ForceTreeModel(ForceDescriptor root) {
             this.root = root;
-            listeners = new ArrayList<TreeModelListener>();
+            listeners = new ArrayList<>();
         }
 
         @Override
@@ -501,7 +481,7 @@ public class ForceGeneratorViewUi {
                 setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
-            ForceDescriptor fd = (ForceDescriptor)value;
+            ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
                 String uname = "";
@@ -523,7 +503,7 @@ public class ForceGeneratorViewUi {
                         clientGui.loadPreviewImage(this, fd.getEntity(),
                                 clientGui.getClient().getLocalPlayer());
                     } catch (NullPointerException ex) {
-                        MegaMek.getLogger().warning("No image found for " + fd.getEntity().getShortNameRaw());
+                        LogManager.getLogger().warn("No image found for " + fd.getEntity().getShortNameRaw());
                     }
                 }
             } else {

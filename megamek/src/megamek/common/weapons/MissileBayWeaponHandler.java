@@ -208,8 +208,9 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      * check for special munitions and their effect on av 
      * 
      */
+    @Override
     protected double updateAVforAmmo(double current_av, AmmoType atype,
-            WeaponType bayWType, int range, int wId) {
+                                     WeaponType bayWType, int range, int wId) {
         Mounted bayW = ae.getEquipment(wId);
         Mounted mLinker = bayW.getLinkedBy();
         int bonus = 0;
@@ -263,7 +264,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         
-        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
 

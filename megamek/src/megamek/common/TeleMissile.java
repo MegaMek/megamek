@@ -56,25 +56,26 @@ public class TeleMissile extends Aero {
         //fuel
         int fuel = 0;
         String name = "T-Op Missile";
-        switch(type) {
-        case(AmmoType.T_KRAKEN_T):
-            fuel = 25;
-        name = "Kraken-T Missile";
-        break;
-        case(AmmoType.T_WHITE_SHARK_T):
-            fuel = 40;
-        name = "White Shark-T Missile";
-        break;
-        case(AmmoType.T_KILLER_WHALE_T):
-            fuel = 30;
-        name = "Killer Whale-T Missile";
-        break;
-        case(AmmoType.T_BARRACUDA_T):
-            fuel = 30;
-        name = "Barracuda-T Missile";
-        break;
-        default:
-            fuel = 30;
+        switch (type) {
+            case(AmmoType.T_KRAKEN_T):
+                fuel = 25;
+                name = "Kraken-T Missile";
+                break;
+            case(AmmoType.T_WHITE_SHARK_T):
+                fuel = 40;
+                name = "White Shark-T Missile";
+                break;
+            case(AmmoType.T_KILLER_WHALE_T):
+                fuel = 30;
+                name = "Killer Whale-T Missile";
+                break;
+            case(AmmoType.T_BARRACUDA_T):
+                fuel = 30;
+                name = "Barracuda-T Missile";
+                break;
+            default:
+                fuel = 30;
+                break;
         }
 
         setCritMod(capMisMod);
@@ -131,7 +132,7 @@ public class TeleMissile extends Aero {
     @Override
     public void autoSetThresh()
     {
-        for(int x = 0; x < locations(); x++)
+        for (int x = 0; x < locations(); x++)
         {
             initializeThresh(x);
         }
@@ -140,7 +141,7 @@ public class TeleMissile extends Aero {
     @Override
     public void initializeThresh(int loc)
     {
-        int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
+        int nThresh = (int) Math.ceil(getArmor(loc) / 10.0);
         setThresh(nThresh,loc);
     }
 
@@ -230,7 +231,8 @@ public class TeleMissile extends Aero {
         return false;
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO & Entity.ETYPE_TELEMISSILE;
     }
     

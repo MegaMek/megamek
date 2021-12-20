@@ -19,32 +19,8 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
-
-import megamek.MegaMek;
-import megamek.client.event.*;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
@@ -63,6 +39,22 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+
 import static megamek.common.Terrains.*;
 
 // TODO: center map
@@ -117,6 +109,11 @@ public class BoardEditor extends JPanel
             } else {
                 return getTerrainType() == ((TerrainHelper) other).getTerrainType();
             }
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getTerrainType());
         }
     }
 
@@ -205,9 +202,9 @@ public class BoardEditor extends JPanel
     // Components
     private JFrame frame = new JFrame();
     private Game game = new Game();
-    private IBoard board = game.getBoard();
+    private Board board = game.getBoard();
     private BoardView bv;
-    public static final int [] allDirections = {0,1,2,3,4,5};
+    public static final int[] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
     private Component bvc;
     private CommonMenuBar menuBar = new CommonMenuBar(this);
@@ -223,7 +220,7 @@ public class BoardEditor extends JPanel
 
     // The active hex "brush"
     private HexCanvas canHex;
-    private IHex curHex = new Hex();
+    private Hex curHex = new Hex();
     
     // Easy terrain access buttons
     private List<ScalingIconButton> terrainButtons = new ArrayList<>();
@@ -281,9 +278,9 @@ public class BoardEditor extends JPanel
     // Undo / Redo
     private List<ScalingIconButton> undoButtons = new ArrayList<>();
     private ScalingIconButton buttonUndo, buttonRedo;
-    private Stack<HashSet<IHex>> undoStack = new Stack<>();
-    private Stack<HashSet<IHex>> redoStack = new Stack<>();
-    private HashSet<IHex> currentUndoSet;
+    private Stack<HashSet<Hex>> undoStack = new Stack<>();
+    private Stack<HashSet<Hex>> redoStack = new Stack<>();
+    private HashSet<Hex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
     
     // Tracker for board changes; unfortunately this is not equal to 
@@ -675,7 +672,7 @@ public class BoardEditor extends JPanel
                 return;
             }
 
-            IHex saveHex = curHex.duplicate();
+            Hex saveHex = curHex.duplicate();
             // change the terrain level by wheel direction if present,
             // or set to 1 if not present
             int newLevel = 1;
@@ -1063,7 +1060,7 @@ public class BoardEditor extends JPanel
             currentUndoCoords = new HashSet<>();
         }
         if (!currentUndoCoords.contains(c)) {
-            IHex hex = board.getHex(c).duplicate();
+            Hex hex = board.getHex(c).duplicate();
             // Newly drawn board hexes do not know their Coords
             hex.setCoords(c);
             currentUndoSet.add(hex);
@@ -1085,7 +1082,7 @@ public class BoardEditor extends JPanel
      * to be on the board.
      */
     private void relevelHex(Coords c) {
-        IHex newHex = board.getHex(c).duplicate(); 
+        Hex newHex = board.getHex(c).duplicate(); 
         newHex.setLevel(hexLeveltoDraw);
         board.resetStoredElevation();
         board.setHex(c, newHex);
@@ -1105,7 +1102,7 @@ public class BoardEditor extends JPanel
      */
     public void retextureHex(Coords c) {
         if (board.contains(c)) {
-            IHex newHex = curHex.duplicate();
+            Hex newHex = curHex.duplicate();
             newHex.setLevel(board.getHex(c).getLevel());
             board.resetStoredElevation();
             board.setHex(c, newHex);
@@ -1117,8 +1114,8 @@ public class BoardEditor extends JPanel
      */
     public void addToHex(Coords c) {
         if (board.contains(c)) {
-            IHex newHex = curHex.duplicate();
-            IHex oldHex = board.getHex(c);
+            Hex newHex = curHex.duplicate();
+            Hex oldHex = board.getHex(c);
             newHex.setLevel(oldHex.getLevel());
             int[] terrainTypes = oldHex.getTerrainTypes();
             for (int terrainID : terrainTypes) {
@@ -1138,7 +1135,7 @@ public class BoardEditor extends JPanel
      *
      * @param hex hex to set.
      */
-    void setCurrentHex(IHex hex) {
+    void setCurrentHex(Hex hex) {
         curHex = hex.duplicate();
         texElev.setText(Integer.toString(curHex.getLevel()));
         refreshTerrainList();
@@ -1389,16 +1386,16 @@ public class BoardEditor extends JPanel
     }
 
     // When we resize a board, implant the old board's hexes where they should be in the new board
-    public IBoard implantOldBoard(Game game, int west, int north, int east, int south) {
-        IBoard oldBoard = game.getBoard();
+    public Board implantOldBoard(Game game, int west, int north, int east, int south) {
+        Board oldBoard = game.getBoard();
         for (int x = 0; x < oldBoard.getWidth(); x++) {
             for (int y = 0; y < oldBoard.getHeight(); y++) {
                 int newX = x + west;
                 int odd = x & 1 & west;
                 int newY = y + north + odd;
                 if (oldBoard.contains(x, y) && board.contains(newX, newY)) {
-                    IHex oldHex = oldBoard.getHex(x, y);
-                    IHex hex = board.getHex(newX, newY);
+                    Hex oldHex = oldBoard.getHex(x, y);
+                    Hex hex = board.getHex(newX, newY);
                     hex.removeAllTerrains();
                         hex.setLevel(oldHex.getLevel());
                     int[] terrainTypes = oldHex.getTerrainTypes();
@@ -1444,7 +1441,7 @@ public class BoardEditor extends JPanel
             // flipBGVert/flipBGHoriz lists for the board, which is necessary 
             // for the background image to work in the BoardEditor
             board = BoardUtilities.combine(board.getWidth(), board.getHeight(), 1, 1, 
-                    new IBoard[]{board}, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
+                    new Board[]{ board }, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
             // BoardUtilities.combine does not preserve tags, so add them back
             for (String tag : boardTags) {
@@ -1460,7 +1457,7 @@ public class BoardEditor extends JPanel
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
-            MegaMek.getLogger().error(ex);
+            LogManager.getLogger().error(ex);
         }
     }
     
@@ -1499,7 +1496,7 @@ public class BoardEditor extends JPanel
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileImage);
         } catch (IOException e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());
@@ -1535,7 +1532,7 @@ public class BoardEditor extends JPanel
             setFrameTitle();
             return true;
         } catch (IOException e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return false;
         }
     }
@@ -1786,7 +1783,7 @@ public class BoardEditor extends JPanel
                     JOptionPane.showMessageDialog(frame,
                             Messages.getString("BoardEditor.OpenFileError", curBoardFile.toString())
                             + e.getMessage());
-                    MegaMek.getLogger().error(e);
+                    LogManager.getLogger().error(e);
                     ignoreHotKeys = false;
                 }
             }
@@ -1865,8 +1862,8 @@ public class BoardEditor extends JPanel
             if (newTheme != null) {
                 choTheme.setSelectedItem(newTheme);
             }
-        } else if (ae.getSource().equals(choTheme) ) { 
-            curHex.setTheme((String)choTheme.getSelectedItem());
+        } else if (ae.getSource().equals(choTheme)) {
+            curHex.setTheme((String) choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
             setConvenientTerrain(ae, new Terrain(Terrains.WOODS, 1), new Terrain(Terrains.FOLIAGE_ELEV, 2));
@@ -1953,11 +1950,11 @@ public class BoardEditor extends JPanel
             if (undoStack.isEmpty()) { 
                 buttonUndo.setEnabled(false);
             } else {
-                HashSet<IHex> recentHexes = undoStack.pop();
-                HashSet<IHex> redoHexes = new HashSet<>(); 
-                for (IHex hex: recentHexes) {
+                HashSet<Hex> recentHexes = undoStack.pop();
+                HashSet<Hex> redoHexes = new HashSet<>(); 
+                for (Hex hex: recentHexes) {
                     // Retrieve the board hex for Redo
-                    IHex rHex = board.getHex(hex.getCoords()).duplicate();
+                    Hex rHex = board.getHex(hex.getCoords()).duplicate();
                     rHex.setCoords(hex.getCoords());
                     redoHexes.add(rHex);
                     // and undo the board hex
@@ -1979,10 +1976,10 @@ public class BoardEditor extends JPanel
             if (redoStack.isEmpty()) { 
                 buttonRedo.setEnabled(false); 
             } else {
-                HashSet<IHex> recentHexes = redoStack.pop();
-                HashSet<IHex> undoHexes = new HashSet<>(); 
-                for (IHex hex: recentHexes) {
-                    IHex rHex = board.getHex(hex.getCoords()).duplicate();
+                HashSet<Hex> recentHexes = redoStack.pop();
+                HashSet<Hex> undoHexes = new HashSet<>(); 
+                for (Hex hex: recentHexes) {
+                    Hex rHex = board.getHex(hex.getCoords()).duplicate();
                     rHex.setCoords(hex.getCoords());
                     undoHexes.add(rHex);
                     board.setHex(hex.getCoords(), hex);
@@ -2027,7 +2024,7 @@ public class BoardEditor extends JPanel
                 Coords c = new Coords(x, y);
                 if (board.getHex(c).getLevel() != 0) {
                     saveToUndo(c);
-                    IHex newHex = board.getHex(c).duplicate();
+                    Hex newHex = board.getHex(c).duplicate();
                     newHex.setLevel(0);
                     board.setHex(c, newHex);
                 }
@@ -2044,7 +2041,7 @@ public class BoardEditor extends JPanel
                 Coords c = new Coords(x, y);
                 if (board.getHex(c).containsTerrain(type) || board.getHex(c).containsAnyTerrainOf(types)) {
                     saveToUndo(c);
-                    IHex newHex = board.getHex(c).duplicate();
+                    Hex newHex = board.getHex(c).duplicate();
                     newHex.removeTerrain(type);
                     for (int additional : types) {
                         newHex.removeTerrain(additional);
@@ -2111,7 +2108,7 @@ public class BoardEditor extends JPanel
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 saveToUndo(c);
-                IHex newHex = board.getHex(c).duplicate();
+                Hex newHex = board.getHex(c).duplicate();
                 newHex.setLevel(newHex.getLevel() + dlg.getLevelChange());
                 board.setHex(c, newHex);
             }
@@ -2133,10 +2130,10 @@ public class BoardEditor extends JPanel
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
-                IHex hex = board.getHex(c);
+                Hex hex = board.getHex(c);
                 if (hex.getLevel() < surface) {
                     saveToUndo(c);
-                    IHex newHex = hex.duplicate();
+                    Hex newHex = hex.duplicate();
                     int presentDepth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
                     if (dlg.getRemoveTerrain()) {
                         newHex.removeAllTerrains();

@@ -58,10 +58,12 @@ public class DropshuttleBay extends Bay {
     }
 
     // Type is Dropshuttle Bay
+    @Override
     public String getType() {
         return "Dropshuttle Bay";
     }
 
+    @Override
     public boolean canLoad(Entity unit) {
         
         return unit.hasETypeFlag(Entity.ETYPE_DROPSHIP)
@@ -83,6 +85,7 @@ public class DropshuttleBay extends Bay {
      * Sets the bay location
      * @param facing The armor facing (location) of the bay
      */
+    @Override
     public void setFacing(int facing) {
         this.facing = facing;
     }

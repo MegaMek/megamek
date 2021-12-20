@@ -120,7 +120,7 @@ public class Report implements Serializable {
     public int newlines = 1;
 
     /** The data values to fill in the report with. */
-    private Vector<String> tagData = new Vector<String>();
+    private Vector<String> tagData = new Vector<>();
 
     /** How to translate the tagData or not at all. */
     private String tagTranslate = null;
@@ -142,22 +142,21 @@ public class Report implements Serializable {
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
-    public transient int player = IPlayer.PLAYER_NONE;
+    public transient int player = Player.PLAYER_NONE;
 
     /**
      * This hash table will store the tagData Vector indexes that are supposed
      * to be obscured before sending to clients. This only applies when the
      * report type is "obscured".
      */
-    private Hashtable<Integer, Boolean> obscuredIndexes = 
-            new Hashtable<Integer, Boolean>();
+    private Hashtable<Integer, Boolean> obscuredIndexes = new Hashtable<>();
 
     /**
      * Vector to store the player names of those who received an obscured
      * version of this report. Used to reconstruct individual client's reports
      * from the master copy stored by the server.
      */
-    private Vector<String> obscuredRecipients = new Vector<String>();
+    private Vector<String> obscuredRecipients = new Vector<>();
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
@@ -346,7 +345,7 @@ public class Report implements Serializable {
     /**
      * Manually Toggle if the report should show an image of the entity
     */
-    public void setShowImage(boolean showImage){
+    public void setShowImage(boolean showImage) {
         this.showImage = showImage;
     }
 

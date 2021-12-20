@@ -198,6 +198,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
@@ -205,6 +206,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setPDBayReportingFlag() {
         pdBayEngagedCap = true;
     }

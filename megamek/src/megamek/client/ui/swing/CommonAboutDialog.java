@@ -42,7 +42,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class CommonAboutDialog extends JDialog {
     private static final long serialVersionUID = -9019180090528719535L;
     
-    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif"; //$NON-NLS-1$
+    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif";
     /** We only need a single copy of the "about" title image. */
     private static Image imgTitleImage;
 
@@ -79,7 +79,7 @@ public class CommonAboutDialog extends JDialog {
      * @param parentFrame - the parent <code>JFrame</code> for this dialog.
      */
     public CommonAboutDialog(JFrame parentFrame) {
-        super(parentFrame, Messages.getString("CommonAboutDialog.title"), true); //$NON-NLS-1$
+        super(parentFrame, Messages.getString("CommonAboutDialog.title"), true);
 
         // Splash image
         Image imgSplash = getTitleImage(parentFrame);
@@ -87,27 +87,25 @@ public class CommonAboutDialog extends JDialog {
 
         // Version text
         StringBuffer buff = new StringBuffer();
-        buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
+        buff.append(Messages.getString("CommonAboutDialog.version"))
                 .append(MegaMekConstants.VERSION).append(
-                        Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
+                        Messages.getString("CommonAboutDialog.timestamp"))
                 .append(new Date(TIMESTAMP)).append(
-                        Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
-                .append(System.getProperty("java.vendor"))//$NON-NLS-1$
-                .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
-                .append(System.getProperty("java.version")); //$NON-NLS-1$
+                        Messages.getString("CommonAboutDialog.javaVendor"))
+                .append(System.getProperty("java.vendor"))
+                .append(Messages.getString("CommonAboutDialog.javaVersion"))
+                .append(System.getProperty("java.version"));
         JTextArea lblVersion = new JTextArea(buff.toString());
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
         
         // Copyright notice
-        JTextArea lblCopyright = new JTextArea(Messages
-                .getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
+        JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright"));
         lblCopyright.setEditable(false);
         lblCopyright.setOpaque(false);
         
         // MegaMek About message
-        JTextArea lblAbout = new JTextArea(Messages
-                .getString("CommonAboutDialog.about")); //$NON-NLS-1$
+        JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about"));
         lblAbout.setEditable(false);
         lblAbout.setOpaque(false);
 

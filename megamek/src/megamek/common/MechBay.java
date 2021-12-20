@@ -11,24 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents a volume of space set aside for carrying mechs or LAMs aboard large spacecraft and mobile structures
  */
-
 public final class MechBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 927162989742234173L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected MechBay() {
+    private MechBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -68,8 +62,8 @@ public final class MechBay extends Bay {
         boolean result = false;
 
         // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs
-        if ((unit instanceof Mech) 
-        		|| ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH)) 
+        if (((unit instanceof Mech) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMech))
+        		|| ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH))
         		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
@@ -108,7 +102,7 @@ public final class MechBay extends Bay {
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)totalSpace * 2;
+        return (int) totalSpace * 2;
     }
 
     @Override
@@ -133,5 +127,4 @@ public final class MechBay extends Bay {
         // Based on the number of cubicles
         return 20000L * (long) totalSpace;
     }
-
-} // End package class TroopSpace implements Transporter
+}

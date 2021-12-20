@@ -1,71 +1,38 @@
 /*
  * MegaMek - Copyright (C) 2018 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.utils;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import megamek.client.ratgenerator.*;
+import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.common.Configuration;
+import megamek.common.EntityMovementMode;
+import megamek.common.UnitType;
+import org.apache.logging.log4j.LogManager;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import megamek.MegaMek;
-import megamek.client.ratgenerator.AbstractUnitRecord;
-import megamek.client.ratgenerator.AvailabilityRating;
-import megamek.client.ratgenerator.FactionRecord;
-import megamek.client.ratgenerator.FactionRecord.TechCategory;
-import megamek.client.ratgenerator.ModelRecord;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.common.Configuration;
-import megamek.common.EntityMovementMode;
-import megamek.common.UnitType;
+import java.awt.*;
+import java.io.File;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author neoancient
- *
  */
 public class RATGeneratorEditor extends JFrame {
 
@@ -367,7 +334,7 @@ public class RATGeneratorEditor extends JFrame {
         panEditTab.add(button, gbc);
         button.addActionListener(ev -> {
             
-            if(!unitEditorModel.addEntry(txtFaction.getText())) {
+            if (!unitEditorModel.addEntry(txtFaction.getText())) {
                 JOptionPane.showMessageDialog(this, 
                         "Unable to add model or chassis entry. Please select a unit model. " +
                         "If adding a model entry, make sure you already have a chassis entry defined.");
@@ -589,19 +556,16 @@ public class RATGeneratorEditor extends JFrame {
 
     private void filterFactionList() {
         RowFilter<FactionListTableModel, Integer> rf;
-        rf = new RowFilter<FactionListTableModel, Integer>() {
+        rf = new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends FactionListTableModel,
-                    ? extends Integer> entry) {
+            public boolean include(Entry<? extends FactionListTableModel, ? extends Integer> entry) {
                 FactionListTableModel model = entry.getModel();
                 FactionRecord rec = model.getFactionRecord(entry.getIdentifier());
-                if (!chkShowSubfactions.isSelected() &&
-                        rec.getKey().contains(".")) {
+                if (!chkShowSubfactions.isSelected() && rec.getKey().contains(".")) {
                     return false;
                 }
 
-                return chkShowMinorFactions.isSelected() ||
-                        rec.getParentFactions() == null;
+                return chkShowMinorFactions.isSelected() || rec.getParentFactions() == null;
             }
         };
         masterFactionListSorter.setRowFilter(rf);
@@ -609,18 +573,15 @@ public class RATGeneratorEditor extends JFrame {
 
     private void filterMasterUnitList() {
         RowFilter<MasterUnitListTableModel, Integer> rf;
-        rf = new RowFilter<MasterUnitListTableModel, Integer>() {
+        rf = new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends MasterUnitListTableModel,
-                    ? extends Integer> entry) {
+            public boolean include(Entry<? extends MasterUnitListTableModel, ? extends Integer> entry) {
                 MasterUnitListTableModel model = entry.getModel();
                 ModelRecord rec = model.getUnitRecord(entry.getIdentifier());
-                if (cbUnitType.getSelectedIndex() > 0 &&
-                        !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
+                if (cbUnitType.getSelectedIndex() > 0 && !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
                     return false;
                 }
-                if (cbMovementType.getSelectedIndex() > 0 &&
-                        (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
+                if (cbMovementType.getSelectedIndex() > 0 && (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
                     return false;
                 }
                 if (txtSearch.getText().length() > 0) {
@@ -724,12 +685,12 @@ public class RATGeneratorEditor extends JFrame {
         @Override
         public void setValueAt(Object val, int row, int col) {
             if (col == COL_ROLE) {
-                data.get(row).addRoles((String)val);
+                data.get(row).addRoles((String) val);
             } else if (col == COL_DEPLOYED_WITH) {
                 data.get(row).getRequiredUnits().clear();
                 data.get(row).getDeployedWith().clear();
-                if (((String)val).length() > 0) {
-                    for (String unit : ((String)val).split(",")) {
+                if (((String) val).length() > 0) {
+                    for (String unit : ((String) val).split(",")) {
                         if (unit.startsWith("req:")) {
                             data.get(row).getRequiredUnits().add(unit);             
                         } else {
@@ -738,7 +699,7 @@ public class RATGeneratorEditor extends JFrame {
                     }
                 }
             } else if (col == COL_EXCLUDE_FACTIONS) {
-                data.get(row).setExcludedFactions((String)val);
+                data.get(row).setExcludedFactions((String) val);
             }
         }
 
@@ -787,34 +748,34 @@ public class RATGeneratorEditor extends JFrame {
                 empty.add("");
             }
             for (int i = 0; i < rg.getEraSet().size(); i++) {
-                Collection<AvailabilityRating> recs = (mode == MODE_MODEL)?
-                        rg.getModelFactionRatings(ERAS[i], getUnitKey()):
-                            rg.getChassisFactionRatings(ERAS[i], unitRec.getChassisKey());
-                        if (recs != null) {
-                            for (AvailabilityRating rec : recs) {
-                                String key = rec.getFactionCode();
-                                if (!factions.contains(key)) {
-                                    factions.add(key);
-                                    data.put(key, new ArrayList<>(empty));
-                                }
-                                if (mode == MODE_SUMMARY) {
-                                    AvailabilityRating mar = rg.findModelAvailabilityRecord(ERAS[i],
-                                            unitRec.getKey(), rec.getFaction());
-                                    if (mar != null) {
-                                        int weight = (int)((rec.getWeight() * 10.0 * mar.getWeight()) /
-                                                rg.getChassisRecord(unitRec.getChassisKey()).
-                                                totalModelWeight(ERAS[i], rec.getFaction()) + 0.5);
-                                        if (weight > 0) {
-                                            data.get(key).set(i, Integer.toString(weight));
-                                        }
-                                    } 
-                                } else if (rec.getEra() == rec.getStartYear()){
-                                    data.get(key).set(i, rec.getAvailabilityCode());
-                                } else {
-                                    data.get(key).set(i, rec.getAvailabilityCode() + ":" + rec.getStartYear());                     
+                Collection<AvailabilityRating> recs = (mode == MODE_MODEL)
+                        ? rg.getModelFactionRatings(ERAS[i], getUnitKey())
+                        : rg.getChassisFactionRatings(ERAS[i], unitRec.getChassisKey());
+                if (recs != null) {
+                    for (AvailabilityRating rec : recs) {
+                        String key = rec.getFactionCode();
+                        if (!factions.contains(key)) {
+                            factions.add(key);
+                            data.put(key, new ArrayList<>(empty));
+                        }
+                        if (mode == MODE_SUMMARY) {
+                            AvailabilityRating mar = rg.findModelAvailabilityRecord(ERAS[i],
+                                    unitRec.getKey(), rec.getFaction());
+                            if (mar != null) {
+                                int weight = (int) ((rec.getWeight() * 10.0 * mar.getWeight()) /
+                                        rg.getChassisRecord(unitRec.getChassisKey()).
+                                        totalModelWeight(ERAS[i], rec.getFaction()) + 0.5);
+                                if (weight > 0) {
+                                    data.get(key).set(i, Integer.toString(weight));
                                 }
                             }
+                        } else if (rec.getEra() == rec.getStartYear()) {
+                            data.get(key).set(i, rec.getAvailabilityCode());
+                        } else {
+                            data.get(key).set(i, rec.getAvailabilityCode() + ":" + rec.getStartYear());
                         }
+                    }
+                }
             }
             fireTableDataChanged();
         }
@@ -835,6 +796,7 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS.length + 1;
         }
 
+        @Override
         public int getRowCount() {
             if (data == null) {
                 return 0;
@@ -863,17 +825,18 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
+            if (!(value instanceof String) || !((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
+                return;
+            }
+            String stringValue = (String) value;
             AvailabilityRating ar;
             int era = ERAS[col - 1];
-            if ((value).equals("")) {
+            if (stringValue.isBlank()) {
                 ar = null;
-            } else if (!((String)value).matches("\\d+[+\\-]?(:\\d+)?")) {
-                return;
             } else {
-                ar = new AvailabilityRating(getUnitKey(), era,
-                        factions.get(row) + ":" + value);
+                ar = new AvailabilityRating(getUnitKey(), era, factions.get(row) + ":" + stringValue);
             }
-            data.get(factions.get(row)).set(col - 1, (String)value);
+            data.get(factions.get(row)).set(col - 1, stringValue);
             if (rg.getChassisRecord(getUnitKey()) != null) {
                 if (ar == null) {
                     rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                
@@ -890,20 +853,20 @@ public class RATGeneratorEditor extends JFrame {
         }
 
         public boolean addEntry(String faction) {
-            if(unitRecord == null) {                 
+            if (unitRecord == null) {                 
                 return false;
             }
             
-            if(mode == MODE_MODEL) {
+            if (mode == MODE_MODEL) {
                 boolean chassisRecordFound = false;
-                for(int era : ERAS) {
-                    if(rg.getChassisFactionRatings(era, unitRecord.getChassisKey()) != null) {
+                for (int era : ERAS) {
+                    if (rg.getChassisFactionRatings(era, unitRecord.getChassisKey()) != null) {
                         chassisRecordFound = true;
                         break;
                     }
                 }
                 
-                if(!chassisRecordFound) {
+                if (!chassisRecordFound) {
                     return false;
                 }
             }                    
@@ -940,7 +903,7 @@ public class RATGeneratorEditor extends JFrame {
             }       
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
-                if (!copyFrom.get(i).equals("")) {
+                if (!copyFrom.get(i).isBlank()) {
                     AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i],
                             newFaction + ":" + copyFrom.get(i));
                     if (mode == MODE_MODEL) {
@@ -1045,54 +1008,54 @@ public class RATGeneratorEditor extends JFrame {
         @Override
         public Object getValueAt(int row, int col) {
             switch (col) {
-            case COL_CODE:
-                return data.get(row).getKey();
-            case COL_NAME:
-                return data.get(row).getNamesAsString();
-            case COL_YEARS:
-                return data.get(row).getYearsAsString();
-            case COL_MINOR:
-                return data.get(row).isMinor();
-            case COL_CLAN:
-                return data.get(row).isClan();
-            case COL_PERIPHERY:
-                return data.get(row).isPeriphery();
-            case COL_RATINGS:
-                return String.join(",", data.get(row).getRatingLevels());
-            case COL_USE_ALT_FACTION:
-                return String.join(",", data.get(row).getParentFactions());
-            default:
-                return "?";
+                case COL_CODE:
+                    return data.get(row).getKey();
+                case COL_NAME:
+                    return data.get(row).getNamesAsString();
+                case COL_YEARS:
+                    return data.get(row).getYearsAsString();
+                case COL_MINOR:
+                    return data.get(row).isMinor();
+                case COL_CLAN:
+                    return data.get(row).isClan();
+                case COL_PERIPHERY:
+                    return data.get(row).isPeriphery();
+                case COL_RATINGS:
+                    return String.join(",", data.get(row).getRatingLevels());
+                case COL_USE_ALT_FACTION:
+                    return String.join(",", data.get(row).getParentFactions());
+                default:
+                    return "?";
             }
         }
         
         @Override
         public void setValueAt(Object val, int row, int col) {
             switch (col) {
-            case COL_CLAN:
-                data.get(row).setClan((Boolean)val);
-                break;
-            case COL_PERIPHERY:
-                data.get(row).setPeriphery((Boolean)val);
-                break;
-            case COL_NAME:
-                data.get(row).setNames((String)val);
-                break;
-            case COL_YEARS:
-                try {
-                    data.get(row).setYears((String)val);
-                } catch (Exception ex) {
-                    //Illegal format; ignore new value
-                }
-                break;
-            case COL_MINOR:
-                data.get(row).setMinor((Boolean)val);
-                break;
-            case COL_RATINGS:
-                data.get(row).setRatings((String)val);
-                break;
-            case COL_USE_ALT_FACTION:
-                data.get(row).setParentFactions((String)val);
+                case COL_CLAN:
+                    data.get(row).setClan((Boolean) val);
+                    break;
+                case COL_PERIPHERY:
+                    data.get(row).setPeriphery((Boolean) val);
+                    break;
+                case COL_NAME:
+                    data.get(row).setNames((String) val);
+                    break;
+                case COL_YEARS:
+                    try {
+                        data.get(row).setYears((String) val);
+                    } catch (Exception ex) {
+                        //Illegal format; ignore new value
+                    }
+                    break;
+                case COL_MINOR:
+                    data.get(row).setMinor((Boolean) val);
+                    break;
+                case COL_RATINGS:
+                    data.get(row).setRatings((String) val);
+                    break;
+                case COL_USE_ALT_FACTION:
+                    data.get(row).setParentFactions((String) val);
             }
         }
         
@@ -1114,7 +1077,7 @@ public class RATGeneratorEditor extends JFrame {
         private static final int CAT_SL_AERO_PCT = 5;
         private static final int CAT_CLAN_VEE_PCT = 6;
         private static final int CAT_SL_VEE_PCT = 7;
-        private static final String [] CATEGORIES = {
+        private static final String[] CATEGORIES = {
             "Omni %", "Clan %", "SL %",
             "Omni % (Aero)", "Clan % (Aero)", "SL % (Aero)",
             "Clan % (Vee)", "SL % (Vee)"
@@ -1191,31 +1154,31 @@ public class RATGeneratorEditor extends JFrame {
             
             if (row == 0) {
                 Integer pct = factionRec.getPctSalvage(era);
-                return (pct == null)?"":pct.toString();
+                return (pct == null) ? "" : pct.toString();
             } else if (row > factionRec.getRatingLevels().size() * CATEGORIES.length) {
                 int unitType = WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length];
                 return factionRec.getWeightDistributionAsString(era, unitType);
             }
             int rating = (row - 1) % factionRec.getRatingLevels().size();
             switch ((row - 1) / factionRec.getRatingLevels().size()) {
-            case CAT_OMNI_PCT:
-                return factionRec.getPctTech(TechCategory.OMNI, era, rating);
-            case CAT_CLAN_PCT:
-                return factionRec.getPctTech(TechCategory.CLAN, era, rating);
-            case CAT_SL_PCT:
-                return factionRec.getPctTech(TechCategory.IS_ADVANCED, era, rating);
-            case CAT_OMNI_AERO_PCT:
-                return factionRec.getPctTech(TechCategory.OMNI_AERO, era, rating);
-            case CAT_CLAN_AERO_PCT:
-                return factionRec.getPctTech(TechCategory.CLAN_AERO, era, rating);
-            case CAT_SL_AERO_PCT:
-                return factionRec.getPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
-            case CAT_CLAN_VEE_PCT:
-                return factionRec.getPctTech(TechCategory.CLAN_VEE, era, rating);
-            case CAT_SL_VEE_PCT:
-                return factionRec.getPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
-            default:
-                return "?";
+                case CAT_OMNI_PCT:
+                    return factionRec.getPctTech(TechCategory.OMNI, era, rating);
+                case CAT_CLAN_PCT:
+                    return factionRec.getPctTech(TechCategory.CLAN, era, rating);
+                case CAT_SL_PCT:
+                    return factionRec.getPctTech(TechCategory.IS_ADVANCED, era, rating);
+                case CAT_OMNI_AERO_PCT:
+                    return factionRec.getPctTech(TechCategory.OMNI_AERO, era, rating);
+                case CAT_CLAN_AERO_PCT:
+                    return factionRec.getPctTech(TechCategory.CLAN_AERO, era, rating);
+                case CAT_SL_AERO_PCT:
+                    return factionRec.getPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
+                case CAT_CLAN_VEE_PCT:
+                    return factionRec.getPctTech(TechCategory.CLAN_VEE, era, rating);
+                case CAT_SL_VEE_PCT:
+                    return factionRec.getPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
+                default:
+                    return "?";
             }
         }
         
@@ -1223,9 +1186,9 @@ public class RATGeneratorEditor extends JFrame {
         public void setValueAt(Object val, int row, int col) {
             int era = ERAS[col - 1];
             Integer value = null;
-            if (((String)val).length() > 0) {
+            if (((String) val).length() > 0) {
                 try {
-                    value = Integer.parseInt((String)val);
+                    value = Integer.parseInt((String) val);
                 } catch (NumberFormatException ex) {
                     //leave null
                 }
@@ -1234,9 +1197,9 @@ public class RATGeneratorEditor extends JFrame {
                 factionRec.setPctSalvage(era, value);
             } else if (row > factionRec.getRatingLevels().size() * CATEGORIES.length) {
                 int unitType = WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length];
-                if (((String)val).length() > 0) {
+                if (((String) val).length() > 0) {
                     try {
-                        factionRec.setWeightDistribution(era, unitType, (String)val);
+                        factionRec.setWeightDistribution(era, unitType, (String) val);
                     } catch (Exception ex) {
                         //ignore
                     }
@@ -1246,30 +1209,30 @@ public class RATGeneratorEditor extends JFrame {
             } else if (null != value) {
                 int rating = (row - 1) % factionRec.getRatingLevels().size();
                 switch ((row - 1) / factionRec.getRatingLevels().size()) {
-                case CAT_OMNI_PCT:
-                    factionRec.setPctTech(TechCategory.OMNI, era, rating, value);
-                    break;
-                case CAT_CLAN_PCT:
-                    factionRec.setPctTech(TechCategory.CLAN, era, rating, value);
-                    break;
-                case CAT_SL_PCT:
-                    factionRec.setPctTech(TechCategory.IS_ADVANCED, era, rating, value);
-                    break;
-                case CAT_OMNI_AERO_PCT:
-                    factionRec.setPctTech(TechCategory.OMNI_AERO, era, rating, value);
-                    break;
-                case CAT_CLAN_AERO_PCT:
-                    factionRec.setPctTech(TechCategory.CLAN_AERO, era, rating, value);
-                    break;
-                case CAT_SL_AERO_PCT:
-                    factionRec.setPctTech(TechCategory.IS_ADVANCED_AERO, era, rating, value);
-                    break;
-                case CAT_CLAN_VEE_PCT:
-                    factionRec.setPctTech(TechCategory.CLAN_VEE, era, rating, value);
-                    break;
-                case CAT_SL_VEE_PCT:
-                    factionRec.setPctTech(TechCategory.IS_ADVANCED_VEE, era, rating, value);
-                    break;
+                    case CAT_OMNI_PCT:
+                        factionRec.setPctTech(TechCategory.OMNI, era, rating, value);
+                        break;
+                    case CAT_CLAN_PCT:
+                        factionRec.setPctTech(TechCategory.CLAN, era, rating, value);
+                        break;
+                    case CAT_SL_PCT:
+                        factionRec.setPctTech(TechCategory.IS_ADVANCED, era, rating, value);
+                        break;
+                    case CAT_OMNI_AERO_PCT:
+                        factionRec.setPctTech(TechCategory.OMNI_AERO, era, rating, value);
+                        break;
+                    case CAT_CLAN_AERO_PCT:
+                        factionRec.setPctTech(TechCategory.CLAN_AERO, era, rating, value);
+                        break;
+                    case CAT_SL_AERO_PCT:
+                        factionRec.setPctTech(TechCategory.IS_ADVANCED_AERO, era, rating, value);
+                        break;
+                    case CAT_CLAN_VEE_PCT:
+                        factionRec.setPctTech(TechCategory.CLAN_VEE, era, rating, value);
+                        break;
+                    case CAT_SL_VEE_PCT:
+                        factionRec.setPctTech(TechCategory.IS_ADVANCED_VEE, era, rating, value);
+                        break;
                 }
             }
         }
@@ -1339,6 +1302,7 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS.length + 1;
         }
         
+        @Override
         public int getRowCount() {
             if (data == null) {
                 return 0;
@@ -1371,12 +1335,12 @@ public class RATGeneratorEditor extends JFrame {
             int era = ERAS[col - 1];
             if ("".equals(value)) {
                 wt = null;
-            } else if (!((String)value).matches("\\d+")) {
+            } else if (!((String) value).matches("\\d+")) {
                 return;
             } else {
-                wt = Integer.parseInt((String)value);
+                wt = Integer.parseInt((String) value);
             }
-            data.get(factions.get(row)).set(col - 1, (String)value);
+            data.get(factions.get(row)).set(col - 1, (String) value);
             if (wt == null) {
                 factionRec.removeSalvage(era, factions.get(row));
             } else {
@@ -1412,7 +1376,7 @@ public class RATGeneratorEditor extends JFrame {
             }       
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
-                if (!copyFrom.get(i).equals("")) {
+                if (!copyFrom.get(i).isBlank()) {
                     factionRec.setSalvage(ERAS[i], newFaction, Integer.parseInt(copyFrom.get(i)));
                 }
             }
@@ -1436,7 +1400,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (dir.exists() && dir.isDirectory()) {
                     ui = new RATGeneratorEditor(dir);
                 } else {
-                    MegaMek.getLogger().info(args[0] + " is not a valid directory name");
+                    LogManager.getLogger().info(args[0] + " is not a valid directory name");
                     ui = new RATGeneratorEditor();
                 }
             } else {

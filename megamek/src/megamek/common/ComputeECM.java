@@ -127,13 +127,13 @@ public class ComputeECM {
             return 0;
         }
         // Only grab enemies with active ECM
-        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
-        Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
+        Vector<Coords> vEnemyECMCoords = new Vector<>(16);
+        Vector<Integer> vEnemyECMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyBAPCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPRanges = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPFacings = new Vector<>(16);
         for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
@@ -250,13 +250,13 @@ public class ComputeECM {
             return 0;
         }
         // Only grab enemies with active ECM
-        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
-        Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
+        Vector<Coords> vEnemyECMCoords = new Vector<>(16);
+        Vector<Integer> vEnemyECMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyBAPCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPRanges = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPFacings = new Vector<>(16);
         for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
@@ -368,10 +368,10 @@ public class ComputeECM {
         Comparator<ECMInfo> ecmComparator;
         ecmComparator = new ECMInfo.ECCMComparator();
         
-        ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
-        ArrayList<ECMInfo> allEccmInfo = new ArrayList<ECMInfo>(entities.size());
+        ArrayList<ECMInfo> allEcmInfo = new ArrayList<>(entities.size());
+        ArrayList<ECMInfo> allEccmInfo = new ArrayList<>(entities.size());
         // ECCM that counter an ECM need to get removed from allEcmInfo later
-        LinkedList<ECMInfo> eccmToRemove = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> eccmToRemove = new LinkedList<>();
         
         Game game = null;
         for (Entity e : entities) {
@@ -416,7 +416,7 @@ public class ComputeECM {
                 && allEccmInfo.size() > 0) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
-            while (ecmIterator.hasNext()){
+            while (ecmIterator.hasNext()) {
                 ECMInfo ecmInfo = ecmIterator.next();
                 // Ignore ECCM
                 if (ecmInfo.isECCM()) {

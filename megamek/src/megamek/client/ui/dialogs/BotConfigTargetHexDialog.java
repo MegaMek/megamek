@@ -47,7 +47,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
     private final DefaultListModel<Coords> coordsListModel = new DefaultListModel<>();
     private final TipList<Coords> coordsList = new TipList<>(coordsListModel);
     private final ClientGUI clientGui;
-    private final IBoard board;
+    private final Board board;
 
     protected BotConfigTargetHexDialog(JFrame frame, @Nullable ClientGUI cg) {
         super(frame, "BotConfigTargetUnitDialog", "BotConfigDialog.bcthdTitle");
@@ -73,6 +73,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             }
         });
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowOpened(WindowEvent e) {
                 coordsField.requestFocus();
             }
@@ -150,7 +151,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             Coords coords = (Coords) value;
             String content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
             if (board != null && board.getHex(coords) != null) {
-                final IHex hex = board.getHex(coords); 
+                final Hex hex = board.getHex(coords); 
                 final Building bldg = board.getBuildingAt(coords);
                 if (hex.containsTerrain(BUILDING)) {
                     content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),

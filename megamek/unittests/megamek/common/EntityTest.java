@@ -39,7 +39,7 @@ public class EntityTest {
         Mockito.when(testEntity.calculateBattleValue()).thenCallRealMethod();
         Mockito.when(testEntity.calculateBattleValue(Mockito.anyBoolean(), Mockito.anyBoolean())).thenCallRealMethod();
         Mockito.when(testEntity.getTotalArmor()).thenReturn(100);
-        ArrayList<Mounted> equipment = new ArrayList<Mounted>(2);
+        ArrayList<Mounted> equipment = new ArrayList<>(2);
         WeaponType ppcType = Mockito.mock(WeaponType.class);
         Mockito.when(ppcType.getBV(Mockito.any(Entity.class))).thenReturn(50.0);
         Mounted ppc = Mockito.mock(Mounted.class);
@@ -49,7 +49,7 @@ public class EntityTest {
         equipment.add(ppc);
         Mockito.when(testEntity.getEquipment()).thenReturn(equipment);
         Mockito.when(testEntity.getWeaponList()).thenReturn(equipment);
-        Mockito.when(testEntity.getAmmo()).thenReturn(new ArrayList<Mounted>(0));
+        Mockito.when(testEntity.getAmmo()).thenReturn(new ArrayList<>(0));
         return testEntity;
     }
 
@@ -89,11 +89,10 @@ public class EntityTest {
             mfp  = new MechFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;
-            computedWeight = (int)e.getWeight();
+            computedWeight = (int) e.getWeight();
             TestCase.assertEquals(expectedWeight, computedWeight);
-        } catch (Exception exc){
+        } catch (Exception exc) {
             TestCase.fail(exc.getMessage());
         }
     }
-    
 }

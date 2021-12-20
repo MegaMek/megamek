@@ -27,54 +27,71 @@ package megamek.common.event;
  */
 public class GameListenerAdapter implements GameListener {
 
+    @Override
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
     }
 
+    @Override
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
     }
 
+    @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
     }
 
+    @Override
     public void gamePlayerChat(GamePlayerChatEvent e) {
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
     }
 
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
     }
 
+    @Override
     public void gameReport(GameReportEvent e) {
     }
 
+    @Override
     public void gameEnd(GameEndEvent e) {
     }
 
+    @Override
     public void gameBoardNew(GameBoardNewEvent e) {
     }
 
+    @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
     }
 
+    @Override
     public void gameSettingsChange(GameSettingsChangeEvent e) {
     }
 
+    @Override
     public void gameMapQuery(GameMapQueryEvent e) {
     }
 
+    @Override
     public void gameEntityNew(GameEntityNewEvent e) {
     }
 
+    @Override
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
     }
 
+    @Override
     public void gameEntityRemove(GameEntityRemoveEvent e) {
     }
 
+    @Override
     public void gameEntityChange(GameEntityChangeEvent e) {
     }
 
+    @Override
     public void gameNewAction(GameNewActionEvent e) {
     }
     

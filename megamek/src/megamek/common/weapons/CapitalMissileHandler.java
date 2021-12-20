@@ -205,7 +205,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
-        if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+        if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
     
             if (bDirect) {
@@ -493,6 +493,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
      */
+    @Override
     protected boolean canEngageCapitalMissile(Mounted counter) {
         if (counter.getBayWeapons().size() < 2) {
             return false;

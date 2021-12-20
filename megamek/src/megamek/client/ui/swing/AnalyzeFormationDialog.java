@@ -1,6 +1,3 @@
-/**
- * 
- */
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -46,7 +43,6 @@ import megamek.common.UnitRoleHandler;
  * as well.  
  * 
  * @author Neoancient
- *
  */
 public class AnalyzeFormationDialog extends JDialog {
 
@@ -61,7 +57,7 @@ public class AnalyzeFormationDialog extends JDialog {
     private List<FormationType.Constraint> allConstraints = new ArrayList<>();
     
     public AnalyzeFormationDialog(JFrame frame, List<MechSummary> generatedUnits,
-    		FormationType ft, List<UnitTable.Parameters> params,
+            FormationType ft, List<UnitTable.Parameters> params,
             int numUnits, int networkMask) {
         super(frame, Messages.getString("AnalyzeFormationDialog.title"), true);
         formationType = ft;
@@ -204,21 +200,22 @@ public class AnalyzeFormationDialog extends JDialog {
         panAvailable.add(new JScrollPane(tblUnits), gbc);
         
         if (generatedUnits == null || generatedUnits.isEmpty()) {
-        	getContentPane().add(panAvailable, BorderLayout.CENTER);
+            getContentPane().add(panAvailable, BorderLayout.CENTER);
         } else {
-        	JTabbedPane panTabs = new JTabbedPane();
-        	JTextPane txtReport = new JTextPane();
-        	txtReport.setContentType("text/html");
-        	txtReport.setText(ft.qualificationReport(generatedUnits));
-        	JScrollPane scroll = new JScrollPane(txtReport);
-        	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
-        			scroll);
-        	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
-        	getContentPane().add(panTabs, BorderLayout.CENTER);
+            JTabbedPane panTabs = new JTabbedPane();
+            JTextPane txtReport = new JTextPane();
+            txtReport.setContentType("text/html");
+            txtReport.setText(ft.qualificationReport(generatedUnits));
+            JScrollPane scroll = new JScrollPane(txtReport);
+            panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
+                    scroll);
+            panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
+            getContentPane().add(panTabs, BorderLayout.CENTER);
             
             getContentPane().setPreferredSize(panAvailable.getPreferredSize());
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
-               public void run() { 
+               @Override
+               public void run() {
                    scroll.getVerticalScrollBar().setValue(0);
                }
             });
@@ -329,29 +326,29 @@ public class AnalyzeFormationDialog extends JDialog {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             MechSummary ms = units.get(rowIndex);
-            switch(columnIndex) {
-            case COL_NAME:
-                return ms.getName();
-            case COL_WEIGHT_CLASS:
-                return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
-            case COL_MOVEMENT:
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.valueOf(ms.getWalkMp())).append("/")
-                        .append(String.valueOf(ms.getRunMp()));
-                if (formationType.isGround()) {
-                    sb.append("/").append(String.valueOf(ms.getJumpMp()));
-                }
-                return sb.toString();
-            case COL_ROLE:
-                ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
-                if (null == mr) {
-                    return UnitRole.UNDETERMINED.toString();
-                } else {
-                    return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
-                }
-            default:
-                Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
-                return metric == null? "?" : metric.apply(ms);
+            switch (columnIndex) {
+                case COL_NAME:
+                    return ms.getName();
+                case COL_WEIGHT_CLASS:
+                    return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
+                case COL_MOVEMENT:
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(String.valueOf(ms.getWalkMp())).append("/")
+                            .append(String.valueOf(ms.getRunMp()));
+                    if (formationType.isGround()) {
+                        sb.append("/").append(String.valueOf(ms.getJumpMp()));
+                    }
+                    return sb.toString();
+                case COL_ROLE:
+                    ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
+                    if (null == mr) {
+                        return UnitRole.UNDETERMINED.toString();
+                    } else {
+                        return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
+                    }
+                default:
+                    Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
+                    return metric == null? "?" : metric.apply(ms);
             }
         }
     }

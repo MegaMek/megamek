@@ -43,11 +43,7 @@ import megamek.common.QuadVee;
 import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.IOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
+import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -56,7 +52,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 public class GeneralInfoMapSet implements DisplayMapSet {
 
-    private static String STAR3 = "***"; //$NON-NLS-1$
+    private static String STAR3 = "***";
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, statusL, pilotL, playerL,
@@ -67,11 +63,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR1, mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR,
             elevationR, fuelR, curSensorsR, visualRangeR;
     private PMMultiLineLabel quirksAndPartReps;
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
-    private static final Font FONT_TITLE = new Font(
-            "SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
     private int yCoord = 1;
 
     /**
@@ -97,154 +93,131 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private void setAreas() {
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
 
-        mechTypeL0 = createLabel(
-                Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
+        mechTypeL0 = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord());
         mechTypeL0.setVisible(false);
         mechTypeL0.setColor(Color.RED);
         content.addArea(mechTypeL0);
 
         fm = comp.getFontMetrics(FONT_VALUE);
 
-        pilotL = createLabel(
-                Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        pilotL = createLabel(Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord());
         content.addArea(pilotL);
 
-        pilotR = createLabel(
-                Messages.getString("GeneralInfoMapSet.playerR"), fm, pilotL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        pilotR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm,
+                pilotL.getSize().width + 10, getYCoord());
         content.addArea(pilotR);
 
-        playerL = createLabel(
-                Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        playerL = createLabel(Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord());
         content.addArea(playerL);
 
-        playerR = createLabel(
-                Messages.getString("GeneralInfoMapSet.playerR"), fm, playerL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        playerR = createLabel(Messages.getString("GeneralInfoMapSet.playerR"), fm,
+                playerL.getSize().width + 10, getYCoord());
         content.addArea(playerR);
 
-        teamL = createLabel(
-                Messages.getString("GeneralInfoMapSet.teamL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        teamL = createLabel(Messages.getString("GeneralInfoMapSet.teamL"), fm, 0, getNewYCoord());
         content.addArea(teamL);
 
-        teamR = createLabel(
-                Messages.getString("GeneralInfoMapSet.teamR"), fm, teamL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        teamR = createLabel(Messages.getString("GeneralInfoMapSet.teamR"), fm,
+                teamL.getSize().width + 10, getYCoord());
         content.addArea(teamR);
 
-        statusL = createLabel(
-                Messages.getString("GeneralInfoMapSet.statusL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        statusL = createLabel(Messages.getString("GeneralInfoMapSet.statusL"), fm, 0, getNewYCoord());
         content.addArea(statusL);
 
-        statusR = createLabel(STAR3, fm, statusL.getSize().width + 10,
-                getYCoord());
+        statusR = createLabel(STAR3, fm, statusL.getSize().width + 10, getYCoord());
         content.addArea(statusR);
 
-        weightL = createLabel(
-                Messages.getString("GeneralInfoMapSet.weightL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        weightL = createLabel(Messages.getString("GeneralInfoMapSet.weightL"), fm, 0, getNewYCoord());
         content.addArea(weightL);
 
-        weightR = createLabel(STAR3, fm, weightL.getSize().width + 10,
-                getYCoord());
+        weightR = createLabel(STAR3, fm, weightL.getSize().width + 10, getYCoord());
         content.addArea(weightR);
 
-        bvL = createLabel(
-                Messages.getString("GeneralInfoMapSet.bvL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        bvL = createLabel(Messages.getString("GeneralInfoMapSet.bvL"), fm, 0, getNewYCoord());
         content.addArea(bvL);
 
         bvR = createLabel(STAR3, fm, bvL.getSize().width + 10, getYCoord());
         content.addArea(bvR);
 
-        mpL0 = createLabel(
-                Messages.getString("GeneralInfoMapSet.mpL0"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        mpL0 = createLabel(Messages.getString("GeneralInfoMapSet.mpL0"), fm, 0, getNewYCoord());
         content.addArea(mpL0);
 
-        mpR0 = createLabel("", fm, mpL0.getSize().width + 10, getYCoord()); //$NON-NLS-1$
+        mpR0 = createLabel("", fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR0);
 
-        mpL1 = createLabel(
-                Messages.getString("GeneralInfoMapSet.mpL1"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        mpL1 = createLabel(Messages.getString("GeneralInfoMapSet.mpL1"), fm, 0, getNewYCoord());
         mpL1.moveTo(mpL0.getSize().width - mpL1.getSize().width, getYCoord());
         content.addArea(mpL1);
 
         mpR1 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR1);
 
-        mpL2 = createLabel(
-                Messages.getString("GeneralInfoMapSet.mpL2"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        mpL2 = createLabel(Messages.getString("GeneralInfoMapSet.mpL2"), fm, 0, getNewYCoord());
         mpL2.moveTo(mpL0.getSize().width - mpL2.getSize().width, getYCoord());
         content.addArea(mpL2);
 
         mpR2 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR2);
 
-        mpL3 = createLabel(
-                Messages.getString("GeneralInfoMapSet.mpL3"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        mpL3 = createLabel(Messages.getString("GeneralInfoMapSet.mpL3"), fm, 0, getNewYCoord());
         mpL3.moveTo(mpL0.getSize().width - mpL3.getSize().width, getYCoord());
         content.addArea(mpL3);
 
         mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR3);
 
-        mpL4 = createLabel(
-                Messages.getString("GeneralInfoMapSet.mpL4"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        mpL4 = createLabel(Messages.getString("GeneralInfoMapSet.mpL4"), fm, 0, getNewYCoord());
         mpL4.moveTo(mpL0.getSize().width - mpL3.getSize().width, getYCoord());
         content.addArea(mpL4);
 
         mpR4 = createLabel("", fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR4);
 
-        curMoveL = createLabel(
-                Messages.getString("GeneralInfoMapSet.curMoveL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        curMoveL = createLabel(Messages.getString("GeneralInfoMapSet.curMoveL"), fm, 0, getNewYCoord());
         content.addArea(curMoveL);
 
-        curMoveR = createLabel(STAR3, fm, curMoveL.getSize().width + 10,
-                getYCoord());
+        curMoveR = createLabel(STAR3, fm, curMoveL.getSize().width + 10, getYCoord());
         content.addArea(curMoveR);
 
-        heatL = createLabel(
-                Messages.getString("GeneralInfoMapSet.heatL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        heatL = createLabel(Messages.getString("GeneralInfoMapSet.heatL"), fm, 0, getNewYCoord());
         content.addArea(heatL);
 
         heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, getYCoord());
         content.addArea(heatR);
 
-        fuelL = createLabel(
-                Messages.getString("GeneralInfoMapSet.fuelL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        fuelL = createLabel(Messages.getString("GeneralInfoMapSet.fuelL"), fm, 0, getNewYCoord());
         content.addArea(fuelL);
         fuelR = createLabel(STAR3, fm, fuelL.getSize().width + 10, getYCoord());
         content.addArea(fuelR);
 
-        movementTypeL = createLabel(
-                Messages.getString("GeneralInfoMapSet.movementTypeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        movementTypeL = createLabel(Messages.getString("GeneralInfoMapSet.movementTypeL"), fm,
+                0, getNewYCoord());
         content.addArea(movementTypeL);
-        movementTypeR = createLabel(STAR3, fm,
-                movementTypeL.getSize().width + 10, getYCoord());
+        movementTypeR = createLabel(STAR3, fm, movementTypeL.getSize().width + 10, getYCoord());
         content.addArea(movementTypeR);
 
-        ejectL = createLabel(
-                Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        ejectL = createLabel(Messages.getString("GeneralInfoMapSet.ejectL"), fm, 0,
+                getNewYCoord());
         content.addArea(ejectL);
-        ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10,
-                getYCoord());
+        ejectR = createLabel(STAR3, fm, ejectL.getSize().width + 10, getYCoord());
         content.addArea(ejectR);
 
-        elevationL = createLabel(
-                Messages.getString("GeneralInfoMapSet.elevationL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        elevationL = createLabel(Messages.getString("GeneralInfoMapSet.elevationL"), fm, 0,
+                getNewYCoord());
         content.addArea(elevationL);
-        elevationR = createLabel(STAR3, fm, elevationL.getSize().width + 10,
-                getYCoord());
+        elevationR = createLabel(STAR3, fm, elevationL.getSize().width + 10, getYCoord());
         content.addArea(elevationR);
 
-        curSensorsL = createLabel(
-                Messages.getString("GeneralInfoMapSet.currentSensorsL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        curSensorsL = createLabel(Messages.getString("GeneralInfoMapSet.currentSensorsL"), fm,
+                0, getNewYCoord());
         content.addArea(curSensorsL);
-        curSensorsR = createLabel(STAR3, fm, curSensorsL.getSize().width + 10,
-                getYCoord());
+        curSensorsR = createLabel(STAR3, fm, curSensorsL.getSize().width + 10, getYCoord());
         content.addArea(curSensorsR);
 
-        visualRangeL = createLabel(
-                Messages.getString("GeneralInfoMapSet.visualRangeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        visualRangeL = createLabel(Messages.getString("GeneralInfoMapSet.visualRangeL"), fm,
+                0, getNewYCoord());
         content.addArea(visualRangeL);
-        visualRangeR = createLabel(STAR3, fm,
-                visualRangeL.getSize().width + 10, getYCoord());
+        visualRangeR = createLabel(STAR3, fm, visualRangeL.getSize().width + 10, getYCoord());
         content.addArea(visualRangeR);
 
         getNewYCoord(); // skip a line for readability
@@ -257,6 +230,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     /**
      * updates fields for the unit
      */
+    @Override
     public void setEntity(Entity en) {
 
         mechTypeL0.setVisible(false);
@@ -268,8 +242,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mechTypeL0.setVisible(true);
         }
 
-        statusR.setString(en.isProne() ? Messages
-                .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
+        statusR.setString(en.isProne() ? Messages.getString("GeneralInfoMapSet.prone")
+                : Messages.getString("GeneralInfoMapSet.normal"));
         if (en.getOwner() != null) {
             playerR.setString(en.getOwner().getName());
             if (en.getOwner().getTeam() == 0) {
@@ -277,7 +251,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 teamR.setVisible(false);
             } else {
                 teamL.setVisible(true);
-                teamR.setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
+                teamR.setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam());
                 teamR.setVisible(true);
             }
         }
@@ -303,24 +277,20 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             weightR.setString(Integer.toString((int) en.getWeight()));
         }
 
-        ejectR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
+        ejectR.setString(Messages.getString("GeneralInfoMapSet.NA"));
         if (en instanceof Mech) {
             if (((Mech) en).isAutoEject()) {
-                ejectR.setString(Messages
-                        .getString("GeneralInfoMapSet.Operational")); //$NON-NLS-1$
+                ejectR.setString(Messages.getString("GeneralInfoMapSet.Operational"));
             } else {
-                ejectR.setString(Messages
-                        .getString("GeneralInfoMapSet.Disabled")); //$NON-NLS-1$
+                ejectR.setString(Messages.getString("GeneralInfoMapSet.Disabled"));
             }
         }
         elevationR.setString(Integer.toString(en.getElevation()));
         if (en.isAirborne()) {
-            elevationL.setString(Messages
-                    .getString("GeneralInfoMapSet.altitudeL"));
+            elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
             elevationR.setString(Integer.toString(en.getAltitude()));
         } else {
-            elevationL.setString(Messages
-                    .getString("GeneralInfoMapSet.elevationL"));
+            elevationL.setString(Messages.getString("GeneralInfoMapSet.elevationL"));
         }
 
         quirksAndPartReps.clear();
@@ -339,17 +309,15 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         if (en.mpUsed > 0) {
-            mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
+            mpR0.setString("(" + en.mpUsed + " used)");
         } else {
-            mpR0.setString(""); //$NON-NLS-1$
+            mpR0.setString("");
         }
         mpR1.setString(Integer.toString(en.getWalkMP()));
         mpR2.setString(en.getRunMPasString());
 
         if ((en instanceof Jumpship) && !(en instanceof Warship)) {
-            mpR2.setString(en.getRunMPasString() + " ("
-                    + Double.toString(((Jumpship) en).getAccumulatedThrust())
-                    + ")");
+            mpR2.setString(en.getRunMPasString() + " (" + ((Jumpship) en).getAccumulatedThrust() + ")");
         }
 
         mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
@@ -362,10 +330,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
-            mpR1.setString(Integer.toString(((LandAirMech)en).getAirMechWalkMP()));
-            mpR2.setString(Integer.toString(((LandAirMech)en).getAirMechRunMP()));
-            mpR3.setString(Integer.toString(((LandAirMech)en).getAirMechCruiseMP()));
-            mpR4.setString(Integer.toString(((LandAirMech)en).getAirMechFlankMP()));
+            mpR1.setString(Integer.toString(((LandAirMech) en).getAirMechWalkMP()));
+            mpR2.setString(Integer.toString(((LandAirMech) en).getAirMechRunMP()));
+            mpR3.setString(Integer.toString(((LandAirMech) en).getAirMechCruiseMP()));
+            mpR4.setString(Integer.toString(((LandAirMech) en).getAirMechFlankMP()));
         } else {
             mpL4.setVisible(false);
             mpR4.setVisible(false);
@@ -373,8 +341,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         if (en.isAero()) {
             IAero a = (IAero) en;
-            curMoveR.setString(Integer.toString(a.getCurrentVelocity())
-                    + Messages.getString("GeneralInfoMapSet.velocity"));
+            curMoveR.setString(a.getCurrentVelocity() + Messages.getString("GeneralInfoMapSet.velocity"));
             int currentFuel = a.getCurrentFuel();
             int safeThrust = en.getWalkMP();
             fuelR.setString(Integer.toString(a.getCurrentFuel()));
@@ -387,23 +354,23 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             }
         } else {
             curMoveR.setString(en.getMovementString(en.moved)
-                    + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
+                    + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance));
         }
 
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
-        if(en.getCoolantFailureAmount() > 0) {
+        if (en.getCoolantFailureAmount() > 0) {
             heatCap -= en.getCoolantFailureAmount();
             heatCapWater -= en.getCoolantFailureAmount();
         }
         String heatCapacityStr = Integer.toString(heatCap);
 
         if (heatCap < heatCapWater) {
-            heatCapacityStr = heatCap + " [" + heatCapWater + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+            heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
 
-        heatR.setString(Integer.toString(en.heat)
-                + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        heatR.setString(en.heat
+                + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
         if (en instanceof Mech) {
             heatL.setVisible(true);
@@ -420,7 +387,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
         } else if (en instanceof QuadVee || en instanceof LandAirMech
-                || (en instanceof Mech && ((Mech)en).hasTracks())) {
+                || (en instanceof Mech && ((Mech) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
                 //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
@@ -455,7 +422,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 }
                 if (en.getActiveSensor() != null) {
                     if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                        //required because the return on this from the method below is for ground maps
+                        // required because the return on this from the method below is for ground maps
                         autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
                     } else {
                         autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);
@@ -509,8 +476,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
             if (en.getMovementMode() == EntityMovementMode.WHEELED) {
-                mpR1.setString(Integer.toString(((IAero)en).getCurrentThrust()));
-                mpR2.setString(Integer.toString((int)Math.ceil(((IAero)en).getCurrentThrust() * 1.5)));
+                mpR1.setString(Integer.toString(((IAero) en).getCurrentThrust()));
+                mpR2.setString(Integer.toString((int) Math.ceil(((IAero) en).getCurrentThrust() * 1.5)));
                 mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
                 mpR3.setString(Integer.toString(en.getWalkMP()));
                 mpR3.setVisible(true);
@@ -562,11 +529,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     }
 
     /**
-     * Add all options from the given IOptions instance into an array of PMSimpleLabel elements.
-     * @param optionsInstance IOptions instance
+     * Add all options from the given AbstractOptions instance into an array of PMSimpleLabel elements.
+     * @param optionsInstance AbstractOptions instance
      * @param quirksAndPartReps
      */
-    public void addOptionsToList(IOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
+    public void addOptionsToList(AbstractOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {
@@ -582,64 +549,74 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString()); //$NON-NLS-1$
+        Image tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString()); //$NON-NLS-1$
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
+        tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
@@ -650,5 +627,4 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         l.moveTo(x, y);
         return l;
     }
-
 }

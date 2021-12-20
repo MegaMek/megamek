@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -61,7 +61,7 @@ public class MMPreferences {
     public void saveToFile(final String filePath) {
         try {
             try (FileOutputStream output = new FileOutputStream(filePath)) {
-                MegaMek.getLogger().debug("Saving nameToPreferencesMap to: " + filePath);
+                LogManager.getLogger().debug("Saving nameToPreferencesMap to: " + filePath);
 
                 final JsonFactory factory = new JsonFactory();
                 final JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter();
@@ -82,9 +82,9 @@ public class MMPreferences {
                 writer.close();
             }
         } catch (FileNotFoundException e) {
-            MegaMek.getLogger().error("Could not save nameToPreferencesMap to: " + filePath, e);
+            LogManager.getLogger().error("Could not save nameToPreferencesMap to: " + filePath, e);
         } catch (IOException e) {
-            MegaMek.getLogger().error("Error writing to the nameToPreferencesMap file: " + filePath, e);
+            LogManager.getLogger().error("Error writing to the nameToPreferencesMap file: " + filePath, e);
         }
     }
 
@@ -117,7 +117,7 @@ public class MMPreferences {
     public void loadFromFile(final String filePath) {
         try {
             try (FileInputStream input = new FileInputStream(filePath)) {
-                MegaMek.getLogger().info("Loading user preferences from: " + filePath);
+                LogManager.getLogger().info("Loading user preferences from: " + filePath);
 
                 final JsonFactory factory = new JsonFactory();
                 final JsonParser parser = factory.createParser(input);
@@ -135,18 +135,18 @@ public class MMPreferences {
                     try {
                         readPreferencesNode(parser, getNameToPreferencesMap());
                     } catch (IOException e) {
-                        MegaMek.getLogger().error("Error reading node. " + getParserInformation(parser), e);
+                        LogManager.getLogger().error("Error reading node. " + getParserInformation(parser), e);
                     }
                 }
 
                 parser.close();
 
-                MegaMek.getLogger().info("Finished loading user preferences");
+                LogManager.getLogger().info("Finished loading user preferences");
             }
         } catch (FileNotFoundException ignored) {
 
         } catch (IOException e) {
-            MegaMek.getLogger().error("Error reading from the user preferences file: " + filePath, e);
+            LogManager.getLogger().error("Error reading from the user preferences file: " + filePath, e);
         }
     }
 
@@ -179,7 +179,7 @@ public class MMPreferences {
             try {
                 readPreferenceElement(parser, elements);
             } catch (IOException e) {
-                MegaMek.getLogger().warning("Error reading elements for node: " + className + ".", e);
+                LogManager.getLogger().warn("Error reading elements for node: " + className + ".", e);
             }
         }
 
@@ -188,7 +188,7 @@ public class MMPreferences {
             node.initialize(elements);
             nodes.put(node.getNode().getName(), node);
         } catch (ClassNotFoundException e) {
-            MegaMek.getLogger().error("No class with name " + className + " found", e);
+            LogManager.getLogger().error("No class with name " + className + " found", e);
         }
     }
 

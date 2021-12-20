@@ -113,7 +113,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
     @Override
     protected boolean doAmmoFeedProblemCheck(Vector<Report> vPhaseReport) {
         // don't have neg ammo feed problem quirk
-        if(!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
+        if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
         // attack roll was a 2, may explode
         } else if (roll <= 2) {

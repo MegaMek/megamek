@@ -681,7 +681,7 @@ public class TestMech extends TestEntity {
     }
 
     public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + Integer.toString(wert) + "!";
+        return " is greater than " + wert + "!";
     }
 
     public boolean correctArmor(StringBuffer buff) {

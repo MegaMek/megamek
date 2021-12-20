@@ -612,9 +612,7 @@ public class TestBattleArmor extends TestEntity {
                 .getArmorType(BattleArmor.LOC_SQUAD), TechConstants.isClan(ba
                 .getArmorTechLevel(BattleArmor.LOC_SQUAD)));
 
-        return StringUtil.makeLength(
-                "Armor: " + Integer.toString(getTotalOArmor()) + " "
-                        + armorName, getPrintSize() - 5)
+        return StringUtil.makeLength("Armor: " + getTotalOArmor() + " " + armorName, getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightArmor(), true) + "\n";
     }
 
@@ -657,7 +655,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + Integer.toString(wert) + "!";
+        return " is greater than " + wert + "!";
     }
 
     public boolean correctMovement(StringBuffer buff) {

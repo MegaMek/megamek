@@ -317,9 +317,8 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public String printWeightStructure() {
-        return StringUtil.makeLength(
-                "Structure: "
-                        + Integer.toString(getEntity().getTotalOInternal()), getPrintSize() - 5)
+        return StringUtil.makeLength("Structure: " + getEntity().getTotalOInternal(),
+                getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
     }
 
@@ -330,16 +329,12 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public String printWeightControls() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-                "Controls:", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightControls(), true));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength("Controls:", getPrintSize() - 5)
+                + makeWeightString(getWeightControls(), true) + "\n";
     }
 
     @Override
-    public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
-            int posWeight) {
+    public StringBuffer printMiscEquip(StringBuffer buff, int posLoc, int posWeight) {
         for (Mounted m : getEntity().getMisc()) {
             buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(

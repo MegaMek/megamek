@@ -1760,7 +1760,7 @@ public class BattleArmor extends Infantry {
             } else {
                 buff.append("Standard:");
             }
-            buff.append(String.valueOf(getTurretCapacity()));
+            buff.append(getTurretCapacity());
             buff.append("</turret>");
             buff.append(newline);
         }

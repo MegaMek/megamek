@@ -145,8 +145,8 @@ public class TestXMLOption implements TestEntityOption {
 
     @Override
     public boolean ignoreFailedEquip(String name) {
-        for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-            if (ignoreFailedEquip.get(i).equals(name)) {
+        for (String s : ignoreFailedEquip) {
+            if (s.equals(name)) {
                 return true;
             }
         }
@@ -195,45 +195,45 @@ public class TestXMLOption implements TestEntityOption {
 
     public String printIgnoredFailedEquip() {
         System.out.println("--->printIgnoredFailedEquip");
-        String ret = "";
-        for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-            ret += "  " + ignoreFailedEquip.get(i) + "\n";
+        StringBuilder sb = new StringBuilder();
+        for (String s : ignoreFailedEquip) {
+            sb.append("  ").append(s).append("\n");
         }
-        return ret;
+        return sb.toString();
     }
 
     public String printOptions() {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
                 + showOverweightedEntity() + "\n" + "Max Overweight: "
-                + Double.toString(getMaxOverweight()) + "\n"
+                + getMaxOverweight() + "\n"
                 + "Show Underweighted Entity: " + showUnderweightedEntity()
                 + "\n" + "Min Underweight: "
-                + Double.toString(getMinUnderweight()) + "\n"
+                + getMinUnderweight() + "\n"
                 + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
                 + "Show bad Critical Allocation: " + showCorrectCritical()
                 + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
                 + "\n" + "Show Incorrect Intro Year: " + showIncorrectIntroYear()
                 + "\n" + "Margin of error for Intro Year: " + getIntroYearMargin()
                 + "\n" + "Weight Ceiling Engine: "
-                + Double.toString(1 / getWeightCeilingEngine().mult) + "\n"
+                + 1 / getWeightCeilingEngine().mult + "\n"
                 + "Weight Ceiling Structure: "
-                + Double.toString(1 / getWeightCeilingStructure().mult) + "\n"
+                + 1 / getWeightCeilingStructure().mult + "\n"
                 + "Weight Ceiling Armor: "
-                + Double.toString(1 / getWeightCeilingArmor().mult) + "\n"
+                + 1 / getWeightCeilingArmor().mult + "\n"
                 + "Weight Ceiling Controls: "
-                + Double.toString(1 / getWeightCeilingControls().mult) + "\n"
+                + 1 / getWeightCeilingControls().mult + "\n"
                 + "Weight Ceiling Weapons: "
-                + Double.toString(1 / getWeightCeilingWeapons().mult) + "\n"
+                + 1 / getWeightCeilingWeapons().mult + "\n"
                 + "Weight Ceiling TargComp: "
-                + Double.toString(1 / getWeightCeilingTargComp().mult) + "\n"
+                + 1 / getWeightCeilingTargComp().mult + "\n"
                 + "Weight Ceiling Gyro: "
-                + Double.toString(1 / getWeightCeilingGyro().mult) + "\n"
+                + 1 / getWeightCeilingGyro().mult + "\n"
                 + "Weight Ceiling Turret: "
-                + Double.toString(1 / getWeightCeilingTurret().mult) + "\n"
+                + 1 / getWeightCeilingTurret().mult + "\n"
                 + "Weight Ceiling Lifting:"
-                + Double.toString(1 / getWeightCeilingLifting().mult) + "\n"
+                + 1 / getWeightCeilingLifting().mult + "\n"
                 + "Weight Ceiling PowerAmp: "
-                + Double.toString(1 / getWeightCeilingPowerAmp().mult) + "\n"
+                + 1 / getWeightCeilingPowerAmp().mult + "\n"
                 + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
     

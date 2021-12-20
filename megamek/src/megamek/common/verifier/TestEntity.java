@@ -418,26 +418,17 @@ public abstract class TestEntity implements TestEntityOption {
     }
     
     public String printShortMovement() {
-        return "Movement: "
-                + Integer.toString(getEntity().getOriginalWalkMP())
-                + "/"
-                + Integer.toString((int) Math.ceil(getEntity()
-                        .getOriginalWalkMP() * 1.5))
-                + (hasMASC() ? "("
-                        + Integer.toString(getEntity().getOriginalWalkMP() * 2)
-                        + ")" : "")
-                + (getEntity().getOriginalJumpMP() != 0 ? "/"
-                        + Integer.toString(getEntity().getOriginalJumpMP())
-                        : "") + "\n";
+        return "Movement: " + getEntity().getOriginalWalkMP() + "/"
+                + (int) Math.ceil(getEntity().getOriginalWalkMP() * 1.5)
+                + (hasMASC() ? "(" + getEntity().getOriginalWalkMP() * 2 + ")" : "")
+                + (getEntity().getOriginalJumpMP() != 0 ? "/" + getEntity().getOriginalJumpMP() : "")
+                + "\n";
     }
 
     public String printWeightHeatSinks() {
-        return StringUtil.makeLength(
-                "Heat Sinks: "
-                        + Integer.toString(getCountHeatSinks())
-                        + (hasDoubleHeatSinks() ? " ["
-                                + Integer.toString(2 * getCountHeatSinks())
-                                + "]" : ""), getPrintSize() - 5)
+        return StringUtil.makeLength("Heat Sinks: " + getCountHeatSinks()
+                        + (hasDoubleHeatSinks() ? " [" + 2 * getCountHeatSinks() + "]" : ""),
+                getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightHeatSinks(), usesKgStandard()) + "\n";
     }
 
@@ -452,10 +443,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printWeightStructure() {
-        return StringUtil.makeLength(
-                "Structure: "
-                        + Integer.toString(getEntity().getTotalOInternal())
-                        + " " + structure.getShortName(), getPrintSize() - 5)
+        return StringUtil.makeLength("Structure: " + getEntity().getTotalOInternal() + " " + structure.getShortName(),
+                getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightStructure(), usesKgStandard()) + "\n";
     }
 
@@ -466,14 +455,12 @@ public abstract class TestEntity implements TestEntityOption {
 
     public String printWeightArmor() {
         if (!getEntity().hasPatchworkArmor()) {
-            return StringUtil.makeLength(
-                    "Armor: " + Integer.toString(getTotalOArmor()) + " "
-                            + armor[0].getShortName(), getPrintSize() - 5)
+            return StringUtil.makeLength("Armor: " + getTotalOArmor() + " "
+                    + armor[0].getShortName(), getPrintSize() - 5)
                     + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
         } else {
-            return StringUtil.makeLength(
-                    "Armor: " + Integer.toString(getTotalOArmor()) + " "
-                            + "Patchwork", getPrintSize() - 5)
+            return StringUtil.makeLength("Armor: " + getTotalOArmor() + " " + "Patchwork",
+                    getPrintSize() - 5)
                     + TestEntity.makeWeightString(getWeightArmor(), usesKgStandard()) + "\n";
         }
 
@@ -681,37 +668,31 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printLocations() {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getEntity().locations(); i++) {
             String locationName = getEntity().getLocationName(i);
-            buff.append(locationName + ":");
-            buff.append("\n");
+            sb.append(locationName).append(":");
+            sb.append("\n");
             for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
-                    buff.append(Integer.toString(j) + ". -Emtpy-");
-                    buff.append("\n");
+                    sb.append(j).append(". -Empty-");
+                    sb.append("\n");
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
                     if (isMech()) {
-                        buff.append(Integer.toString(j));
-                        buff.append(". ");
-                        buff.append(((Mech) getEntity()).getSystemName(slot
-                                .getIndex()));
-                        buff.append("\n");
+                        sb.append(j).append(". ")
+                                .append(((Mech) getEntity()).getSystemName(slot.getIndex()))
+                                .append("\n");
                     } else {
-                        buff.append(Integer.toString(j)
-                                + ". UNKNOWN SYSTEM NAME");
-                        buff.append("\n");
+                        sb.append(j).append(". UNKNOWN SYSTEM NAME").append("\n");
                     }
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     EquipmentType e = getEntity().getEquipmentType(slot);
-                    buff.append(Integer.toString(j) + ". "
-                            + e.getInternalName());
-                    buff.append("\n");
+                    sb.append(j).append(". ").append(e.getInternalName()).append("\n");
                 }
             }
         }
-        return buff.toString();
+        return sb.toString();
     }
 
     public int calcMiscCrits(MiscType mt, double size) {

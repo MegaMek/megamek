@@ -3205,7 +3205,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing, int elevation) {
-        Integer entityId = Integer.valueOf(entity.getId());
+        Integer entityId = entity.getId();
         List<Integer> spriteKey = getIdAndLoc(entityId, -1);
         EntitySprite sprite = entitySpriteIds.get(spriteKey);
         IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
@@ -3295,11 +3295,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
      * the old sprite with the new! Takes a reference to the Entity object
      * before changes, in case it contained important state information, like
-     * Dropships taking off (airborne dropships lose their secondary hexes). Try
+     * DropShips taking off (airborne DropShips lose their secondary hexes). Try
      * to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity, Entity oldEntity) {
-        Integer entityId = Integer.valueOf(entity.getId());
+        Integer entityId = entity.getId();
         if (oldEntity == null) {
             oldEntity = entity;
         }

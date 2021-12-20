@@ -179,7 +179,7 @@ public class Packet {
      * @param command
      * @param data
      */
-    public Packet(int command, Object[] data) {
+    public Packet(int command, Object... data) {
         this.command = command;
         this.data = data;
     }

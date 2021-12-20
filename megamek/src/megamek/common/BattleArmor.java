@@ -25,17 +25,14 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * This class represents a squad or point of battle armor equiped infantry,
+ * This class represents a squad or point of battle armor equipped infantry,
  * sometimes referred to as "Elementals". Much of the behaviour of a battle
  * armor unit is identical to that of an infantry platoon, and is rather
- * different than that of a Mek or Tank.
+ * different from that of a Mek or Tank.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $revision:$
- */
-/*
- * PLEASE NOTE!!! My programming style is to put constants first in tests so the
- * compiler catches my "= for ==" errors.
+ * This was originally coded using the legacy programming style of putting constants first in tests
+ * so the compiler catches the "= for ==" errors.
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class BattleArmor extends Infantry {
     private static final long serialVersionUID = 4594311535026187825L;

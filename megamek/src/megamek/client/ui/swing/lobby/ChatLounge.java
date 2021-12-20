@@ -2679,7 +2679,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             switch (command[0]) {
                 case MapListPopup.MLP_BOARD:
-                    boolean rotate = (command.length > 3) && Boolean.valueOf(command[3]);
+                    boolean rotate = (command.length > 3) && Boolean.parseBoolean(command[3]);
                     String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
 
                     changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));

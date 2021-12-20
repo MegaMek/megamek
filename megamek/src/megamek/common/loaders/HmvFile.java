@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.loaders;
 
 import megamek.common.*;
@@ -35,12 +34,10 @@ public class HmvFile implements IMechLoader {
     private HMVMovementType movementType;
     private int rulesLevel;
     private int year;
-    private boolean isOmni = false;
+    private boolean isOmni;
     private HMVTechType techType;
 
     private HMVTechType engineTechType;
-    private HMVTechType baseTechType;
-    private HMVTechType targetingComputerTechType;
 
     private int engineRating;
     private HMVEngineType engineType;
@@ -122,6 +119,8 @@ public class HmvFile implements IMechLoader {
 
             techType = HMVTechType.getType(readUnsignedShort(dis));
 
+            HMVTechType baseTechType;
+            HMVTechType targetingComputerTechType;
             if (techType.equals(HMVTechType.MIXED)) {
                 // THESE ARE GUESSES. Need example hmv files to verify.
                 baseTechType = HMVTechType.getType(readUnsignedShort(dis));
@@ -141,7 +140,6 @@ public class HmvFile implements IMechLoader {
                 armorTechType = HMVTechType.INNER_SPHERE;
             }
 
-            // ??
             dis.skipBytes(4);
 
             engineRating = readUnsignedShort(dis);
@@ -152,7 +150,6 @@ public class HmvFile implements IMechLoader {
 
             // Even if we aren't using this, we need to read past its location.
             readUnsignedShort(dis);
-            // heatSinks = readUnsignedShort(dis);
             armorType = HMVArmorType.getType(readUnsignedShort(dis));
 
             roundedInternalStructure = readUnsignedShort(dis);
@@ -187,7 +184,7 @@ public class HmvFile implements IMechLoader {
                 // Skip 12 bytes for OmniVehicles
                 dis.skipBytes(12);
 
-                // Decide whether or not the turret is a fixed weight
+                // Decide whether the turret is a fixed weight
                 int lockedTurret = readUnsignedShort(dis);
 
                 if (lockedTurret == 2) {
@@ -246,22 +243,16 @@ public class HmvFile implements IMechLoader {
 
                             // Add as many copies of the AmmoType as needed.
                             addEquipmentType(ammoType, weaponAmmo / ammoType.getShots(), HMVWeaponLocation.BODY);
+                        }
+                    }
+                }
 
-                        } // End found-ammoType
-
-                    } // End have-rounds-of-ammo
-
-                } // End found-equipmentType
-
-                // ??
                 dis.skipBytes(4);
-
-            } // Handle the next piece of equipment
+            }
 
             // Read the amount of troop/cargo bays.
             int bayCount = readUnsignedShort(dis);
             for (int loop = 0; loop < bayCount; loop++) {
-
                 // Read the size of this bay.
                 // dis.skipBytes(2);
                 float baySize = readFloat(dis);
@@ -272,8 +263,7 @@ public class HmvFile implements IMechLoader {
 
                 // Add the troopSpace of this bay to our running total.
                 troopSpace += baySize;
-
-            } // Handle the next bay.
+            }
 
             dis.skipBytes(12);
             int CASE = readUnsignedShort(dis);
@@ -294,15 +284,12 @@ public class HmvFile implements IMechLoader {
             }
 
             artemisType = readUnsignedShort(dis);
-            // the artemis is a bit field: 1 = SRM artemis IV, 2 = LRM artemis
-            // IV,
+            // the artemis is a bit field: 1 = SRM artemis IV, 2 = LRM artemis IV,
             // 4 = SRM artemis V, 8 = LRM artemis V
             dis.skipBytes(4);
             int VTOLoptions = readUnsignedShort(dis);
-            // Yuck, a decimal field: 10 = main/tail, 20 = dual, 30 = coax
-            // rotors
-            // 100 = beagle/clan AP, 200 = bloodhound/light AP, 300 = c3 slave
-            // mast mount
+            // Yuck, a decimal field: 10 = main/tail, 20 = dual, 30 = coax rotors
+            // 100 = beagle/clan AP, 200 = bloodhound/light AP, 300 = c3 slave mast mount
             int mastEq = VTOLoptions / 100;
             // int rotorType = VTOLoptions % 100; //rorottype is never read
             // TODO read rotottype from a file.
@@ -364,7 +351,7 @@ public class HmvFile implements IMechLoader {
 
             dis.skipBytes(readUnsignedShort(dis)); // notes
 
-            // just a catch all for small Fluffs anything well less then 10
+            // just a catch-all for small Fluffs anything well less than 10
             // characters, per section, isn't worth printing.
             if (fluffSize <= 60) {
                 fluff = null;
@@ -399,10 +386,6 @@ public class HmvFile implements IMechLoader {
 
     /**
      * Read a single precision float from a file in little endian format
-     *
-     * @param dis
-     * @return
-     * @throws IOException
      */
     private float readFloat(DataInputStream dis) throws IOException {
         int bits = dis.readInt();
@@ -441,7 +424,7 @@ public class HmvFile implements IMechLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
-            Tank vehicle = null;
+            Tank vehicle;
 
             if ((movementType == HMVMovementType.TRACKED) || (movementType == HMVMovementType.WHEELED) || (movementType == HMVMovementType.HOVER) || (movementType == HMVMovementType.DISPLACEMENT_HULL) || (movementType == HMVMovementType.HYDROFOIL) || (movementType == HMVMovementType.SUBMARINE)) {
                 vehicle = new Tank();
@@ -579,7 +562,7 @@ public class HmvFile implements IMechLoader {
                 EquipmentType equipmentType = e.nextElement();
                 Integer count = equipmentAtLocation.get(equipmentType);
 
-                for (int i = 0; i < count.intValue(); i++) {
+                for (int i = 0; i < count; i++) {
                     // for experimental or unofficial equipment, we need
                     // to adjust the mech's techlevel, because HMV only
                     // knows lvl1/2/3
@@ -647,471 +630,471 @@ public class HmvFile implements IMechLoader {
         //
         Hashtable<Long, String> isEquipment = new Hashtable<>();
         EQUIPMENT.put(HMVTechType.INNER_SPHERE, isEquipment);
-        isEquipment.put(Long.valueOf(0x0A), "ISDouble Heat Sink");
-        isEquipment.put(Long.valueOf(0x0B), "Jump Jet");
-        isEquipment.put(Long.valueOf(0x12), "ISTargeting Computer");
-        isEquipment.put(Long.valueOf(0x14), "Endo Steel");
-        isEquipment.put(Long.valueOf(0x15), "Ferro-Fibrous");
-        isEquipment.put(Long.valueOf(0x17), "ISMASC");
-        isEquipment.put(Long.valueOf(0x18), "ISArtemisIV");
-        isEquipment.put(Long.valueOf(0x19), "ISCASE");
-        isEquipment.put(Long.valueOf(0x33), "ISERLargeLaser");
-        isEquipment.put(Long.valueOf(0x34), "ISERPPC");
-        isEquipment.put(Long.valueOf(0x35), "ISFlamer");
-        isEquipment.put(Long.valueOf(0x36), "ISLaserAMS");
-        isEquipment.put(Long.valueOf(0x37), "ISLargeLaser");
-        isEquipment.put(Long.valueOf(0x38), "ISMediumLaser");
-        isEquipment.put(Long.valueOf(0x39), "ISSmallLaser");
-        isEquipment.put(Long.valueOf(0x3A), "ISPPC");
-        isEquipment.put(Long.valueOf(0x3B), "ISLargePulseLaser");
-        isEquipment.put(Long.valueOf(0x3C), "ISMediumPulseLaser");
-        isEquipment.put(Long.valueOf(0x3D), "ISSmallPulseLaser");
-        isEquipment.put(Long.valueOf(0x3E), "ISAC2");
-        isEquipment.put(Long.valueOf(0x3F), "ISAC5");
-        isEquipment.put(Long.valueOf(0x40), "ISAC10");
-        isEquipment.put(Long.valueOf(0x41), "ISAC20");
-        isEquipment.put(Long.valueOf(0x42), "ISAntiMissileSystem");
-        isEquipment.put(Long.valueOf(0x43), "Long Tom Cannon");
-        isEquipment.put(Long.valueOf(0x44), "Sniper Cannon");
-        isEquipment.put(Long.valueOf(0x45), "Thumper Cannon");
-        isEquipment.put(Long.valueOf(0x46), "ISLightGaussRifle");
-        isEquipment.put(Long.valueOf(0x47), "ISGaussRifle");
-        isEquipment.put(Long.valueOf(0x48), "ISLargeXPulseLaser");
-        isEquipment.put(Long.valueOf(0x49), "ISMediumXPulseLaser");
-        isEquipment.put(Long.valueOf(0x4A), "ISSmallXPulseLaser");
-        isEquipment.put(Long.valueOf(0x4B), "ISLBXAC2");
-        isEquipment.put(Long.valueOf(0x4C), "ISLBXAC5");
-        isEquipment.put(Long.valueOf(0x4D), "ISLBXAC10");
-        isEquipment.put(Long.valueOf(0x4E), "ISLBXAC20");
-        isEquipment.put(Long.valueOf(0x4F), "ISMachine Gun");
-        isEquipment.put(Long.valueOf(0x50), "ISLAC2");
-        isEquipment.put(Long.valueOf(0x51), "ISLAC5");
-        isEquipment.put(Long.valueOf(0x52), "ISHeavyFlamer");
-        isEquipment.put(Long.valueOf(0x53), "ISPPCCapacitor");
-        isEquipment.put(Long.valueOf(0x54), "ISUltraAC2");
-        isEquipment.put(Long.valueOf(0x55), "ISUltraAC5");
-        isEquipment.put(Long.valueOf(0x56), "ISUltraAC10");
-        isEquipment.put(Long.valueOf(0x57), "ISUltraAC20");
-        isEquipment.put(Long.valueOf(0x59), "ISPPCCapacitor");
-        isEquipment.put(Long.valueOf(0x5A), "ISERMediumLaser");
-        isEquipment.put(Long.valueOf(0x5B), "ISERSmallLaser");
-        isEquipment.put(Long.valueOf(0x5C), "ISAntiPersonnelPod");
+        isEquipment.put(0x0AL, "ISDouble Heat Sink");
+        isEquipment.put(0x0BL, "Jump Jet");
+        isEquipment.put(0x12L, "ISTargeting Computer");
+        isEquipment.put(0x14L, "Endo Steel");
+        isEquipment.put(0x15L, "Ferro-Fibrous");
+        isEquipment.put(0x17L, "ISMASC");
+        isEquipment.put(0x18L, "ISArtemisIV");
+        isEquipment.put(0x19L, "ISCASE");
+        isEquipment.put(0x33L, "ISERLargeLaser");
+        isEquipment.put(0x34L, "ISERPPC");
+        isEquipment.put(0x35L, "ISFlamer");
+        isEquipment.put(0x36L, "ISLaserAMS");
+        isEquipment.put(0x37L, "ISLargeLaser");
+        isEquipment.put(0x38L, "ISMediumLaser");
+        isEquipment.put(0x39L, "ISSmallLaser");
+        isEquipment.put(0x3AL, "ISPPC");
+        isEquipment.put(0x3BL, "ISLargePulseLaser");
+        isEquipment.put(0x3CL, "ISMediumPulseLaser");
+        isEquipment.put(0x3DL, "ISSmallPulseLaser");
+        isEquipment.put(0x3EL, "ISAC2");
+        isEquipment.put(0x3FL, "ISAC5");
+        isEquipment.put(0x40L, "ISAC10");
+        isEquipment.put(0x41L, "ISAC20");
+        isEquipment.put(0x42L, "ISAntiMissileSystem");
+        isEquipment.put(0x43L, "Long Tom Cannon");
+        isEquipment.put(0x44L, "Sniper Cannon");
+        isEquipment.put(0x45L, "Thumper Cannon");
+        isEquipment.put(0x46L, "ISLightGaussRifle");
+        isEquipment.put(0x47L, "ISGaussRifle");
+        isEquipment.put(0x48L, "ISLargeXPulseLaser");
+        isEquipment.put(0x49L, "ISMediumXPulseLaser");
+        isEquipment.put(0x4AL, "ISSmallXPulseLaser");
+        isEquipment.put(0x4BL, "ISLBXAC2");
+        isEquipment.put(0x4CL, "ISLBXAC5");
+        isEquipment.put(0x4DL, "ISLBXAC10");
+        isEquipment.put(0x4EL, "ISLBXAC20");
+        isEquipment.put(0x4FL, "ISMachine Gun");
+        isEquipment.put(0x50L, "ISLAC2");
+        isEquipment.put(0x51L, "ISLAC5");
+        isEquipment.put(0x52L, "ISHeavyFlamer");
+        isEquipment.put(0x53L, "ISPPCCapacitor");
+        isEquipment.put(0x54L, "ISUltraAC2");
+        isEquipment.put(0x55L, "ISUltraAC5");
+        isEquipment.put(0x56L, "ISUltraAC10");
+        isEquipment.put(0x57L, "ISUltraAC20");
+        isEquipment.put(0x59L, "ISPPCCapacitor");
+        isEquipment.put(0x5AL, "ISERMediumLaser");
+        isEquipment.put(0x5BL, "ISERSmallLaser");
+        isEquipment.put(0x5CL, "ISAntiPersonnelPod");
 
-        isEquipment.put(Long.valueOf(0x60), "ISLRM5");
-        isEquipment.put(Long.valueOf(0x61), "ISLRM10");
-        isEquipment.put(Long.valueOf(0x62), "ISLRM15");
-        isEquipment.put(Long.valueOf(0x63), "ISLRM20");
-        isEquipment.put(Long.valueOf(0x66), "ISImprovedNarc");
-        isEquipment.put(Long.valueOf(0x67), "ISSRM2");
-        isEquipment.put(Long.valueOf(0x68), "ISSRM4");
-        isEquipment.put(Long.valueOf(0x69), "ISSRM6");
-        isEquipment.put(Long.valueOf(0x6A), "ISStreakSRM2");
-        isEquipment.put(Long.valueOf(0x6B), "ISStreakSRM4");
-        isEquipment.put(Long.valueOf(0x6C), "ISStreakSRM6");
-        isEquipment.put(Long.valueOf(0x6D), "ISThunderbolt5");
-        isEquipment.put(Long.valueOf(0x6E), "ISThunderbolt10");
-        isEquipment.put(Long.valueOf(0x6F), "ISThunderbolt15");
-        isEquipment.put(Long.valueOf(0x70), "ISThunderbolt20");
-        isEquipment.put(Long.valueOf(0x71), "ISArrowIVSystem");
-        isEquipment.put(Long.valueOf(0x72), "ISAngelECMSuite");
-        isEquipment.put(Long.valueOf(0x73), "ISBeagleActiveProbe");
-        isEquipment.put(Long.valueOf(0x74), "ISBloodhoundActiveProbe");
-        isEquipment.put(Long.valueOf(0x75), "ISC3MasterComputer");
-        isEquipment.put(Long.valueOf(0x76), "ISC3SlaveUnit");
-        isEquipment.put(Long.valueOf(0x77), "ISImprovedC3CPU");
-        isEquipment.put(Long.valueOf(0x78), "ISGuardianECM");
-        isEquipment.put(Long.valueOf(0x79), "ISNarcBeacon");
-        isEquipment.put(Long.valueOf(0x7A), "ISTAG");
-        isEquipment.put(Long.valueOf(0x7B), "ISLRM5 (OS)");
-        isEquipment.put(Long.valueOf(0x7C), "ISLRM10 (OS)");
-        isEquipment.put(Long.valueOf(0x7D), "ISLRM15 (OS)");
-        isEquipment.put(Long.valueOf(0x7E), "ISLRM20 (OS)");
-        isEquipment.put(Long.valueOf(0x7F), "ISSRM2 (OS)");
-        isEquipment.put(Long.valueOf(0x80), "ISSRM4 (OS)");
-        isEquipment.put(Long.valueOf(0x81), "ISSRM6 (OS)");
-        isEquipment.put(Long.valueOf(0x82), "ISStreakSRM2 (OS)");
-        isEquipment.put(Long.valueOf(0x83), "ISStreakSRM4 (OS)");
-        isEquipment.put(Long.valueOf(0x84), "ISStreakSRM6 (OS)");
-        isEquipment.put(Long.valueOf(0x85), "ISVehicleFlamer");
-        isEquipment.put(Long.valueOf(0x86), "ISLongTomArtillery");
-        isEquipment.put(Long.valueOf(0x87), "ISSniperArtillery");
-        isEquipment.put(Long.valueOf(0x88), "ISThumperArtillery");
-        isEquipment.put(Long.valueOf(0x89), "ISMRM10");
-        isEquipment.put(Long.valueOf(0x8A), "ISMRM20");
-        isEquipment.put(Long.valueOf(0x8B), "ISMRM30");
-        isEquipment.put(Long.valueOf(0x8C), "ISMRM40");
-        isEquipment.put(Long.valueOf(0x8E), "ISMRM10 (OS)");
-        isEquipment.put(Long.valueOf(0x8F), "ISMRM20 (OS)");
-        isEquipment.put(Long.valueOf(0x90), "ISMRM30 (OS)");
-        isEquipment.put(Long.valueOf(0x91), "ISMRM40 (OS)");
-        isEquipment.put(Long.valueOf(0x92), "ISLRTorpedo5");
-        isEquipment.put(Long.valueOf(0x93), "ISLRTorpedo10");
-        isEquipment.put(Long.valueOf(0x94), "ISLRTorpedo15");
-        isEquipment.put(Long.valueOf(0x95), "ISLRTorpedo20");
-        isEquipment.put(Long.valueOf(0x96), "ISSRT2");
-        isEquipment.put(Long.valueOf(0x97), "ISSRT4");
-        isEquipment.put(Long.valueOf(0x98), "ISSRT6");
-        isEquipment.put(Long.valueOf(0x99), "ISLRM5 (I-OS)");
-        isEquipment.put(Long.valueOf(0x9A), "ISLRM10 (I-OS)");
-        isEquipment.put(Long.valueOf(0x9B), "ISLRM15 (I-OS)");
-        isEquipment.put(Long.valueOf(0x9C), "ISLRM20 (I-OS)");
-        isEquipment.put(Long.valueOf(0x9D), "ISSRM2 (I-OS)");
-        isEquipment.put(Long.valueOf(0x9E), "ISSRM4 (I-OS)");
-        isEquipment.put(Long.valueOf(0x9f), "ISSRM6 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA0), "ISStreakSRM2 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA1), "ISStreakSRM4 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA2), "ISStreakSRM6 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA3), "ISMRM10 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA4), "ISMRM20 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA5), "ISMRM30 (I-OS)");
-        isEquipment.put(Long.valueOf(0xA6), "ISMRM40 (I-OS)");
-        isEquipment.put(Long.valueOf(0x108), "ISTHBLBXAC2");
-        isEquipment.put(Long.valueOf(0x109), "ISTHBLBXAC5");
-        isEquipment.put(Long.valueOf(0x10A), "ISTHBLBXAC20");
-        isEquipment.put(Long.valueOf(0x10B), "ISUltraAC2 (THB)");
-        isEquipment.put(Long.valueOf(0x10C), "ISUltraAC10 (THB)");
-        isEquipment.put(Long.valueOf(0x10D), "ISUltraAC20 (THB)");
-        isEquipment.put(Long.valueOf(0x11D), "ISTHBAngelECMSuite");
-        isEquipment.put(Long.valueOf(0x11e), "ISTHBBloodhoundActiveProbe");
-        isEquipment.put(Long.valueOf(0x121), "ISRotaryAC2");
-        isEquipment.put(Long.valueOf(0x122), "ISRotaryAC5");
-        isEquipment.put(Long.valueOf(0x123), "ISHeavyGaussRifle");
-        isEquipment.put(Long.valueOf(0x12B), "ISRocketLauncher10");
-        isEquipment.put(Long.valueOf(0x12C), "ISRocketLauncher15");
-        isEquipment.put(Long.valueOf(0x12D), "ISRocketLauncher20");
+        isEquipment.put(0x60L, "ISLRM5");
+        isEquipment.put(0x61L, "ISLRM10");
+        isEquipment.put(0x62L, "ISLRM15");
+        isEquipment.put(0x63L, "ISLRM20");
+        isEquipment.put(0x66L, "ISImprovedNarc");
+        isEquipment.put(0x67L, "ISSRM2");
+        isEquipment.put(0x68L, "ISSRM4");
+        isEquipment.put(0x69L, "ISSRM6");
+        isEquipment.put(0x6AL, "ISStreakSRM2");
+        isEquipment.put(0x6BL, "ISStreakSRM4");
+        isEquipment.put(0x6CL, "ISStreakSRM6");
+        isEquipment.put(0x6DL, "ISThunderbolt5");
+        isEquipment.put(0x6EL, "ISThunderbolt10");
+        isEquipment.put(0x6FL, "ISThunderbolt15");
+        isEquipment.put(0x70L, "ISThunderbolt20");
+        isEquipment.put(0x71L, "ISArrowIVSystem");
+        isEquipment.put(0x72L, "ISAngelECMSuite");
+        isEquipment.put(0x73L, "ISBeagleActiveProbe");
+        isEquipment.put(0x74L, "ISBloodhoundActiveProbe");
+        isEquipment.put(0x75L, "ISC3MasterComputer");
+        isEquipment.put(0x76L, "ISC3SlaveUnit");
+        isEquipment.put(0x77L, "ISImprovedC3CPU");
+        isEquipment.put(0x78L, "ISGuardianECM");
+        isEquipment.put(0x79L, "ISNarcBeacon");
+        isEquipment.put(0x7AL, "ISTAG");
+        isEquipment.put(0x7BL, "ISLRM5 (OS)");
+        isEquipment.put(0x7CL, "ISLRM10 (OS)");
+        isEquipment.put(0x7DL, "ISLRM15 (OS)");
+        isEquipment.put(0x7EL, "ISLRM20 (OS)");
+        isEquipment.put(0x7FL, "ISSRM2 (OS)");
+        isEquipment.put(0x80L, "ISSRM4 (OS)");
+        isEquipment.put(0x81L, "ISSRM6 (OS)");
+        isEquipment.put(0x82L, "ISStreakSRM2 (OS)");
+        isEquipment.put(0x83L, "ISStreakSRM4 (OS)");
+        isEquipment.put(0x84L, "ISStreakSRM6 (OS)");
+        isEquipment.put(0x85L, "ISVehicleFlamer");
+        isEquipment.put(0x86L, "ISLongTomArtillery");
+        isEquipment.put(0x87L, "ISSniperArtillery");
+        isEquipment.put(0x88L, "ISThumperArtillery");
+        isEquipment.put(0x89L, "ISMRM10");
+        isEquipment.put(0x8AL, "ISMRM20");
+        isEquipment.put(0x8BL, "ISMRM30");
+        isEquipment.put(0x8CL, "ISMRM40");
+        isEquipment.put(0x8EL, "ISMRM10 (OS)");
+        isEquipment.put(0x8FL, "ISMRM20 (OS)");
+        isEquipment.put(0x90L, "ISMRM30 (OS)");
+        isEquipment.put(0x91L, "ISMRM40 (OS)");
+        isEquipment.put(0x92L, "ISLRTorpedo5");
+        isEquipment.put(0x93L, "ISLRTorpedo10");
+        isEquipment.put(0x94L, "ISLRTorpedo15");
+        isEquipment.put(0x95L, "ISLRTorpedo20");
+        isEquipment.put(0x96L, "ISSRT2");
+        isEquipment.put(0x97L, "ISSRT4");
+        isEquipment.put(0x98L, "ISSRT6");
+        isEquipment.put(0x99L, "ISLRM5 (I-OS)");
+        isEquipment.put(0x9AL, "ISLRM10 (I-OS)");
+        isEquipment.put(0x9BL, "ISLRM15 (I-OS)");
+        isEquipment.put(0x9CL, "ISLRM20 (I-OS)");
+        isEquipment.put(0x9DL, "ISSRM2 (I-OS)");
+        isEquipment.put(0x9EL, "ISSRM4 (I-OS)");
+        isEquipment.put(0x9fL, "ISSRM6 (I-OS)");
+        isEquipment.put(0xA0L, "ISStreakSRM2 (I-OS)");
+        isEquipment.put(0xA1L, "ISStreakSRM4 (I-OS)");
+        isEquipment.put(0xA2L, "ISStreakSRM6 (I-OS)");
+        isEquipment.put(0xA3L, "ISMRM10 (I-OS)");
+        isEquipment.put(0xA4L, "ISMRM20 (I-OS)");
+        isEquipment.put(0xA5L, "ISMRM30 (I-OS)");
+        isEquipment.put(0xA6L, "ISMRM40 (I-OS)");
+        isEquipment.put(0x108L, "ISTHBLBXAC2");
+        isEquipment.put(0x109L, "ISTHBLBXAC5");
+        isEquipment.put(0x10AL, "ISTHBLBXAC20");
+        isEquipment.put(0x10BL, "ISUltraAC2 (THB)");
+        isEquipment.put(0x10CL, "ISUltraAC10 (THB)");
+        isEquipment.put(0x10DL, "ISUltraAC20 (THB)");
+        isEquipment.put(0x11DL, "ISTHBAngelECMSuite");
+        isEquipment.put(0x11eL, "ISTHBBloodhoundActiveProbe");
+        isEquipment.put(0x121L, "ISRotaryAC2");
+        isEquipment.put(0x122L, "ISRotaryAC5");
+        isEquipment.put(0x123L, "ISHeavyGaussRifle");
+        isEquipment.put(0x12BL, "ISRocketLauncher10");
+        isEquipment.put(0x12CL, "ISRocketLauncher15");
+        isEquipment.put(0x12DL, "ISRocketLauncher20");
 
         Hashtable<Long, String> isAmmo = new Hashtable<>();
         AMMO.put(HMVTechType.INNER_SPHERE, isAmmo);
-        isAmmo.put(Long.valueOf(0x3E), "ISAC2 Ammo");
-        isAmmo.put(Long.valueOf(0x3F), "ISAC5 Ammo");
-        isAmmo.put(Long.valueOf(0x40), "ISAC10 Ammo");
-        isAmmo.put(Long.valueOf(0x41), "ISAC20 Ammo");
-        isAmmo.put(Long.valueOf(0x42), "ISAMS Ammo");
-        isAmmo.put(Long.valueOf(0x43), "Long Tom Cannon Ammo");
-        isAmmo.put(Long.valueOf(0x44), "Sniper Cannon Ammo");
-        isAmmo.put(Long.valueOf(0x45), "Thumper Cannon Ammo");
-        isAmmo.put(Long.valueOf(0x46), "ISLightGauss Ammo");
-        isAmmo.put(Long.valueOf(0x47), "ISGauss Ammo");
-        isAmmo.put(Long.valueOf(0x4B), "ISLBXAC2 Ammo");
-        isAmmo.put(Long.valueOf(0x4C), "ISLBXAC5 Ammo");
-        isAmmo.put(Long.valueOf(0x4D), "ISLBXAC10 Ammo");
-        isAmmo.put(Long.valueOf(0x4E), "ISLBXAC20 Ammo");
-        isAmmo.put(Long.valueOf(0x4F), "ISMG Ammo (200)");
-        isAmmo.put(Long.valueOf(0x50), "ISLAC2 Ammo");
-        isAmmo.put(Long.valueOf(0x51), "ISLAC5 Ammo");
-        isAmmo.put(Long.valueOf(0x52), "ISHeavyFlamer Ammo");
-        isAmmo.put(Long.valueOf(0x54), "ISUltraAC2 Ammo");
-        isAmmo.put(Long.valueOf(0x55), "ISUltraAC5 Ammo");
-        isAmmo.put(Long.valueOf(0x56), "ISUltraAC10 Ammo");
-        isAmmo.put(Long.valueOf(0x57), "ISUltraAC20 Ammo");
+        isAmmo.put(0x3EL, "ISAC2 Ammo");
+        isAmmo.put(0x3FL, "ISAC5 Ammo");
+        isAmmo.put(0x40L, "ISAC10 Ammo");
+        isAmmo.put(0x41L, "ISAC20 Ammo");
+        isAmmo.put(0x42L, "ISAMS Ammo");
+        isAmmo.put(0x43L, "Long Tom Cannon Ammo");
+        isAmmo.put(0x44L, "Sniper Cannon Ammo");
+        isAmmo.put(0x45L, "Thumper Cannon Ammo");
+        isAmmo.put(0x46L, "ISLightGauss Ammo");
+        isAmmo.put(0x47L, "ISGauss Ammo");
+        isAmmo.put(0x4BL, "ISLBXAC2 Ammo");
+        isAmmo.put(0x4CL, "ISLBXAC5 Ammo");
+        isAmmo.put(0x4DL, "ISLBXAC10 Ammo");
+        isAmmo.put(0x4EL, "ISLBXAC20 Ammo");
+        isAmmo.put(0x4FL, "ISMG Ammo (200)");
+        isAmmo.put(0x50L, "ISLAC2 Ammo");
+        isAmmo.put(0x51L, "ISLAC5 Ammo");
+        isAmmo.put(0x52L, "ISHeavyFlamer Ammo");
+        isAmmo.put(0x54L, "ISUltraAC2 Ammo");
+        isAmmo.put(0x55L, "ISUltraAC5 Ammo");
+        isAmmo.put(0x56L, "ISUltraAC10 Ammo");
+        isAmmo.put(0x57L, "ISUltraAC20 Ammo");
 
-        isAmmo.put(Long.valueOf(0x60), "ISLRM5 Ammo");
-        isAmmo.put(Long.valueOf(0x61), "ISLRM10 Ammo");
-        isAmmo.put(Long.valueOf(0x62), "ISLRM15 Ammo");
-        isAmmo.put(Long.valueOf(0x63), "ISLRM20 Ammo");
-        isAmmo.put(Long.valueOf(0x66), "ISiNarc Pods");
-        isAmmo.put(Long.valueOf(0x67), "ISSRM2 Ammo");
-        isAmmo.put(Long.valueOf(0x68), "ISSRM4 Ammo");
-        isAmmo.put(Long.valueOf(0x69), "ISSRM6 Ammo");
-        isAmmo.put(Long.valueOf(0x6A), "ISStreakSRM2 Ammo");
-        isAmmo.put(Long.valueOf(0x6B), "ISStreakSRM4 Ammo");
-        isAmmo.put(Long.valueOf(0x6C), "ISStreakSRM6 Ammo");
-        isAmmo.put(Long.valueOf(0x6D), "ISThunderbolt5 Ammo");
-        isAmmo.put(Long.valueOf(0x6E), "ISThunderbolt10 Ammo");
-        isAmmo.put(Long.valueOf(0x6F), "ISThunderbolt15 Ammo");
-        isAmmo.put(Long.valueOf(0x70), "ISThunderbolt20 Ammo");
-        isAmmo.put(Long.valueOf(0x71), "ISArrowIV Ammo");
-        isAmmo.put(Long.valueOf(0x79), "ISNarc Pods");
-        isAmmo.put(Long.valueOf(0x85), "ISVehicleFlamer Ammo");
-        isAmmo.put(Long.valueOf(0x86), "ISLongTom Ammo");
-        isAmmo.put(Long.valueOf(0x87), "ISSniper Ammo");
-        isAmmo.put(Long.valueOf(0x88), "ISThumper Ammo");
-        isAmmo.put(Long.valueOf(0x89), "ISMRM10 Ammo");
-        isAmmo.put(Long.valueOf(0x8A), "ISMRM20 Ammo");
-        isAmmo.put(Long.valueOf(0x8B), "ISMRM30 Ammo");
-        isAmmo.put(Long.valueOf(0x8C), "ISMRM40 Ammo");
-        isAmmo.put(Long.valueOf(0x92), "ISLRTorpedo5 Ammo");
-        isAmmo.put(Long.valueOf(0x93), "ISLRTorpedo10 Ammo");
-        isAmmo.put(Long.valueOf(0x94), "ISLRTorpedo15 Ammo");
-        isAmmo.put(Long.valueOf(0x95), "ISLRTorpedo20 Ammo");
-        isAmmo.put(Long.valueOf(0x96), "ISSRT2 Ammo");
-        isAmmo.put(Long.valueOf(0x97), "ISSRT4 Ammo");
-        isAmmo.put(Long.valueOf(0x98), "ISSRT6 Ammo");
-        isAmmo.put(Long.valueOf(0x108), "ISTHBLBXAC2 Ammo");
-        isAmmo.put(Long.valueOf(0x109), "ISTHBLBXAC5 Ammo");
-        isAmmo.put(Long.valueOf(0x10A), "ISTHBLBXAC20 Ammo");
-        isAmmo.put(Long.valueOf(0x10B), "ISUltraAC2 (THB) Ammo");
-        isAmmo.put(Long.valueOf(0x10C), "ISUltraAC10 (THB) Ammo");
-        isAmmo.put(Long.valueOf(0x10D), "ISUltraAC20 (THB) Ammo");
-        isAmmo.put(Long.valueOf(0x121), "ISRotaryAC2 Ammo");
-        isAmmo.put(Long.valueOf(0x122), "ISRotaryAC5 Ammo");
-        isAmmo.put(Long.valueOf(0x123), "ISHeavyGauss Ammo");
+        isAmmo.put(0x60L, "ISLRM5 Ammo");
+        isAmmo.put(0x61L, "ISLRM10 Ammo");
+        isAmmo.put(0x62L, "ISLRM15 Ammo");
+        isAmmo.put(0x63L, "ISLRM20 Ammo");
+        isAmmo.put(0x66L, "ISiNarc Pods");
+        isAmmo.put(0x67L, "ISSRM2 Ammo");
+        isAmmo.put(0x68L, "ISSRM4 Ammo");
+        isAmmo.put(0x69L, "ISSRM6 Ammo");
+        isAmmo.put(0x6AL, "ISStreakSRM2 Ammo");
+        isAmmo.put(0x6BL, "ISStreakSRM4 Ammo");
+        isAmmo.put(0x6CL, "ISStreakSRM6 Ammo");
+        isAmmo.put(0x6DL, "ISThunderbolt5 Ammo");
+        isAmmo.put(0x6EL, "ISThunderbolt10 Ammo");
+        isAmmo.put(0x6FL, "ISThunderbolt15 Ammo");
+        isAmmo.put(0x70L, "ISThunderbolt20 Ammo");
+        isAmmo.put(0x71L, "ISArrowIV Ammo");
+        isAmmo.put(0x79L, "ISNarc Pods");
+        isAmmo.put(0x85L, "ISVehicleFlamer Ammo");
+        isAmmo.put(0x86L, "ISLongTom Ammo");
+        isAmmo.put(0x87L, "ISSniper Ammo");
+        isAmmo.put(0x88L, "ISThumper Ammo");
+        isAmmo.put(0x89L, "ISMRM10 Ammo");
+        isAmmo.put(0x8AL, "ISMRM20 Ammo");
+        isAmmo.put(0x8BL, "ISMRM30 Ammo");
+        isAmmo.put(0x8CL, "ISMRM40 Ammo");
+        isAmmo.put(0x92L, "ISLRTorpedo5 Ammo");
+        isAmmo.put(0x93L, "ISLRTorpedo10 Ammo");
+        isAmmo.put(0x94L, "ISLRTorpedo15 Ammo");
+        isAmmo.put(0x95L, "ISLRTorpedo20 Ammo");
+        isAmmo.put(0x96L, "ISSRT2 Ammo");
+        isAmmo.put(0x97L, "ISSRT4 Ammo");
+        isAmmo.put(0x98L, "ISSRT6 Ammo");
+        isAmmo.put(0x108L, "ISTHBLBXAC2 Ammo");
+        isAmmo.put(0x109L, "ISTHBLBXAC5 Ammo");
+        isAmmo.put(0x10AL, "ISTHBLBXAC20 Ammo");
+        isAmmo.put(0x10BL, "ISUltraAC2 (THB) Ammo");
+        isAmmo.put(0x10CL, "ISUltraAC10 (THB) Ammo");
+        isAmmo.put(0x10DL, "ISUltraAC20 (THB) Ammo");
+        isAmmo.put(0x121L, "ISRotaryAC2 Ammo");
+        isAmmo.put(0x122L, "ISRotaryAC5 Ammo");
+        isAmmo.put(0x123L, "ISHeavyGauss Ammo");
 
         // clan criticals
         //
         Hashtable<Long, String> clanEquipment = new Hashtable<>();
         EQUIPMENT.put(HMVTechType.CLAN, clanEquipment);
-        clanEquipment.put(Long.valueOf(0x0A), "CLDouble Heat Sink");
-        clanEquipment.put(Long.valueOf(0x0B), "Jump Jet");
-        clanEquipment.put(Long.valueOf(0x12), "CLTargeting Computer");
-        clanEquipment.put(Long.valueOf(0x14), "Endo Steel");
-        clanEquipment.put(Long.valueOf(0x15), "Ferro-Fibrous");
-        clanEquipment.put(Long.valueOf(0x17), "CLMASC");
-        clanEquipment.put(Long.valueOf(0x18), "CLArtemisIV");
-        clanEquipment.put(Long.valueOf(0x33), "CLERLargeLaser");
-        clanEquipment.put(Long.valueOf(0x34), "CLERMediumLaser");
-        clanEquipment.put(Long.valueOf(0x35), "CLERSmallLaser");
-        clanEquipment.put(Long.valueOf(0x36), "CLERPPC");
-        clanEquipment.put(Long.valueOf(0x39), "CLSmallLaser");
-        clanEquipment.put(Long.valueOf(0x37), "CLFlamer");
-        clanEquipment.put(Long.valueOf(0x38), "CLMediumLaser");
-        clanEquipment.put(Long.valueOf(0x3A), "CLPPC");
-        clanEquipment.put(Long.valueOf(0x3C), "CLLargePulseLaser");
-        clanEquipment.put(Long.valueOf(0x3D), "CLMediumPulseLaser");
-        clanEquipment.put(Long.valueOf(0x3E), "CLSmallPulseLaser");
-        clanEquipment.put(Long.valueOf(0x3F), "CLAngelECMSuite");
-        clanEquipment.put(Long.valueOf(0x40), "CLAntiMissileSystem");
-        clanEquipment.put(Long.valueOf(0x41), "CLGaussRifle");
-        clanEquipment.put(Long.valueOf(0x42), "CLLBXAC2");
-        clanEquipment.put(Long.valueOf(0x43), "CLLBXAC5");
-        clanEquipment.put(Long.valueOf(0x44), "CLLBXAC10");
-        clanEquipment.put(Long.valueOf(0x45), "CLLBXAC20");
-        clanEquipment.put(Long.valueOf(0x46), "CLMG");
-        clanEquipment.put(Long.valueOf(0x47), "CLUltraAC2");
-        clanEquipment.put(Long.valueOf(0x48), "CLUltraAC5");
-        clanEquipment.put(Long.valueOf(0x49), "CLUltraAC10");
-        clanEquipment.put(Long.valueOf(0x4A), "CLUltraAC20");
-        clanEquipment.put(Long.valueOf(0x4B), "CLLRM5");
-        clanEquipment.put(Long.valueOf(0x4C), "CLLRM10");
-        clanEquipment.put(Long.valueOf(0x4D), "CLLRM15");
-        clanEquipment.put(Long.valueOf(0x4E), "CLLRM20");
-        clanEquipment.put(Long.valueOf(0x4F), "CLSRM2");
-        clanEquipment.put(Long.valueOf(0x50), "CLSRM4");
-        clanEquipment.put(Long.valueOf(0x51), "CLSRM6");
-        clanEquipment.put(Long.valueOf(0x52), "CLStreakSRM2");
-        clanEquipment.put(Long.valueOf(0x53), "CLStreakSRM4");
-        clanEquipment.put(Long.valueOf(0x54), "CLStreakSRM6");
-        clanEquipment.put(Long.valueOf(0x55), "CLArrowIVSystem");
-        clanEquipment.put(Long.valueOf(0x56), "CLAntiPersonnelPod");
-        clanEquipment.put(Long.valueOf(0x57), "CLActiveProbe");
-        clanEquipment.put(Long.valueOf(0x58), "CLECMSuite");
-        clanEquipment.put(Long.valueOf(0x59), "CLNarcBeacon");
-        clanEquipment.put(Long.valueOf(0x5A), "CLTAG");
-        clanEquipment.put(Long.valueOf(0x5B), "CLERMicroLaser");
-        clanEquipment.put(Long.valueOf(0x5C), "CLLRM5 (OS)");
-        clanEquipment.put(Long.valueOf(0x5D), "CLLRM10 (OS)");
-        clanEquipment.put(Long.valueOf(0x5E), "CLLRM15 (OS)");
-        clanEquipment.put(Long.valueOf(0x5F), "CLLRM20 (OS)");
-        clanEquipment.put(Long.valueOf(0x60), "CLSRM2 (OS)");
-        clanEquipment.put(Long.valueOf(0x61), "CLSRM4 (OS)");
-        clanEquipment.put(Long.valueOf(0x62), "CLSRM6 (OS)");
-        clanEquipment.put(Long.valueOf(0x63), "CLStreakSRM2 (OS)");
-        clanEquipment.put(Long.valueOf(0x64), "CLStreakSRM4 (OS)");
-        clanEquipment.put(Long.valueOf(0x65), "CLStreakSRM6 (OS)");
-        clanEquipment.put(Long.valueOf(0x66), "CLVehicleFlamer");
-        clanEquipment.put(Long.valueOf(0x67), "CLLongTomArtillery");
-        clanEquipment.put(Long.valueOf(0x68), "CLSniperArtillery");
-        clanEquipment.put(Long.valueOf(0x69), "CLThumperArtillery");
-        clanEquipment.put(Long.valueOf(0x6A), "CLLRTorpedo5");
-        clanEquipment.put(Long.valueOf(0x6B), "CLLRTorpedo10");
-        clanEquipment.put(Long.valueOf(0x6C), "CLLRTorpedo15");
-        clanEquipment.put(Long.valueOf(0x6D), "CLLRTorpedo20");
-        clanEquipment.put(Long.valueOf(0x6E), "CLSRT2");
-        clanEquipment.put(Long.valueOf(0x6F), "CLSRT4");
-        clanEquipment.put(Long.valueOf(0x70), "CLSRT6");
-        clanEquipment.put(Long.valueOf(0x7B), "CLLRM5 (OS)");
-        clanEquipment.put(Long.valueOf(0x7C), "CLLRM10 (OS)");
-        clanEquipment.put(Long.valueOf(0x7D), "CLLRM15 (OS)");
-        clanEquipment.put(Long.valueOf(0x7E), "CLLRM20 (OS)");
-        clanEquipment.put(Long.valueOf(0x7F), "CLSRM2 (OS)");
-        clanEquipment.put(Long.valueOf(0x80), "CLHeavyLargeLaser");
-        clanEquipment.put(Long.valueOf(0x81), "CLHeavyMediumLaser");
-        clanEquipment.put(Long.valueOf(0x82), "CLHeavySmallLaser");
-        clanEquipment.put(Long.valueOf(0x85), "CLVehicleFlamer"); // ?
-        clanEquipment.put(Long.valueOf(0x92), "CLLRTorpedo5");
-        clanEquipment.put(Long.valueOf(0x93), "CLLRTorpedo10");
-        clanEquipment.put(Long.valueOf(0x94), "CLLRTorpedo15");
-        clanEquipment.put(Long.valueOf(0x95), "CLLRTorpedo20");
-        clanEquipment.put(Long.valueOf(0x96), "CLSRT2");
-        clanEquipment.put(Long.valueOf(0x97), "CLSRT4");
-        clanEquipment.put(Long.valueOf(0x98), "CLSRT6");
-        clanEquipment.put(Long.valueOf(0xA8), "CLMicroPulseLaser");
-        clanEquipment.put(Long.valueOf(0xAD), "CLLightMG");
-        clanEquipment.put(Long.valueOf(0xAE), "CLHeavyMG");
-        clanEquipment.put(Long.valueOf(0xAF), "CLLightActiveProbe");
-        clanEquipment.put(Long.valueOf(0xB4), "CLLightTAG");
-        clanEquipment.put(Long.valueOf(0xFC), "CLATM3");
-        clanEquipment.put(Long.valueOf(0xFD), "CLATM6");
-        clanEquipment.put(Long.valueOf(0xFE), "CLATM9");
-        clanEquipment.put(Long.valueOf(0xFF), "CLATM12");
+        clanEquipment.put(0x0AL, "CLDouble Heat Sink");
+        clanEquipment.put(0x0BL, "Jump Jet");
+        clanEquipment.put(0x12L, "CLTargeting Computer");
+        clanEquipment.put(0x14L, "Endo Steel");
+        clanEquipment.put(0x15L, "Ferro-Fibrous");
+        clanEquipment.put(0x17L, "CLMASC");
+        clanEquipment.put(0x18L, "CLArtemisIV");
+        clanEquipment.put(0x33L, "CLERLargeLaser");
+        clanEquipment.put(0x34L, "CLERMediumLaser");
+        clanEquipment.put(0x35L, "CLERSmallLaser");
+        clanEquipment.put(0x36L, "CLERPPC");
+        clanEquipment.put(0x39L, "CLSmallLaser");
+        clanEquipment.put(0x37L, "CLFlamer");
+        clanEquipment.put(0x38L, "CLMediumLaser");
+        clanEquipment.put(0x3AL, "CLPPC");
+        clanEquipment.put(0x3CL, "CLLargePulseLaser");
+        clanEquipment.put(0x3DL, "CLMediumPulseLaser");
+        clanEquipment.put(0x3EL, "CLSmallPulseLaser");
+        clanEquipment.put(0x3FL, "CLAngelECMSuite");
+        clanEquipment.put(0x40L, "CLAntiMissileSystem");
+        clanEquipment.put(0x41L, "CLGaussRifle");
+        clanEquipment.put(0x42L, "CLLBXAC2");
+        clanEquipment.put(0x43L, "CLLBXAC5");
+        clanEquipment.put(0x44L, "CLLBXAC10");
+        clanEquipment.put(0x45L, "CLLBXAC20");
+        clanEquipment.put(0x46L, "CLMG");
+        clanEquipment.put(0x47L, "CLUltraAC2");
+        clanEquipment.put(0x48L, "CLUltraAC5");
+        clanEquipment.put(0x49L, "CLUltraAC10");
+        clanEquipment.put(0x4AL, "CLUltraAC20");
+        clanEquipment.put(0x4BL, "CLLRM5");
+        clanEquipment.put(0x4CL, "CLLRM10");
+        clanEquipment.put(0x4DL, "CLLRM15");
+        clanEquipment.put(0x4EL, "CLLRM20");
+        clanEquipment.put(0x4FL, "CLSRM2");
+        clanEquipment.put(0x50L, "CLSRM4");
+        clanEquipment.put(0x51L, "CLSRM6");
+        clanEquipment.put(0x52L, "CLStreakSRM2");
+        clanEquipment.put(0x53L, "CLStreakSRM4");
+        clanEquipment.put(0x54L, "CLStreakSRM6");
+        clanEquipment.put(0x55L, "CLArrowIVSystem");
+        clanEquipment.put(0x56L, "CLAntiPersonnelPod");
+        clanEquipment.put(0x57L, "CLActiveProbe");
+        clanEquipment.put(0x58L, "CLECMSuite");
+        clanEquipment.put(0x59L, "CLNarcBeacon");
+        clanEquipment.put(0x5AL, "CLTAG");
+        clanEquipment.put(0x5BL, "CLERMicroLaser");
+        clanEquipment.put(0x5CL, "CLLRM5 (OS)");
+        clanEquipment.put(0x5DL, "CLLRM10 (OS)");
+        clanEquipment.put(0x5EL, "CLLRM15 (OS)");
+        clanEquipment.put(0x5FL, "CLLRM20 (OS)");
+        clanEquipment.put(0x60L, "CLSRM2 (OS)");
+        clanEquipment.put(0x61L, "CLSRM4 (OS)");
+        clanEquipment.put(0x62L, "CLSRM6 (OS)");
+        clanEquipment.put(0x63L, "CLStreakSRM2 (OS)");
+        clanEquipment.put(0x64L, "CLStreakSRM4 (OS)");
+        clanEquipment.put(0x65L, "CLStreakSRM6 (OS)");
+        clanEquipment.put(0x66L, "CLVehicleFlamer");
+        clanEquipment.put(0x67L, "CLLongTomArtillery");
+        clanEquipment.put(0x68L, "CLSniperArtillery");
+        clanEquipment.put(0x69L, "CLThumperArtillery");
+        clanEquipment.put(0x6AL, "CLLRTorpedo5");
+        clanEquipment.put(0x6BL, "CLLRTorpedo10");
+        clanEquipment.put(0x6CL, "CLLRTorpedo15");
+        clanEquipment.put(0x6DL, "CLLRTorpedo20");
+        clanEquipment.put(0x6EL, "CLSRT2");
+        clanEquipment.put(0x6FL, "CLSRT4");
+        clanEquipment.put(0x70L, "CLSRT6");
+        clanEquipment.put(0x7BL, "CLLRM5 (OS)");
+        clanEquipment.put(0x7CL, "CLLRM10 (OS)");
+        clanEquipment.put(0x7DL, "CLLRM15 (OS)");
+        clanEquipment.put(0x7EL, "CLLRM20 (OS)");
+        clanEquipment.put(0x7FL, "CLSRM2 (OS)");
+        clanEquipment.put(0x80L, "CLHeavyLargeLaser");
+        clanEquipment.put(0x81L, "CLHeavyMediumLaser");
+        clanEquipment.put(0x82L, "CLHeavySmallLaser");
+        clanEquipment.put(0x85L, "CLVehicleFlamer"); // ?
+        clanEquipment.put(0x92L, "CLLRTorpedo5");
+        clanEquipment.put(0x93L, "CLLRTorpedo10");
+        clanEquipment.put(0x94L, "CLLRTorpedo15");
+        clanEquipment.put(0x95L, "CLLRTorpedo20");
+        clanEquipment.put(0x96L, "CLSRT2");
+        clanEquipment.put(0x97L, "CLSRT4");
+        clanEquipment.put(0x98L, "CLSRT6");
+        clanEquipment.put(0xA8L, "CLMicroPulseLaser");
+        clanEquipment.put(0xADL, "CLLightMG");
+        clanEquipment.put(0xAEL, "CLHeavyMG");
+        clanEquipment.put(0xAFL, "CLLightActiveProbe");
+        clanEquipment.put(0xB4L, "CLLightTAG");
+        clanEquipment.put(0xFCL, "CLATM3");
+        clanEquipment.put(0xFDL, "CLATM6");
+        clanEquipment.put(0xFEL, "CLATM9");
+        clanEquipment.put(0xFFL, "CLATM12");
 
         Hashtable<Long, String> clAmmo = new Hashtable<>();
         AMMO.put(HMVTechType.CLAN, clAmmo);
-        clAmmo.put(Long.valueOf(0x40), "CLAMS Ammo");
-        clAmmo.put(Long.valueOf(0x41), "CLGauss Ammo");
-        clAmmo.put(Long.valueOf(0x42), "CLLBXAC2 Ammo");
-        clAmmo.put(Long.valueOf(0x43), "CLLBXAC5 Ammo");
-        clAmmo.put(Long.valueOf(0x44), "CLLBXAC10 Ammo");
-        clAmmo.put(Long.valueOf(0x45), "CLLBXAC20 Ammo");
-        clAmmo.put(Long.valueOf(0x46), "CLMG Ammo (200)");
-        clAmmo.put(Long.valueOf(0x47), "CLUltraAC2 Ammo");
-        clAmmo.put(Long.valueOf(0x48), "CLUltraAC5 Ammo");
-        clAmmo.put(Long.valueOf(0x49), "CLUltraAC10 Ammo");
-        clAmmo.put(Long.valueOf(0x4A), "CLUltraAC20 Ammo");
-        clAmmo.put(Long.valueOf(0x4B), "CLLRM5 Ammo");
-        clAmmo.put(Long.valueOf(0x4C), "CLLRM10 Ammo");
-        clAmmo.put(Long.valueOf(0x4D), "CLLRM15 Ammo");
-        clAmmo.put(Long.valueOf(0x4E), "CLLRM20 Ammo");
-        clAmmo.put(Long.valueOf(0x4F), "CLSRM2 Ammo");
-        clAmmo.put(Long.valueOf(0x50), "CLSRM4 Ammo");
-        clAmmo.put(Long.valueOf(0x51), "CLSRM6 Ammo");
-        clAmmo.put(Long.valueOf(0x52), "CLStreakSRM2 Ammo");
-        clAmmo.put(Long.valueOf(0x53), "CLStreakSRM4 Ammo");
-        clAmmo.put(Long.valueOf(0x54), "CLStreakSRM6 Ammo");
-        clAmmo.put(Long.valueOf(0x55), "CLArrowIV Ammo");
-        clAmmo.put(Long.valueOf(0x66), "CLVehicleFlamer Ammo");
-        clAmmo.put(Long.valueOf(0x67), "CLLongTomArtillery Ammo");
-        clAmmo.put(Long.valueOf(0x68), "CLSniperArtillery Ammo");
-        clAmmo.put(Long.valueOf(0x69), "CLThumperArtillery Ammo");
-        clAmmo.put(Long.valueOf(0x6A), "CLTorpedoLRM5 Ammo");
-        clAmmo.put(Long.valueOf(0x6B), "CLTorpedoLRM10 Ammo");
-        clAmmo.put(Long.valueOf(0x6C), "CLTorpedoLRM15 Ammo");
-        clAmmo.put(Long.valueOf(0x6D), "CLTorpedoLRM20 Ammo");
-        clAmmo.put(Long.valueOf(0x6E), "CLTorpedoSRM2 Ammo");
-        clAmmo.put(Long.valueOf(0x6F), "CLTorpedoSRM4 Ammo");
-        clAmmo.put(Long.valueOf(0x70), "CLTorpedoSRM6 Ammo");
-        clAmmo.put(Long.valueOf(0x85), "CLVehicleFlamer Ammo"); // ?
-        clAmmo.put(Long.valueOf(0x92), "CLTorpedoLRM5 Ammo");
-        clAmmo.put(Long.valueOf(0x93), "CLTorpedoLRM10 Ammo");
-        clAmmo.put(Long.valueOf(0x94), "CLTorpedoLRM15 Ammo");
-        clAmmo.put(Long.valueOf(0x95), "CLTorpedoLRM20 Ammo");
-        clAmmo.put(Long.valueOf(0x96), "CLTorpedoSRM2 Ammo");
-        clAmmo.put(Long.valueOf(0x97), "CLTorpedoSRM4 Ammo");
-        clAmmo.put(Long.valueOf(0x98), "CLTorpedoSRM6 Ammo");
-        clAmmo.put(Long.valueOf(0xAD), "CLLightMG Ammo (200)");
-        clAmmo.put(Long.valueOf(0xAE), "CLHeavyMG Ammo (100)");
-        clAmmo.put(Long.valueOf(0xFC), "CLATM3 Ammo");
-        clAmmo.put(Long.valueOf(0xFD), "CLATM6 Ammo");
-        clAmmo.put(Long.valueOf(0xFE), "CLATM9 Ammo");
-        clAmmo.put(Long.valueOf(0xFF), "CLATM12 Ammo");
+        clAmmo.put(0x40L, "CLAMS Ammo");
+        clAmmo.put(0x41L, "CLGauss Ammo");
+        clAmmo.put(0x42L, "CLLBXAC2 Ammo");
+        clAmmo.put(0x43L, "CLLBXAC5 Ammo");
+        clAmmo.put(0x44L, "CLLBXAC10 Ammo");
+        clAmmo.put(0x45L, "CLLBXAC20 Ammo");
+        clAmmo.put(0x46L, "CLMG Ammo (200)");
+        clAmmo.put(0x47L, "CLUltraAC2 Ammo");
+        clAmmo.put(0x48L, "CLUltraAC5 Ammo");
+        clAmmo.put(0x49L, "CLUltraAC10 Ammo");
+        clAmmo.put(0x4AL, "CLUltraAC20 Ammo");
+        clAmmo.put(0x4BL, "CLLRM5 Ammo");
+        clAmmo.put(0x4CL, "CLLRM10 Ammo");
+        clAmmo.put(0x4DL, "CLLRM15 Ammo");
+        clAmmo.put(0x4EL, "CLLRM20 Ammo");
+        clAmmo.put(0x4FL, "CLSRM2 Ammo");
+        clAmmo.put(0x50L, "CLSRM4 Ammo");
+        clAmmo.put(0x51L, "CLSRM6 Ammo");
+        clAmmo.put(0x52L, "CLStreakSRM2 Ammo");
+        clAmmo.put(0x53L, "CLStreakSRM4 Ammo");
+        clAmmo.put(0x54L, "CLStreakSRM6 Ammo");
+        clAmmo.put(0x55L, "CLArrowIV Ammo");
+        clAmmo.put(0x66L, "CLVehicleFlamer Ammo");
+        clAmmo.put(0x67L, "CLLongTomArtillery Ammo");
+        clAmmo.put(0x68L, "CLSniperArtillery Ammo");
+        clAmmo.put(0x69L, "CLThumperArtillery Ammo");
+        clAmmo.put(0x6AL, "CLTorpedoLRM5 Ammo");
+        clAmmo.put(0x6BL, "CLTorpedoLRM10 Ammo");
+        clAmmo.put(0x6CL, "CLTorpedoLRM15 Ammo");
+        clAmmo.put(0x6DL, "CLTorpedoLRM20 Ammo");
+        clAmmo.put(0x6EL, "CLTorpedoSRM2 Ammo");
+        clAmmo.put(0x6FL, "CLTorpedoSRM4 Ammo");
+        clAmmo.put(0x70L, "CLTorpedoSRM6 Ammo");
+        clAmmo.put(0x85L, "CLVehicleFlamer Ammo"); // ?
+        clAmmo.put(0x92L, "CLTorpedoLRM5 Ammo");
+        clAmmo.put(0x93L, "CLTorpedoLRM10 Ammo");
+        clAmmo.put(0x94L, "CLTorpedoLRM15 Ammo");
+        clAmmo.put(0x95L, "CLTorpedoLRM20 Ammo");
+        clAmmo.put(0x96L, "CLTorpedoSRM2 Ammo");
+        clAmmo.put(0x97L, "CLTorpedoSRM4 Ammo");
+        clAmmo.put(0x98L, "CLTorpedoSRM6 Ammo");
+        clAmmo.put(0xADL, "CLLightMG Ammo (200)");
+        clAmmo.put(0xAEL, "CLHeavyMG Ammo (100)");
+        clAmmo.put(0xFCL, "CLATM3 Ammo");
+        clAmmo.put(0xFDL, "CLATM6 Ammo");
+        clAmmo.put(0xFEL, "CLATM9 Ammo");
+        clAmmo.put(0xFFL, "CLATM12 Ammo");
 
         // mixed *seems* to be the same as IS-base for HMP files
         Hashtable<Long, String> mixedEquipment = new Hashtable<>(isEquipment);
         EQUIPMENT.put(HMVTechType.MIXED, mixedEquipment);
-        mixedEquipment.put(Long.valueOf(0x58), "CLERMicroLaser");
-        mixedEquipment.put(Long.valueOf(0x5E), "CLLightMG");
-        mixedEquipment.put(Long.valueOf(0x5F), "CLHeavyMG");
-        mixedEquipment.put(Long.valueOf(0x64), "CLLightActiveProbe");
-        mixedEquipment.put(Long.valueOf(0x65), "CLLightTAG");
-        mixedEquipment.put(Long.valueOf(0xA7), "CLERLargeLaser");
-        mixedEquipment.put(Long.valueOf(0xA8), "CLERMediumLaser");
-        mixedEquipment.put(Long.valueOf(0xA9), "CLERSmallLaser");
+        mixedEquipment.put(0x58L, "CLERMicroLaser");
+        mixedEquipment.put(0x5EL, "CLLightMG");
+        mixedEquipment.put(0x5FL, "CLHeavyMG");
+        mixedEquipment.put(0x64L, "CLLightActiveProbe");
+        mixedEquipment.put(0x65L, "CLLightTAG");
+        mixedEquipment.put(0xA7L, "CLERLargeLaser");
+        mixedEquipment.put(0xA8L, "CLERMediumLaser");
+        mixedEquipment.put(0xA9L, "CLERSmallLaser");
 
-        mixedEquipment.put(Long.valueOf(0xAA), "CLERPPC");
-        mixedEquipment.put(Long.valueOf(0xAB), "CLFlamer");
+        mixedEquipment.put(0xAAL, "CLERPPC");
+        mixedEquipment.put(0xABL, "CLFlamer");
 
-        mixedEquipment.put(Long.valueOf(0xB0), "CLLargePulseLaser");
-        mixedEquipment.put(Long.valueOf(0xB1), "CLMediumPulseLaser");
-        mixedEquipment.put(Long.valueOf(0xB2), "CLSmallPulseLaser");
+        mixedEquipment.put(0xB0L, "CLLargePulseLaser");
+        mixedEquipment.put(0xB1L, "CLMediumPulseLaser");
+        mixedEquipment.put(0xB2L, "CLSmallPulseLaser");
 
-        mixedEquipment.put(Long.valueOf(0xB4), "CLAntiMissileSystem");
-        mixedEquipment.put(Long.valueOf(0xB5), "CLGaussRifle");
-        mixedEquipment.put(Long.valueOf(0xB6), "CLLBXAC2");
-        mixedEquipment.put(Long.valueOf(0xB7), "CLLBXAC5");
-        mixedEquipment.put(Long.valueOf(0xB8), "CLLBXAC10");
-        mixedEquipment.put(Long.valueOf(0xB9), "CLLBXAC20");
-        mixedEquipment.put(Long.valueOf(0xBA), "CLMG");
-        mixedEquipment.put(Long.valueOf(0xBB), "CLUltraAC2");
-        mixedEquipment.put(Long.valueOf(0xBC), "CLUltraAC5");
-        mixedEquipment.put(Long.valueOf(0xBD), "CLUltraAC10");
-        mixedEquipment.put(Long.valueOf(0xBE), "CLUltraAC20");
-        mixedEquipment.put(Long.valueOf(0xBF), "CLLRM5");
-        mixedEquipment.put(Long.valueOf(0xC0), "CLLRM10");
-        mixedEquipment.put(Long.valueOf(0xC1), "CLLRM15");
-        mixedEquipment.put(Long.valueOf(0xC2), "CLLRM20");
-        mixedEquipment.put(Long.valueOf(0xC3), "CLSRM2");
-        mixedEquipment.put(Long.valueOf(0xC4), "CLSRM4");
-        mixedEquipment.put(Long.valueOf(0xC5), "CLSRM6");
-        mixedEquipment.put(Long.valueOf(0xC6), "CLStreakSRM2");
-        mixedEquipment.put(Long.valueOf(0xC7), "CLStreakSRM4");
-        mixedEquipment.put(Long.valueOf(0xC8), "CLStreakSRM6");
-        mixedEquipment.put(Long.valueOf(0xC9), "CLArrowIVSystem");
-        mixedEquipment.put(Long.valueOf(0xCA), "CLAntiPersonnelPod");
-        mixedEquipment.put(Long.valueOf(0xCB), "CLActiveProbe");
-        mixedEquipment.put(Long.valueOf(0xCC), "CLECMSuite");
-        mixedEquipment.put(Long.valueOf(0xCD), "CLNarcBeacon");
-        mixedEquipment.put(Long.valueOf(0xCE), "CLTAG");
+        mixedEquipment.put(0xB4L, "CLAntiMissileSystem");
+        mixedEquipment.put(0xB5L, "CLGaussRifle");
+        mixedEquipment.put(0xB6L, "CLLBXAC2");
+        mixedEquipment.put(0xB7L, "CLLBXAC5");
+        mixedEquipment.put(0xB8L, "CLLBXAC10");
+        mixedEquipment.put(0xB9L, "CLLBXAC20");
+        mixedEquipment.put(0xBAL, "CLMG");
+        mixedEquipment.put(0xBBL, "CLUltraAC2");
+        mixedEquipment.put(0xBCL, "CLUltraAC5");
+        mixedEquipment.put(0xBDL, "CLUltraAC10");
+        mixedEquipment.put(0xBEL, "CLUltraAC20");
+        mixedEquipment.put(0xBFL, "CLLRM5");
+        mixedEquipment.put(0xC0L, "CLLRM10");
+        mixedEquipment.put(0xC1L, "CLLRM15");
+        mixedEquipment.put(0xC2L, "CLLRM20");
+        mixedEquipment.put(0xC3L, "CLSRM2");
+        mixedEquipment.put(0xC4L, "CLSRM4");
+        mixedEquipment.put(0xC5L, "CLSRM6");
+        mixedEquipment.put(0xC6L, "CLStreakSRM2");
+        mixedEquipment.put(0xC7L, "CLStreakSRM4");
+        mixedEquipment.put(0xC8L, "CLStreakSRM6");
+        mixedEquipment.put(0xC9L, "CLArrowIVSystem");
+        mixedEquipment.put(0xCAL, "CLAntiPersonnelPod");
+        mixedEquipment.put(0xCBL, "CLActiveProbe");
+        mixedEquipment.put(0xCCL, "CLECMSuite");
+        mixedEquipment.put(0xCDL, "CLNarcBeacon");
+        mixedEquipment.put(0xCEL, "CLTAG");
 
-        mixedEquipment.put(Long.valueOf(0xD0), "CLLRM5 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD1), "CLLRM10 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD2), "CLLRM15 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD3), "CLLRM20 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD4), "CLSRM2 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD5), "CLSRM2 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD6), "CLSRM2 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD7), "CLStreakSRM2 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD8), "CLStreakSRM4 (OS)");
-        mixedEquipment.put(Long.valueOf(0xD9), "CLStreakSRM6 (OS)");
-        mixedEquipment.put(Long.valueOf(0xDA), "CLVehicleFlamer");
-        mixedEquipment.put(Long.valueOf(0xDB), "CLLongTomArtillery");
-        mixedEquipment.put(Long.valueOf(0xDC), "CLSniperArtillery");
-        mixedEquipment.put(Long.valueOf(0xDD), "CLThumperArtillery");
-        mixedEquipment.put(Long.valueOf(0xDE), "CLLRTorpedo5");
-        mixedEquipment.put(Long.valueOf(0xDF), "CLLRTorpedo10");
-        mixedEquipment.put(Long.valueOf(0xE0), "CLLRTorpedo15");
-        mixedEquipment.put(Long.valueOf(0xE1), "CLLRTorpedo20");
-        mixedEquipment.put(Long.valueOf(0xE2), "CLSRT2");
-        mixedEquipment.put(Long.valueOf(0xE3), "CLSRT4");
-        mixedEquipment.put(Long.valueOf(0xE4), "CLSRT6");
+        mixedEquipment.put(0xD0L, "CLLRM5 (OS)");
+        mixedEquipment.put(0xD1L, "CLLRM10 (OS)");
+        mixedEquipment.put(0xD2L, "CLLRM15 (OS)");
+        mixedEquipment.put(0xD3L, "CLLRM20 (OS)");
+        mixedEquipment.put(0xD4L, "CLSRM2 (OS)");
+        mixedEquipment.put(0xD5L, "CLSRM2 (OS)");
+        mixedEquipment.put(0xD6L, "CLSRM2 (OS)");
+        mixedEquipment.put(0xD7L, "CLStreakSRM2 (OS)");
+        mixedEquipment.put(0xD8L, "CLStreakSRM4 (OS)");
+        mixedEquipment.put(0xD9L, "CLStreakSRM6 (OS)");
+        mixedEquipment.put(0xDAL, "CLVehicleFlamer");
+        mixedEquipment.put(0xDBL, "CLLongTomArtillery");
+        mixedEquipment.put(0xDCL, "CLSniperArtillery");
+        mixedEquipment.put(0xDDL, "CLThumperArtillery");
+        mixedEquipment.put(0xDEL, "CLLRTorpedo5");
+        mixedEquipment.put(0xDFL, "CLLRTorpedo10");
+        mixedEquipment.put(0xE0L, "CLLRTorpedo15");
+        mixedEquipment.put(0xE1L, "CLLRTorpedo20");
+        mixedEquipment.put(0xE2L, "CLSRT2");
+        mixedEquipment.put(0xE3L, "CLSRT4");
+        mixedEquipment.put(0xE4L, "CLSRT6");
 
-        mixedEquipment.put(Long.valueOf(0xF4), "CLHeavyLargeLaser");
-        mixedEquipment.put(Long.valueOf(0xF5), "CLHeavyMediumLaser");
-        mixedEquipment.put(Long.valueOf(0xF6), "CLHeavySmallLaser");
+        mixedEquipment.put(0xF4L, "CLHeavyLargeLaser");
+        mixedEquipment.put(0xF5L, "CLHeavyMediumLaser");
+        mixedEquipment.put(0xF6L, "CLHeavySmallLaser");
 
-        mixedEquipment.put(Long.valueOf(0xFC), "CLATM3");
-        mixedEquipment.put(Long.valueOf(0xFD), "CLATM6");
-        mixedEquipment.put(Long.valueOf(0xFE), "CLATM9");
-        mixedEquipment.put(Long.valueOf(0xFF), "CLATM12");
+        mixedEquipment.put(0xFCL, "CLATM3");
+        mixedEquipment.put(0xFDL, "CLATM6");
+        mixedEquipment.put(0xFEL, "CLATM9");
+        mixedEquipment.put(0xFFL, "CLATM12");
 
         // but ammo *seems* to use the same numbers as the weapon it goes with
         Hashtable<Long, String> mixedAmmo = new Hashtable<>(isAmmo);
         AMMO.put(HMVTechType.MIXED, mixedAmmo);
-        mixedAmmo.put(Long.valueOf(0x5E), "CLLightMG Ammo");
-        mixedAmmo.put(Long.valueOf(0x5F), "CLHeavyMG Ammo");
-        mixedAmmo.put(Long.valueOf(0xB4), "CLAntiMissileSystem Ammo");
-        mixedAmmo.put(Long.valueOf(0xB5), "CLGaussRifle Ammo");
-        mixedAmmo.put(Long.valueOf(0xB6), "CLLBXAC2 Ammo");
-        mixedAmmo.put(Long.valueOf(0xB7), "CLLBXAC5 Ammo");
-        mixedAmmo.put(Long.valueOf(0xB8), "CLLBXAC10 Ammo");
-        mixedAmmo.put(Long.valueOf(0xB9), "CLLBXAC20 Ammo");
-        mixedAmmo.put(Long.valueOf(0xBA), "CLMG Ammo");
-        mixedAmmo.put(Long.valueOf(0xBB), "CLUltraAC2 Ammo");
-        mixedAmmo.put(Long.valueOf(0xBC), "CLUltraAC5 Ammo");
-        mixedAmmo.put(Long.valueOf(0xBD), "CLUltraAC10 Ammo");
-        mixedAmmo.put(Long.valueOf(0xBE), "CLUltraAC20 Ammo");
-        mixedAmmo.put(Long.valueOf(0xBF), "CLLRM5 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC0), "CLLRM10 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC1), "CLLRM15 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC2), "CLLRM20 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC3), "CLSRM2 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC4), "CLSRM4 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC5), "CLSRM6 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC6), "CLStreakSRM2 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC7), "CLStreakSRM4 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC8), "CLStreakSRM6 Ammo");
-        mixedAmmo.put(Long.valueOf(0xC9), "CLArrowIVSystem Ammo");
-        mixedAmmo.put(Long.valueOf(0xCD), "CLNarcBeacon Ammo");
-        mixedAmmo.put(Long.valueOf(0xDA), "CLVehicleFlamer Ammo");
-        mixedAmmo.put(Long.valueOf(0xDB), "CLLongTomArtillery Ammo");
-        mixedAmmo.put(Long.valueOf(0xDC), "CLSniperArtillery Ammo");
-        mixedAmmo.put(Long.valueOf(0xDD), "CLThumperArtillery Ammo");
-        mixedAmmo.put(Long.valueOf(0xDE), "CLLRTorpedo5 Ammo");
-        mixedAmmo.put(Long.valueOf(0xDF), "CLLRTorpedo10 Ammo");
-        mixedAmmo.put(Long.valueOf(0xE0), "CLLRTorpedo15 Ammo");
-        mixedAmmo.put(Long.valueOf(0xE1), "CLLRTorpedo20 Ammo");
-        mixedAmmo.put(Long.valueOf(0xE2), "CLSRT2 Ammo");
-        mixedAmmo.put(Long.valueOf(0xE3), "CLSRT4 Ammo");
-        mixedAmmo.put(Long.valueOf(0xE4), "CLSRT6 Ammo");
+        mixedAmmo.put(0x5EL, "CLLightMG Ammo");
+        mixedAmmo.put(0x5FL, "CLHeavyMG Ammo");
+        mixedAmmo.put(0xB4L, "CLAntiMissileSystem Ammo");
+        mixedAmmo.put(0xB5L, "CLGaussRifle Ammo");
+        mixedAmmo.put(0xB6L, "CLLBXAC2 Ammo");
+        mixedAmmo.put(0xB7L, "CLLBXAC5 Ammo");
+        mixedAmmo.put(0xB8L, "CLLBXAC10 Ammo");
+        mixedAmmo.put(0xB9L, "CLLBXAC20 Ammo");
+        mixedAmmo.put(0xBAL, "CLMG Ammo");
+        mixedAmmo.put(0xBBL, "CLUltraAC2 Ammo");
+        mixedAmmo.put(0xBCL, "CLUltraAC5 Ammo");
+        mixedAmmo.put(0xBDL, "CLUltraAC10 Ammo");
+        mixedAmmo.put(0xBEL, "CLUltraAC20 Ammo");
+        mixedAmmo.put(0xBFL, "CLLRM5 Ammo");
+        mixedAmmo.put(0xC0L, "CLLRM10 Ammo");
+        mixedAmmo.put(0xC1L, "CLLRM15 Ammo");
+        mixedAmmo.put(0xC2L, "CLLRM20 Ammo");
+        mixedAmmo.put(0xC3L, "CLSRM2 Ammo");
+        mixedAmmo.put(0xC4L, "CLSRM4 Ammo");
+        mixedAmmo.put(0xC5L, "CLSRM6 Ammo");
+        mixedAmmo.put(0xC6L, "CLStreakSRM2 Ammo");
+        mixedAmmo.put(0xC7L, "CLStreakSRM4 Ammo");
+        mixedAmmo.put(0xC8L, "CLStreakSRM6 Ammo");
+        mixedAmmo.put(0xC9L, "CLArrowIVSystem Ammo");
+        mixedAmmo.put(0xCDL, "CLNarcBeacon Ammo");
+        mixedAmmo.put(0xDAL, "CLVehicleFlamer Ammo");
+        mixedAmmo.put(0xDBL, "CLLongTomArtillery Ammo");
+        mixedAmmo.put(0xDCL, "CLSniperArtillery Ammo");
+        mixedAmmo.put(0xDDL, "CLThumperArtillery Ammo");
+        mixedAmmo.put(0xDEL, "CLLRTorpedo5 Ammo");
+        mixedAmmo.put(0xDFL, "CLLRTorpedo10 Ammo");
+        mixedAmmo.put(0xE0L, "CLLRTorpedo15 Ammo");
+        mixedAmmo.put(0xE1L, "CLLRTorpedo20 Ammo");
+        mixedAmmo.put(0xE2L, "CLSRT2 Ammo");
+        mixedAmmo.put(0xE3L, "CLSRT4 Ammo");
+        mixedAmmo.put(0xE4L, "CLSRT6 Ammo");
 
     }
 
@@ -1121,7 +1104,7 @@ public class HmvFile implements IMechLoader {
 
     private String getEquipmentName(Long equipment, HMVTechType techType) {
         if (equipment.longValue() > Short.MAX_VALUE) {
-            equipment = Long.valueOf(equipment.longValue() & 0xFFFF);
+            equipment = equipment.longValue() & 0xFFFF;
         }
         final long value = equipment.longValue();
 
@@ -1175,10 +1158,10 @@ public class HmvFile implements IMechLoader {
     }
 
     private String getAmmoName(Long ammo, HMVTechType techType) {
-        if (ammo.longValue() > Short.MAX_VALUE) {
-            ammo = Long.valueOf(ammo.longValue() & 0xFFFF);
+        if (ammo > Short.MAX_VALUE) {
+            ammo = ammo & 0xFFFF;
         }
-        final long value = ammo.longValue();
+        final long value = ammo;
 
         String ammoName = null;
         try {
@@ -1215,13 +1198,6 @@ public class HmvFile implements IMechLoader {
 
         return ammoType;
     }
-    /*
-     * public static void main(String[] args) throws Exception { for (int i = 0;
-     * i < args.length; i++) { HmvFile hmvFile = new HmvFile(new
-     * FileInputStream(args[i])); System.out.println(new
-     * megamek.client.ui.AWT.MechView(hmvFile.getEntity()).getMechReadout()); }
-     * }
-     */
 }
 
 abstract class HMVType {
@@ -1247,7 +1223,7 @@ abstract class HMVType {
             return false;
         }
         final HMVType other = (HMVType) obj;
-        return Objects.equals(name, other.name) && Objects.equals(id, other.id);
+        return Objects.equals(name, other.name) && (id == other.id);
     }
 
     @Override
@@ -1265,17 +1241,14 @@ class HMVEngineType extends HMVType {
 
     public static final HMVEngineType ICE = new HMVEngineType("I.C.E.", 0);
     public static final HMVEngineType FUSION = new HMVEngineType("Fusion", 1);
-    public static final HMVEngineType XLFUSION = new HMVEngineType("XL Fusion", 2);
-    public static final HMVEngineType XXLFUSION = new HMVEngineType("XXL Fusion", 3);
-    public static final HMVEngineType LIGHTFUSION = new HMVEngineType("Light Fusion", 4);
 
     private HMVEngineType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static HMVEngineType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -1283,19 +1256,14 @@ class HMVArmorType extends HMVType {
     public static final Hashtable<Integer, HMVArmorType> types = new Hashtable<>();
 
     public static final HMVArmorType STANDARD = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), 0);
-    public static final HMVArmorType FERRO = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), 1);
-
-    // public static final HMVArmorType COMPACT = new HMVArmorType("Compact",
-    // 2);
-    // public static final HMVArmorType LASER = new HMVArmorType("Laser", 3);
 
     private HMVArmorType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static HMVArmorType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -1308,11 +1276,11 @@ class HMVTechType extends HMVType {
 
     private HMVTechType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static HMVTechType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -1329,15 +1297,14 @@ class HMVMovementType extends HMVType {
 
     private HMVMovementType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static HMVMovementType getType(int i) {
         // Only pay attention to the movement type bits.
         i &= 1016;
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
-
 }
 
 class HMVWeaponLocation extends HMVType {
@@ -1352,26 +1319,10 @@ class HMVWeaponLocation extends HMVType {
 
     private HMVWeaponLocation(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static HMVWeaponLocation getType(int i) {
-        return types.get(Integer.valueOf(i));
-    }
-}
-
-class HMVStructureType extends HMVType {
-    public static final Hashtable<Integer, HMVStructureType> types = new Hashtable<>();
-
-    public static final HMVStructureType STANDARD = new HMVStructureType("Standard", 179);
-    public static final HMVStructureType REINFORCED = new HMVStructureType("Reinforced", 193);
-
-    private HMVStructureType(String name, int id) {
-        super(name, id);
-        types.put(Integer.valueOf(id), this);
-    }
-
-    public static HMVStructureType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }

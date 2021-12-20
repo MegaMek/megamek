@@ -92,7 +92,7 @@ public class GameOptionsTest {
                 case IOption.STRING:
                 case IOption.CHOICE:
                 case IOption.INTEGER:
-                    assertTrue(io.getValue().toString().equals(""+count));
+                    assertEquals(io.getValue().toString(), "" + count);
                     break;
                 case IOption.BOOLEAN:
                     if (count%2==0) {
@@ -102,7 +102,7 @@ public class GameOptionsTest {
                     }
                     break;
                 case IOption.FLOAT:
-                    assertEquals(Float.valueOf(""+count), io.floatValue(), 0.0f);
+                    assertEquals(Float.parseFloat(""+count), io.floatValue(), 0.0f);
                     break;
             }
             

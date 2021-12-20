@@ -526,8 +526,8 @@ public class TestMech extends TestEntity {
         }
 
         allocation.addElement(mounted);
-        allocation.addElement(Integer.valueOf(criticals));
-        allocation.addElement(Integer.valueOf(count));
+        allocation.addElement(criticals);
+        allocation.addElement(count);
         return false;
     }
 

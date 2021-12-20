@@ -142,20 +142,20 @@ public class ComputeECM {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vEnemyECMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vFriendlyECCMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasBAP(false) && (entPos != null)) {
                 vFriendlyBAPCoords.addElement(entPos);
-                vFriendlyBAPRanges.addElement(Integer.valueOf(ent.getBAPRange()));
-                vFriendlyBAPFacings.addElement(Integer.valueOf(ent.getFacing()));
+                vFriendlyBAPRanges.addElement(ent.getBAPRange());
+                vFriendlyBAPFacings.addElement(ent.getFacing());
             }
     
-            // TODO: do docked dropships give ECM benefit?
+            // TODO: do docked DropShips give ECM benefit?
         }
     
         // none? get out of here
@@ -265,17 +265,17 @@ public class ComputeECM {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
                 && ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vEnemyECMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vFriendlyECCMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasBAP(false) && (entPos != null)) {
                 vFriendlyBAPCoords.addElement(entPos);
-                vFriendlyBAPRanges.addElement(Integer.valueOf(ent.getBAPRange()));
-                vFriendlyBAPFacings.addElement(Integer.valueOf(ent.getFacing()));
+                vFriendlyBAPRanges.addElement(ent.getBAPRange());
+                vFriendlyBAPFacings.addElement(ent.getFacing());
     
             }
             // TODO: do docked dropships give ECM benefit?
@@ -302,7 +302,7 @@ public class ComputeECM {
             // first, subtract 1 for each enemy ECM that affects us
             Enumeration<Integer> ranges = vEnemyECMRanges.elements();
             for (Coords enemyECMCoords : vEnemyECMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(enemyECMCoords);
                 if (nDist <= range) {
                     ecmStatus++;
@@ -311,7 +311,7 @@ public class ComputeECM {
             // now check for friendly small craft eccm
             ranges = vFriendlyECCMRanges.elements();
             for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyECCMCoords);
                 if (nDist <= range) {
                     ecmStatus--;
@@ -321,12 +321,11 @@ public class ComputeECM {
             ranges = vFriendlyBAPRanges.elements();
             Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
             for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyBAPCoords);
-                int facing = facings.nextElement().intValue();
+                int facing = facings.nextElement();
                 if (nDist <= range) {
-                    // still might need to check for right arc if using medium
-                    // range
+                    // still might need to check for right arc if using medium range
                     if ((range < 7)
                         || Compute.isInArc(friendlyBAPCoords, facing, c,
                                            Compute.ARC_NOSE)) {
@@ -342,7 +341,7 @@ public class ComputeECM {
             } else if ((x % 3) == 2) {
                 // if we are looking at the second split hex then both this one
                 // and the prior need to have ECM
-                // becaue the advantage should go to the defender
+                // because the advantage should go to the defender
                 if ((ecmStatus > 0) && (prevEcmStatus > 0)) {
                     totalECM++;
                 }
@@ -404,7 +403,7 @@ public class ComputeECM {
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...
-        Collections.sort(allEcmInfo, ecmComparator);
+        allEcmInfo.sort(ecmComparator);
         Collections.reverse(allEcmInfo);
         
         

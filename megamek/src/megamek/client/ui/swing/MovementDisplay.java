@@ -794,22 +794,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setRamEnabled(ce.canRam());
 
         if (isInfantry) {
-            if (clientgui.getClient().getGame()
-                         .containsMinefield(ce.getPosition())) {
-                setClearEnabled(true);
-            } else {
-                setClearEnabled(false);
-            }
+            setClearEnabled(clientgui.getClient().getGame().containsMinefield(ce.getPosition()));
         } else {
             setClearEnabled(false);
         }
+
         if ((ce.getMovementMode() == EntityMovementMode.HYDROFOIL)
-            || (ce.getMovementMode() == EntityMovementMode.NAVAL)
-            || (ce.getMovementMode() == EntityMovementMode.SUBMARINE)
-            || (ce.getMovementMode() == EntityMovementMode.INF_UMU)
-            || (ce.getMovementMode() == EntityMovementMode.VTOL)
-            || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
-            || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
+                || (ce.getMovementMode() == EntityMovementMode.NAVAL)
+                || (ce.getMovementMode() == EntityMovementMode.SUBMARINE)
+                || (ce.getMovementMode() == EntityMovementMode.INF_UMU)
+                || (ce.getMovementMode() == EntityMovementMode.VTOL)
+                || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
+                || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         } else {
             getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(true);
@@ -1256,9 +1252,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     MiscType.F_JET_BOOSTER))) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString(
-                                "MovementDisplay.ConfirmMoveRoll",
-                                new Object[] { Integer.valueOf(ce().getMASCTarget()) }),
+                        Messages.getString("MovementDisplay.ConfirmMoveRoll", ce().getMASCTarget()),
                         true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
@@ -1313,23 +1307,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Should we nag about taking fall damage with mechanical jump boosters?
         if (cmd.shouldMechanicalJumpCauseFallDamage()
-                && GUIPreferences.getInstance()
-                        .getNagForMechanicalJumpFallDamage()) {
+                && GUIPreferences.getInstance().getNagForMechanicalJumpFallDamage()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString(
-                            "MovementDisplay.ConfirmMechanicalJumpFallDamage",
-                            new Object[] {
-                                    cmd.getJumpMaxElevationChange(),
-                                    ce().getJumpMP(),
-                                    cmd.getJumpMaxElevationChange()
-                                            - ce().getJumpMP() }), true);
+                    Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
+                            cmd.getJumpMaxElevationChange(), ce().getJumpMP(),
+                            cmd.getJumpMaxElevationChange() - ce().getJumpMP()), true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance()
-                            .setNagForMechanicalJumpFallDamage(false);
+                    GUIPreferences.getInstance().setNagForMechanicalJumpFallDamage(false);
                 }
             } else {
                 return;
@@ -1341,9 +1329,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
-                   
-                            check, true);
+                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") + check,
+                    true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1366,11 +1353,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             }
             if (unsecure) {
-                ConfirmDialog nag = new ConfirmDialog(
-                        clientgui.frame,
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.UnsecuredTakeoff"),
-                        true);
+                        Messages.getString("MovementDisplay.UnsecuredTakeoff"), true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
@@ -4641,19 +4626,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
 
             // need to choose a mine
-            List<Minefield> mfs = clientgui.getClient().getGame()
-                    .getMinefields(ce.getPosition());
+            List<Minefield> mfs = clientgui.getClient().getGame().getMinefields(ce.getPosition());
             String[] choices = new String[mfs.size()];
             for (int loop = 0; loop < choices.length; loop++) {
-                choices[loop] = Minefield.getDisplayableName(mfs.get(loop)
-                        .getType());
+                choices[loop] = Minefield.getDisplayableName(mfs.get(loop).getType());
             }
-            String input = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui,
-                            Messages.getString("MovementDisplay.ChooseMinefieldDialog.message"),
-                            Messages.getString("MovementDisplay.ChooseMinefieldDialog.title"),
-                            JOptionPane.QUESTION_MESSAGE, null, choices, null);
+            String input = (String) JOptionPane.showInputDialog(clientgui,
+                    Messages.getString("MovementDisplay.ChooseMinefieldDialog.message"),
+                    Messages.getString("MovementDisplay.ChooseMinefieldDialog.title"),
+                    JOptionPane.QUESTION_MESSAGE, null, choices, null);
             Minefield mf = null;
             if (input != null) {
                 for (int loop = 0; loop < choices.length; loop++) {
@@ -4663,12 +4644,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     }
                 }
             }
-            String title = Messages
-                    .getString("MovementDisplay.ClearMinefieldDialog.title");
-            String msg = Messages.getString(
-                    "MovementDisplay.ClearMinefieldDialog.message",
-                    new Object[] {
-                    Integer.valueOf(clear), Integer.valueOf(boom) });
+            String title = Messages.getString("MovementDisplay.ClearMinefieldDialog.title");
+            String msg = Messages.getString("MovementDisplay.ClearMinefieldDialog.message", clear, boom);
             if ((null != mf) && clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();
@@ -4707,10 +4684,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
             if (opts.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                     && (ce.getWalkMP() > 2)) {
-                ConfirmDialog response = clientgui
-                        .doYesNoBotherDialog(
-                                Messages.getString("MovementDisplay.CarefulStand.title"),
-                                Messages.getString("MovementDisplay.CarefulStand.message"));
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(
+                        Messages.getString("MovementDisplay.CarefulStand.title"),
+                        Messages.getString("MovementDisplay.CarefulStand.message"));
                 if (response.getAnswer()) {
                     ce.setCarefulStand(true);
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
@@ -5280,17 +5256,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         Iterator<Entity> entities = clientgui.getClient().getSelectedEntities(
                 new EntitySelector() {
                     private final Game game = clientgui.getClient().getGame();
-                    private final GameTurn turn = clientgui.getClient()
-                            .getGame().getTurn();
-                    private final int ownerId = clientgui.getClient()
-                            .getLocalPlayer().getId();
+                    private final GameTurn turn = clientgui.getClient().getGame().getTurn();
+                    private final int ownerId = clientgui.getClient().getLocalPlayer().getId();
 
                     @Override
                     public boolean accept(Entity acc) {
-                        if (turn.isValid(ownerId, acc, game)) {
-                            return true;
-                        }
-                        return false;
+                        return turn.isValid(ownerId, acc, game);
                     }
                 });
         while (entities.hasNext()) {
@@ -5301,25 +5272,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         names = new String[stranded.size()];
         for (int index = 0; index < names.length; index++) {
             entity = stranded.elementAt(index);
-            transport = clientgui.getClient()
-                                 .getEntity(entity.getTransportId());
+            transport = clientgui.getClient().getEntity(entity.getTransportId());
             String buffer;
             if (null == transport) {
                 buffer = entity.getDisplayName();
             } else {
-                buffer = Messages.getString("MovementDisplay.EntityAt",
-                        new Object[] { entity.getDisplayName(),
-                                transport.getPosition().getBoardNum() });
+                buffer = Messages.getString("MovementDisplay.EntityAt", entity.getDisplayName(),
+                        transport.getPosition().getBoardNum());
             }
-            names[index] = buffer.toString();
+            names[index] = buffer;
         }
 
         // Show the choices to the player
-        int[] indexes = clientgui
-                .doChoiceDialog(
-                        Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"),
-                        Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.message"),
-                        names);
+        int[] indexes = clientgui.doChoiceDialog(
+                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"),
+                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.message"),
+                names);
 
         // Convert the indexes into selected entity IDs and tell the server.
         int[] ids = null;
@@ -5359,8 +5327,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().getGame().getTurn()
-                         .isValidEntity(e, clientgui.getClient().getGame())) {
+            if (clientgui.getClient().getGame().getTurn().isValidEntity(e, clientgui.getClient().getGame())) {
                 selectEntity(e.getId());
             }
         } else {
@@ -5389,8 +5356,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setForwardIniEnabled(boolean enabled) {
         // forward initiative can only be done if Teams have an initiative!
-        if (clientgui.getClient().getGame().getOptions()
-                     .booleanOption(OptionsConstants.BASE_TEAM_INITIATIVE)) {
+        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_TEAM_INITIATIVE)) {
             getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(enabled);
             clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_FORWARD_INI.getCmd(), enabled);
         } else { // turn them off regardless what is said!
@@ -5411,7 +5377,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setMountEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_MOUNT).setEnabled(enabled);
-        // clientgui.getMenuBar().setMoveMountEnabled(enabled);
     }
     
     private void setTowEnabled(boolean enabled) {
@@ -5570,8 +5535,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setTraitorEnabled(boolean enabled) {
-     // Menu entry does not exist
-//        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TRAITOR.getCmd(), enabled);
+
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {
@@ -5591,8 +5555,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setDockEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DOCK).setEnabled(enabled);
-        // Menu entry does not exist
-//        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DOCK.getCmd(), enabled);
     }
 
     private void setRecoverEnabled(boolean enabled) {
@@ -5602,8 +5564,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setDropEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DROP).setEnabled(enabled);
-        // Menu entry does not exist
-        // clientgui.getMenuBar().setMoveDropEnabled(enabled);
     }
 
     private void setJoinEnabled(boolean enabled) {
@@ -5628,22 +5588,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setTakeOffEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_TAKE_OFF).setEnabled(enabled);
-        // clientgui.getMenuBar().setMoveTakeOffEnabled(enabled);
     }
 
     private void setVTakeOffEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_VERT_TAKE_OFF).setEnabled(enabled);
-        // clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);
     }
 
     private void setLandEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LAND).setEnabled(enabled);
-        // clientgui.getMenuBar().setMoveLandEnabled(enabled);
     }
 
     private void setVLandEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_VERT_LAND).setEnabled(enabled);
-        // clientgui.getMenuBar().setMoveVLandEnabled(enabled);
     }
 
     private void setManeuverEnabled(boolean enabled) {
@@ -5703,21 +5659,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        setTurnEnabled(!ce.isImmobile()
-                       && !ce.isStuck()
-                       && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0))
-                       && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
+        setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0))
+                && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
     }
     
-    public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc) {
+    public void FieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
         // do nothing here outside the movement phase
-        if (!(clientgui.getClient().getGame().getPhase() == GamePhase.MOVEMENT)) return;
-        
+        if (!clientgui.getClient().getGame().getPhase().isMovement()) {
+            return;
+        }
+
         clientgui.getBoardView().fieldofFireUnit = unit;
         clientgui.getBoardView().fieldofFireRanges = ranges;
         clientgui.getBoardView().fieldofFireWpArc = arc;
         clientgui.getBoardView().fieldofFireWpLoc = loc;
-        
+
         // If the unit is the current unit, then work with
         // the current considered movement
         if (unit.equals(ce())) {

@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -2086,7 +2085,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).FieldOfFire(entity, ranges, arc, loc);
         }
     }
 

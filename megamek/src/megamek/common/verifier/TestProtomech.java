@@ -22,7 +22,6 @@ import java.util.Map;
 
 /**
  * @author Neoancient
- *
  */
 public class TestProtomech extends TestEntity {
 

@@ -759,7 +759,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (!"".equals(localName)) {
+        if (!localName.isEmpty()) {
             // initialize game
             client = new Client(playerName, "localhost", port);
             gui = new ClientGUI(client, controller);
@@ -809,7 +809,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Connect to to a game and then launch the chat lounge.
+     * Connect to a game and then launch the chat lounge.
      */
     void connect() {
         ConnectDialog cd = new ConnectDialog(frame);

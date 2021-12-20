@@ -119,8 +119,7 @@ public final class UnitToolTip {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML(uiQuirksColor(), TT_SMALLFONT_DELTA));
-            String quirksList = getOptionList(entity.getQuirks().getGroups(), 
-                    grp -> entity.countQuirks(grp), inLobby);
+            String quirksList = getOptionList(entity.getQuirks().getGroups(), entity::countQuirks, inLobby);
             if (!quirksList.isEmpty()) {
                 result.append(quirksList);
             }
@@ -849,7 +848,7 @@ public final class UnitToolTip {
         result.append(guiScaledFontHTML());
         List<String> members = entity.getGame().getEntitiesVector().stream()
                 .filter(e -> e.onSameC3NetworkAs(entity))
-                .sorted(Comparator.comparingInt(e -> e.getId()))
+                .sorted(Comparator.comparingInt(Entity::getId))
                 .map(e -> c3UnitName(e, entity)).collect(Collectors.toList());
         if (members.size() > 1) {
             result.append(guiScaledFontHTML(uiC3Color(), -0.2f));

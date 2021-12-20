@@ -208,7 +208,7 @@ public class ForceDescriptor {
                                 .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
                         if (byGenRule.containsKey("group")) {
                             if (!generateAndAssignFormation(byGenRule.get("group").stream()
-                                    .map(fd -> fd.getSubforces()).flatMap(sf -> sf.stream())
+                                    .map(ForceDescriptor::getSubforces).flatMap(Collection::stream)
                                     .collect(Collectors.toList()), false, byGenRule.get("group").size())) {
                                 formationType = null;
                             }

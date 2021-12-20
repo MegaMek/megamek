@@ -67,6 +67,8 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter, OK_ACTION);
         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(enter, OK_ACTION);
         getRootPane().getActionMap().put(OK_ACTION, new AbstractAction() {
+            private static final long serialVersionUID = -1060468627937876090L;
+
             @Override
             public void actionPerformed(ActionEvent evt) {
                 okButtonActionPerformed(evt);
@@ -111,7 +113,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             listLabel.setEnabled(false);
             coordsList.setEnabled(false);   
         } else {
-            board.getBuildingsVector().stream().map(b -> b.getCoordsList()).forEach(coordsListModel::addAll);
+            board.getBuildingsVector().stream().map(Building::getCoordsList).forEach(coordsListModel::addAll);
         }
 
         result.add(Box.createVerticalStrut(15));
@@ -134,7 +136,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
                 int y = Integer.parseInt(tokens[1]) - 1;
                 result.add(new Coords(x, y));
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception ignored) {
             // No coords if it cannot be parsed
         }
         // Add the marked list entries 

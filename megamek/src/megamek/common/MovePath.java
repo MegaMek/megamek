@@ -385,7 +385,7 @@ public class MovePath implements Cloneable, Serializable {
                 if (step.getFacing() != last.getFacing()
                         || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
                             != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
-                        || steps.stream().filter(s -> s.isStrafingStep()).count() > 5) {
+                        || steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                 }
             } else {
@@ -1617,7 +1617,7 @@ public class MovePath implements Cloneable, Serializable {
                         && moved == 4)) {
             return false;
         }
-        if (getEntity().wigeLiftoffHover() || steps.stream().map(s -> s.getType())
+        if (getEntity().wigeLiftoffHover() || steps.stream().map(MoveStep::getType)
                 .anyMatch(st -> st == MoveStepType.UP
                         || st == MoveStepType.HOVER)) {
             return false;

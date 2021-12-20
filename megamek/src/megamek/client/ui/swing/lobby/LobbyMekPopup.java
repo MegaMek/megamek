@@ -124,7 +124,7 @@ class LobbyMekPopup {
         // Used to hide some menu items entirely like "Form Squadron" when there's no fighter in the game
         HashSet<Entity> accessibleEntities = new HashSet<>(game.getEntitiesVector());
         accessibleEntities.removeIf(lobby.lobbyActions::isNotEditable);
-        boolean accessibleFighters = accessibleEntities.stream().anyMatch(e -> e.isFighter());
+        boolean accessibleFighters = accessibleEntities.stream().anyMatch(Entity::isFighter);
         boolean accessibleTransportBays = accessibleEntities.stream().anyMatch(e -> !e.getTransportBays().isEmpty());
         boolean accessibleCarriers = accessibleEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
         boolean accessibleProtomeks = accessibleEntities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH));
@@ -133,10 +133,10 @@ class LobbyMekPopup {
         boolean anyCarrier = joinedEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
         boolean noneEmbarked = joinedEntities.stream().allMatch(e -> e.getTransportId() == Entity.NONE);
         boolean allProtomeks = joinedEntities.stream().allMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH));
-        boolean anyRFMGOn = joinedEntities.stream().anyMatch(e -> hasRapidFireMG(e));
-        boolean anyRFMGOff = joinedEntities.stream().anyMatch(e -> hasNormalFireMG(e));
-        boolean anyHLOn = joinedEntities.stream().anyMatch(e -> hasHotLoaded(e));
-        boolean anyHLOff = joinedEntities.stream().anyMatch(e -> hasNonHotLoaded(e));
+        boolean anyRFMGOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasRapidFireMG);
+        boolean anyRFMGOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNormalFireMG);
+        boolean anyHLOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasHotLoaded);
+        boolean anyHLOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNonHotLoaded);
 
         boolean hasjoinedEntities = !joinedEntities.isEmpty();
         boolean joinedOneEntitySelected = (entities.size() == 1) && forces.isEmpty();
@@ -357,7 +357,7 @@ class LobbyMekPopup {
             Collection<Entity> entities) {
 
         JMenu menu = new JMenu("Fighter Squadrons");
-        boolean hasFighter = entities.stream().anyMatch(e -> e.isFighter());
+        boolean hasFighter = entities.stream().anyMatch(Entity::isFighter);
         if (enabled && hasFighter) {
             menu.add(menuItem("Form Fighter Squadron", LMP_SQUADRON + NOINFO + enToken(entities), enabled, listener));
 
@@ -378,8 +378,7 @@ class LobbyMekPopup {
      * target to a local Princess bot.
      */
     private static JMenu prioTargetMenu(ClientGUI cg, boolean enabled, ActionListener listener,
-            Collection<Entity> entities) {
-
+                                        Collection<Entity> entities) {
         JMenu menu = new JMenu("Set Priority Target for");
         if (enabled && !cg.getBots().isEmpty()) {
             for (String bot : cg.getBots().keySet()) {
@@ -398,9 +397,8 @@ class LobbyMekPopup {
     /**
      * Returns the "Deploy" submenu, allowing late deployment
      */
-    private static JMenu deployMenu(ClientGUI clientGui, boolean enabled, ActionListener listener, 
-            Set<Entity> entities) {
-
+    private static JMenu deployMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
+                                    Set<Entity> entities) {
         String eIds = enToken(entities);
         JMenu menu = new JMenu("Deploy");
         if (enabled) {
@@ -473,7 +471,7 @@ class LobbyMekPopup {
     private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg, ActionListener listener) {
         JMenu menu = new JMenu("C3");
 
-        if (entities.stream().anyMatch(e -> e.hasAnyC3System())) {
+        if (entities.stream().anyMatch(Entity::hasAnyC3System)) {
 
             menu.add(menuItem("Disconnect", LMP_C3DISCONNECT + NOINFO + enToken(entities), enabled, listener));
 

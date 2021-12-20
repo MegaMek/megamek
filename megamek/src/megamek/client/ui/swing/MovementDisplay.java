@@ -777,7 +777,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final Entity ce = ce();
         boolean isMech = (ce instanceof Mech);
         boolean isInfantry = (ce instanceof Infantry);
-        // boolean isProtomech = (ce instanceof Protomech);
         boolean isAero = ce.isAero();
 
         if (numButtonGroups > 1)
@@ -4282,7 +4281,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // if all our entities are actually done, don't start up the turn.
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
-                .stream().allMatch(entity -> entity.isDone())) {
+                .stream().allMatch(Entity::isDone)) {
             return;
         }
 

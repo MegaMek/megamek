@@ -1,27 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software* Foundation; either version 2 of the
+ * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
 package megamek.common;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
@@ -32,9 +20,15 @@ import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
- * Represents any type of equipment mounted on a 'Mek, excluding systems and
- * actuators.
+ * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
  *
  * @author Ben
  * @since April 1, 2002, 1:35 PM
@@ -587,7 +581,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Sets the modes that this type of equipment can be in. By default the
+     * Sets the modes that this type of equipment can be in. By default, the
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
      *
@@ -1367,7 +1361,7 @@ public class EquipmentType implements ITechnology {
 
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = type.getTechLevels().keySet().stream()
-                        .map(year -> type.getTechLevel(year))
+                        .map(type::getTechLevel)
                         .sorted()   // ordered for ease of use
                         .distinct()
                         .collect(Collectors.toList());

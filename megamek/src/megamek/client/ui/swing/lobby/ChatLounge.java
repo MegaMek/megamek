@@ -805,7 +805,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     .collect(Collectors.toList());
             List<String> byTags = boardTags.entrySet().stream()
                     .filter(e -> e.getValue().contains(token))
-                    .map(e -> e.getKey())
+                    .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
             List<String> tokenResult = CollectionUtil.union(byFilename, byTags);
             result = result.stream().filter(tokenResult::contains).collect(toList());
@@ -2297,11 +2297,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * <P>See also {@link #isEditable(Entity)}
      */
     boolean canEditAny(Collection<Entity> entities) {
-        return entities.stream().anyMatch(e -> isEditable(e));
+        return entities.stream().anyMatch(this::isEditable);
     }
     
     /**
-     * Returns true if the local player can see all of the given entities.
+     * Returns true if the local player can see all the given entities.
      * This is true except when a blind drop option is active and one or more
      * of the entities are not on his team.
      */
@@ -2914,7 +2914,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * <P>See also {@link #isEditable(Entity)} 
      */
     private Set<Entity> editableEntities(Collection<Entity> entities) {
-        return entities.stream().filter(e -> isEditable(e)).collect(Collectors.toSet());
+        return entities.stream().filter(this::isEditable).collect(Collectors.toSet());
     }
     
    

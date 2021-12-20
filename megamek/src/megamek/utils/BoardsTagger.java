@@ -26,6 +26,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.*;
 import static megamek.common.Terrains.*;
 import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
 /** 
  * Scans all boards and applies automated tags to them.
@@ -113,13 +114,12 @@ public class BoardsTagger {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         try {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
-        } catch (IOException e) {
-            System.out.println("Something is not quite right.");
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().fatal("Board tagger cannot scan boards", e);
             System.exit(64);
         }
         System.out.println("Finished.");
@@ -297,14 +297,14 @@ public class BoardsTagger {
         Set<String> toRemove = board.getTags().stream().filter(t -> t.contains(AUTO_SUFFIX)).collect(toSet());
 
         // Find any applicable tags to give the board
-        Set<String> toAdd = matchingTags.keySet().stream().filter(t -> matchingTags.get(t)).map(Tags::getName).collect(toSet());
+        Set<String> toAdd = matchingTags.keySet().stream().filter(matchingTags::get).map(Tags::getName).collect(toSet());
 
         if (DEBUG) {
             System.out.println("----- Board: " + boardFile);
             if (toRemove.equals(toAdd)) {
                 System.out.println("No changes");
             } else {
-                toAdd.stream().forEach(System.out::println);
+                toAdd.forEach(System.out::println);
             }
         }
         

@@ -1572,7 +1572,7 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(2,
                 // should indicate it has anti-aircraft targeting quirk without having to load all entities
                 ms -> getMissionRoles(ms).contains(MissionRole.ANTI_AIRCRAFT) 
-                || ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                || ms.getEquipmentNames().stream().map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ACWeapon
                             || eq instanceof LBXACWeapon
                             || eq instanceof ArtilleryWeapon),
@@ -1586,7 +1586,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.missionRoles.add(MissionRole.MIXED_ARTILLERY);
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                     .anyMatch(eq -> eq instanceof ArtilleryWeapon),
                 "Artillery"));
         ft.reportMetrics.put("Artillery", ms -> ft.otherCriteria.get(0).criterion.test(ms));
@@ -1609,7 +1609,7 @@ public class FormationType {
         FormationType ft = new FormationType("Fire Support", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.otherCriteria.add(new CountConstraint(3, ms -> ms.getEquipmentNames().stream()
-                .map(name -> EquipmentType.get(name))
+                .map(EquipmentType::get)
                 .filter(eq -> eq instanceof WeaponType && eq.hasModes())
                 .anyMatch(eq -> {
                     for (Enumeration<EquipmentMode> e = eq.getModes(); e.hasMoreElements();) {

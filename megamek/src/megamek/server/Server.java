@@ -30159,7 +30159,7 @@ public class Server implements Runnable {
         updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
 
         // Units that get deleted must not receive updates
-        updateCandidates.removeIf(e -> delEntities.contains(e));
+        updateCandidates.removeIf(delEntities::contains);
         if (!updateCandidates.isEmpty()) {
             send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }

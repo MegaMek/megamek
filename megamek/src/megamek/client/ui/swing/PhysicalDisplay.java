@@ -368,7 +368,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean canZweihander = (en instanceof BipedMech)
                 && ((BipedMech) en).canZweihander()
-                && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());;
+                && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
 

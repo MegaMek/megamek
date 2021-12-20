@@ -20,6 +20,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Configuration;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -52,16 +53,11 @@ public final class UIUtil {
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
-    
-    
+
     public static String repeat(String str, int count) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < count; i++) {
-            result.append(str);
-        }
-        return result.toString();
+        return String.valueOf(str).repeat(Math.max(0, count));
     }
-    
+
     /** 
      * Returns an HTML FONT tag setting the font face to Dialog 
      * and the font size according to GUIScale. 
@@ -691,7 +687,7 @@ public final class UIUtil {
             @Override
             public void focusLost(FocusEvent e) {
                 updateHint();
-            };
+            }
             
             @Override
             public void focusGained(FocusEvent e) {
@@ -699,7 +695,7 @@ public final class UIUtil {
                     setText("");
                 }
                 setForeground(null);
-            };
+            }
         };
 
         @Override
@@ -861,7 +857,7 @@ public final class UIUtil {
         public Dimension getMaximumSize() {
             return new Dimension(super.getMaximumSize().width, getPreferredSize().height);
         }
-    };
+    }
     
     /**
      * Returns a single menu item with the given text, the given command string
@@ -973,7 +969,7 @@ public final class UIUtil {
     }
     
     /** Internal helper method to adapt items in a JPopupmenu to the GUI scaling. */
-    private static void scaleJMenuItem(final JMenuItem menuItem) {
+    private static void scaleJMenuItem(final @Nullable JMenuItem menuItem) {
         Font scaledFont = getScaledFont();
         if (menuItem instanceof JMenu) {
             JMenu menu = (JMenu) menuItem;
@@ -981,7 +977,7 @@ public final class UIUtil {
             for (int i = 0; i < menu.getItemCount(); i++) {
                 scaleJMenuItem(menu.getItem(i));
             }
-        } else if (menuItem instanceof JMenuItem) {
+        } else if (menuItem != null) {
             menuItem.setFont(scaledFont);
         } 
     }

@@ -571,7 +571,7 @@ public class LobbyActions {
                     m.setMode("");
                 }
                 updateCandidates.add(entity);
-            };
+            }
         }
         sendUpdates(updateCandidates);
     }

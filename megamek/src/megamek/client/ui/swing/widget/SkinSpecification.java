@@ -97,7 +97,7 @@ public class SkinSpecification {
             }
             return null;
         }
-    };
+    }
     
     /**
      * Indicates the maximum number of colors a skin specification can have.

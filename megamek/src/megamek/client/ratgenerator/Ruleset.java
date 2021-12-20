@@ -37,16 +37,15 @@ import java.util.regex.Pattern;
  * @author Neoancient
  */
 public class Ruleset {
-
     public enum RatingSystem {
-        IS ("F","D","C","B","A"),
-        SL ("C","B","A"), // used for SLDF and CS/WoB
-        CLAN ("PG","Sol","SL","FL","Keshik"),
-        ROS ("TP","PG","HS","SB"),
+        IS ("F", "D", "C", "B", "A"),
+        SL ("C", "B", "A"), // used for SLDF and CS/WoB
+        CLAN ("PG", "Sol", "SL",  "FL", "Keshik"),
+        ROS ("TP", "PG", "HS", "SB"),
         NONE ();
 
         String[] vals;
-        private RatingSystem(String... vals) {
+        RatingSystem(String... vals) {
             this.vals = vals;
         }
 
@@ -58,7 +57,7 @@ public class Ruleset {
             }
             return -1;
         }
-    };
+    }
 
     private static final String directory = "data/forcegenerator/faction_rules";
     private static final String CONSTANTS_FILE = "constants.txt";
@@ -394,8 +393,8 @@ public class Ruleset {
                 if (rs != null) {
                     rulesets.put(rs.getFaction(), rs);
                 }
-            } catch (IllegalArgumentException ex) {
-                LogManager.getLogger().error("While parsing file " + f.toString() + ": " + ex.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Failed while parsing file " + f, ex);
             }
         }
         initialized = true;
@@ -412,8 +411,7 @@ public class Ruleset {
             xmlDoc = db.parse(fis);
             fis.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("While loading force template from file " + f.getName() + ": "
-                    + e.getMessage());
+            LogManager.getLogger().error("Failed loading force template from file " + f.getName(), e);
             return null;
         }
 
@@ -531,5 +529,4 @@ public class Ruleset {
     public String getFaction() {
         return faction;
     }
-
 }

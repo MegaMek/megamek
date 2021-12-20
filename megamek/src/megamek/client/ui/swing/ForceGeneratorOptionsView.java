@@ -1040,7 +1040,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
             return this;
         }
-    };
+    }
 
     static class ForceTreeModel implements TreeModel {
 

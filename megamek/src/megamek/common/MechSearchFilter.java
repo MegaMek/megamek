@@ -33,7 +33,7 @@ import java.util.Vector;
  */
 public class MechSearchFilter {
 
-    public enum BoolOp { AND, OR, NOP };
+    public enum BoolOp { AND, OR, NOP }
     public String sWalk;
     public String sJump;
     public int iWalk;

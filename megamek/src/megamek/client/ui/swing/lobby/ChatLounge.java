@@ -3169,7 +3169,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else {
                 changeSorter(e);
             }
-        };
+        }
         
         private void sorterPopup(MouseEvent e) {
             ScalingPopup popup = new ScalingPopup();

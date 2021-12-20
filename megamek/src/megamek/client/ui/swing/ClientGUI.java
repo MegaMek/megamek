@@ -2036,7 +2036,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         }
                     }
                     //Set up the selection pane
-                    String i18nString = "TeleMissileTargetDialog.message";;
+                    String i18nString = "TeleMissileTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TeleMissileTargetDialog.title";
                     title = Messages.getString(i18nString);
@@ -2067,8 +2067,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             TAGTargetDescriptions.add(tgt.getDisplayName());
                         }
                     }
-                    //Set up the selection pane
-                    i18nString = "TAGTargetDialog.message";;
+                    // Set up the selection pane
+                    i18nString = "TAGTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TAGTargetDialog.title";
                     title = Messages.getString(i18nString);

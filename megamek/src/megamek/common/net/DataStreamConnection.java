@@ -196,5 +196,5 @@ class DataStreamConnection extends AbstractConnection {
 
 enum PacketReadState {
     Header, // next will be header data
-    Data;
+    Data
 }

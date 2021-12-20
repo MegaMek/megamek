@@ -799,7 +799,7 @@ public class ForceDescriptor {
                     wtIndex++;
                 }
             }
-        };
+        }
 
         LogManager.getLogger().debug("Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
         return null;

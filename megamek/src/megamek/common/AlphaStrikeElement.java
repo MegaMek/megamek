@@ -64,7 +64,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             }
             return null;
         }
-    };
+    }
 
     protected ASUnitType asUnitType;
     

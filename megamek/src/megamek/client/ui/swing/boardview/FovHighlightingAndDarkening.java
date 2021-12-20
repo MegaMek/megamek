@@ -51,12 +51,12 @@ class FovHighlightingAndDarkening {
     public void die() {
         gs.removePreferenceChangeListener(ringsChangeListner);
         this.boardView1.game.removeGameListener(cacheGameListner);
-    };
+    }
 
 
     /**
      * Checks if options for darkening and highlighting are turned on and the
-     * respectively: If there is no LOS from curently selected hex/entity, then
+     * respectively: If there is no LOS from currently selected hex/entity, then
      * darkens hex c. If there is a LOS from the hex c to the selected
      * hex/entity, then hex c is colored according to distance.
      * 

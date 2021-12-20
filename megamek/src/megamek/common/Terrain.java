@@ -545,71 +545,71 @@ public class Terrain implements Serializable {
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
         switch (type) {
-        case (Terrains.SWAMP):
-            // if this is quicksand, then you automatically fail
-            if (level > 1) {
-                return TargetRoll.AUTOMATIC_FAIL;
-            }
-            if (moveMode == EntityMovementMode.VTOL) {
-                return TargetRoll.AUTOMATIC_FAIL;
-            }
-            return 0;
-        case (Terrains.MAGMA):
-            if (level == 2) {
+            case (Terrains.SWAMP):
+                // if this is quicksand, then you automatically fail
+                if (level > 1) {
+                    return TargetRoll.AUTOMATIC_FAIL;
+                }
+                if (moveMode == EntityMovementMode.VTOL) {
+                    return TargetRoll.AUTOMATIC_FAIL;
+                }
                 return 0;
-            }
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        case (Terrains.MUD):
-            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+            case (Terrains.MAGMA):
+                if (level == 2) {
+                    return 0;
+                }
                 return TargetRoll.AUTOMATIC_SUCCESS;
-                // any kind of infantry just gets a flat roll
-            } else if(moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
-                    moveMode == EntityMovementMode.INF_JUMP || moveMode == EntityMovementMode.INF_UMU) {
-                return 0;
-            }
-            return -1;
-        case (Terrains.TUNDRA):
-            return -1;
-        case (Terrains.SNOW):
-            if (level == 2) {
+            case (Terrains.MUD):
+                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+                    return TargetRoll.AUTOMATIC_SUCCESS;
+                    // any kind of infantry just gets a flat roll
+                } else if (moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
+                        moveMode == EntityMovementMode.INF_JUMP || moveMode == EntityMovementMode.INF_UMU) {
+                    return 0;
+                }
                 return -1;
-            }
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        case (Terrains.SAND):
-            if (largeVee) {
-                return 0;
-            }
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        default:
-            return TargetRoll.AUTOMATIC_SUCCESS;
+            case (Terrains.TUNDRA):
+                return -1;
+            case (Terrains.SNOW):
+                if (level == 2) {
+                    return -1;
+                }
+                return TargetRoll.AUTOMATIC_SUCCESS;
+            case (Terrains.SAND):
+                if (largeVee) {
+                    return 0;
+                }
+                return TargetRoll.AUTOMATIC_SUCCESS;
+            default:
+                return TargetRoll.AUTOMATIC_SUCCESS;
         }
     }
 
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         switch (type) {
-        case (Terrains.SWAMP):
-            if (level > 1) {
-                rollTarget.addModifier((3 + ((-3) * elev)), "Quicksand");
+            case (Terrains.SWAMP):
+                if (level > 1) {
+                    rollTarget.addModifier((3 + ((-3) * elev)), "Quicksand");
+                    break;
+                }
+                rollTarget.addModifier(0, "Swamp");
                 break;
-            }
-            rollTarget.addModifier(0, "Swamp");
-            break;
-        case (Terrains.MAGMA):
-            if (level == 2) {
-                rollTarget.addModifier(0, "Liquid Magma");
-            }
-            break;
-        case (Terrains.MUD):
-            rollTarget.addModifier(-1, "Mud");
-            break;
-        case (Terrains.TUNDRA):
-            rollTarget.addModifier(-1, "Tundra");
-            break;
-        case (Terrains.SNOW):
-            rollTarget.addModifier(-1, "Deep Snow");
-            break;
-        default:
-            break;
+            case (Terrains.MAGMA):
+                if (level == 2) {
+                    rollTarget.addModifier(0, "Liquid Magma");
+                }
+                break;
+            case (Terrains.MUD):
+                rollTarget.addModifier(-1, "Mud");
+                break;
+            case (Terrains.TUNDRA):
+                rollTarget.addModifier(-1, "Tundra");
+                break;
+            case (Terrains.SNOW):
+                rollTarget.addModifier(-1, "Deep Snow");
+                break;
+            default:
+                break;
         }
     }
 

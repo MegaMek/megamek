@@ -1,30 +1,26 @@
 /*
  * MegaMek - Copyright (C) 2017 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
-import megamek.MegaMek;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Singleton class that loads the canon unit roles from a text file and provides lookup access.
@@ -32,12 +28,10 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * role listed returns a value of UnitRole.UNDETERMINED.
  * 
  * @author Neoancient
- *
  */
-
 public class UnitRoleHandler {
     
-    private static final String FILE_LOC = "unit_roles.txt"; //$NON-NLS-1$
+    private static final String FILE_LOC = "unit_roles.txt";
     
     private static final UnitRoleHandler instance = new UnitRoleHandler();
     
@@ -119,10 +113,10 @@ public class UnitRoleHandler {
         BufferedReader reader = null;
         try {
             is = new FileInputStream(f);
-            reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String line = null;
             while (null != (line = reader.readLine())) {
-                if (line.startsWith("#")) { //$NON-NLS-1$
+                if (line.startsWith("#")) {
                     continue;
                 }
                 int delimiter = line.lastIndexOf(":");
@@ -137,9 +131,9 @@ public class UnitRoleHandler {
             reader.close();
             is.close();
         } catch (FileNotFoundException e) {
-            MegaMek.getLogger().error("Could not locate unit role file " + f.getName());
+            LogManager.getLogger().error("Could not locate unit role file " + f.getName());
         } catch (IOException e) {
-            MegaMek.getLogger().error("Error reading unit role file " + f.getName());
+            LogManager.getLogger().error("Error reading unit role file " + f.getName());
         }
         // We're going to mark it as initialized even if it fails because there is no benefit to
         // repeating an attempt if the file is not there or cannot be read.

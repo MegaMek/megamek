@@ -69,12 +69,12 @@ public class MechSetTest {
             String imageName = null;
             String entryName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("include")) {
                 st.nextToken();
                 name = st.sval;
                 testFile(dir, name);
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("chassis")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("chassis")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -86,7 +86,7 @@ public class MechSetTest {
                     testImageName(dir, imageName, entryName);
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("exact")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -106,7 +106,7 @@ public class MechSetTest {
                 && imgFile.getCanonicalPath().endsWith(imgFile.getName());
         if (!exactmatch) {
             System.out.print("Error with " + entryName + ": ");
-            String dirFiles[] = imgFile.getParentFile().list();
+            String[] dirFiles = imgFile.getParentFile().list();
             if (dirFiles == null) {
                 System.out.println("File is not a directory! Entry Path: " + imageName);
                 return;
@@ -134,7 +134,7 @@ public class MechSetTest {
             testFile(mechDir, mechset);
             testFile(wreckDir, wreckset);
             
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IOException!");
             e.printStackTrace();
         }

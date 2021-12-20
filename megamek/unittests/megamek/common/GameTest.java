@@ -16,8 +16,8 @@ public class GameTest {
         Game game = new Game();
         game.cancelVictory();
         assertFalse(game.isForceVictory());
-        assertSame(IPlayer.PLAYER_NONE, game.getVictoryPlayerId());
-        assertSame(IPlayer.TEAM_NONE, game.getVictoryTeam());
+        assertSame(Player.PLAYER_NONE, game.getVictoryPlayerId());
+        assertSame(Player.TEAM_NONE, game.getVictoryTeam());
 
         // Test with members set to specific values
         Game game2 = new Game();
@@ -27,8 +27,8 @@ public class GameTest {
 
         game2.cancelVictory();
         assertFalse(game.isForceVictory());
-        assertSame(IPlayer.PLAYER_NONE, game.getVictoryPlayerId());
-        assertSame(IPlayer.TEAM_NONE, game.getVictoryTeam());
+        assertSame(Player.PLAYER_NONE, game.getVictoryPlayerId());
+        assertSame(Player.TEAM_NONE, game.getVictoryTeam());
     }
 
     @Test
@@ -39,8 +39,8 @@ public class GameTest {
         assertNotNull(victoryResult);
 
         // Note: this accessors are tested in VictoryResultTest
-        assertSame(IPlayer.PLAYER_NONE, victoryResult.getWinningPlayer());
-        assertSame(IPlayer.TEAM_NONE, victoryResult.getWinningTeam());
+        assertSame(Player.PLAYER_NONE, victoryResult.getWinningPlayer());
+        assertSame(Player.TEAM_NONE, victoryResult.getWinningTeam());
 
         int winningPlayer = 2;
         int winningTeam = 5;

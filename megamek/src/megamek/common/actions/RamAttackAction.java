@@ -11,36 +11,13 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  */
-
-/*
- * RamAttackAction.java
- * 
- * Created on May 28, 2008
- */
-
 package megamek.common.actions;
 
 import java.util.Enumeration;
+import java.util.Objects;
 
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.FighterSquadron;
-import megamek.common.IAero;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Jumpship;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.SpaceStation;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.Warship;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -49,21 +26,16 @@ import megamek.common.options.OptionsConstants;
  * attack info.
  * 
  * @author Ben Mazur
+ * @since May 28, 2008
  */
 public class RamAttackAction extends AbstractAttackAction {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3549351664290057785L;
 
     public RamAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetType(), target.getTargetId(),
-                target.getPosition());
+        this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
     }
 
-    public RamAttackAction(int entityId, int targetType, int targetId,
-            Coords targetPos) {
+    public RamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
         super(entityId, targetType, targetId);
     }
 
@@ -80,33 +52,31 @@ public class RamAttackAction extends AbstractAttackAction {
     /**
      * To-hit number for a ram, assuming that movement has been handled
      */
-    public ToHitData toHit(Game game, Targetable target, Coords src,
-            int elevation, Coords priorSrc, EntityMovementType movement) {
+    public ToHitData toHit(Game game, Targetable target, Coords src, int elevation, Coords priorSrc,
+                           EntityMovementType movement) {
         final Entity ae = getEntity(game);
 
         // arguments legal?
-        if (ae == null) {
-            throw new IllegalStateException("Attacker is null");
-        }
+        Objects.requireNonNull(ae, "Attacker is null");
 
         // Do to pretreatment of physical attacks, the target may be null.
         if (target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
         
-        if(!ae.isAero()) {
+        if (!ae.isAero()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not Aero");
         }
         
-        if(!target.isAero()) {
+        if (!target.isAero()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
         }   
         
-        if(ae instanceof FighterSquadron || target instanceof FighterSquadron) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attc");
+        if (ae instanceof FighterSquadron || target instanceof FighterSquadron) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attack.");
         }
 
-        Entity te = null;
+        Entity te;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         } else {
@@ -115,30 +85,29 @@ public class RamAttackAction extends AbstractAttackAction {
         
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "A friendly unit can never be the target of a direct attack.");
+            }
         }
-        IHex attHex = game.getBoard().getHex(src);
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(src);
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = elevation + attHex.getLevel();
-        final int targetElevation = target.getElevation()
-                + targHex.getLevel();
-        ToHitData toHit = null;
+        final int targetElevation = target.getElevation() + targHex.getLevel();
+        ToHitData toHit;
  
         // can't target yourself
         if (ae.equals(te)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't target yourself");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target yourself");
         }
 
         // Can't target a transported entity.
         if (Entity.NONE != te.getTransportId()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // check range
@@ -148,78 +117,76 @@ public class RamAttackAction extends AbstractAttackAction {
 
         // target must be at same elevation level
         if (attackerElevation != targetElevation) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target must be at the same elevation level");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be at the same elevation level");
         }
 
         // can't attack Aero making a different ramming attack
         if (te.isRamming()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is already making a ramming attack");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already making a ramming attack");
         }
 
-        //attacker 
+        // attacker
         
         // target must have moved already
         if (!te.isDone()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target must be done with movement");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be done with movement");
         }
         
-        //Set the base BTH       
+        // Set the base BTH
         int base = 6 + te.getCrew().getPiloting() - ae.getCrew().getPiloting(); 
         
         toHit = new ToHitData(base, "base");
 
-        IAero a = (IAero)ae;
+        IAero a = (IAero) ae;
         
-        //target type
-        if(target instanceof SpaceStation) {
-            toHit.addModifier(-1,"target is a space station");
-        } else if(target instanceof Warship) {
-            toHit.addModifier(+1,"target is a warship");
-        } else if(target instanceof Jumpship) {
-            toHit.addModifier(+0,"target is a jumpship");
-        } else if(target instanceof Dropship) {
-            toHit.addModifier(+2,"target is a dropship");
+        // target type
+        if (target instanceof SpaceStation) {
+            toHit.addModifier(-1, "target is a space station");
+        } else if (target instanceof Warship) {
+            toHit.addModifier(+1, "target is a WarShip");
+        } else if (target instanceof Jumpship) {
+            toHit.addModifier(+0, "target is a JumpShip");
+        } else if (target instanceof Dropship) {
+            toHit.addModifier(+2, "target is a DropShip");
         } else {
-            toHit.addModifier(+4,"target is a fighter/small craft");
+            toHit.addModifier(+4, "target is a fighter/small craft");
         }
         
-        //attacker type
-        if(a instanceof SpaceStation) {
-            toHit.addModifier(+0,"attacker is a space station");
-        } else if(a instanceof Warship) {
-            toHit.addModifier(+1,"attacker is a warship");
-        } else if(a instanceof Jumpship) {
-            toHit.addModifier(+0,"attacker is a jumpship");
-        } else if(a instanceof Dropship) {
-            toHit.addModifier(-1,"attacker is a dropship");
+        // attacker type
+        if (a instanceof SpaceStation) {
+            toHit.addModifier(+0, "attacker is a space station");
+        } else if (a instanceof Warship) {
+            toHit.addModifier(+1, "attacker is a WarShip");
+        } else if (a instanceof Jumpship) {
+            toHit.addModifier(+0, "attacker is a JumpShip");
+        } else if (a instanceof Dropship) {
+            toHit.addModifier(-1, "attacker is a DropShip");
         } else {
-            toHit.addModifier(-2,"attacker is a fighter/small craft");
+            toHit.addModifier(-2, "attacker is a fighter/small craft");
         }
         
-        //can the target unit move
-        if(target.isImmobile() || te.getWalkMP() == 0)
-            toHit.addModifier(-2,"target cannot spend thrust");
-            
-        //sensor damage
-        if(a.getSensorHits() > 0) 
+        // can the target unit move
+        if (target.isImmobile() || (te.getWalkMP() == 0)) {
+            toHit.addModifier(-2, "target cannot spend thrust");
+        }
+
+        // sensor damage
+        if (a.getSensorHits() > 0) {
             toHit.addModifier(+1, "sensor damage");
-            
-        //avionics damage
-        int avionics = a.getAvionicsHits();
-        if(avionics > 3) 
-            avionics = 3;
-        if(avionics > 0)
+        }
+
+        // avionics damage
+        int avionics = Math.min(a.getAvionicsHits(), 3);
+        if (avionics > 0) {
             toHit.addModifier(avionics, "avionics damage");
+        }
         
-        //evading bonuses
+        // evading bonuses
         if (target.getTargetType() == Targetable.TYPE_ENTITY && te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
         
-        //determine hit direction
+        // determine hit direction
         toHit.setSideTable(te.sideTable(priorSrc));
         
         toHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -241,8 +208,7 @@ public class RamAttackAction extends AbstractAttackAction {
 
         // let's just check this
         if (!md.contains(MoveStepType.RAM)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Ram action not found in movement path");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Ram action not found in movement path");
         }
 
         // determine last valid step
@@ -260,10 +226,8 @@ public class RamAttackAction extends AbstractAttackAction {
         }
 
         // need to reach target
-        if (ramStep == null
-                || !target.getPosition().equals(ramStep.getPosition())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Could not reach target with movement");
+        if (ramStep == null || !target.getPosition().equals(ramStep.getPosition())) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Could not reach target with movement");
         }
         
         return toHit(game, target, ramSrc, ramEl, priorSrc, ramStep.getMovementType(true));
@@ -271,21 +235,19 @@ public class RamAttackAction extends AbstractAttackAction {
 
     /**
      * Damage that an Aero does on a successful ramming attack
-     * 
      */
    public static int getDamageFor(IAero attacker, Entity target) {
        int avel = attacker.getCurrentVelocity();
        int tvel = 0;
-       if(target.isAero()) {
-           tvel = ((IAero)target).getCurrentVelocity();
+       if (target.isAero()) {
+           tvel = ((IAero) target).getCurrentVelocity();
        }
-       return getDamageFor(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
+       return getDamageFor(attacker, target, ((Entity) attacker).getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageFor(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
-       return (int) Math.ceil(
-               (((Entity)attacker).getWeight() / 10.0) * netv);
+       return (int) Math.ceil((((Entity) attacker).getWeight() / 10.0) * netv);
    }
      
    /**
@@ -294,16 +256,14 @@ public class RamAttackAction extends AbstractAttackAction {
    public static int getDamageTakenBy(IAero attacker, Entity target) {
        int avel = attacker.getCurrentVelocity();
        int tvel = 0;
-       if(target.isAero()) {
-           tvel = ((IAero)target).getCurrentVelocity();
+       if (target.isAero()) {
+           tvel = ((IAero) target).getCurrentVelocity();
        }
-       return getDamageTakenBy(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
+       return getDamageTakenBy(attacker, target, ((Entity) attacker).getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageTakenBy(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
-       return (int) Math.ceil(
-               (target.getWeight() / 10.0) * netv);
+       return (int) Math.ceil((target.getWeight() / 10.0) * netv);
    }
-
 }

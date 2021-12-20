@@ -285,6 +285,7 @@ public final class SmallCraftBay extends Bay {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
+    @Override
     public TechAdvancement getTechAdvancement() {
         if (arts) {
             return Bay.artsTechAdvancement();

@@ -27,8 +27,14 @@ import java.util.Vector;
 /**
  * Represents a player in the game.
  */
-public final class Player extends TurnOrdered implements IPlayer {
+public final class Player extends TurnOrdered {
+    //region Variable Declarations
     private static final long serialVersionUID = 6828849559007455761L;
+
+    public static final int PLAYER_NONE = -1;
+    public static final int TEAM_NONE = 0;
+    public static final int TEAM_UNASSIGNED = -1;
+    public static final String[] TEAM_NAMES = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
 
     private transient Game game;
 
@@ -79,227 +85,160 @@ public final class Player extends TurnOrdered implements IPlayer {
      * player's request to change teams.
      */
     private boolean allowingTeamChange = false;
+    //endregion Variable Declarations
 
+    //region Constructors
     public Player(int id, String name) {
         this.name = name;
         this.id = id;
     }
+    //endregion Constructors
 
-    @Override
-    public IPlayer copy() {
-        var copy = new Player(this.id, this.name);
-
-        copy.email = email;
-
-        copy.game = game;
-        copy.team = team;
-
-        copy.done = done;
-        copy.ghost = ghost;
-        copy.observer = observer;
-
-        copy.seeEntireBoard = seeEntireBoard;
-
-        copy.startingPos = startingPos;
-
-        copy.numMfConv = numMfConv;
-        copy.numMfCmd = numMfCmd;
-        copy.numMfVibra = numMfVibra;
-        copy.numMfActive = numMfActive;
-        copy.numMfInferno = numMfInferno;
-
-        copy.artyAutoHitHexes = new Vector<>(artyAutoHitHexes);
-
-        copy.initialEntityCount = initialEntityCount;
-        copy.initialBV = initialBV;
-
-        copy.constantInitBonus = constantInitBonus;
-        copy.streakCompensationBonus = streakCompensationBonus;
-
-        copy.camouflage = camouflage;
-        copy.colour = colour;
-
-        copy.visibleMinefields = new Vector<>(visibleMinefields);
-
-        copy.admitsDefeat = admitsDefeat;
-
-        return copy;
-    }
-
-    @Override
     public Vector<Minefield> getMinefields() {
         return visibleMinefields;
     }
 
-    @Override
     public void addMinefield(Minefield mf) {
         visibleMinefields.addElement(mf);
     }
 
-    @Override
     public void addMinefields(Vector<Minefield> minefields) {
         for (int i = 0; i < minefields.size(); i++) {
             visibleMinefields.addElement(minefields.elementAt(i));
         }
     }
 
-    @Override
     public void removeMinefield(Minefield mf) {
         visibleMinefields.removeElement(mf);
     }
 
-    @Override
     public void removeMinefields() {
         visibleMinefields.removeAllElements();
     }
 
-    @Override
     public void removeArtyAutoHitHexes() {
         artyAutoHitHexes.removeAllElements();
     }
 
-    @Override
     public boolean containsMinefield(Minefield mf) {
         return visibleMinefields.contains(mf);
     }
 
-    @Override
     public boolean hasMinefields() {
         return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0);
     }
 
-    @Override
     public void setNbrMFConventional(int nbrMF) {
         numMfConv = nbrMF;
     }
 
-    @Override
     public void setNbrMFCommand(int nbrMF) {
         numMfCmd = nbrMF;
     }
 
-    @Override
     public void setNbrMFVibra(int nbrMF) {
         numMfVibra = nbrMF;
     }
 
-    @Override
     public void setNbrMFActive(int nbrMF) {
         numMfActive = nbrMF;
     }
 
-    @Override
     public void setNbrMFInferno(int nbrMF) {
         numMfInferno = nbrMF;
     }
 
-    @Override
     public int getNbrMFConventional() {
         return numMfConv;
     }
 
-    @Override
     public int getNbrMFCommand() {
         return numMfCmd;
     }
 
-    @Override
     public int getNbrMFVibra() {
         return numMfVibra;
     }
 
-    @Override
     public int getNbrMFActive() {
         return numMfActive;
     }
 
-    @Override
     public int getNbrMFInferno() {
         return numMfInferno;
     }
 
-    @Override
     public Camouflage getCamouflage() {
         return camouflage;
     }
 
-    @Override
     public void setCamouflage(Camouflage camouflage) {
         this.camouflage = camouflage;
     }
 
-    @Override
     public void setGame(Game game) {
         this.game = game;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    @Override
     public String getEmail() {
         return email;
     }
 
-    @Override
     public void setEmail(String email) {
         this.email = email;
     }
 
-    @Override
     public int getId() {
         return id;
     }
 
-    @Override
     public int getTeam() {
         return team;
     }
 
-    @Override
     public void setTeam(int team) {
         this.team = team;
     }
 
-    @Override
     public boolean isDone() {
         return done;
     }
 
-    @Override
     public void setDone(boolean done) {
         this.done = done;
         game.processGameEvent(new GamePlayerChangeEvent(this, this));
     }
 
-    @Override
     public boolean isGhost() {
         return ghost;
     }
 
-    @Override
     public void setGhost(boolean ghost) {
         this.ghost = ghost;
     }
 
-    @Override
+    /**
+     * Specifies if this player connected as a bot.
+     */
     public boolean isBot() {
         return bot;
     }
 
-    @Override
+    /**
+     * Sets whether this player connected as a bot.
+     */
     public void setBot(boolean bot) {
         this.bot = bot;
     }
 
-    @Override
     public boolean isObserver() {
         if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
             return false;
@@ -307,24 +246,24 @@ public final class Player extends TurnOrdered implements IPlayer {
         return observer;
     }
 
-    @Override
     public void setSeeAll(boolean seeAll) {
         seeEntireBoard = seeAll;
     }
 
-    // This simply returns the value, without checking the observer flag
-    @Override
+    /**
+     * This simply returns the value, without checking the observer flag
+     */
     public boolean getSeeAll() {
         return seeEntireBoard;
     }
 
-    // If observer is false, see_entire_board does nothing
-    @Override
+    /**
+     * If observer is false, see_entire_board does nothing
+     */
     public boolean canSeeAll() {
         return (observer && seeEntireBoard);
     }
 
-    @Override
     public void setObserver(boolean observer) {
         this.observer = observer;
         // If not an observer, clear the set see all flag
@@ -332,26 +271,22 @@ public final class Player extends TurnOrdered implements IPlayer {
             setSeeAll(false);
         }
         if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObversverStatus();
+            game.getTeamForPlayer(this).cacheObserverStatus();
         }
     }
 
-    @Override
     public PlayerColour getColour() {
         return colour;
     }
 
-    @Override
     public void setColour(PlayerColour colour) {
         this.colour = Objects.requireNonNull(colour, "Colour cannot be set to null");
     }
 
-    @Override
     public int getStartingPos() {
         return startingPos;
     }
 
-    @Override
     public void setStartingPos(int startingPos) {
         this.startingPos = startingPos;
     }
@@ -359,81 +294,52 @@ public final class Player extends TurnOrdered implements IPlayer {
     /**
      * Set deployment zone to edge of board for reinforcements
      */
-    @Override
     public void adjustStartingPosForReinforcements() {
         if (startingPos > 10) {
             startingPos -= 10; // deep deploy change to standard
         }
+
         if (startingPos == Board.START_CENTER) {
             startingPos = Board.START_ANY; // center changes to any
         }
     }
 
-    @Override
-    public boolean isEnemyOf(IPlayer other) {
-        if(null == other) {
+    public boolean isEnemyOf(Player other) {
+        if (null == other) {
             return true;
         }
         return (id != other.getId()) 
             && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
-    /**
-     * Two players are equal if their ids are equal
-     */
-    @Override
-    public boolean equals(Object object) {
-        if(this == object) {
-            return true;
-        }
-        if((null == object) || (getClass() != object.getClass())) {
-            return false;
-        }
-        final Player other = (Player) object;
-        return other.id == id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
-
-    @Override
     public void setAdmitsDefeat(boolean admitsDefeat) {
         this.admitsDefeat = admitsDefeat;
     }
 
-    @Override
     public boolean admitsDefeat() {
         return admitsDefeat;
     }
-    
-    @Override
-    public void setAllowTeamChange(boolean allowChange){
+
+    public void setAllowTeamChange(boolean allowChange) {
         allowingTeamChange = allowChange;
     }
-    
-    @Override
-    public boolean isAllowingTeamChange(){
+
+    public boolean isAllowingTeamChange() {
         return allowingTeamChange;
     }
 
-    @Override
     public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {
         this.artyAutoHitHexes = artyAutoHitHexes;
     }
 
-    @Override
     public Vector<Coords> getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
 
-    @Override
     public void addArtyAutoHitHex(Coords c) {
         artyAutoHitHexes.add(c);
     }
 
-    @Override
     public boolean hasTAG() {
         for (Iterator<Entity> e = game.getSelectedEntities(new EntitySelector() {
                     private final int ownerId = getId();
@@ -455,23 +361,19 @@ public final class Player extends TurnOrdered implements IPlayer {
         return false;
     }
 
-    @Override
     public int getEntityCount() {
         return Math.toIntExact(game.getPlayerEntities(this, false).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count());
     }
 
-    @Override
     public int getInitialEntityCount() {
         return initialEntityCount;
     }
 
-    @Override
     public void setInitialEntityCount(final int initialEntityCount) {
         this.initialEntityCount = initialEntityCount;
     }
 
-    @Override
     public void changeInitialEntityCount(final int initialEntityCountChange) {
         this.initialEntityCount += initialEntityCountChange;
     }
@@ -479,7 +381,6 @@ public final class Player extends TurnOrdered implements IPlayer {
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
-    @Override
     public int getBV() {
         return game.getPlayerEntities(this, true).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped())
@@ -492,7 +393,6 @@ public final class Player extends TurnOrdered implements IPlayer {
      *
      * @return the BV
      */
-    @Override
     public int getFledBV() {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
         Enumeration<Entity> fledUnits = game.getRetreatedEntities();
@@ -506,17 +406,14 @@ public final class Player extends TurnOrdered implements IPlayer {
         return bv;
     }
 
-    @Override
     public int getInitialBV() {
         return initialBV;
     }
 
-    @Override
     public void setInitialBV(final int initialBV) {
         this.initialBV = initialBV;
     }
 
-    @Override
     public void changeInitialBV(final int initialBVChange) {
         this.initialBV += initialBVChange;
     }
@@ -531,12 +428,10 @@ public final class Player extends TurnOrdered implements IPlayer {
         return streakCompensationBonus;
     }
 
-    @Override
     public void setConstantInitBonus(int b) {
         constantInitBonus = b;
     }
 
-    @Override
     public int getConstantInitBonus() {
         return constantInitBonus;
     }
@@ -544,7 +439,6 @@ public final class Player extends TurnOrdered implements IPlayer {
     /**
      * @return the bonus to this player's initiative rolls granted by his units
      */
-    @Override
     public int getTurnInitBonus() {
         int bonusHQ = 0;
         int bonusMD = 0;
@@ -581,10 +475,9 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     /**
-     * @return the bonus to this player's initiative rolls for
-     *         the highest value initiative (i.e. the 'commander')
+     * @return the bonus to this player's initiative rolls for the highest value initiative
+     * (i.e. the 'commander')
      */
-    @Override
     public int getCommandBonus() {
         int commandb = 0;
         
@@ -626,7 +519,6 @@ public final class Player extends TurnOrdered implements IPlayer {
      *
      * @return a vector of relevant entity ids
      */
-    @Override
     public Vector<Integer> getAirborneVTOL() {
         //a vector of unit ids
         Vector<Integer> units = new Vector<>();
@@ -642,19 +534,86 @@ public final class Player extends TurnOrdered implements IPlayer {
         }
         return units;
     }
-    
+
+    public String getColorForPlayer() {
+        return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
+    }
+
+    /**
+     * Un-sets any data that may be considered private.
+     *
+     * This method clears any data that should not be transmitted to other players from the server,
+     * such as email addresses.
+     */
+    public void redactPrivateData() {
+        this.email = null;
+    }
+
     @Override
     public String toString() {
         return "Player " + getId() + " (" + getName() + ")";
     }
 
-    public String getColorForPlayer(){
-        return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
+    /**
+     * Two players are equal if their ids are equal
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else if ((null == object) || (getClass() != object.getClass())) {
+            return false;
+        } else {
+            final Player other = (Player) object;
+            return other.id == id;
+        }
     }
 
     @Override
-    public void redactPrivateData() {
-        this.email = null;
+    public int hashCode() {
+        return id;
     }
 
+    /**
+     * TODO : I should be a clone override, not my own method
+     */
+    public Player copy() {
+        var copy = new Player(this.id, this.name);
+
+        copy.email = email;
+
+        copy.game = game;
+        copy.team = team;
+
+        copy.done = done;
+        copy.ghost = ghost;
+        copy.observer = observer;
+
+        copy.seeEntireBoard = seeEntireBoard;
+
+        copy.startingPos = startingPos;
+
+        copy.numMfConv = numMfConv;
+        copy.numMfCmd = numMfCmd;
+        copy.numMfVibra = numMfVibra;
+        copy.numMfActive = numMfActive;
+        copy.numMfInferno = numMfInferno;
+
+        copy.artyAutoHitHexes = new Vector<>(artyAutoHitHexes);
+
+        copy.initialEntityCount = initialEntityCount;
+        copy.initialBV = initialBV;
+
+        copy.constantInitBonus = constantInitBonus;
+        copy.streakCompensationBonus = streakCompensationBonus;
+
+        copy.camouflage = camouflage;
+        copy.colour = colour;
+
+        copy.visibleMinefields = new Vector<>(visibleMinefields);
+
+        copy.admitsDefeat = admitsDefeat;
+
+        return copy;
+    }
 }

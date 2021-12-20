@@ -19,9 +19,9 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -272,7 +272,7 @@ public enum EntityMovementMode {
 
         }
 
-        MegaMek.getLogger().error("Unable to parse " + text + " into an EntityMovementMode. Returning NONE.");
+        LogManager.getLogger().error("Unable to parse " + text + " into an EntityMovementMode. Returning NONE.");
 
         return NONE;
     }

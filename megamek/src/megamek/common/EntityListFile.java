@@ -721,7 +721,7 @@ public class EntityListFile {
             output.write(String.valueOf(entity.wasNeverDeployed()));
             if (entity.isAero()) {
                 output.write("\" velocity=\"");
-                output.write(((IAero)entity).getCurrentVelocity() + "");
+                output.write(((IAero) entity).getCurrentVelocity() + "");
                 output.write("\" altitude=\"");
                 output.write(entity.getAltitude() + "");
             }
@@ -1109,7 +1109,7 @@ public class EntityListFile {
         output.write("\" piloting=\"");
         output.write(String.valueOf(crew.getPiloting(pos)));
         if (crew instanceof LAMPilot) {
-            writeLAMAeroAttributes(output, (LAMPilot)crew,
+            writeLAMAeroAttributes(output, (LAMPilot) crew,
                     (null != entity.getGame())
                     && entity.getGame().getOptions()
                     .booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
@@ -1301,7 +1301,7 @@ public class EntityListFile {
             critVal = critVal.concat(" gear=\"none\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1325,7 +1325,7 @@ public class EntityListFile {
             critVal = critVal.concat(" kfboom=\"none\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1370,7 +1370,7 @@ public class EntityListFile {
             critVal = critVal.concat("\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");

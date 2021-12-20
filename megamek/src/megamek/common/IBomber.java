@@ -123,7 +123,7 @@ public interface IBomber {
                                 .getBombWeaponName(type)), loc);
                         // Add bomb itself as single-shot ammo.
                         if (type != BombType.B_TAG) {
-                            Mounted ammo = new Mounted((Entity)this,
+                            Mounted ammo = new Mounted((Entity) this,
                                     EquipmentType.get(BombType.getBombInternalName(type)));
                             ammo.setShotsLeft(1);
                             m.setLinked(ammo);
@@ -131,14 +131,14 @@ public interface IBomber {
                                                         
                         }
                     } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
+
                     }
                 } else {
                     try {
                         ((Entity) this).addEquipment(EquipmentType.get(BombType
                                 .getBombInternalName(type)), loc, false);
                     } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
+
                     }
                 }
             }

@@ -8,9 +8,8 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
 import megamek.common.Game;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.event.GameListener;
-import megamek.common.logging.LogLevel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,18 +21,14 @@ import java.util.HashSet;
 import java.util.Vector;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/6/13 4:24 PM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class AddBotUtilTest {
 
     private static final String HUMAN_PLAYER_NAME = "MockHuman";
     private static final String BOT_PLAYER_NAME = "MockBot";
-    private static final String DEFAULT_VERBOSITY = LogLevel.WARNING.toString();
 
     private Client mockClient;
     private Game mockGame;
@@ -42,19 +37,19 @@ public class AddBotUtilTest {
 
     @Before
     public void setUp() {
-        final IPlayer mockHumanPlayer = Mockito.mock(IPlayer.class);
+        final Player mockHumanPlayer = Mockito.mock(Player.class);
         Mockito.when(mockHumanPlayer.getName()).thenReturn(HUMAN_PLAYER_NAME);
         Mockito.when(mockHumanPlayer.isGhost()).thenReturn(false);
 
-        final IPlayer mockBotPlayer = Mockito.mock(IPlayer.class);
+        final Player mockBotPlayer = Mockito.mock(Player.class);
         Mockito.when(mockBotPlayer.getName()).thenReturn(BOT_PLAYER_NAME);
         Mockito.when(mockBotPlayer.isGhost()).thenReturn(true);
 
-        final Vector<IPlayer> playerVector = new Vector<>(2);
+        final Vector<Player> playerVector = new Vector<>(2);
         playerVector.add(mockHumanPlayer);
         playerVector.add(mockBotPlayer);
 
-        final Enumeration<IPlayer> playerEnumeration = playerVector.elements();
+        final Enumeration<Player> playerEnumeration = playerVector.elements();
 
         mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getPlayersVector()).thenReturn(playerVector);
@@ -67,27 +62,23 @@ public class AddBotUtilTest {
         Mockito.when(mockClient.getHost()).thenReturn("mockHost");
         Mockito.when(mockClient.getPort()).thenReturn(1);
 
-        mockPrincess = Mockito.spy(new Princess("Princess", "mockHost", 1, LogLevel.ERROR));
+        mockPrincess = Mockito.spy(new Princess("Princess", "mockHost", 1));
         Mockito.doCallRealMethod().when(mockPrincess).setBehaviorSettings(Mockito.any(BehaviorSettings.class));
         Mockito.doReturn(mockGame).when(mockPrincess).getGame();
         Mockito.doReturn(true).when(mockPrincess).connect();
         Mockito.doReturn(new HashSet<Coords>()).when(mockPrincess).getStrategicBuildingTargets();
         Mockito.doReturn(new HashSet<Integer>()).when(mockPrincess).getPriorityUnitTargets();
         Mockito.doCallRealMethod().when(mockPrincess).getBehaviorSettings();
-        Mockito.doCallRealMethod().when(mockPrincess).getVerbosity();
 
         final TestBot mockTestBot = Mockito.mock(TestBot.class);
         Mockito.when(mockTestBot.connect()).thenReturn(true);
         Mockito.when(mockTestBot.getGame()).thenReturn(mockGame);
 
         testAddBotUtil = Mockito.spy(new AddBotUtil());
-        Mockito.doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(Mockito.any(IPlayer.class),
-                                                                                  Mockito.nullable(LogLevel.class),
-                                                                                  Mockito.anyString(),
-                                                                                  Mockito.anyInt());
-        Mockito.doReturn(mockTestBot).when(testAddBotUtil).makeNewTestBotClient(Mockito.any(IPlayer.class),
-                                                                                Mockito.anyString(),
-                                                                                Mockito.anyInt());
+        Mockito.doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(
+                Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt());
+        Mockito.doReturn(mockTestBot).when(testAddBotUtil).makeNewTestBotClient(
+                Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt());
     }
 
     @Test
@@ -109,34 +100,30 @@ public class AddBotUtilTest {
         // Test explicitly specifying Princess.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", BOT_PLAYER_NAME};
-        expected = "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+        expected = "Princess has replaced MockBot.  Config: DEFAULT.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
         // Test specifying the config to be used with Princess.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-c:BERSERK", "-p:" + BOT_PLAYER_NAME};
-        expected = "Princess has replaced MockBot.  Config: BERSERK.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+        expected = "Princess has replaced MockBot.  Config: BERSERK.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         BehaviorSettings expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("BERSERK");
         TestCase.assertEquals(expectedBehavior, mockPrincess.getBehaviorSettings());
 
         // Test setting the verbosity level for Princess.
-        // Because makeNewPrincessClient is mocked out, the log level is always going to be ERROR.
         setUp();
-        args = new String[] { "/replacePlayer", "-b:Princess", "-v:" + LogLevel.INFO, "-p:" + BOT_PLAYER_NAME };
-        expected = "Verbosity set to 'INFO'.\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+        args = new String[] { "/replacePlayer", "-b:Princess", "-p:" + BOT_PLAYER_NAME };
+        expected = "Princess has replaced MockBot.  Config: DEFAULT.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
         // Test setting both config and verbosity for Princess.
-        // Because makeNewPrincessClient is mocked out, the log level is always going to be ERROR.
         setUp();
-        args = new String[] {
-                "/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING, "-c:ESCAPE",
-                            "-p:" + BOT_PLAYER_NAME};
-        expected = "Verbosity set to 'WARNING'.\nPrincess has replaced MockBot.  Config: ESCAPE.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+        args = new String[] { "/replacePlayer", "-b:Princess", "-c:ESCAPE", "-p:" + BOT_PLAYER_NAME};
+        expected = "Princess has replaced MockBot.  Config: ESCAPE.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("ESCAPE");
@@ -167,26 +154,16 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-c:invalid", "-p:" + BOT_PLAYER_NAME};
         expected = "Unrecognized Behavior Setting: 'invalid'.  Using DEFAULT.\n" +
-                   "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+                   "Princess has replaced MockBot.  Config: DEFAULT.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");
         TestCase.assertEquals(expectedBehavior, mockPrincess.getBehaviorSettings());
 
-        // Test an invalid verbosity level for Princess.
-        setUp();
-        args = new String[]{"/replacePlayer", "-b:Princess", "-v:invalid", "-p:" + BOT_PLAYER_NAME};
-        expected = "Invalid Verbosity: 'invalid'.  Defaulting to " + DEFAULT_VERBOSITY +
-                   ".\nVerbosity set to '" + DEFAULT_VERBOSITY + "'." +
-                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
-        actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
-        TestCase.assertEquals(expected, actual);
-
         // Test leaving out a delimiter.
         setUp();
-        args = new String[]{"/replacePlayer", "-b:Princess", LogLevel.WARNING.toString(), "-c:ESCAPE",
-                            "-p:" + BOT_PLAYER_NAME};
-        expected = "Princess has replaced MockBot.  Config: ESCAPE.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+        args = new String[]{"/replacePlayer", "-b:Princess", "-c:ESCAPE", "-p:" + BOT_PLAYER_NAME};
+        expected = "Princess has replaced MockBot.  Config: ESCAPE.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("ESCAPE");
@@ -194,12 +171,8 @@ public class AddBotUtilTest {
 
         // Test leaving out a different delimiter.
         setUp();
-        args = new String[] {
-                "/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING, "ESCAPE",
-                            "-p:" + BOT_PLAYER_NAME};
-        expected = "Invalid Verbosity: 'WARNING ESCAPE'.  Defaulting to " + DEFAULT_VERBOSITY +
-                   ".\nVerbosity set to '" + DEFAULT_VERBOSITY + "'." +
-                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
+        args = new String[] { "/replacePlayer", "-b:Princess", "ESCAPE", "-p:" + BOT_PLAYER_NAME};
+        expected = "Princess has replaced MockBot.  Config: DEFAULT.\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");

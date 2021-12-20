@@ -53,10 +53,14 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_LASER;
         rulesRefs = "320,TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setClanAdvancement(3059, 3083, 3145).setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setClanAdvancement(DATE_NONE, 3059, 3083, DATE_NONE, DATE_NONE)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
 }

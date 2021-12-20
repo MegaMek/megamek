@@ -34,6 +34,7 @@ public class WeaponComparatorRange implements Comparator<Mounted> {
             this.ascending = -1;
     }
 
+    @Override
     public int compare(Mounted obj1, Mounted obj2) {
         if (obj1.getType() instanceof WeaponType
                 && obj2.getType() instanceof WeaponType) {
@@ -48,8 +49,8 @@ public class WeaponComparatorRange implements Comparator<Mounted> {
                     return 1 * ascending;
                 return 0;
             }
-            int ranges1[] = weap1.getRanges(obj1);
-            int ranges2[] = weap2.getRanges(obj2);
+            int[] ranges1 = weap1.getRanges(obj1);
+            int[] ranges2 = weap2.getRanges(obj2);
             // Start by comparing the short range brackets (*not* the minimum
             // ranges at index 0), then work outwards from there as needed.
             for (int r = 1; r < ranges1.length; r++) {

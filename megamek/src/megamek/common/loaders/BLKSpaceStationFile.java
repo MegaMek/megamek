@@ -363,7 +363,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                         }
                         newmount.setSize(size);
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
                 }
             }

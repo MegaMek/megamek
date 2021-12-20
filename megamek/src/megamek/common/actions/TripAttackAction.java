@@ -14,27 +14,13 @@
 
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
  * The attacker kicks the target.
  */
 public class TripAttackAction extends PhysicalAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8639566786588420601L;
 
     public TripAttackAction(int entityId, int targetId) {
@@ -67,18 +53,19 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        if ( ae.getGrappled() != Entity.NONE ) {
+        if (ae.getGrappled() != Entity.NONE) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
-            if (target.getTargetType() == Targetable.TYPE_ENTITY
-                    && (((Entity)target).getOwnerId() == ae.getOwnerId()
-                            || (((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() != IPlayer.TEAM_NONE
-                                    && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam()))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "A friendly unit can never be the target of a direct attack.");
             }
         }
 
@@ -121,18 +108,17 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
-        final int targetElevation = target.getElevation()
-                + targHex.getLevel();
+        final int targetElevation = target.getElevation() + targHex.getLevel();
 
-        if (attackerElevation != targetElevation){
+        if (attackerElevation != targetElevation) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker and Target must be at the same elevation");
         }
 
         // check if attacker has fired leg-mounted weapons
-        boolean usedWeapons[] = new boolean[ae.locations()];
+        boolean[] usedWeapons = new boolean[ae.locations()];
         for (int i = 0; i < ae.locations(); i++) {
             usedWeapons[i] = false;
         }
@@ -167,9 +153,7 @@ public class TripAttackAction extends PhysicalAttackAction {
                 }
                 limb1 = Mech.LOC_LARM;
             }
-        }
-        // normal attack uses both legs
-        else if (usedWeapons[Mech.LOC_RLEG]) {
+        } else if (usedWeapons[Mech.LOC_RLEG]) { // normal attack uses both legs
             if (usedWeapons[Mech.LOC_LLEG]) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
             }
@@ -185,7 +169,7 @@ public class TripAttackAction extends PhysicalAttackAction {
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // Get best leg
-        if ( ae instanceof QuadMech ) {
+        if (ae instanceof QuadMech) {
             if (limb1 == Entity.LOC_NONE) {
                 ToHitData left = TripAttackAction.getLimbModifier(Mech.LOC_LARM, ae);
                 ToHitData right = TripAttackAction.getLimbModifier(Mech.LOC_RARM, ae);
@@ -197,8 +181,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             } else {
                 toHit.append(TripAttackAction.getLimbModifier(limb1, ae));
             }
-        }
-        else if (limb1 == Entity.LOC_NONE) {
+        } else if (limb1 == Entity.LOC_NONE) {
             ToHitData left = TripAttackAction.getLimbModifier(Mech.LOC_LLEG, ae);
             ToHitData right = TripAttackAction.getLimbModifier(Mech.LOC_RLEG, ae);
             if (left.getValue() < right.getValue()) {
@@ -210,8 +193,8 @@ public class TripAttackAction extends PhysicalAttackAction {
             toHit.append(TripAttackAction.getLimbModifier(limb1, ae));
         }
 
-        if ( ae.hasFunctionalLegAES() ) {
-            toHit.addModifier(-1, "AES modifer");
+        if (ae.hasFunctionalLegAES()) {
+            toHit.addModifier(-1, "AES modifier");
         }
 
         // done!
@@ -224,9 +207,11 @@ public class TripAttackAction extends PhysicalAttackAction {
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, loc)) {
             toHit.addModifier(2, "Upper leg actuator destroyed");
         }
+
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, loc)) {
             toHit.addModifier(2, "Lower leg actuator destroyed");
         }
+
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_FOOT, loc)) {
             toHit.addModifier(1, "Foot actuator destroyed");
         }

@@ -17,6 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -39,6 +40,13 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         this.ammoType = AmmoType.T_LRM_STREAK;
         flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         clearModes();
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setClanAdvancement(DATE_NONE, 3057, 3079, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, true, false,false)
+        .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
+        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
     @Override

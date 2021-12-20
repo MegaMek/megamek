@@ -62,7 +62,7 @@ public class Minefield implements Serializable, Cloneable {
     public static int TYPE_SIZE = names.length;
 
     private Coords coords = null;
-    private int playerId = IPlayer.PLAYER_NONE;
+    private int playerId = Player.PLAYER_NONE;
     //private int damage = 0;
     //private int secondaryDamage = 0;
     private int density = 5;
@@ -129,10 +129,10 @@ public class Minefield implements Serializable, Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final Minefield other = (Minefield) obj;
@@ -162,7 +162,7 @@ public class Minefield implements Serializable, Cloneable {
      * @return
      */
     public int getTrigger() {    
-        if(density < 15) {
+        if (density < 15) {
             return 9;
         } else if (density < 25) {
             return 8;
@@ -230,10 +230,10 @@ public class Minefield implements Serializable, Cloneable {
         }
         
         boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct && getType() != Minefield.TYPE_CONVENTIONAL && getType() != Minefield.TYPE_INFERNO);
-        if(getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
+        if (getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
             isReduced = false;
         }
-        if(isReduced) {
+        if (isReduced) {
             setDensity(getDensity() - 5);
         }    
     }

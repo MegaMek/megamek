@@ -1,57 +1,35 @@
 /*
  * MegaMek - Copyright (C) 2017 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import megamek.client.ui.Messages;
+import megamek.common.*;
+import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import megamek.MegaMek;
-import megamek.client.ui.Messages;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SimpleTechLevel;
-import megamek.common.WeaponType;
-import megamek.common.options.OptionsConstants;
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Neoancient
- *
  */
 public class BayMunitionsChoicePanel extends JPanel {
-    
-    /**
-     * 
-     */
     private static final long serialVersionUID = -7741380967676720496L;
     
     private final Entity entity;
@@ -108,7 +86,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
                         } catch (LocationFullException e) {
-                            MegaMek.getLogger().error(e);
+                            LogManager.getLogger().error(e);
                         }
 
                     } else {
@@ -206,7 +184,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             gbc.insets = new Insets(0, 5, 0, 5);
             gbc.gridwidth = 5;
             add(new JLabel("(" + entity.getLocationAbbr(bay.getLocation()) + ") "
-                    + (wtype.isPresent()? wtype.get().getName() : "?")), gbc);
+                    + (wtype.isPresent() ? wtype.get().getName() : "?")), gbc);
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
@@ -261,32 +239,32 @@ public class BayMunitionsChoicePanel extends JPanel {
             if (atype.getAmmoType() == AmmoType.T_MML) {
                 if ((atype.getMunitionType() & (AmmoType.M_ARTEMIS_CAPABLE | AmmoType.M_ARTEMIS_V_CAPABLE))
                         == 0) {
-                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)?
-                            "CustomMechDialog.LRM" : "CustomMechDialog.SRM"); //$NON-NLS-1$  //$NON-NLS-2$
+                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
+                            ? "CustomMechDialog.LRM" : "CustomMechDialog.SRM");
                 } else {
-                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)?
-                            "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis"); //$NON-NLS-1$  //$NON-NLS-2$
+                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
+                            ? "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis");
                 }
             }
             
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
-                String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE)? "-T":"";
+                String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE) ? "-T" : "";
                 if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-                    return Messages.getString("CustomMechDialog.Peacemaker") + tele; //$NON-NLS-1$
+                    return Messages.getString("CustomMechDialog.Peacemaker") + tele;
                 } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-                    return Messages.getString("CustomMechDialog.SantaAnna") + tele; //$NON-NLS-1$
+                    return Messages.getString("CustomMechDialog.SantaAnna") + tele;
                 } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-                    return Messages.getString("CustomMechDialog.KillerWhale") + tele; //$NON-NLS-1$
+                    return Messages.getString("CustomMechDialog.KillerWhale") + tele;
                 } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                    return Messages.getString("CustomMechDialog.WhiteShark") + tele; //$NON-NLS-1$
+                    return Messages.getString("CustomMechDialog.WhiteShark") + tele;
                 } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                    return Messages.getString("CustomMechDialog.Barracuda") + tele; //$NON-NLS-1$
+                    return Messages.getString("CustomMechDialog.Barracuda") + tele;
                 }
             }
             
             if ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
                     || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
-                return Messages.getString("CustomMechDialog.Artemis"); //$NON-NLS-1$
+                return Messages.getString("CustomMechDialog.Artemis");
             }
             
             // ATM munitions
@@ -302,12 +280,12 @@ public class BayMunitionsChoicePanel extends JPanel {
                         || atype.getAmmoType() == AmmoType.T_THUMPER
                         || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
                     if (atype.getMunitionType() == AmmoType.M_STANDARD) {
-                        return Messages.getString("CustomMechDialog.StandardMunition"); //$NON-NLS-1$
+                        return Messages.getString("CustomMechDialog.StandardMunition");
                     }
-                    return atype.getShortName(); //$NON-NLS-1$
+                    return atype.getShortName();
                 }
             }
-            return Messages.getString("CustomMechDialog.StandardMunition"); //$NON-NLS-1$
+            return Messages.getString("CustomMechDialog.StandardMunition");
         }
         
         private void recalcMaxValues() {
@@ -325,7 +303,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                 ((SpinnerNumberModel) spinners.get(i).getModel()).setMaximum(max);
                 spinners.get(i).addChangeListener(this);
             }
-            lblTonnage.setText(String.format(Messages.getString("CustomMechDialog.formatAmmoTonnage"), //$NON-NLS-1$
+            lblTonnage.setText(String.format(Messages.getString("CustomMechDialog.formatAmmoTonnage"),
                     tonnage - remaining, tonnage));
         }
 

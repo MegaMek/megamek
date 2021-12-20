@@ -2,21 +2,16 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * Author: Reinhard Vicinus
- */
-
 package megamek.common.verifier;
 
 import java.util.*;
@@ -42,7 +37,7 @@ import megamek.common.weapons.srms.SRTWeapon;
  * Aerospace Fighters.
  * 
  * @author arlith
- *
+ * @author Reinhard Vicinus
  */
 public class TestAero extends TestEntity {
     private Aero aero = null;
@@ -54,9 +49,8 @@ public class TestAero extends TestEntity {
      * as the number of slots the armor takes up.
      * 
      * @author arlith
-     *
      */
-    public static enum AeroArmor{
+    public static enum AeroArmor {
         STANDARD(EquipmentType.T_ARMOR_STANDARD, 0, 0, false),   
         CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
         FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
@@ -100,7 +94,7 @@ public class TestAero extends TestEntity {
          */
         public boolean isClan;
         
-        private AeroArmor(int t, int s, int p, boolean c){
+        AeroArmor(int t, int s, int p, boolean c) {
             type = t;
             space = s;
             patchworkSpace = p;
@@ -116,8 +110,8 @@ public class TestAero extends TestEntity {
          * @return   The <code>AeroArmor</code> that correspondes to the given 
          *              type or null if no match was found.
          */
-        public static AeroArmor getArmor(int t, boolean c){
-            for (AeroArmor a : values()){
+        public static AeroArmor getArmor(int t, boolean c) {
+            for (AeroArmor a : values()) {
                 if ((a.type == t) && ((a.isClan == c)
                         || (t == EquipmentType.T_ARMOR_STANDARD))) {
                     return a;
@@ -133,7 +127,6 @@ public class TestAero extends TestEntity {
             String name = EquipmentType.getArmorTypeName(type, isClan);
             return EquipmentType.get(name);
         }
-        
     }
     
     /**
@@ -176,14 +169,14 @@ public class TestAero extends TestEntity {
      */
     public static int maxBayDoors(Aero aero) {
         if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            return 8 + (int)Math.ceil(aero.getWeight() / 100000);
+            return 8 + (int) Math.ceil(aero.getWeight() / 100000);
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            return 8 + (int)Math.ceil(aero.getWeight() / 75000);
+            return 8 + (int) Math.ceil(aero.getWeight() / 75000);
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || (aero.hasETypeFlag(Entity.ETYPE_DROPSHIP))) {
-            return 7 + (int)Math.ceil(aero.getWeight() / 50000);
+            return 7 + (int) Math.ceil(aero.getWeight() / 50000);
         } else if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return aero.isSpheroid()? 4 : 2;
+            return aero.isSpheroid() ? 4 : 2;
         } else {
             return 0;
         }
@@ -238,11 +231,6 @@ public class TestAero extends TestEntity {
     }
     
     /**
-     * Defines the maximum engine rating that an Aero can have.
-     */
-    public static int MAX_ENGINE_RATING = 400;
-    
-    /**
      *  Computes the maximum number of armor points for a given Aero
      *  at the given tonnage.
      *   
@@ -250,14 +238,14 @@ public class TestAero extends TestEntity {
      * @param tonnage
      * @return
      */
-    public static int maxArmorPoints(Entity aero, double tonnage){
+    public static int maxArmorPoints(Entity aero, double tonnage) {
         long eType = aero.getEntityType();
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return TestSmallCraft.maxArmorPoints((SmallCraft)aero);
+            return TestSmallCraft.maxArmorPoints((SmallCraft) aero);
         } else if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-                return (int)(tonnage * 1);
-        } else if (eType == Entity.ETYPE_AERO){
-            return (int)(tonnage * 8);
+                return (int) (tonnage * 1);
+        } else if (eType == Entity.ETYPE_AERO) {
+            return (int) (tonnage * 8);
         } else {
             return 0;
         }
@@ -274,36 +262,32 @@ public class TestAero extends TestEntity {
      *           have in that location. Returns null if the space cannot be determined
      *           due to illegal armor type value.
      */
-    public static @Nullable int[] availableSpace(Aero a){
+    public static @Nullable int[] availableSpace(Aero a) {
         // Keep track of the max space we have in each arc
         int slots = slotsPerArc(a);
-        int availSpace[] = 
-            { slots, slots, slots, slots };
+        int[] availSpace = { slots, slots, slots, slots };
         
         if (!a.hasPatchworkArmor()) {
             // Get the armor type, to determine how much space it uses
-            AeroArmor armor = 
-                    AeroArmor.getArmor(a.getArmorType(Aero.LOC_NOSE),
-                                       a.isClanArmor(Aero.LOC_NOSE));
+            AeroArmor armor = AeroArmor.getArmor(a.getArmorType(Aero.LOC_NOSE), a.isClanArmor(Aero.LOC_NOSE));
             
-            if (armor == null){            
+            if (armor == null) {            
                 return null;
             }
             // Remove space for each location until we've allocated the armor
             int spaceUsedByArmor = armor.space;
             int loc = (spaceUsedByArmor != 2) ? Aero.LOC_AFT : Aero.LOC_RWING;
-            while (spaceUsedByArmor > 0){
+            while (spaceUsedByArmor > 0) {
                 availSpace[loc]--;
                 spaceUsedByArmor--;
                 loc--;
-                if (loc < 0){
+                if (loc < 0) {
                     loc = Aero.LOC_AFT;
                 }
             }
         } else {
             for (int loc = 0; loc < Aero.LOC_WINGS; loc++) {
-                AeroArmor armor = AeroArmor.getArmor(a.getArmorType(loc),
-                        a.isClanArmor(loc));
+                AeroArmor armor = AeroArmor.getArmor(a.getArmorType(loc), a.isClanArmor(loc));
                 if (null == armor) {
                     return null;
                 } else {
@@ -368,18 +352,18 @@ public class TestAero extends TestEntity {
      * @param desiredSafeThrust
      * @return
      */
-    public static int calculateEngineRating(Aero unit, int tonnage, int desiredSafeThrust){
+    public static int calculateEngineRating(Aero unit, int tonnage, int desiredSafeThrust) {
         int rating;
         long eType = unit.getEntityType();
         if (unit.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             rating = (tonnage * desiredSafeThrust);
-        } else if (eType == Entity.ETYPE_AERO){
+        } else if (eType == Entity.ETYPE_AERO) {
             rating = (tonnage * (desiredSafeThrust - 2));
         } else {
             rating = 0;
         }
         
-        if (unit.isPrimitive()){
+        if (unit.isPrimitive()) {
             double dRating = rating;
             dRating *= 1.2;
             if ((dRating % 5) != 0) {
@@ -389,23 +373,17 @@ public class TestAero extends TestEntity {
         }
         return rating;
     }
-    
+
     /**
-     * Computes and returns the maximum number of turns the given unit could
-     * fly at safe thrust given its fuel payload.  Aerospace fighters consume
-     * 1 fuel point per thrust point spent up the the maximum safe thrust, 
-     * whereas conventional fighters with turbine engines consume 0.5 fuel
-     * points per thrust point spent up to the maximum safe thrust.
-     * See Strategic Operations pg 34. 
-     * 
-     * @param aero
-     * @return
+     * @return the maximum number of turns the given unit could fly at safe thrust given its fuel
+     * payload. Aerospace fighters consume 1 fuel point per thrust point spent up the the maximum
+     * safe thrust, whereas conventional fighters with turbine engines consume 0.5 fuel points per
+     * thrust point spent up to the maximum safe thrust.
+     * See Strategic Operations pg 34.
      */
-    public static float calculateMaxTurnsAtSafe(Aero aero){
-        int fuelPoints = aero.getFuel();
-        float fuelPerTurn;
-        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)
-                && aero.hasEngine()
+    public static float calculateMaxTurnsAtSafe(final Aero aero) {
+        final float fuelPerTurn;
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && aero.hasEngine()
                 && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
         } else if (aero.getWalkMP() == 0) {
@@ -413,45 +391,45 @@ public class TestAero extends TestEntity {
         } else {
             fuelPerTurn = aero.getWalkMP();
         }
-        return fuelPoints/fuelPerTurn;        
+
+        return aero.getFuel() / fuelPerTurn;
     }
-    
+
     /**
      * Computes and returns the maximum number of turns the given unit could
-     * fly at max thrust given its fuel payload.  Aerospace fighters consume
+     * fly at max thrust given its fuel payload. Aerospace fighters consume
      * 1 fuel point per thrust point spent up the the maximum safe thrust and
      * 2 fuel points per thrust point afterwards, whereas conventional fighters 
      * with ICE engines consume 0.5 fuel points per thrust point spent up to 
      * the maximum safe thrust and 1 fuel point per thrust up to the maximum 
-     * thrust.  Conventional fighters with Fusion engines spend 0.5 fuel points
+     * thrust. Conventional fighters with Fusion engines spend 0.5 fuel points
      * per thrust up to the safe thrust and then 2 fuel points per thrust 
-     * afterwards.  See Strategic Operations pg 34.
+     * afterwards. See Strategic Operations pg 34.
      * 
      * @param aero
      * @return
      */
-    public static float calculateMaxTurnsAtMax(Aero aero){
+    public static float calculateMaxTurnsAtMax(Aero aero) {
         int fuelPoints = aero.getFuel();
         float fuelPerTurn;
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
-            if(aero.hasEngine()) {
-                if(aero.getEngine().isFusion()) {
-                    fuelPerTurn += (aero.getRunMP()-aero.getWalkMP()) * 2;
+            if (aero.hasEngine()) {
+                if (aero.getEngine().isFusion()) {
+                    fuelPerTurn += (aero.getRunMP() - aero.getWalkMP()) * 2f;
                 } else {
-                    fuelPerTurn += (aero.getRunMP()-aero.getWalkMP());
+                    fuelPerTurn += (aero.getRunMP() - aero.getWalkMP());
                 }
             }
         } else if (aero.getWalkMP() == 0) {
             fuelPerTurn = 0.2f;
         } else {
-            fuelPerTurn = aero.getWalkMP() + 
-                    (aero.getRunMP()-aero.getWalkMP()) * 2;
+            fuelPerTurn = aero.getWalkMP() + (aero.getRunMP() - aero.getWalkMP()) * 2f;
         }
-        return fuelPoints/fuelPerTurn;       
-    }    
+        return fuelPoints / fuelPerTurn;       
+    }
 
-    public static int weightFreeHeatSinks(Aero aero) {
+    public static int weightFreeHeatSinks(final Aero aero) {
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             return TestSmallCraft.weightFreeHeatSinks((SmallCraft) aero);
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
@@ -462,31 +440,20 @@ public class TestAero extends TestEntity {
             return 0;
         }
     }
-    
+
     /**
-     * Computes and returns the number of days the unit can spend accelerating at 1G 
-     * 
-     * @param aero
-     * @return
+     * @return the number of days the unit can spend accelerating at 1G
      */
-    public static double calculateDaysAt1G(Aero aero) {
-        double stratUse = aero.getStrategicFuelUse();
-        if (stratUse > 0) {
-            return aero.getFuelTonnage() / aero.getStrategicFuelUse();
-        } else {
-            return 0.0;
-        }
+    public static double calculateDaysAt1G(final Aero aero) {
+        final double strategicFuelUse = aero.getStrategicFuelUse();
+        return (strategicFuelUse > 0) ? aero.getFuelTonnage() / aero.getStrategicFuelUse() : 0d;
     }
-    
+
     /**
-     * Computes and returns the number of days the unit can spend accelerating at maximum thrust. 
-     * 
-     * @param aero
-     * @return
+     * @return the number of days the unit can spend accelerating at maximum thrust.
      */
-    public static double calculateDaysAtMax(Aero aero) {
-        double stratUse = aero.getStrategicFuelUse();
-        if (stratUse > 0) {
+    public static double calculateDaysAtMax(final Aero aero) {
+        if (aero.getStrategicFuelUse() > 0) {
             double maxMP = aero.getRunMP();
             // check for station-keeping drive
             if (maxMP == 0) {
@@ -497,7 +464,7 @@ public class TestAero extends TestEntity {
             return 0.0;
         }
     }
-    
+
     public TestAero(Aero a, TestEntityOption option, String fs) {
         super(option, a.getEngine(), getArmor(a), getStructure(a));
         aero = a;
@@ -583,7 +550,7 @@ public class TestAero extends TestEntity {
                 Mounted linkedBy = m.getLinkedBy();
                 if ((linkedBy != null) && 
                         (linkedBy.getType() instanceof MiscType) && 
-                        linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)){
+                        linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                     weight += linkedBy.getTonnage();
                 }
             }
@@ -619,7 +586,7 @@ public class TestAero extends TestEntity {
             weight = 3.0;
             if (aero.getCockpitType() == Aero.COCKPIT_SMALL) {
                 weight = 2.0;
-        } else if (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE){                       
+        } else if (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE) {                       
                 weight = 6.0;
             } else if (aero.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
                 weight = 5.0;
@@ -658,7 +625,7 @@ public class TestAero extends TestEntity {
     @Override
     public String printWeightMisc() {
         double weight = getWeightMisc();
-        if (weight > 0){
+        if (weight > 0) {
             StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
                     "VSTOL equipment:", getPrintSize() - 5));
             retVal.append(makeWeightString(weight));
@@ -690,7 +657,7 @@ public class TestAero extends TestEntity {
     }
 
     public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + Integer.toString(wert) + "!";
+        return " is greater than " + wert + "!";
     }
 
     /**
@@ -712,7 +679,7 @@ public class TestAero extends TestEntity {
             }
             armorTotal += aero.getOArmor(loc);
         }
-        if (armorTotal > maxArmorPoints){
+        if (armorTotal > maxArmorPoints) {
             buff.append("Total armor," + armorTotal + 
                     ", is greater than the maximum: " + maxArmorPoints + "\n");
             correct = false;
@@ -729,14 +696,14 @@ public class TestAero extends TestEntity {
      * @param buff
      * @return
      */
-    public boolean correctControlSystems(StringBuffer buff){
+    public boolean correctControlSystems(StringBuffer buff) {
         if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) &&
-                aero.getCockpitType() != Aero.COCKPIT_STANDARD){
+                aero.getCockpitType() != Aero.COCKPIT_STANDARD) {
             buff.append(
                     "Conventional fighters may only have standard cockpits!");
             return false;
         } else if (aero.getCockpitType() < Aero.COCKPIT_STANDARD || 
-                aero.getCockpitType() > Aero.COCKPIT_PRIMITIVE){
+                aero.getCockpitType() > Aero.COCKPIT_PRIMITIVE) {
             buff.append(
                     "Invalid cockpit type!");
             return false;
@@ -777,13 +744,13 @@ public class TestAero extends TestEntity {
         int[] numWeapons = new int[aero.locations()];
         int numBombs = 0;
         
-        for (Mounted m : aero.getWeaponList()){
+        for (Mounted m : aero.getWeaponList()) {
             if (m.getLocation() == Entity.LOC_NONE)
                 continue;
             
             // Aeros can't use special munitions except for artemis, exceptions
             //  LBX's must use clusters
-            WeaponType wt = (WeaponType)m.getType();
+            WeaponType wt = (WeaponType) m.getType();
             boolean canHaveSpecialMunitions = 
                     ((wt.getAmmoType() == AmmoType.T_MML)
                     || (wt.getAmmoType() == AmmoType.T_ATM)
@@ -797,7 +764,7 @@ public class TestAero extends TestEntity {
                         || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_PROTO)
                         || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_V));
                 if (linkedType instanceof AmmoType) {
-                    AmmoType linkedAT = (AmmoType)linkedType;
+                    AmmoType linkedAT = (AmmoType) linkedType;
                     // Check LBX's
                     if (wt.getAmmoType() == AmmoType.T_AC_LBX && 
                             linkedAT.getMunitionType() != AmmoType.M_CLUSTER) {
@@ -817,7 +784,7 @@ public class TestAero extends TestEntity {
                     if (linkedAT.getMunitionType() != AmmoType.M_STANDARD 
                             && !hasArtemisFCS 
                             && wt.getAmmoType() != AmmoType.T_AC_LBX
-                    		&& wt.getAmmoType() != AmmoType.T_SBGAUSS){
+                    		&& wt.getAmmoType() != AmmoType.T_SBGAUSS) {
                         correct = false;
                         buff.append("Aeros may not use special munitions! ").append(m.getType().getInternalName())
                                 .append(" is using ").append(linkedAT.getInternalName()).append("\n");
@@ -830,7 +797,7 @@ public class TestAero extends TestEntity {
                     || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     || m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
                     || m.getType().hasFlag(WeaponType.F_ALT_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_SPACE_BOMB)){
+                    || m.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                 numBombs++;
             } else {
                 numWeapons[m.getLocation()]++;
@@ -903,7 +870,7 @@ public class TestAero extends TestEntity {
                 aero.getEntityType() == Entity.ETYPE_SMALL_CRAFT ||
                 aero.getEntityType() == Entity.ETYPE_FIGHTER_SQUADRON ||
                 aero.getEntityType() == Entity.ETYPE_JUMPSHIP ||
-                aero.getEntityType() == Entity.ETYPE_SPACE_STATION){
+                aero.getEntityType() == Entity.ETYPE_SPACE_STATION) {
             System.out.println("TestAero only supports Aerospace Fighters " +
                     "and Conventional fighters.  Supplied unit was a " + 
                     Entity.getEntityTypeName(aero.getEntityType()));
@@ -1269,6 +1236,7 @@ public class TestAero extends TestEntity {
     /**
      * Calculate the structural integrity weight
      */
+    @Override
     public double getWeightStructure() {
         double tonnage = 0;
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
@@ -1290,17 +1258,6 @@ public class TestAero extends TestEntity {
             return 0;
         }
         return Math.ceil(tonnage * 2) / 2.0;
-    }
-
-    /**
-     * Get the maximum tonnage for the type of unit. Primitive jumpships will use the maximum
-     * allowable value for the construction year (Terran Alliance/Hegemony)
-     * 
-     * @param aero      The unit
-     * @return          The maximum tonnage for the type of unit.
-     */
-    public static int getMaxTonnage(Aero aero) {
-        return getMaxTonnage(aero, ITechnology.F_NONE);
     }
     
     /**
@@ -1328,7 +1285,7 @@ public class TestAero extends TestEntity {
             if (aero.isPrimitive()) {
                 return getPrimitiveDropshipMaxTonnage(aero);
             }
-            return aero.isSpheroid()? 100000 : 35000;
+            return aero.isSpheroid() ? 100000 : 35000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                 || aero.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
             return 200;
@@ -1358,7 +1315,7 @@ public class TestAero extends TestEntity {
                     return 250000;
                 } else if (jumpship.getYear() < 2200) {
                     return 350000;
-                } else if (jumpship.getYear() < 2300){
+                } else if (jumpship.getYear() < 2300) {
                     return 500000;
                 } else if (jumpship.getYear() < 2350) {
                     return 1000000;
@@ -1372,7 +1329,7 @@ public class TestAero extends TestEntity {
             case ITechnology.F_FS:
             case ITechnology.F_FW:
             case ITechnology.F_LC:
-                if (jumpship.getYear() < 2300){
+                if (jumpship.getYear() < 2300) {
                     return 350000;
                 } else if (jumpship.getYear() < 2350) {
                     return 600000;
@@ -1382,7 +1339,7 @@ public class TestAero extends TestEntity {
                     return 1000000;
                 }
             default:
-                if (jumpship.getYear() < 2300){
+                if (jumpship.getYear() < 2300) {
                     return 300000;
                 } else if (jumpship.getYear() < 2350) {
                     return 450000;
@@ -1396,25 +1353,25 @@ public class TestAero extends TestEntity {
     
     public static int getPrimitiveDropshipMaxTonnage(Aero dropship) {
         if (dropship.getYear() < 2130) {
-            return dropship.isSpheroid()? 3000 : 1000; 
+            return dropship.isSpheroid() ? 3000 : 1000;
         } else if (dropship.getYear() < 2150) {
-            return dropship.isSpheroid()? 4000 : 1500; 
+            return dropship.isSpheroid() ? 4000 : 1500;
         } else if (dropship.getYear() < 2165) {
-            return dropship.isSpheroid()? 7000 : 2500; 
+            return dropship.isSpheroid() ? 7000 : 2500;
         } else if (dropship.getYear() < 2175) {
-            return dropship.isSpheroid()? 10000 : 3000; 
+            return dropship.isSpheroid() ? 10000 : 3000;
         } else if (dropship.getYear() < 2200) {
-            return dropship.isSpheroid()? 14000 : 5000; 
+            return dropship.isSpheroid() ? 14000 : 5000;
         } else if (dropship.getYear() < 2250) {
-            return dropship.isSpheroid()? 15000 : 6000; 
+            return dropship.isSpheroid() ? 15000 : 6000;
         } else if (dropship.getYear() < 2300) {
-            return dropship.isSpheroid()? 19000 : 7000; 
+            return dropship.isSpheroid() ? 19000 : 7000;
         } else if (dropship.getYear() < 2350) {
-            return dropship.isSpheroid()? 23000 : 8000; 
+            return dropship.isSpheroid() ? 23000 : 8000;
         } else if (dropship.getYear() < 2425) {
-            return dropship.isSpheroid()? 30000 : 10000; 
+            return dropship.isSpheroid() ? 30000 : 10000;
         } else {
-            return dropship.isSpheroid()? 50000 : 20000; 
+            return dropship.isSpheroid() ? 50000 : 20000;
         }
     }
 
@@ -1445,19 +1402,19 @@ public class TestAero extends TestEntity {
             if (m.getType() instanceof BayWeapon) {
                 continue;
             }
-            if ((((WeaponType)m.getType()).getLongRange() <= 1)
+            if ((((WeaponType) m.getType()).getLongRange() <= 1)
                     // MML range depends on ammo, and getLongRange() returns 0
                     && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
                 continue;
             }
-            if (((WeaponType)m.getType()).isCapital()
+            if (((WeaponType) m.getType()).isCapital()
                     || (m.getType() instanceof ScreenLauncherWeapon)) {
                 capitalWeapons++;
             } else {
                 stdWeapons++;
             }
         }
-        return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
+        return capitalWeapons + (int) Math.ceil(stdWeapons / 6.0);
     }
 
     /**

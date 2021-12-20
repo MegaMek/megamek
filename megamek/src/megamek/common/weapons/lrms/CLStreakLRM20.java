@@ -49,10 +49,6 @@ public class CLStreakLRM20 extends StreakLRMWeapon {
         longAV = 20;
         maxRange = RANGE_LONG;
         rulesRefs = "327,TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        //Tech Advancement moved to StreakLRMWeapon.java
     }
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,15 +21,15 @@ TR-5
 </Model>
 
 <year>
-2510
+2560
 </year>
 
 <originalBuildYear>
-2510
+2560
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -106,3 +106,4 @@ Field Report 2765 Liao - Age of War
 <tonnage>
 25.0
 </tonnage>
+

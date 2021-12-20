@@ -179,6 +179,7 @@ public class UnitEditorDialog extends JDialog {
         });
         JButton butCancel = new JButton(Messages.getString("Cancel"));
         butCancel.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 setVisible(false);
             }
@@ -343,7 +344,7 @@ public class UnitEditorDialog extends JDialog {
     }
 
     private void initEquipPanel() {
-        equipCrits = new HashMap<Integer, CheckCritPanel>();
+        equipCrits = new HashMap<>();
         panEquip = new JPanel();
         panEquip.setLayout(new GridBagLayout());
         panEquip.setBorder(BorderFactory.createTitledBorder(Messages.getString("UnitEditorDialog.equipment")));
@@ -1179,7 +1180,7 @@ public class UnitEditorDialog extends JDialog {
         		        + "</b><br></html>"), gridBagConstraints);
     		
         		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
-                        0, nextbay.getCapacity(), nextbay.isCargo()? 0.5: 1.0));
+                        0, nextbay.getCapacity(), nextbay.isCargo() ? 0.5: 1.0));
         		bayDamage[b] = bayCrit;
         		gridBagConstraints.gridx = 1;
         		gridBagConstraints.weightx = 1.0;
@@ -1530,7 +1531,7 @@ public class UnitEditorDialog extends JDialog {
          */
         private static final long serialVersionUID = 8662728291188274362L;
 
-        private ArrayList<JCheckBox> checks = new ArrayList<JCheckBox>();
+        private ArrayList<JCheckBox> checks = new ArrayList<>();
 
         public CheckCritPanel(int crits, int current) {
             setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -1538,6 +1539,7 @@ public class UnitEditorDialog extends JDialog {
                 JCheckBox check = new JCheckBox("");
                 check.setActionCommand(Integer.toString(i));
                 check.addActionListener(new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent evt) {
                         checkBoxes(evt);
                     }

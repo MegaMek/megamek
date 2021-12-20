@@ -127,7 +127,7 @@ public class TestTank extends TestEntity {
      * @return            The maximum construction tonnage
      */
     public static double maxTonnage(EntityMovementMode mode, boolean superheavy) {
-        switch(mode) {
+        switch (mode) {
             case WHEELED:
             case WIGE:
                 return superheavy ? 160.0 : 80.0;
@@ -310,6 +310,7 @@ public class TestTank extends TestEntity {
         return super.getWeightCarryingSpace() + tank.getExtraCrewSeats() * 0.5;
     }
 
+    @Override
     public String printWeightCarryingSpace() {
         if (tank.getExtraCrewSeats() > 0) {
             return super.printWeightCarryingSpace()
@@ -580,7 +581,7 @@ public class TestTank extends TestEntity {
             }
         }
         for (Mounted mount : tank.getAmmo()) {
-            int ammoType = ((AmmoType)mount.getType()).getAmmoType();
+            int ammoType = ((AmmoType) mount.getType()).getAmmoType();
             if ((mount.getLocation() == Entity.LOC_NONE) &&
                     (mount.getUsableShotsLeft() > 1
                             || ammoType == AmmoType.T_CRUISE_MISSILE )) {
@@ -627,9 +628,9 @@ public class TestTank extends TestEntity {
             if (tank.getEngine().getEngineType() == Engine.LIGHT_ENGINE) {
                 engineSlots = 1;
             } else if (tank.getEngine().getEngineType() == Engine.XL_ENGINE) {
-                engineSlots = tank.getEngine().hasFlag(Engine.CLAN_ENGINE)? 1 : 2;
+                engineSlots = tank.getEngine().hasFlag(Engine.CLAN_ENGINE) ? 1 : 2;
             } else if (tank.getEngine().getEngineType() == Engine.XXL_ENGINE) {
-                engineSlots = tank.getEngine().hasFlag(Engine.CLAN_ENGINE)? 2 : 4;
+                engineSlots = tank.getEngine().hasFlag(Engine.CLAN_ENGINE) ? 2 : 4;
             } else if (tank.getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
                 engineSlots--;
             }
@@ -810,7 +811,7 @@ public class TestTank extends TestEntity {
         }
         
         for (Mounted m : getEntity().getMisc()) {
-            final MiscType misc = (MiscType)m.getType();
+            final MiscType misc = (MiscType) m.getType();
             
             if (misc.hasFlag(MiscType.F_JUMP_JET)) {
                 if (hasSponsonTurret) {

@@ -1,31 +1,19 @@
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.image.ImageObserver;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IPlayer;
-import megamek.common.options.IOptions;
+import megamek.common.Player;
+import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 
+import java.awt.*;
+import java.awt.image.ImageObserver;
+
 /**
- * Sprite used for isometric rendering to render an entity partially hidden
- * behind a hill.
- *
+ * Sprite used for isometric rendering to render an entity partially hidden behind a hill.
  */
 class IsometricSprite extends Sprite {
 
@@ -40,7 +28,7 @@ class IsometricSprite extends Sprite {
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+        Font font = new Font("SansSerif", Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
 
@@ -78,9 +66,6 @@ class IsometricSprite extends Sprite {
         }
     }
 
-    /**
-     *
-     */
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
             boolean makeTranslucent) {
@@ -168,7 +153,7 @@ class IsometricSprite extends Sprite {
         // draw the 'fuel leak' decal where appropriate
         boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
         
-        if(drawFuelLeak) {
+        if (drawFuelLeak) {
             Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
             if (null != fuelLeak) {
                 graph.drawImage(fuelLeak, x, y, observer);
@@ -178,7 +163,7 @@ class IsometricSprite extends Sprite {
         // draw the 'tires' or 'tracks' decal where appropriate
         boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
         
-        if(drawMotiveWreckage) {
+        if (drawMotiveWreckage) {
             Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
             if (null != motiveWreckage) {
                 graph.drawImage(motiveWreckage, x, y, observer);
@@ -194,7 +179,7 @@ class IsometricSprite extends Sprite {
                 .getDefaultConfiguration();
         image = config.createCompatibleImage(bounds.width, bounds.height,
                 Transparency.TRANSLUCENT);
-        Graphics2D g = (Graphics2D)image.getGraphics();
+        Graphics2D g = (Graphics2D) image.getGraphics();
 
         // draw the unit icon translucent if hidden from the enemy 
         // (and activated graphics setting); or submerged
@@ -218,18 +203,16 @@ class IsometricSprite extends Sprite {
      * mechs and teammates mechs (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-        IPlayer localPlayer = this.bv.getLocalPlayer();
+        Player localPlayer = this.bv.getLocalPlayer();
         if (localPlayer == null) {
             return false;
         }
-        IOptions opts = this.bv.game.getOptions();
-        if (opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
-                && ((e.getOwner().getId() == localPlayer.getId()) 
-                        || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
-                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
-            return true;
-        }
-        return false;
+
+        AbstractOptions opts = this.bv.game.getOptions();
+        return opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && ((e.getOwner().getId() == localPlayer.getId())
+                || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
+                && (e.getOwner().getTeam() == localPlayer.getTeam())));
     }
     
     /**
@@ -239,25 +222,18 @@ class IsometricSprite extends Sprite {
      * @return
      */
     private boolean onlyDetectedBySensors() {
-        boolean sensors = (bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+        boolean sensors = (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
-        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
+        boolean doubleBlind = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && !trackThisEntitiesVisibilityInfo(entity)
-                && hasDetected && !hasVisual) {
-            return true;
-        } else {
-            return false;
-        }
+        return sensors && doubleBlind && !sensorsDetectAll
+                && !trackThisEntitiesVisibilityInfo(entity) && hasDetected && !hasVisual;
     }
 
+    @Override
     protected int getSpritePriority() {
         return entity.getSpriteDrawPriority();
     }

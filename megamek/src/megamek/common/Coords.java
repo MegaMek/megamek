@@ -42,7 +42,7 @@ public class Coords implements Serializable {
     private static final long serialVersionUID = -4451256806040563030L;
 
     public static final double HEXSIDE = Math.PI / 3.0;
-    public static final int [] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
+    public static final int[] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
 
     @XmlElement(name="x")
     private final int x;
@@ -187,7 +187,7 @@ public class Coords implements Serializable {
      * 0 if the coordinates are equal
      */
     public int approximateDirection(Coords second, int initialDirection, int previousDirection) {
-        if(this.equals(second)) {
+        if (this.equals(second)) {
             return 0;
         }
         
@@ -196,25 +196,25 @@ public class Coords implements Serializable {
         HexLine startLine = new HexLine(this, direction);
         int directionIncrement = 0;
         int pointJudgement = startLine.judgePoint(second);
-        if(pointJudgement == 0) {
+        if (pointJudgement == 0) {
             // we are either directly above or below
-            switch(direction) {
-            case 0:
-                direction = (getY() > second.getY()) ? 0 : 3;
-                break;
-            case 3:
-                direction = (getY() < second.getY()) ? 0 : 3;
-                break;
+            switch (direction) {
+                case 0:
+                    direction = (getY() > second.getY()) ? 0 : 3;
+                    break;
+                case 3:
+                    direction = (getY() < second.getY()) ? 0 : 3;
+                    break;
             }
             return direction;
-        } else if(pointJudgement < 0) {
+        } else if (pointJudgement < 0) {
             directionIncrement = 5;
-        } else if(pointJudgement > 0) {
+        } else if (pointJudgement > 0) {
             directionIncrement = 1;
         }
         
         int newDirection = (initialDirection + directionIncrement) % 6;
-        if(newDirection == previousDirection) {
+        if (newDirection == previousDirection) {
             return newDirection;
         } else {
             return approximateDirection(second, newDirection, initialDirection);
@@ -464,6 +464,20 @@ public class Coords implements Serializable {
     }
     
     /**
+     * Returns a list of all coordinates at the given distance dist 
+     * and anything less than dist as well.
+     */
+    public ArrayList<Coords> allAtDistanceOrLess(int dist) {
+        ArrayList<Coords> retval = new ArrayList<>();
+        
+        for (int radius = 0; radius < dist; radius++) {
+            retval.addAll(allAtDistance(radius));
+        }
+        
+        return retval;
+    }
+    
+    /**
      * Returns a list of all coordinates at the given distance dist, 
      * regardless of whether they're on the board or not. Returns an 
      * empty Set for dist < 0 and the calling Coords itself for dist == 0.
@@ -480,8 +494,8 @@ public class Coords implements Serializable {
             // until we circle around. The length of a hex side is equivalent to the radius
             Coords currentHex = translated(4, dist);
 
-            for(int direction = 0; direction < 6; direction++) {
-                for(int translation = 0; translation < dist; translation++) {
+            for (int direction = 0; direction < 6; direction++) {
+                for (int translation = 0; translation < dist; translation++) {
                     currentHex = currentHex.translated(direction);
                     retval.add(currentHex);
                 }

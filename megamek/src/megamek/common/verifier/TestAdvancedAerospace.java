@@ -54,7 +54,7 @@ public class TestAdvancedAerospace extends TestAero {
          */
         public boolean isClan;
         
-        CapitalArmor(int t, boolean c){
+        CapitalArmor(int t, boolean c) {
             type = t;
             isClan = c;
         }
@@ -68,9 +68,9 @@ public class TestAdvancedAerospace extends TestAero {
          * @return   The <code>AeroArmor</code> that corresponds to the given 
          *              type or null if no match was found.
          */
-        public static CapitalArmor getArmor(int t, boolean c){
-            for (CapitalArmor a : values()){
-                if (a.type == t && a.isClan == c){
+        public static CapitalArmor getArmor(int t, boolean c) {
+            for (CapitalArmor a : values()) {
+                if (a.type == t && a.isClan == c) {
                     return a;
                 }
             }
@@ -165,7 +165,7 @@ public class TestAdvancedAerospace extends TestAero {
      *  Computes the maximum number armor level in tons
      *   
      */
-    public static double maxArmorWeight(Jumpship vessel){
+    public static double maxArmorWeight(Jumpship vessel) {
         // max armor tonnage is based on SI weight
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             // SI weight (SI/1000) / 50
@@ -205,8 +205,8 @@ public class TestAdvancedAerospace extends TestAero {
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             slotsPerArc = 20;
         }
-        int weaponsPerArc[] = new int[arcs];
-        double weaponTonnage[] = new double[arcs];
+        int[] weaponsPerArc = new int[arcs];
+        double[] weaponTonnage = new double[arcs];
         boolean hasNC3 = vessel.hasWorkingMisc(MiscType.F_NAVAL_C3);
 
         for (Mounted m : vessel.getEquipment()) {
@@ -308,7 +308,7 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static int weightFreeHeatSinks(Jumpship vessel) {
         return (int) Math.floor(45 + Math.sqrt(calculateEngineTonnage(vessel)
-                * (vessel.isPrimitive()?  1 : 2)));
+                * (vessel.isPrimitive() ?  1 : 2)));
     }
     
     /**
@@ -379,19 +379,19 @@ public class TestAdvancedAerospace extends TestAero {
         int stdWeapons = 0;
         for (Mounted m : vessel.getTotalWeaponList()) {
             if ((m.getType() instanceof BayWeapon)
-                    || (((WeaponType)m.getType()).getLongRange() <= 1)) {
+                    || (((WeaponType) m.getType()).getLongRange() <= 1)) {
                 continue;
             }
             if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
                 capitalWeapons += 10;
-            } else if (((WeaponType)m.getType()).isCapital()
+            } else if (((WeaponType) m.getType()).isCapital()
                     || (m.getType() instanceof ScreenLauncherWeapon)) {
                 capitalWeapons++;
             } else {
                 stdWeapons++;
             }
         }
-        return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
+        return capitalWeapons + (int) Math.ceil(stdWeapons / 6.0);
     }
     
     public TestAdvancedAerospace(Jumpship vessel, TestEntityOption option, String fs) {
@@ -634,7 +634,7 @@ public class TestAdvancedAerospace extends TestAero {
             for (Integer aNum : m.getBayAmmo()) {
                 final Mounted a = getEntity().getEquipment(aNum);
                 double weight = ceil(a.getTonnage()
-                        * a.getBaseShotsLeft() / ((AmmoType)a.getType()).getShots(), Ceil.HALFTON);
+                        * a.getBaseShotsLeft() / ((AmmoType) a.getType()).getShots(), Ceil.HALFTON);
                 buffer.append("   ").append(StringUtil.makeLength(a.getName(),
                         getPrintSize() - 25)).append(weight).append("\n");
             }
@@ -783,7 +783,7 @@ public class TestAdvancedAerospace extends TestAero {
                     continue;
                 }
                 if (w.getType() instanceof WeaponType) {
-                    ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
+                    ammoWeaponCount.merge(((WeaponType) w.getType()).getAmmoType(), 1, Integer::sum);
                 } else {
                     buff.append(w.getName()).append(" in bay ").append(bay.getName()).append(" is not a weapon\n");
                     illegal = true;
@@ -792,7 +792,7 @@ public class TestAdvancedAerospace extends TestAero {
             for (Integer aNum : bay.getBayAmmo()) {
                 final Mounted a = vessel.getEquipment(aNum);
                 if (a.getType() instanceof AmmoType) {
-                    ammoTypeCount.merge(((AmmoType)a.getType()).getAmmoType(), a.getUsableShotsLeft(),
+                    ammoTypeCount.merge(((AmmoType) a.getType()).getAmmoType(), a.getUsableShotsLeft(),
                             Integer::sum);
                 } else {
                     buff.append(a.getName()).append(" in bay ").append(bay.getName()).append(" is not ammo\n");
@@ -888,7 +888,7 @@ public class TestAdvancedAerospace extends TestAero {
                         buff.append("Minimum vessel tonnage for ")
                             .append(m.getType().getName()).append(" is 1,500,000 tons\n");
                         illegal = true;
-                    } else if((at == AmmoType.T_LMASS) && vessel.getWeight() < 750000) {
+                    } else if ((at == AmmoType.T_LMASS) && vessel.getWeight() < 750000) {
                         buff.append("Minimum vessel tonnage for ")
                             .append(m.getType().getName()).append(" is 750,000 tons\n");
                         illegal = true;
@@ -998,7 +998,7 @@ public class TestAdvancedAerospace extends TestAero {
             illegal = true;
         }
         if (vessel.getNOfficers() < Math.ceil(reqCrew / 6.0)) {
-            buffer.append("Requires at least " + (int)Math.ceil(reqCrew / 6.0) + " officers\n");
+            buffer.append("Requires at least " + (int) Math.ceil(reqCrew / 6.0) + " officers\n");
             illegal = true;
         }
         crewSize += vessel.getNPassenger();
@@ -1183,7 +1183,7 @@ public class TestAdvancedAerospace extends TestAero {
     public String getName() {
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             return "Warship: " + vessel.getDisplayName();
-        } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)){
+        } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return "Space Station: " + vessel.getDisplayName();
         } else {
             return "Jumpship: " + vessel.getDisplayName();

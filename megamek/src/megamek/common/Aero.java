@@ -13,24 +13,15 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Vector;
-
-import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -322,6 +313,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * A method to determine if an aero has suffered 3 sensor hits.
      * When double-blind is on, this affects both standard visibility and sensor rolls
      */
+    @Override
     public boolean isAeroSensorDestroyed() {
         return getSensorHits() >= 3;
     }
@@ -748,6 +740,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     //Landing mods for partial repairs
+    @Override
     public int getLandingGearPartialRepairs() {
     	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
         return 2;
@@ -759,6 +752,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     //Avionics mods for partial repairs
+    @Override
     public int getAvionicsMisreplaced() {
     	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
@@ -767,6 +761,7 @@ public class Aero extends Entity implements IAero, IBomber {
     	}
     }
 
+    @Override
     public int getAvionicsMisrepaired() {
     	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
@@ -835,6 +830,7 @@ public class Aero extends Entity implements IAero, IBomber {
         return fuel;
     }
 
+    @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
         		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -844,6 +840,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
 
+    @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
             	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -859,15 +856,18 @@ public class Aero extends Entity implements IAero, IBomber {
      * @param gas
      *            Number of fuel points.
      */
+    @Override
     public void setFuel(int gas) {
         fuel = gas;
         currentfuel = gas;
     }
 
+    @Override
     public void setCurrentFuel(int gas) {
     	currentfuel = gas;
     }
 
+    @Override
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
             return 80 / primitiveFuelFactor();
@@ -996,20 +996,20 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-        case MOVE_SKID:
-            return "Skidded";
-        case MOVE_NONE:
-            return "None";
-        case MOVE_WALK:
-            return "Cruised";
-        case MOVE_RUN:
-            return "Flanked";
-        case MOVE_SAFE_THRUST:
-            return "Safe Thrust";
-        case MOVE_OVER_THRUST:
-            return "Over Thrust";
-        default:
-            return "Unknown!";
+            case MOVE_SKID:
+                return "Skidded";
+            case MOVE_NONE:
+                return "None";
+            case MOVE_WALK:
+                return "Cruised";
+            case MOVE_RUN:
+                return "Flanked";
+            case MOVE_SAFE_THRUST:
+                return "Safe Thrust";
+            case MOVE_OVER_THRUST:
+                return "Over Thrust";
+            default:
+                return "Unknown!";
         }
     }
 
@@ -1019,14 +1019,14 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-        case MOVE_NONE:
-            return "N";
-        case MOVE_SAFE_THRUST:
-            return "S";
-        case MOVE_OVER_THRUST:
-            return "O";
-        default:
-            return "?";
+            case MOVE_NONE:
+                return "N";
+            case MOVE_SAFE_THRUST:
+                return "S";
+            case MOVE_OVER_THRUST:
+                return "O";
+            default:
+                return "?";
         }
     }
 
@@ -1072,6 +1072,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 break;
             default:
                 arc = Compute.ARC_360;
+                break;
         }
 
         return rollArcs(arc);
@@ -1092,7 +1093,8 @@ public class Aero extends Entity implements IAero, IBomber {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         return rollHitLocation(table, side);
     }
 
@@ -1117,189 +1119,189 @@ public class Aero extends Entity implements IAero, IBomber {
                 wingloc = LOC_LWING;
             }
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
 
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_FCS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_FCS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_BOMB);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_BOMB);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
             // normal right-side hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_BOMB);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_BOMB);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_REAR) {
             // normal aft hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1622,7 +1624,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // subtract for explosive ammo
         double explosivePenalty = 0;
         // FIXME: Consider new AmmoType::equals / BombType::equals
-        Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
+        Map<AmmoType, Boolean> ammos = new HashMap<>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 1;
@@ -2187,7 +2189,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
                 // first element in the the ArrayList is BV, second is heat
                 // if same BV, lower heat first
-                if(obj1BV.equals(obj2BV)) {
+                if (obj1BV.equals(obj2BV)) {
                     Double obj1Heat = (Double) obj1.get(1);
                     Double obj2Heat = (Double) obj2.get(1);
 
@@ -2318,8 +2320,8 @@ public class Aero extends Entity implements IAero, IBomber {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -2344,13 +2346,13 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED) || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
+                Player tmpP = getOwner();
 
                 if (tmpP != null) {
                     // Okay, actually check for friendly TAG.
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE) && (game != null)) {
+                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
                         for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
@@ -2707,7 +2709,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -3272,34 +3274,34 @@ public class Aero extends Entity implements IAero, IBomber {
         // Infantry do not ignore Chameleon LPS!!!
         else {
             switch (range) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                if (!ae.isConventionalInfantry()) {
-                    result = new TargetRoll(0, "stealth");
-                } else {
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_MEDIUM:
-                if (!ae.isConventionalInfantry()) {
-                    result = new TargetRoll(1, "stealth");
-                } else {
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME:
-            case RangeType.RANGE_LOS:
-                if (!ae.isConventionalInfantry()) {
-                    result = new TargetRoll(2, "stealth");
-                } else {
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_OUT:
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown range constant: " + range);
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    if (!ae.isConventionalInfantry()) {
+                        result = new TargetRoll(0, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    if (!ae.isConventionalInfantry()) {
+                        result = new TargetRoll(1, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
+                    if (!ae.isConventionalInfantry()) {
+                        result = new TargetRoll(2, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -3332,7 +3334,7 @@ public class Aero extends Entity implements IAero, IBomber {
             return false;
         }
 
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
 
         // Additional restrictions for hidden units
         if (isHidden()) {
@@ -3494,16 +3496,16 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public int getOppositeLocation(int loc) {
         switch (loc) {
-        case Aero.LOC_NOSE:
-            return Aero.LOC_AFT;
-        case Aero.LOC_LWING:
-            return Aero.LOC_RWING;
-        case Aero.LOC_RWING:
-            return Aero.LOC_LWING;
-        case Aero.LOC_AFT:
-            return Aero.LOC_NOSE;
-        default:
-            return Aero.LOC_NOSE;
+            case Aero.LOC_NOSE:
+                return Aero.LOC_AFT;
+            case Aero.LOC_LWING:
+                return Aero.LOC_RWING;
+            case Aero.LOC_RWING:
+                return Aero.LOC_LWING;
+            case Aero.LOC_AFT:
+                return Aero.LOC_NOSE;
+            default:
+                return Aero.LOC_NOSE;
         }
     }
 
@@ -3956,26 +3958,26 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (isEjecting()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
             return true;
         } else if (getInternalRemainingPercent() < 0.5) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(getInternalRemainingPercent()) + " internals remaining.");
             return true;
         } else if (getEngineHits() > 0) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
         } else if (fuelTankHit()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
         } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
             return true;
         } else if (getFCSHits() >= 3) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
             return true;
         } else if (getCICHits() >= 3) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
             return true;
         }
 
@@ -3985,7 +3987,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
             return true;
         } else {
             return false;
@@ -3995,17 +3997,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgHeavy() {
         if (getArmorRemainingPercent() <= 0.33) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.67.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 3)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + "Moderately Damaged: The crew has taken a minimum of three hits.");
             return true;
         }
@@ -4029,17 +4031,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgModerate() {
         if (getArmorRemainingPercent() <= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.50.");
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.75.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 2)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: The crew has taken a minimum of two hits.");
             return true;
         }
@@ -4062,17 +4064,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgLight() {
         if (getArmorRemainingPercent() <= 0.75) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.75.");
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.9.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 1)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: The crew has taken a minimum of one hit.");
             return true;
         }
@@ -4263,6 +4265,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * @return The number conventional marines available to vessels for boarding actions.
      */
+    @Override
     public int getNMarines() {
         return 0;
     }
@@ -4530,7 +4533,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            Vector<Sensor> sensorsToRemove = new Vector<>();
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {

@@ -1,36 +1,30 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.IAero;
 import megamek.common.Game;
+import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This class is intended to be used by the bot for generating possible paths for 
  * aerospace units on a low-altitude atmospheric map.
  * @author NickAragua
- *
  */
 public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
-
-    protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroLowAltitudePathFinder";
-    
     protected AeroLowAltitudePathFinder(Game game) {
         super(game);
     }
 
     public static AeroLowAltitudePathFinder getInstance(Game game) {
-        AeroLowAltitudePathFinder alf = new AeroLowAltitudePathFinder(game);
-
-        return alf;
+        return new AeroLowAltitudePathFinder(game);
     }
     
     @Override
@@ -52,7 +46,7 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
         List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(mp);
         List<MovePath> fullMovePaths = new ArrayList<>();
         
-        for(MovePath altitudePath : altitudePaths) {
+        for (MovePath altitudePath : altitudePaths) {
             fullMovePaths.addAll(super.GenerateAllPaths(altitudePath.clone()));
         }
         
@@ -88,21 +82,21 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
     
     // this data structure maps a set of coordinates with facing
     // to a map between height and "used MP".
-    private Map<CoordsWithFacing, Map<Integer, Integer>> visitedCoords = new HashMap<CoordsWithFacing, Map<Integer, Integer>>();
+    private Map<CoordsWithFacing, Map<Integer, Integer>> visitedCoords = new HashMap<>();
     /**
      * Determines whether or not the given move path is "redundant".
      * In this situation, "redundant" means "there is already a shorter path that goes to the ending coordinates/facing/height" combo.
      */
     @Override
     protected boolean pathIsRedundant(MovePath mp) {
-        if(!mp.fliesOffBoard()) {
+        if (!mp.fliesOffBoard()) {
             CoordsWithFacing destinationCoords = new CoordsWithFacing(mp);
-            if(!visitedCoords.containsKey(destinationCoords)) {
+            if (!visitedCoords.containsKey(destinationCoords)) {
                 visitedCoords.put(destinationCoords, new HashMap<>());
             }
             
             // we may or may not have been to these coordinates before, but we haven't been to this height. Not redundant. 
-            if(!visitedCoords.get(destinationCoords).containsKey(mp.getFinalAltitude())) {
+            if (!visitedCoords.get(destinationCoords).containsKey(mp.getFinalAltitude())) {
                 visitedCoords.get(destinationCoords).put(mp.getFinalAltitude(), mp.getMpUsed());
                 return false;
             // we *have* been to these coordinates and height before. This is redundant if the previous visit used less MP.

@@ -294,8 +294,6 @@ import megamek.common.weapons.other.CLNarcIOS;
 import megamek.common.weapons.other.CLNarcOS;
 import megamek.common.weapons.other.ISAMS;
 import megamek.common.weapons.other.ISAPDS;
-import megamek.common.weapons.other.ISC3M;
-import megamek.common.weapons.other.ISC3MBS;
 import megamek.common.weapons.other.ISC3RemoteSensorLauncher;
 import megamek.common.weapons.other.ISCenturionWeaponSystem;
 import megamek.common.weapons.other.ISFireExtinguisher;
@@ -437,6 +435,8 @@ import megamek.common.weapons.tag.CLLightTAG;
 import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISLightTAG;
 import megamek.common.weapons.tag.ISTAG;
+import megamek.common.weapons.tag.ISC3M;
+import megamek.common.weapons.tag.ISC3MBS;
 import megamek.common.weapons.unofficial.CLPlasmaRifle;
 import megamek.common.weapons.unofficial.CLRAC10;
 import megamek.common.weapons.unofficial.CLRAC20;
@@ -928,7 +928,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int getMaxRange(Mounted weapon) {
-        if(null != weapon) {
+        if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
                 if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {

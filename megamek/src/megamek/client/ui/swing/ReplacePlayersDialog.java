@@ -18,15 +18,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -34,7 +25,16 @@ import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
-import megamek.common.IPlayer;
+import megamek.common.Player;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class ReplacePlayersDialog extends AbstractButtonDialog {
     
@@ -48,23 +48,23 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     private final Game game;
     
     /** The list of displayed ghost players */
-    private Set<IPlayer> ghostPlayers;
+    private Set<Player> ghostPlayers;
     
     /** Maps a ghost player to the combobox that sets its replacement */
-    private Map<IPlayer, JComboBox<String>> playerChoosers = new HashMap<>();
+    private Map<Player, JComboBox<String>> playerChoosers = new HashMap<>();
     
     /** Maps a ghost player to the config button for the bot settings */
-    private Map<IPlayer, JButton> configButtons = new HashMap<>();
+    private Map<Player, JButton> configButtons = new HashMap<>();
     
     /** Maps a ghost player to bot settings chosen for it */
-    private Map<IPlayer, BehaviorSettings> botConfigs = new HashMap<>();
+    private Map<Player, BehaviorSettings> botConfigs = new HashMap<>();
 
     protected ReplacePlayersDialog(JFrame frame, ClientGUI cg) {
         super(frame, "ReplacePlayersDialog", "ReplacePlayersDialog.title");
         clientGui = cg;
         game = clientGui.getClient().getGame();
         ghostPlayers = game.getPlayersVector().stream()
-                .filter(IPlayer::isGhost).collect(Collectors.toSet());
+                .filter(Player::isGhost).collect(Collectors.toSet());
         // Add a new Princess behavior for each ghost. It will be overwritten by savegame behaviors
         ghostPlayers.forEach(p -> botConfigs.put(p, new BehaviorSettings()));
         initialize();
@@ -80,7 +80,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     @Override
     protected Container createCenterPane() {
         // Construct the available replacements for the combobox chooser
-        Vector<String> replacements = new Vector<String>();
+        Vector<String> replacements = new Vector<>();
         replacements.add(NOREPLACE_STRING);
         replacements.add(PRINCESS_STRING);
         
@@ -97,7 +97,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
         
         // The rows for the ghost players
         Map<String, BehaviorSettings> savedSettings = game.getBotSettings();
-        for (IPlayer ghost : ghostPlayers) {
+        for (Player ghost : ghostPlayers) {
             // Name
             gridPanel.add(new JLabel(ghost.getName()));
             
@@ -111,7 +111,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             }
             
             // The replacement chooser
-            var chooser = new JComboBox<String>(replacements);
+            var chooser = new JComboBox<>(replacements);
             playerChoosers.put(ghost, chooser);
             if (savedSettingsExist) {
                 chooser.setSelectedItem(PRINCESS_STRING);
@@ -142,7 +142,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     }
     
     /** Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any. */
-    private void callConfig(IPlayer ghost) {
+    private void callConfig(Player ghost) {
         var bcd = new BotConfigDialog(getFrame(), ghost.getName(), botConfigs.get(ghost), clientGui);
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
@@ -152,7 +152,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     
     /** Updates the config button enabled states (only enabled when Princess bot is selected). */
     private void updateButtonStates() {
-        for (IPlayer ghost : ghostPlayers) {
+        for (Player ghost : ghostPlayers) {
             JButton button = configButtons.get(ghost);
             button.setEnabled(playerChoosers.get(ghost).getSelectedItem().equals(PRINCESS_STRING));
         }
@@ -167,7 +167,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
      */
     public Map<String, BehaviorSettings> getNewBots() {
         var result = new HashMap<String, BehaviorSettings>();
-        for (IPlayer ghost : ghostPlayers) {
+        for (Player ghost : ghostPlayers) {
             JComboBox<String> chooser = playerChoosers.get(ghost);
             if (chooser.getSelectedItem().equals(PRINCESS_STRING)) {
                 result.put(ghost.getName(), botConfigs.get(ghost));

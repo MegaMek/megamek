@@ -77,7 +77,7 @@ public class BombType extends AmmoType {
     }
     
     public static String getBombName(int type) {
-        if((type >= B_NUM) || (type < 0)) {
+        if ((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";
         }
         return bombNames[type];
@@ -102,7 +102,7 @@ public class BombType extends AmmoType {
     }
 
     public static String getBombWeaponName(int type) {
-        if((type >= B_NUM) || (type < 0)) {
+        if ((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb weapon";
         }
         return bombWeaponNames[type];
@@ -119,45 +119,45 @@ public class BombType extends AmmoType {
     }
 
     public static String getBombInternalName(int type) {
-        if((type >= B_NUM) || (type < 0)) {
+        if ((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";
         }
         return bombInternalNames[type];
     }
 
     public static int getBombCost(int type) {
-        if((type >= B_NUM) || (type < 0)) {
+        if ((type >= B_NUM) || (type < 0)) {
             return 0;
         }
         return bombCosts[type];
     }
 
     public static boolean canGroundBomb(int type) {
-        switch(type) {
-        case B_HE:
-        case B_CLUSTER:
-        case B_LG:
-        case B_INFERNO:
-        case B_THUNDER:
-        case B_TORPEDO:
-        case B_FAE_SMALL:
-        case B_FAE_LARGE:
-            return true;
-        default:
-            return false;
+        switch (type) {
+            case B_HE:
+            case B_CLUSTER:
+            case B_LG:
+            case B_INFERNO:
+            case B_THUNDER:
+            case B_TORPEDO:
+            case B_FAE_SMALL:
+            case B_FAE_LARGE:
+                return true;
+            default:
+                return false;
         }
     }
 
     public static boolean canSpaceBomb(int type) {
-        switch(type) {
-        case B_HE:
-        case B_CLUSTER:
-        case B_LG:
-        case B_ARROW:
-        case B_HOMING:
-            return true;
-        default:
-            return false;
+        switch (type) {
+            case B_HE:
+            case B_CLUSTER:
+            case B_LG:
+            case B_ARROW:
+            case B_HOMING:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -194,7 +194,7 @@ public class BombType extends AmmoType {
     }
     
     public static BombType createBombByType(int bType)    {
-        switch (bType){
+        switch (bType) {
             case B_HE:
                 return createHighExplosiveBomb();
             case B_CLUSTER:
@@ -285,17 +285,18 @@ public class BombType extends AmmoType {
 		bomb.bv = 114;
 		bomb.cost = 15000;
 		bomb.rulesRefs = "358,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
-		.setIntroLevel(false)
-		.setUnofficial(false)
-	    .setTechRating(RATING_D)
-	    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-	    .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
-	    .setISApproximate(false, true, false,false, false)
-	    .setClanAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
-	    .setClanApproximate(false, false, false, false, false)
-	    .setPrototypeFactions(F_FS).setProductionFactions(F_FS)
-	    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_D)
+		    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		    .setISAdvancement(3071, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setClanAdvancement(DATE_NONE, DATE_NONE, 3072, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, true, false, false)
+		    .setPrototypeFactions(F_FS).setProductionFactions(F_FS)
+		    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
 		return bomb;
 	}

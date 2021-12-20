@@ -13,14 +13,15 @@
  */
 package megamek.common.weapons;
 
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 import megamek.server.SmokeCloud;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,8 +32,9 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * @author Andrew Hunter A basic, simple attack handler. May or may not work for
- *         any particular weapon; must be overloaded to support special rules.
+ * A basic, simple attack handler. May or may not work for any particular weapon; must be overloaded
+ * to support special rules.
+ * @author Andrew Hunter
  */
 public class WeaponHandler implements AttackHandler, Serializable {
 
@@ -66,7 +68,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean missed = false;
     protected DamageType damageType;
     protected int generalDamageType = HitData.DAMAGE_NONE;
-    protected Vector<Integer> insertedAttacks = new Vector<Integer>();
+    protected Vector<Integer> insertedAttacks = new Vector<>();
     protected int nweapons; // for capital fighters/fighter squadrons
     protected int nweaponsHit; // for capital fighters/fighter squadrons
     protected boolean secondShot = false;
@@ -302,12 +304,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         bayWAmmo.setShotsLeft(Math.max(0,
                             bayWAmmo.getBaseShotsLeft() - 1));
                     }
+
                     if (isAMSBay) {
                         // get the attack value
-                        amsAV += bayWType.getShortAV();
+                        amsAV += (int) Math.round(bayWType.getShortAV());
                         // set the ams as having fired, if it did
                         setAMSBayReportingFlag();
                     }
+
                     if (isPDBay) {
                         // get the attack value
                         pdAV += bayWType.getShortAV();
@@ -379,10 +383,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
      */
+    @Override
     public int getAttackerId() {
         return ae.getId();
     }
 
+    @Override
     public Entity getAttacker() {
         return ae;
     }
@@ -390,6 +396,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Do we care about the specified phase?
      */
+    @Override
     public boolean cares(GamePhase phase) {
         if (phase == GamePhase.FIRING) {
             return true;
@@ -524,7 +531,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
             int AMSHits = 0;
             if (ae.isCapitalFighter()) {
-                Vector<Report> throwAwayReport = new Vector<Report>();
+                Vector<Report> throwAwayReport = new Vector<>();
                 // for capital scale fighters, each non-cluster weapon hits a
                 // different location
                 bSalvo = true;
@@ -748,11 +755,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
+    @Override
     public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
         if (!cares(phase)) {
             return true;
         }
-        Vector<Report> vPhaseReport = new Vector<Report>();
+        Vector<Report> vPhaseReport = new Vector<>();
 
         boolean heatAdded = false;
         int numAttacks = 1;
@@ -903,7 +911,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
             //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
             //when Advanced Point Defense is on, but they work correctly.
-            if(!(amsBayEngagedCap || pdBayEngagedCap)) {
+            if (!(amsBayEngagedCap || pdBayEngagedCap)) {
                 addGlancingBlowReports(vPhaseReport);
     
                 if (bDirect) {
@@ -1131,7 +1139,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         // we shouldn't be here, but if we get here, let's set hits to 0
                         // to avoid infinite loops
                         hits = 0;
-                        MegaMek.getLogger().error("Unexpected target type: " + target.getTargetType());
+                        LogManager.getLogger().error("Unexpected target type: " + target.getTargetType());
                     }
                 } // Handle the next cluster.
             } else { // We missed, but need to handle special miss cases
@@ -1385,8 +1393,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            int savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            AimingMode savedAimingMode = waa.getAimingMode();
+            waa.setAimingMode(AimingMode.NONE);
             int savedAimedLocation = waa.getAimedLocation();
             waa.setAimedLocation(Entity.LOC_NONE);
             boolean savedSalvo = bSalvo;
@@ -1453,7 +1461,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         
         boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
         
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
         
         // a very specific situation where a mech is standing in a height 1 building
@@ -1577,17 +1585,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Worker function - does the entity gain partial cover from shallow water?
      */
-    protected boolean unitGainsPartialCoverFromWater(IHex targetHex, Entity entityTarget) {
+    protected boolean unitGainsPartialCoverFromWater(Hex targetHex, Entity entityTarget) {
         return (targetHex != null) && 
                 targetHex.containsTerrain(Terrains.WATER) &&
-                (entityTarget.relHeight() == targetHex.surface());
+                (entityTarget.relHeight() == targetHex.getLevel());
     }
     
     /**
      * Worker function - is a part of this unit inside the hex's terrain features, 
      * but part sticking out?
      */
-    protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+    protected boolean unitStickingOutOfBuilding(Hex targetHex, Entity entityTarget) {
         // target needs to be on the board,
         // be tall enough for it to make a difference,
         // target "feet" are below the "ceiling"
@@ -1886,14 +1894,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return false;
     }
 
+    @Override
     public boolean announcedEntityFiring() {
         return announcedEntityFiring;
     }
 
+    @Override
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring) {
         this.announcedEntityFiring = announcedEntityFiring;
     }
 
+    @Override
     public WeaponAttackAction getWaa() {
         return waa;
     }
@@ -1903,7 +1914,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (entityTarget == null) {
             return nDamage;
         }
-        IHex hex = game.getBoard().getHex(entityTarget.getPosition());
+        Hex hex = game.getBoard().getHex(entityTarget.getPosition());
         boolean hasWoods = hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE);
         boolean isAboveWoods = (entityTarget.relHeight() + 1 > hex.terrainLevel(Terrains.FOLIAGE_ELEV)) 
                 || entityTarget.isAirborne() || !hasWoods;

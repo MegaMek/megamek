@@ -19,7 +19,7 @@
  */
 package megamek.common.util.fileUtils;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 
@@ -64,7 +64,7 @@ public class DirectoryItems extends AbstractDirectory {
 
         final String[] children = root.list();
         if (children == null) {
-            MegaMek.getLogger().error("Failed to parse the " + categoryName + " directory, getting null children calling root.list()");
+            LogManager.getLogger().error("Failed to parse the " + categoryName + " directory, getting null children calling root.list()");
             return;
         }
 

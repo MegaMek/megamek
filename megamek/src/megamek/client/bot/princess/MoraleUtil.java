@@ -15,13 +15,8 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Protomech;
-import megamek.common.logging.MMLogger;
+import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -40,10 +35,8 @@ public class MoraleUtil {
 
     private final Set<Integer> BROKEN_UNITS = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    private final MMLogger logger;
+    public MoraleUtil() {
 
-    public MoraleUtil(MMLogger logger) {
-        this.logger = logger;
     }
 
     /**
@@ -62,11 +55,11 @@ public class MoraleUtil {
      * @param forcedWithdrawal Set TRUE if Forced Withdrawal is in effect.
      * @param bravery          The index of the bravery setting in {@link BehaviorSettings}.
      * @param selfPreservation The index of the selfPreservation setting in {@link BehaviorSettings}.
-     * @param player           The {@link IPlayer} of the Princess bot.
+     * @param player           The {@link Player} of the Princess bot.
      * @param game             The game being played.
      */
     public void checkMorale(boolean forcedWithdrawal, int bravery, int selfPreservation,
-                            IPlayer player, Game game) {
+                            Player player, Game game) {
         StringBuilder logMsg = new StringBuilder("Starting morale checks for ").append(player.getName());
 
         try {
@@ -141,7 +134,7 @@ public class MoraleUtil {
                 }
             }
         } finally {
-            logger.info(logMsg.toString());
+            LogManager.getLogger().info(logMsg.toString());
         }
     }
 
@@ -166,7 +159,7 @@ public class MoraleUtil {
         return Compute.d6(2);
     }
 
-    private int calcBvRatioMod(IPlayer player, Game game, StringBuilder logMsg) {
+    private int calcBvRatioMod(Player player, Game game, StringBuilder logMsg) {
         int friendlyBv = 0;
         int enemyBv = 0;
 

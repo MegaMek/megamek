@@ -42,8 +42,7 @@ public class UnitTable {
 
     private static final int CACHE_SIZE = 32;
 
-    private static LinkedHashMap<Parameters,UnitTable> cache =
-            new LinkedHashMap<Parameters, UnitTable>(CACHE_SIZE, 0.75f, true) {
+    private static LinkedHashMap<Parameters,UnitTable> cache = new LinkedHashMap<>(CACHE_SIZE, 0.75f, true) {
 
         private static final long serialVersionUID = -8016095510116134800L;
 
@@ -109,15 +108,15 @@ public class UnitTable {
             retVal = new UnitTable(params);
             if (retVal.hasUnits()) {
                 //Use a copy of the params for the cache key to prevent changing it.
-                cache.put((Parameters)params.copy(), retVal);
+                cache.put(params.copy(), retVal);
             }
         }
         return retVal;
     }
 
     private Parameters key;
-    private List<TableEntry> salvageTable = new ArrayList<TableEntry>();
-    private List<TableEntry> unitTable = new ArrayList<TableEntry>();
+    private List<TableEntry> salvageTable = new ArrayList<>();
+    private List<TableEntry> unitTable = new ArrayList<>();
 
     int salvageTotal;
     int unitTotal;
@@ -132,7 +131,7 @@ public class UnitTable {
      */
     protected UnitTable(Parameters key) {
         this.key = key;
-        /**
+        /*
          * Generate the RAT, then go through it to build the NavigableMaps that
          * will be used for random selection.
          */
@@ -353,11 +352,11 @@ public class UnitTable {
         }
 
         public MechSummary getUnitEntry() {
-            return (MechSummary)entry;
+            return (MechSummary) entry;
         }
 
         public FactionRecord getSalvageFaction() {
-            return (FactionRecord)entry;
+            return (FactionRecord) entry;
         }
 
         public boolean isUnit() {
@@ -378,7 +377,7 @@ public class UnitTable {
         @Override
         public String toString() {
             if (entry instanceof MechSummary) {
-                return ((MechSummary)entry).getName();
+                return ((MechSummary) entry).getName();
             }
             return entry.toString();
         }
@@ -412,12 +411,12 @@ public class UnitTable {
             this.weightClasses = weightClasses == null?
                     new ArrayList<>() : new ArrayList<>(weightClasses);
             this.networkMask = networkMask;
-            this.movementModes = movementModes == null || movementModes.isEmpty()?
-                    EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
-            this.roles = roles == null || roles.isEmpty()?
-                    EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
+            this.movementModes = ((movementModes == null) || movementModes.isEmpty())
+                    ? EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
+            this.roles = ((roles == null) || roles.isEmpty())
+                    ? EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
             this.roleStrictness = roleStrictness;
-            this.deployingFaction = deployingFaction == null? faction : deployingFaction;
+            this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
         }
 
         @Override

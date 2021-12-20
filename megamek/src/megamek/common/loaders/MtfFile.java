@@ -204,6 +204,7 @@ public class MtfFile implements IMechLoader {
         }
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;
@@ -431,8 +432,8 @@ public class MtfFile implements IMechLoader {
             
             // Set capital fighter stats for LAMs
             if (mech instanceof LandAirMech) {
-                ((LandAirMech)mech).autoSetCapArmor();
-                ((LandAirMech)mech).autoSetFatalThresh();
+                ((LandAirMech) mech).autoSetCapArmor();
+                ((LandAirMech) mech).autoSetFatalThresh();
             }
 
             // oog, crits.
@@ -754,7 +755,7 @@ public class MtfFile implements IMechLoader {
                             }
                         }
                         if (bFound) {
-                            m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 2 : 1));
+                            m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy() ? 2 : 1));
                             if (m.getFoundCrits() >= m.getCriticals()) {
                                 vSplitWeapons.remove(m);
                             }

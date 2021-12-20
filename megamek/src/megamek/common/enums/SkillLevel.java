@@ -18,9 +18,9 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -104,7 +104,7 @@ public enum SkillLevel {
     public int[] getDefaultSkillValues() {
         switch (this) {
             case NONE:
-                MegaMek.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
+                LogManager.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
                 return new int[]{ 8, 8 };
             case ULTRA_GREEN:
                 return new int[]{ 6, 7 };
@@ -154,7 +154,7 @@ public enum SkillLevel {
 
         }
 
-        MegaMek.getLogger().error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
+        LogManager.getLogger().error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
 
         return REGULAR;
     }

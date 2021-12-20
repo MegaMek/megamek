@@ -44,7 +44,7 @@ public class OkayAction extends AbstractAction {
      */
     public OkayAction(ActionListener myOwner) {
         owner = myOwner;
-        putValue(NAME, Messages.getString("Okay")); //$NON-NLS-N$
+        putValue(NAME, Messages.getString("Okay"));
     }
     
     @Override

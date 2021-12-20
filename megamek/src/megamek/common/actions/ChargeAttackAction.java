@@ -11,40 +11,12 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  */
-
-/*
- * ChargeAttackAction.java
- *
- * Created on March 12, 2002, 3:23 PM
- */
-
 package megamek.common.actions;
 
 import java.util.Enumeration;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -53,12 +25,9 @@ import megamek.common.options.OptionsConstants;
  * attack info.
  *
  * @author Ben Mazur
+ * @since March 12, 2002, 3:23 PM
  */
 public class ChargeAttackAction extends DisplacementAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3549351664290057785L;
 
     public ChargeAttackAction(Entity attacker, Targetable target) {
@@ -103,8 +72,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
 
-        int targetId = Entity.NONE;
-        Entity te = null;
+        int targetId;
+        Entity te;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
             targetId = target.getTargetId();
@@ -114,22 +83,18 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
-            if (!skid
-                && (target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target)
-                                                                                     .getOwner().getTeam() != IPlayer
-                                                                                     .TEAM_NONE)
-                                                                            && (ae.getOwner().getTeam() != IPlayer
-                    .TEAM_NONE) && (ae
-                                                                                                                                          .getOwner().getTeam() == ((Entity) target)
-                                                                                                                                          .getOwner().getTeam())))) {
+            if (!skid && (target.getTargetType() == Targetable.TYPE_ENTITY)
+                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "A friendly unit can never be the target of a direct attack.");
+                        "A friendly unit can never be the target of a direct attack.");
             }
         }
 
-        IHex srcHex = game.getBoard().getHex(src);
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex srcHex = game.getBoard().getHex(src);
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
         // the target's hex
@@ -154,28 +119,25 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
-        ToHitData toHit = null;
-        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK) || (getTargetType() == Targetable
-                .TYPE_BUILDING));
+        ToHitData toHit;
+        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (getTargetType() == Targetable.TYPE_BUILDING));
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         // can't target yourself
         if (ae.equals(te)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "You can't target yourself");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target yourself");
         }
 
         // Can't target a transported entity.
         if (Entity.NONE != te.getTransportId()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Target is a passenger.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if (Entity.NONE != te.getSwarmTargetId()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Target is swarming a Mek.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
@@ -190,22 +152,21 @@ public class ChargeAttackAction extends DisplacementAttackAction {
                         }
                     }
                 }
+
                 if (!inSecondaryRange) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "Target not in range");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
                 }
             } else {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Target not in range");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
             }
         }
 
         // mechs can only charge standing mechs
         if ((ae instanceof Mech) && !skid) {
             if (!(te instanceof Mech)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Target is not a mech");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a 'Mech");
             }
+
             if (te.isProne()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
             }
@@ -213,63 +174,55 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             // Can't charge infantry.
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is infantry");
         } else if (te instanceof Protomech) {
-            // Can't charge protomechs.
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is protomech");
+            // Can't charge ProtoMechs.
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is ProtoM<ech");
         }
 
         // target must be within 1 elevation level
         if ((attackerElevation > targetHeight)
             || (attackerHeight < targetElevation)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Target must be within 1 elevation level");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
 
         // can't attack mech making a different displacement attack
         if (te.hasDisplacementAttack()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Target is already making a charge/DFA attack");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already making a charge/DFA attack");
         }
 
         // target must have moved already, unless it's a skid charge
         // errata: immobile units can be targeted, even when they haven't moved
         // yet
         if (!te.isDone() && !skid && !te.isImmobile()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Target must be done with movement");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be done with movement");
         }
 
         // can't attack the target of another displacement attack
         if (te.isTargetOfDisplacementAttack()
             && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Target is the target of another charge/DFA");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is the target of another charge/DFA");
         }
 
         // Can't target units in buildings (from the outside).
         if ((null != bldg) && (!targIsBuilding)
             && Compute.isInBuilding(game, te)) {
             if (!Compute.isInBuilding(game, ae)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Target is inside building");
-            } else if (!game.getBoard().getBuildingAt(ae.getPosition())
-                            .equals(bldg)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Target is inside differnt building");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside building");
+            } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(bldg)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside different building");
             }
         }
 
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-            || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-            || (target instanceof GunEmplacement)) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                                 "Targeting adjacent building.");
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target instanceof GunEmplacement)) {
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Targeting adjacent building.");
         }
 
         // Can't target woods or ignite a building with a physical.
         if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-            || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-            || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
@@ -279,8 +232,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit = new ToHitData(base, "base");
 
         // attacker movement
-        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId(),
-                                                         movement));
+        toHit.append(Compute.getAttackerMovementModifier(game, ae.getId(), movement));
 
         // target movement
         toHit.append(Compute.getTargetMovementModifier(game, targetId));
@@ -289,8 +241,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te, 0,
-                                                      inSameBuilding));
+        toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         if ((ae instanceof Mech) && ((Mech) ae).isSuperHeavy()) {
             toHit.addModifier(+1, "attacker is superheavy mech");
@@ -302,8 +253,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
         // piloting skill differential
         if (ae.getCrew().getPiloting() != te.getCrew().getPiloting()) {
-            toHit.addModifier(ae.getCrew().getPiloting()
-                              - te.getCrew().getPiloting(), "piloting skill differential");
+            toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(),
+                    "piloting skill differential");
         }
 
         // target prone
@@ -313,7 +264,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // water partial cover?
         if ((te.height() > 0) && (te.getElevation() == -1)
-            && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
+                && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
             toHit.addModifier(1, "target has partial cover");
         }
 
@@ -321,17 +272,14 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // sensor hits...
         // It gets a =4 penalty for being blind!
         if ((ae instanceof Mech)
-            && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                 Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
-                toHit.addModifier(4,
-                                  "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 
@@ -356,7 +304,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         // all charges resolved against full-body table, except vehicles
         // and charges against mechs in water partial cover
         if ((targHex.terrainLevel(Terrains.WATER) == te.height())
-            && (te.getElevation() == -1) && (te.height() > 0)) {
+                && (te.getElevation() == -1) && (te.height() > 0)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         } else if (ae.getHeight() < target.getHeight()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
@@ -406,28 +354,24 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // let's just check this
         if (!md.contains(MoveStepType.CHARGE)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Charge action not found in movement path");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Charge action not found in movement path");
         }
 
         // no jumping
         if (md.contains(MoveStepType.START_JUMP)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "No jumping allowed while charging");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No jumping allowed while charging");
         }
 
         // no backwards
         if (md.contains(MoveStepType.BACKWARDS)
-            || md.contains(MoveStepType.LATERAL_LEFT_BACKWARDS)
-            || md.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "No backwards movement allowed while charging");
+                || md.contains(MoveStepType.LATERAL_LEFT_BACKWARDS)
+                || md.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No backwards movement allowed while charging");
         }
 
         // no evading
         if (md.contains(MoveStepType.EVADE)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "No evading while charging");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No evading while charging");
         }
 
         // determine last valid step
@@ -437,6 +381,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
+
             if (step.getType() == MoveStepType.CHARGE) {
                 chargeStep = step;
             } else {
@@ -449,13 +394,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         boolean isReachable = false;
         if ((chargeStep != null)) {
             isReachable = target.getPosition().equals(chargeStep.getPosition());
-            if (!isReachable && (target instanceof Entity)
-                && (null != ((Entity) target).getSecondaryPositions())) {
-                for (int i : ((Entity) target).getSecondaryPositions().keySet()) {
-                    if (null != ((Entity) target).getSecondaryPositions()
-                                                 .get(i)) {
-                        isReachable = ((Entity) target).getSecondaryPositions()
-                                                       .get(i).equals(chargeStep.getPosition());
+            if (!isReachable && (target instanceof Entity) && (null != target.getSecondaryPositions())) {
+                for (int i : target.getSecondaryPositions().keySet()) {
+                    if (null != target.getSecondaryPositions().get(i)) {
+                        isReachable = target.getSecondaryPositions().get(i).equals(chargeStep.getPosition());
                         if (isReachable) {
                             break;
                         }
@@ -464,13 +406,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
         if (!isReachable) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Could not reach target with movement");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Could not reach target with movement");
         }
 
         if (!md.getSecondLastStep().isLegalEndPos()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Violation of stacking limit in second last step");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Violation of stacking limit in second last step");
         }
 
         return toHit(

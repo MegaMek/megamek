@@ -63,7 +63,7 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getFuelUsed(int thrust) {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         int overThrust =  Math.max(thrust - getWalkMP(), 0);
@@ -115,7 +115,7 @@ public class ConvFighter extends Aero {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        if(hasEngine()) {
+        if (hasEngine()) {
             cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
         }
         
@@ -159,7 +159,7 @@ public class ConvFighter extends Aero {
 
     @Override
     protected int calculateWalk() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         if (isPrimitive()) {
@@ -179,7 +179,8 @@ public class ConvFighter extends Aero {
         specialAbilities.put(BattleForceSPA.ATMO, null);
     }
     
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }
 }

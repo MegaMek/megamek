@@ -77,7 +77,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     }
 
     private void resolveWeather() {
-        IBoard board = game.getBoard();
+        Board board = game.getBoard();
         int width = board.getWidth();
         int height = board.getHeight();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
@@ -145,10 +145,10 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         }
 
         // Cycle through all hexes, checking for the appropriate weather changes
-        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
+        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
             for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+                Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 //check for fires and potentially put them out
                 if (currentHex.containsTerrain(Terrains.FIRE)) {

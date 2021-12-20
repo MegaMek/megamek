@@ -134,7 +134,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
-            if ( ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM) ) {
+            if (ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
                 toHit.addModifier(-1,"AES modifer");
             }
         }

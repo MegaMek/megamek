@@ -52,7 +52,7 @@ public class Warship extends Jumpship {
 
     //ASEW Missile Effects, per location
     //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};
+    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0};
     
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
@@ -118,64 +118,65 @@ public class Warship extends Jumpship {
         
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
-        case LOC_NOSE:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_NOSE_WPL;
+            case LOC_NOSE:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_NOSE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_NOSE;
                 break;
-            }
-            arc = Compute.ARC_NOSE;
-            break;
-        case LOC_FRS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+            case LOC_FRS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_RIGHTSIDE_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_RIGHTSIDE_SPHERE;
-            break;
-        case LOC_FLS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+            case LOC_FLS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_LEFTSIDE_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_LEFTSIDE_SPHERE;
-            break;
-        case LOC_ARS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+            case LOC_ARS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_RIGHTSIDEA_SPHERE;
-            break;
-        case LOC_ALS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+            case LOC_ALS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_LEFTSIDEA_SPHERE;
                 break;
-            }
-            arc = Compute.ARC_LEFTSIDEA_SPHERE;
-            break;
-        case LOC_AFT:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_AFT_WPL;
+            case LOC_AFT:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_AFT_WPL;
+                    break;
+                }
+                arc = Compute.ARC_AFT;
                 break;
-            }
-            arc = Compute.ARC_AFT;
-            break;
-        case LOC_LBS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_LEFT_BROADSIDE_WPL;
+            case LOC_LBS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_LEFT_BROADSIDE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_LEFT_BROADSIDE;
                 break;
-            }
-            arc = Compute.ARC_LEFT_BROADSIDE;
-            break;
-        case LOC_RBS:
-            if (mounted.isInWaypointLaunchMode()) {
-                arc = Compute.ARC_RIGHT_BROADSIDE_WPL;
+            case LOC_RBS:
+                if (mounted.isInWaypointLaunchMode()) {
+                    arc = Compute.ARC_RIGHT_BROADSIDE_WPL;
+                    break;
+                }
+                arc = Compute.ARC_RIGHT_BROADSIDE;
                 break;
-            }
-            arc = Compute.ARC_RIGHT_BROADSIDE;
-            break;
-        default:
-            arc = Compute.ARC_360;
+            default:
+                arc = Compute.ARC_360;
+                break;
         }
         return rollArcs(arc);
     }
@@ -413,24 +414,24 @@ public class Warship extends Jumpship {
     @Override
     public int getAdjacentArcCW(int arc) {
         switch (arc) {
-        case Compute.ARC_NOSE:
-            return Compute.ARC_RIGHTSIDE_SPHERE;
-        case Compute.ARC_LEFTSIDE_SPHERE:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_RIGHTSIDE_SPHERE:
-            return Compute.ARC_RIGHT_BROADSIDE;
-        case Compute.ARC_LEFTSIDEA_SPHERE:
-            return Compute.ARC_LEFT_BROADSIDE;
-        case Compute.ARC_RIGHTSIDEA_SPHERE:
-            return Compute.ARC_AFT;
-        case Compute.ARC_LEFT_BROADSIDE:
-            return Compute.ARC_LEFTSIDE_SPHERE;
-        case Compute.ARC_RIGHT_BROADSIDE:
-            return Compute.ARC_RIGHTSIDEA_SPHERE;
-        case Compute.ARC_AFT:
-            return Compute.ARC_LEFTSIDEA_SPHERE;
-        default:
-            return Integer.MIN_VALUE;
+            case Compute.ARC_NOSE:
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            case Compute.ARC_LEFTSIDE_SPHERE:
+                return Compute.ARC_NOSE;
+            case Compute.ARC_RIGHTSIDE_SPHERE:
+                return Compute.ARC_RIGHT_BROADSIDE;
+            case Compute.ARC_LEFTSIDEA_SPHERE:
+                return Compute.ARC_LEFT_BROADSIDE;
+            case Compute.ARC_RIGHTSIDEA_SPHERE:
+                return Compute.ARC_AFT;
+            case Compute.ARC_LEFT_BROADSIDE:
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            case Compute.ARC_RIGHT_BROADSIDE:
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            case Compute.ARC_AFT:
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -440,24 +441,24 @@ public class Warship extends Jumpship {
     @Override
     public int getAdjacentArcCCW(int arc) {
         switch (arc) {
-        case Compute.ARC_NOSE:
-            return Compute.ARC_LEFTSIDE_SPHERE;
-        case Compute.ARC_RIGHTSIDE_SPHERE:
-            return Compute.ARC_NOSE;
-        case Compute.ARC_LEFTSIDE_SPHERE:
-            return Compute.ARC_LEFT_BROADSIDE;
-        case Compute.ARC_LEFTSIDEA_SPHERE:
-            return Compute.ARC_AFT;
-        case Compute.ARC_RIGHTSIDEA_SPHERE:
-            return Compute.ARC_RIGHT_BROADSIDE;
-        case Compute.ARC_LEFT_BROADSIDE:
-            return Compute.ARC_LEFTSIDEA_SPHERE;
-        case Compute.ARC_RIGHT_BROADSIDE:
-            return Compute.ARC_RIGHTSIDE_SPHERE;
-        case Compute.ARC_AFT:
-            return Compute.ARC_RIGHTSIDEA_SPHERE;
-        default:
-            return Integer.MIN_VALUE;
+            case Compute.ARC_NOSE:
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            case Compute.ARC_RIGHTSIDE_SPHERE:
+                return Compute.ARC_NOSE;
+            case Compute.ARC_LEFTSIDE_SPHERE:
+                return Compute.ARC_LEFT_BROADSIDE;
+            case Compute.ARC_LEFTSIDEA_SPHERE:
+                return Compute.ARC_AFT;
+            case Compute.ARC_RIGHTSIDEA_SPHERE:
+                return Compute.ARC_RIGHT_BROADSIDE;
+            case Compute.ARC_LEFT_BROADSIDE:
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            case Compute.ARC_RIGHT_BROADSIDE:
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            case Compute.ARC_AFT:
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 
@@ -512,30 +513,30 @@ public class Warship extends Jumpship {
     @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (location) {
-        case LOC_NOSE:
-        case LOC_FLS:
-        case LOC_FRS:
-            if (index == 0) {
-                return 1.0;
-            }
-            break;
-        case LOC_LBS:
-            if (index == 1) {
-                return 1.0;
-            }
-            break;            
-        case LOC_RBS:
-            if (index == 2) {
-                return 1.0;
-            }
-            break;            
-        case LOC_AFT:
-        case LOC_ALS:
-        case LOC_ARS:
-            if (index == 3) {
-                return 1.0;
-            }
-            break;
+            case LOC_NOSE:
+            case LOC_FLS:
+            case LOC_FRS:
+                if (index == 0) {
+                    return 1.0;
+                }
+                break;
+            case LOC_LBS:
+                if (index == 1) {
+                    return 1.0;
+                }
+                break;
+            case LOC_RBS:
+                if (index == 2) {
+                    return 1.0;
+                }
+                break;
+            case LOC_AFT:
+            case LOC_ALS:
+            case LOC_ARS:
+                if (index == 3) {
+                    return 1.0;
+                }
+                break;
         }
         return 0;
     }
@@ -548,20 +549,21 @@ public class Warship extends Jumpship {
     @Override
     public String getAlphaStrikeLocationName(int index) {
         switch (index) {
-        case 0:
-            return getLocationAbbrs()[LOC_NOSE];
-        case 1:
-            return getLocationAbbrs()[LOC_LBS];
-        case 2:
-            return getLocationAbbrs()[LOC_RBS];
-        case 3:
-            return getLocationAbbrs()[LOC_AFT];
+            case 0:
+                return getLocationAbbrs()[LOC_NOSE];
+            case 1:
+                return getLocationAbbrs()[LOC_LBS];
+            case 2:
+                return getLocationAbbrs()[LOC_RBS];
+            case 3:
+                return getLocationAbbrs()[LOC_AFT];
+            default:
+                return "";
         }
-        return "";
     }
     
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }
     

@@ -122,7 +122,7 @@ public final class InfantryBay extends Bay {
     public double spaceForUnit(Entity unit) {
         PlatoonType type = PlatoonType.getPlatoonType(unit);
         if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry)unit).getSquadN();
+            return type.getWeight() * ((Infantry) unit).getSquadN();
         } else {
             return type.getWeight();
         }
@@ -181,8 +181,8 @@ public final class InfantryBay extends Bay {
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)(totalSpace / platoonType.getWeight())
-                * (clan? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
+        return (int) (totalSpace / platoonType.getWeight())
+                * (clan ? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
     }
 
     @Override
@@ -209,4 +209,4 @@ public final class InfantryBay extends Bay {
         // Based on the weight of the equipment (not capacity), rounded up to the whole ton
         return 15000L * (long) Math.ceil(getWeight());
     }
-} // End package class TroopSpace implements Transporter
+}

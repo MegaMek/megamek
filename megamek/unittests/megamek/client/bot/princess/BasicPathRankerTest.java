@@ -1,45 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.ConvFighter;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Hex;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
+import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -52,13 +28,7 @@ import org.mockito.Mockito;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -70,7 +40,6 @@ public class BasicPathRankerTest {
     private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00");
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
-    private final MMLogger fakeLogger = new FakeLogger();
 
     private final double TOLERANCE = 0.001;
 
@@ -113,7 +82,6 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
         Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
         Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
@@ -406,9 +374,9 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.toString()).thenReturn("F F F");
         Mockito.when(mockPath.clone()).thenReturn(mockPath);
         Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
-        Mockito.when(mockPath.getStepVector()).thenReturn(new Vector<MoveStep>());
+        Mockito.when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
         final Coords boardCenter = Mockito.spy(new Coords(8, 8));
         Mockito.when(mockBoard.getCenter()).thenReturn(boardCenter);
@@ -1069,7 +1037,7 @@ public class BasicPathRankerTest {
 
         final List<Entity> friends = new ArrayList<>();
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
 
         final Game mockGame = Mockito.mock(Game.class);
@@ -1153,7 +1121,7 @@ public class BasicPathRankerTest {
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
         Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
 
-        final IBoard mockBoard = generateMockBoard();
+        final Board mockBoard = generateMockBoard();
         final Entity mockEnemy = generateMockEntity(10, 5);
         final MovePath mockPath = generateMockPath(10, 5, mockEnemy);
         final List<Entity> entities = new ArrayList<>();
@@ -1207,7 +1175,7 @@ public class BasicPathRankerTest {
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
         Mockito.doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
        
-        final IBoard mockBoard = generateMockBoard();
+        final Board mockBoard = generateMockBoard();
         final MovePath mockPath = generateMockPath(10, 10, mockMe);
         final Entity mockEnemy = generateMockEntity(10, 15);
         final List<Entity> entities = new ArrayList<>();
@@ -1243,10 +1211,10 @@ public class BasicPathRankerTest {
         Assert.assertEquals(expected, actual, TOLERANCE);
     }
 
-    private IBoard generateMockBoard() {
+    private Board generateMockBoard() {
         // we'll be on a nice, empty, 20x20 board, not in space.
-        final IBoard mockBoard = Mockito.mock(Board.class);
-        final IHex mockHex = new Hex();
+        final Board mockBoard = Mockito.mock(Board.class);
+        final Hex mockHex = new Hex();
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
         Mockito.when(mockBoard.inSpace()).thenReturn(false);
@@ -1303,7 +1271,7 @@ public class BasicPathRankerTest {
      * @param entities
      * @return
      */ 
-    private Game generateMockGame(List<Entity> entities, IBoard mockBoard) {
+    private Game generateMockGame(List<Entity> entities, Board mockBoard) {
        
         final Game mockGame = Mockito.mock(Game.class);
         
@@ -1312,7 +1280,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
         Mockito.when(mockGameOptions.booleanOption(Mockito.anyString())).thenReturn(false);
          
-        for(int x = 0; x < entities.size(); x++) {
+        for (int x = 0; x < entities.size(); x++) {
             Mockito.when(mockGame.getEntity(x + 1)).thenReturn(entities.get(x));
             Mockito.when(entities.get(x).getGame()).thenReturn(mockGame);
             Mockito.when(entities.get(x).getId()).thenReturn(x + 1);
@@ -1330,10 +1298,10 @@ public class BasicPathRankerTest {
         final Coords testCoordsThree = new Coords(10, 9);
         final Coords testFinalCoords = new Coords(10, 10);
 
-        final IHex mockHexOne = Mockito.mock(IHex.class);
-        final IHex mockHexTwo = Mockito.mock(IHex.class);
-        final IHex mockHexThree = Mockito.mock(IHex.class);
-        final IHex mockFinalHex = Mockito.mock(IHex.class);
+        final Hex mockHexOne = Mockito.mock(Hex.class);
+        final Hex mockHexTwo = Mockito.mock(Hex.class);
+        final Hex mockHexThree = Mockito.mock(Hex.class);
+        final Hex mockFinalHex = Mockito.mock(Hex.class);
         Mockito.when(mockHexOne.getTerrainTypes()).thenReturn(new int[0]);
         Mockito.when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
         Mockito.when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
@@ -1368,7 +1336,7 @@ public class BasicPathRankerTest {
 
         final Game mockGame = Mockito.mock(Game.class);
 
-        final IBoard mockBoard = Mockito.mock(IBoard.class);
+        final Board mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockBoard.getHex(Mockito.eq(testFinalCoords))).thenReturn(mockFinalHex);
         Mockito.when(mockBoard.getHex(Mockito.eq(testCoordsOne))).thenReturn(mockHexOne);

@@ -12,10 +12,8 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
@@ -24,6 +22,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,16 +32,10 @@ import javax.xml.parsers.DocumentBuilder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 /**
- * Class for reading in and parsing MUL XML files.  The MUL xsl is defined in
+ * Class for reading in and parsing MUL XML files. The MUL xsl is defined in
  * the docs directory.
  *
  * @author arlith
@@ -275,7 +268,7 @@ public class MULParser {
 
     //region Constructors
     /**
-     * This initializes all of the variables utilised by the MUL parser.
+     * This initializes all the variables utilised by the MUL parser.
      */
     private MULParser() {
         warning = new StringBuffer();
@@ -356,7 +349,7 @@ public class MULParser {
         element.normalize();
 
         final String version = element.getAttribute(VERSION);
-        if (version.equals("")) {
+        if (version.isBlank()) {
             warning.append("Warning: No version specified, correct parsing ")
                     .append("not guaranteed!\n");
         }
@@ -377,7 +370,7 @@ public class MULParser {
 
         // Finally, output the warning if there is any
         if (hasWarningMessage()) {
-            MegaMek.getLogger().warning(getWarningMessage());
+            LogManager.getLogger().warn(getWarningMessage());
         }
     }
 
@@ -617,14 +610,12 @@ public class MULParser {
             ms = MechSummaryCache.getInstance().getMech(key.toString());
             if ((model != null) && (model.length() > 0)) {
                 key.append(" ").append(model);
-                ms = MechSummaryCache.getInstance().getMech(
-                        key.toString());
-                // That didn't work. Try swaping model and chassis.
+                ms = MechSummaryCache.getInstance().getMech(key.toString());
+                // That didn't work. Try swapping model and chassis.
                 if (ms == null) {
                     key = new StringBuffer(model);
                     key.append(" ").append(chassis);
-                    ms = MechSummaryCache.getInstance().getMech(
-                            key.toString());
+                    ms = MechSummaryCache.getInstance().getMech(key.toString());
                 }
             }
             // We should have found the mech.
@@ -639,14 +630,14 @@ public class MULParser {
                 try {
                     newEntity = new MechFileParser(ms.getSourceFile(),
                             ms.getEntryName()).getEntity();
-                } catch (EntityLoadingException e) {
-                    MegaMek.getLogger().error(e);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
                     warning.append("Unable to load mech: ")
                             .append(ms.getSourceFile()).append(": ")
                             .append(ms.getEntryName()).append(": ")
-                            .append(e.getMessage());
+                            .append(ex.getMessage());
                 }
-            } // End found-MechSummary
+            }
         }
         return newEntity;
     }
@@ -714,7 +705,7 @@ public class MULParser {
                 wasNeverDeployed = true;
             }
             entity.setNeverDeployed(wasNeverDeployed);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             entity.setNeverDeployed(true);
         }
 
@@ -755,7 +746,7 @@ public class MULParser {
             if ((null == pickUpId) || (pickUpId.length() == 0)) {
                 pickUpId = "-1";
             }
-            ((MechWarrior)entity).setPickedUpByExternalId(pickUpId);
+            ((MechWarrior) entity).setPickedUpByExternalId(pickUpId);
         }
 
 
@@ -1301,7 +1292,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    MegaMek.getLogger().error("Error in loading MUL, issues with extraData elements!");
+                    LogManager.getLogger().error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         }
@@ -1353,7 +1344,7 @@ public class MULParser {
                     if (Boolean.parseBoolean(destroyed)) {
                         destroyLocation(entity, loc);
                     }
-                } catch (Throwable excep) {
+                } catch (Exception ignored) {
                     warning.append("Found invalid isDestroyed value: ")
                             .append(destroyed).append(".\n");
                 }
@@ -1382,7 +1373,7 @@ public class MULParser {
                     locAmmoCount = parseSlot(currEle, entity, loc, locAmmoCount);
                 } else if (nodeName.equalsIgnoreCase(STABILIZER)) {
                     String hit = currEle.getAttribute(IS_HIT);
-                    if (!hit.equals("")) {
+                    if (!hit.isBlank()) {
                         ((Tank) entity).setStabiliserHit(loc);
                     }
                 }
@@ -1486,7 +1477,7 @@ public class MULParser {
         String capacity = slotTag.getAttribute(CAPACITY);
         String hit = slotTag.getAttribute(IS_HIT);
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
-        String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
+        String repairable = (slotTag.getAttribute(IS_REPAIRABLE).isBlank() ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
         String standard = slotTag.getAttribute(STANDARD);
         String inferno = slotTag.getAttribute(INFERNO);
@@ -1868,9 +1859,9 @@ public class MULParser {
         try {
             int turDir = Integer.parseInt(value);
             entity.setSecondaryFacing(turDir);
-            ((Tank) entity).lockTurret(((Tank)entity).getLocTurret());
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            ((Tank) entity).lockTurret(((Tank) entity).getLocTurret());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             warning.append("Invalid turret lock direction value in movement tag.\n");
         }
     }
@@ -1886,9 +1877,9 @@ public class MULParser {
         try {
             int turDir = Integer.parseInt(value);
             ((Tank) entity).setDualTurretOffset(turDir);
-            ((Tank) entity).lockTurret(((Tank)entity).getLocTurret2());
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            ((Tank) entity).lockTurret(((Tank) entity).getLocTurret2());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             warning.append("Invalid turret2 lock direction value in movement tag.\n");
         }
     }
@@ -1904,7 +1895,7 @@ public class MULParser {
         try {
             int newSI = Integer.parseInt(value);
             ((Aero) entity).setSI(newSI);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             warning.append("Invalid SI value in structural integrity tag.\n");
         }
     }
@@ -1920,7 +1911,7 @@ public class MULParser {
         try {
             int newSinks = Integer.parseInt(value);
             ((Aero) entity).setHeatSinks(newSinks);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             warning.append("Invalid heat sink value in heat sink tag.\n");
         }
     }
@@ -1936,7 +1927,7 @@ public class MULParser {
         try {
             int newFuel = Integer.parseInt(value);
             ((IAero) entity).setFuel(newFuel);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             warning.append("Invalid fuel value in fuel tag.\n");
         }
     }
@@ -1969,8 +1960,7 @@ public class MULParser {
             int newIntegrity = Integer.parseInt(value);
             ((Jumpship) entity).setSailIntegrity(newIntegrity);
         } catch (Exception e) {
-            warning.append("Invalid sail integrity value in sail " +
-                    "integrity tag.\n");
+            warning.append("Invalid sail integrity value in sail integrity tag.\n");
         }
     }
 
@@ -2210,7 +2200,7 @@ public class MULParser {
                     String link = currEle.getAttribute(LINK);
                     int pos = entity.getFreeC3iUUID();
                     if (!link.isBlank() && (pos != -1)) {
-                        MegaMek.getLogger().info("Loading C3i UUID " + pos + ": " + link);
+                        LogManager.getLogger().info("Loading C3i UUID " + pos + ": " + link);
                         entity.setC3iNextUUIDAsString(pos, link);
                     }
                 }
@@ -2243,7 +2233,7 @@ public class MULParser {
                     String link = currEle.getAttribute(LINK);
                     int pos = entity.getFreeNC3UUID();
                     if (!link.isBlank() && (pos != -1)) {
-                        MegaMek.getLogger().info("Loading NC3 UUID " + pos + ": " + link);
+                        LogManager.getLogger().info("Loading NC3 UUID " + pos + ": " + link);
                         entity.setNC3NextUUIDAsString(pos, link);
                     }
                 }
@@ -2475,13 +2465,13 @@ public class MULParser {
             int baMountLoc = mountedManip.getBaMountLoc();
             mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());
             mountedManip.setBaMountLoc(baMountLoc);
-        } catch (LocationFullException e) {
-            MegaMek.getLogger().error(e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 
     /**
-     * Parase a antiPersonnelMount tag for the supplied <code>Entity</code>.
+     * Parse a antiPersonnelMount tag for the supplied <code>Entity</code>.
      *
      * @param apmTag
      * @param entity
@@ -2540,8 +2530,8 @@ public class MULParser {
             apMount.setLinked(newWeap);
             newWeap.setLinked(apMount);
             newWeap.setAPMMounted(true);
-        } catch (LocationFullException e) {
-            MegaMek.getLogger().error(e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 

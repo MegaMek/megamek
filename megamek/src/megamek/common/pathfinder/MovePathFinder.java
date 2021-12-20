@@ -107,7 +107,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public String toString() {
-            return String.format("%s f:%d", coords, facing);  //$NON-NLS-1$
+            return String.format("%s f:%d", coords, facing);
         }
     }
 
@@ -280,7 +280,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final MoveStepType lType = (last == null) ? null : last.getType();
             final Entity entity = mp.getEntity();
 
-            final ArrayList<MovePath> result = new ArrayList<MovePath>();
+            final ArrayList<MovePath> result = new ArrayList<>();
 
             if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
@@ -319,7 +319,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.BACKWARDS));
-            } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
+            } else if (mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.FORWARDS));

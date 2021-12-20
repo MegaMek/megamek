@@ -43,7 +43,7 @@ public class AeroMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[13];
     private PMValueLabel[] vLabels = new PMValueLabel[13];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
     
     private UnitDisplay unitDisplay;
@@ -68,10 +68,10 @@ public class AeroMapSet implements DisplayMapSet {
     private Polygon aftArmor = new Polygon(new int[] { 45, 45, 30, 30, 95, 95,
             80, 80 }, new int[] { 160, 180, 190, 200, 200, 190, 180, 160 }, 8);
 
-    private static final Font FONT_LABEL = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public AeroMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -109,15 +109,13 @@ public class AeroMapSet implements DisplayMapSet {
             a = t.getArmor(i);
             a0 = t.getOArmor(i);
             vLabels[i].setValue(t.getArmorString(i));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
-                    / (double) a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
 
         }
         a = t.getSI();
         a0 = t.get0SI();
         vLabels[4].setValue(Integer.toString(t.getSI()));
-        WidgetUtils
-                .setAreaColor(areas[4], vLabels[4], (double) a / (double) a0);
+        WidgetUtils.setAreaColor(areas[4], vLabels[4], (double) a / (double) a0);
 
         // now for the vitals
         vLabels[5].setValue(getCriticalHitTally(t.getAvionicsHits(), 3));
@@ -129,8 +127,7 @@ public class AeroMapSet implements DisplayMapSet {
             // add in thrusters
             SmallCraft sc = (SmallCraft) t;
             vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(), 3));
-            vLabels[10]
-                    .setValue(getCriticalHitTally(sc.getRightThrustHits(), 3));
+            vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(), 3));
         } else {
             vLabels[9].setValue("-");
             vLabels[10].setValue("-");
@@ -138,7 +135,7 @@ public class AeroMapSet implements DisplayMapSet {
         
         if (t instanceof Dropship) {
         	// add kf boom and docking collar
-        	Dropship ds = (Dropship)t;
+        	Dropship ds = (Dropship) t;
         	int kfboom = 0;
         	int collar = 0;
         	if (ds.isKFBoomDamaged()) {
@@ -183,16 +180,11 @@ public class AeroMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay,
-                Aero.LOC_NOSE);
-        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor,
-                unitDisplay, Aero.LOC_RWING);
-        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor,
-                unitDisplay, Aero.LOC_LWING);
-        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplay,
-                Aero.LOC_AFT);
-        areas[4] = new PMSimplePolygonArea(Structure, unitDisplay,
-                Aero.LOC_NOSE);
+        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay, Aero.LOC_NOSE);
+        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor, unitDisplay, Aero.LOC_RWING);
+        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor, unitDisplay, Aero.LOC_LWING);
+        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplay, Aero.LOC_AFT);
+        areas[4] = new PMSimplePolygonArea(Structure, unitDisplay, Aero.LOC_NOSE);
     }
 
     private void setLabels() {
@@ -200,123 +192,102 @@ public class AeroMapSet implements DisplayMapSet {
 
         // Labels for Front view
         // Prefer to use message thingy but don't know how
-        labels[Aero.LOC_NOSE] = WidgetUtils.createLabel(
-                "NOS", fm, Color.black, 62, 30); //$NON-NLS-1$
-        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57); //$NON-NLS-1$
-        labels[Aero.LOC_LWING] = WidgetUtils.createLabel(
-                "LWG", fm, Color.black, 32, 120); //$NON-NLS-1$
-        //    labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106); //$NON-NLS-1$
-        labels[Aero.LOC_RWING] = WidgetUtils.createLabel(
-                "RWG", fm, Color.black, 92, 120); //$NON-NLS-1$
-        //    labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106); //$NON-NLS-1$
-        labels[Aero.LOC_AFT] = WidgetUtils.createLabel(
-                "AFT", fm, Color.black, 62, 170); //$NON-NLS-1$
-        labels[4] = WidgetUtils.createLabel("SI", fm, Color.black, 62, 120); //$NON-NLS-1$
-        labels[5] = WidgetUtils.createLabel(
-                "Avionics:", fm, Color.white, 10, 210); //$NON-NLS-1$
-        labels[6] = WidgetUtils
-                .createLabel("Engine:", fm, Color.white, 10, 225); //$NON-NLS-1$
-        labels[7] = WidgetUtils.createLabel("FCS:", fm, Color.white, 10, 240); //$NON-NLS-1$
-        labels[8] = WidgetUtils.createLabel(
-                "Sensors:", fm, Color.white, 10, 255); //$NON-NLS-1$
-        labels[9] = WidgetUtils.createLabel(
-                "L Thrust:", fm, Color.white, 90, 210); //$NON-NLS-1$
-        labels[10] = WidgetUtils.createLabel(
-                "R Thrust:", fm, Color.white, 90, 225); //$NON-NLS-1$
-        labels[11] = WidgetUtils.createLabel("K-F Boom:", fm, Color.white,90,240); //$NON-NLS-1$
-        labels[12] = WidgetUtils.createLabel("Collar:", fm, Color.white,90,255); //$NON-NLS-1$
+        labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black, 62, 30);
+        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57);
+        labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black, 32, 120);
+        //    labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106);
+        labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black, 92, 120);
+        //    labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106);
+        labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black, 62, 170);
+        labels[4] = WidgetUtils.createLabel("SI", fm, Color.black, 62, 120);
+        labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white, 10, 210);
+        labels[6] = WidgetUtils.createLabel("Engine:", fm, Color.white, 10, 225);
+        labels[7] = WidgetUtils.createLabel("FCS:", fm, Color.white, 10, 240);
+        labels[8] = WidgetUtils.createLabel("Sensors:", fm, Color.white, 10, 255);
+        labels[9] = WidgetUtils.createLabel("L Thrust:", fm, Color.white, 90, 210);
+        labels[10] = WidgetUtils.createLabel("R Thrust:", fm, Color.white, 90, 225);
+        labels[11] = WidgetUtils.createLabel("K-F Boom:", fm, Color.white, 90, 240);
+        labels[12] = WidgetUtils.createLabel("Collar:", fm, Color.white, 90, 255);
 
         // Value labels for all parts of aero
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(62, 45, "", fm); //$NON-NLS-1$
-        //   vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm); //$NON-NLS-1$
-        vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(32, 135, "", fm); //$NON-NLS-1$
-        //   vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm); //$NON-NLS-1$
-        vLabels[Aero.LOC_RWING] = WidgetUtils.createValueLabel(92, 135, "", fm); //$NON-NLS-1$
-        //   vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm); //$NON-NLS-1$
-        vLabels[Aero.LOC_AFT] = WidgetUtils.createValueLabel(62, 185, "", fm); //$NON-NLS-1$
-        vLabels[4] = WidgetUtils.createValueLabel(62, 135, "", fm); //$NON-NLS-1$
-        vLabels[5] = WidgetUtils.createValueLabel(40, 210, "", fm); //$NON-NLS-1$
-        vLabels[6] = WidgetUtils.createValueLabel(40, 225, "", fm); //$NON-NLS-1$
-        vLabels[7] = WidgetUtils.createValueLabel(40, 240, "", fm); //$NON-NLS-1$
-        vLabels[8] = WidgetUtils.createValueLabel(40, 255, "", fm); //$NON-NLS-1$
-        vLabels[9] = WidgetUtils.createValueLabel(130, 210, "", fm); //$NON-NLS-1$
-        vLabels[10] = WidgetUtils.createValueLabel(130, 225, "", fm); //$NON-NLS-1$
-        vLabels[11] = WidgetUtils.createValueLabel(135, 240, "", fm); //$NON-NLS-1$
-        vLabels[12] = WidgetUtils.createValueLabel(130, 255, "", fm); //$NON-NLS-1$
+        vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(62, 45, "", fm);
+        //   vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm);
+        vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(32, 135, "", fm);
+        //   vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        vLabels[Aero.LOC_RWING] = WidgetUtils.createValueLabel(92, 135, "", fm);
+        //   vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
+        vLabels[Aero.LOC_AFT] = WidgetUtils.createValueLabel(62, 185, "", fm);
+        vLabels[4] = WidgetUtils.createValueLabel(62, 135, "", fm);
+        vLabels[5] = WidgetUtils.createValueLabel(40, 210, "", fm);
+        vLabels[6] = WidgetUtils.createValueLabel(40, 225, "", fm);
+        vLabels[7] = WidgetUtils.createValueLabel(40, 240, "", fm);
+        vLabels[8] = WidgetUtils.createValueLabel(40, 255, "", fm);
+        vLabels[9] = WidgetUtils.createValueLabel(130, 210, "", fm);
+        vLabels[10] = WidgetUtils.createValueLabel(130, 225, "", fm);
+        vLabels[11] = WidgetUtils.createValueLabel(135, 240, "", fm);
+        vLabels[12] = WidgetUtils.createValueLabel(130, 255, "", fm);
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+        tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
@@ -333,7 +304,6 @@ public class AeroMapSet implements DisplayMapSet {
     }
 
     private String getCriticalHitTally(int tally, int max) {
-
         String marks = "";
 
         if (tally < 1) {
@@ -352,5 +322,4 @@ public class AeroMapSet implements DisplayMapSet {
 
         return marks;
     }
-
 }

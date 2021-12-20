@@ -67,7 +67,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             r.indent(2);
             if (entityTarget.getArmor(hit) > 0 && 
                     (entityTarget.getArmorType(hit.getLocation()) == 
-                    EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
+                    EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += nDamPerHit / 2;
                 r.add(nDamPerHit / 2);
                 r.choose(true);

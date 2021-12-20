@@ -13,24 +13,17 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class represents a single, possibly multi-hex building on the board.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $Revision$
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {
     private static final long serialVersionUID = -8236017592012683793L;
@@ -73,12 +66,12 @@ public class Building implements Serializable {
     /**
      * The coordinates of every hex of this building.
      */
-    private Vector<Coords> coordinates = new Vector<Coords>();
+    private Vector<Coords> coordinates = new Vector<>();
 
     /**
      * The Basement type of the building.
      */
-    private Map<Coords,BasementType> basement = new HashMap<Coords,BasementType>();
+    private Map<Coords,BasementType> basement = new HashMap<>();
 
     private int collapsedHexes = 0;
 
@@ -88,24 +81,24 @@ public class Building implements Serializable {
      * The current construction factor of the building hexes. Any damage
      * immediately updates this value.
      */
-    private Map<Coords, Integer> currentCF = new HashMap<Coords, Integer>();
+    private Map<Coords, Integer> currentCF = new HashMap<>();
     
     /**
      * The construction factor of the building hexes at the start of this attack
      * phase. Damage that is received during the phase is applied at the end of
      * the phase.
      */
-    private Map<Coords, Integer> phaseCF = new HashMap<Coords, Integer>();
+    private Map<Coords, Integer> phaseCF = new HashMap<>();
     
     /**
      * The current armor of the building hexes.
      */
-    private Map<Coords, Integer> armor = new HashMap<Coords, Integer>();
+    private Map<Coords, Integer> armor = new HashMap<>();
 
     /**
      * The current state of the basement.
      */
-    private Map<Coords, Boolean> basementCollapsed = new HashMap<Coords, Boolean>();
+    private Map<Coords, Boolean> basementCollapsed = new HashMap<>();
 
     /**
      * The name of the building.
@@ -115,12 +108,9 @@ public class Building implements Serializable {
     /**
      * Flag that indicates whether this building is burning
      */
-    private Map<Coords, Boolean> burning = new HashMap<Coords, Boolean>();
+    private Map<Coords, Boolean> burning = new HashMap<>();
 
-    public class DemolitionCharge implements Serializable {
-        /**
-         *
-         */
+    public static class DemolitionCharge implements Serializable {
         private static final long serialVersionUID = -6655782801564155668L;
         public int damage;
         public int playerId;
@@ -148,7 +138,7 @@ public class Building implements Serializable {
         @Override
         public boolean equals(Object o) {
             if (o instanceof DemolitionCharge) {
-                return uuid.equals(((DemolitionCharge)o).uuid);
+                return uuid.equals(((DemolitionCharge) o).uuid);
             }
             return false;
         }
@@ -160,16 +150,12 @@ public class Building implements Serializable {
      * Update this building to include the new hex (and all hexes off the new
      * hex, which aren't already included).
      *
-     * @param coords
-     *            - the <code>Coords</code> of the new hex.
-     * @param board
-     *            - the game's <code>IBoard</code> object.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CF.
+     * @param coords tthe <code>Coords</code> of the new hex.
+     * @param board the game's <code>Board</code> object.
+     * @exception IllegalArgumentException will be thrown if the given coordinates do not contain a
+     * building, or if the building covers multiple hexes with different CF.
      */
-    protected void include(Coords coords, IBoard board, int structureType) {
+    protected void include(Coords coords, Board board, int structureType) {
 
         // If the hex is already in the building, we've covered it before.
         if (isIn(coords)) {
@@ -177,7 +163,7 @@ public class Building implements Serializable {
         }
 
         // Get the nextHex hex.
-        IHex nextHex = board.getHex(coords);
+        Hex nextHex = board.getHex(coords);
         if ((null == nextHex) || !(nextHex.containsTerrain(structureType))) {
             return;
         }
@@ -285,18 +271,14 @@ public class Building implements Serializable {
      * information. If the building covers multiple hexes, every hex will be
      * included in the building.
      *
-     * @param coords
-     *            - the <code>Coords</code> of a hex of the building. If the
-     *            building covers multiple hexes, this constructor will include
-     *            them all in this building automatically.
-     * @param board
-     *            - the game's <code>Board</code> object.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CFs.
+     * @param coords the <code>Coords</code> of a hex of the building. If the building covers
+     *               multiple hexes, this constructor will include them all in this building
+     *               automatically.
+     * @param board the game's <code>Board</code> object.
+     * @exception IllegalArgumentException will be thrown if the given coordinates do not contain a
+     * building, or if the building covers multiple hexes with different CFs.
      */
-    public Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
+    public Building(Coords coords, Board board, int structureType, BasementType basementType) {
 
         // The ID of the building will be deterministic based on the
         // position of its first hex. 9,999 hexes in the Y direction
@@ -313,7 +295,7 @@ public class Building implements Serializable {
         burning.put(coords, false);
 
         // Get the Hex for those coords.
-        IHex startHex = board.getHex(coords);
+        Hex startHex = board.getHex(coords);
 
         // Read our construction type from the hex.
         if (!startHex.containsTerrain(structureType)) {
@@ -366,22 +348,21 @@ public class Building implements Serializable {
         }
 
         // Set the building's name.
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (structureType == Terrains.FUEL_TANK) {
-            buffer.append("Fuel Tank #");
+            sb.append("Fuel Tank #");
         } else if (getType() == Building.WALL) {
-            buffer.append("Wall #");
+            sb.append("Wall #");
         } else if (structureType == Terrains.BUILDING) {
-            buffer.append("Building #");
+            sb.append("Building #");
         } else if (structureType == Terrains.BRIDGE) {
-            buffer.append("Bridge #");
+            sb.append("Bridge #");
         } else {
-            buffer.append("Structure #");
+            sb.append("Structure #");
         }
-        buffer.append(id);
-        name = buffer.toString();
-
-    } // End public Building( Coords, Board )
+        sb.append(id);
+        name = sb.toString();
+    }
 
     /**
      * Get the ID of this building. The same ID applies to all hexes.
@@ -460,22 +441,21 @@ public class Building implements Serializable {
         return basementCollapsed.get(coords);
     }
 
-    public void collapseBasement(Coords coords, IBoard board,
+    public void collapseBasement(Coords coords, Board board,
             Vector<Report> vPhaseReport) {
         if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
-            System.err.println("hex has no basement to collapse");
+            LogManager.getLogger().error("Hex has no basement to collapse");
             return;
         }
         if (basementCollapsed.get(coords)) {
-            System.err.println("hex has basement that already collapsed");
+            LogManager.getLogger().error("Hex has basement that already collapsed");
             return;
         }
         Report r = new Report(2112, Report.PUBLIC);
         r.add(getName());
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        System.err.println("basement " + basement + "is collapsing, hex:"
-                + coords.toString() + " set terrain!");
+        LogManager.getLogger().error("basement " + basement + "is collapsing, hex:" + coords + " set terrain!");
         board.getHex(coords).addTerrain(new Terrain(Terrains.BLDG_BASE_COLLAPSED, 1));
         basementCollapsed.put(coords, true);
 
@@ -487,9 +467,9 @@ public class Building implements Serializable {
      * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
      * @return a <code>boolean</code> indicating wether the hex and building was changed or not
      */
-    public boolean rollBasement(Coords coords, IBoard board, Vector<Report> vPhaseReport) {
+    public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
         if (basement.get(coords) == BasementType.UNKNOWN) {
-            IHex hex = board.getHex(coords);
+            Hex hex = board.getHex(coords);
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
             r.add(coords.getBoardNum());
@@ -563,20 +543,14 @@ public class Building implements Serializable {
      * Set the current construction factor of the building hex. Call this method
      * immediately when the building sustains any damage.
      *
-     * @param coords
-     *            - the <code>Coords> of the hex in question
-     * @param cf
-     *            - the <code>int</code> value of the building hex's current
-     *            construction factor. This value must be greater than or equal
-     *            to zero.
-     * @exception If
-     *                the passed value is less than zero, an
-     *                <code>IllegalArgumentException</code> is thrown.
+     * @param coords the <code>Coords> of the hex in question
+     * @param cf the <code>int</code> value of the building hex's current construction factor. This
+     *           value must be greater than or equal to zero.
+     * @exception IllegalArgumentException if the passed value is less than zero
      */
     public void setCurrentCF(int cf, Coords coords) {
         if (cf < 0) {
-            throw new IllegalArgumentException(
-                    "Invalid value for Construction Factor: " + cf);
+            throw new IllegalArgumentException("Invalid value for Construction Factor: " + cf);
         }
 
         currentCF.put(coords, cf);
@@ -587,15 +561,10 @@ public class Building implements Serializable {
      * phase. Call this method at the end of the phase to apply damage sustained
      * by the building during the phase.
      *
-     * @param coords
-     *            - the <code>Coords> of the hex in question
-     * @param cf
-     *            - the <code>int</code> value of the building's current
-     *            construction factor. This value must be greater than or equal
-     *            to zero.
-     * @exception If
-     *                the passed value is less than zero, an
-     *                <code>IllegalArgumentException</code> is thrown.
+     * @param coords the <code>Coords> of the hex in question
+     * @param cf the <code>int</code> value of the building hex's current construction factor. This
+     *           value must be greater than or equal to zero.
+     * @exception IllegalArgumentException if the passed value is less than zero
      */
     public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {
@@ -666,10 +635,10 @@ public class Building implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof Building)) {
+        if (!(obj instanceof Building)) {
             return false;
         }
         // True until we're talking about more than one Board per Game.
@@ -714,11 +683,7 @@ public class Building implements Serializable {
 
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append(typeName(getType())).append(" ");
-        buf.append(className(getBldgClass())).append(" ");
-        buf.append(name);
-        return buf.toString();
+        return typeName(getType()) + " " + className(getBldgClass()) + " " + name;
     }
 
     /**
@@ -820,7 +785,7 @@ public class Building implements Serializable {
      * @return the amount of damage the building absorbs
      */
     public int getAbsorbtion(Coords pos) {
-        // if(getBldgClass() == Building.CASTLE_BRIAN) {
+        // if (getBldgClass() == Building.CASTLE_BRIAN) {
         // return (int) Math.ceil(getPhaseCF(pos));
         // }
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);
@@ -875,7 +840,4 @@ public class Building implements Serializable {
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
         basementCollapsed.put(coords, collapsed);
     }
-
-
-
-} // End public class Building implements Serializable
+}

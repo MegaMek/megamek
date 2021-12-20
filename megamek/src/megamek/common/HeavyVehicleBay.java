@@ -108,7 +108,7 @@ public final class HeavyVehicleBay extends Bay {
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)totalSpace * 8;
+        return (int) totalSpace * 8;
     }
 
     @Override

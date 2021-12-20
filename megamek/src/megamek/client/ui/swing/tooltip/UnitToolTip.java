@@ -45,20 +45,20 @@ public final class UnitToolTip {
     final static float TT_SMALLFONT_DELTA = -0.2f;
     
     /** Returns the unit tooltip with values that are relevant in the lobby. */
-    public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 
+    public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
         return getEntityTip(entity, localPlayer, true, mapSettings);
     }
     
     /** Returns the unit tooltip with values that are relevant in-game. */
-    public static StringBuilder getEntityTipGame(Entity entity, IPlayer localPlayer) {
+    public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
         return getEntityTip(entity, localPlayer, false, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
-    private static StringBuilder getEntityTip(Entity entity, IPlayer localPlayer, 
+    private static StringBuilder getEntityTip(Entity entity, Player localPlayer,
             boolean inLobby, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
@@ -71,7 +71,7 @@ public final class UnitToolTip {
         GUIPreferences guip = GUIPreferences.getInstance();
 
         // Unit Chassis and Player
-        IPlayer owner = game.getPlayer(entity.getOwnerId());
+        Player owner = game.getPlayer(entity.getOwnerId());
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
         result.append(entity.getChassis()).append(clanStr);
@@ -327,7 +327,7 @@ public final class UnitToolTip {
         // Gather names, counts, Clan/IS
         WeaponInfo currentWp;
         for (Mounted curWp: weapons) {
-            WeaponType wtype = (WeaponType)curWp.getType();
+            WeaponType wtype = (WeaponType) curWp.getType();
             if (isNotTTRelevant(wtype)) {
                 continue;
             }
@@ -362,7 +362,7 @@ public final class UnitToolTip {
                 currentWp.isRapidFire = weapDesc.contains(RAPIDFIRE);
 
                 // Create the ranges String
-                int ranges[];
+                int[] ranges;
                 if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
@@ -383,7 +383,7 @@ public final class UnitToolTip {
                         rangeString += "\u2B1D";
                     }
                 }
-                WeaponType wpT = ((WeaponType)curWp.getType());
+                WeaponType wpT = ((WeaponType) curWp.getType());
                 if (!wpT.hasFlag(WeaponType.F_AMS)
                         || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
@@ -436,7 +436,7 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         boolean subsequentLine = false; 
         // Display sorted by weapon name
-        var wps = new ArrayList<WeaponInfo>(wpInfos.values());
+        var wps = new ArrayList<>(wpInfos.values());
         wps.sort(Comparator.comparing(w -> w.sortString));
         int totalWeaponCount = wpInfos.values().stream().filter(i -> i.ammos.isEmpty()).mapToInt(wp -> wp.count).sum();
         boolean hasMultiples = wpInfos.values().stream().mapToInt(wp -> wp.count).anyMatch(c -> c > 1);
@@ -565,7 +565,7 @@ public final class UnitToolTip {
     }
 
     /** Returns values that only are relevant when in-game such as heat. */
-    private static StringBuilder inGameValues(Entity entity, IPlayer localPlayer) {
+    private static StringBuilder inGameValues(Entity entity, Player localPlayer) {
         StringBuilder result = new StringBuilder();
         Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
@@ -618,7 +618,7 @@ public final class UnitToolTip {
                     result.append(addToTT("Evade", NOBR));
                 }
 
-                if ((entity instanceof Infantry) && ((Infantry)entity).isTakingCover()) { 
+                if ((entity instanceof Infantry) && ((Infantry) entity).isTakingCover()) { 
                     result.append(addToTT("TakingCover", NOBR));
                 }
 
@@ -687,7 +687,7 @@ public final class UnitToolTip {
             StringBuffer playerList = new StringBuffer();
             boolean teamVision = game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_TEAM_VISION);
-            for (IPlayer player : entity.getWhoCanSee()) {
+            for (Player player : entity.getWhoCanSee()) {
                 if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
                     playerList.append(player.getName());
                     playerList.append(", ");
@@ -762,8 +762,8 @@ public final class UnitToolTip {
     }
     
     /** Returns warnings about problems that should be solved before deploying. */
-    private static StringBuilder deploymentWarnings(Entity entity, IPlayer localPlayer,
-            MapSettings mapSettings) {
+    private static StringBuilder deploymentWarnings(Entity entity, Player localPlayer,
+                                                    MapSettings mapSettings) {
         StringBuilder result = new StringBuilder();
         // Critical (red) warnings
         result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
@@ -776,7 +776,7 @@ public final class UnitToolTip {
         if (entity.doomedOnGround() && mapSettings.getMedium() == MapSettings.MEDIUM_GROUND) {
             result.append("<BR>Cannot survive on a ground map!");
         }
-        if  (entity.doomedInSpace() && mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+        if (entity.doomedInSpace() && mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             result.append("<BR>Cannot survive in space!");
         }
         result.append("</FONT>");
@@ -819,7 +819,7 @@ public final class UnitToolTip {
     }
     
     /** Returns the full force chain the entity is in as one text line. */
-    private static StringBuilder forceEntry(Entity entity, IPlayer localPlayer) {
+    private static StringBuilder forceEntry(Entity entity, Player localPlayer) {
         StringBuilder result = new StringBuilder();
         
         if (entity.partOfForce()) {

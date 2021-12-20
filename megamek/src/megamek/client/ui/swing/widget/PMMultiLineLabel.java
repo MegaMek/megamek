@@ -41,7 +41,7 @@ public class PMMultiLineLabel extends PMSimpleLabel {
         labels.add(s);
         
         int newWidth = fm.stringWidth(s);
-        if(newWidth > width) {
+        if (newWidth > width) {
             width = newWidth;
         }
         
@@ -62,7 +62,7 @@ public class PMMultiLineLabel extends PMSimpleLabel {
         
         int currentY = y;
 
-        for(String s : labels) {
+        for (String s : labels) {
             g.drawString(s, x, currentY);
             currentY += fm.getHeight();
         }

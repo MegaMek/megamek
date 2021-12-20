@@ -14,14 +14,14 @@
  */
 package megamek.test;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.QuirksHandler;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This program is a tool to help rewrite a quirks file that does not have
@@ -31,7 +31,7 @@ import megamek.common.QuirksHandler;
  * with the same quirks for that unit type.
  * 
  * @author arlith
- * @date April 2016
+ * @since April 2016
  */
 public class QuirkRewriteTool implements MechSummaryCache.Listener {
 
@@ -54,9 +54,8 @@ public class QuirkRewriteTool implements MechSummaryCache.Listener {
 
         try {
             QuirksHandler.initQuirksList();
-        } catch (IOException e) {
-            System.err.println("Error initializing quirks!");
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Error initializing quirks", e);
             return;
         }
 
@@ -93,11 +92,7 @@ public class QuirkRewriteTool implements MechSummaryCache.Listener {
 
         System.out.println("Writing new custom quirks!");
         // Save the munged quirks in the custom quirks list
-        try {
-            QuirksHandler.saveCustomQuirksList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        QuirksHandler.saveCustomQuirksList();
         System.out.println("\n");
 
         System.out.println("Comparing Quirks!");

@@ -58,88 +58,109 @@ class ClientPreferences extends PreferenceStoreProxy implements
         setMekHitLocLog();
     }
 
+    @Override
     public boolean getPrintEntityChange() {
         return store.getBoolean(PRINT_ENTITY_CHANGE);
     }
 
+    @Override
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
     }
 
+    @Override
     public boolean defaultAutoejectDisabled() {
         return store.getBoolean(DEFAULT_AUTOEJECT_DISABLED);
     }
 
+    @Override
     public boolean useAverageSkills() {
         return store.getBoolean(USE_AVERAGE_SKILLS);
     }
 
+    @Override
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
     }
 
+    @Override
     public String getLastConnectAddr() {
         return store.getString(LAST_CONNECT_ADDR);
     }
 
+    @Override
     public int getLastConnectPort() {
         return store.getInt(LAST_CONNECT_PORT);
     }
 
+    @Override
     public String getLastPlayerName() {
         return store.getString(LAST_PLAYER_NAME);
     }
 
+    @Override
     public String getLastServerPass() {
         return store.getString(LAST_SERVER_PASS);
     }
 
+    @Override
     public int getLastServerPort() {
         return store.getInt(LAST_SERVER_PORT);
     }
 
+    @Override
     public String getMapTileset() {
         return store.getString(MAP_TILESET);
     }
 
+    @Override
     public int getMaxPathfinderTime() {
         return store.getInt(MAX_PATHFINDER_TIME);
     }
 
+    @Override
     public String getDataDirectory() {
         return store.getString(DATA_DIRECTORY);
     }
 
+    @Override
     public String getLogDirectory() {
         return store.getString(LOG_DIRECTORY);
     }
 
+    @Override
     public String getMechDirectory() {
         return store.getString(MECH_DIRECTORY);
     }
 
     protected PrintWriter mekHitLocLog = null;
 
+    @Override
     public PrintWriter getMekHitLocLog() {
         return mekHitLocLog;
     }
 
+    @Override
     public String getMetaServerName() {
         return store.getString(METASERVER_NAME);
     }
 
+    @Override
     public void setMetaServerName(String name) {
         store.setValue(METASERVER_NAME, name);
     }
 
+    @Override
     public int getGoalPlayers() {
         return store.getInt(GOAL_PLAYERS);
     }
 
+    @Override
     public void setGoalPlayers(int n) {
         store.setValue(GOAL_PLAYERS, n);
     }
 
+    @Override
     public String getGameLogFilename() {
         return store.getString(GAMELOG_FILENAME);
     }
@@ -148,78 +169,97 @@ class ClientPreferences extends PreferenceStoreProxy implements
     // return store.getInt(GAMELOG_MAX_SIZE);
     // }
 
+    @Override
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
 
+    @Override
     public String getStampFormat() {
         return store.getString(STAMP_FORMAT);
     }
 
+    @Override
     public boolean getShowUnitId() {
         return store.getBoolean(SHOW_UNIT_ID);
     }
 
+    @Override
     public char getUnitStartChar() {
         return (char) store.getInt(UNIT_START_CHAR);
     }
 
+    @Override
     public boolean keepGameLog() {
         return store.getBoolean(GAMELOG_KEEP);
     }
 
+    @Override
     public boolean memoryDumpOn() {
         return store.getBoolean(MEMORY_DUMP_ON);
     }
 
+    @Override
     public boolean debugOutputOn() {
         return store.getBoolean(DEBUG_OUTPUT_ON);
     }
 
+    @Override
     public void setDefaultAutoejectDisabled(boolean state) {
         store.setValue(DEFAULT_AUTOEJECT_DISABLED, state);
     }
 
+    @Override
     public void setUseAverageSkills(boolean state) {
         store.setValue(USE_AVERAGE_SKILLS, state);
     }
 
+    @Override
     public void setGenerateNames(boolean state) {
         store.setValue(GENERATE_NAMES, state);
     }
 
+    @Override
     public void setKeepGameLog(boolean state) {
         store.setValue(GAMELOG_KEEP, state);
     }
 
+    @Override
     public void setLastConnectAddr(String serverAddr) {
         store.setValue(LAST_CONNECT_ADDR, serverAddr);
     }
 
+    @Override
     public void setLastConnectPort(int port) {
         store.setValue(LAST_CONNECT_PORT, port);
     }
 
+    @Override
     public void setLastPlayerName(String name) {
         store.setValue(LAST_PLAYER_NAME, name);
     }
 
+    @Override
     public void setLastServerPass(String serverPass) {
         store.setValue(LAST_SERVER_PASS, serverPass);
     }
 
+    @Override
     public void setLastServerPort(int port) {
         store.setValue(LAST_SERVER_PORT, port);
     }
 
+    @Override
     public void setMapTileset(String name) {
         store.setValue(MAP_TILESET, name);
     }
 
+    @Override
     public void setMaxPathfinderTime(int i) {
         store.setValue(MAX_PATHFINDER_TIME, i);
     }
 
+    @Override
     public void setGameLogFilename(String name) {
         store.setValue(GAMELOG_FILENAME, name);
     }
@@ -232,40 +272,49 @@ class ClientPreferences extends PreferenceStoreProxy implements
     // store.setValue(GAMELOG_MAX_SIZE, i);
     // }
 
+    @Override
     public void setStampFilenames(boolean state) {
         store.setValue(STAMP_FILENAMES, state);
     }
 
+    @Override
     public void setStampFormat(String format) {
         store.setValue(STAMP_FORMAT, format);
     }
 
+    @Override
     public void setShowUnitId(boolean state) {
         store.setValue(SHOW_UNIT_ID, state);
     }
 
+    @Override
     public void setUnitStartChar(char c) {
         store.setValue(UNIT_START_CHAR, c);
     }
 
+    @Override
     public String getGUIName() {
         return store.getString(GUI_NAME);
     }
 
+    @Override
     public void setGUIName(String guiName) {
         store.setValue(GUI_NAME, guiName);
     }
 
+    @Override
     public boolean getShowIPAddressesInChat() {
         return store.getBoolean(IP_ADDRESSES_IN_CHAT);
     }
 
+    @Override
     public void setShowIPAddressesInChat(boolean value) {
         store.setValue(IP_ADDRESSES_IN_CHAT, value);
     }
 
     protected Locale locale = null;
 
+    @Override
     public void setLocale(String l) {
         LocaleParser p = new LocaleParser();
         if (!p.parse(l)) {
@@ -274,6 +323,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         }
     }
 
+    @Override
     public Locale getLocale() {
         if (locale == null) {
             // return Locale.getDefault();
@@ -282,6 +332,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         return locale;
     }
 
+    @Override
     public String getLocaleString() {
         if (locale == null) {
             return "";
@@ -313,18 +364,22 @@ class ClientPreferences extends PreferenceStoreProxy implements
         }
     }
 
+    @Override
     public int getBoardWidth() {
         return store.getInt(BOARD_WIDTH);
     }
 
+    @Override
     public int getBoardHeight() {
         return store.getInt(BOARD_HEIGHT);
     }
 
+    @Override
     public int getMapWidth() {
         return store.getInt(MAP_WIDTH);
     }
 
+    @Override
     public int getMapHeight() {
         return store.getInt(MAP_HEIGHT);
     }

@@ -266,6 +266,7 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
+    @Override
     public double getBaseEngineValue() {
         if (getWeight() < 5) {
             return 0.005;
@@ -276,6 +277,7 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
+    @Override
     public double getBaseChassisValue() {
         if (getWeight() < 5) {
             return 0.08;
@@ -507,7 +509,8 @@ public class FixedWingSupport extends ConvFighter {
         return 1.0;
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
     }
 }

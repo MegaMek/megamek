@@ -13,36 +13,29 @@
 */ 
 package megamek.client.ui.swing.util;
 
-import java.awt.Rectangle;
-import java.util.*;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Image;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import javax.swing.*;
-import javax.swing.border.*;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Configuration;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public final class UIUtil {
 
@@ -189,7 +182,7 @@ public final class UIUtil {
      * oneself from the GUIPreferences depending on the relation
      * of the given player1 and player2. 
      */
-    public static Color teamColor(IPlayer player1, IPlayer player2) {
+    public static Color teamColor(Player player1, Player player2) {
         if (player1.getId() == player2.getId()) {
             return GUIPreferences.getInstance().getMyUnitColor();
         } else if (player1.isEnemyOf(player2)) {
@@ -303,7 +296,7 @@ public final class UIUtil {
     }
     
     public static int scaleForGUI(int value) {
-        return Math.round(scaleForGUI((float)value));
+        return Math.round(scaleForGUI((float) value));
     }
     
     public static float scaleForGUI(float value) {
@@ -312,7 +305,7 @@ public final class UIUtil {
     
     public static Dimension scaleForGUI(Dimension dim) {
         float scale = GUIPreferences.getInstance().getGUIScale();
-        return new Dimension((int)(scale * dim.width), (int)(scale * dim.height));
+        return new Dimension((int) (scale * dim.width), (int) (scale * dim.height));
     }
     
     /** 
@@ -377,35 +370,36 @@ public final class UIUtil {
                 comp.setFont(scaledFont);
             }
             if (comp instanceof JScrollPane 
-                    && ((JScrollPane)comp).getViewport().getView() instanceof JComponent) {
-                adjustDialog((JViewport)((JScrollPane)comp).getViewport());
+                    && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
+                adjustDialog(((JScrollPane) comp).getViewport());
             }
             if (comp instanceof JPanel) {
-                JPanel panel = (JPanel)comp;
+                JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
-                if ((border != null) && (border instanceof TitledBorder)) {
-                    ((TitledBorder)border).setTitleFont(scaledFont);
+                if ((border instanceof TitledBorder)) {
+                    ((TitledBorder) border).setTitleFont(scaledFont);
                 }
-                if ((border != null) && (border instanceof EmptyBorder)) {
-                    Insets i = ((EmptyBorder)border).getBorderInsets();
+
+                if ((border instanceof EmptyBorder)) {
+                    Insets i = ((EmptyBorder) border).getBorderInsets();
                     int top = scaleForGUI(i.top);
                     int bottom = scaleForGUI(i.bottom);
                     int left = scaleForGUI(i.left);
                     int right = scaleForGUI(i.right);
                     panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
-                adjustDialog((JPanel)comp);
+                adjustDialog((JPanel) comp);
             }
             if (comp instanceof JTabbedPane) {
                 comp.setFont(scaledFont);
-                JTabbedPane tpane = (JTabbedPane)comp;
+                JTabbedPane tpane = (JTabbedPane) comp;
                 for (int i=0; i<tpane.getTabCount();i++) {
                     Component sc = tpane.getTabComponentAt(i);
                     if (sc instanceof JPanel) {
-                        adjustDialog((JPanel)sc);
+                        adjustDialog((JPanel) sc);
                     }
                 }
-                adjustDialog((JTabbedPane)comp);
+                adjustDialog((JTabbedPane) comp);
             }
         }
     }
@@ -415,7 +409,7 @@ public final class UIUtil {
         for (Component comp: popup.getComponents()) {
             if ((comp instanceof JMenuItem)) {
                 comp.setFont(getScaledFont());
-                scaleJMenuItem((JMenuItem)comp);
+                scaleJMenuItem((JMenuItem) comp);
             } 
         }
     }
@@ -694,10 +688,12 @@ public final class UIUtil {
         }
         
         FocusListener l = new FocusListener() {
+            @Override
             public void focusLost(FocusEvent e) {
                 updateHint();
             };
             
+            @Override
             public void focusGained(FocusEvent e) {
                 if (getText().equals(hintText)) {
                     setText("");
@@ -924,7 +920,7 @@ public final class UIUtil {
     
     /** Returns an HTML FONT Size String, according to GUIScale (e.g. "style=font-size:22"). */
     private static String sizeString() {
-        int fontSize = (int)(GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);
+        int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);
         return " style=font-size:" + fontSize + " ";
     }
     
@@ -939,7 +935,7 @@ public final class UIUtil {
         float guiScale = GUIPreferences.getInstance().getGUIScale();
         float boundedScale = Math.max(ClientGUI.MIN_GUISCALE, guiScale + deltaScale);
         boundedScale = Math.min(ClientGUI.MAX_GUISCALE, boundedScale);
-        int fontSize = (int)(boundedScale * FONT_SCALE1);
+        int fontSize = (int) (boundedScale * FONT_SCALE1);
         return " style=font-size:" + fontSize + " ";
     }
     
@@ -980,7 +976,7 @@ public final class UIUtil {
     private static void scaleJMenuItem(final JMenuItem menuItem) {
         Font scaledFont = getScaledFont();
         if (menuItem instanceof JMenu) {
-            JMenu menu = (JMenu)menuItem;
+            JMenu menu = (JMenu) menuItem;
             menu.setFont(scaledFont);
             for (int i = 0; i < menu.getItemCount(); i++) {
                 scaleJMenuItem(menu.getItem(i));

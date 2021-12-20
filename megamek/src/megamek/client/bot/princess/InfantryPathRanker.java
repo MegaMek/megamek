@@ -91,7 +91,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         // If an infantry unit is not in range to do damage,
         // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
         // that's not going to end well.
-        if(maximumDamageDone <= 0) {
+        if (maximumDamageDone <= 0) {
         	utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
         }
         
@@ -108,8 +108,9 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         return rankedPath;
     }
     
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, 
-            boolean useExtremeRange, boolean useLOSRange) {
+    @Override
+    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
+                                                  boolean useExtremeRange, boolean useLOSRange) {
         
         //some preliminary calculations
         final double damageDiscount = 0.25;
@@ -135,7 +136,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         
         int range = closest.distance(finalCoords);
         // assume that an enemy unit is highly unlikely to stand there and let you swarm them 
-        if(range <= 0) {
+        if (range <= 0) {
             range = 1;
         }
 

@@ -33,15 +33,7 @@ import java.util.StringTokenizer;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.BattleArmorHandlesTank;
-import megamek.common.Bay;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.MapSettings;
-import megamek.common.TankTrailerHitch;
-import megamek.common.Transporter;
+import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -59,9 +51,9 @@ public class LobbyUtility {
      * and "Exclusive Starting Positions" are on and the starting position overlaps
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
-     * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
+     * <P>See also {@link #startPosOverlap(Player, Player)}
      */
-    static boolean isValidStartPos(Game game, IPlayer player) {
+    static boolean isValidStartPos(Game game, Player player) {
         return isValidStartPos(game, player, player.getStartingPos());
     }
 
@@ -71,18 +63,18 @@ public class LobbyUtility {
      * and "Exclusive Starting Positions" are on and the starting position overlaps
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
-     * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
+     * <P>See also {@link #startPosOverlap(Player, Player)}
      */
-    static boolean isValidStartPos(Game game, IPlayer player, int pos) {
+    static boolean isValidStartPos(Game game, Player player, int pos) {
         if (!isExclusiveDeployment(game)) {
             return true;
         } else {
             if (isTeamsShareVision(game)) {
-                return !game.getPlayersVector().stream().filter(p -> p.isEnemyOf(player))
-                        .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                return game.getPlayersVector().stream().filter(p -> p.isEnemyOf(player))
+                        .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             } else {
-                return !game.getPlayersVector().stream().filter(p -> !p.equals(player))
-                        .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                return game.getPlayersVector().stream().filter(p -> !p.equals(player))
+                        .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             }
         }
     }
@@ -219,7 +211,7 @@ public class LobbyUtility {
             boardsString = boardsString.substring(MapSettings.BOARD_SURPRISE.length());
         }
         String[] boards = boardsString.split("\n");
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         result.addAll(Arrays.asList(boards));
         return result;
     }

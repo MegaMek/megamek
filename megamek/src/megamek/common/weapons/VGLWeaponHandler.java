@@ -137,7 +137,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                     // Infantry in a building take damage when the building is
                     //  targeted, so should be ignored here
                     if (bldg != null && (entTarget instanceof Infantry) 
-                            && Compute.isInBuilding(game, entTarget)){
+                            && Compute.isInBuilding(game, entTarget)) {
                         continue;
                     }
                     dmgReports = server

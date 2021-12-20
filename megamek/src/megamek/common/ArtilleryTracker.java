@@ -49,7 +49,7 @@ public class ArtilleryTracker implements Serializable {
      * @param mounted new weapon
      */
     public void addWeapon(Mounted mounted) {
-        weapons.put(mounted, new Vector<ArtilleryModifier>());
+        weapons.put(mounted, new Vector<>());
     }
     
     /**
@@ -117,7 +117,7 @@ public class ArtilleryTracker implements Serializable {
     public Vector<ArtilleryModifier> getWeaponModifiers(Mounted mounted) {
         Vector<ArtilleryModifier> result = weapons.get(mounted);
         if (result == null) {
-            result = new Vector<ArtilleryModifier>();
+            result = new Vector<>();
             weapons.put(mounted, result);
         }
         return result;

@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.util.Map;
@@ -22,15 +21,9 @@ import java.util.Map;
  * @author beerockxs
  */
 public class SupportTank extends Tank {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -9028127010133768714L;
     private int[] barRating;
     private double fuelTonnage = 0;
-    
-    public static final double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66};
 
     public SupportTank() {
         super();
@@ -145,7 +138,7 @@ public class SupportTank extends Tank {
     public static TechAdvancement getConstructionTechAdvancement(EntityMovementMode movementMode, int weightClass) {
         /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
          * be the same as Clan invasion era. */
-        switch(movementMode) {
+        switch (movementMode) {
             case HOVER:
                 if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
                     return TA_HOVER_LARGE;
@@ -197,7 +190,7 @@ public class SupportTank extends Tank {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -333,6 +326,7 @@ public class SupportTank extends Tank {
     
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information
+    @Override
     public double getBaseChassisValue() {
         switch (movementMode) {
             case HOVER:
@@ -381,6 +375,7 @@ public class SupportTank extends Tank {
     }
 
     //Support Vee Engine Information
+    @Override
     public double getBaseEngineValue() {
         switch (movementMode) {
             case AIRSHIP:
@@ -467,7 +462,8 @@ public class SupportTank extends Tank {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
     }
     
@@ -483,31 +479,31 @@ public class SupportTank extends Tank {
         int largeCeil=0;
         int veryLargeCeil = 0;
         switch (movementMode) {
-        case TRACKED:
-            mediumCeil = 100;
-            largeCeil = 200;
-            break;
-        case WHEELED:
-            mediumCeil = 80;
-            largeCeil = 160;
-            break;
-        case HOVER:
-            mediumCeil = 50;
-            largeCeil = 100;
-            break;
-        case NAVAL:
-        case HYDROFOIL:
-        case SUBMARINE:
-            mediumCeil = 300;
-            largeCeil = 6000;
-            veryLargeCeil = 30000;
-            break;
-        case WIGE:
-            mediumCeil = 80;
-            largeCeil = 240;
-            break;
-        default:
-            break;
+            case TRACKED:
+                mediumCeil = 100;
+                largeCeil = 200;
+                break;
+            case WHEELED:
+                mediumCeil = 80;
+                largeCeil = 160;
+                break;
+            case HOVER:
+                mediumCeil = 50;
+                largeCeil = 100;
+                break;
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                mediumCeil = 300;
+                largeCeil = 6000;
+                veryLargeCeil = 30000;
+                break;
+            case WIGE:
+                mediumCeil = 80;
+                largeCeil = 240;
+                break;
+            default:
+                break;
         }
         if (getWeight() < mediumCeil) {
             return 2;
@@ -527,30 +523,30 @@ public class SupportTank extends Tank {
      */
     public int getBattleForceStructurePoints() {
         switch (movementMode) {
-        case NAVAL:
-        case HYDROFOIL:
-        case SUBMARINE:
-            if (getWeight() <= 300) {
-                return 10;
-            }
-            if (getWeight() <= 500) {
-                return 15;
-            }
-            if (getWeight() <= 6000) {
-                return 20;
-            }
-            if (getWeight() <= 12000) {
-                return 25;
-            }
-            if (getWeight() <= 30000) {
-                return 30;
-            }
-            if (getWeight() <= 100000) {
-                return 35;
-            }
-        default:
-            //TODO add rail in here when ready
-            return super.getBattleForceStructurePoints();
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                if (getWeight() <= 300) {
+                    return 10;
+                }
+                if (getWeight() <= 500) {
+                    return 15;
+                }
+                if (getWeight() <= 6000) {
+                    return 20;
+                }
+                if (getWeight() <= 12000) {
+                    return 25;
+                }
+                if (getWeight() <= 30000) {
+                    return 30;
+                }
+                if (getWeight() <= 100000) {
+                    return 35;
+                }
+            default:
+                //TODO add rail in here when ready
+                return super.getBattleForceStructurePoints();
         }
     }
     
@@ -558,18 +554,19 @@ public class SupportTank extends Tank {
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         switch (getBattleForceSize()) {
-        case 3:
-            specialAbilities.put(BattleForceSPA.LG, null);
-            break;
-        case 4:
-            specialAbilities.put(BattleForceSPA.VLG, null);
-            break;
-        case 5:
-            specialAbilities.put(BattleForceSPA.SLG, null);
-            break;
+            case 3:
+                specialAbilities.put(BattleForceSPA.LG, null);
+                break;
+            case 4:
+                specialAbilities.put(BattleForceSPA.VLG, null);
+                break;
+            case 5:
+                specialAbilities.put(BattleForceSPA.SLG, null);
+                break;
         }
     }
     
+    @Override
     public boolean isSupportVehicle() {
         return true;
     }
@@ -583,5 +580,4 @@ public class SupportTank extends Tank {
     public boolean isTrailer() {
         return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
     }
-
 }

@@ -19,6 +19,7 @@ package megamek.common.weapons.prototypes;
 
 import megamek.common.Game;
 import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -70,7 +71,8 @@ public class ISUAC5Prototype extends UACWeapon {
         .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
         .setISAdvancement(3029, DATE_NONE, DATE_NONE, 3035, DATE_NONE)
         .setISApproximate(false, false, false, true, false)
-        .setPrototypeFactions(F_FS);
+        .setPrototypeFactions(F_FS)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

@@ -18,9 +18,9 @@
  */
 package megamek.common.icons;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
@@ -87,7 +87,7 @@ public class Portrait extends AbstractIcon {
                         DEFAULT_PORTRAIT_FILENAME);
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
         }
 
         return portrait;
@@ -104,7 +104,7 @@ public class Portrait extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error(e);
             return new Portrait();
         }
         return icon;

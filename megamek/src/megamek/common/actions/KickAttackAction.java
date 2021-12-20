@@ -19,7 +19,7 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Game;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -102,7 +102,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         double talonMultiplier = 1;
-        if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ){
+        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
             talonMultiplier += 0.5;
         }
 
@@ -144,8 +144,8 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();
@@ -244,7 +244,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        if ( ae.isHullDown() ){
+        if (ae.isHullDown()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
 
@@ -287,7 +287,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
-        if ( ae.hasFunctionalLegAES() ) {
+        if (ae.hasFunctionalLegAES()) {
             toHit.addModifier(-1, "AES bonus");
         }
 
@@ -304,8 +304,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         //until then, we will assume that if the attacker height is less than half
         //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
         //See Dropship.rollHitLocation to see how HIT_KICK is handled
-        if(target instanceof Dropship) {
-            if((attackerElevation - targetElevation) > (target.getHeight()/2)) {
+        if (target instanceof Dropship) {
+            if ((attackerElevation - targetElevation) > (target.getHeight()/2)) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);

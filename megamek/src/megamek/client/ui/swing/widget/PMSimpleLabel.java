@@ -53,6 +53,7 @@ public class PMSimpleLabel implements PMLabel {
         color = c;
     }
 
+    @Override
     public void setString(String s) {
         string = s;
         // The width use to just be the stringWidth, but this
@@ -69,6 +70,7 @@ public class PMSimpleLabel implements PMLabel {
     /*
      * Set the color of the label of the font.
      */
+    @Override
     public void setColor(Color c) {
         color = c;
     }
@@ -76,11 +78,13 @@ public class PMSimpleLabel implements PMLabel {
     /*
      * translate the coordinates of the label.
      */
+    @Override
     public void moveTo(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
+    @Override
     public void translate(int x, int y) {
         this.x += x;
         this.y += y;
@@ -89,6 +93,7 @@ public class PMSimpleLabel implements PMLabel {
     /*
      * Draw the label.
      */
+    @Override
     public void drawInto(Graphics g) {
         if (!visible)
             return;
@@ -101,10 +106,12 @@ public class PMSimpleLabel implements PMLabel {
         g.setFont(font);
     }
 
+    @Override
     public void setVisible(boolean v) {
         visible = v;
     }
 
+    @Override
     public Rectangle getBounds() {
         return new Rectangle(x, y - height + descent, width, height);
     }
@@ -112,6 +119,7 @@ public class PMSimpleLabel implements PMLabel {
     /*
      * Returns the size of the label
      */
+    @Override
     public Dimension getSize() {
         return new Dimension(width, height);
     }
@@ -119,6 +127,7 @@ public class PMSimpleLabel implements PMLabel {
     /*
      * Returns the descent of the label.
      */
+    @Override
     public int getDescent() {
         return descent;
     }

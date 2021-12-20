@@ -21,7 +21,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityRemovalConditions;
-import megamek.common.IHex;
+import megamek.common.Hex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -44,7 +44,7 @@ public class EntityWreckHelper {
         //  for units that were destroyed by ejection rather than unit destruction
         //  for units on top of a bridge (looks kind of stupid)
         
-        if(entity.getGame().getBoard().inSpace() ||
+        if (entity.getGame().getBoard().inSpace() ||
                 (entity instanceof Mech) ||
                 (entity instanceof Infantry) ||
                 (entity instanceof GunEmplacement) ||
@@ -95,17 +95,17 @@ public class EntityWreckHelper {
      * Gets the prefix used to retrieve image files for motive-damaged entities
      */
     public static String getMotivePrefix(Entity entity) {
-        if(!displayMotiveDamage(entity)) {
+        if (!displayMotiveDamage(entity)) {
             return null;
         }
         
-        switch(entity.getMovementMode()) {
-        case WHEELED:
-            return "wheels";
-        case TRACKED:
-            return "treads";
-        default:
-            return null;
+        switch (entity.getMovementMode()) {
+            case WHEELED:
+                return "wheels";
+            case TRACKED:
+                return "treads";
+            default:
+                return null;
         }
     }
     
@@ -113,19 +113,19 @@ public class EntityWreckHelper {
      * Gets the weight class suffix for destruction decals for the given entity
      */
     public static String getWeightSuffix(Entity entity) {
-        switch(entity.getWeightClass()) {
-        case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-            return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT;
-        case EntityWeightClass.WEIGHT_LIGHT:
-            // this is a "hack" as some units < 20 tons are classified as 'light'
-            // additionally, gun emplacements are "light" but should really have a little more debris.
-            if ((entity.getWeight() > 0) && (entity.getWeight() < 20)) {
-               return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT; 
-            } else {
+        switch (entity.getWeightClass()) {
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT;
+            case EntityWeightClass.WEIGHT_LIGHT:
+                // this is a "hack" as some units < 20 tons are classified as 'light'
+                // additionally, gun emplacements are "light" but should really have a little more debris.
+                if ((entity.getWeight() > 0) && (entity.getWeight() < 20)) {
+                   return TilesetManager.FILENAME_SUFFIX_WRECKS_ULTRALIGHT; 
+                } else {
+                    return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
+                }
+            default:
                 return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
-            }
-        default:
-            return TilesetManager.FILENAME_SUFFIX_WRECKS_ASSAULTPLUS;
         }
     }
     
@@ -133,11 +133,11 @@ public class EntityWreckHelper {
      * Utility function that determines if the entity is on a bridge
      */
     public static boolean entityOnBridge(Entity entity) {   
-        IHex hex = entity.getGame().getBoard().getHex(entity.getPosition());
-        if(hex != null) {
+        Hex hex = entity.getGame().getBoard().getHex(entity.getPosition());
+        if (hex != null) {
             boolean hexHasBridge = hex.containsTerrain(Terrains.BRIDGE_CF);
             
-            if(hexHasBridge && entity.getElevation() >= hex.ceiling()) {
+            if (hexHasBridge && entity.getElevation() >= hex.ceiling()) {
                 return true;
             }
         }

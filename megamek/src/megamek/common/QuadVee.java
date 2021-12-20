@@ -23,7 +23,7 @@ public class QuadVee extends QuadMech {
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
     
-    public static final String systemNames[] = { "Life Support", "Sensors",
+    public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
             "Conversion Gear"};
@@ -113,6 +113,7 @@ public class QuadVee extends QuadMech {
     /**
      * This is used to identify Mechs that have tracks mounted as industrial equipment.
      */
+    @Override
     public boolean hasTracks() {
         return false;
     }
@@ -160,8 +161,8 @@ public class QuadVee extends QuadMech {
             wmp = wmp / (1 << badTracks);
         }
 
-        //Now apply modifiers
-        if (!ignoremodulararmor && hasModularArmor() ) {
+        // Now apply modifiers
+        if (!ignoremodulararmor && hasModularArmor()) {
             wmp--;
         }
 
@@ -251,6 +252,7 @@ public class QuadVee extends QuadMech {
         }
     }
 
+    @Override
     public int getOriginalSprintMPwithoutMASC() {
         if (getConversionMode() == CONV_MODE_VEHICLE && (game == null || !game.getOptions()
                 .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
@@ -262,6 +264,7 @@ public class QuadVee extends QuadMech {
     /*
      * No jumping in vehicle mode.
      */
+    @Override
     public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {
         if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
             return 0;
@@ -272,6 +275,7 @@ public class QuadVee extends QuadMech {
     /*
      * In a QuadVee they're all torso jump jets. But they still don't work in vehicle mode.
      */
+    @Override
     public int torsoJumpJets() {
         if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
             return 0;
@@ -282,6 +286,7 @@ public class QuadVee extends QuadMech {
     /**
      * UMUs do not function in vehicle mode
      */
+    @Override
     public int getActiveUMUCount() {
         if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
             return 0;
@@ -444,6 +449,7 @@ public class QuadVee extends QuadMech {
     /**
      * In vehicle mode the QuadVee is at the same level as the terrain.
      */
+    @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
             return 0;
@@ -515,7 +521,7 @@ public class QuadVee extends QuadMech {
                 }
             }
             // are we wheeled and in light snow?
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                     && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
@@ -557,7 +563,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
-            IHex occupiedHex = game.getBoard().getHex(getPosition());
+            Hex occupiedHex = game.getBoard().getHex(getPosition());
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         }

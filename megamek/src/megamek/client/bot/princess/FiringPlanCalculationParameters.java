@@ -1,13 +1,14 @@
 package megamek.client.bot.princess;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GET;
 import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GUESS;
 
@@ -89,7 +90,7 @@ public final class FiringPlanCalculationParameters {
          */
         public Builder setMaxHeat(final int value) {
             if (value < 0) {
-                MegaMek.getLogger().warning("Invalid max heat: " + value);
+                LogManager.getLogger().warn("Invalid max heat: " + value);
                 maxHeat = 0;
                 return this;
             }

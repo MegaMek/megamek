@@ -22,28 +22,8 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -231,15 +211,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target)
-                                                                                     .getOwner().getTeam() != IPlayer
-                                                                                     .TEAM_NONE)
-                                                                            && (ae.getOwner().getTeam() != IPlayer
-                    .TEAM_NONE) && (ae
-                                                                                                                                          .getOwner().getTeam() == ((Entity) target)
-                                                                                                                                          .getOwner().getTeam())))) {
+                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "A friendly unit can never be the target of a direct attack.");
+                        "A friendly unit can never be the target of a direct attack.");
             }
         }
 

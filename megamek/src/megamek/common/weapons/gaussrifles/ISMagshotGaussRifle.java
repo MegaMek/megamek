@@ -18,6 +18,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -53,14 +54,16 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         cost = 8500;
         explosionDamage = 3;
         rulesRefs = "314,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
-        .setISAdvancement(3059, 3072, 3090, DATE_NONE, DATE_NONE)
+        .setISAdvancement(3059, 3072, 3078, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false,false, false)
         .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
+        .setProductionFactions(F_FS)
+        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

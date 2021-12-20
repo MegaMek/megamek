@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
@@ -32,13 +32,10 @@ import java.util.Vector;
 /**
  * FiringPlan is a series of {@link WeaponFireInfo} objects describing a full attack turn
  *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 12/18/13 1:20 pM
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since 12/18/13 1:20 PM
  */
-public class FiringPlan extends ArrayList<WeaponFireInfo> implements
-        Comparable<FiringPlan> {
-
+public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<FiringPlan> {
     private static final long serialVersionUID = 8938385222775928559L;
 
     private double utility; // calculated elsewhere
@@ -97,7 +94,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
 
     /**
      * Models the probability of each individual weapon getting a kill shot.
-     * We treat each weapon shot as a Bernoulli trial and compute the probiblity
+     * We treat each weapon shot as a Bernoulli trial and compute the probability
      * of the target surviving each shot.  We can then take 1 - surviveChance to
      * get the chance of getting a kill.  This model doesn't take into 
      * consideration multiple weapons hitting the same location. 
@@ -140,12 +137,12 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
             return actionVector;
         }
         
-        if(getTwist() != 0) {
+        if (getTwist() != 0) {
         	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
         		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
         
-        if(flipArms) {
+        if (flipArms) {
             actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
         }
         
@@ -167,8 +164,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
                                                                          .append(" at ");
         Set<Integer> targets = new HashSet<>();
         // loop through all the targets for this firing plan, only show each target once.
-        for(WeaponFireInfo weaponFireInfo : this) {
-            if(!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
+        for (WeaponFireInfo weaponFireInfo : this) {
+            if (!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
                 description.append(weaponFireInfo.getTarget().getDisplayName()).append(", ");
                 targets.add(weaponFireInfo.getTarget().getTargetId());
             }
@@ -268,7 +265,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
      * Hole punchers before crit seekers
      */
     void sortPlan() {
-        this.sort(new Comparator<WeaponFireInfo>() {
+        this.sort(new Comparator<>() {
             @Override
             public int compare(WeaponFireInfo o1, WeaponFireInfo o2) {
                 Mounted weapon1 = o1.getWeapon();
@@ -298,21 +295,24 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
 
                 if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
                     AmmoType ammoType = (AmmoType) ammo1.getType();
-                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage() ||
-                        AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                    if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage())
+                            || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
                         dmg1 = ammoType.getDamagePerShot();
                     }
                 }
+
                 if (dmg1 == -1) {
                     dmg1 = weaponType1.getDamage();
                 }
+
                 if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
                     AmmoType ammoType = (AmmoType) ammo2.getType();
-                    if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage() ||
-                        AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
+                    if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage())
+                            || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
                         dmg2 = ammoType.getDamagePerShot();
                     }
                 }
+
                 if (dmg2 == -1) {
                     dmg2 = weaponType2.getDamage();
                 }
@@ -343,6 +343,6 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
      */
     @Override
     public int compareTo(FiringPlan other) {
-        return (int)(getUtility() - other.getUtility() + 0.5);
+        return (int) (getUtility() - other.getUtility() + 0.5);
     }
 }

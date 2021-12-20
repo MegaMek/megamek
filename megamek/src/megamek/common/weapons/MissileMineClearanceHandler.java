@@ -13,27 +13,15 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.Server;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author arlith
@@ -144,7 +132,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         // Handle mine clearance
-        List<Minefield> mfRemoved = new ArrayList<Minefield>();
+        List<Minefield> mfRemoved = new ArrayList<>();
         int missileDamage = (wtype instanceof LRMWeapon) ? 1 : 2;
         int mineDamage = wtype.getRackSize() * missileDamage;
         boolean updateMinefields = false;
@@ -190,16 +178,15 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
-            newReports = server.damageBuilding(bldg, damage, " receives ",
-                    targetPos);
+            newReports = server.damageBuilding(bldg, damage, " receives ", targetPos);
             adjustReports(newReports);
             vPhaseReport.addAll(newReports);
         }
 
         // Damage Terrain if applicable
-        IHex h = game.getBoard().getHex(targetPos);
-        newReports = new Vector<Report>();
-        if ((h != null) && h.hasTerrainfactor()) {
+        Hex h = game.getBoard().getHex(targetPos);
+        newReports = new Vector<>();
+        if ((h != null) && h.hasTerrainFactor()) {
             r = new Report(3384);
             r.indent(2);
             r.subject = subjectId;
@@ -224,7 +211,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             // munitions like airburst mortars for purposes of units in
             // buildings
             if (Compute.isInBuilding(game, target, targetPos)) {
-                IPlayer tOwner = target.getOwner();
+                Player tOwner = target.getOwner();
                 String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
                 newReports = server.damageBuilding(bldg, damage, " shields "
                         + target.getShortName() + " (<B><font color='"
@@ -273,7 +260,8 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         for (Report nr : reports) {
             nr.indent();
         }
-        if (reports.size() > 0) {
+
+        if (!reports.isEmpty()) {
             reports.get(reports.size() - 1).newlines++;
         }
     }

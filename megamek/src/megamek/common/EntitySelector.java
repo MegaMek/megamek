@@ -29,5 +29,5 @@ public interface EntitySelector {
      * @param entity the <code>Entity</code> being tested.
      * @return <code>true</code> if the entity meets the criteria.
      */
-    public boolean accept(Entity entity);
+    boolean accept(Entity entity);
 }

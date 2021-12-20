@@ -610,7 +610,7 @@ public class MenuScroller {
       }
       for (int i = 0; i < menu.getMenuComponentCount(); i++) {
           if (menu.getMenuComponent(i) instanceof JMenu) {
-              MenuScroller.createScrollBarsOnMenus(((JMenu)menu.getMenuComponent(i)));
+              MenuScroller.createScrollBarsOnMenus(((JMenu) menu.getMenuComponent(i)));
           }
       }
   }

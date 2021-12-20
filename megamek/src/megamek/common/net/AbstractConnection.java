@@ -33,14 +33,14 @@ import java.util.zip.GZIPOutputStream;
 import megamek.common.net.marshall.PacketMarshaller;
 import megamek.common.net.marshall.PacketMarshallerFactory;
 import megamek.common.util.CircularIntegerBuffer;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Generic bidirectional connection between client and server
  */
-public abstract class AbstractConnection implements IConnection {
+public abstract class AbstractConnection {
 
-    private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory
-            .getInstance();
+    private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
 
     private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
 
@@ -87,7 +87,7 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Connection listeners list
      */
-    private Vector<ConnectionListener> connectionListeners = new Vector<ConnectionListener>();
+    private Vector<ConnectionListener> connectionListeners = new Vector<>();
 
     /**
      * Buffer of the last commands sent; Used for debugging purposes.
@@ -143,8 +143,6 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns <code>true</code> if it's the Server connection
-     *
      * @return <code>true</code> if it's the Server connection
      */
     public boolean isServer() {
@@ -152,8 +150,6 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns the type of the marshalling used to send packets
-     *
      * @return the type of the marshalling used to send packets
      */
     protected int getMarshallingType() {
@@ -203,27 +199,22 @@ public abstract class AbstractConnection implements IConnection {
                 if (socket != null) {
                     socket.close();
                 }
-            } catch (IOException e) {
-                System.err.print("Error closing connection #"); //$NON-NLS-1$
-                System.err.print(getId());
-                System.err.print(": "); //$NON-NLS-1$
-                System.err.println(e.getMessage());
-                // We don't need a full stack trace... we're
-                // just closing the connection anyway.
-                // e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed closing connection " + getId(), e);
             }
             socket = null;
         }
         processConnectionEvent(new DisconnectedEvent(this));
     }
 
-    public boolean isClosed(){
+    /**
+     * @return if the socket for this connection has been closed.
+     */
+    public boolean isClosed() {
         return (socket == null) || socket.isClosed();
     }
 
     /**
-     * Returns the connection ID
-     *
      * @return the connection ID
      */
     public int getId() {
@@ -233,12 +224,16 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Sets the connection ID
      *
-     * @param id new connection ID Be careful with this...
+     * @param id new connection ID
+     * @note Be careful with using this method
      */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * @return the address this socket is or was connected to
+     */
     public String getInetAddress() {
         if (socket != null) {
             return socket.getInetAddress().toString();
@@ -274,7 +269,7 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Send packet now; This is the blocking call.
+     * Send the packet now, on a separate thread; This is the blocking call.
      */
     public void sendNow(SendPacket packet) {
         try {
@@ -286,8 +281,6 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns <code>true</code> if there are pending packets
-     *
      * @return <code>true</code> if there are pending packets
      */
     public synchronized boolean hasPending() {
@@ -295,8 +288,6 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns a very approximate count of how many bytes were sent
-     *
      * @return a very approximate count of how many bytes were sent
      */
     public synchronized long bytesSent() {
@@ -304,8 +295,6 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Returns a very approximate count of how many bytes were received
-     *
      * @return a very approximate count of how many bytes were received
      */
     public synchronized long bytesReceived() {
@@ -313,8 +302,7 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Adds the specified connection listener to receive connection events from
-     * connection.
+     * Adds the specified connection listener to receive connection events from connection.
      *
      * @param listener the connection listener.
      */
@@ -391,11 +379,11 @@ public abstract class AbstractConnection implements IConnection {
     protected void reportLastCommands(boolean sent) {
         CircularIntegerBuffer buf = sent ? debugLastFewCommandsSent
                 : debugLastFewCommandsReceived;
-        System.err.print("    Last "); //$NON-NLS-1$
+        System.err.print("    Last ");
         System.err.print(buf.length());
-        System.err.print(" commands that were "); //$NON-NLS-1$
-        System.err.print(sent ? "sent" : "received"); //$NON-NLS-1$
-        System.err.print(" (oldest first): "); //$NON-NLS-1$
+        System.err.print(" commands that were ");
+        System.err.print(sent ? "sent" : "received");
+        System.err.print(" (oldest first): ");
         System.err.println(buf);
     }
 
@@ -406,7 +394,7 @@ public abstract class AbstractConnection implements IConnection {
      * @return
      */
     protected String getConnectionTypeAbbrevation() {
-        return isServer() ? "s:" : "c:"; //$NON-NLS-1$ //$NON-NLS-2$
+        return isServer() ? "s:" : "c:";
     }
 
     /**
@@ -430,21 +418,20 @@ public abstract class AbstractConnection implements IConnection {
     }
 
 
-    protected int getSendBufferSize() throws SocketException{
+    protected int getSendBufferSize() throws SocketException {
         return socket.getSendBufferSize();
     }
 
 
-    protected int getReceiveBufferSize() throws SocketException{
+    protected int getReceiveBufferSize() throws SocketException {
         return socket.getReceiveBufferSize();
     }
 
     /**
-     * Process all incoming data, blocking on the input stream until new input
-     * is available.  This method should not be synchronized as it should only
-     * deal with the input side of things.  Without creating separate read/write
-     * locks, making this method synchronized would not allow synchronous reads
-     * and writes.
+     * Process all incoming data, blocking on the input stream until new input is available. This
+     * method should not be synchronized as it should only deal with the input side of things.
+     * Without creating separate read/write locks, making this method synchronized would not allow
+     * synchronous reads and writes.
      */
     public void update() {
         try {
@@ -470,8 +457,8 @@ public abstract class AbstractConnection implements IConnection {
     }
 
     /**
-     * Send all queued packets.  This method is synchronized since it deals with
-     * the non-thread-safe send queue.
+     * Send all queued packets. This method is synchronized since it deals with the non-thread-safe
+     * send queue.
      */
     public synchronized void flush() {
         SendPacket packet = null;
@@ -526,23 +513,21 @@ public abstract class AbstractConnection implements IConnection {
     protected abstract INetworkPacket readNetworkPacket() throws Exception;
 
     /**
-     * Sends the data must not block for too long
+     * Sends the data. This must not be blocked for too long
      *
      * @param data data to send
      * @param zipped should the data be compressed
-     * @throws Exception
+     * @throws Exception if there's an issue with sending the packet
      */
-    protected abstract void sendNetworkPacket(byte[] data, boolean zipped)
-            throws Exception;
+    protected abstract void sendNetworkPacket(byte[] data, boolean zipped) throws Exception;
 
     /**
      * Wrapper around a <code>LinkedList</code> for keeping a queue of packets
-     * to send.  Note that this implementation is not synchronized.
+     * to send. Note that this implementation is not synchronized.
      */
     static class SendQueue {
 
-        private LinkedList<SendPacket> queue =
-                new LinkedList<SendPacket>();
+        private LinkedList<SendPacket> queue = new LinkedList<>();
         private boolean finished = false;
 
         public void addPacket(SendPacket packet) {
@@ -631,14 +616,17 @@ public abstract class AbstractConnection implements IConnection {
             }
         }
 
+        @Override
         public int getMarshallingType() {
             return marshallingType;
         }
 
+        @Override
         public byte[] getData() {
             return data;
         }
 
+        @Override
         public boolean isCompressed() {
             return zipped;
         }

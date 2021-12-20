@@ -59,6 +59,7 @@ public class TurnTimer {
 
         listener = new ActionListener() {
             int counter = timeLimit;
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 counter--;
                 int seconds = counter % 60;
@@ -98,7 +99,7 @@ public class TurnTimer {
         timer.stop();
     }
 
-    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client){
+    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
         //check if there should be a turn timer running
         if (timerShouldStart(client)) {
             Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");
@@ -118,7 +119,7 @@ public class TurnTimer {
         // check if there is a timer set
         Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
         // if timer is set to 0 in options, it is disabled so we only create one if a limit is set in options
-        if (timer.intValue() > 0 ) {
+        if (timer.intValue() > 0) {
             GamePhase phase = client.getGame().getPhase();
 
             // turn timer should only kick in on firing, targeting, movement and physical attack phase

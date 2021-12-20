@@ -1,34 +1,23 @@
-/**
+/*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
 
-public abstract class TurnOrdered implements ITurnOrdered {
+import java.util.*;
 
-    /**
-     *
-     */
+public abstract class TurnOrdered implements ITurnOrdered {
     private static final long serialVersionUID = 4131468442031773195L;
 
     private InitiativeRoll initiative = new InitiativeRoll();
@@ -36,7 +25,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
     private transient int turns_other = 0;
     private transient int turns_even = 0;
-    private transient HashMap<Integer, Integer> turns_multi = new HashMap<Integer, Integer>();
+    private transient HashMap<Integer, Integer> turns_multi = new HashMap<>();
 
     // these are special turns for all of the aero units (only used in the
     // movement phase)
@@ -78,7 +67,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int turns = 0;
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            turns_multi = new HashMap<Integer, Integer>();
+            turns_multi = new HashMap<>();
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER);
@@ -163,14 +152,9 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void incrementMultiTurns(int entityClass) {
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            turns_multi = new HashMap<Integer, Integer>();
+            turns_multi = new HashMap<>();
         }
-        Integer classCount = turns_multi.get(entityClass);
-        if (classCount == null) {
-            turns_multi.put(entityClass, 1);
-        } else {
-            turns_multi.put(entityClass, classCount + 1);
-        }
+        turns_multi.merge(entityClass, 1, Integer::sum);
     }
 
     @Override
@@ -222,7 +206,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void resetMultiTurns() {
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            turns_multi = new HashMap<Integer, Integer>();
+            turns_multi = new HashMap<>();
         } else {
             turns_multi.clear();
         }
@@ -302,9 +286,9 @@ public abstract class TurnOrdered implements ITurnOrdered {
      *            streaks
      */
     public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v,
-            boolean bInitCompBonus) {
+                                                   boolean bInitCompBonus) {
         // initiative compensation
-        if (bInitCompBonus && (v.size() > 0)) {
+        if (bInitCompBonus && !v.isEmpty()) {
             final ITurnOrdered comparisonElement = v.get(0);
             int difference = 0;
             ITurnOrdered winningElement = comparisonElement;
@@ -312,9 +296,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // figure out who won initiative this round
             for (ITurnOrdered item : v) {
                 // Observers don't have initiative, and they don't get initiative compensation
-                if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                if (((item instanceof Player) && ((Player) item).isObserver())
+                        || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                     continue;
                 }
+
                 if (item.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
                     difference = item.getInitiative().compareTo(comparisonElement.getInitiative());
                     winningElement = item;
@@ -328,7 +314,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
                         int newBonus = 0;
                         boolean observer = false;
                         // Observers don't have initiative, and they don't get initiative compensation
-                        if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                        if (((item instanceof Player) && ((Player) item).isObserver())
+                                || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                             observer = true;
                         }
                         
@@ -363,7 +350,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
             List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
         for (ITurnOrdered item : v) {
             // Observers don't have initiative, set it to -1
-            if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+            if (((item instanceof Player) && ((Player) item).isObserver())
+                    || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 item.getInitiative().observerRoll();
             }
             
@@ -371,10 +359,13 @@ public abstract class TurnOrdered implements ITurnOrdered {
             if (item instanceof Team) {
                 bonus = ((Team) item).getTotalInitBonus(bInitCompBonus);
             }
+
             if (item instanceof Entity) {
                 Entity e = (Entity) item;
-                bonus = e.getGame().getTeamForPlayer(e.getOwner()).getTotalInitBonus(false) + e.getCrew().getInitBonus();
+                bonus = e.getGame().getTeamForPlayer(e.getOwner()).getTotalInitBonus(false)
+                        + e.getCrew().getInitBonus();
             }
+
             if (rerollRequests == null) { // normal init roll
                 // add a roll for all teams
                 item.getInitiative().addRoll(bonus);
@@ -390,10 +381,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
         }
 
         // check for ties
-        Vector<ITurnOrdered> ties = new Vector<ITurnOrdered>();
+        Vector<ITurnOrdered> ties = new Vector<>();
         for (ITurnOrdered item : v) {
             // Observers don't have initiative, and were already set to -1
-            if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+            if (((item instanceof Player) && ((Player) item).isObserver())
+                    || ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 continue;
             }
             ties.removeAllElements();
@@ -403,6 +395,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     ties.addElement(other);
                 }
             }
+
             if (ties.size() > 1) {
                 // We want to ignore initiative compensation here, because it will
                 // get dealt with once we're done resolving ties
@@ -438,14 +431,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
         ITurnOrdered[] order = new ITurnOrdered[v.size()];
         int orderedItems = 0;
 
-        ArrayList<ITurnOrdered> plist = new ArrayList<ITurnOrdered>(v.size());
+        ArrayList<ITurnOrdered> plist = new ArrayList<>(v.size());
         plist.addAll(v);
 
-        Collections.sort(plist, new Comparator<ITurnOrdered>() {
-            public int compare(ITurnOrdered o1, ITurnOrdered o2) {
-                return o1.getInitiative().compareTo(o2.getInitiative());
-            }
-        });
+        plist.sort(Comparator.comparing(ITurnOrdered::getInitiative));
 
         // Walk through the ordered items.
         for (Iterator<ITurnOrdered> i = plist.iterator(); i.hasNext(); orderedItems++) {
@@ -790,10 +779,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
         return turns;
     }
 
+    @Override
     public int getInitCompensationBonus() {
         return 0;
     }
 
+    @Override
     public void setInitCompensationBonus(int newBonus) {
     }
 }

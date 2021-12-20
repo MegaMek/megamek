@@ -13,10 +13,11 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-
-import megamek.MegaMek;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.ArrayList;
 
 /**
  * This is a large support vehicle
@@ -77,8 +78,8 @@ public class LargeSupportTank extends SupportTank {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -106,8 +107,7 @@ public class LargeSupportTank extends SupportTank {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
 
             int roll = Compute.d6(2);
 
@@ -203,8 +203,8 @@ public class LargeSupportTank extends SupportTank {
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
         if ((fa % 30) == 0) {
-            IHex srcHex = game.getBoard().getHex(src);
-            IHex curHex = game.getBoard().getHex(getPosition());
+            Hex srcHex = game.getBoard().getHex(src);
+            Hex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
                 LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
                         getPosition(), 1, getElevation(), srcHex.floor(),
@@ -342,31 +342,31 @@ public class LargeSupportTank extends SupportTank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTRIGHT) < 1) && (getOArmor(LOC_FRONTRIGHT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTLEFT) < 1) && (getOArmor(LOC_FRONTLEFT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARRIGHT) < 1) && (getOArmor(LOC_REARRIGHT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARLEFT) < 1) && (getOArmor(LOC_REARLEFT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(LOC_TURRET) < 1) && (getOArmor(LOC_TURRET) > 0))) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(LOC_TURRET_2) < 1) && (getOArmor(LOC_TURRET_2) > 0))) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -380,7 +380,7 @@ public class LargeSupportTank extends SupportTank {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -397,7 +397,7 @@ public class LargeSupportTank extends SupportTank {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         // Additional restrictions for hidden large support tanks
         if (isHidden()) {
             // Can't deploy in paved hexes

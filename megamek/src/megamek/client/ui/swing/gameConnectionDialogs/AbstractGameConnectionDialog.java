@@ -247,7 +247,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            LogManager.getLogger().error(ex.getMessage());
+            LogManager.getLogger().error("", ex);
         }
 
         setConfirmed(true);

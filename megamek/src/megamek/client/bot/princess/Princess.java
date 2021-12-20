@@ -258,7 +258,7 @@ public class Princess extends BotClient {
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (final PrincessException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return;
         }
         getStrategicBuildingTargets().clear();

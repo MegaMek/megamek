@@ -536,7 +536,7 @@ public class HmpFile implements IMechLoader {
 
             return mech;
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             throw new EntityLoadingException(e.getMessage());
         }
     }
@@ -1955,7 +1955,7 @@ public class HmpFile implements IMechLoader {
             try (InputStream is = new FileInputStream(args[i])) {
                 hmpFile = new HmpFile(is);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
                 return;
             }
             filename = filename.substring(0, filename.lastIndexOf(".hmp"));
@@ -1965,7 +1965,7 @@ public class HmpFile implements IMechLoader {
                 out = new BufferedWriter(new FileWriter(new File(filename)));
                 out.write(hmpFile.getMtf());
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             } finally {
                 if (out != null) {
                     try {

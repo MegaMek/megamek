@@ -1208,7 +1208,7 @@ public class Game implements Serializable {
                     return null;
             }
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }
@@ -3103,7 +3103,7 @@ public class Game implements Serializable {
     public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) throws RuntimeException {
         if (ip == null) {
             var ex = new RuntimeException("Illuminated Positions is null.");
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             throw ex;
         }
         illuminatedPositions = ip;

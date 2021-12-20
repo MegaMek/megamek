@@ -447,7 +447,7 @@ public abstract class BotClient extends Client {
             // Save the entities to the file.
             EntityListFile.saveTo(unitFile, living);
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
         }
     }
@@ -477,20 +477,20 @@ public abstract class BotClient extends Client {
             if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
                 // as it may be due to some kind of thread-related issue
-                // limit number of retries so we're not endlessly spinning
+                // limit number of retries, so we're not endlessly spinning
                 // if we can't recover from the error
                 retryCount++;
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error(e.toString());
+                    LogManager.getLogger().error("", e);
                 }
             }
         }
     }
 
     /**
-     * Worker function for a single attempt to calculate the bot's turn.
+     * Worker function for a single attempt to calculate the boot's turn.
      */
     private synchronized boolean calculateMyTurnWorker() {
         // clear out transient data
@@ -546,8 +546,8 @@ public abstract class BotClient extends Client {
             }
             
             return true;
-        } catch (Throwable t) {
-            LogManager.getLogger().error(t);            
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
             return false;
         }
     }

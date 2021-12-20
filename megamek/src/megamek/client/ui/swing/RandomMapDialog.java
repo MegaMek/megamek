@@ -363,7 +363,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return;
         }
         mapSettings.setBoardsSelectedVector(selectedBoards);

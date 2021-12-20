@@ -5117,7 +5117,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             }
 
@@ -6170,7 +6170,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     tracker.waitForID(0);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -6190,7 +6190,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             try {
                 tracker.waitForID(1);
             } catch (InterruptedException e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             tracker.removeImage(scaled);
             // Cache the image if the flag is set

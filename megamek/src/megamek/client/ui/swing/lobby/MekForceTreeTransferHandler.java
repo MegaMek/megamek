@@ -112,7 +112,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             }
             
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return false;
         }
         return true;
@@ -178,7 +178,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             
             
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return false;
         }
         return false;

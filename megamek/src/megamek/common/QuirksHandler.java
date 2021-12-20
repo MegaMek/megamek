@@ -310,7 +310,7 @@ public class QuirksHandler {
             log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             throw e;
         } finally {
             LogManager.getLogger().info(log.toString());
@@ -514,7 +514,7 @@ public class QuirksHandler {
             try {
                 QuirksHandler.initQuirksList();
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
 
@@ -632,7 +632,7 @@ public class QuirksHandler {
             try {
                 QuirksHandler.initQuirksList();
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
 

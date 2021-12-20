@@ -67,7 +67,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
         } catch (Exception e) {
             setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
             pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
         return new JScrollPane(pane);
     }

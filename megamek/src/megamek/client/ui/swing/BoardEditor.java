@@ -1457,7 +1457,7 @@ public class BoardEditor extends JPanel
             refreshTerrainList();
             setupUiFreshBoard();
         } catch (IOException ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
     }
     
@@ -1496,7 +1496,7 @@ public class BoardEditor extends JPanel
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileImage);
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());
@@ -1532,7 +1532,7 @@ public class BoardEditor extends JPanel
             setFrameTitle();
             return true;
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return false;
         }
     }
@@ -1783,7 +1783,7 @@ public class BoardEditor extends JPanel
                     JOptionPane.showMessageDialog(frame,
                             Messages.getString("BoardEditor.OpenFileError", curBoardFile.toString())
                             + e.getMessage());
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                     ignoreHotKeys = false;
                 }
             }

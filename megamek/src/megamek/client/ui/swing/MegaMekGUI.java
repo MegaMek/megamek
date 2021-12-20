@@ -664,7 +664,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             g = sl.createGame();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
                     Messages.getString("MegaMek.HostScenarioAlert.title"),
@@ -897,7 +897,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -1032,7 +1032,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     SwingUtilities.updateComponentTreeUI(w);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
             }
         }
     }

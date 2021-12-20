@@ -545,7 +545,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         try {
             tracker.waitForID(1);
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

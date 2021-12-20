@@ -136,7 +136,7 @@ public class PathEnumerator {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error(e.toString());
+                    LogManager.getLogger().error("", e);
                 }
             }
         }
@@ -147,7 +147,6 @@ public class PathEnumerator {
      */
     private boolean recalculateMovesForWorker(final Entity mover) {
         try {
-    
             // Record it's current position.
             getLastKnownLocations().put(
                     mover.getId(),
@@ -302,7 +301,7 @@ public class PathEnumerator {
 
             return true;
         } catch (Exception e) {
-            LogManager.getLogger().error(e.toString());
+            LogManager.getLogger().error("", e);
             return false;
         }
     }

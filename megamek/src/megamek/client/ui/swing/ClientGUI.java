@@ -319,7 +319,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -553,7 +553,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR",
                     JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -846,7 +846,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // Save the destroyed entities to the file.
                 EntityListFile.saveTo(unitFile, destroyed);
             } catch (IOException e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
             }
         }
@@ -916,7 +916,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             frame.dispose();
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
         client.die();
 
@@ -1485,7 +1485,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     addedUnits = true;
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
             }
         }
@@ -1584,7 +1584,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
@@ -1626,7 +1626,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, getClient());
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
                 doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
@@ -1825,7 +1825,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     // Save the destroyed entities to the file.
                     EntityListFile.saveTo(unitFile, destroyed);
                 } catch (IOException ex) {
-                    LogManager.getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                     doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
                 }
             }
@@ -2163,7 +2163,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
         waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());

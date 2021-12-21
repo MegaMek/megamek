@@ -129,7 +129,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             testEntity = new MechFileParser(ms.getSourceFile(),
                     ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -213,7 +213,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + e);
             die();
@@ -253,7 +253,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bvc = bv.getComponent();
             bvc.setName("BoardView");
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + e);
             die();

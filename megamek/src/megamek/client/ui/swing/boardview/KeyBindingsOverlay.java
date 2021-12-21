@@ -268,7 +268,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
                 int blu = Integer.parseInt(s.substring(5,7), 16);
                 textColor = new Color(red, grn, blu);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             s = s.substring(7);
         }

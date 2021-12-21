@@ -33,7 +33,7 @@ public final class PMUtil {
         try {
             mt.waitForID(0);
         } catch (InterruptedException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return false;
         }
 

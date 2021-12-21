@@ -133,7 +133,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         try {
             entity = new MechFileParser(f, entityName).getEntity();
         } catch (megamek.common.loaders.EntityLoadingException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
         return entity;
     }

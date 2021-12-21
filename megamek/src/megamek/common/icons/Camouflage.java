@@ -70,7 +70,7 @@ public class Camouflage extends AbstractIcon {
         try {
             return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
 
         return null;
@@ -99,7 +99,7 @@ public class Camouflage extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return new Camouflage();
         }
         return icon;

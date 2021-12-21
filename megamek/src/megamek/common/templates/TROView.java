@@ -83,7 +83,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
             } catch (final IOException e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             view.initModel(view.verifier);
         }
@@ -121,7 +121,7 @@ public class TROView {
                 template.process(model, out);
                 return os.toString();
             } catch (TemplateException | IOException e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
                 e.printStackTrace();
             }
         }

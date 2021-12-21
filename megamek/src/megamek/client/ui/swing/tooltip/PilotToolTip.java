@@ -140,7 +140,7 @@ public final class PilotToolTip {
                 }
                 result.append("<TD VALIGN=TOP><IMG SRC=file:").append(tempPath).append("></TD>");
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             result.append("<TD WIDTH=3></TD>");
         }

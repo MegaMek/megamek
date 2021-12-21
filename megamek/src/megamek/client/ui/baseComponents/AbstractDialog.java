@@ -187,7 +187,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         } finally {
             setVisible(false);
         }
@@ -210,7 +210,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

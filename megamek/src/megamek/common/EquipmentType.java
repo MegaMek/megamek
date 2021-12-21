@@ -1337,7 +1337,7 @@ public class EquipmentType implements ITechnology {
             w.flush();
             w.close();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -1437,7 +1437,7 @@ public class EquipmentType implements ITechnology {
             w.flush();
             w.close();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

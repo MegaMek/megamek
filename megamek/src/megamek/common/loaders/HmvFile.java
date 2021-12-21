@@ -558,7 +558,7 @@ public class HmvFile implements IMechLoader {
 
             return vehicle;
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             throw new EntityLoadingException(e.getMessage());
         }
     }

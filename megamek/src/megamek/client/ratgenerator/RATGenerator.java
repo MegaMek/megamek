@@ -874,7 +874,7 @@ public class RATGenerator {
             DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             return;
         }
 
@@ -933,7 +933,7 @@ public class RATGenerator {
             DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             return;
         }
 
@@ -1256,7 +1256,7 @@ public class RATGenerator {
                 pw.println("</ratgen>");
                 pw.close();
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
     }

@@ -123,7 +123,7 @@ public class MegaMek {
             try (PrintWriter writer = new PrintWriter(file)) {
                 writer.print("");
             } catch (FileNotFoundException e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
     }
@@ -168,7 +168,7 @@ public class MegaMek {
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
         try (InputStream is = new FileInputStream(filename);
@@ -181,7 +181,7 @@ public class MegaMek {
                 sb.append(String.format("%02x", d));
             }
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
         return sb.toString();
@@ -523,7 +523,7 @@ public class MegaMek {
                         bfe.writeCsv(fw);
                     }
                 } catch (Exception e) {
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
             }
 
@@ -563,7 +563,7 @@ public class MegaMek {
                         ase.writeCsv(bw);
                     }
                 } catch (Exception ex) {
-                    LogManager.getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             }
             System.exit(0);
@@ -658,7 +658,7 @@ public class MegaMek {
                         bw.newLine();
                     }
                 } catch (Exception ex) {
-                    LogManager.getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             }
             System.exit(0);

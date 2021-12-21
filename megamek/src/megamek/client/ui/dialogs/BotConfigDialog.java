@@ -605,7 +605,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
     }

@@ -795,7 +795,7 @@ public class BehaviorSettings implements Serializable {
 
             return behavior;
         } catch (final Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
 
         return null;

@@ -168,7 +168,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         });
-        LogManager.getLogger().error("Windchild C");
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
@@ -192,7 +191,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Show the window.
         frame.setVisible(true);
-        LogManager.getLogger().error("Windchild D");
 
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
@@ -666,7 +664,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             g = sl.createGame();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
                     Messages.getString("MegaMek.HostScenarioAlert.title"),
@@ -899,7 +897,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -1034,7 +1032,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     SwingUtilities.updateComponentTreeUI(w);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
             }
         }
     }

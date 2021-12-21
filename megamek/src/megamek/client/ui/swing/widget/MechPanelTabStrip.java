@@ -81,7 +81,7 @@ public class MechPanelTabStrip extends PicMap {
         try {
             mt.waitForAll();
         } catch (InterruptedException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
 
         if (mt.isErrorID(0)) {

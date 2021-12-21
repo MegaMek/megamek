@@ -358,7 +358,7 @@ public class Ruleset {
             }
             reader.close();
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

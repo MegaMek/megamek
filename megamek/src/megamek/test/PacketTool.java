@@ -413,7 +413,7 @@ public class PacketTool extends Frame implements Runnable {
                     try (OutputStream os = new FileOutputStream("xmit.board")) {
                         recvBoard.save(os);
                     } catch (Exception ex) {
-                        LogManager.getLogger().error(ex);
+                        LogManager.getLogger().error("", ex);
                     }
                     break;
                 case Packet.COMMAND_SENDING_ENTITIES:

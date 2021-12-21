@@ -490,7 +490,7 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Worker function for a single attempt to calculate the boot's turn.
+     * Worker function for a single attempt to calculate the bot's turn.
      */
     private synchronized boolean calculateMyTurnWorker() {
         // clear out transient data

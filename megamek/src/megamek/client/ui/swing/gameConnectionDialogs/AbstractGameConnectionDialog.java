@@ -141,7 +141,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             }
         } else {
             if (playerNameCombo == null) {
-                playerNameCombo = new JComboBox<String>(playerNames);
+                playerNameCombo = new JComboBox<>(playerNames);
                 Dimension preferredSize = playerNameCombo.getPreferredSize();
                 preferredSize.setSize(180, preferredSize.getHeight());
                 playerNameCombo.setPreferredSize(preferredSize);
@@ -236,7 +236,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private boolean validatePlayerName() {
         // Players should have to enter a non-blank, non-whitespace name.
-        return !getPlayerName().trim().equals("");
+        return !getPlayerName().trim().isBlank();
     }
     //endregion Validation
 
@@ -247,7 +247,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            LogManager.getLogger().error(ex.getMessage());
+            LogManager.getLogger().error("", ex);
         }
 
         setConfirmed(true);

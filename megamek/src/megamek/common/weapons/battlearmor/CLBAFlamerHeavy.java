@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
 public class CLBAFlamerHeavy extends BAFlamerWeapon {
@@ -48,16 +49,14 @@ public class CLBAFlamerHeavy extends BAFlamerWeapon {
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "312,TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_C)
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
         .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(3070, 3073, 3075, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(DATE_NONE, DATE_NONE, 3073, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
+        .setISAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, true, false, false, false)
+        .setPrototypeFactions(F_IS)
+        .setProductionFactions(F_IS)
+        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

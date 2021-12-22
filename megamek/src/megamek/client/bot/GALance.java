@@ -11,16 +11,16 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  */
-
 package megamek.client.bot;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import megamek.client.bot.ga.Chromosome;
 import megamek.client.bot.ga.GA;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GALance extends GA {
 
@@ -48,26 +48,23 @@ public class GALance extends GA {
             }
             for (int i = 1; i < populationDim; i++) {
                 for (int iGene = 0; iGene < chromosomeDim; iGene++) {
-                    (this.chromosomes[i]).genes[iGene] = Compute
-                            .randomInt(moves.get(iGene).length);
+                    this.chromosomes[i].genes[iGene] = Compute.randomInt(moves.get(iGene).length);
                 }
                 this.chromosomes[i].fitness = getFitness(i);
             }
         } catch (Exception e) {
-            System.out
-                    .println("Error occured with " + populationDim + " pop " + chromosomeDim + " chromDim"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            Iterator<MoveOption[]> i = moves.iterator();
-            while (i.hasNext()) {
-                System.out.println(i.next());
+            LogManager.getLogger().error(String.format("Error occurred with %d pop %d chromDim", populationDim, chromosomeDim));
+            for (MoveOption[] move : moves) {
+                LogManager.getLogger().error(Arrays.toString(move));
             }
         }
     }
 
-    // now they have a hard-coded hoard metality
+    // now they have a hard-coded hoard mentality
     @Override
     protected double getFitness(int iChromIndex) {
         Chromosome chrom = this.chromosomes[iChromIndex];
-        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> possible = new ArrayList<>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
             possible.add(new MoveOption(
                     this.moves.get(iGene)[chrom.genes[iGene]]));
@@ -94,7 +91,7 @@ public class GALance extends GA {
             }
         }
         // total damage delt, and rescaling of threat
-        double damages[] = new double[enemy_array.length];
+        double[] damages = new double[enemy_array.length];
         for (int m = 0; m < move_array.length; m++) {
             MoveOption next = (MoveOption) move_array[m];
             next.threat = 0;
@@ -182,7 +179,7 @@ public class GALance extends GA {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
         }
         double max = 0;
         // bonuses for endangering or dooming opponent mechs
@@ -241,7 +238,7 @@ public class GALance extends GA {
 
     public MoveOption getResult() {
         Chromosome r = this.chromosomes[best];
-        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> possible = new ArrayList<>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
             possible.add(new MoveOption(this.moves.get(iGene)[r.genes[iGene]]));
         }

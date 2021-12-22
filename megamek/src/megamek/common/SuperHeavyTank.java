@@ -67,13 +67,14 @@ public class SuperHeavyTank extends Tank {
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
-
+    
+    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS   
     private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(F_LC)
             .setTechRating(RATING_C)
             .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {

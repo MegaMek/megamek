@@ -1236,6 +1236,7 @@ public class TestAero extends TestEntity {
     /**
      * Calculate the structural integrity weight
      */
+    @Override
     public double getWeightStructure() {
         double tonnage = 0;
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {

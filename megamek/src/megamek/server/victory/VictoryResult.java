@@ -231,7 +231,7 @@ public class VictoryResult {
         return sw.toString();
     }
 
-    private int[] intify(Integer[] ar) {
+    private int[] intify(Integer... ar) {
         int[] ret = new int[ar.length];
         for (int i = 0; i < ar.length; i++)
             ret[i] = ar[i];

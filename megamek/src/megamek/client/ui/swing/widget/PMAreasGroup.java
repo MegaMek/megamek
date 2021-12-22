@@ -24,7 +24,7 @@ import java.util.Vector;
  */
 
 public class PMAreasGroup implements PMElement {
-    private Vector<PMElement> gr = new Vector<PMElement>();
+    private Vector<PMElement> gr = new Vector<>();
 
     /**
      * Adds area to group
@@ -67,6 +67,7 @@ public class PMAreasGroup implements PMElement {
     /**
      * Translates all elements in group by x, y.
      */
+    @Override
     public void translate(int x, int y) {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
@@ -88,6 +89,7 @@ public class PMAreasGroup implements PMElement {
     /**
      * Returns bounding box which includes all elements in group.
      */
+    @Override
     public Rectangle getBounds() {
         Rectangle bounds = null;
         Enumeration<PMElement> iter = gr.elements();
@@ -108,6 +110,7 @@ public class PMAreasGroup implements PMElement {
      * Draws all elements in group into specifyed Graphics
      */
 
+    @Override
     public void drawInto(Graphics g) {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
@@ -121,6 +124,7 @@ public class PMAreasGroup implements PMElement {
      * Sets visibility of all elements in roup to true or false.
      */
 
+    @Override
     public void setVisible(boolean v) {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {

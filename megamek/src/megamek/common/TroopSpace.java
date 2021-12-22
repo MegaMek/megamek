@@ -140,7 +140,7 @@ public final class TroopSpace implements Transporter {
      */
     @Override
     public Vector<Entity> getLoadedUnits() {
-        Vector<Entity> loaded = new Vector<Entity>();
+        Vector<Entity> loaded = new Vector<>();
         for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
             int key = entry.getKey();
             Entity entity = game.getEntity(key);
@@ -242,7 +242,7 @@ public final class TroopSpace implements Transporter {
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>(1);
+        ArrayList<Entity> rv = new ArrayList<>(1);
         return rv;
     }
 

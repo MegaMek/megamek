@@ -21,15 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
+import megamek.common.*;
 import java.util.stream.Stream;
 
-import megamek.common.Aero;
-import megamek.common.EquipmentType;
-import megamek.common.Mech;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.TechConstants;
-import megamek.common.UnitRoleHandler;
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
@@ -52,7 +46,9 @@ public class MechCacheCSVTool {
         MechSummary[] mechs = cache.getAllMechs();
         
         try {
-            StringBuilder csvLine = new StringBuilder();
+            StringBuffer csvLine = new StringBuffer();
+
+
             csvLine.append("Chassis,Model,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
@@ -63,8 +59,8 @@ public class MechCacheCSVTool {
                     continue;
                 }
                 
-                csvLine = new StringBuilder();
-                // Chassis Name
+                csvLine = new StringBuffer();
+                // Chasis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
@@ -109,7 +105,8 @@ public class MechCacheCSVTool {
                 // Unit Type
                 csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
                 
-                // Role
+
+                //Role
                 csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
                 
                 // BV
@@ -117,8 +114,10 @@ public class MechCacheCSVTool {
                 
                 // Cost
                 csvLine.append(mech.getCost() + ",");
-                
+
+                //Level
                 csvLine.append(mech.getLevel() + ",");
+                
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
                 

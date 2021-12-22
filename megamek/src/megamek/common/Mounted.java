@@ -97,8 +97,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // this bay (if the mounted is of the BayWeapon type)
     // I can also use this for weapons of the same type on a capital fighter
     //and now Machine Gun Arrays too!
-    private Vector<Integer> bayWeapons = new Vector<Integer>();
-    private Vector<Integer> bayAmmo = new Vector<Integer>();
+    private Vector<Integer> bayWeapons = new Vector<>();
+    private Vector<Integer> bayAmmo = new Vector<>();
     
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
@@ -397,6 +397,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 && !type.isNextTurnModeSwitch(curModeName);
     }
 
+    @Override
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
 
@@ -407,6 +408,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         called.reset();
     }
 
+    @Override
     public void newPhase(GamePhase phase) {
         jammed = jammedThisPhase;
     }

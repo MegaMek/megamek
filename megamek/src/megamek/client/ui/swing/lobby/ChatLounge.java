@@ -1706,7 +1706,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 Client c = getSelectedClient();
                 if (c == null) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
-                            Messages.getString("ChatLounge.SelectBotOrPlayer"));  //$NON-NLS-2$
+                            Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
                 clientgui.loadListFile(c.getLocalPlayer());
@@ -1850,7 +1850,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } catch (Exception e) {
                     dialog.setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
                     pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
 
                 JButton button = new DialogButton(Messages.getString("Okay"));
@@ -1954,7 +1954,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
                     "There was a problem while saving the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
     }
 
@@ -1987,7 +1987,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
                     "There was a problem while loading the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
     }
     
@@ -2814,7 +2814,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
             List<Entity> entities = getSelectedEntities();
-            ScalingPopup popup = LobbyMekPopup.getPopup(entities, new ArrayList<Force>(), new LobbyMekPopupActions(ChatLounge.this), ChatLounge.this);
+            ScalingPopup popup = LobbyMekPopup.getPopup(entities, new ArrayList<>(), new LobbyMekPopupActions(ChatLounge.this), ChatLounge.this);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -3272,14 +3272,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     class ImageLoader extends SwingWorker<Void, Image> {
 
-        private BlockingQueue<String> boards = new LinkedBlockingQueue<String>();
+        private BlockingQueue<String> boards = new LinkedBlockingQueue<>();
 
         private synchronized void add(String name) {
             if (!boards.contains(name)) {
                 try {
                     boards.put(name);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    LogManager.getLogger().error("", e);
                 }
             }
         }

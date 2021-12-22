@@ -38,6 +38,7 @@ public class AttackOption extends ToHitData {
             primary = primary_target;
         }
 
+        @Override
         public int compare(AttackOption a, AttackOption a1) {
             if (a.target.getKey().intValue() == a1.target.getKey().intValue()) {
                 WeaponType w = (WeaponType) a.weapon.getType();

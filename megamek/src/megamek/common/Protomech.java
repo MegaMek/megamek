@@ -40,7 +40,7 @@ public class Protomech extends Entity {
 
     // Crew damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
-    private int pilotDamageTaken[] = { 0, 0, 0, 0, 0, 0, 0 };
+    private int[] pilotDamageTaken = { 0, 0, 0, 0, 0, 0, 0 };
 
     /**
      * Not every Protomech has a main gun. N.B. Regardless of the value set
@@ -84,7 +84,7 @@ public class Protomech extends Entity {
 
     public static final int[] POSSIBLE_PILOT_DAMAGE = { 0, 1, 3, 1, 1, 1, 0 };
 
-    public static final String systemNames[] = { "Arm", "Leg", "Head", "Torso" };
+    public static final String[] systemNames = { "Arm", "Leg", "Head", "Torso" };
 
     // For grapple attacks
     private int grappled_id = Entity.NONE;
@@ -1232,7 +1232,7 @@ public class Protomech extends Entity {
         // figure out base weapon bv
         boolean hasTargComp = hasTargComp();
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
@@ -1338,8 +1338,8 @@ public class Protomech extends Entity {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -1722,7 +1722,7 @@ public class Protomech extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -2022,10 +2022,12 @@ public class Protomech extends Entity {
         return grappled_id;
     }
     
+    @Override
     public boolean isGrappledThisRound() {
         return grappledThisRound;
     }
     
+    @Override
     public void setGrappledThisRound(boolean grappled) {
         grappledThisRound = grappled;
     }
@@ -2328,6 +2330,7 @@ public class Protomech extends Entity {
         return Entity.ETYPE_PROTOMECH;
     }
     
+    @Override
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);

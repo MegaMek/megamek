@@ -1069,7 +1069,7 @@ public class Game implements Serializable {
                 // If this is the first entity at this position,
                 // create the vector and add it to the map.
                 if (atPos == null) {
-                    atPos = new Vector<Entity>();
+                    atPos = new Vector<>();
                     positionMap.put(coords, atPos);
                 }
 
@@ -1208,7 +1208,7 @@ public class Game implements Serializable {
                     return null;
             }
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }
@@ -1491,22 +1491,20 @@ public class Game implements Serializable {
         entityIds.clear();
         lastEntityId = 0;
 
-        if (entities != null) {
-            // Add these entities to the game.
-            for (Entity entity : entities) {
-                final int id = entity.getId();
-                entityIds.put(id, entity);
+        // Add these entities to the game.
+        for (Entity entity : entities) {
+            final int id = entity.getId();
+            entityIds.put(id, entity);
 
-                if (id > lastEntityId) {
-                    lastEntityId = id;
-                }
+            if (id > lastEntityId) {
+                lastEntityId = id;
             }
-            // We need to ensure that each entity has the propery Game reference
-            //  however, the entityIds Hashmap must be fully formed before this
-            //  is called, since setGame also calls setGame for loaded Entities
-            for (Entity entity : entities) {
-                entity.setGame(this);
-            }
+        }
+        // We need to ensure that each entity has the proper Game reference
+        // however, the entityIds Hashmap must be fully formed before this
+        // is called, since setGame also calls setGame for loaded Entities
+        for (Entity entity : entities) {
+            entity.setGame(this);
         }
     }
 
@@ -1577,8 +1575,7 @@ public class Game implements Serializable {
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         //checkPositionCacheConsistency();
         // Make sure the look-up is initialized
-        if (entityPosLookup == null
-                || (entityPosLookup.size() < 1 && entities.size() > 0)) {
+        if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
             resetEntityPositionLookup();
         }
         Set<Integer> posEntities = entityPosLookup.get(c);
@@ -2456,7 +2453,7 @@ public class Game implements Serializable {
      */
     public void resetPSRs(Entity entity) {
         PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<Integer>();
+        Vector<Integer> rollsToRemove = new Vector<>();
         int i = 0;
 
         // first, find all the rolls belonging to the target entity
@@ -2485,7 +2482,7 @@ public class Game implements Serializable {
      */
     public void resetExtremeGravityPSRs(Entity entity) {
         PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<Integer>();
+        Vector<Integer> rollsToRemove = new Vector<>();
         int i = 0;
 
         // first, find all the rolls belonging to the target entity
@@ -2731,12 +2728,13 @@ public class Game implements Serializable {
         // that selects entities in this game.
         else {
             final EntitySelector entry = selector;
-            retVal = new Iterator<Entity>() {
+            retVal = new Iterator<>() {
                 private EntitySelector entitySelector = entry;
                 private Entity current = null;
                 private Iterator<Entity> iter = getEntities();
 
                 // Do any more entities meet the selection criteria?
+                @Override
                 public boolean hasNext() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
@@ -2753,6 +2751,7 @@ public class Game implements Serializable {
                 }
 
                 // Get the next entity that meets the selection criteria.
+                @Override
                 public Entity next() {
                     // Pre-approve an entity.
                     if (!hasNext()) {
@@ -2837,12 +2836,13 @@ public class Game implements Serializable {
         // that selects entities in this game.
         else {
             final EntitySelector entry = selector;
-            retVal = new Enumeration<Entity>() {
+            retVal = new Enumeration<>() {
                 private EntitySelector entitySelector = entry;
                 private Entity current = null;
                 private Enumeration<Entity> iter = vOutOfGame.elements();
 
                 // Do any more entities meet the selection criteria?
+                @Override
                 public boolean hasMoreElements() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
@@ -2859,6 +2859,7 @@ public class Game implements Serializable {
                 }
 
                 // Get the next entity that meets the selection criteria.
+                @Override
                 public Entity nextElement() {
                     // Pre-approve an entity.
                     if (!hasMoreElements()) {
@@ -3102,7 +3103,7 @@ public class Game implements Serializable {
     public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) throws RuntimeException {
         if (ip == null) {
             var ex = new RuntimeException("Illuminated Positions is null.");
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             throw ex;
         }
         illuminatedPositions = ip;

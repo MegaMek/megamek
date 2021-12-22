@@ -37,11 +37,11 @@ public class GameReports implements Serializable {
         }
         if (round > reports.size()) {
             // First reports for the round.
-            reports.addElement(new Vector<Report>(v));
+            reports.addElement(new Vector<>(v));
         } else {
             // Already have some reports for this round, so we'll append these
             // new ones.
-            reports.elementAt(round - 1).addAll(new Vector<Report>(v));
+            reports.elementAt(round - 1).addAll(new Vector<>(v));
         }
     }
 
@@ -78,7 +78,7 @@ public class GameReports implements Serializable {
     }
 
     public void clear() {
-        reports = new Vector<Vector<Report>>();
+        reports = new Vector<>();
     }
 
 }

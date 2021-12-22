@@ -68,7 +68,7 @@ public class BASE64ImageView extends ImageView {
                         Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
             }
             return newImage;
         } else {
@@ -90,8 +90,8 @@ public class BASE64ImageView extends ImageView {
 
             try {
                 this.url = new URL("file:/" + this.getElement().toString());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
 
             return this.url;

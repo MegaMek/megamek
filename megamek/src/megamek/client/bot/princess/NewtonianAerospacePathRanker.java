@@ -95,6 +95,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     /**
      * Guesses a number of things about an enemy that has not yet moved
      */
+    @Override
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
                                                   boolean useExtremeRange,
                                                   boolean useLOSRange) {

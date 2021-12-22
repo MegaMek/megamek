@@ -149,10 +149,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
     }
 
     //we need to figure out AV damage to aeros for AA weapons
+    @Override
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }
 
+    @Override
     protected int calcAttackValue() {
         int av;
         //Sigh, another rules oversight - nobody bothered to figure this out

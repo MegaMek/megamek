@@ -70,7 +70,7 @@ public class PreferenceManager {
     }
 
     protected void load() {
-        stores = new Hashtable<String, IPreferenceStore>();
+        stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
                 CFG_FILE_OPTION_NAME,
@@ -135,8 +135,7 @@ public class PreferenceManager {
             
             marshaller.marshal(element, file);
         } catch (JAXBException ex) {
-            System.err.println("Error writing XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+            LogManager.getLogger().error("Failed writing client settings XML", ex);
         }
     }
 

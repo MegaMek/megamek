@@ -1293,6 +1293,7 @@ public class BattleArmor extends Infantry {
         return hasCamoSystem;
     }
 
+    @Override
     public boolean isStealthy() {
         return isStealthy;
     }
@@ -1556,7 +1557,7 @@ public class BattleArmor extends Infantry {
     }
 
     public int getRandomTrooper() {
-        Vector<Integer> activeTroops = new Vector<Integer>();
+        Vector<Integer> activeTroops = new Vector<>();
         for (int loop = 1; loop < locations(); loop++) {
             if (isTrooperActive(loop)) {
                 activeTroops.add(loop);
@@ -2179,6 +2180,7 @@ public class BattleArmor extends Infantry {
         return damage;
     }
 
+    @Override
     public boolean isConventionalInfantry() {
         return false;
     }

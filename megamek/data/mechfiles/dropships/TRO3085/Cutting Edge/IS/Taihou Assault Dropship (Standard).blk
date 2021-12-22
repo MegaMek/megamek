@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -38,11 +38,9 @@ Aerodyne
 
 <transporters>
 smallcraftbay:2.0:1:2
-2ndclassquarters:0.0:0
-steeragequarters:180.0:0
-1stclassquarters:40.0:0
-crewquarters:133.0:0
 cargobay:614.0:2:6
+2ndclassquarters:28.0:0
+steeragequarters:255.0:0
 </transporters>
 
 <SafeThrust>
@@ -163,6 +161,54 @@ ISNC3
 30
 </structural_integrity>
 
+<capabilities>
+Protected by 115 tons of Ferro Aluminum armor, as part to enhance the Taihou's fleet performance, the ship had been fitted out with advance tech Nirasaki Naval C3 System, which like its land-based version helps squadrons of ships fitted with the system to enhance the effectiveness against opposing enemy forces. Intended as an assault ship, the Taihou features a relatively small cargo capacity of 472 tons along with the ability to carry two Small Craft to allow its complement of 36 Battle Armor marines to perform boarding operations.
+</capabilities>
+
+<overview>
+The Taihou Assault DropShip was produced as part of the Draconis Combine efforts to produce a replacement vessel for its diminished navy in the late Jihad era.
+</overview>
+
+<deployment>
+Conceived as a replacement for lost WarShip producing capacities of the Combine, the Taihou utilized a sizable array of Sub-Capital Weapons to meet this role. The ship carried four Heavy Capital Cannons with 60 rounds of fire for them mounted in the ship's nose. Backing up these powerful Sub-capital weapons is a trio of Heavy PPCs and advanced tech Apollo Fire Control System for the ship's MRM 40 Launchers. A Screen Launcher was mounted in the nose to help protect the ship from incoming fire. In the ship's right and left wing sections and aft quarters are mounted an additional trinity of Heavy PPCs and Apollo Guided MRM 40 Launchers. An Anti-Missile System was also added to each of the wing sections, to cut down on missile fire and potentially capital grade missiles used against the ship. On rear flanks of the wing sections, additional Anti-Missile Systems are added per facing flanking sections.
+</deployment>
+
+<history>
+Produced as a collaborative effort between Hinsdale Elec's shipyard, personnel from various companies such as Midway Warship Yard and electronic assistance from the Nirasaki Computers Collective, the end-result was a tough and small Assault DropShip which could inflict considerable damage against even WarShips.
+</history>
+
+<manufacturer>
+Hinsdale Elec
+</manufacturer>
+
+<primaryFactory>
+Dover
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault DropShip
+</use>
+
+<length>
+200 meters
+</length>
+
+<width>
+90 meters
+</width>
+
+<height>
+30 meters
+</height>
+
 <source>
 TRO 3085 - Jihad
 </source>
@@ -210,3 +256,4 @@ TRO 3085 - Jihad
 <escape_pod>
 5
 </escape_pod>
+

@@ -112,17 +112,17 @@ public class ForceDescriptor {
     public ForceDescriptor() {
         faction = "IS";
         year = 3067;
-        movementModes = new HashSet<EntityMovementMode>();
-        roles = new HashSet<MissionRole>();
+        movementModes = new HashSet<>();
+        roles = new HashSet<>();
         formationType = null;
         experience = EXP_REGULAR;
-        models = new HashSet<String>();
-        chassis = new HashSet<String>();
-        variants = new HashSet<String>();
+        models = new HashSet<>();
+        chassis = new HashSet<>();
+        variants = new HashSet<>();
         parent = null;
-        subforces = new ArrayList<ForceDescriptor>();
-        attached = new ArrayList<ForceDescriptor>();
-        flags = new HashSet<String>();
+        subforces = new ArrayList<>();
+        attached = new ArrayList<>();
+        flags = new HashSet<>();
         topLevel = false;
         element = false;
         positionIndex = -1;
@@ -507,7 +507,7 @@ public class ForceDescriptor {
         Integer ut = subs.get(0).getUnitType();
 
         boolean useWeights = useWeightClass(ut);
-        ArrayList<Integer> weights = new ArrayList<Integer>();
+        ArrayList<Integer> weights = new ArrayList<>();
         if (useWeights) {
             for (ForceDescriptor sub : subs) {
                 weights.add(sub.getWeightClass());
@@ -534,8 +534,8 @@ public class ForceDescriptor {
         if (ratingLevel < 0) {
             target = 10;
         }
-        Integer era = RATGenerator.getInstance().eraForYear(getYear());
-        AvailabilityRating av = null;
+        int era = RATGenerator.getInstance().eraForYear(getYear());
+        AvailabilityRating av;
         ModelRecord baseModel = null;
         /* Generate base model using weight class of entire formation */
         if (ut != null) {
@@ -555,6 +555,7 @@ public class ForceDescriptor {
                 }
             }
         }
+
         for (ForceDescriptor sub : subs) {
             boolean foundUnit = false;
             if (baseModel == null || (ut != null && !ut.equals(sub.getUnitType()))) {
@@ -1009,7 +1010,7 @@ public class ForceDescriptor {
 
     public void assignPositions() {
         int index = 0;
-        HashMap<String,Integer> uniqueCount = new HashMap<String,Integer>();
+        HashMap<String,Integer> uniqueCount = new HashMap<>();
         for (int i = 0; i < subforces.size(); i++) {
             subforces.get(i).positionIndex = i + 1;
             if (subforces.get(i).name == null) {
@@ -1025,7 +1026,7 @@ public class ForceDescriptor {
                 subforces.get(i).nameIndex = index++;
             }
         }
-        HashMap<String,Integer> indexCount = new HashMap<String,Integer>();
+        HashMap<String,Integer> indexCount = new HashMap<>();
         for (ForceDescriptor sub : subforces) {
             if (uniqueCount.containsKey(sub.name)) {
                 if (uniqueCount.get(sub.name) > 1) {
@@ -1045,7 +1046,7 @@ public class ForceDescriptor {
         attached.forEach(ForceDescriptor::assignPositions);
     }
 
-    private Comparator<? super ForceDescriptor> forceSorter = new Comparator<ForceDescriptor>() {
+    private Comparator<? super ForceDescriptor> forceSorter = new Comparator<>() {
         /* Rank by difference in experience + difference in unit/eschelon weights */
         private int rank(ForceDescriptor fd) {
             int retVal = 0;

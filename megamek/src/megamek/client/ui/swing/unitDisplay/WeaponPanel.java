@@ -241,7 +241,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
 
             StringBuilder wn = new StringBuilder(mounted.getDesc());
-            wn.append(" ["); //$NON-NLS-1$
+            wn.append(" [");
             wn.append(en.getLocationAbbr(mounted.getLocation()));
             if (mounted.isSplit()) {
                 wn.append('/');
@@ -261,11 +261,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                 int totalShotsLeft = en.getTotalMunitionsOfType(mounted);
 
-                wn.append(" ("); //$NON-NLS-1$
+                wn.append(" (");
                 wn.append(shotsLeft);
-                wn.append('/'); //$NON-NLS-1$
+                wn.append('/');
                 wn.append(totalShotsLeft);
-                wn.append(')'); //$NON-NLS-1$
+                wn.append(')');
             } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
                     || (en.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
                 int shotsLeft = 0;
@@ -277,18 +277,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         totalShots += current.getOriginalShots();
                     }
                 }
-                wn.append(" (").append(shotsLeft) //$NON-NLS-1$
-                    .append("/").append(totalShots).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                wn.append(" (").append(shotsLeft)
+                    .append("/").append(totalShots).append(")");
             }
 
             // MG rapidfire
             if (mounted.isRapidfire()) {
-                wn.append(Messages.getString("MechDisplay.rapidFire")); //$NON-NLS-1$
+                wn.append(Messages.getString("MechDisplay.rapidFire"));
             }
 
             // Hotloaded Missile Launchers
             if (mounted.isHotLoaded()) {
-                wn.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                wn.append(Messages.getString("MechDisplay.isHotLoaded"));
             }
 
             // Fire Mode - lots of things have variable modes
@@ -303,7 +303,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
             if ((game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) { //$NON-NLS-1$
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
                 wn.append(' ');
                 wn.append(mounted.getCalledShot().getDisplayableName());
             }
@@ -425,7 +425,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wSortOrder.setForeground(Color.WHITE);
         add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
-        weapSortOrder = new JComboBox<String>();
+        weapSortOrder = new JComboBox<>();
         for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
             String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
             weapSortOrder.addItem(Messages.getString(entry));
@@ -438,7 +438,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         gridy++;
 
         // weapon list
-        weaponList = new JList<String>(new DefaultListModel<String>());
+        weaponList = new JList<>(new DefaultListModel<>());
         WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
@@ -458,17 +458,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // adding Ammo choice + label
 
-        wAmmo = new JLabel(
-                Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT); //$NON-NLS-1$
+        wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT);
         wAmmo.setOpaque(false);
         wAmmo.setForeground(Color.WHITE);
-        m_chAmmo = new JComboBox<String>();
+        m_chAmmo = new JComboBox<>();
 
-        wBayWeapon = new JLabel(
-                Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT); //$NON-NLS-1$
+        wBayWeapon = new JLabel(Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT);
         wBayWeapon.setOpaque(false);
         wBayWeapon.setForeground(Color.WHITE);
-        m_chBayWeapon = new JComboBox<String>();
+        m_chBayWeapon = new JComboBox<>();
 
         add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(gridy).gridx(0));
 
@@ -483,11 +481,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         gridy++;
         // Adding Heat Buildup
 
-        currentHeatBuildupL = new JLabel(
-                Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT); //$NON-NLS-1$
+        currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
         currentHeatBuildupL.setOpaque(false);
         currentHeatBuildupL.setForeground(Color.WHITE);
-        currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT); //$NON-NLS-1$
+        currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
         currentHeatBuildupR.setOpaque(false);
         currentHeatBuildupR.setForeground(Color.WHITE);
 
@@ -502,40 +499,35 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         gridy++;
 
         // Adding weapon display labels
-        wNameL = new JLabel(
-                Messages.getString("MechDisplay.Name"), SwingConstants.CENTER); //$NON-NLS-1$
+        wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER);
         wNameL.setOpaque(false);
         wNameL.setForeground(Color.WHITE);
-        wHeatL = new JLabel(
-                Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER); //$NON-NLS-1$
+        wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER);
         wHeatL.setOpaque(false);
         wHeatL.setForeground(Color.WHITE);
-        wDamL = new JLabel(
-                Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER); //$NON-NLS-1$
+        wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER);
         wDamL.setOpaque(false);
         wDamL.setForeground(Color.WHITE);
-        wArcHeatL = new JLabel(
-                Messages.getString("MechDisplay.ArcHeat"), SwingConstants.CENTER); //$NON-NLS-1$
+        wArcHeatL = new JLabel(Messages.getString("MechDisplay.ArcHeat"), SwingConstants.CENTER);
         wArcHeatL.setOpaque(false);
         wArcHeatL.setForeground(Color.WHITE);
-        wNameR = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
+        wNameR = new JLabel("", SwingConstants.CENTER);
         wNameR.setOpaque(false);
         wNameR.setForeground(Color.WHITE);
-        wHeatR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
+        wHeatR = new JLabel("--", SwingConstants.CENTER);
         wHeatR.setOpaque(false);
         wHeatR.setForeground(Color.WHITE);
-        wDamR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
+        wDamR = new JLabel("--", SwingConstants.CENTER);
         wDamR.setOpaque(false);
         wDamR.setForeground(Color.WHITE);
-        wArcHeatR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
+        wArcHeatR = new JLabel("--", SwingConstants.CENTER);
         wArcHeatR.setOpaque(false);
         wArcHeatR.setForeground(Color.WHITE);
 
-        wDamageTrooperL = new JLabel(
-                Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER); //$NON-NLS-1$
+        wDamageTrooperL = new JLabel(Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER);
         wDamageTrooperL.setOpaque(false);
         wDamageTrooperL.setForeground(Color.WHITE);
-        wDamageTrooperR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wDamageTrooperR = new JLabel("---", SwingConstants.CENTER);
         wDamageTrooperR.setOpaque(false);
         wDamageTrooperR.setForeground(Color.WHITE);
 
@@ -576,92 +568,86 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                                 .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
         gridy++;
         // Adding range labels
-        wMinL = new JLabel(
-                Messages.getString("MechDisplay.Min"), SwingConstants.CENTER); //$NON-NLS-1$
+        wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER);
         wMinL.setOpaque(false);
         wMinL.setForeground(Color.WHITE);
-        wShortL = new JLabel(
-                Messages.getString("MechDisplay.Short"), SwingConstants.CENTER); //$NON-NLS-1$
+        wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER);
         wShortL.setOpaque(false);
         wShortL.setForeground(Color.WHITE);
-        wMedL = new JLabel(
-                Messages.getString("MechDisplay.Med"), SwingConstants.CENTER); //$NON-NLS-1$
+        wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER);
         wMedL.setOpaque(false);
         wMedL.setForeground(Color.WHITE);
-        wLongL = new JLabel(
-                Messages.getString("MechDisplay.Long"), SwingConstants.CENTER); //$NON-NLS-1$
+        wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER);
         wLongL.setOpaque(false);
         wLongL.setForeground(Color.WHITE);
-        wExtL = new JLabel(
-                Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER); //$NON-NLS-1$
+        wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER);
         wExtL.setOpaque(false);
         wExtL.setForeground(Color.WHITE);
-        wMinR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wMinR = new JLabel("---", SwingConstants.CENTER);
         wMinR.setOpaque(false);
         wMinR.setForeground(Color.WHITE);
-        wShortR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wShortR = new JLabel("---", SwingConstants.CENTER);
         wShortR.setOpaque(false);
         wShortR.setForeground(Color.WHITE);
-        wMedR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wMedR = new JLabel("---", SwingConstants.CENTER);
         wMedR.setOpaque(false);
         wMedR.setForeground(Color.WHITE);
-        wLongR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wLongR = new JLabel("---", SwingConstants.CENTER);
         wLongR.setOpaque(false);
         wLongR.setForeground(Color.WHITE);
-        wExtR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wExtR = new JLabel("---", SwingConstants.CENTER);
         wExtR.setOpaque(false);
         wExtR.setForeground(Color.WHITE);
-        wAVL = new JLabel(
-                Messages.getString("MechDisplay.AV"), SwingConstants.CENTER); //$NON-NLS-1$
+        wAVL = new JLabel(Messages.getString("MechDisplay.AV"), SwingConstants.CENTER);
         wAVL.setOpaque(false);
         wAVL.setForeground(Color.WHITE);
-        wShortAVR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wShortAVR = new JLabel("---", SwingConstants.CENTER);
         wShortAVR.setOpaque(false);
         wShortAVR.setForeground(Color.WHITE);
-        wMedAVR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wMedAVR = new JLabel("---", SwingConstants.CENTER);
         wMedAVR.setOpaque(false);
         wMedAVR.setForeground(Color.WHITE);
-        wLongAVR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wLongAVR = new JLabel("---", SwingConstants.CENTER);
         wLongAVR.setOpaque(false);
         wLongAVR.setForeground(Color.WHITE);
-        wExtAVR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wExtAVR = new JLabel("---", SwingConstants.CENTER);
         wExtAVR.setOpaque(false);
         wExtAVR.setForeground(Color.WHITE);
 
-        wInfantryRange0L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange0L = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange0L.setOpaque(false);
         wInfantryRange0L.setForeground(Color.WHITE);
-        wInfantryRange0R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange0R = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange0R.setOpaque(false);
         wInfantryRange0R.setForeground(Color.WHITE);
-        wInfantryRange1L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange1L = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange1L.setOpaque(false);
         wInfantryRange1L.setForeground(Color.WHITE);
-        wInfantryRange1R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange1R = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange1R.setOpaque(false);
         wInfantryRange1R.setForeground(Color.WHITE);
-        wInfantryRange2L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange2L = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange2L.setOpaque(false);
         wInfantryRange2L.setForeground(Color.WHITE);
-        wInfantryRange2R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange2R = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange2R.setOpaque(false);
         wInfantryRange2R.setForeground(Color.WHITE);
-        wInfantryRange3L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange3L = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange3L.setOpaque(false);
         wInfantryRange3L.setForeground(Color.WHITE);
-        wInfantryRange3R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange3R = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange3R.setOpaque(false);
         wInfantryRange3R.setForeground(Color.WHITE);
-        wInfantryRange4L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange4L = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange4L.setOpaque(false);
         wInfantryRange4L.setForeground(Color.WHITE);
-        wInfantryRange4R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange4R = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange4R.setOpaque(false);
         wInfantryRange4R.setForeground(Color.WHITE);
-        wInfantryRange5L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange5L = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange5L.setOpaque(false);
         wInfantryRange5L.setForeground(Color.WHITE);
-        wInfantryRange5R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wInfantryRange5R = new JLabel("---", SwingConstants.CENTER);
         wInfantryRange5R.setOpaque(false);
         wInfantryRange5R.setForeground(Color.WHITE);
 
@@ -770,26 +756,23 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
 
         // target panel
-        wTargetL = new JLabel(
-                Messages.getString("MechDisplay.Target"), SwingConstants.CENTER); //$NON-NLS-1$
+        wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), SwingConstants.CENTER);
         wTargetL.setOpaque(false);
         wTargetL.setForeground(Color.WHITE);
-        wRangeL = new JLabel(
-                Messages.getString("MechDisplay.Range"), SwingConstants.CENTER); //$NON-NLS-1$
+        wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER);
         wRangeL.setOpaque(false);
         wRangeL.setForeground(Color.WHITE);
-        wToHitL = new JLabel(
-                Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER); //$NON-NLS-1$
+        wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER);
         wToHitL.setOpaque(false);
         wToHitL.setForeground(Color.WHITE);
 
-        wTargetR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wTargetR = new JLabel("---", SwingConstants.CENTER);
         wTargetR.setOpaque(false);
         wTargetR.setForeground(Color.WHITE);
-        wRangeR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wRangeR = new JLabel("---", SwingConstants.CENTER);
         wRangeR.setOpaque(false);
         wRangeR.setForeground(Color.WHITE);
-        wToHitR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+        wToHitR = new JLabel("---", SwingConstants.CENTER);
         wToHitR.setOpaque(false);
         wToHitR.setForeground(Color.WHITE);
 
@@ -821,10 +804,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         gridy++;
 
         // to-hit text
-        toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
+        toHitText = new JTextArea("", 2, 20);
         toHitText.setEditable(false);
         toHitText.setLineWrap(true);
-        toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10)); //$NON-NLS-1$
+        toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10));
         add(toHitText,
             GBC.eol().fill(GridBagConstraints.BOTH)
                .insets(15, 9, 15, 9).gridy(gridy).gridx(0)
@@ -1121,7 +1104,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String heatCapacityStr = Integer.toString(heatCap);
 
         if (heatCap < heatCapWater) {
-            heatCapacityStr = heatCap + " [" + heatCapWater + ']'; //$NON-NLS-1$
+            heatCapacityStr = heatCap + " [" + heatCapWater + ']';
         }
         // end duplicate block
 
@@ -1132,10 +1115,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         String heatText = Integer.toString(currentHeatBuildup);
         if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
-            heatText += "*"; // overheat indication //$NON-NLS-1$
+            heatText += "*"; // overheat indication
         }
 
-        currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')'); //$NON-NLS-1$
+        currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')');
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {
@@ -1185,7 +1168,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // If MaxTech range rules are in play, display the extreme range.
         if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
-                || (entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays()))) { // $NON-NLS-1$
+                || (entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays()))) {
             wExtL.setVisible(true);
             wExtR.setVisible(true);
         } else {
@@ -1385,15 +1368,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             m_chAmmo.setEnabled(false);
             m_chBayWeapon.removeAllItems();
             m_chBayWeapon.setEnabled(false);
-            wNameR.setText(""); //$NON-NLS-1$
-            wHeatR.setText("--"); //$NON-NLS-1$
-            wArcHeatR.setText("---"); //$NON-NLS-1$
-            wDamR.setText("--"); //$NON-NLS-1$
-            wMinR.setText("---"); //$NON-NLS-1$
-            wShortR.setText("---"); //$NON-NLS-1$
-            wMedR.setText("---"); //$NON-NLS-1$
-            wLongR.setText("---"); //$NON-NLS-1$
-            wExtR.setText("---"); //$NON-NLS-1$
+            wNameR.setText("");
+            wHeatR.setText("--");
+            wArcHeatR.setText("---");
+            wDamR.setText("--");
+            wMinR.setText("---");
+            wShortR.setText("---");
+            wMedR.setText("---");
+            wLongR.setText("---");
+            wExtR.setText("---");
 
             wDamageTrooperL.setVisible(false);
             wDamageTrooperR.setVisible(false);
@@ -1688,21 +1671,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
             if (wtype instanceof HAGWeapon) {
-                wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
+                wDamR.setText(Messages.getString("MechDisplay.Variable"));
             } else {
-                wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
+                wDamR.setText(Messages.getString("MechDisplay.Missile"));
             }
         } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-            wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
+            wDamR.setText(Messages.getString("MechDisplay.Variable"));
         } else if (wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-            wDamR.setText(Messages.getString("MechDisplay.Special")); //$NON-NLS-1$
+            wDamR.setText(Messages.getString("MechDisplay.Special"));
         } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
             StringBuffer damage = new StringBuffer();
             int artyDamage = wtype.getRackSize();
-            damage.append(Integer.toString(artyDamage));
+            damage.append(artyDamage);
             artyDamage -= 10;
             while (artyDamage > 0) {
-                damage.append('/').append(Integer.toString(artyDamage));
+                damage.append('/').append(artyDamage);
                 artyDamage -= 10;
             }
             wDamR.setText(damage.toString());
@@ -1745,10 +1728,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         //Point Defense bays have a variable range, depending on the mode they're in
             if (wtype.hasModes() && mounted.curMode().equals("Point Defense")) {
                 shortR = 1;
-                wShortR.setText("1"); //$NON-NLS-1$
+                wShortR.setText("1");
             } else {
                 shortR = 6;
-                wShortR.setText("1-6"); //$NON-NLS-1$
+                wShortR.setText("1-6");
             }
         }
         // We need to adjust the ranges for Centurion Weapon Systems: it's
@@ -1774,27 +1757,27 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (wtype.getMinimumRange() > 0) {
             wMinR.setText(Integer.toString(wtype.getMinimumRange()));
         } else {
-            wMinR.setText("---"); //$NON-NLS-1$
+            wMinR.setText("---");
         }
         if (shortR > 1) {
-            wShortR.setText("1 - " + shortR); //$NON-NLS-1$
+            wShortR.setText("1 - " + shortR);
         } else {
-            wShortR.setText("" + shortR); //$NON-NLS-1$
+            wShortR.setText("" + shortR);
         }
         if ((mediumR - shortR) > 1) {
-            wMedR.setText(shortR + 1 + " - " + mediumR); //$NON-NLS-1$
+            wMedR.setText(shortR + 1 + " - " + mediumR);
         } else {
-            wMedR.setText("" + mediumR); //$NON-NLS-1$
+            wMedR.setText("" + mediumR);
         }
         if ((longR - mediumR) > 1) {
-            wLongR.setText(mediumR + 1 + " - " + longR); //$NON-NLS-1$
+            wLongR.setText(mediumR + 1 + " - " + longR);
         } else {
-            wLongR.setText("" + longR); //$NON-NLS-1$
+            wLongR.setText("" + longR);
         }
         if ((extremeR - longR) > 1) {
-            wExtR.setText(longR + 1 + " - " + extremeR); //$NON-NLS-1$
+            wExtR.setText(longR + 1 + " - " + extremeR);
         } else {
-            wExtR.setText("" + extremeR); //$NON-NLS-1$
+            wExtR.setText("" + extremeR);
         }
 
         // Update the range display to account for the weapon's loaded ammo.
@@ -1805,9 +1788,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (aerospaceAttack) {
             // change damage report to a statement of standard or capital
             if (wtype.isCapital()) {
-                wDamR.setText(Messages.getString("MechDisplay.CapitalD")); //$NON-NLS-1$
+                wDamR.setText(Messages.getString("MechDisplay.CapitalD"));
             } else {
-                wDamR.setText(Messages.getString("MechDisplay.StandardD")); //$NON-NLS-1$
+                wDamR.setText(Messages.getString("MechDisplay.StandardD"));
             }
 
             // if this is a weapons bay, then I need to compile it to get
@@ -1887,11 +1870,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         } else {
             m_chAmmo.setEnabled(true);
-            vAmmo = new ArrayList<Mounted>();
+            vAmmo = new ArrayList<>();
             int nCur = -1;
             int i = 0;
             //Ammo sharing between adjacent trailers
-            List<Mounted> fullAmmoList = new ArrayList<Mounted>(entity.getAmmo());
+            List<Mounted> fullAmmoList = new ArrayList<>(entity.getAmmo());
             if (entity.getTowedBy() != Entity.NONE) {
                 Entity ahead = entity.getGame().getEntity(entity.getTowedBy());
                 fullAmmoList.addAll(ahead.getAmmo());
@@ -2116,18 +2099,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private String formatAmmo(Mounted m) {
         StringBuffer sb = new StringBuffer(64);
-        int ammoIndex = m.getDesc().indexOf(
-                Messages.getString("MechDisplay.0")); //$NON-NLS-1$
+        int ammoIndex = m.getDesc().indexOf(Messages.getString("MechDisplay.0"));
         int loc = m.getLocation();
         if (!m.getEntity().equals(entity)) {
-            sb.append("[TR] "); //$NON-NLS-1$
+            sb.append("[TR] ");
         } else if (loc != Entity.LOC_NONE) {
-            sb.append('[').append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$
+            sb.append('[').append(entity.getLocationAbbr(loc)).append("] ");
         }
         if (ammoIndex == -1) {
             sb.append(m.getDesc());
         } else {
-            sb.append(m.getDesc().substring(0, ammoIndex));
+            sb.append(m.getDesc(), 0, ammoIndex);
             sb.append(m.getDesc().substring(ammoIndex + 4));
         }
         if (m.isHotLoaded()) {
@@ -2155,70 +2137,69 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // Only override the display for the various ATM and MML ammos
         if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                wMinR.setText("4"); //$NON-NLS-1$
-                wShortR.setText("1 - 9"); //$NON-NLS-1$
-                wMedR.setText("10 - 18"); //$NON-NLS-1$
-                wLongR.setText("19 - 27"); //$NON-NLS-1$
-                wExtR.setText("28 - 36"); //$NON-NLS-1$
+                wMinR.setText("4");
+                wShortR.setText("1 - 9");
+                wMedR.setText("10 - 18");
+                wLongR.setText("19 - 27");
+                wExtR.setText("28 - 36");
             } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-                wMinR.setText("---"); //$NON-NLS-1$
-                wShortR.setText("1 - 3"); //$NON-NLS-1$
-                wMedR.setText("4 - 6"); //$NON-NLS-1$
-                wLongR.setText("7 - 9"); //$NON-NLS-1$
-                wExtR.setText("10 - 12"); //$NON-NLS-1$
+                wMinR.setText("---");
+                wShortR.setText("1 - 3");
+                wMedR.setText("4 - 6");
+                wLongR.setText("7 - 9");
+                wExtR.setText("10 - 12");
             } else {
-                wMinR.setText("4"); //$NON-NLS-1$
-                wShortR.setText("1 - 5"); //$NON-NLS-1$
-                wMedR.setText("6 - 10"); //$NON-NLS-1$
-                wLongR.setText("11 - 15"); //$NON-NLS-1$
-                wExtR.setText("16 - 20"); //$NON-NLS-1$
+                wMinR.setText("4");
+                wShortR.setText("1 - 5");
+                wMedR.setText("6 - 10");
+                wLongR.setText("11 - 15");
+                wExtR.setText("16 - 20");
             }
-        } // End weapon-is-ATM
-        else if (atype.getAmmoType() == AmmoType.T_MML) {
+        } else if (atype.getAmmoType() == AmmoType.T_MML) {
             if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                wMinR.setText("6"); //$NON-NLS-1$
-                wShortR.setText("1 - 7"); //$NON-NLS-1$
-                wMedR.setText("8 - 14"); //$NON-NLS-1$
-                wLongR.setText("15 - 21"); //$NON-NLS-1$
-                wExtR.setText("21 - 28"); //$NON-NLS-1$
+                wMinR.setText("6");
+                wShortR.setText("1 - 7");
+                wMedR.setText("8 - 14");
+                wLongR.setText("15 - 21");
+                wExtR.setText("21 - 28");
             } else {
-                wMinR.setText("---"); //$NON-NLS-1$
-                wShortR.setText("1 - 3"); //$NON-NLS-1$
-                wMedR.setText("4 - 6"); //$NON-NLS-1$
-                wLongR.setText("7 - 9"); //$NON-NLS-1$
-                wExtR.setText("10 - 12"); //$NON-NLS-1$
+                wMinR.setText("---");
+                wShortR.setText("1 - 3");
+                wMedR.setText("4 - 6");
+                wLongR.setText("7 - 9");
+                wExtR.setText("10 - 12");
             }
         } else if (atype.getAmmoType() == AmmoType.T_IATM) {
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                wMinR.setText("4"); //$NON-NLS-1$
-                wShortR.setText("1 - 9"); //$NON-NLS-1$
-                wMedR.setText("10 - 18"); //$NON-NLS-1$
-                wLongR.setText("19 - 27"); //$NON-NLS-1$
-                wExtR.setText("28 - 36"); //$NON-NLS-1$
+                wMinR.setText("4");
+                wShortR.setText("1 - 9");
+                wMedR.setText("10 - 18");
+                wLongR.setText("19 - 27");
+                wExtR.setText("28 - 36");
             } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-                wMinR.setText("---"); //$NON-NLS-1$
-                wShortR.setText("1 - 3"); //$NON-NLS-1$
-                wMedR.setText("4 - 6"); //$NON-NLS-1$
-                wLongR.setText("7 - 9"); //$NON-NLS-1$
-                wExtR.setText("10 - 12"); //$NON-NLS-1$
+                wMinR.setText("---");
+                wShortR.setText("1 - 3");
+                wMedR.setText("4 - 6");
+                wLongR.setText("7 - 9");
+                wExtR.setText("10 - 12");
             } else if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
-                wMinR.setText("4"); //$NON-NLS-1$
-                wShortR.setText("1 - 5"); //$NON-NLS-1$
-                wMedR.setText("6 - 10"); //$NON-NLS-1$
-                wLongR.setText("11 - 15"); //$NON-NLS-1$
-                wExtR.setText("16 - 20"); //$NON-NLS-1$
+                wMinR.setText("4");
+                wShortR.setText("1 - 5");
+                wMedR.setText("6 - 10");
+                wLongR.setText("11 - 15");
+                wExtR.setText("16 - 20");
             } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
-                wMinR.setText("---"); //$NON-NLS-1$
-                wShortR.setText("1 - 3"); //$NON-NLS-1$
-                wMedR.setText("4 - 6"); //$NON-NLS-1$
-                wLongR.setText("7 - 9"); //$NON-NLS-1$
-                wExtR.setText("10 - 12"); //$NON-NLS-1$
+                wMinR.setText("---");
+                wShortR.setText("1 - 3");
+                wMedR.setText("4 - 6");
+                wLongR.setText("7 - 9");
+                wExtR.setText("10 - 12");
             } else /* standard */ {
-                wMinR.setText("4"); //$NON-NLS-1$
-                wShortR.setText("1 - 5"); //$NON-NLS-1$
-                wMedR.setText("6 - 10"); //$NON-NLS-1$
-                wLongR.setText("11 - 15"); //$NON-NLS-1$
-                wExtR.setText("16 - 20"); //$NON-NLS-1$
+                wMinR.setText("4");
+                wShortR.setText("1 - 5");
+                wMedR.setText("6 - 10");
+                wLongR.setText("11 - 15");
+                wExtR.setText("16 - 20");
             }           
         }
 
@@ -2259,50 +2240,50 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // set default values in case if statement stops
-        wShortAVR.setText("---"); //$NON-NLS-1$
-        wMedAVR.setText("---"); //$NON-NLS-1$
-        wLongAVR.setText("---"); //$NON-NLS-1$
-        wExtAVR.setText("---"); //$NON-NLS-1$
-        wShortR.setText("---"); //$NON-NLS-1$
-        wMedR.setText("---"); //$NON-NLS-1$
-        wLongR.setText("---"); //$NON-NLS-1$
-        wExtR.setText("---"); //$NON-NLS-1$
+        wShortAVR.setText("---");
+        wMedAVR.setText("---");
+        wLongAVR.setText("---");
+        wExtAVR.setText("---");
+        wShortR.setText("---");
+        wMedR.setText("---");
+        wLongR.setText("---");
+        wExtR.setText("---");
         // every weapon gets at least short range
         wShortAVR.setText(Integer.toString(avShort));
         if (wtype.isCapital()) {
-            wShortR.setText("1-12"); //$NON-NLS-1$
+            wShortR.setText("1-12");
         } else if (wtype.hasFlag(WeaponType.F_PDBAY)) {
                 //Point Defense bays have a variable range too, depending on the mode they're in
                 if (wtype.hasModes() && weapon.curMode().equals("Point Defense")) {
-                    wShortR.setText("1"); //$NON-NLS-1$
+                    wShortR.setText("1");
                 } else {
-                    wShortR.setText("1-6"); //$NON-NLS-1$
+                    wShortR.setText("1-6");
                 }
         } else {
-            wShortR.setText("1-6"); //$NON-NLS-1$
+            wShortR.setText("1-6");
         }
         if (maxr > WeaponType.RANGE_SHORT) {
             wMedAVR.setText(Integer.toString(avMed));
             if (wtype.isCapital()) {
-                wMedR.setText("13-24"); //$NON-NLS-1$
+                wMedR.setText("13-24");
             } else {
-                wMedR.setText("7-12"); //$NON-NLS-1$
+                wMedR.setText("7-12");
             }
         }
         if (maxr > WeaponType.RANGE_MED) {
             wLongAVR.setText(Integer.toString(avLong));
             if (wtype.isCapital()) {
-                wLongR.setText("25-40"); //$NON-NLS-1$
+                wLongR.setText("25-40");
             } else {
-                wLongR.setText("13-20"); //$NON-NLS-1$
+                wLongR.setText("13-20");
             }
         }
         if (maxr > WeaponType.RANGE_LONG) {
             wExtAVR.setText(Integer.toString(avExt));
             if (wtype.isCapital()) {
-                wExtR.setText("41-50"); //$NON-NLS-1$
+                wExtR.setText("41-50");
             } else {
-                wExtR.setText("21-25"); //$NON-NLS-1$
+                wExtR.setText("21-25");
             }
         }
 
@@ -2443,14 +2424,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         WeaponType wtype = (WeaponType) weapon.getType();
 
         // set default values in case if statement stops
-        wShortAVR.setText("---"); //$NON-NLS-1$
-        wMedAVR.setText("---"); //$NON-NLS-1$
-        wLongAVR.setText("---"); //$NON-NLS-1$
-        wExtAVR.setText("---"); //$NON-NLS-1$
-        wShortR.setText("---"); //$NON-NLS-1$
-        wMedR.setText("---"); //$NON-NLS-1$
-        wLongR.setText("---"); //$NON-NLS-1$
-        wExtR.setText("---"); //$NON-NLS-1$
+        wShortAVR.setText("---");
+        wMedAVR.setText("---");
+        wLongAVR.setText("---");
+        wExtAVR.setText("---");
+        wShortR.setText("---");
+        wMedR.setText("---");
+        wLongR.setText("---");
+        wExtR.setText("---");
 
         int heat = 0;
         double avShort = 0;
@@ -2522,37 +2503,38 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wHeatR.setText(Integer.toString(heat));
         wShortAVR.setText(Integer.toString((int) Math.ceil(avShort)));
         if (isCapital) {
-            wShortR.setText("1-12"); //$NON-NLS-1$
+            wShortR.setText("1-12");
         } else {
-            wShortR.setText("1-6"); //$NON-NLS-1$
+            wShortR.setText("1-6");
         }
         if (maxr > WeaponType.RANGE_SHORT) {
             wMedAVR.setText(Integer.toString((int) Math.ceil(avMed)));
             if (isCapital) {
-                wMedR.setText("13-24"); //$NON-NLS-1$
+                wMedR.setText("13-24");
             } else {
-                wMedR.setText("7-12"); //$NON-NLS-1$
+                wMedR.setText("7-12");
             }
         }
         if (maxr > WeaponType.RANGE_MED) {
             wLongAVR.setText(Integer.toString((int) Math.ceil(avLong)));
             if (isCapital) {
-                wLongR.setText("25-40"); //$NON-NLS-1$
+                wLongR.setText("25-40");
             } else {
-                wLongR.setText("13-20"); //$NON-NLS-1$
+                wLongR.setText("13-20");
             }
         }
         if (maxr > WeaponType.RANGE_LONG) {
             wExtAVR.setText(Integer.toString((int) Math.ceil(avExt)));
             if (isCapital) {
-                wExtR.setText("41-50"); //$NON-NLS-1$
+                wExtR.setText("41-50");
             } else {
-                wExtR.setText("21-25"); //$NON-NLS-1$
+                wExtR.setText("21-25");
             }
         }
         onResize();
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

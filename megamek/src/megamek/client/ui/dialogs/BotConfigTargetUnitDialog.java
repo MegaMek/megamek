@@ -53,6 +53,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
             }
         });
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowOpened(WindowEvent e) {
                 unitIDField.requestFocus();
             }

@@ -87,7 +87,7 @@ public class Portrait extends AbstractIcon {
                         DEFAULT_PORTRAIT_FILENAME);
             }
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
 
         return portrait;
@@ -104,7 +104,7 @@ public class Portrait extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return new Portrait();
         }
         return icon;

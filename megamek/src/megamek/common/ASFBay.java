@@ -287,6 +287,7 @@ public final class ASFBay extends Bay {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
+    @Override
     public TechAdvancement getTechAdvancement() {
         if (arts) {
             return Bay.artsTechAdvancement();

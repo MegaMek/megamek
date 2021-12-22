@@ -347,6 +347,7 @@ public class Precognition implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         try {
             // todo There's probably a better way to handle this than a loop that only exits on an error.
@@ -452,9 +453,7 @@ public class Precognition implements Runnable {
                     LogManager.getLogger().debug("Received entity change event for "
                                     + changeEvent.getEntity().getDisplayName()
                                     + " (ID " + entity.getId() + ")");
-                    Integer entityId = changeEvent.getEntity().getId();
-                    dirtifyUnit(entityId);
-
+                    dirtifyUnit(changeEvent.getEntity().getId());
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
                     LogManager.getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());
@@ -830,7 +829,7 @@ public class Precognition implements Runnable {
                 e.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
 
     }

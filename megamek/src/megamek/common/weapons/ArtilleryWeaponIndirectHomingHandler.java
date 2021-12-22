@@ -330,7 +330,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         Targetable newTarget = null;
 
         Vector<TagInfo> v = game.getTagInfo();
-        Vector<TagInfo> allowed = new Vector<TagInfo>();
+        Vector<TagInfo> allowed = new Vector<>();
         Entity attacker = game.getEntityFromAllSources(getAttackerId());
         
         // get only TagInfo on the same side

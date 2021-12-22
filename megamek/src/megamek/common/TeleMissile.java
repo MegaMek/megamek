@@ -231,6 +231,7 @@ public class TeleMissile extends Aero {
         return false;
     }
 
+    @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO & Entity.ETYPE_TELEMISSILE;
     }

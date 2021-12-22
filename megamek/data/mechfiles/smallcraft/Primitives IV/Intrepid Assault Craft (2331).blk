@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -41,7 +41,6 @@ infantrybay:1.0:2:1:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
-steeragequarters:25.0:0
 </transporters>
 
 <SafeThrust>
@@ -57,7 +56,7 @@ steeragequarters:25.0:0
 </sink_type>
 
 <fuel>
-560
+285
 </fuel>
 
 <engine_type>
@@ -153,3 +152,4 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 0
 </escape_pod>
+

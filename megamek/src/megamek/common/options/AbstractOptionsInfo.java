@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.options;
 
 import java.util.Enumeration;
@@ -25,11 +24,10 @@ import java.util.Vector;
  * the Singleton pattern
  */
 public class AbstractOptionsInfo implements IOptionsInfo {
-
-    protected static final String GROUP_SUFFIX = ".group."; //$NON-NLS-1$
-    protected static final String OPTION_SUFFIX = ".option."; //$NON-NLS-1$
-    protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName"; //$NON-NLS-1$
-    protected static final String DESCRIPTION_SUFFIX = ".description"; //$NON-NLS-1$
+    protected static final String GROUP_SUFFIX = ".group.";
+    protected static final String OPTION_SUFFIX = ".option.";
+    protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName";
+    protected static final String DESCRIPTION_SUFFIX = ".description";
 
     /**
      * The OptionsInfo name that must be unique. Every instance of the
@@ -46,17 +44,17 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * Hashtable of the <code>OptionInfo</code> used to store/find option
      * info.
      */
-    private Hashtable<String, OptionInfo> optionsHash = new Hashtable<String, OptionInfo>();
+    private Hashtable<String, OptionInfo> optionsHash = new Hashtable<>();
 
     /**
      * List of option groups. The order of groups is important. The first group
      * added by <code>addGroup</code> is the first in the
      * <code>Enumeration</code> returned by <code>getGroups</code>
      */
-    private Vector<IBasicOptionGroup> groups = new Vector<IBasicOptionGroup>();
+    private Vector<IBasicOptionGroup> groups = new Vector<>();
 
     /**
-     * Flag that indicates that this filling the the options info data is
+     * Flag that indicates that this filling the options info data is
      * completed. <code>addGroup</code> and <code>addOptionInfo</code> will
      * have no effect if it's <code>true</code>
      * 
@@ -69,10 +67,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * The <code>HashSet</code> used to check if the options info is already
      * registered
-     * 
+     *
      * @see AbstractOptionsInfo()
      */
-    private static HashSet<String> names = new HashSet<String>();
+    private static HashSet<String> names = new HashSet<>();
 
     /**
      * Protected constructor. It is called only by descendants. The name must be
@@ -83,10 +81,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      */
     protected AbstractOptionsInfo(String name) {
         if (names.contains(name)) {
-            throw new IllegalArgumentException(
-                    "OptionsInfo '" + name + "' is already registered"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("OptionsInfo '" + name + "' is already registered");
         }
         this.name = name;
+        names.add(name);
     }
 
     /*
@@ -94,6 +92,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
      */
+    @Override
     public IOptionInfo getOptionInfo(String name) {
         return optionsHash.get(name);
     }
@@ -103,6 +102,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * 
      * @see megamek.common.options.IOptionsInfo#getGroups()
      */
+    @Override
     public Enumeration<IBasicOptionGroup> getGroups() {
         return groups.elements();
     }
@@ -140,7 +140,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     }
 
     /**
-     * Returns the user friendly NLS dependent name suitable for displaying in
+     * Returns the user-friendly NLS dependent name suitable for displaying in
      * the options editor dialogs etc.
      * 
      * @param groupName
@@ -174,13 +174,11 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     }
 
     private String getOptionDisplayableName(String optionName) {
-        return Messages.getString(name + OPTION_SUFFIX + optionName
-                + DISPLAYABLE_NAME_SUFFIX);
+        return Messages.getString(name + OPTION_SUFFIX + optionName + DISPLAYABLE_NAME_SUFFIX);
     }
 
     private String getOptionDescription(String optionName) {
-        return Messages.getString(name + OPTION_SUFFIX + optionName
-                + DESCRIPTION_SUFFIX);
+        return Messages.getString(name + OPTION_SUFFIX + optionName + DESCRIPTION_SUFFIX);
     }
 
     /**
@@ -190,7 +188,6 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * @see getOptionInfo
      */
     private class OptionInfo implements IOptionInfo {
-
         private String name;
         private int textFieldLength = 3;
 
@@ -200,26 +197,29 @@ public class AbstractOptionsInfo implements IOptionsInfo {
             this.name = optionName;
         }
 
+        @Override
         public String getDisplayableName() {
             return getOptionDisplayableName(name);
         }
 
+        @Override
         public String getDisplayableNameWithValue() {
             return getOptionDisplayableName(name);
         }
 
+        @Override
         public String getDescription() {
             return getOptionDescription(name);
         }
 
+        @Override
         public int getTextFieldLength() {
             return textFieldLength;
         }
 
+        @Override
         public boolean isLabelBeforeTextField() {
             return labelBeforeTextField;
         }
-
     }
-
 }

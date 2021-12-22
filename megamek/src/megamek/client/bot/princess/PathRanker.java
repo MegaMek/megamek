@@ -71,9 +71,10 @@ public abstract class PathRanker implements IPathRanker {
     abstract RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords);
 
+    @Override
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
-                                    double fallTolerance,
-                                    List<Entity> enemies, List<Entity> friends) {
+                                           double fallTolerance,
+                                           List<Entity> enemies, List<Entity> friends) {
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
             return new ArrayList<>();
@@ -229,6 +230,7 @@ public abstract class PathRanker implements IPathRanker {
      * @param ps The list of ranked paths to process
      * @return "Best" out of those paths
      */
+    @Override
     public RankedPath getBestPath(List<RankedPath> ps) {
         if (ps.size() == 0) {
             return null;
@@ -242,9 +244,11 @@ public abstract class PathRanker implements IPathRanker {
      * unit on this turn. Rankers that extend this class should override this
      * function
      */
+    @Override
     public void initUnitTurn(Entity unit, Game game) {
     }
 
+    @Override
     public Targetable findClosestEnemy(Entity me, Coords position, Game game) {
         return findClosestEnemy(me, position, game, true);
     }
@@ -252,6 +256,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
+    @Override
     public Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets) {
         int range = 9999;
         Targetable closest = null;
@@ -354,6 +359,7 @@ public abstract class PathRanker implements IPathRanker {
      * @param game     The {@link Game} currently in play.
      * @return The distance to the unit's home edge.
      */
+    @Override
     public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game) {
         int width = game.getBoard().getWidth();
         int height = game.getBoard().getHeight();

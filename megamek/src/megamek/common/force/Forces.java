@@ -425,6 +425,7 @@ public final class Forces implements Serializable {
     }
     
     /** Returns a clone of this Forces object, including clones of all contained forces. */
+    @Override
     public Forces clone() {
         Forces clone = new Forces(game);
         for (Entry<Integer, Force> entry: forces.entrySet()) {
@@ -549,7 +550,7 @@ public final class Forces implements Serializable {
                 }
             }
 
-            var subForceIds = new ArrayList<Integer>(entry.getValue().getSubForces());
+            var subForceIds = new ArrayList<>(entry.getValue().getSubForces());
             for (int subforceId: subForceIds) {
                 // Remove nonexistent subforces
                 if (!contains(subforceId)) {

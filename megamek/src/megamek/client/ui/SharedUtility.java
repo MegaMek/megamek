@@ -183,7 +183,7 @@ public class SharedUtility {
     private static Object doPSRCheck(MovePath md, boolean stringResult) {
 
         StringBuffer nagReport = new StringBuffer();
-        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
+        List<TargetRoll> psrList = new ArrayList<>();
 
         final Entity entity = md.getEntity();
         final Game game = entity.getGame();
@@ -657,10 +657,8 @@ public class SharedUtility {
             StringBuffer nagReport, List<TargetRoll> psrList) {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             psrList.add(rollTarget);
-            Object[] objs = new Object[] { rollTarget.getValueAsString(),
-                    rollTarget.getDesc() };
-            nagReport
-                    .append(Messages.getString("MovementDisplay.addNag", objs));//$NON-NLS-1$
+            nagReport.append(Messages.getString("MovementDisplay.addNag",
+                    rollTarget.getValueAsString(), rollTarget.getDesc()));
         }
     }
 

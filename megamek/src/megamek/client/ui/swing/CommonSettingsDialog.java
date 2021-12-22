@@ -69,6 +69,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         }
 
         /** Returns a human-readable name for this advanced option. */
+        @Override
         public String toString() {
             String key = "AdvancedOptions." + option + ".name";
             return Messages.keyExists(key) ? Messages.getString(key) : option;
@@ -894,6 +895,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     }
 
     /** Handle some setting changes that directly update e.g. the board. */
+    @Override
     public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -947,8 +949,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         }
     }
 
+    @Override
     public void focusGained(FocusEvent e) { }
 
+    @Override
     public void focusLost(FocusEvent e) {
         Object src = e.getSource();
         GUIPreferences guip = GUIPreferences.getInstance();          
@@ -1504,6 +1508,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     }
 
     /** Used to note which advanced setting is currently clicked. */  
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;

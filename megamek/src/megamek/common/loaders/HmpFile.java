@@ -1,51 +1,26 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
 package megamek.common.loaders;
 
-/* BLOCK_END */
+import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
 import java.util.Objects;
 import java.util.Vector;
-
-import megamek.common.ArmlessMech;
-import megamek.common.BipedMech;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-
-/* BLOCK_END */
 
 /**
  * Based on the hmpread.c program and the MtfFile object. Note that this class
@@ -56,11 +31,7 @@ import megamek.common.WeaponType;
  * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
  *          help from Ian Hamilton.
  */
-public class HmpFile
-/* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
-implements IMechLoader
-/* BLOCK_END */
-{
+public class HmpFile implements IMechLoader {
     private String name;
     private String model;
     private String fluff = null;
@@ -135,8 +106,8 @@ implements IMechLoader
     private long[] headCriticals = new long[12];
     private long[] ctCriticals = new long[12];
 
-    private Hashtable<EquipmentType, Mounted> spreadEquipment = new Hashtable<EquipmentType, Mounted>();
-    private Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
+    private Hashtable<EquipmentType, Mounted> spreadEquipment = new Hashtable<>();
+    private Vector<Mounted> vSplitWeapons = new Vector<>();
 
     private int gyroType = Mech.GYRO_STANDARD;
     private int cockpitType = Mech.COCKPIT_STANDARD;
@@ -433,6 +404,7 @@ implements IMechLoader
     }
 
     /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech = null;
@@ -564,7 +536,7 @@ implements IMechLoader
 
             return mech;
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             throw new EntityLoadingException(e.getMessage());
         }
     }
@@ -816,7 +788,7 @@ implements IMechLoader
         return (critical & 0xFFFF0000) != 0;
     }
 
-    private static final Hashtable<Object, Serializable> criticals = new Hashtable<Object, Serializable>();
+    private static final Hashtable<Object, Serializable> criticals = new Hashtable<>();
     static {
         // common criticals
         criticals.put(Long.valueOf(0x00), "-Empty-");
@@ -968,7 +940,7 @@ implements IMechLoader
         criticals.put(Long.valueOf(0x2AC), "Thunderbolt-20 Ammo (THB)");
 
         // Criticals for mechs with a base type of Inner Sphere.
-        Hashtable<Long, String> isCriticals = new Hashtable<Long, String>();
+        Hashtable<Long, String> isCriticals = new Hashtable<>();
         criticals.put(TechType.INNER_SPHERE, isCriticals);
         isCriticals.put(Long.valueOf(0x0A), "ISDouble Heat Sink");
 
@@ -1301,7 +1273,7 @@ implements IMechLoader
         isCriticals.put(Long.valueOf(0x02b3), "ISHeavyGauss Ammo");
 
         // criticals for mechs with a base type of clan
-        Hashtable<Long, String> clanCriticals = new Hashtable<Long, String>();
+        Hashtable<Long, String> clanCriticals = new Hashtable<>();
         criticals.put(TechType.CLAN, clanCriticals);
         clanCriticals.put(Long.valueOf(0x0A), "CLDouble Heat Sink");
 
@@ -1983,7 +1955,7 @@ implements IMechLoader
             try (InputStream is = new FileInputStream(args[i])) {
                 hmpFile = new HmpFile(is);
             } catch (Exception e) {
-                e.printStackTrace();
+                LogManager.getLogger().error("", e);
                 return;
             }
             filename = filename.substring(0, filename.lastIndexOf(".hmp"));
@@ -1993,7 +1965,7 @@ implements IMechLoader
                 out = new BufferedWriter(new FileWriter(new File(filename)));
                 out.write(hmpFile.getMtf());
             } catch (Exception e) {
-                e.printStackTrace();
+                LogManager.getLogger().error("", e);
             } finally {
                 if (out != null) {
                     try {
@@ -2041,7 +2013,7 @@ abstract class HMPType {
 }
 
 class DesignType extends HMPType {
-    public static final Hashtable<Integer, DesignType> types = new Hashtable<Integer, DesignType>();
+    public static final Hashtable<Integer, DesignType> types = new Hashtable<>();
 
     public static final DesignType STANDARD = new DesignType("Standard", 1);
     public static final DesignType MODIFIED = new DesignType("Modified", 2);
@@ -2058,7 +2030,7 @@ class DesignType extends HMPType {
 }
 
 class ArmorType extends HMPType {
-    public static final Hashtable<Integer, ArmorType> types = new Hashtable<Integer, ArmorType>();
+    public static final Hashtable<Integer, ArmorType> types = new Hashtable<>();
 
     public static final ArmorType STANDARD = new ArmorType("Standard", 0);
     public static final ArmorType FERRO_FIBROUS = new ArmorType("Ferro-Fibrous", 1);
@@ -2081,7 +2053,7 @@ class ArmorType extends HMPType {
 }
 
 class EngineType extends HMPType {
-    public static final Hashtable<Integer, EngineType> types = new Hashtable<Integer, EngineType>();
+    public static final Hashtable<Integer, EngineType> types = new Hashtable<>();
 
     public static final EngineType FUSION = new EngineType("Fusion", 0);
     public static final EngineType XL = new EngineType("XL", 1);
@@ -2101,7 +2073,7 @@ class EngineType extends HMPType {
 }
 
 class HeatSinkType extends HMPType {
-    public static final Hashtable<Integer, HeatSinkType> types = new Hashtable<Integer, HeatSinkType>();
+    public static final Hashtable<Integer, HeatSinkType> types = new Hashtable<>();
 
     public static final HeatSinkType SINGLE = new HeatSinkType("Single", 0);
     public static final HeatSinkType DOUBLE = new HeatSinkType("Double", 1);
@@ -2119,7 +2091,7 @@ class HeatSinkType extends HMPType {
 }
 
 class ChassisType extends HMPType {
-    public static final Hashtable<Integer, ChassisType> types = new Hashtable<Integer, ChassisType>();
+    public static final Hashtable<Integer, ChassisType> types = new Hashtable<>();
 
     public static final ChassisType BIPED = new ChassisType("Biped", 0);
     public static final ChassisType QUADRAPED = new ChassisType("Quadraped", 1);
@@ -2139,7 +2111,7 @@ class ChassisType extends HMPType {
 }
 
 class InternalStructureType extends HMPType {
-    public static final Hashtable<Integer, InternalStructureType> types = new Hashtable<Integer, InternalStructureType>();
+    public static final Hashtable<Integer, InternalStructureType> types = new Hashtable<>();
 
     public static final InternalStructureType STANDARD = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD), 0);
     public static final InternalStructureType ENDO_STEEL = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL), 1);
@@ -2158,7 +2130,7 @@ class InternalStructureType extends HMPType {
 }
 
 class TechType extends HMPType {
-    public static final Hashtable<Integer, TechType> types = new Hashtable<Integer, TechType>();
+    public static final Hashtable<Integer, TechType> types = new Hashtable<>();
 
     public static final TechType INNER_SPHERE = new TechType("Inner Sphere", 0);
     public static final TechType CLAN = new TechType("Clan", 1);
@@ -2175,7 +2147,7 @@ class TechType extends HMPType {
 }
 
 class MyomerType extends HMPType {
-    public static final Hashtable<Integer, MyomerType> types = new Hashtable<Integer, MyomerType>();
+    public static final Hashtable<Integer, MyomerType> types = new Hashtable<>();
 
     public static final MyomerType STANDARD = new MyomerType("Standard", 0);
     public static final MyomerType TRIPLE_STRENGTH = new MyomerType("Triple-Strength", 1);
@@ -2193,7 +2165,7 @@ class MyomerType extends HMPType {
 }
 
 class WeaponLocation extends HMPType {
-    public static final Hashtable<Integer, WeaponLocation> types = new Hashtable<Integer, WeaponLocation>();
+    public static final Hashtable<Integer, WeaponLocation> types = new Hashtable<>();
 
     public static final WeaponLocation LEFT_ARM = new WeaponLocation("Left Arm", 1);
     public static final WeaponLocation LEFT_TORSO = new WeaponLocation("Left Torso", 2);

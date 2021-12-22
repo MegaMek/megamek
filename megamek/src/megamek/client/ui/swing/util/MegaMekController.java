@@ -74,10 +74,10 @@ public class MegaMekController implements KeyEventDispatcher {
     protected boolean ignoreKeyPresses = false;
 
     public MegaMekController() {
-        keyCmdSet = new HashSet<KeyCommandBind>();
-        cmdActionMap = new HashMap<String, ArrayList<CommandAction>>();
+        keyCmdSet = new HashSet<>();
+        cmdActionMap = new HashMap<>();
         keyRepeatTimer = new Timer("Key Repeat Timer");
-        repeatingTasks = new HashMap<KeyCommandBind, TimerTask>();
+        repeatingTasks = new HashMap<>();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class MegaMekController implements KeyEventDispatcher {
             CommandAction action) {
         ArrayList<CommandAction> actions = cmdActionMap.get(cmd);
         if (actions == null) {
-            actions = new ArrayList<CommandAction>();
+            actions = new ArrayList<>();
             actions.add(action);
             cmdActionMap.put(cmd, actions);
         } else {

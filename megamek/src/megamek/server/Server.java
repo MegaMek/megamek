@@ -1948,7 +1948,7 @@ public class Server implements Runnable {
             try {
                 removed = game.removeFirstTurnFor(entityUsed);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             entityUsed.setDone(true);
             turnsChanged = true;
@@ -2015,8 +2015,7 @@ public class Server implements Runnable {
 
         // Unless overridden by the "protos_move_multi" option, all ProtoMechs
         // in a unit declare fire, and they don't mix with infantry.
-        if (protosMoved && !protosMoveMulti && !isMultiTurn && (entityUsed != null)) {
-
+        if (protosMoved && !protosMoveMulti && !isMultiTurn) {
             // What's the unit number and ID of the entity used?
             final short movingUnit = entityUsed.getUnitNumber();
             final int movingId = entityUsed.getId();
@@ -2029,6 +2028,7 @@ public class Server implements Runnable {
 
                 private final short unitNum = movingUnit;
 
+                @Override
                 public boolean accept(Entity entity) {
                     return (entity instanceof Protomech)
                             && entity.isSelectableThisTurn()
@@ -3401,6 +3401,7 @@ public class Server implements Runnable {
                 Iterator<Entity> playerProtos = game.getSelectedEntities(new EntitySelector() {
                             private final int ownerId = player.getId();
 
+                            @Override
                             public boolean accept(Entity entity) {
                                 return (entity instanceof Protomech)
                                         && (ownerId == entity.getOwnerId())
@@ -13399,6 +13400,7 @@ public class Server implements Runnable {
                             public int player = firingEntity.getOwnerId();
                             public Targetable target = aaa.getTarget(game);
 
+                            @Override
                             public boolean accept(Entity entity) {
                                 LosEffects los = LosEffects.calculateLOS(game, entity, target);
                                 return ((player == entity.getOwnerId()) && !(los.isBlocked())
@@ -27386,7 +27388,7 @@ public class Server implements Runnable {
                                          boolean canSalvage) {
         // can't destroy an entity if it's already been destroyed        
         if (entity.isDestroyed()) {
-            return new Vector<Report>();
+            return new Vector<>();
         }
         
         Vector<Report> vDesc = new Vector<>();
@@ -28783,7 +28785,7 @@ public class Server implements Runnable {
                     getBoardSizesInDir(query_file, sizes);
                 } else {
                     try {
-                        if (filename.endsWith(".board")) { //$NON-NLS-1$
+                        if (filename.endsWith(".board")) {
                             BoardDimensions size = Board.getSize(query_file);
                             if (size == null) {
                                 throw new Exception();
@@ -29942,7 +29944,7 @@ public class Server implements Runnable {
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
 
     }
@@ -30178,6 +30180,7 @@ public class Server implements Runnable {
                     int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
+                        @Override
                         public boolean accept(Entity entity) {
                             return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
                         }
@@ -31309,6 +31312,7 @@ public class Server implements Runnable {
     /**
      * Listen for incoming clients.
      */
+    @Override
     public void run() {
         Thread currentThread = Thread.currentThread();
         LogManager.getLogger().info("s: listening for clients...");
@@ -33524,7 +33528,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
     public Vector<Report> ejectSpacecraft(Aero entity, boolean inSpace, boolean airborne, Coords pos) {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
         Report r;
 
         // An entity can only eject it's crew once.
@@ -35416,12 +35420,9 @@ public class Server implements Runnable {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            DataOutputStream printout = new DataOutputStream(
-                    conn.getOutputStream());
+            DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
             String content;
-            content = "port="
-                      + URLEncoder.encode(
-                              Integer.toString(serverSocket.getLocalPort()), "UTF-8");
+            content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
             if (register) {
                 for (AbstractConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());

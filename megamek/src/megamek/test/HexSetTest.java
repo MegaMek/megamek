@@ -74,10 +74,10 @@ public class HexSetTest {
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
                     && (st.sval.equals("base") || st.sval.equals("super") || 
-                        st.sval.equals("ortho"))) { //$NON-NLS-1$ //$NON-NLS-2$
-                boolean bas = st.sval.equals("base"); //$NON-NLS-1$
-                boolean sup = st.sval.equals("super"); //$NON-NLS-1$
-                boolean ort = st.sval.equals("ortho"); //$NON-NLS-1$
+                        st.sval.equals("ortho"))) {
+                boolean bas = st.sval.equals("base");
+                boolean sup = st.sval.equals("super");
+                boolean ort = st.sval.equals("ortho");
 
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int) st.nval;
@@ -100,19 +100,17 @@ public class HexSetTest {
                 if (ort) {
                     orthos++;
                 }
-                Vector<String> filenames = StringUtil.splitString(imageName,
-                        ";"); //$NON-NLS-1$
+                Vector<String> filenames = StringUtil.splitString(imageName, ";");
                 for (String entryFile : filenames) {
                     String entryName;
-                    if ((theme == null) || theme.equals("")) {
+                    if ((theme == null) || theme.isBlank()) {
                         entryName = terrain;
                     } else {
                         entryName = terrain + " " +  theme;
                     }
                     testImageName(dir, entryFile, entryName);
                 }
-            } else if ((st.ttype == StreamTokenizer.TT_WORD) &&
-                    st.sval.equals("include")) {
+            } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equals("include")) {
                 st.nextToken(); 
                 incDepth++;
                 if (incDepth < 100) {

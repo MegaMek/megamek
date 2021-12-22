@@ -30,6 +30,7 @@ public class ForceVictory implements IVictoryConditions, Serializable {
 
     }
 
+    @Override
     public VictoryResult victory(Game game, Map<String, Object> ctx) {
         if (!game.isForceVictory()) {
             return VictoryResult.noResult();

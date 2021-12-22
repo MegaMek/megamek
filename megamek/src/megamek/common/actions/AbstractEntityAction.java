@@ -33,10 +33,12 @@ public abstract class AbstractEntityAction implements Serializable,
         this.entityId = entityId;
     }
 
+    @Override
     public int getEntityId() {
         return entityId;
     }
 
+    @Override
     public void setEntityId(int entityId) {
         this.entityId = entityId;
     }

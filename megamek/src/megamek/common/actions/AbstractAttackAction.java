@@ -43,18 +43,22 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         this.targetId = targetId;
     }
 
+    @Override
     public int getTargetType() {
         return targetType;
     }
 
+    @Override
     public int getTargetId() {
         return targetId;
     }
 
+    @Override
     public void setTargetType(int targetType) {
         this.targetType = targetType;
     }
 
+    @Override
     public void setTargetId(int targetId) {
         this.targetId = targetId;
     }

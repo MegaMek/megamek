@@ -9,9 +9,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -26,12 +23,9 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class Jumpship extends Aero {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 9154398176617208384L;
     // Additional Jumpship locations (FLS, FRS and ALS override Aero locations)
     public static final int LOC_FLS = 1;
@@ -134,7 +128,7 @@ public class Jumpship extends Aero {
 
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0 };
     
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
@@ -167,8 +161,7 @@ public class Jumpship extends Aero {
     }
     
     /**
-     * Primitive Jumpships may be constructed with standard docking collars, or with pre-boom collars. 
-     * 
+     * Primitive JumpShips may be constructed with standard docking collars, or with pre-boom collars.
      */
     public static final int COLLAR_STANDARD  = 0;
     public static final int COLLAR_NO_BOOM = 1;
@@ -224,6 +217,7 @@ public class Jumpship extends Aero {
         return false;
     }
 
+    @Override
     public String getCritDamageString() {
         StringBuilder toReturn = new StringBuilder(super.getCritDamageString());
         boolean first = toReturn.length() == 0;
@@ -606,6 +600,7 @@ public class Jumpship extends Aero {
      * Used for abandoning a unit
      * @return
      */
+    @Override
     public int getNMarines() {
         return nMarines;
     }
@@ -614,6 +609,7 @@ public class Jumpship extends Aero {
         nBattleArmor = m;
     }
 
+    @Override
     public int getNBattleArmor() {
         return nBattleArmor;
     }
@@ -1427,9 +1423,9 @@ public class Jumpship extends Aero {
 
         // get arc BV and heat
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
-        TreeMap<Integer, Double> arcBVs = new TreeMap<Integer, Double>();
-        TreeMap<Integer, Double> arcHeat = new TreeMap<Integer, Double>();
+        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<>();
+        TreeMap<Integer, Double> arcBVs = new TreeMap<>();
+        TreeMap<Integer, Double> arcHeat = new TreeMap<>();
         
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -1632,8 +1628,8 @@ public class Jumpship extends Aero {
         // According to an email with Welshman, ammo should be now added into
         // each arc BV
         // for the final calculation of BV, including the excessive ammo rule
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             int arc = getWeaponArc(getEquipmentNum(mounted));
             AmmoType atype = (AmmoType) mounted.getType();

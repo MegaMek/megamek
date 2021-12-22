@@ -124,7 +124,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
-        boolean targetIsAirborneVTOL = targetIsEntity && ((Entity) target).isAirborneVTOLorWIGE();
+        boolean targetIsAirborneVTOL = targetIsEntity && target.isAirborneVTOLorWIGE();
         boolean isFlak = targetIsAirborneVTOL || target.isAirborne();
         boolean asfFlak = target.isAirborne();
         Entity bestSpotter = null;
@@ -138,7 +138,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // However, we only bother with this if the ammo carrier is actually different from the attacker
         Entity ammoCarrier = ae; 
         
-        if ((ae != null) && (aaa.getAmmoCarrier() != ae.getId())) {
+        if (aaa.getAmmoCarrier() != ae.getId()) {
             ammoCarrier = aaa.getEntity(game, aaa.getAmmoCarrier());
         }
         
@@ -154,6 +154,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
                         public Targetable targ = target;
 
+                        @Override
                         public boolean accept(Entity entity) {
                             Integer id = entity.getId();
                             if ((player == entity.getOwnerId())
@@ -187,8 +188,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     }
                 }
             }
-
-        } // End have-valid-spotters
+        }
 
         // If at least one valid spotter, then get the benefits thereof.
         if (null != bestSpotter) {
@@ -203,15 +203,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // Is the attacker still alive and we're not shooting FLAK?
         // then adjust the target
-        if ((null != ae) && !isFlak) {
+        if (!isFlak) {
 
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
             // This should only happen for indirect shots
             if (roll >= toHit.getValue() 
                     && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
-                ae.aTracker
-                        .setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+                ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
@@ -232,8 +231,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
                 }
             }
-
-        } // End artyAttacker-alive
+        }
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -342,20 +340,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
             // Arrow IVs deliver fixed 30-point minefields.
-            int rackSize = (atype.getAmmoType() == AmmoType.T_ARROW_IV) ? 30
-                    : atype.getRackSize();
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                    rackSize, ae.getId());
+            int rackSize = (atype.getAmmoType() == AmmoType.T_ARROW_IV) ? 30 : atype.getRackSize();
+            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), rackSize, ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(targetPos, ae, subjectId,
-                    vPhaseReport);
+            server.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-            server.deliverThunderVibraMinefield(targetPos, ae.getOwner()
-                    .getId(), 30, waa.getOtherAttackInfo(), ae.getId());
+            server.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(), 30,
+                    waa.getOtherAttackInfo(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
@@ -399,8 +394,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
             
             if (actualDamage > 0) {
-                AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
-                    effectiveTargetPos, atype, targetPos, false, ae, null, altitude, vPhaseReport, server);
+                AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null,
+                        0, false, asfFlak, isFlak, altitude,
+                        effectiveTargetPos, atype, targetPos, false, ae, null, altitude,
+                        vPhaseReport, server);
             }
         } else {
             server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
@@ -408,8 +405,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     asfFlak, shootingBA);
         }
 
-        // artillery may unintentionally clear minefields, but only if it wasn't
-        // trying to
+        // artillery may unintentionally clear minefields, but only if it wasn't trying to
         if (!mineClear) {
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
         }

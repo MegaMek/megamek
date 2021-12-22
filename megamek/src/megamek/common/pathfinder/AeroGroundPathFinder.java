@@ -88,20 +88,18 @@ public class AeroGroundPathFinder {
              * by ending prematurely while preserving already computed results.
              */
 
-            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
-                    + " Try setting time limit to lower value, or "//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."
+                    + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
 
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
         }
     }
 
     public static AeroGroundPathFinder getInstance(Game game) {
-        AeroGroundPathFinder apf = new AeroGroundPathFinder(game);
-
-        return apf;
+        return new AeroGroundPathFinder(game);
     }
 
     /**
@@ -324,18 +322,18 @@ public class AeroGroundPathFinder {
     // "respect" board edges by attempting a turn
     protected void ForwardToTheEnd(MovePath mp) {
         while (mp.getFinalVelocityLeft() > 0) {
-                // don't generate an illegal move that flies off the board
-                if (!mp.nextForwardStepOffBoard()) {
-                    mp.addStep(MoveStepType.FORWARDS);
-                }
+            // don't generate an illegal move that flies off the board
+            if (!mp.nextForwardStepOffBoard()) {
+                mp.addStep(MoveStepType.FORWARDS);
+            }
 
-                // if we have arrived on the edge, and we can turn, then attempt to "bounce off" or "ride" the edge.
-                // as long as we're not trying to go off board, then forget about it
-                // this slightly increases the area covered by the aero in cases where the path takes it near the edge
-                if (mp.nextForwardStepOffBoard() &&
-                        mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED &&
-                        mp.getLastStep().canAeroTurn(game)) {
-
+            // if we have arrived on the edge, and we can turn, then attempt to "bounce off" or "ride" the edge.
+            // as long as we're not trying to go off board, then forget about it
+            // this slightly increases the area covered by the aero in cases where the path takes it near the edge
+            if (mp.nextForwardStepOffBoard()
+                    && (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED)) {
+                final MoveStep lastStep = mp.getLastStep(); // using to prevent unnecessary computation
+                if ((lastStep != null) && lastStep.canAeroTurn(game)) {
                     // we want to generate a path that looks like this:
                     // ||
                     // ||
@@ -358,17 +356,18 @@ public class AeroGroundPathFinder {
                         mp.removeLastStep();
                     }
                 }
+            }
 
-                // if we're going off board (even after all this turning stuff)
-                if (mp.nextForwardStepOffBoard()) {
-                    if (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED) {
-                        mp.addStep(MoveStepType.RETURN);
-                    } else {
-                        // "I'm too beat up, bugging out!"
-                        mp.addStep(MoveStepType.FLEE);
-                    }
-                    return;
+            // if we're going off board (even after all this turning stuff)
+            if (mp.nextForwardStepOffBoard()) {
+                if (mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED) {
+                    mp.addStep(MoveStepType.RETURN);
+                } else {
+                    // "I'm too beat up, bugging out!"
+                    mp.addStep(MoveStepType.FLEE);
                 }
+                return;
+            }
         }
     }
 

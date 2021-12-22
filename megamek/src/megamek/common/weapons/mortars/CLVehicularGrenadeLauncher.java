@@ -34,6 +34,7 @@ public class CLVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
         super();
         name = "Vehicular Grenade Launcher";
         setInternalName("CLVehicularGrenadeLauncher");
+        addLookupName("CLVehicularGrenadeLauncher");
 
     }
 

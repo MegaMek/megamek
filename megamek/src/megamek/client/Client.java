@@ -123,6 +123,7 @@ public class Client implements IClientCommandHandler {
             shouldStop = true;
         }
 
+        @Override
         public void run() {
             while (!shouldStop) {
                 // Write any queued packets
@@ -270,12 +271,11 @@ public class Client implements IClientCommandHandler {
         if (log != null) {
             try {
                 log.close();
-            } catch (IOException e) {
-                System.err.print("Exception closing logfile: "); //$NON-NLS-1$
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("Failed to close the logfile", e);
             }
         }
-        System.out.println("client: died"); //$NON-NLS-1$
+        System.out.println("client: died");
         System.out.flush();
     }
 
@@ -288,7 +288,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals("localhost")) { //$NON-NLS-1$
+            if (!host.equals("localhost")) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
@@ -431,22 +431,22 @@ public class Client implements IClientCommandHandler {
                 // We must do this last, as the name and unit generators can create
                 // a new instance if they are running
                 MechSummaryCache.dispose();
-                memDump("entering deployment phase"); //$NON-NLS-1$
+                memDump("entering deployment phase");
                 break;
             case TARGETING:
-                memDump("entering targeting phase"); //$NON-NLS-1$
+                memDump("entering targeting phase");
                 break;
             case MOVEMENT:
-                memDump("entering movement phase"); //$NON-NLS-1$
+                memDump("entering movement phase");
                 break;
             case OFFBOARD:
-                memDump("entering offboard phase"); //$NON-NLS-1$
+                memDump("entering offboard phase");
                 break;
             case FIRING:
-                memDump("entering firing phase"); //$NON-NLS-1$
+                memDump("entering firing phase");
                 break;
             case PHYSICAL:
-                memDump("entering physical phase"); //$NON-NLS-1$
+                memDump("entering physical phase");
                 break;
             case LOUNGE:
                 try {
@@ -606,7 +606,7 @@ public class Client implements IClientCommandHandler {
      *            - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing, int elevation) {
-        this.deploy(id, c, nFacing, elevation, new Vector<Entity>(), false);
+        this.deploy(id, c, nFacing, elevation, new Vector<>(), false);
     }
 
     /**
@@ -780,7 +780,7 @@ public class Client implements IClientCommandHandler {
      *            The Entity to add.
      */
     public void sendAddEntity(Entity entity) {
-        ArrayList<Entity> entities = new ArrayList<Entity>(1);
+        ArrayList<Entity> entities = new ArrayList<>(1);
         entities.add(entity);
         sendAddEntity(entities);
     }
@@ -937,7 +937,7 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
+        try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
             game.reset();
             
             XStream xstream = SerializationHelper.getXStream();            
@@ -945,13 +945,12 @@ public class Client implements IClientCommandHandler {
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Can't find local savegame " + f); //$NON-NLS-1$
+            LogManager.getLogger().error("Can't find the local savegame " + f, e);
         }
     }
 
     public void sendExplodeBuilding(DemolitionCharge charge) {
-        Object data[] = new Object[1];
+        Object[] data = new Object[1];
         data[0] = charge;
         send(new Packet(Packet.COMMAND_BLDG_EXPLODE, data));
     }
@@ -1034,8 +1033,8 @@ public class Client implements IClientCommandHandler {
         // Gather the forces and entities to be deleted
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
-        forceIds.stream().map(id -> forces.getForce(id)).forEach(delForces::add);
-        delForces.stream().map(f -> forces.getFullEntities(f)).forEach(delEntities::addAll);
+        forceIds.stream().map(forces::getForce).forEach(delForces::add);
+        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
 
         forces.deleteForces(delForces);
 
@@ -1144,7 +1143,7 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveUpdateMinefields(Packet packet) {
         // only update information if you know about the minefield
-        Vector<Minefield> newMines = new Vector<Minefield>();
+        Vector<Minefield> newMines = new Vector<>();
         for (Minefield mf : (Vector<Minefield>) packet.getObject(0)) {
             if (getLocalPlayer().containsMinefield(mf)) {
                 newMines.add(mf);
@@ -1318,7 +1317,7 @@ public class Client implements IClientCommandHandler {
             fw.flush();
             fw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -1370,9 +1369,10 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void handlePacket(Packet c) {
         if (c == null) {
-            System.out.println("client: got null packet"); //$NON-NLS-1$
+            LogManager.getLogger().error("Client: got null packet");
             return;
         }
+
         switch (c.getCommand()) {
             case Packet.COMMAND_CLOSE_CONNECTION:
                 disconnected();
@@ -1700,37 +1700,37 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendDominoCFRResponse(MovePath mp) {
-        Object data[] = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
+        Object[] data = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAMSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendAPDSAssignCFRResponse(Integer waaIndex) {
-        Object data[] = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
+        Object[] data = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
-        Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
+        Object[] data = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 
     public void sendTelemissileTargetCFRResponse(int index) {
-        Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
+        Object[] data = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
     
     public void sendTAGTargetCFRResponse(int index) {
-        Object data[] = { Packet.COMMAND_CFR_TAG_TARGET, index };
+        Object[] data = { Packet.COMMAND_CFR_TAG_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
@@ -1748,16 +1748,12 @@ public class Client implements IClientCommandHandler {
      */
     private void memDump(String where) {
         if (PreferenceManager.getClientPreferences().memoryDumpOn()) {
-            StringBuffer buf = new StringBuffer();
             final long total = Runtime.getRuntime().totalMemory();
             final long free = Runtime.getRuntime().freeMemory();
             final long used = total - free;
-            buf.append("Memory dump ").append(where); //$NON-NLS-1$
-            for (int loop = where.length(); loop < 25; loop++) {
-                buf.append(' ');
-            }
-            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            System.out.println(buf.toString());
+            LogManager.getLogger().error("Memory dump " + where
+                    + " ".repeat(Math.max(0, 25 - where.length())) + ": used (" + used
+                    + ") + free (" + free + ") = " + total);
         }
     }
 
@@ -1847,6 +1843,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Registers a new command in the client command table
      */
+    @Override
     public void registerCommand(ClientCommand command) {
         //Warning, the special direction commands are registered seperatly
         commandsHash.put(command.getName(), command);

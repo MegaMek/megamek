@@ -500,7 +500,7 @@ public class FactionRecord {
                 try {
                     retVal.setYears(wn.getTextContent());
                 } catch (ParseException ex) {
-                    LogManager.getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             } else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
                 retVal.setRatings(wn.getTextContent());
@@ -795,6 +795,7 @@ public class FactionRecord {
         return sj.toString();
     }
 
+    @Override
     public String toString() {
         return key;
     }

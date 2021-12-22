@@ -59,5 +59,4 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
         }
         return ret;
     }
-
 }

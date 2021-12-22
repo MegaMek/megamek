@@ -1315,52 +1315,38 @@ public abstract class Mech extends Entity {
      * @return The Jump MP bonus conferred by the wing
      */
     public int getPartialWingJumpBonus(Mounted mount) {
-        int bonus = 0;
+        int bonus;
         if (game != null) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
-                        bonus = 0;
-                        break;
                     case PlanetaryConditions.ATMO_TRACE:
                         bonus = 0;
                         break;
                     case PlanetaryConditions.ATMO_THIN:
                         bonus = 1;
                         break;
-                    case PlanetaryConditions.ATMO_STANDARD:
-                        bonus = 2;
-                        break;
-                    case PlanetaryConditions.ATMO_HIGH:
-                        bonus = 2;
-                        break;
-
                     case PlanetaryConditions.ATMO_VHIGH:
                         bonus = 3;
                         break;
+                    case PlanetaryConditions.ATMO_STANDARD:
+                    case PlanetaryConditions.ATMO_HIGH:
                     default:
                         bonus = 2;
+                        break;
                 }
             } else {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
-                        bonus = 0;
-                        break;
                     case PlanetaryConditions.ATMO_TRACE:
-                        bonus = 0;
-                        break;
                     case PlanetaryConditions.ATMO_THIN:
                         bonus = 0;
                         break;
-                    case PlanetaryConditions.ATMO_STANDARD:
-                        bonus = 1;
-                        break;
                     case PlanetaryConditions.ATMO_HIGH:
-                        bonus = 2;
-                        break;
                     case PlanetaryConditions.ATMO_VHIGH:
                         bonus = 2;
                         break;
+                    case PlanetaryConditions.ATMO_STANDARD:
                     default:
                         bonus = 1;
                 }
@@ -1379,7 +1365,7 @@ public abstract class Mech extends Entity {
         bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
                 getEquipmentNum(mount), Mech.LOC_LT);
 
-        return bonus > 0 ? bonus : 0;
+        return Math.max(bonus, 0);
     }
 
     /**
@@ -1388,7 +1374,7 @@ public abstract class Mech extends Entity {
      * @return the heat capacity bonus provided by the wing
      */
     private int getPartialWingHeatBonus() {
-        int bonus = 0;
+        int bonus;
         if (game != null) {
             switch (game.getPlanetaryConditions().getAtmosphere()) {
                 case PlanetaryConditions.ATMO_VACUUM:
@@ -1401,16 +1387,11 @@ public abstract class Mech extends Entity {
                     bonus = 2;
                     break;
                 case PlanetaryConditions.ATMO_STANDARD:
-                    bonus = 3;
-                    break;
                 case PlanetaryConditions.ATMO_HIGH:
-                    bonus = 3;
-                    break;
                 case PlanetaryConditions.ATMO_VHIGH:
-                    bonus = 3;
-                    break;
                 default:
                     bonus = 3;
+                    break;
             }
         } else {
             bonus = 3;
@@ -1491,8 +1472,7 @@ public abstract class Mech extends Entity {
         }
         int waterLevel = 0;
         if (!isOffBoard()) {
-            waterLevel = game.getBoard().getHex(getPosition())
-                    .terrainLevel(Terrains.WATER);
+            waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
         }
         if ((waterLevel <= 0) || (getElevation() >= 0)) {
             return getJumpMP();
@@ -2720,23 +2700,15 @@ public abstract class Mech extends Entity {
             // Hits from below.
             switch (roll) {
                 case 1:
-                    return new HitData(Mech.LOC_LLEG,
-                            (side == ToHitData.SIDE_REAR));
                 case 2:
-                    return new HitData(Mech.LOC_LLEG,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 case 3:
-                    return new HitData(Mech.LOC_LT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
                 case 4:
-                    return new HitData(Mech.LOC_RT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
                 case 5:
-                    return new HitData(Mech.LOC_RLEG,
-                            (side == ToHitData.SIDE_REAR));
                 case 6:
-                    return new HitData(Mech.LOC_RLEG,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
             }
         }
         return null;
@@ -3342,11 +3314,13 @@ public abstract class Mech extends Entity {
     }
 
     public static TechAdvancement getFullHeadEjectAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3020, 3023, 3100)
-                .setClanAdvancement(DATE_NONE, 3052, 3100).setPrototypeFactions(F_LC)
+        return new TechAdvancement(TECH_BASE_ALL)
+        		.setISAdvancement(DATE_NONE, 3020, 3023,DATE_NONE, DATE_NONE)
+        		.setISApproximate(false, true, false, false, false)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC)
                 .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override
@@ -3451,7 +3425,7 @@ public abstract class Mech extends Entity {
         bvText.append(nl);
 
         double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
+        double obv; // offensive bv
 
         double armorMultiplier = 1.0;
         bvText.append(startTable);
@@ -4467,12 +4441,12 @@ public abstract class Mech extends Entity {
 
         // here we store the modified BV and heat of all heat-using weapons,
         // to later be sorted by BV
-        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<ArrayList<Object>>();
+        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<>();
         // BVs of non-heat-using weapons
-        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<ArrayList<Object>>();
+        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<>();
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
         double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
@@ -4645,7 +4619,7 @@ public abstract class Mech extends Entity {
             // stores a double first (BV), then an Integer (heat),
             // then a String (weapon name)
             // for 0 heat weapons, just stores BV and name
-            ArrayList<Object> weaponValues = new ArrayList<Object>();
+            ArrayList<Object> weaponValues = new ArrayList<>();
             if (weaponHeat > 0) {
                 // store heat and BV, for sorting a few lines down;
                 weaponValues.add(dBV);
@@ -4688,19 +4662,15 @@ public abstract class Mech extends Entity {
                             && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
                         Mounted mount = cs.getMount();
                         if ((mount.getType() instanceof MiscType)
-                                && ((MiscType) mount.getType())
-                                        .hasFlag(MiscType.F_CLUB)
+                                && mount.getType().hasFlag(MiscType.F_CLUB)
                                 && ((MiscType) mount.getType()).isVibroblade()) {
-
-                            ArrayList<Object> weaponValues = new ArrayList<Object>();
-                            double dBV = ((MiscType) mount.getType())
-                                    .getBV(this);
+                            ArrayList<Object> weaponValues = new ArrayList<>();
+                            double dBV = mount.getType().getBV(this);
                             if (hasFunctionalArmAES(mount.getLocation())) {
                                 dBV *= 1.25;
                             }
                             weaponValues.add(dBV);
-                            weaponValues.add((double) getActiveVibrobladeHeat(
-                                    location, true));
+                            weaponValues.add((double) getActiveVibrobladeHeat(location, true));
                             weaponValues.add(mount.getName());
                             heatBVs.add(weaponValues);
 
@@ -4713,12 +4683,10 @@ public abstract class Mech extends Entity {
                             bvText.append(endColumn);
                             bvText.append(startColumn);
                             bvText.append("+ ");
-                            bvText.append(getActiveVibrobladeHeat(location,
-                                    true));
+                            bvText.append(getActiveVibrobladeHeat(location, true));
                             bvText.append(endColumn);
                             bvText.append(endRow);
-                            maximumHeat += getActiveVibrobladeHeat(location,
-                                    true);
+                            maximumHeat += getActiveVibrobladeHeat(location, true);
                             break;
                         }
                     }
@@ -4784,7 +4752,6 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
 
         if (maximumHeat > mechHeatEfficiency) {
-
             bvText.append(startRow);
             bvText.append(startColumn);
 
@@ -4799,7 +4766,6 @@ public abstract class Mech extends Entity {
         }
 
         if (maximumHeat <= mechHeatEfficiency) {
-
             // count all weapons equal
             for (ArrayList<Object> weaponValues : heatBVs) {
                 // name
@@ -4816,35 +4782,30 @@ public abstract class Mech extends Entity {
                 bvText.append(weaponValues.get(0));
                 bvText.append(endColumn);
                 bvText.append(endRow);
-
             }
         } else {
             // this will count heat-generating weapons at full modified BV until
-            // heatefficiency is reached or passed with one weapon
+            // heat efficiency is reached or passed with one weapon
 
             // sort the heat-using weapons by modified BV
-            Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
-                @Override
-                public int compare(ArrayList<Object> obj1,
-                        ArrayList<Object> obj2) {
-                    Double obj1BV = (Double) obj1.get(0); // BV
-                    Double obj2BV = (Double) obj2.get(0); // BV
-                    
-                    // first element in the the ArrayList is BV, second is heat
-                    // if same BV, lower heat first
-                    if (obj1BV.equals(obj2BV)) {
-                        Double obj1Heat = (Double) obj1.get(1);
-                        Double obj2Heat = (Double) obj2.get(1);
-                        
-                        return Double.compare(obj1Heat, obj2Heat);
-                    }
-                    
-                    // higher BV first
-                    return Double.compare(obj2BV, obj1BV);
+            heatBVs.sort((obj1, obj2) -> {
+                Double obj1BV = (Double) obj1.get(0); // BV
+                Double obj2BV = (Double) obj2.get(0); // BV
+
+                // first element in the ArrayList is BV, second is heat
+                // if same BV, lower heat first
+                if (obj1BV.equals(obj2BV)) {
+                    Double obj1Heat = (Double) obj1.get(1);
+                    Double obj2Heat = (Double) obj2.get(1);
+
+                    return Double.compare(obj1Heat, obj2Heat);
                 }
+
+                // higher BV first
+                return Double.compare(obj2BV, obj1BV);
             });
             // count heat-generating weapons at full modified BV until
-            // heatefficiency is reached or
+            // heat efficiency is reached or
             // passed with one weapon
             double heatAdded = 0;
             for (ArrayList<Object> weaponValues : heatBVs) {
@@ -4879,7 +4840,7 @@ public abstract class Mech extends Entity {
                 bvText.append(endRow);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Heat count: " + heatAdded);
+                bvText.append("Heat count: ").append(heatAdded);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -4934,7 +4895,7 @@ public abstract class Mech extends Entity {
             }
             // vibroblades have been counted under weapons
             if ((mounted.getType() instanceof MiscType)
-                    && ((MiscType) mounted.getType()).hasFlag(MiscType.F_CLUB)
+                    && mounted.getType().hasFlag(MiscType.F_CLUB)
                     && ((MiscType) mounted.getType()).isVibroblade()) {
                 continue;
             }
@@ -5003,8 +4964,8 @@ public abstract class Mech extends Entity {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -5075,8 +5036,7 @@ public abstract class Mech extends Entity {
                 // Ammo with no matching weapons counts 0, unless it's a coolant
                 // pod
                 // because coolant pods have no matching weapon
-                if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString()
-                        + "1")) {
+                if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString() + "1")) {
                     ammoBV += ammo.get(key);
                 }
             }
@@ -5343,9 +5303,7 @@ public abstract class Mech extends Entity {
             pilotFactor = getCrew().getBVSkillMultiplier(game);
         }
 
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
-
-        return retVal;
+        return (int) Math.round(finalBV * pilotFactor);
     }
 
     /**
@@ -5359,7 +5317,7 @@ public abstract class Mech extends Entity {
         double[] costs = new double[17 + locations()];
         int i = 0;
 
-        double cockpitCost = 0;
+        double cockpitCost;
         if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             cockpitCost = 750000;
         } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
@@ -5561,7 +5519,7 @@ public abstract class Mech extends Entity {
         return Math.max(0, caseLocations.size() - explicit);
     }
 
-    private void addCostDetails(double cost, double[] costs) {
+    private void addCostDetails(double cost, double... costs) {
         bvText = new StringBuffer();
         String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer",
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
@@ -5623,22 +5581,6 @@ public abstract class Mech extends Entity {
 
         bvText.append(endTable);
         bvText.append("</BODY></HTML>");
-        /*
-         * maxLeft += 5; // leave some padding in the middle maxRight =
-         * Math.max(maxRight, commafy.format(cost).length()); for (int i = 0; i
-         * < left.length; i++) { String both; if (costs[i] < 0) { // negative
-         * marks it as a multiplier both = StringUtil.makeLength(left[i],
-         * maxLeft) + StringUtil.makeLength("x" + commafy.format(costs[i] -1),
-         * maxRight, true); } else if (costs[i] == 0) { both =
-         * StringUtil.makeLength(left[i], maxLeft) +
-         * StringUtil.makeLength("N/A", maxRight, true); } else { both =
-         * StringUtil.makeLength(left[i], maxLeft) +
-         * StringUtil.makeLength(commafy.format(costs[i]), maxRight, true); }
-         * detail.append(both + "\n"); totalLineLength = both.length(); } for
-         * (int x = 0; x < totalLineLength; x++) { detail.append("-"); }
-         * detail.append("\n" + StringUtil.makeLength("Total Cost:", maxLeft) +
-         * StringUtil.makeLength(commafy.format(cost), maxRight, true));
-         */
     }
 
     protected double getActuatorCost() {
@@ -5651,7 +5593,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -6450,7 +6392,7 @@ public abstract class Mech extends Entity {
     }
 
     public static String getGyroDisplayString(int inType) {
-        String inName = "";
+        String inName;
         switch (inType) {
             case GYRO_XL:
                 inName = "GYRO_XL";
@@ -6473,8 +6415,7 @@ public abstract class Mech extends Entity {
             default:
                 inName = "GYRO_UNKNOWN";
         }
-        String result = EquipmentMessages
-                .getString("SystemType.Gyro." + inName);
+        String result = EquipmentMessages.getString("SystemType.Gyro." + inName);
         if (result != null) {
             return result;
         }
@@ -6482,7 +6423,7 @@ public abstract class Mech extends Entity {
     }
 
     public static String getCockpitDisplayString(int inType) {
-        String inName = "";
+        String inName;
         switch (inType) {
             case COCKPIT_COMMAND_CONSOLE:
                 inName = "COCKPIT_COMMAND_CONSOLE";
@@ -6538,8 +6479,7 @@ public abstract class Mech extends Entity {
             default:
                 inName = "COCKPIT_UNKNOWN";
         }
-        String result = EquipmentMessages.getString("SystemType.Cockpit."
-                + inName);
+        String result = EquipmentMessages.getString("SystemType.Cockpit." + inName);
         if (result != null) {
             return result;
         }
@@ -6745,7 +6685,7 @@ public abstract class Mech extends Entity {
         // If we didn't find any heat sinks we may have an ICE with no added sinks, or prototype
         // doubles (which have a different flag). In the latter case, we want to put single
         // here, since this determines what's installed as engine-integrated heat sinks.
-        if (!heatSink.isPresent()) {
+        if (heatSink.isEmpty()) {
             sb.append(MtfFile.HS_SINGLE);
         } else if (heatSink.get().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
             sb.append(MtfFile.HS_LASER);
@@ -7479,8 +7419,7 @@ public abstract class Mech extends Entity {
         }
         boolean success = true;
 
-        int centerSlots[] = getEngine().getCenterTorsoCriticalSlots(
-                getGyroType());
+        int[] centerSlots = getEngine().getCenterTorsoCriticalSlots(getGyroType());
         if (getEmptyCriticals(LOC_CT) < centerSlots.length) {
             success = false;
         } else {
@@ -7489,7 +7428,7 @@ public abstract class Mech extends Entity {
                         CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
-        int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
+        int[] sideSlots = getEngine().getSideTorsoCriticalSlots();
         if ((getEmptyCriticals(LOC_LT) < sideSlots.length)
                 || (getEmptyCriticals(LOC_RT) < sideSlots.length) || !success) {
             success = false;
@@ -7757,28 +7696,24 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean hasCASEII(int location) {
-
-        for (Mounted mount : this.getEquipment()) {
+        for (Mounted mount : getEquipment()) {
             if ((mount.getLocation() == location)
                     && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_CASEII)) {
+                    && mount.getType().hasFlag(MiscType.F_CASEII)) {
                 return true;
             }
         }
-
         return false;
     }
 
     /* Check to see if case II exists anywhere on the mech */
     public boolean hasCASEIIAnywhere() {
-
-        for (Mounted mount : this.getEquipment()) {
+        for (Mounted mount : getEquipment()) {
             if ((mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_CASEII)) {
+                    && mount.getType().hasFlag(MiscType.F_CASEII)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -8100,7 +8035,7 @@ public abstract class Mech extends Entity {
 
     /**
      * should this mech check for a critical hit at the end of turn due to being
-     * an industrial mech and having been the target of a succesfull physical
+     * an industrial mech and having been the target of a successful physical
      * attack or for falling
      */
     public boolean isCheckForCrit() {
@@ -8141,8 +8076,7 @@ public abstract class Mech extends Entity {
         // if BV is 0
         for (Mounted mount : getEquipment()) {
             if (!mount.isArmored()
-                    || ((mount.getType() instanceof MiscType) && ((MiscType) mount
-                            .getType()).hasFlag(MiscType.F_PPC_CAPACITOR))) {
+                    || ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
                 continue;
             }
             double mountBv = mount.getType().getBV(this);
@@ -8479,9 +8413,11 @@ public abstract class Mech extends Entity {
             toReturn += "BLOWN OFF";
             first = false;
         }
+
         if (isLocationTrulyDestroyed(loc)) {
             return toReturn;
         }
+
         if (getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
             if (!first) {
                 toReturn += ", ";
@@ -8489,6 +8425,7 @@ public abstract class Mech extends Entity {
             toReturn += "BREACH";
             first = false;
         }
+
         if (hasSystem(SYSTEM_LIFE_SUPPORT, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         SYSTEM_LIFE_SUPPORT, loc) > 0)) {
@@ -8498,6 +8435,7 @@ public abstract class Mech extends Entity {
             toReturn += "Life Spt.";
             first = false;
         }
+
         if (hasSystem(SYSTEM_SENSORS, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         SYSTEM_SENSORS, loc) > 0)) {
@@ -8507,6 +8445,7 @@ public abstract class Mech extends Entity {
             toReturn += "Sensors";
             first = false;
         }
+
         if (hasSystem(SYSTEM_COCKPIT, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         SYSTEM_COCKPIT, loc) > 0)) {
@@ -8516,6 +8455,7 @@ public abstract class Mech extends Entity {
             toReturn += "Cockpit";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_SHOULDER, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_SHOULDER, loc) > 0)) {
@@ -8525,6 +8465,7 @@ public abstract class Mech extends Entity {
             toReturn += "Shoulder";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_UPPER_ARM, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_UPPER_ARM, loc) > 0)) {
@@ -8534,6 +8475,7 @@ public abstract class Mech extends Entity {
             toReturn += "Upper Arm";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_LOWER_ARM, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_LOWER_ARM, loc) > 0)) {
@@ -8543,6 +8485,7 @@ public abstract class Mech extends Entity {
             toReturn += "Lower Arm";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_HAND, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_HAND, loc) > 0)) {
@@ -8552,6 +8495,7 @@ public abstract class Mech extends Entity {
             toReturn += "Hand";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_HIP, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP,
                         loc) > 0)) {
@@ -8561,6 +8505,7 @@ public abstract class Mech extends Entity {
             toReturn += "Hip";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_UPPER_LEG, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_UPPER_LEG, loc) > 0)) {
@@ -8570,6 +8515,7 @@ public abstract class Mech extends Entity {
             toReturn += "Upper Leg";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_LOWER_LEG, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_LOWER_LEG, loc) > 0)) {
@@ -8579,6 +8525,7 @@ public abstract class Mech extends Entity {
             toReturn += "Lower Leg";
             first = false;
         }
+
         if (hasSystem(ACTUATOR_FOOT, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
                         ACTUATOR_FOOT, loc) > 0)) {
@@ -8588,6 +8535,7 @@ public abstract class Mech extends Entity {
             toReturn += "Foot";
             first = false;
         }
+
         if ((getEntityType() & ETYPE_QUADVEE) != 0
                 && hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
@@ -8598,6 +8546,7 @@ public abstract class Mech extends Entity {
             toReturn += "Conversion Gear";
             first = false;
         }
+
         if ((getEntityType() & ETYPE_LAND_AIR_MECH) != 0
                 && hasSystem(LandAirMech.LAM_AVIONICS, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
@@ -8608,6 +8557,7 @@ public abstract class Mech extends Entity {
             toReturn += "Avionics";
             first = false;
         }
+
         if ((getEntityType() & ETYPE_LAND_AIR_MECH) != 0
                 && hasSystem(LandAirMech.LAM_LANDING_GEAR, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
@@ -8616,8 +8566,8 @@ public abstract class Mech extends Entity {
                 toReturn += ", ";
             }
             toReturn += "Landing Gear";
-            first = false;
         }
+
         return toReturn;
     }
 
@@ -9043,13 +8993,11 @@ public abstract class Mech extends Entity {
                 boolean found = false;
                 for (int i = 0; i < getNumberOfCriticals(loc); i++) {
                     CriticalSlot crit = getCritical(loc, i);
-                    if ((crit != null)
-                        && crit.isHittable()
-                        && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
-                        && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
-                        vCriticals.put(Integer.valueOf(loc),
-                                new LinkedList<CriticalSlot>());
-                        vCriticals.get(Integer.valueOf(loc)).add(crit);
+                    if ((crit != null) && crit.isHittable()
+                            && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                            && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
+                        vCriticals.put(loc, new LinkedList<>());
+                        vCriticals.get(loc).add(crit);
                         found = true;
                         break;
                     }
@@ -9058,13 +9006,11 @@ public abstract class Mech extends Entity {
                     loc = this.getTransferLocation(loc);
                     for (int i = 0; i < getNumberOfCriticals(loc); i++) {
                         CriticalSlot crit = getCritical(loc, i);
-                        if ((crit != null)
-                            && crit.isHittable()
-                            && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
-                            && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
-                            vCriticals.put(Integer.valueOf(loc),
-                                    new LinkedList<CriticalSlot>());
-                            vCriticals.get(Integer.valueOf(loc)).add(crit);
+                        if ((crit != null) && crit.isHittable()
+                                && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                                && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
+                            vCriticals.put(loc, new LinkedList<>());
+                            vCriticals.get(loc).add(crit);
                             break;
                         }
                     }

@@ -25,37 +25,44 @@ class PreferenceStore implements IPreferenceStore {
     protected Properties properties;
     protected Properties defaultProperties;
 
-    protected Vector<IPreferenceChangeListener> listeners = new Vector<IPreferenceChangeListener>();
+    protected Vector<IPreferenceChangeListener> listeners = new Vector<>();
 
     public PreferenceStore() {
         defaultProperties = new Properties();
         properties = new Properties(defaultProperties);
     }
 
+    @Override
     public boolean getDefaultBoolean(String name) {
         return getBoolean(defaultProperties, name);
     }
 
+    @Override
     public int getDefaultInt(String name) {
         return getInt(defaultProperties, name);
     }
 
+    @Override
     public long getDefaultLong(String name) {
         return getLong(defaultProperties, name);
     }
 
+    @Override
     public String getDefaultString(String name) {
         return getString(defaultProperties, name);
     }
 
+    @Override
     public double getDefaultDouble(String name) {
         return getDouble(defaultProperties, name);
     }
 
+    @Override
     public float getDefaultFloat(String name) {
         return getFloat(defaultProperties, name);
     }
 
+    @Override
     public boolean getBoolean(String name) {
         return getBoolean(properties, name);
     }
@@ -69,6 +76,7 @@ class PreferenceStore implements IPreferenceStore {
         return false;
     }
 
+    @Override
     public double getDouble(String name) {
         return getDouble(properties, name);
     }
@@ -85,6 +93,7 @@ class PreferenceStore implements IPreferenceStore {
         return ival;
     }
 
+    @Override
     public float getFloat(String name) {
         return getFloat(properties, name);
     }
@@ -101,6 +110,7 @@ class PreferenceStore implements IPreferenceStore {
         return ival;
     }
 
+    @Override
     public int getInt(String name) {
         return getInt(properties, name);
     }
@@ -117,6 +127,7 @@ class PreferenceStore implements IPreferenceStore {
         return ival;
     }
 
+    @Override
     public long getLong(String name) {
         return getLong(properties, name);
     }
@@ -133,6 +144,7 @@ class PreferenceStore implements IPreferenceStore {
         return ival;
     }
 
+    @Override
     public String getString(String name) {
         return getString(properties, name);
     }
@@ -144,30 +156,37 @@ class PreferenceStore implements IPreferenceStore {
         return value;
     }
 
+    @Override
     public void setDefault(String name, double value) {
         setValue(defaultProperties, name, value);
     }
 
+    @Override
     public void setDefault(String name, float value) {
         setValue(defaultProperties, name, value);
     }
 
+    @Override
     public void setDefault(String name, int value) {
         setValue(defaultProperties, name, value);
     }
 
+    @Override
     public void setDefault(String name, long value) {
         setValue(defaultProperties, name, value);
     }
 
+    @Override
     public void setDefault(String name, String value) {
         setValue(defaultProperties, name, value);
     }
 
+    @Override
     public void setDefault(String name, boolean value) {
         setValue(defaultProperties, name, value);
     }
 
+    @Override
     public void setValue(String name, double value) {
         double oldValue = getDouble(name);
         if (oldValue != value) {
@@ -178,6 +197,7 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public void setValue(String name, float value) {
         float oldValue = getFloat(name);
         if (oldValue != value) {
@@ -187,6 +207,7 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public void setValue(String name, int value) {
         int oldValue = getInt(name);
         if (oldValue != value) {
@@ -197,6 +218,7 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public void setValue(String name, long value) {
         long oldValue = getLong(name);
         if (oldValue != value) {
@@ -206,6 +228,7 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public void setValue(String name, String value) {
         String oldValue = getString(name);
         if (oldValue == null || !oldValue.equals(value)) {
@@ -215,6 +238,7 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public void setValue(String name, boolean value) {
         boolean oldValue = getBoolean(name);
         if (oldValue != value) {
@@ -225,6 +249,7 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public void putValue(String name, String value) {
         String oldValue = getString(name);
         if (oldValue == null || !oldValue.equals(value)) {
@@ -262,12 +287,14 @@ class PreferenceStore implements IPreferenceStore {
         p.put(name, value);
     }
 
+    @Override
     public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
         if (!listeners.contains((listener))) {
             listeners.addElement(listener);
         }
     }
 
+    @Override
     public void removePreferenceChangeListener(
             IPreferenceChangeListener listener) {
         listeners.removeElement(listener);
@@ -286,8 +313,9 @@ class PreferenceStore implements IPreferenceStore {
         }
     }
 
+    @Override
     public String[] getAdvancedProperties() {
-        Vector<String> v = new Vector<String>();
+        Vector<String> v = new Vector<>();
         String s;
         for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
             s = (String) e.nextElement();
@@ -295,7 +323,7 @@ class PreferenceStore implements IPreferenceStore {
                 v.addElement(s);
             }
         }
-        String props[] = new String[v.size()];
+        String[] props = new String[v.size()];
         for (int i = 0; i < v.size(); i++) {
             props[i] = v.elementAt(i);
         }

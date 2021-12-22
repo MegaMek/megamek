@@ -40,13 +40,13 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * Track game entities
      */
-    private Vector<Entity> entities = new Vector<Entity>();
-    private Hashtable<Integer, Entity> entityIds = new Hashtable<Integer, Entity>();
+    private Vector<Entity> entities = new Vector<>();
+    private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
 
     /**
      * Track entities removed from the game (probably by death)
      */
-    Vector<Entity> vOutOfGame = new Vector<Entity>();
+    Vector<Entity> vOutOfGame = new Vector<>();
 
     /**
      * @param source event source
@@ -94,7 +94,7 @@ public class GameVictoryEvent extends GameEvent {
      */
     // TODO: Correctly implement "Captured" Entities
     public Enumeration<Entity> getGraveyardEntities() {
-        Vector<Entity> graveyard = new Vector<Entity>();
+        Vector<Entity> graveyard = new Vector<>();
 
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
@@ -111,7 +111,7 @@ public class GameVictoryEvent extends GameEvent {
      * Returns an enumeration of wrecked entities.
      */
     public Enumeration<Entity> getWreckedEntities() {
-        Vector<Entity> wrecks = new Vector<Entity>();
+        Vector<Entity> wrecks = new Vector<>();
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
                 || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
@@ -127,7 +127,7 @@ public class GameVictoryEvent extends GameEvent {
      * Returns an enumeration of entities that have retreated
      */
     public Enumeration<Entity> getRetreatedEntities() {
-        Vector<Entity> sanctuary = new Vector<Entity>();
+        Vector<Entity> sanctuary = new Vector<>();
 
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
@@ -143,7 +143,7 @@ public class GameVictoryEvent extends GameEvent {
      * Returns an enumeration of entities that were utterly destroyed
      */
     public Enumeration<Entity> getDevastatedEntities() {
-        Vector<Entity> smithereens = new Vector<Entity>();
+        Vector<Entity> smithereens = new Vector<>();
 
         for (Entity entity : vOutOfGame) {
             if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {

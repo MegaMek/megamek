@@ -14,6 +14,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -61,6 +62,7 @@ public class ISThunderBolt15 extends ThunderBoltWeapon {
             .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS,F_LC);
+            .setProductionFactions(F_FS,F_LC)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

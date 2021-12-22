@@ -1,5 +1,7 @@
 package megamek.common.weapons.prototypes;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -63,6 +65,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2827, DATE_NONE)
         .setClanApproximate(true, false, false,true, false)
         .setPrototypeFactions(F_CSF)
-        .setProductionFactions(F_CGS);
+        .setProductionFactions(F_CGS)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

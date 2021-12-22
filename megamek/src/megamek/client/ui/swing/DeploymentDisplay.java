@@ -121,7 +121,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupButtonPanel();        
     }
     
-    protected ArrayList<MegamekButton> getButtonList() {                
+    @Override
+    protected ArrayList<MegamekButton> getButtonList() {
         ArrayList<MegamekButton> buttonList = new ArrayList<>();
         DeployCommand[] commands = DeployCommand.values();
         CommandComparator comparator = new CommandComparator();
@@ -264,8 +265,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final Entity en = ce();
 
         if ((en instanceof Dropship) && !en.isAirborne()) {
-            ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
-            ArrayList<Coords> secondaryPositions = new ArrayList<Coords>();
+            ArrayList<Coords> crushedBuildingLocs = new ArrayList<>();
+            ArrayList<Coords> secondaryPositions = new ArrayList<>();
             secondaryPositions.add(en.getPosition());
             for (int dir = 0; dir < 6; dir++) {
                 secondaryPositions.add(en.getPosition().translated(dir));
@@ -614,6 +615,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
         final Client client = clientgui.getClient();
         final String actionCmd = ev.getActionCommand();
@@ -661,7 +663,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             bayChoices.add(((Bay) t).getBayNumber());
                         }
                     }
-                    if ((bayChoices.size() > 1) && !(other instanceof Infantry)) {
+
+                    if (bayChoices.size() > 1) {
                         String[] retVal = new String[bayChoices.size()];
                         int i = 0;
                         for (Integer bn : bayChoices) {
@@ -870,13 +873,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         die();
     }
     
     /** Returns a list of the entities that can be loaded into the currently selected entity. */
     private List<Entity> getLoadableEntities() {       
-        ArrayList<Entity> choices = new ArrayList<Entity>();
+        ArrayList<Entity> choices = new ArrayList<>();
         // If current entity is null, nothing to do
         if (ce() == null) {
             return choices;

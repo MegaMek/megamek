@@ -362,7 +362,7 @@ public final class UnitToolTip {
                 currentWp.isRapidFire = weapDesc.contains(RAPIDFIRE);
 
                 // Create the ranges String
-                int ranges[];
+                int[] ranges;
                 if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
@@ -436,7 +436,7 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         boolean subsequentLine = false; 
         // Display sorted by weapon name
-        var wps = new ArrayList<WeaponInfo>(wpInfos.values());
+        var wps = new ArrayList<>(wpInfos.values());
         wps.sort(Comparator.comparing(w -> w.sortString));
         int totalWeaponCount = wpInfos.values().stream().filter(i -> i.ammos.isEmpty()).mapToInt(wp -> wp.count).sum();
         boolean hasMultiples = wpInfos.values().stream().mapToInt(wp -> wp.count).anyMatch(c -> c > 1);

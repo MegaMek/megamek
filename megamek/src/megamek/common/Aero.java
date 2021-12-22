@@ -313,6 +313,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * A method to determine if an aero has suffered 3 sensor hits.
      * When double-blind is on, this affects both standard visibility and sensor rolls
      */
+    @Override
     public boolean isAeroSensorDestroyed() {
         return getSensorHits() >= 3;
     }
@@ -739,6 +740,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     //Landing mods for partial repairs
+    @Override
     public int getLandingGearPartialRepairs() {
     	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
         return 2;
@@ -750,6 +752,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     //Avionics mods for partial repairs
+    @Override
     public int getAvionicsMisreplaced() {
     	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
@@ -758,6 +761,7 @@ public class Aero extends Entity implements IAero, IBomber {
     	}
     }
 
+    @Override
     public int getAvionicsMisrepaired() {
     	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
@@ -826,6 +830,7 @@ public class Aero extends Entity implements IAero, IBomber {
         return fuel;
     }
 
+    @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
         		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -835,6 +840,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
 
+    @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
             	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -850,15 +856,18 @@ public class Aero extends Entity implements IAero, IBomber {
      * @param gas
      *            Number of fuel points.
      */
+    @Override
     public void setFuel(int gas) {
         fuel = gas;
         currentfuel = gas;
     }
 
+    @Override
     public void setCurrentFuel(int gas) {
     	currentfuel = gas;
     }
 
+    @Override
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
             return 80 / primitiveFuelFactor();
@@ -1615,7 +1624,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // subtract for explosive ammo
         double explosivePenalty = 0;
         // FIXME: Consider new AmmoType::equals / BombType::equals
-        Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
+        Map<AmmoType, Boolean> ammos = new HashMap<>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 1;
@@ -2311,8 +2320,8 @@ public class Aero extends Entity implements IAero, IBomber {
         // extra BV for when we have semiguided LRMs and someone else has TAG on
         // our team
         double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
+        Map<String, Double> ammo = new HashMap<>();
+        ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
@@ -2700,7 +2709,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -4256,6 +4265,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * @return The number conventional marines available to vessels for boarding actions.
      */
+    @Override
     public int getNMarines() {
         return 0;
     }
@@ -4523,7 +4533,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            Vector<Sensor> sensorsToRemove = new Vector<>();
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {

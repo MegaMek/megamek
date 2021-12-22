@@ -185,38 +185,47 @@ public abstract class TestEntity implements TestEntityOption {
         return options.showUnderweightedEntity();
     }
 
+    @Override
     public boolean showCorrectArmor() {
         return options.showCorrectArmor();
     }
 
+    @Override
     public boolean showCorrectCritical() {
         return options.showCorrectCritical();
     }
 
+    @Override
     public boolean showFailedEquip() {
         return options.showFailedEquip();
     }
 
+    @Override
     public boolean ignoreFailedEquip(String name) {
         return options.ignoreFailedEquip(name);
     }
     
+    @Override
     public boolean showIncorrectIntroYear() {
         return options.showIncorrectIntroYear();
     }
     
+    @Override
     public int getIntroYearMargin() {
         return options.getIntroYearMargin();
     }
 
+    @Override
     public boolean skip() {
         return options.skip();
     }
 
+    @Override
     public int getTargCompCrits() {
         return options.getTargCompCrits();
     }
 
+    @Override
     public int getPrintSize() {
         return options.getPrintSize();
     }

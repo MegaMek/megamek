@@ -19,6 +19,7 @@ package megamek.common.weapons.mortars;
 
 import megamek.common.AmmoType;
 import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -56,15 +57,17 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         bv = 15;
         cost = 10000;
         rulesRefs = "315,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_C)
             .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
-            .setISAdvancement(DATE_PS, DATE_ES, 3078, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setClanAdvancement(DATE_PS, DATE_ES, 3078, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false);
+            .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, true,false, false)
+            .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, true,false, false)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     /*

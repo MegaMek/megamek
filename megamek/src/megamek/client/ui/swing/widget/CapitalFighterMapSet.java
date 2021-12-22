@@ -61,7 +61,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private PMSimpleLabel fcsCritLabel;
     private PMSimpleLabel sensorCritLabel;
     private PMSimpleLabel pilotCritLabel;
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     private int stepY = 14;
@@ -69,7 +69,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private int armorRows = 8;
     private int armorCols = 6;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
 
     public CapitalFighterMapSet(JComponent c) {
@@ -84,14 +84,17 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     public void setRest() {
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Aero t = (Aero) e;
 
@@ -149,11 +152,11 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         armorLabel = new PMSimpleLabel("Armor:", fm, Color.white);
         armorVLabel = new PMValueLabel(fm, Color.red.brighter());
 
-        avCritLabel = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
-        engineCritLabel = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
-        fcsCritLabel = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
-        sensorCritLabel = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
-        pilotCritLabel = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
+        avCritLabel = new PMSimpleLabel("Avionics:", fm, Color.white);
+        engineCritLabel = new PMSimpleLabel("Engine:", fm, Color.white);
+        fcsCritLabel = new PMSimpleLabel("FCS:", fm, Color.white);
+        sensorCritLabel = new PMSimpleLabel("Sensors:", fm, Color.white);
+        pilotCritLabel = new PMSimpleLabel("Pilot hits:", fm, Color.white);
     }
 
     private void setBackGround() {

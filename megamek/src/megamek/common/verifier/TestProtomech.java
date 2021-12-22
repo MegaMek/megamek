@@ -786,7 +786,7 @@ public class TestProtomech extends TestEntity {
         }
     }
     
-    private static final int MAX_ARMOR_FACTOR[] = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
+    private static final int[] MAX_ARMOR_FACTOR = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
     
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location

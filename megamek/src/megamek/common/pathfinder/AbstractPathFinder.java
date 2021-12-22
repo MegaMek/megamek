@@ -226,7 +226,7 @@ public class AbstractPathFinder<N, C, E> {
                 || edgeRelaxer == null
                 || edgeAdjacencyMap == null
                 || edgeComparator == null) {
-            throw new IllegalArgumentException("Arguments must be non null:" ////$NON-NLS-1$
+            throw new IllegalArgumentException("Arguments must be non null:"
                     + stopCondition + edgeDestinationMap + edgeRelaxer + edgeAdjacencyMap + edgeComparator);
         }
         this.destinationMap = edgeDestinationMap;
@@ -234,7 +234,7 @@ public class AbstractPathFinder<N, C, E> {
         this.adjacencyMap = edgeAdjacencyMap;
         this.comparator = edgeComparator;
 
-        candidates = new PriorityQueue<E>(100, edgeComparator);
+        candidates = new PriorityQueue<>(100, edgeComparator);
     }
 
     /**
@@ -296,13 +296,13 @@ public class AbstractPathFinder<N, C, E> {
                     break;
             }
         } catch (OutOfMemoryError e) {
-            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
-                    + " Try setting time limit to lower value, or "//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."
+                    + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
             
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
         }
     }
 
@@ -365,7 +365,7 @@ public class AbstractPathFinder<N, C, E> {
         if (comparator == null)
             throw new NullPointerException();
         this.comparator = comparator;
-        this.candidates = new PriorityQueue<E>(100, comparator);
+        this.candidates = new PriorityQueue<>(100, comparator);
     }
 
     /**

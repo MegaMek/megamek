@@ -258,7 +258,7 @@ public class Princess extends BotClient {
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (final PrincessException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return;
         }
         getStrategicBuildingTargets().clear();
@@ -1194,13 +1194,10 @@ public class Princess extends BotClient {
 
     @Override
     protected MovePath continueMovementFor(final Entity entity) {
-        if (null == entity) {
-            throw new NullPointerException("Entity is null.");
-        }
+        Objects.requireNonNull(entity, "Entity is null.");
 
         try {
-            // figure out who moved last, and who's move lists need to be 
-            // updated
+            // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase
             LogManager.getLogger().debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
@@ -1282,12 +1279,12 @@ public class Princess extends BotClient {
             if (0 == rankedpaths.size()) {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
-            
+
             LogManager.getLogger().debug("Path ranking took " + (stop_time - startTime) + " millis");
-            
+
             final RankedPath bestpath = getPathRanker(entity).getBestPath(rankedpaths);
             LogManager.getLogger().info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
-            
+
             return performPathPostProcessing(bestpath);
         } finally {
             precognition.unPause();
@@ -1838,6 +1835,7 @@ public class Princess extends BotClient {
         refreshCrippledUnits();
     }
 
+    @Override
     protected void handlePacket(final Packet c) {
         final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.getCommand());
         try {
@@ -1852,6 +1850,7 @@ public class Princess extends BotClient {
     /**
      * sends a load game file to the server
      */
+    @Override
     public void sendLoadGame(final File f) {
         precognition.resetGame();
         super.sendLoadGame(f);
@@ -1862,6 +1861,7 @@ public class Princess extends BotClient {
         send(packet);
     }
     
+    @Override
     protected void disconnected() {
         if (null != precognition) {
             precognition.signalDone();

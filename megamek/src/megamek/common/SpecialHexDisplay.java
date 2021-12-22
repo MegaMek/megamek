@@ -29,8 +29,7 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), 
-                "artyauto.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif").toString()) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -41,8 +40,7 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_ADJUSTED(new MegaMekFile(Configuration.hexesDir(), 
-                "artyadj.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_ADJUSTED(new MegaMekFile(Configuration.hexesDir(), "artyadj.gif").toString()) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -53,24 +51,20 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_INCOMING(new MegaMekFile(Configuration.hexesDir(), 
-                "artyinc.gif").toString()), //$NON-NLS-1$
-        ARTILLERY_TARGET(new MegaMekFile(Configuration.hexesDir(), 
-                "artytarget.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_INCOMING(new MegaMekFile(Configuration.hexesDir(), "artyinc.gif").toString()),
+        ARTILLERY_TARGET(new MegaMekFile(Configuration.hexesDir(), "artytarget.gif").toString()) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(), 
-                "artyhit.gif").toString()) { //$NON-NLS-1$
+        ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(), "artyhit.gif").toString()) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(), 
-                "note.png").toString()) { //$NON-NLS-1$
+        PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(), "note.png").toString()) {
             @Override
             public boolean drawBefore() {
                 return true;

@@ -90,11 +90,11 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         getContentPane().add(choicePanel, BorderLayout.CENTER);
         JPanel butPanel = new JPanel();
         butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton bOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-        bOkay.setActionCommand("okay"); //$NON-NLS-1$
+        JButton bOkay = new JButton(Messages.getString("Okay"));
+        bOkay.setActionCommand("okay");
         bOkay.addActionListener(this);
-        JButton bCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-        bCancel.setActionCommand("cancel"); //$NON-NLS-1$
+        JButton bCancel = new JButton(Messages.getString("Cancel"));
+        bCancel.setActionCommand("cancel");
         bCancel.addActionListener(this);
         butPanel.add(bOkay);
         butPanel.add(bCancel);
@@ -106,8 +106,9 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if ("okay".equals(e.getActionCommand())) { //$NON-NLS-1$
+        if ("okay".equals(e.getActionCommand())) {
             boolean bMeSet = false;
             for (int x = 0; x < m_players.length; x++) {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
@@ -129,7 +130,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             }
             bSet = true;
             setVisible(false);
-        } else if ("cancel".equals(e.getActionCommand())) { //$NON-NLS-1$
+        } else if ("cancel".equals(e.getActionCommand())) {
             setVisible(false);
         }
     }

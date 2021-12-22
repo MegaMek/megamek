@@ -736,7 +736,7 @@ public class BattleForceElement {
         
         public void addDamage(int damageClass, int rangeIndex, double val) {
             if (!specialDamage.containsKey(damageClass)) {
-                specialDamage.put(damageClass, new ArrayList<Double>());
+                specialDamage.put(damageClass, new ArrayList<>());
             }
             addDamage(specialDamage.get(damageClass), rangeIndex, val);
         }

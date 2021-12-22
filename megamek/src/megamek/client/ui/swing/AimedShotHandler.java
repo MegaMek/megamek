@@ -90,8 +90,8 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
             asd = new AimedShotDialog(
                     this.firingDisplay.clientgui.frame,
-                    Messages.getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
-                    Messages.getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
+                    Messages.getString("FiringDisplay.AimedShotDialog.title"),
+                    Messages.getString("FiringDisplay.AimedShotDialog.message"),
                     options, enabled, aimingAt, this, this);
 
             asd.setVisible(true);
@@ -364,6 +364,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     /**
      * ActionListener, listens to the button in the dialog.
      */
+    @Override
     public void actionPerformed(ActionEvent ev) {
         closeDialog();
     }
@@ -371,6 +372,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     /**
      * ItemListener, listens to the radiobuttons in the dialog.
      */
+    @Override
     public void itemStateChanged(ItemEvent ev) {
         IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
         aimingAt = icb.getIndex();

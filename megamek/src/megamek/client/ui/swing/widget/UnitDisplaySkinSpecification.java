@@ -23,32 +23,32 @@ package megamek.client.ui.swing.widget;
  */
 public class UnitDisplaySkinSpecification {
 
-    private String generalTabIdle = "tab_general_idle.gif"; //$NON-NLS-1$
-    private String pilotTabIdle = "tab_pilot_idle.gif"; //$NON-NLS-1$
-    private String armorTabIdle = "tab_armor_idle.gif"; //$NON-NLS-1$
-    private String systemsTabIdle = "tab_systems_idle.gif"; //$NON-NLS-1$
-    private String weaponsTabIdle = "tab_weapon_idle.gif"; //$NON-NLS-1$
-    private String extrasTabIdle = "tab_extras_idle.gif"; //$NON-NLS-1$
-    private String generalTabActive = "tab_general_active.gif"; //$NON-NLS-1$
-    private String pilotTabActive = "tab_pilot_active.gif"; //$NON-NLS-1$
-    private String armorTabActive = "tab_armor_active.gif"; //$NON-NLS-1$
-    private String systemsTabActive = "tab_systems_active.gif"; //$NON-NLS-1$
-    private String weaponsTabActive = "tab_weapon_active.gif"; //$NON-NLS-1$
-    private String extraTabActive = "tab_extras_active.gif"; //$NON-NLS-1$
-    private String cornerIdle = "idle_corner.gif"; //$NON-NLS-1$
-    private String cornerActive = "active_corner.gif"; //$NON-NLS-1$
+    private String generalTabIdle = "tab_general_idle.gif";
+    private String pilotTabIdle = "tab_pilot_idle.gif";
+    private String armorTabIdle = "tab_armor_idle.gif";
+    private String systemsTabIdle = "tab_systems_idle.gif";
+    private String weaponsTabIdle = "tab_weapon_idle.gif";
+    private String extrasTabIdle = "tab_extras_idle.gif";
+    private String generalTabActive = "tab_general_active.gif";
+    private String pilotTabActive = "tab_pilot_active.gif";
+    private String armorTabActive = "tab_armor_active.gif";
+    private String systemsTabActive = "tab_systems_active.gif";
+    private String weaponsTabActive = "tab_weapon_active.gif";
+    private String extraTabActive = "tab_extras_active.gif";
+    private String cornerIdle = "idle_corner.gif";
+    private String cornerActive = "active_corner.gif";
 
-    private String backgroundTile = "tile.gif"; //$NON-NLS-1$
-    private String topLine = "h_line.gif"; //$NON-NLS-1$
-    private String bottomLine = "h_line.gif"; //$NON-NLS-1$
-    private String leftLine = "v_line.gif"; //$NON-NLS-1$
-    private String rightLine = "v_line.gif"; //$NON-NLS-1$
-    private String topLeftCorner = "tl_corner.gif"; //$NON-NLS-1$
-    private String bottomLeftCorner = "bl_corner.gif"; //$NON-NLS-1$
-    private String topRightCorner = "tr_corner.gif"; //$NON-NLS-1$
-    private String bottomRightCorner = "br_corner.gif"; //$NON-NLS-1$
+    private String backgroundTile = "tile.gif";
+    private String topLine = "h_line.gif";
+    private String bottomLine = "h_line.gif";
+    private String leftLine = "v_line.gif";
+    private String rightLine = "v_line.gif";
+    private String topLeftCorner = "tl_corner.gif";
+    private String bottomLeftCorner = "bl_corner.gif";
+    private String topRightCorner = "tr_corner.gif";
+    private String bottomRightCorner = "br_corner.gif";
 
-    private String mechOutline = "bg_mech.gif"; //$NON-NLS-1$
+    private String mechOutline = "bg_mech.gif";
 
     public String getGeneralTabIdle() {
         return generalTabIdle;

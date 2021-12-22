@@ -25,6 +25,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
@@ -93,17 +94,14 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
     
 
-    public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
+    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
         ToHitData toHit = waa.toHit(game);
-        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned
-        // even
-        // if the have an impossible to hit, because there might be other
-        // targets
+        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even
+        // if the have an impossible to hit, because there might be other targets
         // someone else please please figure out how to do this nice
         AttackHandler ah = getCorrectHandler(toHit, waa, game, server);
-        if (ah instanceof LRMSwarmHandler || ah instanceof LRMSwarmIHandler)
-            return ah;
-        return toHit.getValue() == TargetRoll.IMPOSSIBLE ? null : ah;
+        return (ah instanceof LRMSwarmHandler) ? ah
+                : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : ah;
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,
@@ -113,7 +111,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     
     /**
      * Adapt the weapon type to the Game Options such as
-     * PPC Field Inhbitiors or Dial Down Damage, usually
+     * PPC Field Inhibitors or Dial Down Damage, usually
      * adding or removing modes. <B><I>When overriding this in a
      * weapon subclass, call super()!</I></B>
      * 

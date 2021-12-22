@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.Dimension;
@@ -35,31 +34,25 @@ import megamek.common.SpecialHexDisplay;
  * <code>SpecialHexDisplay</code> framework.
  * 
  * @author arlith
- * 
  */
 public class NoteDialog extends JDialog implements ActionListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3126840102187553386L;
     
     private JLabel noteLbl, visibilityLbl;
     
-    private JComboBox<String> visibility = new JComboBox<String>(); //$NON-NLS-1$
+    private JComboBox<String> visibility = new JComboBox<>();
     
-    private JTextArea noteText = new JTextArea(""); //$NON-NLS-1$
+    private JTextArea noteText = new JTextArea("");
   
-    private JButton butDone = new JButton(Messages
-            .getString("NoteDialog.Done")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages
-            .getString("NoteDialog.Cancel")); //$NON-NLS-1$
+    private JButton butDone = new JButton(Messages.getString("NoteDialog.Done"));
+    private JButton butCancel = new JButton(Messages.getString("NoteDialog.Cancel"));
     
     boolean accepted = false;
     
     SpecialHexDisplay note;
 
     NoteDialog(JFrame frame, SpecialHexDisplay note) {
-        super(frame, Messages.getString("NoteDialog.title"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("NoteDialog.title"), true);
         this.note = note;
         setResizable(false);
         butDone.addActionListener(this);
@@ -71,8 +64,8 @@ public class NoteDialog extends JDialog implements ActionListener {
         noteText.setMinimumSize(new Dimension(getWidth(),200));
         noteText.setPreferredSize(new Dimension(getWidth(),200));
         
-        noteLbl = new JLabel(Messages.getString("NoteDialog.note")); //$NON-NLS-1$
-        visibilityLbl = new JLabel(Messages.getString("NoteDialog.visibility")); //$NON-NLS-1$
+        noteLbl = new JLabel(Messages.getString("NoteDialog.note"));
+        visibilityLbl = new JLabel(Messages.getString("NoteDialog.visibility"));
         
         visibility.addItem(Messages.getString("NoteDialog.owner"));
         visibility.addItem(Messages.getString("NoteDialog.team"));
@@ -109,6 +102,7 @@ public class NoteDialog extends JDialog implements ActionListener {
         return accepted;
     }
   
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(butDone)) {
             note.setInfo(noteText.getText());

@@ -43,8 +43,8 @@ public class MegamekBorder extends EtchedBorder {
     protected ImageIcon tlCorner, trCorner, blCorner, brCorner;
     protected ArrayList<ImageIcon> leftLine, topLine, rightLine, bottomLine;
     // We need to know whether each tile in each edge should be tiled or static
-    public ArrayList<Boolean> leftShouldTile,topShouldTile;
-    public ArrayList<Boolean> rightShouldTile,bottomShouldTile;
+    public ArrayList<Boolean> leftShouldTile, topShouldTile;
+    public ArrayList<Boolean> rightShouldTile, bottomShouldTile;
     // Keep track of the total number of space taken up by static (non-tiled)
     //  icons for each edge
     protected int leftStaticSpace, topStaticSpace;
@@ -242,14 +242,15 @@ public class MegamekBorder extends EtchedBorder {
     /**
      * Paints the border using the loaded corner icons and edge icons.
      */
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, 
-            int height) {
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width,
+                            int height) {
         // Do nothing if we don't want to draw a border
         if (noBorder) {
             return;
         }
         
-        // If the icons didn't loaded, treat this as a regualar border
+        // If the icons didn't load, treat this as a regular border
         if (!iconsLoaded) {
             super.paintBorder(c, g, x, y, width, height);
             return;
@@ -306,8 +307,8 @@ public class MegamekBorder extends EtchedBorder {
     private void paintCorner(Component c, Graphics g, int x, int y, ImageIcon icon) {
         int tileW = icon.getIconWidth();
         int tileH = icon.getIconHeight();
-        g = g.create(x, y, x+tileW, y+tileH);
-        icon.paintIcon(c,g,0,0);
+        g = g.create(x, y, x + tileW, y + tileH);
+        icon.paintIcon(c, g, 0, 0);
         g.dispose();        
     }
     
@@ -391,9 +392,10 @@ public class MegamekBorder extends EtchedBorder {
         }
     }
     
+    @Override
     public Insets getBorderInsets(Component c, Insets insets) {
         if (noBorder) {
-            return new Insets(0,0,0,0);
+            return new Insets(0, 0, 0, 0);
         } else {
             return computeInsets(insets);
         }
@@ -403,8 +405,8 @@ public class MegamekBorder extends EtchedBorder {
         return (Insets) (insets.clone());
     }
     
+    @Override
     public boolean isBorderOpaque() {
         return true;
     }
-
 }

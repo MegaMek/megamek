@@ -31,10 +31,10 @@ public class TOCNode extends RulesetNode {
     protected ArrayList<ValueNode> flagNodes;
 
     protected TOCNode() {
-        unitTypeNodes = new ArrayList<ValueNode>();
-        eschelonNodes = new ArrayList<ValueNode>();
-        ratingNodes = new ArrayList<ValueNode>();
-        flagNodes = new ArrayList<ValueNode>();
+        unitTypeNodes = new ArrayList<>();
+        eschelonNodes = new ArrayList<>();
+        ratingNodes = new ArrayList<>();
+        flagNodes = new ArrayList<>();
     }
 
     public ValueNode findUnitTypes(ForceDescriptor fd) {

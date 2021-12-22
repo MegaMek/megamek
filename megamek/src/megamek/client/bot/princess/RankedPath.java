@@ -59,6 +59,7 @@ class RankedPath implements Comparable<RankedPath> {
         this.reason = reason;
     }
 
+    @Override
     public int compareTo(RankedPath p) {
         if (rank < p.rank) {
             return -1;

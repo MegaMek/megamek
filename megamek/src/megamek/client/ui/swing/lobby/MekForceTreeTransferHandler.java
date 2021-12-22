@@ -33,6 +33,7 @@ import javax.swing.tree.TreePath;
 
 import megamek.common.Entity;
 import megamek.common.force.Force;
+import org.apache.logging.log4j.LogManager;
 
 /** 
  * The TransferHandler manages drag-and-drop for the C3 tree. 
@@ -111,7 +112,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             return false;
         }
         return true;
@@ -177,7 +178,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             
             
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             return false;
         }
         return false;

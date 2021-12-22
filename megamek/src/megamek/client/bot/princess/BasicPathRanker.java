@@ -730,6 +730,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * @param position Coords from which the closest enemy is found
      * @param game     Game that we're playing
      */
+    @Override
     public double distanceToClosestEnemy(Entity me, Coords position, Game game) {
         Targetable closest = findClosestEnemy(me, position, game);
         if (closest == null) {

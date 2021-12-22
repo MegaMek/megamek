@@ -556,19 +556,16 @@ public class RATGeneratorEditor extends JFrame {
 
     private void filterFactionList() {
         RowFilter<FactionListTableModel, Integer> rf;
-        rf = new RowFilter<FactionListTableModel, Integer>() {
+        rf = new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends FactionListTableModel,
-                    ? extends Integer> entry) {
+            public boolean include(Entry<? extends FactionListTableModel, ? extends Integer> entry) {
                 FactionListTableModel model = entry.getModel();
                 FactionRecord rec = model.getFactionRecord(entry.getIdentifier());
-                if (!chkShowSubfactions.isSelected() &&
-                        rec.getKey().contains(".")) {
+                if (!chkShowSubfactions.isSelected() && rec.getKey().contains(".")) {
                     return false;
                 }
 
-                return chkShowMinorFactions.isSelected() ||
-                        rec.getParentFactions() == null;
+                return chkShowMinorFactions.isSelected() || rec.getParentFactions() == null;
             }
         };
         masterFactionListSorter.setRowFilter(rf);
@@ -576,18 +573,15 @@ public class RATGeneratorEditor extends JFrame {
 
     private void filterMasterUnitList() {
         RowFilter<MasterUnitListTableModel, Integer> rf;
-        rf = new RowFilter<MasterUnitListTableModel, Integer>() {
+        rf = new RowFilter<>() {
             @Override
-            public boolean include(Entry<? extends MasterUnitListTableModel,
-                    ? extends Integer> entry) {
+            public boolean include(Entry<? extends MasterUnitListTableModel, ? extends Integer> entry) {
                 MasterUnitListTableModel model = entry.getModel();
                 ModelRecord rec = model.getUnitRecord(entry.getIdentifier());
-                if (cbUnitType.getSelectedIndex() > 0 &&
-                        !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
+                if (cbUnitType.getSelectedIndex() > 0 && !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
                     return false;
                 }
-                if (cbMovementType.getSelectedIndex() > 0 &&
-                        (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
+                if (cbMovementType.getSelectedIndex() > 0 && (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
                     return false;
                 }
                 if (txtSearch.getText().length() > 0) {
@@ -802,6 +796,7 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS.length + 1;
         }
 
+        @Override
         public int getRowCount() {
             if (data == null) {
                 return 0;
@@ -830,17 +825,18 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
+            if (!(value instanceof String) || !((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
+                return;
+            }
+            String stringValue = (String) value;
             AvailabilityRating ar;
             int era = ERAS[col - 1];
-            if ((value).equals("")) {
+            if (stringValue.isBlank()) {
                 ar = null;
-            } else if (!((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
-                return;
             } else {
-                ar = new AvailabilityRating(getUnitKey(), era,
-                        factions.get(row) + ":" + value);
+                ar = new AvailabilityRating(getUnitKey(), era, factions.get(row) + ":" + stringValue);
             }
-            data.get(factions.get(row)).set(col - 1, (String) value);
+            data.get(factions.get(row)).set(col - 1, stringValue);
             if (rg.getChassisRecord(getUnitKey()) != null) {
                 if (ar == null) {
                     rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                
@@ -907,7 +903,7 @@ public class RATGeneratorEditor extends JFrame {
             }       
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
-                if (!copyFrom.get(i).equals("")) {
+                if (!copyFrom.get(i).isBlank()) {
                     AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i],
                             newFaction + ":" + copyFrom.get(i));
                     if (mode == MODE_MODEL) {
@@ -1306,6 +1302,7 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS.length + 1;
         }
         
+        @Override
         public int getRowCount() {
             if (data == null) {
                 return 0;
@@ -1379,7 +1376,7 @@ public class RATGeneratorEditor extends JFrame {
             }       
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
-                if (!copyFrom.get(i).equals("")) {
+                if (!copyFrom.get(i).isBlank()) {
                     factionRec.setSalvage(ERAS[i], newFaction, Integer.parseInt(copyFrom.get(i)));
                 }
             }

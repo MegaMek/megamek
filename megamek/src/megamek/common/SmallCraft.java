@@ -999,6 +999,7 @@ public class SmallCraft extends Aero {
         specialAbilities.put(BattleForceSPA.LG, null);
     }
 
+    @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }

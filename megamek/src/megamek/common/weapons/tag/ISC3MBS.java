@@ -17,6 +17,8 @@ package megamek.common.weapons.tag;
  *
  */
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Jason Tighe
  */
@@ -49,14 +51,16 @@ public class ISC3MBS extends TAGWeapon {
         longRange = 15;
         extremeRange = 18;
         rulesRefs = "298,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3071, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISAdvancement(3073, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS);
+            .setProductionFactions(F_FS)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

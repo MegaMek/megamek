@@ -204,6 +204,7 @@ public class MtfFile implements IMechLoader {
         }
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;

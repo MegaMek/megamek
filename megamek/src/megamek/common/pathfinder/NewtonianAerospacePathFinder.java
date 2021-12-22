@@ -78,13 +78,13 @@ public class NewtonianAerospacePathFinder {
              * by ending prematurely while preserving already computed results.
              */
 
-            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
-                    + " Try setting time limit to lower value, or "//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."
+                    + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
             
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
         }
     }
     

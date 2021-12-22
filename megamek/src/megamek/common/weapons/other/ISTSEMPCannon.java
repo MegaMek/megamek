@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.other;
 
+import megamek.common.SimpleTechLevel;
+
 public class ISTSEMPCannon extends TSEMPWeapon {
 
     /**
@@ -29,15 +31,16 @@ public class ISTSEMPCannon extends TSEMPWeapon {
         tonnage = 6;
         criticals  = 5;
 		rulesRefs = "91,IO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
 		techAdvancement.setTechBase(TECH_BASE_IS)
-			.setIntroLevel(false)
-			.setUnofficial(false)
+			.setIntroLevel(false).setUnofficial(false)
 		    .setTechRating(RATING_E)
 		    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
-		    .setISAdvancement(3100, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISAdvancement(3085, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
 		    .setISApproximate(true, false, false,false, false)
 		    .setPrototypeFactions(F_RS)
-			.setProductionFactions(F_RS);
+			.setProductionFactions(F_RS)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     /*

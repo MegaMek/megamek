@@ -23,7 +23,6 @@ import megamek.common.Entity;
  * 
  * TODO: Different color depending upon whether
  * entity has already moved this turn
- *
  */
 class MovementSprite extends Sprite {
 
@@ -180,13 +179,4 @@ class MovementSprite extends Sprite {
     public boolean isInside(Point point) {
         return movePoly.contains(point.x - bounds.x, point.y - bounds.y);
     }
-
-    /*
-     * public String[] getTooltip() { String[] tipStrings = new String[1 +
-     * weaponDescs.size()]; int tip = 1; tipStrings[0] = attackerDesc +
-     * " "+Messages.getString("BoardView1.on")+" " + targetDesc;
-     * //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ for (Iterator<String> i =
-     * weaponDescs.iterator(); i.hasNext();) { tipStrings[tip++] = i.next();
-     * } return tipStrings; }
-     */
 }

@@ -24,7 +24,6 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
@@ -69,7 +68,7 @@ import java.util.zip.GZIPInputStream;
 
 import static megamek.common.Compute.d6;
 
-public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
+public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
@@ -88,8 +87,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
     BufferedImage backgroundIcon = null;
 
-    @Override
-    public void start(String[] args) {
+    public void start() {
         createGUI();
     }
 
@@ -103,7 +101,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
             LogManager.getLogger().info("Loaded Font: " + btFont.getName());
             ge.registerFont(btFont);
-        } catch (IOException | FontFormatException e) {
+        } catch (Exception e) {
             LogManager.getLogger().error("Failed to Register BT Classic Font", e);
         }
 
@@ -170,7 +168,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 }
             }
         });
-        LogManager.getLogger().error("Windchild C");
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
@@ -194,7 +191,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         // Show the window.
         frame.setVisible(true);
-        LogManager.getLogger().error("Windchild D");
 
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
@@ -668,7 +664,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         try {
             g = sl.createGame();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
                     Messages.getString("MegaMek.HostScenarioAlert.title"),
@@ -901,7 +897,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -1036,7 +1032,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                     SwingUtilities.updateComponentTreeUI(w);
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
             }
         }
     }

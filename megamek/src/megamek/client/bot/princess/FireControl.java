@@ -2699,10 +2699,9 @@ public class FireControl {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
-            } else //noinspection ConstantConditions
-                if ((null != mmlSrm) && (null != mmlLrm)) {
-                    break;
-                }
+            } else if (null != mmlLrm) {
+                break;
+            }
         }
 
         // Out of SRM range.
@@ -2870,10 +2869,9 @@ public class FireControl {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
-                } else //noinspection ConstantConditions
-                    if ((null != mmlLrm) && (null != mmlSrm)) {
-                        break;
-                    }
+                } else if (null != mmlLrm) {
+                    break;
+                }
             }
         }
 
@@ -3028,10 +3026,9 @@ public class FireControl {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
-            } else //noinspection ConstantConditions
-                if ((null != mmlLrm) && (null != mmlSrm)) {
-                    break;
-                }
+            } else if (null != mmlLrm) {
+                break;
+            }
         }
 
         // MML ammo depends on range.

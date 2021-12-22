@@ -73,7 +73,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
 
         battleArmorImage = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), "battle_armor.gif").toString()); //$NON-NLS-1$
+                new MegaMekFile(Configuration.widgetsDir(), "battle_armor.gif").toString());
         PMUtil.setImage(battleArmorImage, comp);
         for (int i = 0; i < BattleArmor.BA_MAX_MEN; i++) {
             int shiftY = i * stepY;
@@ -92,14 +92,17 @@ public class BattleArmorMapSet implements DisplayMapSet {
         }
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         BattleArmor ba = (BattleArmor) e;
         int armor = 0;

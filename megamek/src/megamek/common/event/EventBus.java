@@ -78,13 +78,13 @@ public final class EventBus {
                         Class<?>[] parameterTypes = method.getParameterTypes();
                         if (parameterTypes.length != 1) {
                             throw new IllegalArgumentException(
-                                String.format("@Subscribe annotation requires single-argument method; %s has %d", //$NON-NLS-1$
+                                String.format("@Subscribe annotation requires single-argument method; %s has %d",
                                     method, parameterTypes.length));
                         }
                         Class<?> eventType = parameterTypes[0];
                         if (!MMEvent.class.isAssignableFrom(eventType)) {
                             throw new IllegalArgumentException(
-                                String.format("@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s", //$NON-NLS-1$
+                                String.format("@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s",
                                     method, eventType));
                         }
                         internalRegister(handler, realMethod, (Class<? extends MMEvent>) eventType);

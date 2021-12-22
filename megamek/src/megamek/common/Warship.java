@@ -52,7 +52,7 @@ public class Warship extends Jumpship {
 
     //ASEW Missile Effects, per location
     //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};
+    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0};
     
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.

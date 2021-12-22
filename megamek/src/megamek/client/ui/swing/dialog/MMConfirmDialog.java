@@ -112,6 +112,7 @@ public class MMConfirmDialog {
         }
 
         KeyListener k = new KeyAdapter() { 
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     respondNo();

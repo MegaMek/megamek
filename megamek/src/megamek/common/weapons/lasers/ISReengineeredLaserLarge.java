@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -54,6 +56,7 @@ public class ISReengineeredLaserLarge extends ReengineeredLaserWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         rulesRefs = "89, IO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
@@ -62,6 +65,7 @@ public class ISReengineeredLaserLarge extends ReengineeredLaserWeapon {
             .setISAdvancement(3120, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS);
+            .setProductionFactions(F_FS)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

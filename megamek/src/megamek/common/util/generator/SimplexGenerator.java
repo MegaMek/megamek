@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.util.generator;
 
@@ -35,15 +35,16 @@ public class SimplexGenerator implements ElevationGenerator {
     
     @Override
     public String getName() {
-        return "Generator.Simplex"; //$NON-NLS-1$
+        return "Generator.Simplex";
     }
 
     @Override
     public String getTooltip() {
-        return "Generator.Simplex.toolTip"; //$NON-NLS-1$
+        return "Generator.Simplex.toolTip";
     }
 
-    @Override public void generate(int hilliness, int width, int height, int[][] elevationMap) {
+    @Override
+    public void generate(int hilliness, int width, int height, int[][] elevationMap) {
         double noiseStartX = rnd.nextDouble() * 1000000;
         double noiseStartY = rnd.nextDouble() * 1000000;
         double noiseScale = (200.0 + rnd.nextDouble() * 30.0) / (4.0 + hilliness / 5.0);

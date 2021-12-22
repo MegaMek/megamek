@@ -510,7 +510,6 @@ public class EntityListFile {
      *             is thrown on any error.
      */
     public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
-
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file), StandardCharsets.UTF_8));
@@ -556,7 +555,7 @@ public class EntityListFile {
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
         output.write("<record version=\"" + MegaMekConstants.VERSION + "\" >");
-        
+
         ArrayList<Entity> living = new ArrayList<>();
         ArrayList<Entity> allied = new ArrayList<>();
         ArrayList<Entity> salvage = new ArrayList<>();
@@ -1302,7 +1301,7 @@ public class EntityListFile {
             critVal = critVal.concat(" gear=\"none\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1326,7 +1325,7 @@ public class EntityListFile {
             critVal = critVal.concat(" kfboom=\"none\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1371,7 +1370,7 @@ public class EntityListFile {
             critVal = critVal.concat("\"");
         }
 
-        if (!critVal.equals("")) {
+        if (!critVal.isBlank()) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
@@ -1382,42 +1381,4 @@ public class EntityListFile {
         return retVal;
 
     }
-
-    /**
-     * Load a list of <code>Entity</code>s from the given file.
-     * <p/>
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
-     * other campaign-related information are retained but data specific to a
-     * particular game is ignored.
-     *
-     * @param file
-     *            - the <code>File</code> to load from.
-     * @return A <code>Vector</code> containing <code>Entity</code>s loaded from
-     *         the file. This vector may be empty, but it will not be
-     *         <code>null</code>.
-     * @throws IOException
-     *             is thrown on any error.
-     */
-    public static Vector<Entity> loadFrom(File file) throws IOException {
-
-        // Create an empty parser.
-        MULParser parser = new MULParser();
-
-        // Open up the file.
-        InputStream listStream = new FileInputStream(file);
-
-        // Read a Vector from the file.
-        parser.parse(listStream);
-        listStream.close();
-
-
-        // Was there any error in parsing?
-        if (parser.hasWarningMessage()) {
-            System.out.println(parser.getWarningMessage());
-        }
-
-        // Return the entities.
-        return parser.getEntities();
-    }
-
 }

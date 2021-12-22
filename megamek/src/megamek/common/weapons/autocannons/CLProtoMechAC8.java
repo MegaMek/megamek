@@ -56,10 +56,12 @@ public class CLProtoMechAC8 extends ProtoMechACWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
         rulesRefs = "286,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
+            .setClanAdvancement(DATE_NONE, 3070, 3073, DATE_NONE,DATE_NONE)
+            .setClanApproximate(false, true, false,false,false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

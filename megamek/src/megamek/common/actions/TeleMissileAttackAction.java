@@ -74,7 +74,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      */
     public void addCounterEquipment(Mounted m) {
         if (vCounterEquipment == null) {
-            vCounterEquipment = new ArrayList<Mounted>();
+            vCounterEquipment = new ArrayList<>();
         }
         vCounterEquipment.add(m);
     }

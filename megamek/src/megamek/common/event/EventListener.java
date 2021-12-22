@@ -10,6 +10,8 @@
 
 package megamek.common.event;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -31,12 +33,8 @@ class EventListener {
         if (!event.isCancellable() || !event.isCancelled()) {
             try {
                 method.invoke(handler, event);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
         }
     }

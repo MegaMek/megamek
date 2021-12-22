@@ -29,7 +29,7 @@ public class StringUtil {
     private static final String ESC_GREATER_THAN = "&gt;";
 
     public static Vector<String> splitString(String s, String divider) {
-        if ((s == null) || s.equals("")) {
+        if ((s == null) || s.isBlank()) {
             return new Vector<>();
         }
 

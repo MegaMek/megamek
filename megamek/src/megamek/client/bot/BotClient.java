@@ -58,6 +58,7 @@ public abstract class BotClient extends Client {
     private ClientGUI clientgui = null;
 
     public class CalculateBotTurn implements Runnable {
+        @Override
         public void run() {
             calculateMyTurn();
             flushConn();
@@ -176,6 +177,7 @@ public abstract class BotClient extends Client {
         });
     }
 
+    @Override
     public boolean isBot() {
         return true;
     }
@@ -348,7 +350,7 @@ public abstract class BotClient extends Client {
         try {
             switch (phase) {
                 case LOUNGE:
-                    sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
+                    sendChat(Messages.getString("BotClient.Hi"));
                     break;
                 case DEPLOYMENT:
                     initialize();
@@ -358,13 +360,13 @@ public abstract class BotClient extends Client {
                      * for proper salvage. If the bot dies out here, the salvage for all but the
                      * last bot disappears for some reason
                     if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
-                        sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
+                        sendChat(Messages.getString("BotClient.HowAbout"));
                         die();
                     }
                      */
                     // if the game is not double blind and I can't see anyone
                     // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) //$NON-NLS-1$
+                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND))
                         && ((game.getEntitiesOwnedBy(getLocalPlayer())
                              - game.getNoOfEntities()) == 0)) {
                         die();
@@ -403,7 +405,7 @@ public abstract class BotClient extends Client {
                     break;
                 case VICTORY:
                     runEndGame();
-                    sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
+                    sendChat(Messages.getString("BotClient.Bye"));
                     die();
                     break;
                 default:
@@ -444,9 +446,9 @@ public abstract class BotClient extends Client {
         try {
             // Save the entities to the file.
             EntityListFile.saveTo(unitFile, living);
-        } catch (IOException excep) {
-            excep.printStackTrace(System.err);
-            doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
         }
     }
 
@@ -475,13 +477,13 @@ public abstract class BotClient extends Client {
             if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
                 // as it may be due to some kind of thread-related issue
-                // limit number of retries so we're not endlessly spinning
+                // limit number of retries, so we're not endlessly spinning
                 // if we can't recover from the error
                 retryCount++;
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error(e.toString());
+                    LogManager.getLogger().error("", e);
                 }
             }
         }
@@ -544,8 +546,8 @@ public abstract class BotClient extends Client {
             }
             
             return true;
-        } catch (Throwable t) {
-            LogManager.getLogger().error(t);            
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
             return false;
         }
     }
@@ -1168,6 +1170,7 @@ public abstract class BotClient extends Client {
         // Do nothing;
     }
     
+    @Override
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));

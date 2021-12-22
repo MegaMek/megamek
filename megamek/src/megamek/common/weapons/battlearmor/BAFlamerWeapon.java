@@ -51,6 +51,7 @@ public abstract class BAFlamerWeapon extends Weapon {
         return new FlamerHandler(toHit, waa, game, server);
     }
 
+    @Override
     public int getBattleForceHeatDamage(int range) {
         if (range < BattleForceElement.MEDIUM_RANGE) {
             return getDamage();

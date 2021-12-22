@@ -40,11 +40,18 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
 		cost = 8000;
 		bv = 4.75;
 		tonnage = .0108;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY).or(F_INF_BURST);
+		/*Errata
+		 * https://bg.battletech.com/forums/index.php?topic=60038.msg1377699#msg1377699
+		 * No Primary Infantry Weapon may have a Damage Value greater than 0.60. 
+		 * If the weapon selected has a Damage Value greater than 0.60, then reduce it's Damage Value to 0.60 
+		 * when determining final damage values (pg.152). Platoons that have their primary weapon damage reduced 
+		 * in this way automatically gain the Heavy Burst Weapon special feature
+		*/
+		infantryDamage = 0.60; //.93
 		ammoWeight = 0.0003;
 		shots = 15;
 		bursts = 2;
-		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-		infantryDamage = 0.93;
 		infantryRange = 2;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2698, 2700, 2710, DATE_NONE, DATE_NONE)

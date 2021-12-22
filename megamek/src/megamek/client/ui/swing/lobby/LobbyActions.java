@@ -182,7 +182,7 @@ public class LobbyActions {
         if (forceIds.stream().anyMatch(id -> !forces.contains(id))) {
             return;
         }
-        Set<Force> forceList = forceIds.stream().map(id -> forces.getForce(id)).collect(toSet());
+        Set<Force> forceList = forceIds.stream().map(forces::getForce).collect(toSet());
         if (!areForcesEditable(forceList)) {
             LobbyErrors.showCannotConfigEnemies(frame());
             return;
@@ -487,7 +487,7 @@ public class LobbyActions {
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
-        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<Entity>());
+        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<>());
     }
     
     /**
@@ -520,7 +520,7 @@ public class LobbyActions {
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
-        client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)), new ArrayList<Entity>());
+        client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)), new ArrayList<>());
     }
     
     /**
@@ -642,7 +642,7 @@ public class LobbyActions {
             return;
         }
         forces.renameForce(name, forceId);
-        var forceList = new ArrayList<Force>(List.of(force)); // must be mutable
+        var forceList = new ArrayList<>(List.of(force)); // must be mutable
         client().sendUpdateForce(forceList);
     }
     
@@ -688,19 +688,17 @@ public class LobbyActions {
         }
         
         // Send a command to remove the forceless entities
-        Set<Client> senders = finalEnDelete.stream().map(this::correctSender).distinct().collect(toSet());
+        Set<Client> senders = finalEnDelete.stream().map(this::correctSender).collect(toSet());
         for (Client sender: senders) {
             // Gather the entities for this sending client; 
             // Serialization doesn't like the toList() result, therefore the new ArrayList
-            List<Integer> ids = new ArrayList<Integer>(finalEnDelete.stream()
-                    .filter(e -> correctSender(e).equals(sender))
-                    .map(Entity::getId)
-                    .collect(toList()));
+            List<Integer> ids = new ArrayList<>(finalEnDelete.stream()
+                    .filter(e -> correctSender(e).equals(sender)).map(Entity::getId).collect(toList()));
             sender.sendDeleteEntities(ids);
         }
         
         // Send a command to remove the forces (with entities)
-        senders = finalFoDelete.stream().map(this::correctSender).distinct().collect(toSet());
+        senders = finalFoDelete.stream().map(this::correctSender).collect(toSet());
         for (Client sender: senders) {
             List<Force> foList = new ArrayList<>(finalFoDelete.stream()
                     .filter(f -> correctSender(f).equals(sender))
@@ -788,11 +786,11 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        if (!entities.stream().allMatch(e -> e.hasC3M())) {
+        if (!entities.stream().allMatch(Entity::hasC3M)) {
             LobbyErrors.showOnlyC3M(frame());
             return;
         }
-        entities.stream().forEach(e -> e.setC3Master(e.getId(), true));
+        entities.forEach(e -> e.setC3Master(e.getId(), true));
         sendUpdates(entities);
     }
     
@@ -801,11 +799,11 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        if (!entities.stream().allMatch(e -> e.hasC3M())) {
+        if (!entities.stream().allMatch(Entity::hasC3M)) {
             LobbyErrors.showOnlyC3M(frame());
             return;
         }
-        entities.stream().forEach(e -> e.setC3Master(-1, true));
+        entities.forEach(e -> e.setC3Master(-1, true));
         sendUpdates(entities);
     }
     
@@ -835,7 +833,7 @@ public class LobbyActions {
             LobbyErrors.showExceedC3Capacity(frame());
             return;
         }
-        entities.stream().forEach(e -> e.setC3NetId(master));
+        entities.forEach(e -> e.setC3NetId(master));
         sendUpdates(entities);
     }
 
@@ -854,8 +852,8 @@ public class LobbyActions {
             LobbyErrors.showOnlyTeam(frame());
             return;
         }
-        boolean connectMS = master.isC3IndependentMaster()  && entities.stream().allMatch(e -> e.hasC3S());
-        boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(e -> e.hasC3M());
+        boolean connectMS = master.isC3IndependentMaster()  && entities.stream().allMatch(Entity::hasC3S);
+        boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(Entity::hasC3M);
         boolean connectSMM = master.hasC3MM() && entities.stream().allMatch(e -> e.hasC3S() || e.hasC3M());
         if (!connectMM && !connectMS && !connectSMM) {
             LobbyErrors.showSameC3(frame());
@@ -872,7 +870,7 @@ public class LobbyActions {
             LobbyErrors.showExceedC3Capacity(frame());
             return;
         }
-        entities.stream().forEach(e -> e.setC3Master(master, true));
+        entities.forEach(e -> e.setC3Master(master, true));
         sendUpdates(updateCandidates);
     }
     
@@ -1018,7 +1016,7 @@ public class LobbyActions {
         // Now, actually create the squadron
         FighterSquadron fs = new FighterSquadron(name);
         fs.setOwner(createSquadronOwner(entities));
-        List<Integer> fighterIds = new ArrayList<>(entities.stream().map(e -> e.getId()).collect(toList()));
+        List<Integer> fighterIds = new ArrayList<>(entities.stream().map(Entity::getId).collect(toList()));
         correctSender(fs).sendAddSquadron(fs, fighterIds);
     }
     
@@ -1039,7 +1037,7 @@ public class LobbyActions {
                 }
             }
         }
-        return entities.stream().map(e -> e.getOwner()).findAny().get();
+        return entities.stream().map(Entity::getOwner).findAny().get();
     }
 
     /** 
@@ -1078,8 +1076,7 @@ public class LobbyActions {
             if (sender == null) {
                 continue;
             }
-            sender.sendUpdateEntity(new ArrayList<Entity>(
-                    entities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList())));
+            sender.sendUpdateEntity(new ArrayList<>(entities.stream().filter(e -> correctSender(e).equals(sender)).collect(toList())));
         }
     }
     
@@ -1200,7 +1197,7 @@ public class LobbyActions {
      * @see #isEditable(Entity)
      */
     boolean isEditable(Collection<Entity> entities) {
-        return !entities.stream().anyMatch(this::isNotEditable);
+        return entities.stream().noneMatch(this::isNotEditable);
     }
 
     /**
@@ -1212,7 +1209,7 @@ public class LobbyActions {
         if (!isBlindDrop(game()) && !isRealBlindDrop(game())) {
             return true;
         }
-        return !entities.stream().anyMatch(this::isLocalEnemy);
+        return entities.stream().noneMatch(this::isLocalEnemy);
     }
 
     boolean entityInLocalTeam(Entity entity) {
@@ -1244,7 +1241,7 @@ public class LobbyActions {
     }
     
     boolean areForcesEditable(Collection<Force> forces) {
-        return !forces.stream().anyMatch(f -> !isEditable(f));
+        return forces.stream().allMatch(f -> isEditable(f));
     }
     
     /**
@@ -1261,7 +1258,7 @@ public class LobbyActions {
             return true;
         }
         Entity randomEntry = entities.stream().findAny().get();
-        return !entities.stream().anyMatch(e -> e.isEnemyOf(randomEntry));
+        return entities.stream().noneMatch(e -> e.isEnemyOf(randomEntry));
     }
     
     /**
@@ -1304,7 +1301,7 @@ public class LobbyActions {
         }
         Force randomEntry = forces.stream().findAny().get();
         Player owner = game().getForces().getOwner(randomEntry);
-        return !forces.stream().anyMatch(f -> game().getForces().getOwner(f).isEnemyOf(owner));
+        return forces.stream().noneMatch(f -> game().getForces().getOwner(f).isEnemyOf(owner));
     }
     
     private Game game() {

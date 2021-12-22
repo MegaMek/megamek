@@ -24,6 +24,7 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -290,7 +291,7 @@ public class Ruleset {
     }
 
     public HashMap<String,String> getEschelonNames(String unitType) {
-        HashMap<String,String> retVal = new HashMap<String,String>();
+        HashMap<String,String> retVal = new HashMap<>();
         for (ForceNode n : forceNodes) {
             if (n.matchesPredicate(unitType, "ifUnitType")) {
                 retVal.put(n.getEschelonCode(), n.getEschelonName());
@@ -343,9 +344,8 @@ public class Ruleset {
         InputStream is;
         try {
             is = new FileInputStream(f);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is,
-                    Charset.forName("UTF-8")));
-            String line = null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.startsWith("#") && line.contains(":")) {
                     String[] fields = line.split(":");
@@ -358,14 +358,14 @@ public class Ruleset {
             }
             reader.close();
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
     public static void loadData() {
         initialized = false;
         initializing = true;
-        rulesets = new HashMap<String,Ruleset>();
+        rulesets = new HashMap<>();
 
         File dir = new File(directory);
         if (!dir.exists()) {

@@ -137,6 +137,7 @@ public class TargetRoll implements Serializable {
         return allDesc.toString();
     }
     
+    @Override
     public String toString() {
         return getDesc();
     }

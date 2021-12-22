@@ -64,6 +64,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return 0;
     }
     
+    @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
@@ -77,9 +78,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return super.handle(phase, vPhaseReport);
     }
 
+    @Override
     protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+                                      int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
                 nCluster, bldgAbsorbs);
         

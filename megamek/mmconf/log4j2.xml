@@ -11,6 +11,12 @@
         <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
             <PatternLayout pattern="${layout}"/>
         </File>
+        <File name="MegaMekLabLog" fileName="logs/megameklab.log" append="false">
+            <PatternLayout pattern="${layout}"/>
+        </File>
+        <File name="MekHQLog" fileName="logs/mekhq.log" append="false">
+            <PatternLayout pattern="${layout}"/>
+        </File>
     </Appenders>
 
     <Loggers>
@@ -19,6 +25,12 @@
         </Logger>
         <Logger name="megamek" level="info" additivity="false" >
             <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        <Logger name="megameklab" level="info" additivity="false" >
+            <AppenderRef ref="MegaMekLabLog" />
+        </Logger>
+        <Logger name="mekhq" level="info" additivity="false" >
+            <AppenderRef ref="MekHQLog" />
         </Logger>
 
         <Root level="info">

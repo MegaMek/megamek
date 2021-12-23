@@ -40,7 +40,7 @@ VERSION HISTORY:
 	Static tech levels for lots of equipment to 3145 per those table. 
 + PR #3315: LGTM Code Issues: Fixes Round 2
 + PR #3316: Fixing a NPE in AeroGroundPathFinder::ForwardToTheEnd
-+ Data: New Units, new sprites, and updated Camos
++ Data: New Units (Rec Guides 19,20), new sprites, TP fixes, and updated Camos
 + Issue #2199: MUL Parser Game Option-reliant Personnel Load
 
 0.49.5 (2021-11-06 1800 UTC)

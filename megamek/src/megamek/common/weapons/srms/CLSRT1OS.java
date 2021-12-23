@@ -16,7 +16,7 @@ package megamek.common.weapons.srms;
 /**
  * @author Sebastian Brocks
  */
-public class CLSRT1OS extends SRMWeapon {
+public class CLSRT1OS extends SRTWeapon {
 
     /**
      *

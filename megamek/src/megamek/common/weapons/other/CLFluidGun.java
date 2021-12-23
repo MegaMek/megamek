@@ -44,12 +44,14 @@ public class CLFluidGun extends FluidGunWeapon {
         tonnage = 2;
         cost = 35000;
         rulesRefs = "313,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        //December 2021 - CGL requested we move this to Advanced.
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(RATING_B)
         .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, false, false,false, false);
     }
 }

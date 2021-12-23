@@ -3,32 +3,32 @@ Highlander IIC
 (Standard)
 
 Config:Biped
-TechBase:Clan
-Era:2858
-Source:TRO 3060
-Rules Level:2
+techbase:Clan
+era:2858
+source:TRO 3060
+rules level:2
 
-Mass:90
-Engine:270 Fusion (Clan) Engine
-Structure:Standard
-Myomer:Standard
+mass:90
+engine:270 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:3
-Jump MP:3
+heat sinks:12 Clan Double
+walk mp:3
+jump mp:3
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:30
-RA Armor:30
-LT Armor:28
-RT Armor:28
-CT Armor:40
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:10
-RTR Armor:10
-RTC Armor:17
+armor:Ferro-Fibrous(Clan)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:17
 
 Weapons:7
 Streak SRM 6, Left Arm
@@ -48,8 +48,8 @@ CLStreakSRM6
 CLStreakSRM6
 CLStreakSRM6
 CLStreakSRM6
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -63,8 +63,8 @@ CLGaussRifle
 CLGaussRifle
 CLGaussRifle
 CLGaussRifle
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -91,9 +91,9 @@ CLArtemisIV
 Clan Gauss Ammo
 Clan Gauss Ammo
 Clan Gauss Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -151,4 +151,20 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:One of the most popular Star League BattleMechs, many a Highlander accompanied General Aleksandr Kerensky into exile. Some were mothballed, but many found their way into the toumans of the Clans. 
+
+capabilities:With the use of newer, lighter weapons, the damage potential of the Highlander has roughly doubled. The IIC also contains enough ammunition that it rarely needs to conserve any during Trials. Clan scientists were forced to rearrange the placement of some weapons within the 'Mech to allow it proper ammo feeds, but the design is largely unchanged. It carries the maximum amount of Ferro-Fibrous armor that can be crammed on the frame, fourteen and a half tons. As with the original, the IIC carries enough jump jets to move up to ninety meters at a time, allowing MechWarriors to execute the "Highlander Burial".
+
+deployment:At long range, Highlander IIC pilots have an EMRG "Captain" Series Gauss Rifle and a Type XXVI "Great Bow" LRM-20 launcher at their disposal. Once enemies are closer, they can bring a pair of MPA-14 Mod. 12a Streak SRM-6 launchers and a trio of Series PPS-VIII Medium Pulse Lasers into the fray. Twelve double heat sinks keep heat mostly in check.
+
+history:As technology advanced, the weapons systems were upgraded until the design known as the Highlander IIC finally emerged. Though no new Highlanders have been produced in over a century, several hundred are still in scattered use throughout the touman of every Clan.
+
+manufacturer:Arcadia BattleMech Plant CM-T15, W-7 Facilities (Refit) 
+primaryfactory:Arcadia, Weingarten
+systemmanufacturer:CHASSIS:SL-XT Modified
+systemmanufacturer:ENGINE:Fusion 270 Standard
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Ferro-Fibrous
+systemmanufacturer:JUMPJET:Prentiss-IIIA
+systemmanufacturer:COMMUNICATIONS:C-XII Series B4 GDS
+systemmanufacturer:TARGETING:C-12 Mk. III with Artemis IV FCS
 

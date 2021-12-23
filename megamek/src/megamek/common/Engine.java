@@ -1112,11 +1112,12 @@ public class Engine implements Serializable, ITechnology {
                         return TechConstants.T_IS_ADVANCED;
                     }
                 } else {
-                    if (year < 3055) {
+                	//Dec 2021 - CGL requested errata to move dates back 5 years for all Tech levels.
+                    if (year < 3050) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                    } else if (year < 3062) {
+                    } else if (year < 3057) {
                         return TechConstants.T_IS_EXPERIMENTAL;
-                    } else if (year < 3067) {
+                    } else if (year < 3061) {
                         return TechConstants.T_IS_ADVANCED;
                     } else {
                         return TechConstants.T_IS_TW_NON_BOX;

@@ -1,42 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.lists;
-
-import java.util.List;
-
-import javax.swing.*;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
+import javax.swing.*;
+import java.util.List;
+
 /**
- * A specialized JList to display a list of AbstractIcons for the ImageChoiceDialog,
+ * A specialized JList to display a list of AbstractIcons for the AbstractIconChooserDialog,
  * e.g. camos or portraits. The images will be displayed with horizontal wrap. This is best
  * embedded in a JScrollPane.
  * Using any of the renderers in the package the images can be displayed with or without the filename.
  */
-public class ImageList extends JList<AbstractIcon> {
+public class AbstractIconList extends JList<AbstractIcon> {
     //region Variable Declarations
     private static final long serialVersionUID = -8060324139099113292L;
 
-    private DefaultListModel<AbstractIcon> iconModel;
+    private final DefaultListModel<AbstractIcon> iconModel;
     //endregion Variable Declarations
 
     //region Constructors
-    public ImageList(ListCellRenderer<AbstractIcon> renderer) {
+    public AbstractIconList(final ListCellRenderer<AbstractIcon> renderer) {
         super(); 
         iconModel = new DefaultListModel<>();
         setModel(iconModel);
@@ -50,6 +52,9 @@ public class ImageList extends JList<AbstractIcon> {
     }
     //endregion Constructors
 
+    /**
+     * @param icons the icons to select on this list
+     */
     public void setSelectedValues(final AbstractIcon... icons) {
         clearSelection();
         for (final AbstractIcon icon : icons) {
@@ -60,6 +65,10 @@ public class ImageList extends JList<AbstractIcon> {
         }
     }
 
+    /**
+     * @param icon the specified AbstractIcon, which may be null
+     * @return the index of the specified icon, or -1 if it is null or can't be found
+     */
     public int getIndex(final @Nullable AbstractIcon icon) {
         if (icon == null) {
             return -1;
@@ -77,7 +86,7 @@ public class ImageList extends JList<AbstractIcon> {
     }
 
     /** 
-     * Updates the list to show (only) the given icons.
+     * Updates the list to only show the given icons.
      */
     public void updateImages(final List<AbstractIcon> icons) {
         iconModel.clear();

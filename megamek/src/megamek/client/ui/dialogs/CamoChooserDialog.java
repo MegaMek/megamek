@@ -26,10 +26,9 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * This dialog allows players to select the camouflage pattern (or color) used by their units
- * during the game. It automatically fills itself with all the PlayerColour Enum colours and all
- * the camouflage patterns in the {@link Configuration#camoDir()} directory tree.
- *
+ * This dialog allows players to select the camouflage pattern (or colour) used by their units. It
+ * automatically fills itself with all the PlayerColour Enum colours and all the camouflage icons in
+ * the Camouflage directory.
  * @see AbstractIconChooserDialog
  */
 public class CamoChooserDialog extends AbstractIconChooserDialog {

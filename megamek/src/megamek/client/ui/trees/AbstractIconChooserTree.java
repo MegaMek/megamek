@@ -27,6 +27,10 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.Map;
 
+/**
+ * AbstractIconChooserTree is an extension of JTree that provides additional AbstractIcon specific
+ * functionality to simplify initialization.
+ */
 public abstract class AbstractIconChooserTree extends JTree {
     //region Constructors
     protected AbstractIconChooserTree() {
@@ -44,8 +48,16 @@ public abstract class AbstractIconChooserTree extends JTree {
     //endregion Constructors
 
     //region Initialization
+    /**
+     * @return the created Tree Model for this Tree
+     */
     protected abstract DefaultTreeModel createTreeModel();
 
+    /**
+     * @param root the root tree node for this Tree
+     * @param directory the specified directory, which may be null if there are no children to add
+     * @return the created Tree Model for this Tree
+     */
     protected DefaultTreeModel createTreeModel(final DefaultMutableTreeNode root,
                                                final @Nullable AbstractDirectory directory) {
         if (directory != null) {
@@ -55,6 +67,12 @@ public abstract class AbstractIconChooserTree extends JTree {
         return new DefaultTreeModel(root);
     }
 
+    /**
+     * This recursively creates a tree originating from the node of the first call, and recursively
+     * adds all child categories until there are no categories left to add
+     * @param root the root tree node for the specified directory
+     * @param directory the specified directory
+     */
     private void recursivelyAddToRoot(final DefaultMutableTreeNode root,
                                       final AbstractDirectory directory) {
         for (final Map.Entry<String, AbstractDirectory> category : directory.getCategories().entrySet()) {

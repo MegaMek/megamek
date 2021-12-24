@@ -22,9 +22,6 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.AbstractIconChooser;
-import megamek.client.ui.preferences.JSplitPanePreference;
-import megamek.client.ui.preferences.JToggleButtonPreference;
-import megamek.client.ui.preferences.PreferencesNode;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.preference.PreferenceManager;
@@ -39,9 +36,9 @@ import java.util.ResourceBundle;
 
 /**
  * Creates a dialog that allows players to select a directory from a directory tree and choose an
- * image from the images in that directory. Subclasses must provide the getItems() method that
- * translates a given category (directory) selected in the tree to a list of items (images) to show
- * in the list.
+ * AbstractIcon from the AbstractIcons in that directory. Subclasses must provide the getItems()
+ * method that translates a given category (directory) selected in the tree to a list of items
+ * (AbstractIcons) to show in the list.
  * Subclasses can provide getSearchedItems() that translates a given search String to the list of
  * "found" items. If this is provided, showSearch(true) should be called in the constructor to show
  * the search panel.
@@ -60,8 +57,8 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Creates a dialog that allows players to choose a directory from a directory tree and an image
-     * from the images in that directory.
+     * Creates a dialog that allows players to choose a directory from a directory tree and an
+     * AbstractIcon from the AbstractIcons in that directory.
      *
      * @param frame The frame hosting this dialog
      * @param modal the modality of this dialog

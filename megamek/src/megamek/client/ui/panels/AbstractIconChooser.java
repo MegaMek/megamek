@@ -19,7 +19,7 @@
 package megamek.client.ui.panels;
 
 import megamek.client.ui.baseComponents.AbstractPanel;
-import megamek.client.ui.lists.ImageList;
+import megamek.client.ui.lists.AbstractIconList;
 import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.JToggleButtonPreference;
 import megamek.client.ui.preferences.PreferencesNode;
@@ -43,6 +43,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * An AbstractIconChooser is an abstract panel that is used to select an AbstractIcon from the
+ * various potential icons located within the specified AbstractDirectory.
+ */
 public abstract class AbstractIconChooser extends AbstractPanel implements TreeSelectionListener {
     //region Variable Declarations
     private AbstractIcon originalIcon;
@@ -57,9 +61,9 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     protected JTree treeCategories;
 
     // image selection list
-    protected ImageList imageList;
+    protected AbstractIconList abstractIconList;
 
-    /** When selected, icons from all subdirectories of the current selection are shown. */
+    // When selected, icons from all subdirectories of the current selection are shown
     private JCheckBox chkIncludeSubdirectories;
     //endregion Variable Declarations
 
@@ -83,10 +87,17 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     //endregion Constructors
 
     //region Getters/Setters
+    /**
+     * @return the original AbstractIcon, which may be null if there's not an original icon
+     */
     public @Nullable AbstractIcon getOriginalIcon() {
         return originalIcon;
     }
 
+    /**
+     * @param originalIcon the original AbstractIcon, which may be null if there isn't one or to
+     *                     clear the original AbstractIcon
+     */
     public void setOriginalIcon(final @Nullable AbstractIcon originalIcon) {
         this.originalIcon = originalIcon;
     }
@@ -95,6 +106,11 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         return splitPane;
     }
 
+    /**
+     * @return the current JTree containing the various applicable categories, which will only be
+     * null when initialization of the categories needs to be delayed to the end of initialization.
+     * However, all implementations of this must be null protected.
+     */
     public @Nullable JTree getTreeCategories() {
         return treeCategories;
     }
@@ -103,12 +119,12 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         this.treeCategories = treeCategories;
     }
 
-    public ImageList getImageList() {
-        return imageList;
+    public AbstractIconList getImageList() {
+        return abstractIconList;
     }
 
-    public void setImageList(final ImageList imageList) {
-        this.imageList = imageList;
+    public void setImageList(final AbstractIconList abstractIconList) {
+        this.abstractIconList = abstractIconList;
     }
 
     public JCheckBox getChkIncludeSubdirectories() {
@@ -124,7 +140,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     @Override
     protected void initialize() {
         // Set up the image list (right panel)
-        setImageList(new ImageList(new AbstractIconRenderer()));
+        setImageList(new AbstractIconList(new AbstractIconRenderer()));
         final JScrollPane scrpImages = new JScrollPane(getImageList());
         scrpImages.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrpImages.setMinimumSize(new Dimension(500, 240));
@@ -147,14 +163,12 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         finalizeInitialization();
     }
 
-
-    /** Constructs a functions panel containing the search bar. */
     private JPanel searchPanel() {
         final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         panel.setName("searchPanel");
 
-        panel.add(new JLabel("Search: "));
+        panel.add(new JLabel("Search"));
 
         final JTextField search = new JTextField(20);
         search.getDocument().addDocumentListener(new DocumentListener() {
@@ -185,12 +199,10 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         return panel;
     }
 
-    private void addCategoryIcons(final String category, final List<AbstractIcon> icons) {
-        for (final Iterator<String> iconNames = getDirectory().getItemNames(category); iconNames.hasNext(); ) {
-            icons.add(createIcon(category, iconNames.next()));
-        }
-    }
-
+    /**
+     * This provides a way to override the end of initialization, which is required for MekHQ's
+     * ForcePieceIcons.
+     */
     protected void finalizeInitialization() {
         setPreferences();
     }
@@ -203,16 +215,24 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     }
     //endregion Initialization
 
+    /**
+     * @return the directory for the current icon. This should not be null, but there is a low
+     * possibility of it occurring if the directory doesn't exist
+     */
     protected abstract @Nullable AbstractDirectory getDirectory();
 
+    /**
+     * @param category the category of the newly created icon
+     * @param filename the filename for the created icon
+     * @return the newly created AbstractIcon
+     */
     protected abstract AbstractIcon createIcon(String category, final String filename);
 
     /**
-     * Reacts to changes in the search field, showing searched items
-     * for the search string given by contents when at least
-     * 3 characters are present in the search field
-     * and reverting to the selected category when the search field is
-     * empty.
+     * Reacts to changes in the search field, showing searched items for the search string given by
+     * contents when at least 3 characters are present in the search field, and reverting to the
+     * selected category when the search field is empty.
+     * @param contents the string to search
      */
     private void updateSearch(final String contents) {
         if (contents.length() > 2) {
@@ -237,7 +257,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     }
 
     /**
-     * Returns the selected AbstractIcon
+     * @return the selected AbstractIcon, which may be null if there is nothing selected
      */
     public @Nullable AbstractIcon getSelectedItem() {
         return getImageList().getSelectedValue();
@@ -251,7 +271,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     }
 
     /**
-     * Returns the index of the selected image
+     * @return the index of the selected image
      */
     public int getSelectedIndex() {
         return getImageList().getSelectedIndex();
@@ -263,9 +283,9 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     public abstract void refreshDirectory();
 
     /**
-     * This method is to ONLY be called by those methods overwriting the abstract refreshDirectory
+     * This method is ONLY to be called by those methods overwriting the abstract refreshDirectory
      * above
-     * @param newTree the new directory tree
+     * @param newTree the new directory tree to use
      */
     protected void refreshDirectory(final JTree newTree) {
         if (getTreeCategories() != null) {
@@ -281,29 +301,48 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     /**
      * Called at start and when a new category is selected in the directory tree.
      * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
-     * @return a list of items that should be shown for the category which is given as a TreePath.
+     * @param category the category to get the items for, in TreePath format
+     * @return a list of items that should be shown for the category
      */
     protected List<AbstractIcon> getIcons(final String category) {
         if (getDirectory() == null) {
             return new ArrayList<>();
         }
+        final AbstractDirectory categoryDirectory = getDirectory().getCategory(category);
         final List<AbstractIcon> icons = new ArrayList<>();
         if (getChkIncludeSubdirectories().isSelected()) {
-            recursivelyDetermineCategoryIcons(getDirectory().getCategory(category), icons);
+            recursivelyDetermineCategoryIcons(categoryDirectory, icons);
         } else {
-            addCategoryIcons(category, icons);
+            addCategoryIcons(categoryDirectory, icons);
         }
         return icons;
     }
 
+    /**
+     * @param category the current category directory, or null if there's no further category to
+     *                 check on this path
+     * @param icons the list of icons determined to be part of the overall category path
+     */
     private void recursivelyDetermineCategoryIcons(final @Nullable AbstractDirectory category,
                                                    final List<AbstractIcon> icons) {
         if (category == null) {
             return;
         }
+        addCategoryIcons(category, icons);
+        category.getCategories().values().forEach(c -> recursivelyDetermineCategoryIcons(c, icons));
+    }
+
+    /**
+     * @param category the current category directory, or null if the category doesn't exist
+     * @param icons the list of icons to add icons in this category to
+     */
+    private void addCategoryIcons(final @Nullable AbstractDirectory category,
+                                  final List<AbstractIcon> icons) {
+        if (category == null) {
+            return;
+        }
 
         category.getItems().keySet().forEach(f -> icons.add(createIcon(category.getRootPath(), f)));
-        category.getCategories().values().forEach(c -> recursivelyDetermineCategoryIcons(c, icons));
     }
 
     /**
@@ -312,20 +351,19 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
      * @param searchString the string to search for
      * @return a list of icons that fit the provided search string
      */
-    protected List<AbstractIcon> getSearchedItems(String searchString) {
+    protected List<AbstractIcon> getSearchedItems(final String searchString) {
         if (getDirectory() == null) {
             return new ArrayList<>();
         }
 
-        // For a category that contains the search string, all its items
-        // are added to the list. Additionally, all items that contain
-        // the search string are added.
+        // For a category that contains the search string, all its items are added to the list.
+        // Additionally, all items that contain the search string are added.
         final List<AbstractIcon> result = new ArrayList<>();
         final String lowerSearched = searchString.toLowerCase();
 
         for (final String category : getDirectory().getNonEmptyCategoryPaths()) {
             if (category.toLowerCase().contains(lowerSearched)) {
-                addCategoryIcons(category, result);
+                addCategoryIcons(getDirectory().getCategory(category), result);
                 continue;
             }
 
@@ -341,8 +379,9 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     }
 
     /**
-     * Selects the given category in the tree, updates the shown images to this
-     * category and selects the item given by filename in the image list.
+     * Selects the given category in the tree, updates the shown images to this category, and
+     * selects the item given by filename in the image list.
+     * @param icon the icon to select, which may be null to set nothing as selected
      */
     protected void setSelection(final @Nullable AbstractIcon icon) {
         if (getTreeCategories() == null) {

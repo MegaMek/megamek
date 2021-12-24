@@ -23,10 +23,14 @@ import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 
+/**
+ * Portrait is an implementation of AbstractIcon that contains and displays a Portrait from the
+ * Portrait Directory.
+ * @see AbstractIcon
+ */
 public class Portrait extends AbstractIcon {
     //region Variable Declarations
     private static final long serialVersionUID = -7562297705213174435L;
@@ -58,11 +62,9 @@ public class Portrait extends AbstractIcon {
     }
     //endregion Boolean Methods
 
-    @Override
-    public ImageIcon getImageIcon() {
-        return getImageIcon(72);
-    }
-
+    /**
+     * @return the current image, scaled and centered to a width of 72 pixels
+     */
     @Override
     public Image getImage() {
         return getImage(72);
@@ -86,8 +88,8 @@ public class Portrait extends AbstractIcon {
                 portrait = (Image) MMStaticDirectoryManager.getPortraits().getItem("",
                         DEFAULT_PORTRAIT_FILENAME);
             }
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
 
         return portrait;
@@ -103,8 +105,8 @@ public class Portrait extends AbstractIcon {
         final Portrait icon = new Portrait();
         try {
             icon.parseNodes(wn.getChildNodes());
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return new Portrait();
         }
         return icon;

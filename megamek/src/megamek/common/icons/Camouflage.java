@@ -28,6 +28,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 
+/**
+ * Camouflage is an implementation of AbstractIcon that contains and displays a Camouflage, which
+ * may either be a base Camouflage from the Camouflage directory or a Colour camouflage, which is
+ * based on the specified PlayerColour and then parsed as an AWT Color.
+ * @see AbstractIcon
+ */
 public class Camouflage extends AbstractIcon {
     //region Variable Declarations
     private static final long serialVersionUID = 1093277025745250375L;
@@ -69,13 +75,17 @@ public class Camouflage extends AbstractIcon {
         final String category = ROOT_CATEGORY.equals(getCategory()) ? "" : getCategory();
         try {
             return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
 
         return null;
     }
 
+    /**
+     * @param colour the colour of the camouflage. This shouldn't be null, but null values are handled.
+     * @return the created colour camouflage, or null if a null colour is provided
+     */
     private @Nullable Image getColourCamouflageImage(final @Nullable Color colour) {
         if (colour == null) {
             LogManager.getLogger().error("A null colour was passed.");
@@ -98,8 +108,8 @@ public class Camouflage extends AbstractIcon {
         final Camouflage icon = new Camouflage();
         try {
             icon.parseNodes(wn.getChildNodes());
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return new Camouflage();
         }
         return icon;

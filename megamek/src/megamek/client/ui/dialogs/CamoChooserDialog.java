@@ -23,14 +23,12 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- * This dialog allows players to select the camouflage pattern (or color) used by their units
- * during the game. It automatically fills itself with all the PlayerColour Enum colours and all
- * the camouflage patterns in the {@link Configuration#camoDir()} directory tree.
- *
+ * This dialog allows players to select the camouflage pattern (or colour) used by their units. It
+ * automatically fills itself with all the PlayerColour Enum colours and all the camouflage icons in
+ * the Camouflage directory.
  * @see AbstractIconChooserDialog
  */
 public class CamoChooserDialog extends AbstractIconChooserDialog {
@@ -46,7 +44,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     public CamoChooserDialog(final JFrame frame, final @Nullable AbstractIcon camouflage,
                              final boolean canHaveIndividualCamouflage) {
         super(frame, "CamoChooserDialog", "CamoChoiceDialog.select_camo_pattern",
-                new CamoChooser(camouflage, canHaveIndividualCamouflage), true);
+                new CamoChooser(frame, camouflage, canHaveIndividualCamouflage), true);
     }
     //endregion Constructors
 
@@ -63,10 +61,11 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     //region Initialization
     @Override
     protected JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        final JPanel panel = new JPanel(new GridLayout(1, 3));
+        panel.setName("buttonPanel");
 
-        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText", this::okButtonActionPerformed));
+        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText",
+                this::okButtonActionPerformed));
         if (getChooser().canHaveIndividualCamouflage()) {
             panel.add(new MMButton("btnParent", resources, "btnParent.text",
                     "btnParent.toolTipText", evt -> {
@@ -74,9 +73,10 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
                 okButtonActionPerformed(evt);
             }));
         }
-        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText", this::cancelActionPerformed));
-        panel.add(new MMButton("btnRefresh",resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
-                evt -> getChooser().refreshDirectory()));
+        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText",
+                this::cancelActionPerformed));
+        panel.add(new MMButton("btnRefresh", resources, "RefreshDirectory.text",
+                "RefreshDirectory.toolTipText", evt -> getChooser().refreshDirectory()));
 
         return panel;
     }

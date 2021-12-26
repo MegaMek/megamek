@@ -63,6 +63,7 @@ public class ISUAC5Prototype extends UACWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
+        flags = flags.or(F_PROTOTYPE);
         rulesRefs = "104,IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)

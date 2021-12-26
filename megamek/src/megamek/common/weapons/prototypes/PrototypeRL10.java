@@ -46,6 +46,7 @@ public class PrototypeRL10 extends PrototypeRLWeapon {
         cost = 15000;
         shortAV = 6;
         medAV = 6;
+        flags = flags.or(F_PROTOTYPE);
         maxRange = RANGE_MED;
         rulesRefs = "217,IO";
         techAdvancement.setTechBase(TECH_BASE_ALL)

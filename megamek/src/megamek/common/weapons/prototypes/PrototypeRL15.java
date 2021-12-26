@@ -48,6 +48,7 @@ public class PrototypeRL15 extends PrototypeRLWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
+        flags = flags.or(F_PROTOTYPE);
         rulesRefs = "217,IO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setIntroLevel(false)

@@ -42,7 +42,7 @@ public class ISSRM2Primitive extends SRMWeapon {
         addLookupName("ISSRM2p");
         addLookupName("IS SRM 2 Primitive");
         this.shortName = "SRM/2p";
-        flags = flags.andNot(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTOTYPE).andNot(F_ARTEMIS_COMPATIBLE);
         heat = 2;
         rackSize = 2;
         shortRange = 3;

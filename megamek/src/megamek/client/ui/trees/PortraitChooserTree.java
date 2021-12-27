@@ -24,6 +24,11 @@ import megamek.common.icons.AbstractIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+/**
+ * PortraitChooserTree is an implementation of AbstractIconChooserTree that initializes the tree
+ * using the Portrait Directory.
+ * @see AbstractIconChooserTree
+ */
 public class PortraitChooserTree extends AbstractIconChooserTree {
     //region Constructors
     public PortraitChooserTree() {

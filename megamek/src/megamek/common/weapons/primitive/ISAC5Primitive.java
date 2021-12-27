@@ -61,6 +61,7 @@ public class ISAC5Primitive extends ACWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
+        flags = flags.or(F_PROTOTYPE);
         explosionDamage = damage;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.

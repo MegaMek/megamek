@@ -58,6 +58,7 @@ public class ISAC20Primitive extends ACWeapon {
         cost = 300000;
         shortAV = 20;
         maxRange = RANGE_SHORT;
+        flags = flags.or(F_PROTOTYPE);
         explosionDamage = damage;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.

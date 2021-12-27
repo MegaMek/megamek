@@ -106,7 +106,7 @@ public class MMStaticDirectoryManager {
             parseMechTileset = false;
             mechTileset = new MechTileset(Configuration.unitImagesDir());
             try {
-                mechTileset.loadFromFile("mechset.txt");
+                mechTileset.loadFromFile("mechset.txt");// TODO : Remove inline file path
             } catch (Exception e) {
                 LogManager.getLogger().error("Unable to load mech tileset", e);
             }

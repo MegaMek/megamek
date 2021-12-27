@@ -45,7 +45,7 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
         waterExtremeRange = 4;
         tonnage = 0.5;
         criticals = 1;
-        flags = flags.or(F_NO_FIRES);
+        flags = flags.or(F_NO_FIRES).or(F_PROTOTYPE);
         bv = 9;
         cost = 11250;
         shortAV = 3;

@@ -55,6 +55,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         cost = 11250;
         shortAV = 3;
         maxRange = RANGE_SHORT;
+        flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         rulesRefs = "97,IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setIntroLevel(false)

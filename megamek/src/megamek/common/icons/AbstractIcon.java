@@ -30,6 +30,12 @@ import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
+/**
+ * An AbstractIcon is an abstract class that ensures standardized and isolated image code for icons
+ * across the suite. It handles creating the images and image icons, scaling and centering them,
+ * handles base comparisons and object overrides, and implements basic File I/O. It also gracefully
+ * handles any failures to prevent a hard crash when an image or icon cannot be created.
+ */
 public abstract class AbstractIcon implements Serializable {
     //region Variable Declarations
     private static final long serialVersionUID = 870271199001476289L;
@@ -106,29 +112,48 @@ public abstract class AbstractIcon implements Serializable {
         return (image == null) ? null : new ImageIcon(image);
     }
 
+    /**
+     * @param size the width to scale and center the ImageIcon to
+     * @return the created ImageIcon, scaled and centered to size width. This may be null for
+     * non-existent files
+     */
     public @Nullable ImageIcon getImageIcon(final int size) {
         final Image image = getImage(size);
         return (image == null) ? null : new ImageIcon(image);
     }
 
+    /**
+     * @return the created image, which may only be null for a UnitIcon with no icon selected
+     */
     public @Nullable Image getImage() {
         return getImage(0, 0);
     }
 
+    /**
+     * @param size the width to scale and center the image to
+     * @return the created image, scaled and centered to size width. This may only be null for a
+     * UnitIcon with no icon selected
+     */
     public @Nullable Image getImage(final int size) {
         return getImage(size, -1);
     }
 
+    /**
+     * @param width the width of the image, or -1 if this is the non-scaling factor
+     * @param height the height of the image, or -1 if this is the non-scaling factor
+     * @return the image, scaled and centered if either the width or height are -1. This may only be
+     * null for a UnitIcon with no icon selected
+     */
     public @Nullable Image getImage(final int width, final int height) {
         return getImage(getBaseImage(), width, height);
     }
 
     /**
-     * This is used to create the proper image and scale it if required. It also handles null protection
-     * by creating a blank image if required.
+     * This is used to create the proper image and scale it if required. It also handles null
+     * protection by creating a blank image if required.
      * @return the created image
      */
-    protected Image getImage(final Image image, final int width, final int height) {
+    protected Image getImage(final @Nullable Image image, final int width, final int height) {
         if (image == null) {
             return ImageUtil.failStandardImage();
         } else if (isScaled(width, height)) {
@@ -139,9 +164,8 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * Returns a square BufferedImage of the given size.
-     * Scales the given image to fit into the square and centers it
-     * on a transparent background.
+     * @return a square BufferedImage of the given size. Scales the given image to fit into the
+     * square and centers it on a transparent background.
      */
     private static BufferedImage scaleAndCenter(Image image, final int size) {
         final BufferedImage result = ImageUtil.createAcceleratedImage(size, size);
@@ -170,9 +194,9 @@ public abstract class AbstractIcon implements Serializable {
             return;
         }
 
-        MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, name);
+        MegaMekXmlUtil.writeSimpleXMLOpenTag(pw, indent++, name);
         writeBodyToXML(pw, indent);
-        MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, name);
+        MegaMekXmlUtil.writeSimpleXMLCloseTag(pw, --indent, name);
     }
 
     protected void writeBodyToXML(final PrintWriter pw, int indent) {

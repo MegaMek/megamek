@@ -42,7 +42,7 @@ public class ISLRM10Primitive extends LRMWeapon {
         addLookupName("ISLRM10p");
         addLookupName("IS LRM 10 Primitive");
         this.shortName = "LRM/10 p";
-        flags = flags.andNot(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTOTYPE).andNot(F_ARTEMIS_COMPATIBLE);
         heat = 4;
         rackSize = 10;
         minimumRange = 6;

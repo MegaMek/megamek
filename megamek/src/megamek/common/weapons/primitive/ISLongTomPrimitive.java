@@ -53,6 +53,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         rulesRefs = "118, IO";
+        flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TECH_BASE_IS)
         .setTechRating(RATING_E)
         .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)

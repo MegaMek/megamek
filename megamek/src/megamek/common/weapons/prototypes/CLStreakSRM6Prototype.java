@@ -44,7 +44,7 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
         shortAV = 8;
         maxRange = RANGE_SHORT;
         rulesRefs = "97,IO";
-        flags = flags.andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setIntroLevel(false)
             .setUnofficial(false)

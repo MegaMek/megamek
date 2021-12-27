@@ -5,8 +5,8 @@ Kraken (Bane)
 Config:Biped
 techbase:Clan
 era:3105
-source:Recognition Guide:ilClan #17 - Dark Age
-rules level:3
+source:Rec Guide:ilClan #17 - Late Republic
+rules level:2
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

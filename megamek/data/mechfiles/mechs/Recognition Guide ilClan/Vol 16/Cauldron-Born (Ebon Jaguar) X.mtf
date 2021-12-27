@@ -5,8 +5,8 @@ X
 Config:Biped Omnimech
 techbase:Clan
 era:3075
-source:Recognition Guide:ilClan #16 - Jihad
-rules level:4
+source:Rec Guide:ilClan #16 - Jihad
+rules level:3
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

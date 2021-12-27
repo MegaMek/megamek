@@ -149,4 +149,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Dragon is a heavy BattleMech originally designed in a bid to replace the Shadow Hawk. 
 
+capabilities:A close assault 'Mech, its versatile design allows it to be used in both offensive and defensive operations. It boasts above-average firepower and plenty of ammunition for extended combat, while a Vlar 300 fusion engine gives it a high top speed for a heavy 'Mech. Armor coverage for the Dragon's ten tons is thick around the torso, and especially the rear, for when it is surrounded by opponents, while the squat design gives it a smaller profile and makes it harder to knock over. The lack of any especially heat-intensive equipment makes the use of only ten heat sinks a non-issue. The Dragon's only major problem is it requires frequent maintenance and/or overhaul of its hip actuator.
+
+A simple field refit used during the Jihad, this version mounts a C3 Slave unit in the torso and a second arm-mounted laser by removing the rear-firing model, while replacing the original autocannon with a Light Autocannon/5.
+
+history:Debuting in 2754 during the twilight years of the Star League, the Dragon was turned down by the SLDF in favor of an upgraded Shadow Hawk, though it would be quietly picked up by the Draconis Combine. With the dissolution of the Star League and the onset of the Succession Wars, the Dragon became the Combine's standard heavy 'Mech. Multiple production lines on many well-defended worlds, including Luthien, meant the design was so prevalent every battalion and almost every company featured the Dragon, with some battalions comprised of nothing but these 'Mechs. So many were produced that the Federated Suns and Lyran Commonwealth employed salvaged Dragons in their own arsenals, while many mercenary commands used captured or purchased models. The Free Rasalhague Republic would also adopt the 'Mech following their formation. The beginning of the end came around 3025 when the Grand Dragon, an improved version of the Dragon, entered the prototype phase. By 3040 initial production had begun on this upgraded model with several Dragon factories switching over entirely to producing Grand Dragons. Even as the Combine was phasing it out of service the original Dragon was not wholly abandoned and it saw combat during the Clan Invasion. By 3065 Luthien Armor Works had ceased production altogether on the Dragon, though it would remain within the DCMS' inventory for some time.
+
+manufacturer:Refit
+primaryfactory:Various 
+systemmanufacturer:CHASSIS:Alshain Type 56-60H
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Starshield
+systemmanufacturer:COMMUNICATIONS:Sipher CommSys 3
+systemmanufacturer:TARGETING:Eagle Eye SY10-10

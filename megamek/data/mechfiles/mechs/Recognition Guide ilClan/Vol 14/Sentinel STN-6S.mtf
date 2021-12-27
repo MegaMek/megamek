@@ -5,8 +5,8 @@ STN-6S
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3135
-source:ilClan Rec Guide 13 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #14 - Dark Age
+rules level:2
 
 mass:40
 engine:240 XL (Clan) Engine

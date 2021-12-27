@@ -5,8 +5,8 @@ TDR-12R
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3127
-source:ilClan RecGuide 15 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #15 - Late Republic
+rules level:3
 
 mass:65
 engine:195 Fusion Engine(IS)

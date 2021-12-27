@@ -5,8 +5,8 @@ Baboon (Howler)
 Config:Biped
 techbase:Clan
 era:3086
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #8 - Early Republic
+rules level:3
 
 mass:20
 engine:140 Fusion (Clan) Engine(IS)

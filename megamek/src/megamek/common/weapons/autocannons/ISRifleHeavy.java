@@ -52,10 +52,10 @@ public class ISRifleHeavy extends RifleWeapon {
         bv = 91;
         cost = 90000;
         explosive = false; // when firing incendiary ammo
-        shortAV = 4;
-        medAV = 8;
-        longAV = 8;
-        extAV = 8;
+        shortAV = 9;
+        medAV = 9;
+        longAV = 9;
+        extAV = 9;
         maxRange = RANGE_MED;
         explosionDamage = 0;
         rulesRefs = "338,TO";

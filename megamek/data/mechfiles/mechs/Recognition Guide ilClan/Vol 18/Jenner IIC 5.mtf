@@ -5,7 +5,7 @@ Jenner IIC
 Config:Biped
 techbase:Clan
 era:3140
-source:ilClan Rec Guide 18 - Dark Age
+source:Rec Guide:ilClan #18 - Dark Age
 rules level:2
 
 mass:35

@@ -150,4 +150,18 @@ Stealth
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Goliath .jpg
+overview:The Goliath is based on lessons that were learned from the Scorpion. 
+
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.				
+
+deployment:This is a Capellan Confederation variant introduced in 3082. A larger engine increases the top speed of the Goliath to approximately 86 km/h. Equipped with Stealth Armor and a Guardian ECM Suite for protection, the 'Mech carries an ER PPC and two MML-7s. Though the ammo in the side torso is protected by CASE, the ammo in the center torso isn't.
+
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. he first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
+
+manufacturer:Hollis Incorporated	
+primaryfactory:Corey
+systemmanufacturer:CHASSIS:Corean VIII
+systemmanufacturer:ENGINE:Hermes 400 XL
+systemmanufacturer:ARMOR:StarSlab Stealth with CASE
+systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
+systemmanufacturer:TARGETING:Corean B-Tech

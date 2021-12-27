@@ -5,8 +5,8 @@ I
 Config:Biped Omnimech
 techbase:Clan
 era:3094
-source:ilClan Rec Guide 13 - Early Republic
-rules level:3
+source:Rec Guide:ilClan #14 - Early Republic
+rules level:2
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

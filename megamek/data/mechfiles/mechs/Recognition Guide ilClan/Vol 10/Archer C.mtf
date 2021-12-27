@@ -5,8 +5,8 @@ C
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3050
-source:Clan Invasion
-rules level:4
+source:Rec Guide:ilClan #10 - Clan Invasion
+rules level:3
 
 mass:70
 engine:280 Fusion (Clan) Engine

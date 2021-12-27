@@ -5,8 +5,8 @@ Phoenix Hawk IIC
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3146
-source:ilClan RecGuide 15 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #15 - Dark Age
+rules level:2
 
 mass:80
 engine:400 XL (Clan) Engine

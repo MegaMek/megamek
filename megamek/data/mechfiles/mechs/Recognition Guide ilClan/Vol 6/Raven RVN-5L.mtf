@@ -6,6 +6,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3125
 rules level:4
+source:Rec Guide:ilClan #6 - Dark Age
 
 mass:35
 engine:280 XL Engine(IS)

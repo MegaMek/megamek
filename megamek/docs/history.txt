@@ -43,6 +43,7 @@ VERSION HISTORY:
 + Data: New Units (Rec Guides 19, 20), new sprites, TP fixes, and updated Camos
 + Issue #2199: MUL Parser Game Option-reliant Personnel Load
 + MekHQ Issue #3026: MegaMekXMLUtil: Skip Null UUIDs During File Output
++ Data: Large update of Fluff, Tech level, and clean up of Rec Guide Names.
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

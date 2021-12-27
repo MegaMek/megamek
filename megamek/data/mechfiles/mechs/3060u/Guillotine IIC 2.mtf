@@ -150,4 +150,19 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Guillotine IIC is a simple upgrade of the original Guillotine BattleMech using Clan technology. 
 
+capabilities:This version of that venerable 'Mech uses double heat sinks and an Endo Steel internal structure to save weight. These weight savings were used to upgrade the 'Mech's weapon systems. The original twelve tons of armor was left unchanged. 
+
+deployment:Developed during the Jihad in 3070, this variant was remodelled for close-quarter combat. The variant removes both Large Pulse Lasers, using the space for two additional ER Medium Lasers and a Targeting Computer to guide them. The SRM 6 is exchanged for a Streak SRM 4 Launcher and one ton of ammunition. The standard armor was exchanged for Ferro-Fibrous armor, and the 'Mech was equipped with six Improved Jump Jets.
+
+history:Although Clan Coyote created this upgrade, Clan Star Adder was the first to use it in combat in 2892. With the introduction of the OmniMech, most Guillotine IICs were relegated to second-line and solahma duty.
+manufacturer:Omega Orbital Production Plant, Irian BattleMechs Unlimited (Refit ),  W-7 Facilities (Refit) 
+
+primaryfactory:Unknown, Angell II, Weingarten
+systemmanufacturer:CHASSIS:Clan Modified Heavy Type X
+systemmanufacturer:ENGINE:Clan Standard 280 series
+systemmanufacturer:ARMOR:Forging OTR17b
+systemmanufacturer:JUMPJET:Clan Series Type 4 Heavy
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Series VI KITT

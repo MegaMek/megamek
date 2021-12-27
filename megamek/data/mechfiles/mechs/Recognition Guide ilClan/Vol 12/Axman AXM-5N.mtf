@@ -5,7 +5,7 @@ AXM-5N
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3148
-source:ilClan Vol 12 - Dark Age
+source:Rec Guide:ilClan #12 - Dark Age
 rules level:2
 
 mass:65

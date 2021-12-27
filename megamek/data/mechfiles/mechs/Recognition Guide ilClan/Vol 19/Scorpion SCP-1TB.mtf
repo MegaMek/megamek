@@ -5,7 +5,7 @@ SCP-1TB
 Config:Quad
 techbase:Inner Sphere
 era:3072
-source:RecGuide 19 -Jihad
+source:Rec Guide:ilClan #19 - Jihad
 rules level:2
 
 mass:55

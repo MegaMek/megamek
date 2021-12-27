@@ -1,0 +1,146 @@
+Version:1.1
+Grand Dragon
+DRG-1G (Douglas)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3028
+Rules Level:1
+
+Mass:60
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Single
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:27
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:4
+1 ISAC5, Right Arm, Ammo:20
+1 ISMediumLaser (R), Left Torso (R)
+1 ISSRM6, Left Arm, Ammo:15
+1 ISLRM5, Center Torso, Ammo:24
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISSRM6
+ISSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISAC5
+ISAC5
+ISAC5
+ISAC5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISSRM6 Ammo
+ISMediumLaser (R)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISAC5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISLRM5
+ISLRM5 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+overview:The Grand Dragon is the successful follow-up to the Dragon BattleMech.
+ 
+capabilities:Protected by ten tons of armor, the Grand Dragon uses thirteen double heat sinks for excellent heat management and uses a 16.5 ton Hermes 360 XL engine to achieve a moderate cruising speed of 64 km/h. Originally the Grand Dragon used the same Alshain Type 56-60H chassis as was found in the Dragon 'Mech it replaced. However, when the new Nykvarn plant was being set up an innovative engineering team came up with a way to increase the Grand Dragon's rotation from 250° to 300° by using an alternative assembly method for the hip and torso structure. This improvement was responsible for Nykvarn being awarded the honor of restarting Grand Dragon production, with all new Grand Dragons using this Nykvarn Type 58-66SH chassis
+
+deployment:This first generation Grand Dragon was customized by Team Banzai MechWarrior Douglas Running-Elk. Not keen on high temperatures, Douglas refitted his captured Grand Dragon to run with cooler weapons. He had the 'Mech's PPC removed for a Class 5 Autocannon with one ton of ammunition. He then downgraded its LRM Launcher to a 5 Rack with single ton of ammunition. He removed all the forward medium lasers and replaced them with a single 6-tubed Short Range Missile Launcher.
+
+history:The 'Mech was originally a simple variant of the Dragon with some modifications, chiefly replacing the autocannon with a particle projection cannon, introduced around the end of the Fourth Succession War. In 3040 this DRG-1G variant was turned into a production model, with several of the Dragon's production lines turned over to building Grand Dragons. As it reached Draconis Combine Mustered Soldiery units the Grand Dragon became well-liked for its all-around effectiveness in terms of speed, heat management and weaponry. Luthien Armor Works went ahead with phasing in the Grand Dragon, retooling their Dragon factories on Luthien, Saffel, Yorii and Dieron to build the new 'Mechs exclusively, by 3055 all Dragon production had ceased in favor of the Grand Dragon. Just like the Dragon, the Grand Dragon quickly became a favorite in the DCMS, with nearly every line unit fielding a company of either design. Production of the Grand Dragon continued unabated until the Jihad, when the Word of Blake devastated LAW's factories in 3068. It took two years for LAW to get new Grand Dragon factories up and running, the first on Nykvarn followed by Abiy Adi and Savinsville, and ensure the continued use of the 'Mech in years to come.
+
+manufacturer:Refit
+primaryfactory:Refit
+systemmanufacturer:CHASSIS:Alshain Type 56-60H
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Starshield
+systemmanufacturer:COMMUNICATIONS:Sipher CommSys 3
+systemmanufacturer:TARGETING:Eagle Eye SY10-10

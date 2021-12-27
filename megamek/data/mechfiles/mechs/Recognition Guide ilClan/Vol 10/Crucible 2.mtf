@@ -5,7 +5,8 @@ Crucible
 Config:Biped
 techbase:Clan
 era:3149
-rules level:4
+source:Rec Guide:ilClan #10 - Dark Age
+rules level:2
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

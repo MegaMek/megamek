@@ -151,3 +151,20 @@ IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Guillotine was originally designed in 2499 as a front-line BattleMech for the Terran Hegemony and was the Star League Defense Force's standard heavy 'Mech for generations.
+
+capabilities:While its weaponry was ample for its era, as time went by the march of technology allowed for the development of larger 'Mechs which were significantly better armed. However few of these new 'Mechs could match the Guillotine in maneuverability or staying power, and so the 'Mech simply transitioned from the front-line shock role to that of a heavy raider - a task it excels at thanks to its quick speed and use of jump jets. Its mobility also makes the 'Mech adept at fighting in difficult terrain such as jungle or mountainous regions. The only serious issue with the 'Mech ironically are its weapons, which have been plagued with various problems over the centuries.
+
+deployment:Following the Blakist defeat, many of their weapons were changed for the victorious powers. This version of the GLT-6WB Guillotine introduced in 3080 exchanges the Improved C3 CPU for a Guardian ECM and a C3 slave CPU. 
+
+history:Newhart Industries built the Guillotine from their factory on New Earth, but this was destroyed during the Amaris Civil War in 2776 as part of a celebration put on by the 12th Republican Guard. At the same time Irian BattleMechs Unlimited was building Guillotines under contract from Newheart out of Irian and continued to do so for another half-century; Lycomb-Davion IntroTech had also been producing the Guillotine from their main manufacturing facility on Demeter, but this facility was destroyed by Capellan Confederation forces early in the First Succession War. The collapse of the Star League and exodus of the SLDF scattered Guillotines across all of the Great Houses, while ComStar succeeded in raiding New Earth in 2788 and acquiring a battalion's worth from former Newhart stockpiles. In the wake of the First Succession War a shortage of the advanced components necessary for the 'Mech forced IBMU to design a downgraded variant, the GLT-4L, which they continued to produce off and on for the next few centuries. The recovery of the Helm Memory Core inspired a number of old designs, the Guillotine included, to be upgraded with lostech. Using the refurbished Newhart factory Irian's new GLT-5M model not only restored the Guillotine to its former glory but improved upon it with better (and importantly more reliable) weaponry. Irian continued producing new Guillotines, which would go on to take part in the FedCom Civil War and the Jihad.
+
+manufacturer:Irian BattleMechs Unlimited
+primaryfactory:Irian 
+systemmanufacturer:CHASSIS:Crucis-I Endo Steel
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Ulston Prime with CASE
+systemmanufacturer:JUMPJET:Anderson 398
+systemmanufacturer:COMMUNICATIONS:StarLink 955G
+systemmanufacturer:TARGETING:Pulsar Tri-X

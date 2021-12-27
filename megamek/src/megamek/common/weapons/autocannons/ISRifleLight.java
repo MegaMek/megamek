@@ -52,10 +52,10 @@ public class ISRifleLight extends RifleWeapon {
         bv = 21;
         cost = 37750;
         explosive = false; // when firing incendiary ammo
-        shortAV = 4;
-        medAV = 8;
-        longAV = 8;
-        extAV = 8;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
+        extAV = 3;
         maxRange = RANGE_MED;
         explosionDamage = 0;
         rulesRefs = "338,TO";

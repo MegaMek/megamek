@@ -5,13 +5,13 @@ AXM-6T
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Rules Level:3
+Rules Level:2
 
 Mass:65
 Engine:325 XL Fusion Engine
 Structure:Endo-Steel
 Myomer:Standard
-History:Handheld weapons NOT available in MegaMek so none are included.
+ejection:Full Head Ejection System
 
 Heat Sinks:10 Double
 Walk MP:5
@@ -131,3 +131,19 @@ Lower Leg Actuator
 Foot Actuator
 ISERMediumLaser
 ISERMediumLaser
+
+overview:Developed by Team Banzai as the big brother of the highly successful Hatchetman, the Axman was designed exclusively to be a 'Mech killer
+
+capabilities:The Axman has a ground speed of only 64.8 km/h, which is average for a Heavy weight, but improved in part by the inclusion of Jump Jets. The 'Mech is covered with eleven tons of Ferro-Fibrous armor that gives it a great deal of protection, with ten Double Heat Sinks offering average heat dissipation. Much like its lighter brother, the Axman was designed to utilize the Full-Head Ejection System to safe-guard its MechWarrior.
+
+deployment:This is the production variant of the AXM-6X described under "Custom Variants". This version, introduced in 3083, uses an Inner Sphere produced XL engine and lacks the Supercharger of the 6X. The top speed of the 6T is 86 km/h. The armor protection and weapon configuration are identical to the Axman 6X, but the Thunderbolt launchers have two tons of ammunition each. Dev note- Handheld weapons NOT available in MegaMek so none are included.
+
+history:The Axman was also intended as a symbol of solidarity throughout the Federated Commonwealth by using components that were produced in Federated Suns, Lyran Commonwealth, and even former Capellan Confederation space. The collapse of the Federated Commonwealth in 3057 almost rendered the design extinct because of this, production slowing to a trickle as both the Federated Suns and Lyran Alliance were forced to rely on surplus stores while developing new variants utilizing locally sourced components.
+
+manufacturer:Defiance Industries
+primaryfactory:Furillo
+systemmanufacturer:CHASSIS:Dorwinion AXM Endo Steel
+systemmanufacturer:ENGINE:Vox 325 XL
+systemmanufacturer:ARMOR:Lexington Ltd. Light Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Neil 8000
+systemmanufacturer:TARGETING:RCA Instatrac Mark X

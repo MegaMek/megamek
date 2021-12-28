@@ -6,7 +6,7 @@ Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3074
 Source:XTRO Steiner - Jihad
-Rules Level:4
+Rules Level:3
 
 Mass:65
 Engine:325 XL (Clan) Engine
@@ -151,4 +151,18 @@ ISERMediumLaser
 -Empty-
 -Empty-
 
+overview:Developed by Team Banzai as the big brother of the highly successful Hatchetman, the Axman was designed exclusively to be a 'Mech killer
 
+capabilities:The Axman has a ground speed of only 64.8 km/h, which is average for a Heavy weight, but improved in part by the inclusion of Jump Jets. The 'Mech is covered with eleven tons of Ferro-Fibrous armor that gives it a great deal of protection, with ten Double Heat Sinks offering average heat dissipation. Much like its lighter brother, the Axman was designed to utilize the Full-Head Ejection System to safe-guard its MechWarrior.
+
+deployment:This Axman variant introduced in 3074, and uses several experimental systems as a technology test-bed. The hatchet and standard weaponry have been removed. In their place is a pair of Thunderbolt 15 missile launchers in the torso, while each leg mounts a pair of ER Medium Lasers. This is important, as the Axman-6X uses several hand-held weapons to provide its main firepower. A Clan-spec engine coupled with a Supercharger keeps the 6X moving at high speeds. Though the Thunderbolt missiles provide some firepower, they're only supported by a ton of ammunition. Dev Note:Handheld weapons NOT available in MegaMek so none are included.
+
+history:The Axman was also intended as a symbol of solidarity throughout the Federated Commonwealth by using components that were produced in Federated Suns, Lyran Commonwealth, and even former Capellan Confederation space. The collapse of the Federated Commonwealth in 3057 almost rendered the design extinct because of this, production slowing to a trickle as both the Federated Suns and Lyran Alliance were forced to rely on surplus stores while developing new variants utilizing locally sourced components.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion AXM Endo Steel
+systemmanufacturer:ENGINE:Magna 260 XL
+systemmanufacturer:ARMOR:Kallon Unity Weave Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Neil 8000
+systemmanufacturer:TARGETING:RCA Instatrac Mark X

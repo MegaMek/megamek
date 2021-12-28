@@ -1,35 +1,35 @@
-Version:1.1
+Version:1.0
 Hankyu (Arctic Cheetah)
 E
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3071
-source:TRO Clan Invasion - Jihad
-Rules Level:2
+techbase:Clan
+era:3071
+source:Rec Guide:ilClan #21 - Jihad
+rules level:2
 
-Mass:30
-Engine:240 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:30
+engine:240 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:9
-Walk MP:8
-Jump MP:6
+heat sinks:10 Clan Double
+base chassis heat sinks:9
+walk mp:8
+jump mp:6
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:7
-RA Armor:7
-LT Armor:8
-RT Armor:8
-CT Armor:8
-HD Armor:9
-LL Armor:8
-RL Armor:8
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+armor:Ferro-Fibrous(Clan)
+LA armor:7
+RA armor:7
+LT armor:8
+RT armor:8
+CT armor:8
+HD armor:9
+LL armor:8
+RL armor:8
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:13
 Light Machine Gun, Left Arm
@@ -42,20 +42,20 @@ Light Machine Gun, Right Arm
 Light Machine Gun Array, Right Arm
 Medium Pulse Laser, Left Torso
 Flamer, Left Torso
-B-Pod, Left Torso
+Anti-BattleArmor Pods (B-Pods), Left Torso
 Medium Pulse Laser, Right Torso
-B-Pod, Right Torso
+Anti-BattleArmor Pods (B-Pods), Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLightMG (omnipod)
-CLLightMG (omnipod)
-CLLightMG (omnipod)
-CLLMGA (omnipod)
-Clan Light Machine Gun Ammo - Half (omnipod)
+CLLightMG (OMNIPOD)
+CLLightMG (OMNIPOD)
+CLLightMG (OMNIPOD)
+CLLMGA (OMNIPOD)
+Clan Light Machine Gun Ammo - Half (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -65,11 +65,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLightMG (omnipod)
-CLLightMG (omnipod)
-CLLightMG (omnipod)
-CLLMGA (omnipod)
-Clan Light Machine Gun Ammo - Half (omnipod)
+CLLightMG (OMNIPOD)
+CLLightMG (OMNIPOD)
+CLLightMG (OMNIPOD)
+CLLMGA (OMNIPOD)
+Clan Light Machine Gun Ammo - Half (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -77,9 +77,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser (omnipod)
-CLFlamer (omnipod)
-CLBPod (omnipod)
+CLMediumPulseLaser (OMNIPOD)
+CLFlamer (OMNIPOD)
+ISBPod (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -93,8 +93,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMediumPulseLaser (omnipod)
-CLBPod (omnipod)
+CLMediumPulseLaser (OMNIPOD)
+ISBPod (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous

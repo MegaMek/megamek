@@ -1,42 +1,42 @@
-Version:1.1
+Version:1.0
 Hankyu (Arctic Cheetah)
-F
+T
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3093
-Source:RS 3145 NTNU - Early Republic
-Rules Level:2
+techbase:Clan
+era:3142
+source:Rec Guide:ilClan #21 - Succession Wars
+rules level:2
 
-Mass:30
-Engine:240 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:30
+engine:240 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:9
-Walk MP:8
-Jump MP:6
+heat sinks:10 Clan Double
+base chassis heat sinks:9
+walk mp:8
+jump mp:8
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:7
-RA Armor:7
-LT Armor:8
-RT Armor:8
-CT Armor:8
-HD Armor:9
-LL Armor:8
-RL Armor:8
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+armor:Ferro-Fibrous(Clan)
+LA armor:7
+RA armor:7
+LT armor:8
+RT armor:8
+CT armor:8
+HD armor:9
+LL armor:8
+RL armor:8
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:6
-Improved Heavy Medium Laser, Left Arm
+ER Medium Laser, Left Arm
 Streak LRM 5, Left Arm
-Improved Heavy Medium Laser, Right Arm
+ER Medium Laser, Right Arm
 Streak LRM 5, Right Arm
-Light TAG, Left Torso
+TAG (Clan), Left Torso
 Flamer, Right Torso
 
 Left Arm:
@@ -44,11 +44,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLStreakLRM5 (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -58,11 +58,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLStreakLRM5 (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -70,9 +70,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-WatchdogECMSuite (omnipod)
-WatchdogECMSuite (omnipod)
-CLLightTAG (omnipod)
+Jump Jet (OMNIPOD)
+CLTAG (OMNIPOD)
+Clan Streak LRM 5 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -86,8 +86,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLFlamer (omnipod)
-Clan Streak LRM 5 Ammo (omnipod)
+Jump Jet (OMNIPOD)
+CLFlamer (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -155,7 +155,7 @@ overview:The Arctic Cheetah was originally designed by Clan Ice Hellion to repla
 
 capabilities:The Arctic Cheetah uses all the weight-saving materials that were available to the Clans in the 3030s: an Endo Steel structure, an XL Engine, and four tons of Ferro-Fibrous armor. It maintains enough jump jets in the base chassis to leap up to one hundred eighty meters at a time. Every variant of the Arctic Cheetah mounts a modular Flamer somewhere on the 'Mech for anti-infantry work.
 
-deployment:This configuration is equipped with two Streak LRM-5 launchers and two Improved Heavy Medium Lasers. It also carries a Light TAG and a Watchdog CEWS.
+deployment:Unknown
 
 history:Shortly after they began production in 3037, Clan Smoke Jaguar conquered the factory on Foster that produced the design, enabling the Jaguars to replace their Mist Lynx 'Mechs. The design was dubbed the Hankyu (Japanese for "short bow") by the Draconis Combine forces that first encountered it during the Battle of Luthien. The Ice Hellions subsequently recovered or recaptured Foster MechWorks Facility Beta, but by that point, the majority of the Ice Hellion MechWarriors preferred the Hellion OmniMech.
 

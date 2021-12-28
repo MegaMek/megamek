@@ -1,18 +1,10 @@
-#
 # Validates Boards
 #
 # Jobs:
-#
 #    - board_validator: Validate boards in MM
-#
-
 name: Validate Boards
 
-#
-# This Action Definition should be triggered only on
-# master being updated or Pull Requests being added
-# or updated against master.
-#
+# This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
 on:
   push:
     branches: [ master ]
@@ -36,36 +28,40 @@ on:
     - 'megamek/src/megamek/utils/BoardsValidator.java'
 
 jobs:
-
   board_validator:
+    runs-on: ${{ matrix.os }}
 
-    runs-on: ubuntu-latest
+    # Run this job once for each combination in the matrix below.
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ] # For Board Validation running on *nix is sufficient
+        java-distribution: [ temurin ]
+        java-version: [ 11 ]
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
+    # Setup the requested Java Distribution and Version from the matrix
+    - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v2
       with:
-        java-version: 11
+        distribution: ${{ matrix.java-distribution }}
+        java-version: ${{ matrix.java-version }}
 
+    # Make sure we can execute the Gradle wrapper
     - name: Grant execute permission for gradlew (*nix or MacOS)
       run: chmod +x gradlew
+      if: runner.os != 'Windows'
 
-    #
     # Build the MegaMek project
-    #
     - name: Create MM Jar
       run: ./gradlew jar --stacktrace
 
-    #
     # Run the Boards Validator
-    #
     - name: Validate Boards
       working-directory: megamek
       # Runs the BoardsValidator in default mode, which rips through
       # the ./data directory of the current working directory.
       #
-      # The -q flag tells the validator to only print the filenames
-      # that are invalid.
+      # The -q flag tells the validator to only print the filenames that are invalid.
       run: java -cp build/libs/MegaMek.jar megamek.utils.BoardsValidator -q

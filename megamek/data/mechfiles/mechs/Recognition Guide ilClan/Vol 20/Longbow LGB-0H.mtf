@@ -5,7 +5,7 @@ LGB-0H
 Config:Biped
 techbase:Inner Sphere
 era:3065
-source:ilClan Rec Guide 20 - Civil War
+source:Rec Guide:ilClan #20 - Civil War
 rules level:2
 
 mass:85

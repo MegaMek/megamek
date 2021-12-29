@@ -3782,8 +3782,8 @@ Raider Mk II JL-2:BRAWLER
 Raijin II RJN-200-A:SKIRMISHER
 Raijin II RJN-200-B:SKIRMISHER
 Raijin II RJN-200-C:SKIRMISHER
-Raijin RJN101-A:STRIKER
-Raijin RJN101-C:STRIKER
+Raijin RJN-101-A:STRIKER
+Raijin RJN-101-C:STRIKER
 Rakshasa MDG-1A:SKIRMISHER
 Rakshasa MDG-1Ar:SKIRMISHER
 Rakshasa MDG-1B:SKIRMISHER
@@ -5941,7 +5941,63 @@ Regent B:JUGGERNAUT
 Regent C:SNIPER
 Regent D:SNIPER
 #ilClan Rec Guide 22
+Battle Cobra T:SNIPER
+Battle Cobra F:STRIKER
+Battle Cobra G:STRIKER
+Battle Cobra I:MISSILE BOAT
+Battle Cobra J:STRIKER
+Battle Cobra X:STRIKER
+Doom Courser Prime:SNIPER
+Doom Courser A:BRAWLER
+Doom Courser B:JUGGERNAUT
+Doom Courser C:MISSILE_BOAT
+Doom Courser D:SNIPER
+Night Gyr T:JUGGERNAUT
+Night Gyr F:SKIRMISHER
+Night Gyr G:SNIPER
+Night Gyr X:SNIPER
+Goliath GOL-3M:SNIPER
+Goliath GOL-3M2:SNIPER
+Goliath GOL-7C:JUGGERNAUT
+Goliath GOL-7K:JUGGERNAUT
+Goliath GOL-7R:SNIPER
+Jade Phoenix Prime:SNIPER
+Jade Phoenix A:SKIRMISHER
+Jade Phoenix B:SKIRMISHER
+Jade Phoenix C:SKIRMISHER
+Jade Phoenix D:SNIPER
+Jade Phoenix E:SKIRMISHER
 #ilClan Rec Guide 23
+Nexus NXS1-A:STRIKER
+Nexus NXS1-B:SCOUT
+Nexus NXS1-C:STRIKER
+Star Python :SCOUT
+Fujin RJN-301-F:STRIKER
+Raijin RJN-101-A:STRIKER
+Raijin RJN-101-B:SCOUT
+Raijin RJN-101-C:STRIKER
+Raijin RJN-101-X:STRIKER
+Raijin RJN-301-B:STRIKER
+Lancelot LNC25-09:SKIRMISHER
+Rifleman IIC :SNIPER
+Rifleman IIC 2:SNIPER
+Rifleman IIC 9:SNIPER
+Rifleman IIC 10:SKIRMISHER
+Guillotine GLT-7M:BRAWLER
+Nova Cat T:SNIPER
+Nova Cat E:BRAWLER
+Nova Cat F:SKIRMISHER
+Nova Cat G:MISSILE_BOAT
+Nova Cat H:SKIRMISHER
+Nova Cat M:JUGGERNAUT
+Grand Crusader GRN-D-01:MISSILE_BOAT
+Grand Crusader GRN-D-01-X:MISSILE_BOAT
+Grand Crusader GRN-D-02:MISSILE_BOAT
+Grand Crusader GRN-D-02-B:SNIPER
+Star Crusader Prime:SNIPER
+Star Crusader A:BRAWLER
+Star Crusader B:SNIPER
+Katana CRK-5006-1:SKIRMISHER
 #ilClan Rec Guide 24
 #GoldenCentury
 Mongoose C:SCOUT

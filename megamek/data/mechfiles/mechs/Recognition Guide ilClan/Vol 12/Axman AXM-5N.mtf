@@ -5,7 +5,7 @@ AXM-5N
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3148
-source:ilClan Vol 12 - Dark Age
+source:Rec Guide:ilClan #12 - Dark Age
 rules level:2
 
 mass:65
@@ -150,4 +150,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Developed by Team Banzai as the big brother of the highly successful Hatchetman, the Axman was designed exclusively to be a 'Mech killer
 
+capabilities:The Axman has a ground speed of only 64.8 km/h, which is average for a Heavy weight, but improved in part by the inclusion of Jump Jets. The 'Mech is covered with eleven tons of Ferro-Fibrous armor that gives it a great deal of protection, with ten Double Heat Sinks offering average heat dissipation. Much like its lighter brother, the Axman was designed to utilize the Full-Head Ejection System to safe-guard its MechWarrior.
+
+deployment:A prototype in 3146 whose production was delayed only due to lack parts, the AXM-5N was rapidly built for the desperate AFFS after the Davion recapture of New Syrtis from the Capellans. Using a number of components shared with the Hatchetman 7D and Caesar 5D, the AXM-5N carries a Tiburon Khanate supplied HAG 20 in its right torso supported by a left-arm mounted Sea Fox Clan ER PPC and a trio of IS-grade ER Medium Lasers on the right-arm. Fitted with a Guardian ECM Suite, through carrying three tons of HAG reloads, the AXM-5N primarily relies on its energy weaponry to activate its Triple Strength Myomer to enhance both its speed and the damage inflicted with its hatchet.
+
+history:The Axman was also intended as a symbol of solidarity throughout the Federated Commonwealth by using components that were produced in Federated Suns, Lyran Commonwealth, and even former Capellan Confederation space. The collapse of the Federated Commonwealth in 3057 almost rendered the design extinct because of this, production slowing to a trickle as both the Federated Suns and Lyran Alliance were forced to rely on surplus stores while developing new variants utilizing locally sourced components.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion AXM Standard
+systemmanufacturer:ENGINE:Magna 260 XL
+systemmanufacturer:ARMOR:Kallon Light Light Ferro-Fibrous
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Rander Pinpoint-HY

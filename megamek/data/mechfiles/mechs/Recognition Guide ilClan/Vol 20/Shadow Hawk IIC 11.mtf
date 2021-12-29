@@ -5,8 +5,8 @@ Shadow Hawk IIC
 Config:Biped
 techbase:Clan
 era:3141
-source:ilClan Rec Guide 20 - Dark Age
-rules level:3
+source:Rec Guide:ilClan #20 - Dark Age
+rules level:2
 
 mass:45
 engine:270 Fusion (Clan) Engine(IS)

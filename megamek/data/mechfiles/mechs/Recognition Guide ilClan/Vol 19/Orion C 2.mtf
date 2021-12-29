@@ -5,8 +5,8 @@ C 2
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3143
-source:ilClan Rec Guide 19 - Dark Age
-rules level:3
+source:Rec Guide:ilClan #19 - Dark Age
+rules level:2
 
 mass:75
 engine:300 Fusion Engine(IS)

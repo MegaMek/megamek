@@ -5,7 +5,7 @@ BL-18-KNT
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3130
-source:ilClan Vol 12 - Dark Age
+source:Rec Guide:ilClan #12 - Dark Age
 rules level:2
 
 mass:75

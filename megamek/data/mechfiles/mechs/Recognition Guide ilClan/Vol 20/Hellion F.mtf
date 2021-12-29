@@ -5,8 +5,8 @@ F
 Config:Biped Omnimech
 TechBase:Clan
 Era:3077
-source:ilClan Rec Guide 20 - Jihad
-Rules Level:3
+source:Rec Guide:ilClan #20 - Jihad
+Rules Level:2
 
 Mass:30
 Engine:210 XL (Clan) Engine(IS)

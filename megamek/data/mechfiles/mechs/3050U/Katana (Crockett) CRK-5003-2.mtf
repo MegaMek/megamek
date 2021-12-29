@@ -3,49 +3,49 @@ Katana (Crockett)
 CRK-5003-2
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3035
-Source:TRO 3050 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:3035
+source:TRO 3050 - Succession Wars
+rules level:2
 
-Mass:85
-Engine:255 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:255 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:20 Single
-Walk MP:3
-Jump MP:3
+heat sinks:20 Single
+walk mp:3
+jump mp:3
 
-Armor:Standard Armor
-LA Armor:19
-RA Armor:19
-LT Armor:23
-RT Armor:23
-CT Armor:31
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+armor:Standard(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:23
+RT armor:23
+CT armor:31
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:8
+RTR armor:8
+RTC armor:12
 
 Weapons:7
-1 ISLargeLaser, Right Arm
-1 ISLargeLaser, Left Arm
-1 ISSRM6, Right Torso, Ammo:30
-1 ISSRM6, Left Torso
-1 ISLBXAC10, Left Torso, Ammo:20
-1 ISSmallLaser, Left Arm
-1 ISSmallLaser, Right Arm
+Large Laser, Left Arm
+Small Laser, Left Arm
+Large Laser, Right Arm
+Small Laser, Right Arm
+SRM 6, Left Torso
+LB 10-X AC, Left Torso
+SRM 6, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
+Large Laser
+Large Laser
+Small Laser
 -Empty-
 -Empty-
 -Empty-
@@ -57,9 +57,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
+Large Laser
+Large Laser
+Small Laser
 -Empty-
 -Empty-
 -Empty-
@@ -72,8 +72,8 @@ Heat Sink
 Heat Sink
 Heat Sink
 Heat Sink
-ISSRM6
-ISSRM6
+SRM 6
+SRM 6
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
@@ -86,12 +86,12 @@ Heat Sink
 Heat Sink
 Heat Sink
 Heat Sink
-ISSRM6
-ISSRM6
-ISSRM6 Ammo
-ISSRM6 Ammo
-ISLBXAC10 CL Ammo
-ISLBXAC10 Ammo
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo SRM-6
+IS LB 10-X Cluster Ammo
+IS LB 10-X AC Ammo
 -Empty-
 -Empty-
 
@@ -150,4 +150,21 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Katana began its existence when the Draconis Combine was given several downgraded Crockett BattleMechs by ComStar as part of Operation Rosebud.
+ 
+capabilities:The Katana shares many of the same features as the Crockett, right down to the serial number. Just like the Crockett, the Katana mounts the same fusion engine and jump jets for similar ground speed and leaping ability. It is also protected by the same twelve and a half tons of armor and utilizes the same electronic systems. Unlike the original 'Mech, the Katana makes do with twenty standard heat sinks.
+
+deployment:In its left torso is a Blankenburg LB-X Autocannon/10 which draws from a two-ton ammo bin in the right torso. A pair of Magna Mk III Large Lasers split between both arms take the place of the extended-range versions found in the Crockett. For close-range combat it carries two Holly SRM-6s in either side torso, with two tons of reloads concentrated in the right side, and for point blank defense the 'Mech carries two Dodd Small Lasers mounted co-axially with the large lasers.
+
+history:During negotiations in 3035 Primus Myndo Waterly gave the Combine the Blankenburg Technologies storage facility on Soul as a gesture of good faith. The facility was handed over to Independence Weaponry (although for appearance's sake it was "leased" from Blankenburg) which, beyond a treasure trove of lostech weapons, also contained a number of Crocketts. IW went about reverse-engineering the weapons so they could produce copies at a nearby facility for sale to other Combine manufacturers and closely examined the Crocketts for several months. After making minor modifications these 'Mechs were renamed Katanas and used to replace Chargers in several DCMS units. The Katana quickly become a mainstay in many of the heavier mobile line units, especially after the invention of the C3 Computer. Recognizing the value in this new technology, IW quickly developed several new Katana variants which could effectively operate as part of C3 lances. When the "lease" expired and the Soul facility was returned to Blankenburg, the company hired on the entire IW Katana engineering team and entered into a technology-sharing agreement to continue production of new Katanas.
+
+manufacturer:Blankenburg Technologies (Refit)
+primaryfactory:Soul
+systemmanufacturer:CHASSIS:Geometric 530 Hard Core
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:CarbonStrand 30 Weight AS
+systemmanufacturer:JUMPJET:Geotec 300
+systemmanufacturer:COMMUNICATIONS:GRPNTR Groundpainter 5
+systemmanufacturer:TARGETING:Scope 30 RNDST
 

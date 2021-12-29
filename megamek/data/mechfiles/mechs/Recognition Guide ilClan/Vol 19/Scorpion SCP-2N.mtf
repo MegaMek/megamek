@@ -5,8 +5,8 @@ SCP-2N
 Config:Quad
 techbase:Inner Sphere
 era:3131
-source:ilClan Rec Guide 19 - Early Republic
-rules level:3
+source:Rec Guide:ilClan #19 - Early Republic
+rules level:2
 
 mass:55
 engine:330 Light Engine(IS)

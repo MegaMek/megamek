@@ -24,7 +24,7 @@ import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
 import megamek.client.ui.swing.dialog.DialogButton;
-import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
@@ -79,7 +79,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private Vector<String> playerNames = null;
 
-    private IClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
+    private ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
         this(owner, title, modal, playerName, null);
@@ -216,7 +216,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.portField = portField;
     }
 
-    protected IClientPreferences getClientPreferences() {
+    protected ClientPreferences getClientPreferences() {
         return clientPreferences;
     }
     //endregion Getters and Setters

@@ -148,4 +148,18 @@ ISHeavyGauss Ammo
 -Empty-
 -Empty-
 
+overview:The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s. 
 
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.
+
+deployment:The 3067 4S Goliath is built using a Pitban 320 Light Fusion Engine to save weight. The saved weight is used to mount a new Defiance Hammerfist Heavy Gauss Rifle. The 4S also carries a Light Crossbow LRM-10 launcher for long-range support and for closer ranges the 'Mech also carries two RAMTech 1500Z ER Medium Lasers. This arsenal makes the 4S extremely deadly at close ranges.
+
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. The Goliath is based on lessons that were learned from the Scorpion. The first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
+
+manufacturer:Defiance Industries,TharHes Industries
+primaryfactory:Hesperus II,Tharkad
+systemmanufacturer:CHASSIS:Earthwerks GOL Quad-A
+systemmanufacturer:ENGINE:Pitban 320 Light Fusion Engine
+systemmanufacturer:ARMOR:Durallex Heavy with CASE
+systemmanufacturer:COMMUNICATIONS:Angst Clear Channel 3G
+systemmanufacturer:TARGETING:Angst Clear View Multitask

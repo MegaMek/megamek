@@ -1,11 +1,11 @@
 Version:1.0
 Regent
-B
+A
 
 Config:Biped Omnimech
 techbase:Clan
 era:3145
-source:ilClan Rec Guide 21 - Dark Age
+source:Rec Guide:ilClan #21 - Dark Age
 rules level:2
 
 mass:90
@@ -13,7 +13,7 @@ engine:270 Fusion (Clan) Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:23 Clan Double
+heat sinks:26 Clan Double
 base chassis heat sinks:10
 walk mp:3
 jump mp:0
@@ -31,16 +31,11 @@ RTL armor:10
 RTR armor:10
 RTC armor:16
 
-Weapons:9
-ER Micro Laser, Left Arm
-ER Micro Laser, Left Arm
-ER Micro Laser, Right Arm
-ER Micro Laser, Right Arm
-ER PPC, Center Torso
+Weapons:4
+ER PPC, Right Arm
 ER PPC, Left Torso
+ER PPC, Right Torso
 ER Medium Laser, Head
-ER Medium Laser, Right Torso
-Ultra AC/20, Right Torso
 
 Left Arm:
 Shoulder
@@ -53,22 +48,22 @@ CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
-CLERMicroLaser (OMNIPOD)
-CLERMicroLaser (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
-CLERMicroLaser (OMNIPOD)
-CLERMicroLaser (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+PPC Capacitor (OMNIPOD)
+Coolant Pod (OMNIPOD)
 
 Left Torso:
 CLDoubleHeatSink (OMNIPOD)
@@ -79,24 +74,24 @@ CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
 CLDoubleHeatSink (OMNIPOD)
-CLDoubleHeatSink (OMNIPOD)
-CLDoubleHeatSink (OMNIPOD)
 CLERPPC (OMNIPOD)
 CLERPPC (OMNIPOD)
+PPC Capacitor (OMNIPOD)
+-Empty-
 
 Right Torso:
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLUltraAC20 (OMNIPOD)
-CLERMediumLaser (OMNIPOD)
-Clan Ultra AC/20 Ammo (OMNIPOD)
-Clan Ultra AC/20 Ammo (OMNIPOD)
-Clan Ultra AC/20 Ammo (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+PPC Capacitor (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -109,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERPPC (OMNIPOD)
-CLERPPC (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support

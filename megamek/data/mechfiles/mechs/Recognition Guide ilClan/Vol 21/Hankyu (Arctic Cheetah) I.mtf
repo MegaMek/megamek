@@ -1,11 +1,11 @@
 Version:1.0
 Hankyu (Arctic Cheetah)
-T
+I
 
 Config:Biped Omnimech
 techbase:Clan
-era:3142
-source:ilClan Rec Guide 21 - Succession Wars
+era:3099
+source:Rec Guide:ilClan #21 - Succession Wars
 rules level:2
 
 mass:30
@@ -16,7 +16,7 @@ myomer:Standard
 heat sinks:10 Clan Double
 base chassis heat sinks:9
 walk mp:8
-jump mp:8
+jump mp:6
 
 armor:Ferro-Fibrous(Clan)
 LA armor:7
@@ -31,21 +31,20 @@ RTL armor:4
 RTR armor:4
 RTC armor:5
 
-Weapons:6
-ER Medium Laser, Left Arm
-Streak LRM 5, Left Arm
-ER Medium Laser, Right Arm
-Streak LRM 5, Right Arm
-TAG (Clan), Left Torso
-Flamer, Right Torso
+Weapons:5
+Improved Heavy Medium Laser, Left Arm
+Plasma Cannon, Right Arm
+SRM 4, Left Torso
+SRM 4, Right Torso
+Flamer, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser (OMNIPOD)
-CLStreakLRM5 (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -58,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser (OMNIPOD)
-CLStreakLRM5 (OMNIPOD)
+CLPlasmaCannon (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -70,9 +69,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (OMNIPOD)
-CLTAG (OMNIPOD)
-Clan Streak LRM 5 Ammo (OMNIPOD)
+CLSRM4 (OMNIPOD)
+CLFlamer (OMNIPOD)
+Clan Ammo SRM-4 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -86,8 +85,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-Jump Jet (OMNIPOD)
-CLFlamer (OMNIPOD)
+CLSRM4 (OMNIPOD)
+Clan Ammo SRM-4 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous

@@ -6,6 +6,7 @@ Config:Biped
 techbase:Clan
 era:3149
 rules level:4
+source:Rec Guide:ilClan #4 - Dark Age
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

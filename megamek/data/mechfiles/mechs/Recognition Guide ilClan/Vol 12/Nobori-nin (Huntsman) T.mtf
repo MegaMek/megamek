@@ -6,7 +6,7 @@ Config:Biped Omnimech
 techbase:Clan
 era:3142
 rules level:2
-source:ilClan Vol 12 - Clan Invasion
+source:Rec Guide:ilClan #12 - Clan Invasion
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

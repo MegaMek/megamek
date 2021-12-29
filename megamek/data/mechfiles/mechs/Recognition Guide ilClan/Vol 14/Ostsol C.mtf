@@ -5,7 +5,7 @@ C
 Config:Biped
 techbase:Clan
 era:3145
-source:ilClan Rec Guide 13 - Dark Age
+source:Rec Guide:ilClan #14 - Dark Age
 rules level:3
 
 mass:60

@@ -5,8 +5,9 @@ Marauder IIC
 Config:Biped
 techbase:Clan
 era:3025
-source:Succession Wars
+source:Rec Guide:ilClan #6 - Succession Wars
 rules level:2
+
 
 mass:85
 engine:340 Fusion (Clan) Engine(IS)

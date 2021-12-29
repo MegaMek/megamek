@@ -1,12 +1,7 @@
-#
 # Builds MegaMek for CI each Night
 #
 # Jobs:
-#
-#    - nightly_ci: Build MegaMek for CI across multiple platforms
-#                  and Java versions.
-#
-
+#    - nightly_ci: Build MegaMek for CI across multiple platforms and Java versions.
 name: MegaMek Nightly CI
 
 on:
@@ -15,50 +10,66 @@ on:
     # ref: https://crontab.guru/every-night
     - cron:  '0 0 * * *'
 
-#
 # Setup the Build Scan "VCS" link for all gradle invocations
-#
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
 
 jobs:
   nightly_ci:
-    # Run this job once for each combination in the
-    # matrix below.
-    strategy:
-      matrix:
-        os:   [ubuntu-latest, windows-latest]
-        java: [ 11 ]
-      fail-fast: false
-
     runs-on: ${{ matrix.os }}
 
-    name: Nightly MegaMek CI ${{ matrix.os }} on Java ${{ matrix.java }}
+    # Run this job once for each combination in the matrix below.
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        java-distribution: [ temurin ]
+        java-version: [ 11 ]
+      fail-fast: false
+
+    name: Nightly MegaMek CI ${{ matrix.os }} on ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
 
     steps:
     - uses: actions/checkout@v2
 
-    #
-    # Setup the requested Java Version from the matrix
-    #
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
+    # Setup the requested Java Distribution and Version from the matrix
+    - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.java }}
+        distribution: ${{ matrix.java-distribution }}
+        java-version: ${{ matrix.java-version }}
 
     # Don't run this for Windows.
     - name: Grant execute permission for gradlew (*nix or MacOS)
       run: chmod +x gradlew
       if: runner.os != 'Windows'
       
-    # Include --stacktrace to make some build failures easier
-    # to figure out.
+    # Include --stacktrace to make some build failures easier to figure out.
     - name: Build with Gradle
       run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
 
     - name: Upload Test Logs on Failure
-      uses: actions/upload-artifact@v2-preview
+      uses: actions/upload-artifact@v2.2.4
       if: failure()
       with:
-        name: ${{ matrix.os }}-jdk${{ matrix.java }}-ci-failure-logs
+        name: ${{ matrix.os }}-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}-ci-failure-logs
         path: megamek/build/reports/
+
+    # Put the non-Windows Release in an artifact
+    #
+    # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
+    - name: Upload Nix/Mac Releases
+      uses: actions/upload-artifact@v2.2.4
+      if: always() && matrix.os == 'ubuntu-latest'
+      with:
+        name: release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        path: megamek/build/distributions/*.tar
+
+    # Put the Windows Release in an artifact
+    #
+    # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
+    - name: Upload Windows Release
+      uses: actions/upload-artifact@v2.2.4
+      if: always() && matrix.os == 'windows-latest'
+      with:
+        name: release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        path: megamek/build/distributions/*.zip

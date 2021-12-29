@@ -52,10 +52,10 @@ public class ISRifleMedium extends RifleWeapon {
         bv = 51;
         cost = 75750;
         explosive = false; // when firing incendiary ammo
-        shortAV = 4;
-        medAV = 8;
-        longAV = 8;
-        extAV = 8;
+        shortAV = 6;
+        medAV = 6;
+        longAV = 6;
+        extAV = 6;
         maxRange = RANGE_MED;
         explosionDamage = 0;
         rulesRefs = "338,TO";

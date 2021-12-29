@@ -25,10 +25,13 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.MechSummaryCache;
+import megamek.common.Player;
+import megamek.common.TechConstants;
 import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
@@ -115,7 +118,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     }
 
     private void autoSetSkillsAndName(Entity e, Player player) {
-        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        ClientPreferences cs = PreferenceManager.getClientPreferences();
 
         if (cs.useAverageSkills()) {
             clientGUI.getClient().getSkillGenerator().setRandomSkills(e, true);

@@ -1,19 +1,19 @@
 Version:1.0
 Regent
-C
+Prime
 
 Config:Biped Omnimech
-techbase:Mixed (Clan Chassis)
+techbase:Clan
 era:3145
-source:ilClan Rec Guide 21 - Dark Age
+source:Rec Guide:ilClan #21 - Dark Age
 rules level:2
 
 mass:90
-engine:270 Fusion (Clan) Engine
+engine:270 Fusion (Clan) Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:10 Clan Double
+heat sinks:19 Clan Double
 base chassis heat sinks:10
 walk mp:3
 jump mp:0
@@ -31,18 +31,24 @@ RTL armor:10
 RTR armor:10
 RTC armor:16
 
-Weapons:2
-HAG/40, Left Torso
-Improved Heavy Gauss Rifle, Right Torso
+Weapons:8
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Left Arm
+ER Large Laser, Right Arm
+ER Large Laser, Right Torso
+LB 20-X AC, Right Torso
+Streak SRM 4, Left Torso
+Micro Pulse Laser, Head
+ER Large Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
--Empty-
--Empty-
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -54,42 +60,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
--Empty-
--Empty-
--Empty-
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-CLHAG40 (OMNIPOD)
-Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
-Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLStreakSRM4 (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
+Clan LB 20-X Cluster Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 
 Right Torso:
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGaussRifle (OMNIPOD)
-ISImprovedHeavyGauss Ammo (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
 
 Center Torso:
 Fusion Engine
@@ -102,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
-ISImprovedHeavyGauss Ammo (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+CLMicroPulseLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -124,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
--Empty-
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISImprovedHeavyGauss Ammo (OMNIPOD)
--Empty-
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

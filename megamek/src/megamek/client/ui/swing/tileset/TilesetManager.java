@@ -29,10 +29,7 @@ import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -141,14 +138,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // A new Hex Tileset has been selected
-        if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
+        if (e.getName().equals(ClientPreferences.MAP_TILESET)) {
             HexTileset hts = new HexTileset(boardview.game);
             try {
                 hexTileset.incDepth = 0;
                 hts.loadFromFile((String) e.getNewValue());
                 hexTileset = hts;
                 boardview.clearHexImageCache();
-            } catch (IOException ex) {
+            } catch (IOException ignored) {
                 return;
             }
         }

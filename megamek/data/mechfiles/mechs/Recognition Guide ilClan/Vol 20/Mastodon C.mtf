@@ -5,8 +5,8 @@ C
 Config:Biped Omnimech
 techbase:Clan
 era:3148
-source:ilClan Rec Guide 20 - Dark Age
-rules level:3
+source:Rec Guide:ilClan #20 - Dark Age
+rules level:2
 
 mass:95
 engine:285 XL (Clan) Engine(IS)

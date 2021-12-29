@@ -54,10 +54,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
@@ -2932,17 +2929,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-            
-        } else if (e.getName().equals(IClientPreferences.SHOW_UNIT_ID)) {
-            setButUnitIDState();
-            mekModel.refreshCells();
-            refreshTree();
-        } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
-            clientgui.getBoardView().getTilesetManager().reloadUnitIcons();
-            mekModel.refreshCells();
-            refreshTree();
+        switch (e.getName()) {
+            case GUIPreferences.GUI_SCALE:
+                adaptToGUIScale();
+                break;
+            case ClientPreferences.SHOW_UNIT_ID:
+                setButUnitIDState();
+                mekModel.refreshCells();
+                refreshTree();
+                break;
+            case GUIPreferences.ADVANCED_USE_CAMO_OVERLAY:
+                clientgui.getBoardView().getTilesetManager().reloadUnitIcons();
+                mekModel.refreshCells();
+                refreshTree();
+                break;
         }
     }
     

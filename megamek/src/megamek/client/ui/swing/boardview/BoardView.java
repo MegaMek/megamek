@@ -52,10 +52,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.*;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -882,7 +879,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
-            case IClientPreferences.MAP_TILESET:
+            case ClientPreferences.MAP_TILESET:
                 updateBoard();
                 break;
 

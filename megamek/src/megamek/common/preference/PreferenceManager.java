@@ -56,7 +56,7 @@ public class PreferenceManager {
         return instance;
     }
 
-    public static IClientPreferences getClientPreferences() {
+    public static ClientPreferences getClientPreferences() {
         return getInstance().clientPreferences;
     }
 
@@ -84,7 +84,7 @@ public class PreferenceManager {
         InputStream is;
 
         try {
-            is = new FileInputStream(new File(fileName));
+            is = new FileInputStream(fileName);
         } catch (FileNotFoundException e) {
             return;
         }

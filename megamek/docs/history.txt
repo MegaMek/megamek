@@ -45,6 +45,8 @@ VERSION HISTORY:
 + MekHQ Issue #3026: MegaMekXMLUtil: Skip Null UUIDs During File Output
 + Data: Large update of Fluff, Tech level, and clean up of Rec Guide Names adding Rec Guide 21 units. 
 + PR #3334: GitHub Actions: Adding Support For Multiple Java Distributions and Versions, with Temurin as our default, and Fixing Missing Release Inclusions
++ Issue #3337: Fixing EntityListFile NPE when using OS weapon with no linked munition type
++ PR #3335: MegaMekXMLUtil: Skip Null LocalDates During File Output and Fixing Empty UUID Write
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

@@ -420,9 +420,7 @@ VERSION HISTORY:
 + Issue #1955: Mechs can deploy hidden in water as long as they are completely submerged
 + Issue #2377: Fuel Air Bombs size wrong
 + PR #2380: Implement "Oversized" quirk
-+ Data: Updated Boards, RecGuide 6, and new Sprites. To confirm the naming conventions on some of the new clan
-  Omni Variants are correct.
-
++ Data: Updated Boards, RecGuide 6, and new Sprites. To confirm the naming conventions on some of the new clan Omni Variants are correct.
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

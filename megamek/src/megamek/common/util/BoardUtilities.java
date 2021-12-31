@@ -1126,8 +1126,7 @@ public class BoardUtilities {
             for (int h = 0; h < height; h++) {
                 if (elevationMap[w][h] > max) {
                     max = elevationMap[w][h];
-                }
-                if (elevationMap[w][h] < min) {
+                } else if (elevationMap[w][h] < min) {
                     min = elevationMap[w][h];
                 }
             }
@@ -1138,11 +1137,11 @@ public class BoardUtilities {
         int[] elevationCount = new int[range + 1];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
-                elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale);
-                elevationMap[w][h] += inc;
+                elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
                 elevationCount[elevationMap[w][h]]++;
             }
         }
+
         int mostElevation = 0;
         for (int lvl = 1; lvl <= range; lvl++) {
             if (elevationCount[lvl] > elevationCount[mostElevation]) {
@@ -1237,7 +1236,7 @@ public class BoardUtilities {
     /**
      * Flips the board around the vertical axis (North-for-South) and/or the
      * horizontal axis (East-for-West). The dimensions of the board will remain
-     * the same, but the terrain of the hexes will be swiched.
+     * the same, but the terrain of the hexes will be switched.
      *
      * @param horiz - a <code>boolean</code> value that, if <code>true</code>,
      *            indicates that the board is being flipped North-for-South.
@@ -1349,7 +1348,7 @@ public class BoardUtilities {
         p2 = new Point(0, 0);
         for (int step = 0; step < hilliness * 20; step++) {
             /*
-             * select which side should be decremented, and which increemented
+             * select which side should be decremented, and which incremented
              */
             sideA = (Compute.randomInt(2) == 0) ? -1 : 1;
             sideB = -sideA;
@@ -1405,8 +1404,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Helper function for the map generator increased a heightmap my a given
-     * value
+     * Helper function for the map generator increased a heightmap by a given value
      */
     protected static void markRect(int x1, int x2, int inc, int[][] elevationMap, int height) {
         for (int x = x1; x < x2; x++) {
@@ -1417,7 +1415,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Helper function for map generator inreases all of one side and decreased
+     * Helper function for map generator increases all of one side and decreased
      * on other side
      */
     protected static void markSides(Point p1, Point p2, int upperInc, int lowerInc,
@@ -1435,7 +1433,7 @@ public class BoardUtilities {
     }
 
     /**
-     * midpoint algorithm for landscape generartion
+     * midpoint algorithm for landscape generation
      */
     protected static void midPoint(int hilliness, int width, int height, int[][] elevationMap) {
         int size;

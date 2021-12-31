@@ -48,7 +48,8 @@ VERSION HISTORY:
 + Issue #3337: Fixing EntityListFile NPE when using OS weapon with no linked munition type
 + PR #3335: MegaMekXMLUtil: Skip Null LocalDates During File Output and Fixing Empty UUID Write
 + PR #3266: Fix incorrect saxarba structured water tile sizes
-+ Data: Fixes for #3342, #3333, #3242, #3067 and #3246 includes fixes to RAT Generator and RATs for name changes etc. 
++ Data: Fixes for #3342, #3333, #3242, #3067 and #3236 includes fixes to RAT Generator and RATs for name changes etc.
++ Data: Updated boards for Flynn, new sprites, more fluff for selected units. 
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

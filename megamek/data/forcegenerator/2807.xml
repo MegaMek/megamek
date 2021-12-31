@@ -2880,7 +2880,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Powerman XI LoaderMech' unitType='Mek'>
+	<chassis name='Powerman SC XI LoaderMech' unitType='Mek'>
 		<availability>PP:4</availability>
 		<model name='(Laser)'>
 			<availability>PP:8</availability>

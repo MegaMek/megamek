@@ -13665,7 +13665,7 @@
 			<availability>CLAN:8,FS:2,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:4,CDS:3,HL:3,LA:7,CNC:4,MERC:3,FS:5,CWIE:4</availability>
 		<model name='(Heavy Gauss)'>
 			<availability>LA:6,CNC:6,CWIE:6</availability>

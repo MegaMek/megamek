@@ -13308,10 +13308,10 @@
 	</chassis>
 	<chassis name='Raijin' unitType='Mek'>
 		<availability>CS:5,WOB:1</availability>
-		<model name='RJN101-A'>
+		<model name='RJN-101-A'>
 			<availability>General:6</availability>
 		</model>
-		<model name='RJN101-C'>
+		<model name='RJN-101-C'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -15417,7 +15417,7 @@
 			<availability>ROS:6,CLAN:8,FS:3,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>PR:4,HL:2,WOB:3,MERC:2,FS:4,CWIE:4,Periphery.R:3,CDS:3,LA:6,ROS:4,PG:4,CNC:4,RFS:4</availability>
 		<model name='(Heavy Gauss)'>
 			<availability>PR:3,LA:6,PG:3,CNC:6,RFS:3,CWIE:6</availability>

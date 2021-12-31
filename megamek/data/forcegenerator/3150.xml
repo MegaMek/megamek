@@ -5041,7 +5041,7 @@
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Targetting Computer)'>
+		<model name='(Targeting Computer)'>
 			<availability>General:4</availability>
 		</model>
 	</chassis>
@@ -16291,7 +16291,7 @@
 			<availability>ROS:6,CLAN:8,FS:4,MERC:4,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:2,CDS:2,RF:3,LA:2,ROS:3,FS:2,CP:2,CWIE:2</availability>
 		<model name='(Heavy Gauss)'>
 			<availability>RF:6,LA:6,CP:6,CWIE:6</availability>

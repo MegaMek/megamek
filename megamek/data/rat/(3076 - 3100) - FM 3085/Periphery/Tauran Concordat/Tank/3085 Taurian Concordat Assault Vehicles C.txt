@@ -1,5 +1,5 @@
 3085 Taurian Concordat Assault Vehicles C
-Sturmfeur Heavy Tank (Standard),1
+SturmFeur Heavy Tank (Standard),1
 Demolisher Heavy Tank (Standard Mk. II),2
 Ontos Heavy Tank (Standard),3
 Partisan Heavy Tank (Standard),4

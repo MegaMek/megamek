@@ -1,7 +1,7 @@
 WoB Medium Mechs Protectorate Militia
 Buccaneer BCN-3R,1
 Vulcan VT-6C,2
-Raijin RJN101-C,3
+Raijin RJN-101-C,3
 Kintaro KTO-21,4
 Crab CRB-30,5
 Cicada CDA-3M,6

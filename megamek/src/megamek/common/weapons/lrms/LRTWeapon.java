@@ -38,7 +38,7 @@ public abstract class LRTWeapon extends MissileWeapon {
     public LRTWeapon() {
         super();
         ammoType = AmmoType.T_LRM_TORPEDO;
-        flags = flags.or(F_PROTO_WEAPON).andNot(F_AERO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_ARTEMIS_COMPATIBLE);
 
     }
     

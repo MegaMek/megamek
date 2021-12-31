@@ -15024,7 +15024,7 @@
 			<availability>ROS:6,CLAN:8,FS:4,MERC:3,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>PR:4,HL:2,MERC:1,FS:3,CWIE:3,Periphery.R:3,CDS:2,RF:4,LA:5,ROS:4,PG:4,CNC:3,RFS:4</availability>
 		<model name='(Heavy Gauss)'>
 			<availability>PR:4,RF:4,LA:6,PG:4,CNC:6,RFS:4,CWIE:6</availability>

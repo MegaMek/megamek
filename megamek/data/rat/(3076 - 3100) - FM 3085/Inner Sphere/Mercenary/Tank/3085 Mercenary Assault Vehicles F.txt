@@ -1,6 +1,6 @@
 3085 Mercenary Assault Vehicles F
 Heavy LRM Carrier (Standard),1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Rhino Fire Support Tank (Standard),3
 Schrek PPC Carrier (Standard),4
 Ontos Heavy Tank (Standard),5

@@ -5868,7 +5868,7 @@
 			<availability>CLAN:8,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:4,HL:2,LA:8,FRR:2,SIC:3,FS:5</availability>
 		<model name='(SRM)'>
 			<availability>LA:3,FS:3</availability>

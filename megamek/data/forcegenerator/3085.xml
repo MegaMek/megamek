@@ -12369,21 +12369,21 @@
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
-		<availability>IS:2</availability>
+		<availability>IS:1</availability>
 		<model name='PHX-HK1'>
-			<availability>IS:4</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='PHX-HK1R'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-		<availability>IS:3</availability>
+		<availability>IS:2</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='PHX-HK2M'>
-			<availability>IS:2,FWL:4</availability>
+			<availability>IS:1,FWL:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -14813,10 +14813,10 @@
 	<chassis name='Stinger LAM' unitType='Mek'>
 		<availability>IS:2</availability>
 		<model name='STG-A10'>
-			<availability>IS:1,DC:2</availability>
+			<availability>IS:1,DC:1</availability>
 		</model>
 		<model name='STG-A5'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
@@ -17063,22 +17063,22 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-100'>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-100A'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='WSP-100b'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-105M'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='WSP-110'>
 			<availability>IS:1</availability>

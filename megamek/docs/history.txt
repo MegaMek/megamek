@@ -35,7 +35,7 @@ VERSION HISTORY:
 + PR #3310: JUnit Update to 4.13.2 from 4.12
 + Issue #3312, 3313: Prevent bot units from spotting aerospace fighters and sensor contacts for indirect fire
 + PR #3298: Entity::assignAMS Performance Refactor
-+ PR #3307: Log4j2 2.17.0 Swapover From Log4j1 1.2.17
++ PR #3307: Log4j2 2.17.1 Swapover From Log4j1 1.2.17
 + Data: Tech Progression update. Merging the tables from TRO Prototypes and 3145 NTNU. Moves
 	Static tech levels for lots of equipment to 3145 per those table. 
 + PR #3315: LGTM Code Issues: Fixes Round 2

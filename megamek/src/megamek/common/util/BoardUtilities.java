@@ -1137,7 +1137,7 @@ public class BoardUtilities {
         int[] elevationCount = new int[range + 1];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
-                elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
+                elevationMap[w][h] = (int) Math.ceil(elevationMap[w][h] * scale) + inc;
                 elevationCount[elevationMap[w][h]]++;
             }
         }

@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-0.49.6-SNAPSHOT
+0.49.7-SNAPSHOT
+
+0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds
 + Issue #3156: Use More Reliable Technique to Report the Attacker
 + PR #3225: Blood Stalker SPA
@@ -35,10 +37,21 @@ VERSION HISTORY:
 + PR #3310: JUnit Update to 4.13.2 from 4.12
 + Issue #3312, 3313: Prevent bot units from spotting aerospace fighters and sensor contacts for indirect fire
 + PR #3298: Entity::assignAMS Performance Refactor
-+ PR #3307: Log4j2 2.17.0 Swapover From Log4j1 1.2.17
++ PR #3307: Log4j2 2.17.1 Swapover From Log4j1 1.2.17
 + Data: Tech Progression update. Merging the tables from TRO Prototypes and 3145 NTNU. Moves
 	Static tech levels for lots of equipment to 3145 per those table. 
 + PR #3315: LGTM Code Issues: Fixes Round 2
++ PR #3316: Fixing a NPE in AeroGroundPathFinder::ForwardToTheEnd
++ Data: New Units (Rec Guides 19, 20), new sprites, TP fixes, and updated Camos
++ Issue #2199: MUL Parser Game Option-reliant Personnel Load
++ MekHQ Issue #3026: MegaMekXMLUtil: Skip Null UUIDs During File Output
++ Data: Large update of Fluff, Tech level, and clean up of Rec Guide Names adding Rec Guide 21 units. 
++ PR #3334: GitHub Actions: Adding Support For Multiple Java Distributions and Versions, with Temurin as our default, and Fixing Missing Release Inclusions
++ Issue #3337: Fixing EntityListFile NPE when using OS weapon with no linked munition type
++ PR #3335: MegaMekXMLUtil: Skip Null LocalDates During File Output and Fixing Empty UUID Write
++ PR #3266: Fix incorrect saxarba structured water tile sizes
++ Data: Fixes for #3342, #3333, #3242, #3067 and #3236 includes fixes to RAT Generator and RATs for name changes etc.
++ Data: Updated boards for Flynn, new sprites, more fluff for selected units. 
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ
@@ -96,7 +109,7 @@ VERSION HISTORY:
 + PR #3218: BotGeometry Null Edge Detected Exception Logging Upgrade
 + PR #3219: Fixing the Messages instance used by Entity
 + Issue #3175: Fix concurrent modification issue preventing multi-bot replacement
-+ Data: Fixes for #3208,#3188,#3155,#3146,#3141,#3117,#3064,#3040,#3034#2949,#2647,and #2637
++ Data: Fixes for #3208, #3188, #3155, #3146, #3141, #3117, #3064, #3040, #3034, #2949, #2647, and #2637
 + Data: Numerous Fluff entries added, new sprites, new camos, and largest board in MegaMek added
 	Stonewall072 Ocoee (50x700)
 
@@ -145,7 +158,7 @@ VERSION HISTORY:
 + Issue #3094: Double Blind: Fixing Unjam Turret Action Report
 + Unofficial Equipment Documentation
 + Data: Adding Rec Guides 15-18 includes Unit Roles, some Fluff, and canon quirks. New Camos and new sprites
-+ Data: Fixing some weapon name types and a missing princess behaviour(Ambusher) and some sprite errors.
++ Data: Fixing some weapon name types and a missing princess behaviour (Ambusher) and some sprite errors.
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling
@@ -412,9 +425,7 @@ VERSION HISTORY:
 + Issue #1955: Mechs can deploy hidden in water as long as they are completely submerged
 + Issue #2377: Fuel Air Bombs size wrong
 + PR #2380: Implement "Oversized" quirk
-+ Data: Updated Boards, RecGuide 6, and new Sprites. To confirm the naming conventions on some of the new clan
-  Omni Variants are correct.
-
++ Data: Updated Boards, RecGuide 6, and new Sprites. To confirm the naming conventions on some of the new clan Omni Variants are correct.
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

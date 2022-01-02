@@ -3,41 +3,42 @@ Annihilator
 ANH-2A
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3048
-Source:TRO 3050 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:3048
+source:TRO 3050 - Succession Wars
+rules level:2
 
-Mass:100
-Engine:200 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:100
+engine:200 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Single
-Walk MP:2
-Jump MP:0
+heat sinks:17 Single
+walk mp:2
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:24
-RA Armor:24
-LT Armor:21
-RT Armor:21
-CT Armor:25
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:9
-RTR Armor:9
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:21
+RT armor:21
+CT armor:25
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:9
+RTR armor:9
+RTC armor:10
 
-Weapons:7
-1 ISLBXAC10, Left Torso
-1 ISLBXAC10, Right Torso
-1 ISLBXAC10, Right Arm, Ammo:40
-1 ISLBXAC10, Left Arm
-2 ISMediumPulseLaser, Center Torso
-1 ISMediumPulseLaser, Left Arm
-1 ISMediumPulseLaser, Right Arm
+Weapons:8
+LB 10-X AC, Left Arm
+Medium Pulse Laser, Left Arm
+LB 10-X AC, Right Arm
+Medium Pulse Laser, Right Arm
+LB 10-X AC, Left Torso
+LB 10-X AC, Right Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -76,8 +77,8 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISLBXAC10 CL Ammo
-ISLBXAC10 Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X AC Ammo
 ISCASE
 -Empty-
 
@@ -90,8 +91,8 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISLBXAC10 CL Ammo
-ISLBXAC10 Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X AC Ammo
 ISCASE
 -Empty-
 
@@ -150,4 +151,20 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
+overview:Originally developed in the final year of the Amaris Civil War as the ultimate fixed position city defense BattleMech.
+
+capabilities:The Annihilator is armed with an arsenal that is built to instill fear in an enemy as much as damage them.  The 100-ton 'Mech has a maximum speed of 32.4 km/h, making it one of the slowest 'Mechs ever designed together with the UrbanMech. It is by no means intended to use speed to outmaneuver an enemy, instead depending on its twelve and a half tons of armor to weather any fire that is directed at the 'Mech.
+
+deployment:The 'Mech is armed with four Mydron Excel LB-X Autocannon/10s as its primary weapons. These can all fire either standard rounds or cluster rounds which act like 'Mech sized shotguns spreading damage out all over an enemy 'Mech. The 'Mech is also armed with four Magna 400P Medium Pulse Lasers, which allow the Annihilator to decimate any target which is able to make it through the devastating hail of fire and into close range combat.
+
+history:The Annihilator was built as a sign of the military strength of both the Star League in Exile and the newly created Clans. Discontinued before the Clans' Golden Century, in one of their few missteps, the Wolf's Dragoons brought a number of unknown designs with them in 3009, raising more questions to their origins while at the same time adding to their mystique. It was exclusive to the Dragoons until the Jihad disseminated the design to Arc-Royal due to the strengthening of the relationship that Wolf's Dragoons forged with the Kell Hounds and Clan Wolf-in-Exile following their flight from Outreach.
+
+manufacturer:Arc-Royal MechWorks
+primaryfactory:Arc-Royal
+systemmanufacturer:CHASSIS:Star League MN-01
+systemmanufacturer:ENGINE:Nissan 200
+systemmanufacturer:ARMOR:Starshield Special-b
+systemmanufacturer:COMMUNICATIONS:Garret T19-G
+systemmanufacturer:TARGETING:Wasat Aggressor Type 5
 

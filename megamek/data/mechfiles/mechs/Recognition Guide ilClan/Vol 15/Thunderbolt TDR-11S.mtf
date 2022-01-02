@@ -5,8 +5,8 @@ TDR-11S
 Config:Biped
 techbase:Inner Sphere
 era:3074
-source:ilClan RecGuide 15 - Jihad
-rules level:3
+source:Rec Guide:ilClan #15 - Jihad
+rules level:2
 
 mass:65
 engine:260 Fusion Engine(IS)

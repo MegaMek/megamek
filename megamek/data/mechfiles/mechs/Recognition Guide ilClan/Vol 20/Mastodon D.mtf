@@ -1,0 +1,164 @@
+Version:1.0
+Mastodon
+D
+
+Config:Biped Omnimech
+techbase:Clan
+era:3148
+source:Rec Guide:ilClan #20 - Dark Age
+rules level:2
+
+mass:95
+engine:285 XL (Clan) Engine(IS)
+structure:IS Reinforced
+myomer:Standard
+
+heat sinks:15 Clan Double
+base chassis heat sinks:11
+walk mp:3
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:50
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:8
+LRM 15, Left Arm
+LRM 15, Left Arm
+LRM 15, Right Arm
+LRM 15, Right Arm
+LRM 20, Left Torso
+LRM 20, Right Torso
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+CLCASEII (OMNIPOD)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+CLCASEII (OMNIPOD)
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Jötunn BattleWorx
+primaryfactory:Goito
+notes:Then we will fight in the shade. 
+systemmanufacturer:CHASSIS:Type 56-95C Modified Reinforced
+systemmanufacturer:ENGINE:RUFM XL 285
+systemmanufacturer:ARMOR:IceSheet Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Garret T10B
+systemmanufacturer:TARGETING:GC Hodr System Type 2
+

@@ -1305,7 +1305,7 @@ public class Client implements IClientCommandHandler {
             fw.flush();
             fw.close();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

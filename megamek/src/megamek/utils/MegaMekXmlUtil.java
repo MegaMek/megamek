@@ -224,9 +224,14 @@ public class MegaMekXmlUtil {
         if (values.length > 0) {
             final StringJoiner stringJoiner = new StringJoiner(",");
             for (final UUID value : values) {
-                stringJoiner.add(value.toString());
+                if (value != null) {
+                    stringJoiner.add(value.toString());
+                }
             }
-            pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+
+            if (!stringJoiner.toString().isBlank()) {
+                pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+            }
         }
     }
 
@@ -242,9 +247,14 @@ public class MegaMekXmlUtil {
         if (values.length > 0) {
             final StringJoiner stringJoiner = new StringJoiner(",");
             for (final LocalDate value : values) {
-                stringJoiner.add(value.toString());
+                if (value != null) {
+                    stringJoiner.add(value.toString());
+                }
             }
-            pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+
+            if (!stringJoiner.toString().isBlank()) {
+                pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+            }
         }
     }
 

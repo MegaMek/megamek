@@ -5,8 +5,8 @@ White Raven
 Config:Biped
 techbase:Clan
 era:3149
-source:ilClan Vol 12 - Clan Invasion
-rules level:4
+source:Rec Guide:ilClan #12 - Clan Invasion
+rules level:3
 
 mass:75
 engine:375 XXL (Clan) Engine(IS)

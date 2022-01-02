@@ -7,6 +7,6 @@ Apollo APL-1M,5
 Trebuchet TBT-7M,6
 Bloodhound B1-HND,5
 Blue Flame BLF-21,4
-Raijin RJN101-C,3
+Raijin RJN-101-C,3
 Osprey OSP-26,2
 Scorpion SCP-12C,1

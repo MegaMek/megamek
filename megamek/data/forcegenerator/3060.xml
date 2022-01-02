@@ -10504,9 +10504,9 @@
 		</model>
 	</chassis>
 	<chassis name='Stinger LAM Mk I' unitType='Mek'>
-		<availability>IS:2+</availability>
+		<availability>IS:1+</availability>
 		<model name='STG-A1'>
-			<availability>General:4</availability>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger LAM' unitType='Mek'>
@@ -10515,7 +10515,7 @@
 			<availability>IS:1,DC:2</availability>
 		</model>
 		<model name='STG-A5'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
@@ -12011,22 +12011,22 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-100'>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-100A'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='WSP-100b'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-105M'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

@@ -3124,11 +3124,11 @@ public class MoveStep implements Serializable {
 
         if (null == dest) {
             var ex = new IllegalStateException("Step has no position");
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             throw ex;
         } else if (src.distance(dest) > 1) {
             var ex = new IllegalArgumentException("Coordinates " + src + " and " + dest + " are not adjacent.");
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             throw ex;
         }
 

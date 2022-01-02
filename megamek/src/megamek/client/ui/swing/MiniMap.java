@@ -193,7 +193,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return ImageUtil.failStandardImage();
         }
     }
@@ -381,7 +381,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             }
         } catch (Exception e) {
             // Fall back to the default colors
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

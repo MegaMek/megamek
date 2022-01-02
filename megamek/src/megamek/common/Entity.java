@@ -10582,7 +10582,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
             }
         }
@@ -10604,7 +10604,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
             }
         }
@@ -10627,7 +10627,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     this.addEquipment(et, LOC_NONE);
                 } catch (Exception e) {
                     // can't happen
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
             }
         }
@@ -14671,7 +14671,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         try {
             quirks = QuirksHandler.getQuirks(this);
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return;
         }
 

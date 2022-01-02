@@ -28,7 +28,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +47,7 @@ import java.util.*;
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
     
-    @SuppressWarnings("unused")
+    @SuppressWarnings(value = "unused")
     private static final int TAB_BV_MATCHING       = 0;
     private static final int TAB_RAT               = 1;
     private static final int TAB_RAT_GENERATOR     = 2;
@@ -906,7 +906,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     }
 
     private void autoSetSkillsAndName(Entity e) {
-        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        ClientPreferences cs = PreferenceManager.getClientPreferences();
         if (cs.useAverageSkills()) {
             m_client.getSkillGenerator().setRandomSkills(e, true);
         }

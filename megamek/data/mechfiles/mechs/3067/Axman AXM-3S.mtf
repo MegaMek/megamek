@@ -12,6 +12,7 @@ Mass:65
 Engine:260 Light Engine
 Structure:Standard
 Myomer:Standard
+ejection:Full Head Ejection System
 
 Heat Sinks:10 Double
 Walk MP:4
@@ -147,3 +148,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Developed by Team Banzai as the big brother of the highly successful Hatchetman, the Axman was designed exclusively to be a 'Mech killer
+
+capabilities:The Axman has a ground speed of only 64.8 km/h, which is average for a Heavy weight, but improved in part by the inclusion of Jump Jets. The 'Mech is covered with eleven tons of Ferro-Fibrous armor that gives it a great deal of protection, with ten Double Heat Sinks offering average heat dissipation. Much like its lighter brother, the Axman was designed to utilize the Full-Head Ejection System to safe-guard its MechWarrior.
+
+deployment:The Furillo manufactured 3S introduced in 3057 removes the XL Engine of the 1N and 2N variants and replaces it with a Light Fusion Engine. This exclusively Lyran variant of the Axman is armed with a massive LB-X Autocannon/20, which allows it to fire either solid rounds or cluster rounds that act like a 'Mech sized shotgun. The 'Mech also carries three ER Medium Lasers for close combat and a Guardian ECM Suite, which defends against enemy electronic warfare equipment.
+
+history:The Axman was also intended as a symbol of solidarity throughout the Federated Commonwealth by using components that were produced in Federated Suns, Lyran Commonwealth, and even former Capellan Confederation space. The collapse of the Federated Commonwealth in 3057 almost rendered the design extinct because of this, production slowing to a trickle as both the Federated Suns and Lyran Alliance were forced to rely on surplus stores while developing new variants utilizing locally sourced components.
+
+manufacturer:Defiance Industries
+primaryfactory:Furillo
+systemmanufacturer:CHASSIS:Dorwinion AXM Standard
+systemmanufacturer:ENGINE:Magna 260 Light
+systemmanufacturer:ARMOR:Kallon Unity Weave Ferro-Fibrous
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Rander Pinpoint-HY

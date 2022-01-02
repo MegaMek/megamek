@@ -3,38 +3,38 @@ Super-Griffin
 GRF-2N-X
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3020
-Source:XTRO Succession Wars
-Rules Level:4
+techbase:Inner Sphere
+era:3020
+source:XTRO Succession Wars
+rules level:4
 
-Mass:60
-Engine:240 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:15 Single
-Walk MP:4
-Jump MP:6
+heat sinks:15 Single
+walk mp:4
+jump mp:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:22
-RT Armor:22
-CT Armor:24
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:22
+RT armor:22
+CT armor:24
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:4
-PPC, Right Arm
-Small Laser, Center Torso
 Medium Laser, Left Arm
+PPC, Right Arm
 LRM 10, Right Torso
+Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -148,4 +148,16 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The GRF-2N-X Super Griffin is an evolution of the classic Griffin, a redesign that essentially produced a new BattleMech with even a different tonnage. Using a sixty ton frame, engineers fitted Prototype Improved Jump Jets to the 'Mech to compensate for its reduced speed.
+capabilities:The Super Griffin retains the weapon configuration of the regular GRF-1N Griffin, namely a PPC in the right arm and an LRM-10 launcher with two tons of ammunition in the right torso. A Medium Laser was added to the left arm.
+deployment:This design uses a standard sixty ton frame protected by ten tons of armor. The Super Griffin uses five prototype Double Heat Sinks combined with ten standard heat sinks to dissipate twenty points of heat per turn. In addition, the ground speed has been reduced to that of a Crusader or Archer, but the use of six Prototype Improved Jump Jets allows it to cover 180 meters in a jump. The armament has been updated to include a single Small Laser in the torso. The armor allocation has been fixed. When the Black Widow Company attacked Hoff, the Super Griffin was deployed alongside two Super Wasps. The Super Griffin used its improved jump ability to land an attack in the rear of a Rifleman, but the return fire from the Rifleman destroyed a Prototype Improved Jump Jet. This led to an explosion as the jump jets' uncontrolled ignition led the LRM ammunition being ignited. The resulting explosion destroyed the Super Griffin completely.
+history:The Super Griffin was designed in 3020 as a part of "Project Phoenix" together with the Super Wasp at the Friden Aerospace Park research facility on Hoff by House Davion scientists including Dr. Jorge Belasco. After eighteen months of work, an operational Super Griffin prototype had been completed but it was still untested when the Black Widow Company attacked the facility on 13 May 3022. The Super Griffin was a test-bed for prototype Improved Jump Jets and Prototype Double Heat Sinks developed by the NAIS after reviewing the Halstead Collection. The Super Griffin and Super Wasp were described as the first fully-redesigned units in four decades, but the Hatchetman was hailed as the Inner Sphere's first new 'Mech design in over a century when it entered full production a few years after the attack on Hoff (and in the Periphery the Merlin had been designed in 3010 already). This suggests the Super Griffin and Super Wasp never came beyond the prototype stage.
+manufacturer:Belasco Labs/Friden Aerospace Park
+primaryfactory:Hoff
+systemmanufacturer:CHASSIS:Earthwerks GRF
+systemmanufacturer:ENGINE:InterFus 260
+systemmanufacturer:ARMOR:Starshield A
+systemmanufacturer:JUMPJET:Unknown Prototype
+systemmanufacturer:COMMUNICATIONS:Neil 6000
+systemmanufacturer:TARGETING:Octagon Tartrac System C
 

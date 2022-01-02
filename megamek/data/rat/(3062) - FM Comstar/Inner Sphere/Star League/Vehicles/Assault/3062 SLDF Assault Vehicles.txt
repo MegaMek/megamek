@@ -1,7 +1,7 @@
 3062 Star League Defense Forces Assault Vehicles
 Schiltron Mobile Fire-Support Platform C,1
 Schrek PPC Carrier (Standard),2
-Sturmfeur Heavy Tank (Standard),3
+SturmFeur Heavy Tank (Standard),3
 Schiltron Mobile Fire-Support Platform A,4
 Partisan Air Defense Tank (XL),5
 Schiltron Mobile Fire-Support Platform Prime,6

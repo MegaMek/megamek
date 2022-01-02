@@ -1948,7 +1948,7 @@ public class Server implements Runnable {
             try {
                 removed = game.removeFirstTurnFor(entityUsed);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             entityUsed.setDone(true);
             turnsChanged = true;
@@ -29944,7 +29944,7 @@ public class Server implements Runnable {
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
 
     }

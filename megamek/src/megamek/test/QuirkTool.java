@@ -121,7 +121,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
         try {
             return new MechFileParser(file, entityName).getEntity();
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }

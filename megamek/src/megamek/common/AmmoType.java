@@ -2767,11 +2767,13 @@ public class AmmoType extends EquipmentType {
         // TODO: Need Corrosive, Flame-Retardant, Oil Slick, Paint and Water Ammo's for
         // all Fluid Guns/Sprayers
         // Create the munition types for vehicle flamers
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        //December 2021 - CGL requested we move this to Advanced for all fluid gun ammos.
         munitions.clear();
         munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
                         .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-                        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                        .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                         .setISApproximate(false, false, false, false, false)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "360,TO"));
@@ -2784,7 +2786,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
                 new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
                         .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-                        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                        .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
                         .setClanApproximate(false, false, false, false, false)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "360,TO"));

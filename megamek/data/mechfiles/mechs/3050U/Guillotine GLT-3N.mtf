@@ -3,49 +3,50 @@ Guillotine
 GLT-3N
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2499
-Source:TRO 3050 - Age of War
-Rules Level:2
+techbase:Inner Sphere
+era:2499
+source:TRO 3050 - Age of War
+rules level:2
 
-Mass:70
-Engine:280 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:25 Single
-Walk MP:4
-Jump MP:4
+heat sinks:25 Single
+walk mp:4
+jump mp:4
 
-Armor:Standard Armor
-LA Armor:20
-RA Armor:20
-LT Armor:22
-RT Armor:22
-CT Armor:27
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:22
+RT armor:22
+CT armor:27
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:8
+RTR armor:8
+RTC armor:12
 
-Weapons:5
-1 ISLargeLaser, Left Arm
-1 ISSRM6, Center Torso, Ammo:15
-1 ISMediumLaser, Left Torso
-1 ISMediumLaser, Right Torso
-2 ISMediumLaser, Right Arm
+Weapons:6
+Large Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+SRM 6, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLargeLaser
-ISLargeLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Large Laser
+Large Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,11 +56,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumLaser
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Medium Laser
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -74,10 +75,10 @@ Heat Sink
 Heat Sink
 Heat Sink
 Jump Jet
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Heat Sink
@@ -86,12 +87,12 @@ Heat Sink
 Heat Sink
 Heat Sink
 Jump Jet
-ISMediumLaser
-ISSRM6 Ammo
+Medium Laser
+IS Ammo SRM-6
 ISCASE
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -104,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISSRM6
-ISSRM6
+SRM 6
+SRM 6
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -148,4 +149,21 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Guillotine was originally designed in 2499 as a front-line BattleMech for the Terran Hegemony and was the Star League Defense Force's standard heavy 'Mech for generations.
+
+capabilities:While its weaponry was ample for its era, as time went by the march of technology allowed for the development of larger 'Mechs which were significantly better armed. However few of these new 'Mechs could match the Guillotine in maneuverability or staying power, and so the 'Mech simply transitioned from the front-line shock role to that of a heavy raider - a task it excels at thanks to its quick speed and use of jump jets. Its mobility also makes the 'Mech adept at fighting in difficult terrain such as jungle or mountainous regions. The only serious issue with the 'Mech ironically are its weapons, which have been plagued with various problems over the centuries.
+
+deployment:The Guillotine carries a Sunglow Type 2 Large Laser in its left arm as the primary weapon. While the Sunglow laser is an excellent weapon, there are issues with the fiber optic power cabling, which runs from the power converter hidden deep within the 'Mech out to the emitter. Running near the surface of the underarm, it is all too easy for the cable to bind when the weapon is raised over the 'Mech's head. Experienced pilots know to lower the arm in this case, but for a MechWarrior unused to the Guillotine they may try to force the line and snap it, preventing use of the 'Mech's most powerful weapon. Replacing the power cabling is an extremely expensive and time consuming process requiring considerable effort. Back-up for the large laser are four ExoStar II Medium Lasers, two in the right arm and two split between the side torsos. Like the larger lasers the ExoStar IIs consist of a power supply well-hidden within the Guillotine connected to a firing mechanism by fiber optic cables, although the eight cables which power the medium lasers don't suffer from the Sunglow's snagging issue. The final weapon on the design is a single Coventry-6 SRM-6 with one ton of reloads in the right torso. Despite centuries of correcting other faults in the system, a stubborn and persistent problem with the SRM launcher is its occasional failure to arm missiles five and six. Not even a complete redesign of the system managed to solve this bug. The problem was eventually discovered to involve the CASE protecting the missile reloads, and only its removal caused the problem to desist.
+
+history:Newhart Industries built the Guillotine from their factory on New Earth, but this was destroyed during the Amaris Civil War in 2776 as part of a celebration put on by the 12th Republican Guard. At the same time Irian BattleMechs Unlimited was building Guillotines under contract from Newheart out of Irian and continued to do so for another half-century; Lycomb-Davion IntroTech had also been producing the Guillotine from their main manufacturing facility on Demeter, but this facility was destroyed by Capellan Confederation forces early in the First Succession War. The collapse of the Star League and exodus of the SLDF scattered Guillotines across all of the Great Houses, while ComStar succeeded in raiding New Earth in 2788 and acquiring a battalion's worth from former Newhart stockpiles. In the wake of the First Succession War a shortage of the advanced components necessary for the 'Mech forced IBMU to design a downgraded variant, the GLT-4L, which they continued to produce off and on for the next few centuries. The recovery of the Helm Memory Core inspired a number of old designs, the Guillotine included, to be upgraded with lostech. Using the refurbished Newhart factory Irian's new GLT-5M model not only restored the Guillotine to its former glory but improved upon it with better (and importantly more reliable) weaponry. Irian continued producing new Guillotines, which would go on to take part in the FedCom Civil War and the Jihad.
+
+manufacturer:Irian BattleMechs Unlimited, Newhart Industries 
+primaryfactory:Irian, New Earth 
+systemmanufacturer:CHASSIS:Crucis-I Endo Steel
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Ulston Prime with CASE
+systemmanufacturer:JUMPJET:Anderson 398
+systemmanufacturer:COMMUNICATIONS:StarLink 955G
+systemmanufacturer:TARGETING:Pulsar Tri-X
 

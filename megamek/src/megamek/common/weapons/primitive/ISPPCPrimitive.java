@@ -53,6 +53,7 @@ public class ISPPCPrimitive extends PPCWeapon {
         shortAV = 10;
         medAV = 10;
         maxRange = RANGE_MED;
+        flags = flags.or(F_PROTOTYPE);
         // with a capacitor
         explosive = true;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around

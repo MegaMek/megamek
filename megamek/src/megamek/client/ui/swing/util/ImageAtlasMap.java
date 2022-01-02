@@ -94,7 +94,7 @@ public class ImageAtlasMap {
              Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             xstream.toXML(imgFileToAtlasMap, writer);
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return false;
         }
         return true;
@@ -110,7 +110,7 @@ public class ImageAtlasMap {
             XStream xstream = new XStream();
             return new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }

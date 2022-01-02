@@ -3,7 +3,7 @@ Demolisher II Heavy Tank (MML), 1
 Fortune Wheeled Assault Vehicle (Standard), 2
 Partisan Air Defense Tank (Cell), 3
 Demolisher II Heavy Tank (Standard), 4
-Sturmfeur Heavy Tank (Heavy Gauss), 5
+SturmFeur Heavy Tank (Heavy Gauss), 5
 DI Morgan Assault Tank (Standard), 6
 Demolisher II Heavy Tank (Thunderbolt), 5
 DI Morgan Assault Tank (Gauss), 4

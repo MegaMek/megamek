@@ -5,8 +5,8 @@ G
 Config:Biped Omnimech
 techbase:Clan
 era:3093
-source:RS 3145 NTNU - Early Republic
-rules level:4
+source:Rec Guide:ilClan #10 - Early Republic
+rules level:2
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

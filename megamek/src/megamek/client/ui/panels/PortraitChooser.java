@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -25,10 +25,17 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.AbstractDirectory;
 
+import javax.swing.*;
+
+/**
+ * PortraitChooser is an implementation of AbstractIconChooser that is used to select a Portrait
+ * from the Portrait Directory.
+ * @see AbstractIconChooser
+ */
 public class PortraitChooser extends AbstractIconChooser {
     //region Constructors
-    public PortraitChooser(final AbstractIcon icon) {
-        super(new PortraitChooserTree(), icon);
+    public PortraitChooser(final JFrame frame, final AbstractIcon icon) {
+        super(frame, "PortraitChooser", new PortraitChooserTree(), icon);
     }
     //endregion Constructors
 
@@ -44,7 +51,8 @@ public class PortraitChooser extends AbstractIconChooser {
 
     @Override
     public @Nullable Portrait getSelectedItem() {
-        return (Portrait) getImageList().getSelectedValue();
+        final AbstractIcon icon = super.getSelectedItem();
+        return (icon instanceof Portrait) ? (Portrait) icon : null;
     }
 
     @Override

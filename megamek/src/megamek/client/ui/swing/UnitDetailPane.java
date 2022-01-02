@@ -42,13 +42,11 @@ public class UnitDetailPane extends DetachablePane {
         window.setResizable(true);
         UIUtil.updateWindowBounds(window);
 
-        var state = getState();
         try {
-            state = Mode.valueOf(prefs.getUnitDetailState().toUpperCase());
+            setState(prefs.getUnitDetailState());
         } catch (Exception e) {
             LogManager.getLogger().error("Error setting unit detail state", e);
         }
-        setState(state);
     }
 
     public UnitDisplay getDetail() {
@@ -60,7 +58,7 @@ public class UnitDetailPane extends DetachablePane {
         var existing = getState();
         super.setState(newState);
         if (newState != existing) {
-            GUIPreferences.getInstance().setUnitDetailState(newState.name());
+            GUIPreferences.getInstance().setUnitDetailState(newState);
         }
     }
 }

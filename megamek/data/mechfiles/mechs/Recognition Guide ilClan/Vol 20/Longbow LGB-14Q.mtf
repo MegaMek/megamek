@@ -1,0 +1,165 @@
+Version:1.0
+Longbow
+LGB-14Q
+
+Config:Biped
+techbase:Inner Sphere
+era:3101
+source:Rec Guide:ilClan #20 - Late Republic
+rules level:2
+
+mass:85
+engine:340 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:41
+HD armor:9
+LL armor:33
+RL armor:33
+RTL armor:10
+RTR armor:10
+RTC armor:12
+
+Weapons:8
+LRM 20, Right Arm
+LRM 20, Left Arm
+MML 5, Right Torso
+MML 5, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser (R)
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 LRM
+IS Ammo LRM-20
+IS Ammo LRM-20
+ISCASEII
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser (R)
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 SRM
+IS Ammo LRM-20
+IS Ammo LRM-20
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+deployment:Unknown
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Fletcher (TH),Loburg
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 255 XL
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C
+

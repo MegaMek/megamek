@@ -5,8 +5,8 @@ T
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:ilClan Rec Guide 18 - Dark Age
-rules level:3
+source:Rec Guide:ilClan #18 - Dark Age
+rules level:2
 
 mass:90
 engine:360 Fusion (Clan) Engine(IS)

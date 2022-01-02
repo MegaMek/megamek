@@ -5,8 +5,8 @@ BNC-12S
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3138
-source:Recognition Guide:ilClan #17 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #17 - Dark Age
+rules level:2
 
 mass:95
 engine:380 XL (Clan) Engine

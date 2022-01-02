@@ -149,16 +149,18 @@ Heat Sink
 -Empty-
 
 
-Overview: The Lyran's attempt at a scout mech, the Commando was viewed as a reasonable alternative to the Wasp and Stinger due to it's superior firepower despite the lack of jump jets.
+overview:Created for the Lyran Commonwealth Armed Forces and one of the first 'Mechs ever designed for reconnaissance, the Commando was much lighter and faster than its precursors, though it still utilized primitive BattleMech technology. 
 
-Coventry Defense rolled the design out for testing in 2483 and found themselves having to adjust the weapons loadout early on due to heat issues.  Once Coventry Defense overcame these problems the Lyrans officially adopted the Commando into service in 2486.  The design drew the attention of the Terran Hegemony and Star League.  Coventry Defense with the support of the Lyran government played an excellent stall game that kept the design out of the grips of the Star League.
+capabilities:With only four tons of armor to protect itself, the Commando is not meant to participate in a stand-up fight against heavier enemies, but it excels at hit-and-run tactics and as a scout hunter.
 
-Capabilities: The armor protection of the Commando is considered weak but the firepower that the Commando brings to bear with any of it's variants ensures that it is an opponent to be respected.
+deployment:The COM-3A carries two SRM-6 launchers, a Medium Laser and a Flamer. This was accomplished by removing the SRM-4 launcher and lowering the amount of armor on the 'Mech by one ton. This variant appeared in 3025 and became quite popular because of its hitting-power.
 
-The combination of armor, firepower, and mobility mean the Commando is best used in hit and run tactics or when an opponent is too focused on another target as it will not be able to withstand return fire for long.
+history:In 2463 Coventry Metal Works (then known as Coventry Defense Conglomerate) introduced their second BattleMech, the COM-1A Commando. The Commando was able to destroy much heavier Kuritan Gladiators during the first large-scale battle between BattleMechs in 2475 on Nox. The installed Large Laser caused several problems and other 'Mechs were soon introduced (like the Wasp in 2464 and the Stinger in 2479) that were better equipped for scouting and even mounted jump jets. The Commando's profile was radically changed with the introduction of the sophisticated COM-2D variant in 2486, which exchanged the laser weaponry with short range missiles and turned the machine into a striker. The Commando became popular among LCAF forces and, nearly 600 years later, is still mainly in use by Lyrans. The Commonwealth went to great pains to keep the 'Mech solely in Lyran hands, especially during the years of the Star League. It took an alliance with the Federated Suns and the creation of the Federated Commonwealth to break the stranglehold. The Commando was chosen as the standard light BattleMech for the Armed Forces of the Federated Commonwealth next to the Valkyrie, and after the upgrade to the COM-5S model in 3050, Vandenberg Mechanized Industries was allowed to produce the old COM-2D for the Taurian Defense Force. Furthermore, the Marian Hegemony deploys the Rocket Launcher-packed COM-4H, and the Word of Blake produced its own variant (the COM-7B) during its occupation of Coventry from 3068 to 3074.
 
-Deployment: The Commando has earned a distinction in Lyran forces as the Lyrans have a special commendation for scout pilots that go above and beyond the call of duty and Commando pilots feature prominantly on this list.
-
-Since the fall of the Star League and the chaos of the Succession Wars the Commando has since spread into the service of other nations and mercenaries.
-
-Most notable of this is the appearance of Commandos in the hands of the Taurian Defense Force.  Verifiable reports of when they gained this design date back to 3025 but it is possible they gained it sooner.
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Coventry Metal Works
+systemmanufacturer:ENGINE:GM 150
+systemmanufacturer:ARMOR:Lexington Limited
+systemmanufacturer:COMMUNICATIONS:TharHes Crystal Flower RG-2
+systemmanufacturer:TARGETING:TharHes Star Shark

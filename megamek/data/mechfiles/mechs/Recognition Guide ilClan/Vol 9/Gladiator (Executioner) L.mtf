@@ -5,8 +5,8 @@ L
 Config:Biped Omnimech
 techbase:Clan
 era:3119
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #9 - Late Republic
+rules level:2
 
 mass:95
 engine:380 XL (Clan) Engine(IS)

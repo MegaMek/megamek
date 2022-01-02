@@ -5,8 +5,8 @@ I
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3143
-source:ilClan RecGuide 15 -Dark Age
-rules level:4
+source:Rec Guide:ilClan #15 - Dark Age
+rules level:2
 
 mass:55
 engine:385 XL (Clan) Engine

@@ -545,7 +545,7 @@ public class SkinXMLHandler {
             }
             output.write(SKIN_FOOTER);
         } catch (Exception e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

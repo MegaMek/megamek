@@ -3,32 +3,32 @@ Commando IIC
 (Standard)
 
 Config:Biped
-TechBase:Clan
-Era:2856
-Source:TRO 3060
-Rules Level:2
+techbase:Clan
+era:2856
+source:TRO 3060 - Succession Wars
+rules level:2
 
-Mass:25
-Engine:150 Fusion (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:25
+engine:150 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:0
+heat sinks:10 Clan Double
+walk mp:6
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:6
-RA Armor:6
-LT Armor:8
-RT Armor:8
-CT Armor:10
-HD Armor:9
-LL Armor:9
-RL Armor:9
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+armor:Standard(Clan)
+LA armor:6
+RA armor:6
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:9
+LL armor:9
+RL armor:9
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:6
 ER Medium Laser, Left Arm
@@ -70,9 +70,9 @@ Left Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLSRM4
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,9 +86,9 @@ CLDoubleHeatSink
 CLSRM4
 Clan Ammo SRM-6
 Clan Ammo SRM-4
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -150,4 +150,15 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:Created for the Lyran Commonwealth Armed Forces and one of the first 'Mechs ever designed for reconnaissance, several Lyran loyalist joined the Exodus and brought their machines with them. 
+capabilities:With only four and half tons of armor to protect itself, the Commando is not meant to participate in a stand-up fight against heavier enemies, but it excels at hit-and-run tactics and as a scout hunter. Though this 'Mech is itself a variant of the original Commando, there are no other Clan 'Mechs that use the Commando chassis.
+deployment:Two Series 2d ER Medium Lasers provide energy backup to a Pattern J7 SRM-6 and three SEP Class SRM-4 launchers. These powerful missiles provide devastating barrages, but the wasteful launchers can quickly eat through the Commando IIC's ammunition supply. Lacking Streak, or even Artemis IV FCS technology, Warriors must be sparing with their shots
+history:During the Amaris Civil War, several Lyran MechWarriors joined with Commanding General Aleksandr Kerensky in defiance of their government's official policy of neutrality. With this came the coup that the Star League Defense Force had attempted to pull off for decades: the acquisition of the Lyran Commando. Long considered one of the better scout 'Mechs in the Inner Sphere, at least one of these Commandos accompanied General Kerensky into exile and several of them appeared in the forces Nicholas Kerensky organized in preparation for Operation KLONDIKE. As newer weapons and 'Mechs made their way into the Clan arsenal, these Commandos began to show their age, so Clan Goliath Scorpion began a program to upgrade theirs. Dubbed the Commando IIC, this upgrade used newer technologies to outperform its venerable cousin. With the proliferation of OmniMechs, most Commando IICs were relegated to the status of "reserve" or "second line", though the Scorpions still continue to outfit some of their pirate hunters with these 'Mechs. Four and a half tons of armor provide half a ton more protection than the original.
+manufacturer:Marshall Light Assembly Station
+primaryfactory:Marshall
+systemmanufacturer:CHASSIS:Model ML-225 Endo Steel
+systemmanufacturer:ENGINE:Fusion 150 Standard
+systemmanufacturer:ARMOR:Forging OTR17b with CASE
+systemmanufacturer:COMMUNICATIONS:Build 1685/3 Tacticom
+systemmanufacturer:TARGETING:Mark 11 IHADS
 

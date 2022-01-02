@@ -1,6 +1,6 @@
 3085 Lyran Commonwealth Assault Vehicles B
 Partisan Air Defense Tank (Cell),1
-Sturmfeur Heavy Tank (Heavy Gauss),2
+SturmFeur Heavy Tank (Heavy Gauss),2
 Fortune Wheeled Assault Vehicle (Standard),3
 Alacorn Heavy Tank Mk VII,4
 Demolisher II Heavy Tank (MML),5

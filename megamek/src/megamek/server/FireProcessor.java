@@ -186,7 +186,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         try {
             burnDamage = game.getOptions().intOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT);
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
 
         // Report that damage applied to terrain

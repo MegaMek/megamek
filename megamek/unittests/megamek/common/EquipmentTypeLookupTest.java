@@ -47,7 +47,7 @@ public class EquipmentTypeLookupTest {
             try {
                 Thread.sleep(50);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
 
@@ -57,7 +57,7 @@ public class EquipmentTypeLookupTest {
                         ms.getEntryName()).getEntity();
                 failedEquipment.addAll(entity.failedEquipmentList);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
 

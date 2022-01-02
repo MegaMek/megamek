@@ -150,4 +150,19 @@ Stealth
 -Empty-
 -Empty-
 
+overview:The Raijin is designed to be highly mobile and capable of engaging an enemy at a variety of ranges. 
 
+capabilities: The 'Mech's relatively light armor can be a liability if it is engaged in close combat or finds itself in a protracted engagement. 
+
+deployment:Intended to act as a heavy scout, the 200-B uses the 200-A as its base. The 'Mech has Stealth Armor that makes it extremely hard to hit when activated and carries the ECM suite that is needed with any stealth armor system. The 'Mech also has a TAG laser designator, a Beagle Active Probe, and an improved C3 system. The only drawback to all of the advanced electronics is that when the stealth armor is activated the 'Mech is subject to its own ECM system, effectively blocking its own improved C3 system. The 200-B carries four ER Medium Lasers and an ER Small Laser to defend itself. Additionally, to increase its survivability, the 200-B uses a light fusion engine.
+
+history:The Raijin was designed after the Battle of Tukayyid to rearm ComGuard units that had suffered losses in the campaign. Despite having stockpiled Star League-era BattleMechs at his disposal, Precentor Martial Focht wanted something unfamiliar to both the Inner Sphere and the Clans. The Raijin was redesigned after Word of Blake forces lost considerable amounts of the design during its taking of Terra from ComStar in 3058. Newly redesigned Raijin II units began to be deployed in 3066, with older versions of the 'Mech being refitted to RJN-200-A variant standards. While off-shoots of the 200-A were deployed to elite Divisions.
+
+manufacturer:Martinson Armaments,Martinson Armaments
+primaryfactory:Caph,Terra
+systemmanufacturer:CHASSIS:Krupp 200-ES Endo Steel
+systemmanufacturer:ENGINE:Vlar 300 Light
+systemmanufacturer:ARMOR:Krupp Stealth
+systemmanufacturer:JUMPJET:Rawlings 60
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 200 with C3i Computer
+systemmanufacturer:TARGETING:Garret T12A

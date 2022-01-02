@@ -20,6 +20,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.utils.MegaMekXmlUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -79,7 +80,8 @@ public class EntityListFile {
                                      boolean isRepairable, boolean isMissing, int indentLvl) {
         StringBuilder output = new StringBuilder();
 
-        output.append("         <slot index=\"")
+        output.append(indentStr(indentLvl))
+                .append("<slot index=\"")
                 .append(index)
                 .append("\" type=\"");
 
@@ -106,7 +108,8 @@ public class EntityListFile {
             }
 
             if ((mount.getType() instanceof WeaponType)
-                    && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+                    && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)
+                    && (mount.getLinked() != null)) {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
             }
@@ -162,16 +165,10 @@ public class EntityListFile {
 
     /**
      * Helper function to indent based on an indent level
-     * @param level
-     * @return
      */
     public static String indentStr(int level) {
-        String retVal = "";
-
-        for (int x=0; x<level; x++)
-            retVal += "\t";
-
-        return retVal;
+        // Just redirect to the XML Util for now, and this will make it easy to find for future replacement
+        return MegaMekXmlUtil.indentStr(level);
     }
 
     /**
@@ -209,8 +206,8 @@ public class EntityListFile {
                 isDestroyed = true;
             }
 
-            //exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
-            //suits without pilots
+            // exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
+            // suits without pilots
             if (entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
                 isDestroyed = false;
             }
@@ -510,7 +507,6 @@ public class EntityListFile {
      *             is thrown on any error.
      */
     public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
-
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file), StandardCharsets.UTF_8));
@@ -556,7 +552,7 @@ public class EntityListFile {
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
         output.write("<record version=\"" + MegaMekConstants.VERSION + "\" >");
-        
+
         ArrayList<Entity> living = new ArrayList<>();
         ArrayList<Entity> allied = new ArrayList<>();
         ArrayList<Entity> salvage = new ArrayList<>();
@@ -564,7 +560,7 @@ public class EntityListFile {
         ArrayList<Entity> devastated = new ArrayList<>();
         Hashtable<String, String> kills = new Hashtable<>();
 
-        //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
+        // Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
         Iterator<Entity> entities = client.getGame().getEntities();
         while (entities.hasNext()) {
             Entity entity = entities.next();
@@ -592,7 +588,7 @@ public class EntityListFile {
             }
         }
 
-        //salvageable stuff
+        // salvageable stuff
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
@@ -608,7 +604,7 @@ public class EntityListFile {
             salvage.add(entity);
         }
 
-        //devastated units
+        // devastated units
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
@@ -836,7 +832,7 @@ public class EntityListFile {
                 output.write("\"/>\n");
             }
 
-                // Write the Bomb Data if needed
+            // Write the Bomb Data if needed
             if (entity.isBomber()) {
                 IBomber b = (IBomber) entity;
                 int[] bombChoices = b.getBombChoices();
@@ -880,7 +876,7 @@ public class EntityListFile {
                 output.write(String.valueOf(a.getHeatSinks()));
                 output.write("\"/>\n");
 
-                //large craft bays and doors. 
+                // large craft bays and doors.
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
                     for (Bay nextbay : a.getTransportBays()) {
                         output.write(indentStr(indentLvl + 1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">\n");
@@ -990,12 +986,12 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl + 1) + "</NC3set>\n");
             }
             
-            //Record if this entity is transported by another
+            // Record if this entity is transported by another
             if (entity.getTransportId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) + "<Conveyance id=\"" + entity.getTransportId());
                 output.write("\"/>\n");
             }
-            //Record this unit's id number
+            // Record this unit's id number
             if (entity.getId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) + "<Game id=\"" + entity.getId());
                 output.write("\"/>\n");
@@ -1012,7 +1008,7 @@ public class EntityListFile {
                 output.write("\"/>\n");
             }
             
-            //Write the escape craft data, if needed
+            // Write the escape craft data, if needed
             if (entity instanceof Aero) {
                 Aero aero = (Aero) entity;
                 if (!aero.getEscapeCraft().isEmpty()) {
@@ -1043,7 +1039,7 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl + 1) + "</EscapedPassengers>\n");
                 }
                 if (craft instanceof EscapePods) {                   
-                    //Original number of pods, used to set the strength of a group of pods
+                    // Original number of pods, used to set the strength of a group of pods
                     output.write(indentStr(indentLvl + 1) + "<ONumberOfPods number=\"" + craft.get0SI());
                     output.write("\"/>\n");
                 }
@@ -1067,7 +1063,7 @@ public class EntityListFile {
                     }
                     output.write(indentStr(indentLvl + 1) + "</EscapedPassengers>\n");
                 }
-                //Original number of men
+                // Original number of men
                 output.write(indentStr(indentLvl + 1) + "<ONumberOfMen number=\"" + eCrew.getOInternal(Infantry.LOC_INFANTRY));
                 output.write("\"/>\n");
             }
@@ -1318,7 +1314,7 @@ public class EntityListFile {
         String retVal = "      <dcriticals";
         String critVal = "";
 
-        //crits
+        // crits
         if (a.isDockCollarDamaged()) {
             critVal = critVal.concat(" dockingcollar=\"none\"");
         }
@@ -1382,42 +1378,4 @@ public class EntityListFile {
         return retVal;
 
     }
-
-    /**
-     * Load a list of <code>Entity</code>s from the given file.
-     * <p/>
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
-     * other campaign-related information are retained but data specific to a
-     * particular game is ignored.
-     *
-     * @param file
-     *            - the <code>File</code> to load from.
-     * @return A <code>Vector</code> containing <code>Entity</code>s loaded from
-     *         the file. This vector may be empty, but it will not be
-     *         <code>null</code>.
-     * @throws IOException
-     *             is thrown on any error.
-     */
-    public static Vector<Entity> loadFrom(File file) throws IOException {
-
-        // Create an empty parser.
-        MULParser parser = new MULParser();
-
-        // Open up the file.
-        InputStream listStream = new FileInputStream(file);
-
-        // Read a Vector from the file.
-        parser.parse(listStream);
-        listStream.close();
-
-
-        // Was there any error in parsing?
-        if (parser.hasWarningMessage()) {
-            System.out.println(parser.getWarningMessage());
-        }
-
-        // Return the entities.
-        return parser.getEntities();
-    }
-
 }

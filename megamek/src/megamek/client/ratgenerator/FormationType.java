@@ -46,7 +46,7 @@ public class FormationType {
     public static final int FLAG_VEHICLE = FLAG_TANK | FLAG_NAVAL | FLAG_VTOL;
     public static final int FLAG_ALL = FLAG_GROUND | FLAG_AIR;
     
-    private static HashMap<String,FormationType> allFormationTypes = null;
+    private static HashMap<String, FormationType> allFormationTypes = null;
     public static FormationType getFormationType(String key) {
         if (allFormationTypes == null) {
             createFormationTypes();
@@ -89,7 +89,7 @@ public class FormationType {
     
     // Provide values for the various criteria for reporting purposes
     private String mainDescription = null;
-    private Map<String,Function<MechSummary,?>> reportMetrics = new HashMap<>();
+    private Map<String, Function<MechSummary,?>> reportMetrics = new HashMap<>();
     
     public String getName() {
         return name;

@@ -52,10 +52,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.preference.*;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -862,7 +859,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
-            case IClientPreferences.MAP_TILESET:
+            case ClientPreferences.MAP_TILESET:
                 updateBoard();
                 break;
 
@@ -5059,7 +5056,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             }
 
@@ -6108,7 +6105,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 try {
                     tracker.waitForID(0);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -6128,7 +6125,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             try {
                 tracker.waitForID(1);
             } catch (InterruptedException e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             tracker.removeImage(scaled);
             // Cache the image if the flag is set

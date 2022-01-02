@@ -34,7 +34,7 @@ class EventListener {
             try {
                 method.invoke(handler, event);
             } catch (Exception e) {
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
     }

@@ -23,7 +23,7 @@ package megamek;
  */
 public abstract class SuiteConstants {
     //region General Constants
-    public static final Version VERSION = new Version("0.49.6-SNAPSHOT");
+    public static final Version VERSION = new Version("0.49.7-SNAPSHOT");
     public static final int MAXIMUM_D6_VALUE = 6;
     //endregion General Constants
 }

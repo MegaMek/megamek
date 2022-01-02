@@ -151,4 +151,19 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:One of the most popular Star League BattleMechs, many a Highlander accompanied General Aleksandr Kerensky into exile. Some were mothballed, but many found their way into the toumans of the Clans. 
 
+capabilities:With the use of newer, lighter weapons, the damage potential of the Highlander has roughly doubled. The IIC also contains enough ammunition that it rarely needs to conserve any during Trials. Clan scientists were forced to rearrange the placement of some weapons within the 'Mech to allow it proper ammo feeds, but the design is largely unchanged. It carries the maximum amount of Ferro-Fibrous armor that can be crammed on the frame, fourteen and a half tons. As with the original, the IIC carries enough jump jets to move up to ninety meters at a time, allowing MechWarriors to execute the "Highlander Burial".
+
+deployment:This version introduced 3077 carries a HAG/20 with 4 tons of ammunition for long battlefield endurance and ECM Suite instead of the standard Gauss Rifle.
+
+history:As technology advanced, the weapons systems were upgraded until the design known as the Highlander IIC finally emerged. Though no new Highlanders have been produced in over a century, several hundred are still in scattered use throughout the touman of every Clan.
+
+manufacturer:W-7 Facilities (Refit) 
+primaryfactory:Weingarten
+systemmanufacturer:CHASSIS:SL-XT Modified
+systemmanufacturer:ENGINE:Fusion 270 Standard
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Ferro-Fibrous
+systemmanufacturer:JUMPJET:Prentiss-IIIA
+systemmanufacturer:COMMUNICATIONS:C-XII Series B4 GDS
+systemmanufacturer:TARGETING:C-12 Mk. III with Artemis IV FCS

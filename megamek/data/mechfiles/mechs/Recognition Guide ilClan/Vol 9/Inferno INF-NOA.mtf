@@ -5,8 +5,8 @@ INF-NOA
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3146
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #9 - Dark Age
+rules level:2
 
 mass:75
 engine:300 Fusion Engine(IS)

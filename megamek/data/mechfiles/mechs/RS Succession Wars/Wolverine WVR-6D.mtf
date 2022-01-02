@@ -3,68 +3,68 @@ Wolverine
 WVR-6D
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2834
-Source:RS:Succession Wars - Succession Wars
-Rules Level:1
+techbase:Inner Sphere
+era:2834
+source:RS:Succession Wars - Succession Wars
+rules level:1
 
-Mass:55
-Engine:275 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:55
+engine:275 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:11 Single
-Walk MP:5
-Jump MP:5
+heat sinks:11 Single
+walk mp:5
+jump mp:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:20
-RT Armor:20
-CT Armor:20
-HD Armor:8
-LL Armor:16
-RL Armor:16
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:20
+RT armor:20
+CT armor:20
+HD armor:8
+LL armor:16
+RL armor:16
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:2
+AC/10, Right Arm
 Medium Laser, Head
-AC/10, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Autocannon/10
-Autocannon/10
-Autocannon/10
-Autocannon/10
-Autocannon/10
-Autocannon/10
-Autocannon/10
-IS Ammo AC/10
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/10
 
 Left Torso:
-Jump Jet
-IS Ammo AC/10
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -77,7 +77,7 @@ IS Ammo AC/10
 -Empty-
 
 Right Torso:
-Jump Jet
+IS Ammo AC/10
 -Empty-
 -Empty-
 -Empty-
@@ -124,7 +124,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
--Empty-
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +138,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
--Empty-
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -147,25 +147,15 @@ Jump Jet
 -Empty-
 
 overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
-
 capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
-
 deployment:Introduced in 2834, the 6D drops the SRM and one heat sink of the 6R to upgrade the AC/5 to an Autocannon/10, mounted in the left arm. Two tons of ammunition in the left side supply it, spread through the arm and torso. One jump jet is moved from each leg to the corresponding side torso.
-
 history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
-
 manufacturer:Kallon Industries, Victory Industries, Free Worlds Defense Industries
-primaryFactory:Nanking, Thermopolis (Kallon), Marduk (Victory), Gibson (FWDI)
+primaryfactory:Nanking, Thermopolis (Kallon), Marduk (Victory), Gibson (FWDI)
 systemmanufacturer:CHASSIS:Crucis-A
-systemmodel:CHASSIS:Standard
 systemmanufacturer:ENGINE:CoreTek
-systemmodel:ENGINE:275
 systemmanufacturer:ARMOR:Maximillian
-systemmodel:ARMOR:60 Standard Armor
 systemmanufacturer:JUMPJET:Northrup
-systemmodel:JUMPJET:12000
 systemmanufacturer:COMMUNICATIONS:Garret
-systemmodel:COMMUNICATIONS:T-11b
 systemmanufacturer:TARGETING:Sync
-systemmodel:TARGETING:Tracker
 

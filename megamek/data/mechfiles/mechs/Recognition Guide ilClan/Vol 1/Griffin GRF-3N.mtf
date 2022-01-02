@@ -5,7 +5,7 @@ GRF-3N
 Config:Biped
 techbase:Inner Sphere
 era:3093
-source:ilClan Vol 1 - Dark Age
+source:Rec Guide:ilClan #1 - Dark Age
 rules level:2
 
 mass:55
@@ -146,16 +146,20 @@ IS Ferro-Fibrous
 -Empty-
 -Empty-
 
-manufacturer:Earthwerks-FWL, Inc.
-primaryfactory:Tiber
-systemmanufacturer:CHASSIS:Earthwerks
-systemmode:CHASSIS:GRF Endo Steel
-systemmanufacturer:ENGINE:CoreTek
-systemmode:ENGINE:275
-systemmanufacturer:ARMOR:Valiant
-systemmode:ARMOR:Chainmail Ferro-Fibrous with CASE II
-systemmanufacturer:JUMPJET:Rawlings
-systemmode:JUMPJET:55
+overview:Built in 2492 the Griffin was originally classified as a heavy BattleMech, filling in the weight gap between mammoth machines like the Mackie and smaller recon 'Mechs like the Wasp, and intended for close assaults
+
+capabilities:The massive and efficient fusion engine of the Griffin, giving it a cruising speed of 57.1 km/h, combined with five jump jets occupying the rear torso areas for a total jumping distance of 150 meters, is what distinguishes it from other medium 'Mechs and has kept the Griffin in the game over the centuries. Unfortunately, like most other early 'Mechs, the Griffin suffers from insufficient heat capacity with only twelve heat sinks installed. The result is that Griffin pilots, lacking the ability to do both, must choose at the outset of a fight whether to engage or withdraw. Nine and a half tons of armor plating compares quite favorably to many other medium 'Mechs, although as is often the case the Griffin will find itself in combat with larger 'Mechs. For this reason, two pairs of false armor baffles were added to the 'Mech, one on its shoulders providing limited protection to the LRM launcher and cockpit, and a smaller pair on the legs protecting the knees joints.
+
+deployment:The 3N Griffin is a 3150 era model produced at the Earthwerks Tiber plant for the Free Worlds League, engaging its foes at range with a Fusigon Longtooth ER PPC and a Artemis IV-enhanced Delta Dart II Enhanced LRM-10 Launcher with two tons of reloads. Clad in ten tons of Valiant Chainmail Ferro-Fibrous armor and built around an Endo Steel frame, the use of a standard 275 rated engine, eleven double heat sinks, jump jets and CASE II provide the 3N impressive survivability. 
+
+history:Combining tremendous speed and firepower in one frame the Griffin briefly dominated in this role before being superseded by larger and better-equipped 'Mechs. However the Griffin was very popular among commanders and pilots alike and so Earthwerks Incorporated kept it in production, this time reclassified as a medium 'Mech and tasked with long-range fire support for medium lances. In this capacity the Griffin has excelled, combining good striking power, endurance and speed, with its only major weakness being a lack of close-range defensive weapons. During the Succession Wars the Griffin could be found in almost every unit of all the Great Houses, thanks in part to its diverse number of manufacturers. Besides being constructed from Earthwerks' factory on Keystone the Griffin was later acquired and built by Defiance Industries (Hesperus II), Kallon Industries (Talon), Brigadier Corporation (Oliver), and Norse BattleMech Works (later Victory Industries, Marduk). It was even manufactured in the Periphery by Vandenberg Mechanized Industries on Illiushin. Only the Capellan Confederation lacked a means of building the 'Mech, although they made up for it by purchasing a limited number from the Taurian Concordat. During the Fourth Succession War some of these manufacturers exchanged hands, with the Draconis Combine capturing Marduk from the Federated Suns and the Lyran Commonwealth taking Oliver from the Free Worlds League. This exchange also happened to coincide with several new variants being designed to exploit recently-recovered lostech. As such variants meant specifically for either Houses Kurita, Marik or the Federated Commonwealth found their way into the arsenals of all of them. During the Clan Invasion these manufacturers produced the new variants to meet the Clan threat while Vandenberg Industries continued to build original GRF-1N Griffins. When Vicore Industries began shopping around its "Project Phoenix" initiative, Defiance and Kallon Industries signed on to begin producing the completely redesigned GRF-6S Griffin. Victory Industries later signed up as well after the legal battle between Wolf's Dragoons and the Lyran Alliance saw the famous mercenary group selling its Light Fusion technology to both the Draconis Combine and Free Worlds League. The League designed a native update to the Griffin while ComStar had their own built as well which, ominously, soon began appearing in the ranks of the Word of Blake Militia. The Griffin would continue to remain a staple of the battlefields of the Inner Sphere during the maelstrom of the Jihad, the era of the Republic of the Sphere and the rise of the ilClan, with models still in production within the Free Worlds League and the Wolf Empire.
+
+manufacturer:Earthwerks-FWL, Inc. ,Earthwerks-FWL, Inc.
+primaryfactory:Keystone,Tiber (FWL)
+systemmanufacturer:CHASSIS:Earthwerks GRF Endo Steel
+systemmanufacturer:ENGINE:CoreTek 275
+systemmanufacturer:ARMOR:Valiant Chainmail Ferro-Fibrous with CASE II
+systemmanufacturer:JUMPJET:Rawlings 55
 systemmanufacturer:COMMUNICATIONS:Neil 6000
 systemmanufacturer:TARGETING:Octagon Tartrac System C with Artemis IV FCS
 

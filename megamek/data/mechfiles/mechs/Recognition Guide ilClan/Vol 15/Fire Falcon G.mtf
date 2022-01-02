@@ -5,7 +5,7 @@ G
 Config:Biped Omnimech
 techbase:Clan
 era:3113
-source:ilClan RecGuide 15 - Dark Age
+source:Rec Guide:ilClan #15 - Dark Age
 rules level:2
 
 mass:25

@@ -234,7 +234,7 @@ public class MechSummaryCache {
             } catch (Exception e) {
                 loadReport.append("  Unable to load unit cache: ")
                         .append(e.getMessage()).append("\n");
-                LogManager.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
         }
 
@@ -337,7 +337,7 @@ public class MechSummaryCache {
             }
         } catch (Exception e) {
             loadReport.append(" Unable to save mech cache\n");
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -670,7 +670,7 @@ public class MechSummaryCache {
                     zFile.close();
                     return false;
                 } catch (IOException e) {
-                    LogManager.getLogger().error(e);
+                    LogManager.getLogger().error("", e);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -729,7 +729,7 @@ public class MechSummaryCache {
         try {
             zFile.close();
         } catch (Exception ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
         }
 
         loadReport.append("  ...loaded ").append(thisZipFileCount)
@@ -763,7 +763,7 @@ public class MechSummaryCache {
                     }
                 }
             } catch (IOException ex) {
-                LogManager.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
             }
         }
     }

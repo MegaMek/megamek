@@ -935,7 +935,7 @@ public class MovePath implements Cloneable, Serializable {
         return steps;
     }
 
-    public MoveStep getLastStep() {
+    public @Nullable MoveStep getLastStep() {
         for (int i = getStepVector().size() - 1; i >= 0; i--) {
             MoveStep last = getStepVector().get(i);
             if (last != null) {
@@ -945,7 +945,7 @@ public class MovePath implements Cloneable, Serializable {
         return null;
     }
 
-    public MoveStep getSecondLastStep() {
+    public @Nullable MoveStep getSecondLastStep() {
         if (steps.size() > 1) {
             return getStep(steps.size() - 2);
         }

@@ -643,7 +643,7 @@ public class ScenarioLoader {
             }
             return e;
         } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException ex) {
-            LogManager.getLogger().error(ex);
+            LogManager.getLogger().error("", ex);
             throw new ScenarioLoaderException("unparsableEntityLine", s);
         }
     }
@@ -904,7 +904,7 @@ public class ScenarioLoader {
                 props.put(elements[0].trim(), elements[1].trim());
             }
         } catch (IOException e) {
-            LogManager.getLogger().error(e);
+            LogManager.getLogger().error("", e);
             throw new ScenarioLoaderException("exceptionReadingFile", scenarioFile);
         }
         return props;

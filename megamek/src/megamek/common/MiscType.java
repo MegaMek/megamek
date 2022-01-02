@@ -2303,7 +2303,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
                 .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
@@ -5230,13 +5230,16 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.svslots = 1;
         misc.cost = 750000;
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        //December 2021 - Errata request to change common date
         misc.flags = misc.flags.or(F_C3I).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
-                .setISAdvancement(3052, 3062, DATE_NONE, 3085, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CS)
+                .setISAdvancement(3052, DATE_NONE, 3058, 3085, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).
+                setPrototypeFactions(F_CS)
                 .setProductionFactions(F_CS)
         		.setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;

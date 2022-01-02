@@ -5889,16 +5889,16 @@
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
 		<availability>IS:2+</availability>
 		<model name='PHX-HK1'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
 		<availability>IS:3</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='PHX-HK2M'>
-			<availability>IS:2,FWL:4</availability>
+			<availability>IS:1,FWL:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -6156,7 +6156,7 @@
 	</chassis>
 	<chassis name='Raijin' unitType='Mek'>
 		<availability>CS:4</availability>
-		<model name='RJN101-A'>
+		<model name='RJN-101-A'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -7051,7 +7051,7 @@
 			<availability>CLAN:8,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:4,HL:2,LA:8,FRR:2,SIC:3,MERC:3,FS:6</availability>
 		<model name='(SRM)'>
 			<availability>LA:3,FS:3,MERC:2</availability>
@@ -7907,22 +7907,22 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-100'>
-			<availability>IS:3</availability>
-		</model>
-		<model name='WSP-100A'>
 			<availability>IS:2</availability>
 		</model>
+		<model name='WSP-100A'>
+			<availability>IS:1</availability>
+		</model>
 		<model name='WSP-100b'>
-			<availability>IS:2+</availability>
+			<availability>IS:1+</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-105M'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

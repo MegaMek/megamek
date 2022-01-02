@@ -29,7 +29,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
-import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
@@ -498,7 +498,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         // Initialize the dialog when it's being shown
         if (visible) {
             GUIPreferences gs = GUIPreferences.getInstance();
-            IClientPreferences cs = PreferenceManager.getClientPreferences();
+            ClientPreferences cs = PreferenceManager.getClientPreferences();
 
             guiScale.setValue((int) (gs.getGUIScale() * 10));
             autoEndFiring.setSelected(gs.getAutoEndFiring());
@@ -701,7 +701,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     @Override
     protected void okAction() {
         GUIPreferences gs = GUIPreferences.getInstance();
-        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        ClientPreferences cs = PreferenceManager.getClientPreferences();
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
         gs.setShowDamageDecal(showDamageDecal.isSelected());

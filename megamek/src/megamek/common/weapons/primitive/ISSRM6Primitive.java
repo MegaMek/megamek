@@ -42,7 +42,7 @@ public class ISSRM6Primitive extends SRMWeapon {
         this.addLookupName("ISSRM6p");
         this.addLookupName("IS SRM 6 Primitive");
         this.shortName = "SRM/6p";
-        flags = flags.andNot(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_PROTOTYPE).andNot(F_ARTEMIS_COMPATIBLE);
         this.heat = 4;
         this.rackSize = 6;
         this.shortRange = 3;

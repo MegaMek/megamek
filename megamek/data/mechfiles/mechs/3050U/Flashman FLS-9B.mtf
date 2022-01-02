@@ -153,3 +153,19 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Flashman is an underrated heavy 'Mech, commonly called a "flashbulb" by MechWarriors for its heavy-energy configuration.
+
+capabilities:Designed to provide continuous energy based fire support for lancemates moving to attack or covering fire for withdrawing units. The use of a Faust/Shinji AT/TS targeting-tracking system gives the Flashman a level of accuracy few can match, while fifteen double heat sinks give it an effective heat management system. The 'Mech is also notable for using an extralight engine which makes it fast for its size, though not at the expense of protection thanks to thirteen and a half tons of armor.
+
+deployment:The first variant produced by Word of Blake in 3068 following their conquest of Hesperus II, the 9B utilizes a Light Fusion Engine, Compact Gyro, Endo Steel structure, Light Ferro-Fibrous armor, and a Small Cockpit. Twelve double heat sinks struggle to cool the all-laser configuration. Two ER Large Lasers enable the Flashman to strike from long distances. Two ER Medium Lasers, two Medium Pulse Lasers, and an ER Small Laser are powerful up close. A C3i Computer enables the 9B to share targeting telemetry with other, like-equipped units.
+
+history:The Flashman, which was first introduced in 2701, is a 'Mech that is capable of engaging an enemy for extended periods of time with little re-supply. This made it one of the most prized 'Mechs in a commander's arsenal during the Star League and saw heavy use by line regiments, typically in a "fire brigade" role for heavy and assault lances. During advances it would stay to the rear to protect against ambushes and provide fire support for its lancemates. Towards the end of the Star League, several divisions had battalions composed of nothing but Flashmen, and thanks to its popularity these 'Mechs saw frequent use on the front lines. When the League dissolved, the design spread amongst the Successor States but fewer than 500 Flashmen were still operational at the start of the First Succession War. Their heavy use during this fighting saw many destroyed and production of new 'Mechs abruptly stopped in 2796 when Renault-Prime Industries on Wasat was destroyed. The Flashman was saved from extinction thanks to Defiance Industries, which was able to acquire the schematics and produced a downgraded version at their Hesperus II plant. Thanks to the fact that they owned the only remaining Flashman factory and could replace their combat losses, the Lyran Commonwealth remained the largest user of Flashman 'Mechs throughout the Succession Wars - at least until the unveiling of the Com Guards. ComStar also supplied examples of downgraded Flashmen to the Draconis Combine as part of Operation Rosebud. Following the recovery of the Helm Memory Core, Defiance Industries was able to restart production of original-model Flashman 'Mechs in the 3050s and built new variants for ComStar. After the Word of Blake seized control of Defiance Industries they also produced new variants which were supplied to their Militia for the Jihad.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:FLS/HV-1 Endo
+systemmanufacturer:ENGINE:Defiance 375 Light
+systemmanufacturer:ARMOR:Starshield Light
+systemmanufacturer:COMMUNICATIONS:Duoteck 195
+systemmanufacturer:TARGETING:Faust/Shinji AT/TS

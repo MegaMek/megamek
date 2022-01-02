@@ -50,6 +50,7 @@ public class ISLaserPrimitiveLarge extends LaserWeapon {
         this.maxRange = RANGE_MED;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This is to cover some of the back worlds in the Periphery.
+        flags = flags.or(F_PROTOTYPE);
         rulesRefs = "118, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

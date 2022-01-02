@@ -6,6 +6,7 @@ Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3142
 rules level:3
+source:Rec Guide:ilClan #5 - Dark Age
 
 mass:50
 engine:250 XL Engine(IS)

@@ -229,6 +229,7 @@ Atlas AS8-D:JUGGERNAUT
 Atlas C:JUGGERNAUT
 Atlas II AS7-D-H:JUGGERNAUT
 Atlas II AS7-D-H (Kerensky):JUGGERNAUT
+Atlas II AS7-D-H (Devlin):JUGGERNAUT
 Atlas II AS7-D-H2:JUGGERNAUT
 Atlas III AS7-D2:JUGGERNAUT
 Atlas III AS7-D3:JUGGERNAUT
@@ -1168,7 +1169,7 @@ DI Morgan Assault Tank (Standard):SNIPER
 DI Multipurpose VTOL (Gunship):STRIKER
 DI Multipurpose VTOL (Standard):SCOUT
 DI Schmitt Tank (Standard):JUGGERNAUT
-DI Schmitt Tank (Targetting Computer):JUGGERNAUT
+DI Schmitt Tank (Targeting Computer):JUGGERNAUT
 Daboku DCMS-MX90-D:SNIPER
 Daedalus DAD-3C:STRIKER
 Daedalus DAD-3D:STRIKER
@@ -3678,7 +3679,7 @@ Powerman SC XI-M LoaderMech MOD:BRAWLER
 Powerman SC XI-M-B LoaderMech MOD:BRAWLER
 Powerman SC XV HaulerMech (Standard):AMBUSHER
 Powerman SC XVI HaulerMech (Standard):AMBUSHER
-Powerman XI LoaderMech:AMBUSHER
+Powerman SC XI LoaderMech:AMBUSHER
 Praetorian Mobile Strategic Command HQ (Standard):SCOUT
 Prairie Schooner Land Train (Standard):SCOUT
 Prairie Schooner Module (Standard):SCOUT
@@ -3782,8 +3783,8 @@ Raider Mk II JL-2:BRAWLER
 Raijin II RJN-200-A:SKIRMISHER
 Raijin II RJN-200-B:SKIRMISHER
 Raijin II RJN-200-C:SKIRMISHER
-Raijin RJN101-A:STRIKER
-Raijin RJN101-C:STRIKER
+Raijin RJN-101-A:STRIKER
+Raijin RJN-101-C:STRIKER
 Rakshasa MDG-1A:SKIRMISHER
 Rakshasa MDG-1Ar:SKIRMISHER
 Rakshasa MDG-1B:SKIRMISHER
@@ -4539,10 +4540,10 @@ Stuka STU-K5:ATTACK_FIGHTER
 Stuka STU-K5b:ATTACK_FIGHTER
 SturmFeur “Kalki” Cruise Missile Launcher (Standard):MISSILE_BOAT
 Sturmblitz Assault Gun (Standard):JUGGERNAUT
-Sturmfeur Heavy Tank (Heavy Gauss):JUGGERNAUT
-Sturmfeur Heavy Tank (SRM):JUGGERNAUT
-Sturmfeur Heavy Tank (Standard):MISSILE_BOAT
-Sturmfeur Heavy Tank (WoB):JUGGERNAUT
+SturmFeur Heavy Tank (Heavy Gauss):JUGGERNAUT
+SturmFeur Heavy Tank (SRM):JUGGERNAUT
+SturmFeur Heavy Tank (Standard):MISSILE_BOAT
+SturmFeur Heavy Tank (WoB):JUGGERNAUT
 Stygian Strike Tank (Armor):MISSILE_BOAT
 Stygian Strike Tank (Standard):MISSILE_BOAT
 Stygian Strike Tank (WOB):STRIKER
@@ -5941,8 +5942,90 @@ Regent B:JUGGERNAUT
 Regent C:SNIPER
 Regent D:SNIPER
 #ilClan Rec Guide 22
+Battle Cobra T:SNIPER
+Battle Cobra F:STRIKER
+Battle Cobra G:STRIKER
+Battle Cobra I:MISSILE BOAT
+Battle Cobra J:STRIKER
+Battle Cobra X:STRIKER
+Doom Courser Prime:SNIPER
+Doom Courser A:BRAWLER
+Doom Courser B:JUGGERNAUT
+Doom Courser C:MISSILE_BOAT
+Doom Courser D:SNIPER
+Night Gyr T:JUGGERNAUT
+Night Gyr F:SKIRMISHER
+Night Gyr G:SNIPER
+Night Gyr X:SNIPER
+Goliath GOL-3M:SNIPER
+Goliath GOL-3M2:SNIPER
+Goliath GOL-7C:JUGGERNAUT
+Goliath GOL-7K:JUGGERNAUT
+Goliath GOL-7R:SNIPER
+Jade Phoenix Prime:SNIPER
+Jade Phoenix A:SKIRMISHER
+Jade Phoenix B:SKIRMISHER
+Jade Phoenix C:SKIRMISHER
+Jade Phoenix D:SNIPER
+Jade Phoenix E:SKIRMISHER
 #ilClan Rec Guide 23
+Nexus NXS1-A:STRIKER
+Nexus NXS1-B:SCOUT
+Nexus NXS1-C:STRIKER
+Star Python :SCOUT
+Fujin RJN-301-F:STRIKER
+Raijin RJN-101-A:STRIKER
+Raijin RJN-101-B:SCOUT
+Raijin RJN-101-C:STRIKER
+Raijin RJN-101-X:STRIKER
+Raijin RJN-301-B:STRIKER
+Lancelot LNC25-09:SKIRMISHER
+Rifleman IIC :SNIPER
+Rifleman IIC 2:SNIPER
+Rifleman IIC 9:SNIPER
+Rifleman IIC 10:SKIRMISHER
+Guillotine GLT-7M:BRAWLER
+Nova Cat T:SNIPER
+Nova Cat E:BRAWLER
+Nova Cat F:SKIRMISHER
+Nova Cat G:MISSILE_BOAT
+Nova Cat H:SKIRMISHER
+Nova Cat M:JUGGERNAUT
+Grand Crusader GRN-D-01:MISSILE_BOAT
+Grand Crusader GRN-D-01-X:MISSILE_BOAT
+Grand Crusader GRN-D-02:MISSILE_BOAT
+Grand Crusader GRN-D-02-B:SNIPER
+Star Crusader Prime:SNIPER
+Star Crusader A:BRAWLER
+Star Crusader B:SNIPER
+Katana CRK-5006-1:SKIRMISHER
 #ilClan Rec Guide 24
+Skinwalker (Ryoken III) Prime:STRIKER
+Skinwalker (Ryoken III) A:STRIKER
+Skinwalker (Ryoken III) B:STRIKER
+Skinwalker (Ryoken III) C:STRIKER
+Skinwalker (Ryoken III) D:SCOUT
+Skinwalker (Ryoken III) E:SNIPER
+Skinwalker (Ryoken III) F:STRIKER
+Grand Dragon DRG-12K:SKIRMISHER
+Flashman FLS-10E:SKIRMISHER
+Stalker STK-9F:JUGGERNAUT
+Alpha Wolf Prime:SNIPER
+Alpha Wolf A:BRAWLER
+Alpha Wolf B:BRAWLER
+Alpha Wolf C:SNIPER
+Annihilator ANH-5W:SNIPER
+Atlas AS7-K-DC:SNIPER
+Atlas AS7-S3:SNIPER
+Atlas AS7-S3-DC:SNIPER
+Atlas AS7-S4:SNIPER
+Atlas AS8-K:JUGGERNAUT
+Atlas AS8-KE:JUGGERNAUT
+Atlas AS8-S:SNIPER
+Atlas C:JUGGERNAUT
+Atlas C 2:JUGGERNAUT
+Atlas C 3:SNIPER
+Atlas II AS7-DK-H:BRAWLER
 #GoldenCentury
 Mongoose C:SCOUT
 Mongoose C 2:SCOUT

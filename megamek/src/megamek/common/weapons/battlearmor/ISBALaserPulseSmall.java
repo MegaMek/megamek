@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -47,8 +47,9 @@ public class ISBALaserPulseSmall extends PulseLaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "258,TM";
+        flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON)
+                .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)

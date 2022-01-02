@@ -89,7 +89,7 @@ public class FactionRecord {
     private HashMap<Integer, Integer> techMargin;
     private HashMap<Integer, Integer> upgradeMargin;
 
-    private HashMap<Integer, HashMap<Integer,ArrayList<Integer>>> weightDistribution;
+    private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
     private ArrayList<String> parentFactions;
 
     public FactionRecord() {

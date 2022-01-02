@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -43,7 +43,7 @@ public class ISBALaserERSmall extends LaserWeapon {
         cost = 11250;
         shortAV = 3;
         maxRange = RANGE_SHORT;
-        rulesRefs = "258,TM";
+        rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)

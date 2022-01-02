@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2002-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *

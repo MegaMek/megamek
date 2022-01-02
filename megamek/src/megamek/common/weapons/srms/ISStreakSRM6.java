@@ -45,7 +45,7 @@ public class ISStreakSRM6 extends StreakSRMWeapon {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3055, 3058, 3060, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, true,false, false)
+                .setISApproximate(false, false, true, false, false)
                 .setPrototypeFactions(F_DC)
                 .setProductionFactions(F_DC);
     }

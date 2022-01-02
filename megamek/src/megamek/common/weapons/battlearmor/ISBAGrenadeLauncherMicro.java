@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -43,7 +43,7 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
         bv = 1;
         cost = 1950;
         flags = flags.or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "256,TM";
+        rulesRefs = "256, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

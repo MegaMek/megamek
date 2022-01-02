@@ -1,5 +1,5 @@
 /*
- * * MegaMek - Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur
+ * * MegaMek - Copyright (C) 2000-2005 Ben Mazur
  * (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -4453,12 +4453,14 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 2.0;
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-		misc.rulesRefs = "195,ATOW-C";
+		misc.rulesRefs = "195, AToW-C";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
                 .setAvailability(RATING_C, RATING_E, RATING_F, RATING_X)
-                .setISAdvancement(2570, 2575, 2580, 2800, DATE_NONE).setISApproximate(true, false, false, false, false)
+                .setISAdvancement(2570, 2575, 2580, 2800, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2570, 2575, 2580, 2950, DATE_NONE)
-                .setClanApproximate(true, false, false, true, false).setPrototypeFactions(F_TH)
+                .setClanApproximate(true, false, false, true, false)
+                .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH);
         return misc;
     }
@@ -4472,7 +4474,7 @@ public class MiscType extends EquipmentType {
         misc.damageDivisor = 1.0;
         misc.cost = 370;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-        misc.rulesRefs = "318,TO";
+        misc.rulesRefs = "318, TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
                 .setISAdvancement(3045, 3047, DATE_NONE, DATE_NONE, DATE_NONE)

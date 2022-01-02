@@ -1100,8 +1100,7 @@ public class RATGenerator {
         if (initialized) {
             // Possibility of adding a new listener during notification.
             for (ActionListener l : new ArrayList<>(listeners)) {
-                l.actionPerformed(new ActionEvent(
-                        this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
             }
         }
     }
@@ -1112,8 +1111,7 @@ public class RATGenerator {
     public void notifyListenersEraLoaded() {
         if (initialized) {
             for (ActionListener l : listeners) {
-                l.actionPerformed(new ActionEvent(
-                        this,ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
             }
         }
     }

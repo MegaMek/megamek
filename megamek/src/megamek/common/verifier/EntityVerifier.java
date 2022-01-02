@@ -170,8 +170,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         Entity entity = null;
         try {
             entity = new MechFileParser(f, entityName).getEntity();
-        } catch (Exception e) {
-            LogManager.getLogger().error(e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
         return entity;
     }
@@ -282,8 +282,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             Entity entity;
             try {
                 entity = new MechFileParser(f, entityName).getEntity();
-            } catch (Exception e) {
-                LogManager.getLogger().error(e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
                 return;
             }
             EntityVerifier.getInstance(config).checkEntity(entity, f.toString(), true);

@@ -813,7 +813,7 @@ public class MechFileParser {
                         }
                     }
                     Collections.sort(canonUnitNames);
-                } catch (FileNotFoundException ignored) {
+                } catch (Exception ignored) {
 
                 }
             }
@@ -943,8 +943,8 @@ public class MechFileParser {
         Entity entity = null;
         try {
             entity = new MechFileParser(f, entityName).getEntity();
-        } catch (Exception e) {
-            LogManager.getLogger().error(e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
         return entity;
     }

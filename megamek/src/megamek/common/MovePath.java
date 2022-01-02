@@ -1354,12 +1354,13 @@ public class MovePath implements Cloneable, Serializable {
                             "for path!");
                 }
             }
-        } // end while
-        //System.out.println("iteration count: " + loopcount);
+        }
+
         if (getFinalCoords().distance(dest) > bestPath.getFinalCoords().distance(dest)) {
             // Make the path we found, this path.
             steps = bestPath.steps;
         }
+
         if (!getFinalCoords().equals(dest)) {
             lazyPathfinder(dest, type);
         }

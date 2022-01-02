@@ -111,7 +111,6 @@ public class IdealHex {
     public static IdealHex get(Coords coords) {
         if (cache == null || coords.getX() >= cacheWidth || coords.getY() >= cacheHeight
             || coords.getX() < 0 || coords.getY() < 0) {
-            // System.err.println("IdealHex cache miss on " + coords);
             return new IdealHex(coords);
         }
         // okay, check cache

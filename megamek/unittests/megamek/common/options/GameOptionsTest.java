@@ -53,7 +53,7 @@ public class GameOptionsTest {
             switch (io.getType()) {
                 case IOption.STRING:
                 case IOption.CHOICE:
-                    io.setValue(""+count);
+                    io.setValue("" + count);
                     break;
 
                 case IOption.BOOLEAN:
@@ -69,7 +69,7 @@ public class GameOptionsTest {
                     break;
 
                 case IOption.FLOAT:
-                    io.setValue(Float.valueOf(""+count));
+                    io.setValue(Float.valueOf("" + count));
                     break;
             }
             
@@ -102,7 +102,7 @@ public class GameOptionsTest {
                     }
                     break;
                 case IOption.FLOAT:
-                    assertEquals(Float.parseFloat(""+count), io.floatValue(), 0.0f);
+                    assertEquals(Float.parseFloat("" + count), io.floatValue(), 0.0f);
                     break;
             }
             

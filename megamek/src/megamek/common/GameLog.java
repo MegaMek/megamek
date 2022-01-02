@@ -13,14 +13,14 @@
  */
 package megamek.common;
 
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
-
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 
 /**
  * @author Ben
@@ -50,9 +50,9 @@ public class GameLog {
             logfile = new File(LOG_DIR + File.separator + filename);
             writer = new BufferedWriter(new FileWriter(logfile));
             append("Log file opened " + LocalDate.now());
-        } catch (IOException ex) {
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             writer = null;
-            System.err.println("GameLog:" + ex.getMessage());
         }
     }
 
@@ -66,6 +66,7 @@ public class GameLog {
             writer.newLine();
             writer.flush();
         } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             writer = null;
         }
     }

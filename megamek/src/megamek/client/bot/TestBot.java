@@ -1079,8 +1079,8 @@ public class TestBot extends BotClient {
         }
     }
 
-    protected ArrayList<AttackOption> calculateWeaponAttacks(Entity en,
-                                                             Mounted mw, boolean best_only) {
+    protected ArrayList<AttackOption> calculateWeaponAttacks(Entity en, Mounted mw,
+                                                             boolean best_only) {
         int from = en.getId();
         int weaponID = en.getEquipmentNum(mw);
         int spin_mode = 0;
@@ -1094,13 +1094,8 @@ public class TestBot extends BotClient {
                 en.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
         for (Entity e : ents) {
             CEntity enemy = centities.get(e);
-            // long entry = System.currentTimeMillis();
             ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID, false);
-            // long exit = System.currentTimeMillis();
-            // if (exit != entry)
-            // System.out.println("Weapon attack toHit took "+(exit-entry));
-            if ((th.getValue() != TargetRoll.IMPOSSIBLE)
-                && !(th.getValue() >= 13)) {
+            if ((th.getValue() != TargetRoll.IMPOSSIBLE) && (th.getValue() < 13)) {
                 double expectedDmg;
 
                 wep_test = new WeaponAttackAction(from, e.getId(), weaponID);
@@ -1120,8 +1115,7 @@ public class TestBot extends BotClient {
 
                 expectedDmg = Compute.getAmmoAdjDamage(game, wep_test);
 
-                // Get the secondary target modifier for this weapon/target
-                // combo
+                // Get the secondary target modifier for this weapon/target combo
 
                 starg_mod = 1;
 

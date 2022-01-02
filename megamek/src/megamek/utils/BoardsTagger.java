@@ -118,8 +118,8 @@ public class BoardsTagger {
         try {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
-        } catch (Exception e) {
-            LogManager.getLogger().fatal("Board tagger cannot scan boards", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().fatal("Board tagger cannot scan boards", ex);
             System.exit(64);
         }
         System.out.println("Finished.");

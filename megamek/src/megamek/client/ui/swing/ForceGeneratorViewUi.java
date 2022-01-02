@@ -572,7 +572,6 @@ public class ForceGeneratorViewUi {
             }
             fd.getSubforces().forEach(this::addEntities);
             fd.getAttached().forEach(this::addEntities);
-            
         }
         
         public List<Entity> allEntities() {

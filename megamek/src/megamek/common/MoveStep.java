@@ -600,12 +600,6 @@ public class MoveStep implements Serializable {
                         return;
                     }
                 } else {
-                    // System.err.println(" Entity "+ entity.getDisplayName()
-                    // +" moving from elevation " +
-                    // game.getBoard().getHex(prev.getPosition()) + " to " +
-                    // game.getBoard().getHex(getPosition()) +
-                    // " at assumed elevation " +
-                    // elevation + " climb = " + climbMode());
                     setElevation(entity
                             .calcElevation(
                                     game.getBoard().getHex(prev.getPosition()),
@@ -614,17 +608,8 @@ public class MoveStep implements Serializable {
                                     climbMode(),
                                     (entity.getMovementMode() == EntityMovementMode.WIGE)
                                             && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
-                    // System.err.println(" Entity "+ entity.getDisplayName()
-                    // +" result was " + elevation);
-
                 }
             } else {
-                // System.err.println(" Entity "+ entity.getDisplayName()
-                // +" moving from elevation " +
-                // game.getBoard().getHex(prev.getPosition()) + " to " +
-                // game.getBoard().getHex(getPosition()) +
-                // " at assumed elevation " +
-                // elevation + " climb = " + climbMode());
                 setElevation(entity
                         .calcElevation(
                                 game.getBoard().getHex(prev.getPosition()),
@@ -633,8 +618,6 @@ public class MoveStep implements Serializable {
                                 climbMode(),
                                 (entity.getMovementMode() == EntityMovementMode.WIGE)
                                         && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
-                // System.err.println(" Entity "+ entity.getDisplayName()
-                // +" result was " + elevation);
             }
         }
 
@@ -3161,14 +3144,12 @@ public class MoveStep implements Serializable {
         }
 
         // If you want to flee, and you can flee, flee.
-        if ((type == MoveStepType.FLEE)
-                && entity.canFlee()) {
+        if ((type == MoveStepType.FLEE) && entity.canFlee()) {
             return true;
         }
 
         // super-easy
         if (entity.isImmobile()) {
-            // System.err.println("illegal - immobile");
             return false;
         }
 
@@ -3182,14 +3163,11 @@ public class MoveStep implements Serializable {
 
         // another easy check
         if (!game.getBoard().contains(dest)) {
-            // System.err.println("board doesn't contain destination");
             return false;
         }
 
         // can't enter impassable hex
         if (destHex.containsTerrain(Terrains.IMPASSABLE)) {
-            // System.err.println("can't enter impassable hex");
-
             return false;
         }
 
@@ -3344,9 +3322,7 @@ public class MoveStep implements Serializable {
                 maxDown = entity.getMaxElevationChange();
             }
             if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > maxDown))
-                    || (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity
-                    .getMaxElevationChange()))) {
-                // System.err.println("jump VTOL check failed");
+                    || (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity.getMaxElevationChange()))) {
                 return false;
             }
         }
@@ -3514,7 +3490,6 @@ public class MoveStep implements Serializable {
                 + entity.game.getBoard().getHex(entity.getPosition())
                 .getLevel() + entity.getJumpMPWithTerrain() + (type == MoveStepType.DFA ? 1
                 : 0)))) {
-            // System.err.println("can't jump over too-high terrain");
             return false;
         }
 
@@ -3542,7 +3517,6 @@ public class MoveStep implements Serializable {
                 terrainInvalid = true;
             } else {
                 // This is an illegal move.
-                // System.err.println("landing in illegal terrain");
                 return false;
             }
         }
@@ -3563,15 +3537,15 @@ public class MoveStep implements Serializable {
             }
         }
         
-        //If we're a land train with mixed motive types, use the most restrictive type
-        //to determine terrain restrictions
+        // If we're a land train with mixed motive types, use the most restrictive type
+        // to determine terrain restrictions
         if (!entity.getAllTowedUnits().isEmpty()
                 && (type != MoveStepType.LOAD
                     && type != MoveStepType.UNLOAD
                     && type != MoveStepType.TOW
                     && type != MoveStepType.DISCONNECT)) {
             boolean prohibitedByTrailer = false;
-            //Add up the trailers
+            // Add up the trailers
             for (int id : entity.getAllTowedUnits()) {
                 Entity tr = game.getEntity(id);
                 prohibitedByTrailer = tr.isLocationProhibited(dest, getElevation());
@@ -3587,8 +3561,6 @@ public class MoveStep implements Serializable {
                 && (src != entity.getPosition())
                 && (isJumping() || (entity.getMovementMode() == EntityMovementMode.VTOL))
                 && (srcEl < srcHex.terrainLevel(Terrains.BLDG_ELEV))) {
-            // System.err.println("jumping into side of building");
-
             return false;
         }
 
@@ -3605,19 +3577,15 @@ public class MoveStep implements Serializable {
                 // QuadVees can still convert to vehicle mode in prohibited terrain, but cannot leave
                 && (type != MoveStepType.CONVERT_MODE)
                 && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
-            // System.err.println("in restricted terrain");
             return false;
         }
         if (type == MoveStepType.UP) {
             if (!(entity.canGoUp(elevation - 1, getPosition()))) {
-                // System.err.println("cant go up anymore");
-
                 return false;
             }
         }
         if (type == MoveStepType.DOWN) {
             if (!(entity.canGoDown(elevation + 1, getPosition()))) {
-                // System.err.println("cant go down anymore");
                 return false;// We can't intentionally crash.
             }
         }
@@ -3650,7 +3618,6 @@ public class MoveStep implements Serializable {
                 if (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE)) {
                     return destHex.containsTerrainExit(Terrains.ROAD, dest.direction(src));
                 }
-                // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face
             }
         }
@@ -3661,8 +3628,6 @@ public class MoveStep implements Serializable {
             if (isJumping()) {
                 terrainInvalid = true;
             } else {
-                // System.err.println("isElevationValid failed destHex is " +
-                // dest.toString());
                 return false;
             }
         }

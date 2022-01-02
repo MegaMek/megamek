@@ -84,10 +84,8 @@ public class FireCommand extends ClientCommand {
                     if (args[1].equalsIgnoreCase("TARGET")) {
                         String str = "";
                         try {
-                            Targetable target = getClient().getEntity(Integer
-                                                                              .parseInt(args[2]));
-                            if (args.length == 4
-                                && args[3].equalsIgnoreCase("ALL")) {
+                            Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
+                            if ((args.length == 4) && args[3].equalsIgnoreCase("ALL")) {
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     if (weapon.canFire() && !weapon.isFired()) {
                                         fire(ce().getEquipmentNum(weapon), target);
@@ -123,7 +121,7 @@ public class FireCommand extends ClientCommand {
 
                                 return str;
                             }
-                        } catch (Exception nfe) {
+                        } catch (Exception ignored) {
 
                         }
 

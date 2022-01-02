@@ -108,7 +108,7 @@ public class TestCoords {
         
         origin = new Coords(10, 4); // displays as 11,5        
         correct = "(11, 4); (12, 4); (12, 5); (11, 6); (10, 5); (10, 4)";
-        LogManager.getLogger().info("All neighbors of "+origin.toFriendlyString()+": ");
+        LogManager.getLogger().info("All neighbors of " + origin.toFriendlyString() + ": ");
         for (int di: Coords.ALL_DIRECTIONS) {
             System.out.print(origin.translated(di).toFriendlyString()+"; ");
         }
@@ -117,13 +117,12 @@ public class TestCoords {
         
         origin = new Coords(13, 6); // displays as 14, 7        
         correct = "(14, 4); (17, 6); (17, 9); (14, 10); (11, 9); (11, 6)";
-        LogManager.getLogger().info("All distance 3 translated hexes of "+origin.toFriendlyString()+": ");
+        LogManager.getLogger().info("All distance 3 translated hexes of " + origin.toFriendlyString() + ": ");
         for (int di: Coords.ALL_DIRECTIONS) {
             System.out.print(origin.translated(di, dist).toFriendlyString()+"; ");
         }
-        LogManager.getLogger().info("\nShould be: ");
-        LogManager.getLogger().info(correct);
-        
+        LogManager.getLogger().info("\nShould be: " + correct);
+
         origin = new Coords(13, 6);
         Coords dest = new Coords(15, 1);
         correct = "6"; 
@@ -137,7 +136,7 @@ public class TestCoords {
         Coords testCoords = new Coords(0, 0);
         
         List<Coords> resultingCoords = testCoords.allAtDistance(0);
-        if (resultingCoords.size() == 1 && resultingCoords.contains(testCoords)) {
+        if ((resultingCoords.size() == 1) && resultingCoords.contains(testCoords)) {
             LogManager.getLogger().info("AllAtDistance(0) working correctly.");
         } else {
             LogManager.getLogger().info("AllAtDistance(0) not working correctly.");

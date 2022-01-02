@@ -14680,14 +14680,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return;
         }
 
-        // System.out.println("Loading quirks for " + getChassis() + " " +
-        // getModel());
-
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
-
-            // System.out.print("  " + q.toLog() + "... ");
-
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
             if (StringUtil.isNullOrEmpty(q.getLocation())) {
@@ -14699,13 +14693,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                        + " - Invalid quirk!");
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);
-                // System.out.println("Loaded.");
-                continue;
+                getQuirks().getOption(q.getQuirk()).setValue(true);continue;
             }
 
             // Get the weapon in the indicated location and slot.
-            // System.out.print("Getting CriticalSlot... ");
             CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()),
                                           q.getSlot());
             if (cs == null) {
@@ -14724,7 +14715,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             // Make sure this is a weapon.
-            // System.out.print("Getting WeaponType... ");
             if (!(m.getType() instanceof WeaponType)
                     && !(m.getType().hasFlag(MiscType.F_CLUB))) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
@@ -14734,12 +14724,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             // Make sure it is the weapon we expect.
-            // System.out.print("Matching weapon... ");
             boolean matchFound = false;
             Enumeration<String> typeNames = m.getType().getNames();
             while (typeNames.hasMoreElements()) {
                 String typeName = typeNames.nextElement();
-                // System.out.print(typeName + "... ");
                 if (typeName.equals(q.getWeaponName())) {
                     matchFound = true;
                     break;
@@ -14753,14 +14741,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             // Activate the weapon quirk.
-            // System.out.print("Activating quirk... ");
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
                                    + " " + getModel() + " - Invalid quirk!");
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
-            // System.out.println("Loaded.");
         }
     }
 

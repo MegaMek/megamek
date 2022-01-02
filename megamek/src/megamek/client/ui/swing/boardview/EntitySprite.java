@@ -497,6 +497,8 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(Color.ORANGE, "STUCK"));
             if (!ge && entity.isImmobile())
                 stStr.add(new Status(Color.RED, "IMMOBILE"));
+            if (entity.isBracing()) 
+                stStr.add(new Status(Color.ORANGE, "BRACING"));
             if (isAffectedByECM())
                 stStr.add(new Status(Color.YELLOW, "Jammed"));
             

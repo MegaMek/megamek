@@ -1045,7 +1045,7 @@ public class Compute {
             return null;
         }
 
-        if (target.isImmobile()) {
+        if (target.isImmobile() || target.isBracing()) {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }
@@ -2160,7 +2160,8 @@ public class Compute {
             }
             
             // only arms can have damaged arm actuators
-            if (location == Mech.LOC_LARM || location == Mech.LOC_RARM) {
+            if ((location == Mech.LOC_LARM || location == Mech.LOC_RARM) &&
+                    (attacker.braceLocation() != location)) {
                 if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                                              Mech.ACTUATOR_SHOULDER, location) > 0) {
                     mods.addModifier(4, "shoulder actuator destroyed");
@@ -5405,7 +5406,7 @@ public class Compute {
         if (defender.mpUsed > 0) {
             toHit.addModifier(defender.mpUsed, "defender thrust");
         }
-        if ((defender instanceof SpaceStation) || (defender.getWalkMP() == 0)) {
+        if ((defender instanceof SpaceStation) || (defender.getWalkMP() == 0) || (defender.braceLocation() != Entity.LOC_NONE)) {
             toHit.addModifier(-4, "immobile");
         }
         if (defender.weight < 100000) {

@@ -498,7 +498,7 @@ public class Building implements Serializable {
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             }
 
-            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).desc);
+            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
             vPhaseReport.add(r);
             return true;
         }

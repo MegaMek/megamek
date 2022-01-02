@@ -4577,14 +4577,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return false;
         }
         
-        Hex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
+        Entity targetEntity = (Entity) target;
+        
+        Hex targetHex = targetEntity.getGame().getBoard().getHex(target.getPosition());
         if (targetHex == null) {
             return false;
         }
         
+        // the idea here is that we're in a building that provides partial cover
+        // if the unit involved is tall (at least 2 levels, e.g. mech or superheavy vehicle)
+        // and its height above the hex ceiling (i.e building roof) is 1
+        // the height determination takes being prone into account
         return targetHex.containsTerrain(Terrains.BUILDING) &&
-                (((Entity) target).getHeight() > 0) &&
-                (((Entity) target).relHeight() == targetHex.ceiling());
+                (targetEntity.getHeight() > 0) &&
+                (targetEntity.relHeight() == 1);
     }
     
     /**

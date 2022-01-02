@@ -1045,7 +1045,7 @@ public class Compute {
             return null;
         }
 
-        if (target.isImmobile()) {
+        if (target.isImmobile() || target.isBracing()) {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }

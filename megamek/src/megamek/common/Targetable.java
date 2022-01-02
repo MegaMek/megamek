@@ -150,6 +150,10 @@ public interface Targetable extends Serializable {
         return false;
     }
     
+    default boolean isBracing() {
+        return false;
+    }
+    
     @Override
     int hashCode();
     

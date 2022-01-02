@@ -4799,10 +4799,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
                 }
             }
-            // todo: let bot use this too?
-            // todo: check whether it works on a) protomechs; b) standing on/in front of building;
-            // c) does not work on tanks d) should not work when prone
-            // todo: maybe add option (kind of annoying, don't want to)
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.EscapeDialog.title"),

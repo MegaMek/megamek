@@ -15995,6 +15995,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         braceLocation = location;
     }
     
+    @Override
     public boolean isBracing() {
         return braceLocation != Entity.LOC_NONE;
     }

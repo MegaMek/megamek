@@ -669,7 +669,7 @@ public class MovePath implements Cloneable, Serializable {
     
     public boolean isValidPositionForBrace(Coords coords, int facing) {
         // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomech
-        if (isJumping() || !getEntity().canBrace()) {
+        if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
             return false;
         }
         

@@ -543,7 +543,7 @@ public class Protomech extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !(getCritsHit(LOC_LEG) > 2);
+        return !(getCritsHit(LOC_LEG) > 2) && !isBracing();
     }
 
     @Override

@@ -1759,7 +1759,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *                  if the entity is immobile.
      */
     public boolean isImmobile(boolean checkCrew) {
-        return isShutDown() || isBracing() || (checkCrew && (crew != null) && crew.isUnconscious());
+        return isShutDown() || (checkCrew && (crew != null) && crew.isUnconscious());
     }
 
     /**
@@ -9945,7 +9945,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if you're charging or finding a club, it's already declared
         if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()
             || isFindingClub() || isOffBoard() || isAssaultDropInProgress()
-            || isDropping()) {
+            || isDropping() || isBracing()) {
             return false;
         }
 

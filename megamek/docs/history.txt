@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.49.7-SNAPSHOT
++ PR #3347: TacOps:AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

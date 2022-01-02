@@ -432,7 +432,7 @@ public class UnitOverview implements IDisplayable {
         }
 
         // draw condition strings
-        if (entity.isImmobile() && !entity.isProne() && !(entity instanceof GunEmplacement)) {
+        if (entity.isImmobile() && !entity.isBracing() && !entity.isProne() && !(entity instanceof GunEmplacement)) {
             // draw "IMMOB"
             graph.setColor(Color.darkGray);
             graph.drawString(

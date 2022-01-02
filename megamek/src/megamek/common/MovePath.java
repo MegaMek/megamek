@@ -667,6 +667,10 @@ public class MovePath implements Cloneable, Serializable {
         return isValidPositionForBrace(step.getPosition(), step.getFacing());
     }
     
+    /**
+     * Given a set of coordinates and a facing, is the entity taking this path in a valid 
+     * position to execute a brace?
+     */
     public boolean isValidPositionForBrace(Coords coords, int facing) {
         // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomech
         if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
@@ -693,12 +697,7 @@ public class MovePath implements Cloneable, Serializable {
             int nextHexLevel = nextHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
                     nextHex.ceiling() : nextHex.floor();
             
-            if (onBoard && nextHexOnBoard &&
-                    (nextHexLevel == curHexLevel + 1)) {
-                return true;
-            } else {
-                return false;
-            }
+            return onBoard && nextHexOnBoard && (nextHexLevel == curHexLevel + 1);
         }
         
         return true;

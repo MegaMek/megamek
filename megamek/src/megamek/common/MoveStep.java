@@ -2792,7 +2792,7 @@ public class MoveStep implements Serializable {
         }
         
         // can't brace when jumping, prone, wrong unit type or no eligible locations
-        if (stepType == MoveStepType.BRACE && (this.isJumping() || !entity.canBrace())) {
+        if ((stepType == MoveStepType.BRACE) && (this.isJumping() || !entity.canBrace())) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }

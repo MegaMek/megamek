@@ -8636,7 +8636,7 @@ public class Server implements Runnable {
             
             // if we moved at all, we are no longer bracing "for free", except for when 
             // the current step IS bracing
-            if ((mpUsed > 0) && step.getType() != MoveStepType.BRACE) {
+            if ((mpUsed > 0) && (step.getType() != MoveStepType.BRACE)) {
                 entity.setBraceLocation(Entity.LOC_NONE);
             }
         }

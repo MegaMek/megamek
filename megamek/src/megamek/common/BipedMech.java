@@ -17,7 +17,6 @@
 package megamek.common;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import megamek.common.options.OptionsConstants;

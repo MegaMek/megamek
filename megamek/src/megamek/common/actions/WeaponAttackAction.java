@@ -920,7 +920,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // are we bracing a location that's not where the weapon is located?
-        if (ae.braceLocation() != Entity.LOC_NONE && ae.braceLocation() != weapon.getLocation()) {
+        if (ae.isBracing() && (ae.braceLocation() != weapon.getLocation())) {
             return String.format(Messages.getString("WeaponAttackAction.BracingOtherLocation"), 
                     ae.getLocationName(ae.braceLocation()), ae.getLocationName(weapon.getLocation()));
         }
@@ -3319,7 +3319,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // we are bracing
-        if (ae.braceLocation() != Entity.LOC_NONE && ae.braceLocation() == weapon.getLocation()) {
+        if (ae.isBracing() && (ae.braceLocation() == weapon.getLocation())) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracing"));
         }
         

@@ -13,17 +13,17 @@
  */
 package megamek.common.options;
 
+import megamek.MegaMek;
+import megamek.common.util.EncodeControl;
+
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.EncodeControl;
-
 class Messages {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.common.options.messages",
-            PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
+            MegaMek.getMMOptions().getLocale(), new EncodeControl());
 
     private Messages() {
     }

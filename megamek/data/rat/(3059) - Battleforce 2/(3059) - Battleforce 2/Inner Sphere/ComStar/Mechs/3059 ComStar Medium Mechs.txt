@@ -9,4 +9,4 @@ Wyvern WVE-5N,5
 Hunchback HBK-5N,4
 Assassin ASN-23,3
 Kintaro KTO-19,2
-Raijin RJN101-A,1
+Raijin RJN-101-A,1

@@ -543,7 +543,7 @@ public class Protomech extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !(getCritsHit(LOC_LEG) > 2);
+        return !(getCritsHit(LOC_LEG) > 2) && !isBracing();
     }
 
     @Override
@@ -2337,5 +2337,33 @@ public class Protomech extends Entity {
         roll.addModifier(TargetRoll.CHECK_FALSE,
                          "Protomechs cannot fall");
         return roll;
-    }   
+    }
+    
+    /**
+     * Based on the protomech's current damage status, return valid brace locations.
+     */
+    public List<Integer> getValidBraceLocations() {
+        List<Integer> validLocations = new ArrayList<>();
+        
+        if (!isLocationBad(Protomech.LOC_MAINGUN)) {
+            validLocations.add(Protomech.LOC_MAINGUN);
+        }
+        
+        return validLocations;
+    }
+    
+    /**
+     * Protomechs can brace if not prone, crew conscious and have a main gun
+     */
+    @Override
+    public boolean canBrace() {
+        return !isProne() &&
+                getCrew().isActive() &&
+                !isLocationBad(Protomech.LOC_MAINGUN);
+    }
+    
+    @Override
+    public int getBraceMPCost() {
+        return 0;
+    }
 }

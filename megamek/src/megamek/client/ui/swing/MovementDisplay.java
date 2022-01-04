@@ -118,6 +118,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF),
         MOVE_SWIM("moveSwim", CMD_MECH),
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL),
+        MOVE_BRACE("moveBrace", CMD_MECH),
         //Convert command for a single button, which can cycle through modes because MovePath state is available
         MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER),
         //Convert commands used for menus, where the MovePath state is unknown.
@@ -847,6 +848,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateDropButton();
         updateConvertModeButton();
         updateRecklessButton();
+        updateBraceButton();
         updateHoverButton();
         updateManeuverButton();
         updateStrafeButton();
@@ -1042,6 +1044,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setDisconnectEnabled(false);
         setClearEnabled(false);
         setHullDownEnabled(false);
+        setBraceEnabled(false);
         setSwimEnabled(false);
         setModeConvertEnabled(false);
         setAccEnabled(false);
@@ -1143,6 +1146,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateDropButton();
         updateConvertModeButton();
         updateRecklessButton();
+        updateBraceButton();
         updateHoverButton();
         updateManeuverButton();
         updateAeroButtons();
@@ -1744,7 +1748,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             + "</b></html>");
                    
                 }
-                return;
             } else {
                 clientgui.getBoardView().select(b.getCoords());
             }
@@ -1953,6 +1956,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateDropButton();
             updateConvertModeButton();
             updateRecklessButton();
+            updateBraceButton();
             updateHoverButton();
             updateManeuverButton();
             updateSpeedButtons();
@@ -2620,6 +2624,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setRecklessEnabled(false);
         } else {
             setRecklessEnabled((null == cmd) || (cmd.length() == 0));
+        }
+    }
+    
+    private void updateBraceButton() {
+        if (null == ce()) {
+            return;
+        }        
+        
+        MovePath movePath = cmd;
+        if (null == movePath) {
+            movePath = new MovePath(this.getClientgui().getClient().getGame(), ce());
+        }
+        
+        if (!movePath.contains(MoveStepType.BRACE) && 
+                movePath.isValidPositionForBrace(movePath.getFinalCoords(), movePath.getFinalFacing())) {
+            setBraceEnabled(true);
+        } else {
+            setBraceEnabled(false);
         }
     }
 
@@ -4752,6 +4774,31 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             clientgui.getBoardView().drawMovementData(ce(), cmd);
             butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
+        } else if (actionCmd.equals(MoveCommand.MOVE_BRACE.getCmd())) {
+            var options = ce().getValidBraceLocations();
+            if (options.size() == 1) {
+                cmd.addStep(MoveStepType.BRACE, options.get(0));
+                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+            } else if (options.size() > 1) {
+                String[] locationNames = new String[options.size()];
+                
+                for (int x = 0; x < options.size(); x++) {
+                    locationNames[x] = ce().getLocationName(options.get(x));
+                }
+                
+                // Dialog for choosing which location to brace
+                String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                                "Choose the location to brace:",
+                                "Choose Brace Location", JOptionPane.QUESTION_MESSAGE, null,
+                                locationNames, locationNames[0]);
+    
+                // Verify that we have a valid option...
+                if (option != null) {
+                    int id = options.get(Arrays.asList(locationNames).indexOf(option));
+                    cmd.addStep(MoveStepType.BRACE, id);
+                    butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+                }
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.EscapeDialog.title"),
@@ -5225,6 +5272,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateRollButton();
         updateTakeCoverButton();
         updateLayMineButton();
+        updateBraceButton();
         checkFuel();
         checkOOC();
         checkAtmosphere();
@@ -5506,6 +5554,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setHullDownEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_HULL_DOWN).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_HULL_DOWN.getCmd(), enabled);
+    }
+    
+    private void setBraceEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_BRACE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BRACE.getCmd(), enabled);
     }
 
     private void setClearEnabled(boolean enabled) {

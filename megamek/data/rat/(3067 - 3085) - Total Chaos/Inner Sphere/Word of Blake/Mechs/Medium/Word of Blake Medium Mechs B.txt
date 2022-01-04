@@ -2,7 +2,7 @@ Word of Blake Medium Mechs B
 Trebuchet TBT-7M,1
 Bloodhound B1-HND,2
 Blue Flame BLF-21,3
-Raijin RJN101-C,4
+Raijin RJN-101-C,4
 Osprey OSP-26,5
 Scorpion SCP-12C,6
 Lineholder KW2-LHW,5

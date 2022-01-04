@@ -7178,16 +7178,16 @@
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
 		<availability>IS:2</availability>
 		<model name='PHX-HK1'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-		<availability>IS:3</availability>
+		<availability>IS:2</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='PHX-HK2M'>
-			<availability>IS:2,FWL:4</availability>
+			<availability>IS:1,FWL:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -7500,7 +7500,7 @@
 	</chassis>
 	<chassis name='Raijin' unitType='Mek'>
 		<availability>CS:5,WOB:5</availability>
-		<model name='RJN101-A'>
+		<model name='RJN-101-A'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -8461,9 +8461,9 @@
 		</model>
 	</chassis>
 	<chassis name='Stinger LAM Mk I' unitType='Mek'>
-		<availability>IS:2+</availability>
+		<availability>IS:1+</availability>
 		<model name='STG-A1'>
-			<availability>General:4</availability>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger LAM' unitType='Mek'>
@@ -8472,7 +8472,7 @@
 			<availability>IS:1,DC:2</availability>
 		</model>
 		<model name='STG-A5'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
@@ -8617,7 +8617,7 @@
 			<availability>CLAN:8,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:4,CDS:2,HL:3,LA:7,FRR:2,CNC:2,SIC:2,MERC:3,FS:6,CWIE:2</availability>
 		<model name='(SRM)'>
 			<availability>LA:3,FS:3,MERC:3</availability>
@@ -9628,22 +9628,22 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-100'>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-100A'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='WSP-100b'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-105M'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

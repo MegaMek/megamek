@@ -1,7 +1,7 @@
 3062 ComStar and Word of Blake Assault Vehicles
 Ontos Heavy Tank (3053 Upgrade),1
 Behemoth Heavy Tank (Standard),2
-Sturmfeur Heavy Tank (Standard),3
+SturmFeur Heavy Tank (Standard),3
 Puma Assault Tank PAT-005b,4
 Demolisher Heavy Tank (Standard Mk. II),5
 Fury Command Tank (Royal),6

@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -18,7 +19,6 @@ import megamek.client.ui.preferences.MMPreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.client.ui.swing.MegaMekGUI;
 import megamek.common.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -27,6 +27,7 @@ import megamek.server.DedicatedServer;
 import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
 import java.io.*;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -52,25 +53,25 @@ public class MegaMek {
             + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
             + "(-eqedb) (-oul)] [<args>]";
     public static final String PREFERENCES_FILE = "mmconf/megamek.preferences";
-    public static final String LEGACY_LOG_FILE_NAME = "megameklog.txt";
 
     public static void main(String... args) {
-        String logFileName = LEGACY_LOG_FILE_NAME;
-        CommandLineParser cp = new CommandLineParser(args);
+        // First, create a global default exception handler
+        Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
+            LogManager.getLogger().error("Uncaught Exception Detected", t);
+            final String name = t.getClass().getName();
+            JOptionPane.showMessageDialog(null,
+                    String.format("Uncaught %s detected. Please open up an issue containing all logs, the game save file, and customs at https://github.com/MegaMek/megamek/issues", name),
+                    "Uncaught " + name, JOptionPane.ERROR_MESSAGE);
+        });
 
+        // Second, let's handle logging
+        showInfo();
+        handleLegacyLogging();
+
+        // Third, Command Line Arguments and Startup
         try {
+            CommandLineParser cp = new CommandLineParser(args);
             cp.parse();
-            String lf = cp.getLogFilename();
-            if (lf != null) {
-                if (lf.equals("none") || lf.equals("off")) {
-                    logFileName = null;
-                } else {
-                    logFileName = lf;
-                }
-            }
-
-            configureLogging(logFileName);
-            showInfo();
 
             String[] restArgs = cp.getRestArgs();
             if (cp.dedicatedServer()) {
@@ -95,44 +96,37 @@ public class MegaMek {
         }
     }
 
-    private static void configureLegacyLogging(@Nullable final String logFileName) {
-        // Redirect output to log files, unless turned off.
-        if (logFileName == null) {
-            return;
-        }
-        MegaMek.redirectOutput(logFileName);
-    }
-
     /**
-     * This needs to be done as we are currently using two different loggers.
-     * Both loggers must be set to append in order to prevent them from over-
-     * writing each other.  So, in order to get a clean log file each run,
-     * the existing log file must be cleared.
-     * <p>Alternatively, consider rolling the log file over instead.</p>
-     * If we ever manage to completely get rid of the legacy logger, we can
-     * get rid of this method.
-     *
-     * @param logFileName The name of the log file to reset.
+     * This function redirects the standard error and output streams... It's a legacy method that
+     * is currently being used as a fallback while migrating the last of our legacy logging and
+     * testing out the new global exception handling
      */
-    public static void resetLogFile(@Nullable final String logFileName) {
-        if (null == logFileName) {
-            return;
-        }
-        File file = new File(logFileName);
-        if (file.exists()) {
-            try (PrintWriter writer = new PrintWriter(file)) {
-                writer.print("");
-            } catch (FileNotFoundException e) {
-                LogManager.getLogger().error("", e);
+    @Deprecated
+    public static void handleLegacyLogging() {
+        try {
+            LogManager.getLogger().info("Redirecting System.out, System.err, and Throwable::printStackTrace output to legacy.log");
+            File logDir = new File("logs");
+            if (!logDir.exists()) {
+                logDir.mkdir();
             }
-        }
-    }
 
-    private static void configureLogging(@Nullable final String logFileName) {
-        final String qualifiedLogFilename = PreferenceManager.getClientPreferences().getLogDirectory()
-                + File.separator + logFileName;
-        resetLogFile(qualifiedLogFilename);
-        configureLegacyLogging(logFileName);
+            File file = new File(PreferenceManager.getClientPreferences().getLogDirectory()
+                    + File.separator + "legacy.log");
+            if (file.exists()) {
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    writer.print("");
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to write to legacy.log", ex);
+                }
+            }
+
+            // Note: these are not closed on purpose
+            PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(file, true), 64));
+            System.setOut(ps);
+            System.setErr(ps);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
+        }
     }
 
     public static MMPreferences getPreferences() {
@@ -200,40 +194,6 @@ public class MegaMek {
     }
 
     /**
-     * This function redirects the standard error and output streams to the
-     * given File name.
-     *
-     * @param logFileName The file name to redirect to.
-     */
-    private static void redirectOutput(String logFileName) {
-        LogManager.getLogger().info("Redirecting output to " + logFileName);
-        String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
-        File logDir = new File(sLogDir);
-        if (!logDir.exists()) {
-            if (!logDir.mkdir()) {
-                LogManager.getLogger().error("Error in creating directory ./logs. We know this is annoying, and apologise. "
-                                + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                + " and we will try to resolve your issue.");
-            }
-        }
-        try {
-            PrintStream ps = new PrintStream(
-                    new BufferedOutputStream(new FileOutputStream(sLogDir
-                            + File.separator + logFileName, true) {
-                        @Override
-                        public void flush() throws IOException {
-                            super.flush();
-                            getFD().sync();
-                        }
-                    }, 64));
-            System.setOut(ps);
-            System.setErr(ps);
-        } catch (Exception e) {
-            LogManager.getLogger().error("Unable to redirect output to " + logFileName, e);
-        }
-    }
-
-    /**
      * Starts a dedicated server with the arguments in args. See
      * {@link megamek.server.DedicatedServer#start(String[])} for more
      * information.
@@ -279,14 +239,12 @@ public class MegaMek {
      * This class parses the options passed into to MegaMek from the command line.
      */
     private static class CommandLineParser extends AbstractCommandLineParser {
-        private String logFilename;
         private boolean dedicatedServer = false;
         private boolean ratGenEditor = false;
         private String[] restArgs = new String[0];
 
         // Options
         private static final String OPTION_DEDICATED = "dedicated";
-        private static final String OPTION_LOG = "log";
         private static final String OPTION_EQUIPMENT_DB = "eqdb";
         private static final String OPTION_EQUIPMENT_EXTENDED_DB = "eqedb";
         private static final String OPTION_UNIT_VALIDATOR = "validate";
@@ -317,13 +275,6 @@ public class MegaMek {
         }
 
         /**
-         * @return the log file name option value or <code>null</code> if it wasn't set
-         */
-        String getLogFilename() {
-            return logFilename;
-        }
-
-        /**
          * @return the the <code>array</code> of the unprocessed arguments
          */
         String[] getRestArgs() {
@@ -336,9 +287,6 @@ public class MegaMek {
                 final String tokenVal = getTokenValue();
                 nextToken();
                 switch (tokenVal) {
-                    case OPTION_LOG:
-                        parseLog();
-                        break;
                     case OPTION_EQUIPMENT_DB:
                         processEquipmentDb();
                         break;
@@ -374,15 +322,6 @@ public class MegaMek {
             processRestOfInput();
             if (getToken() != TOK_EOF) {
                 throw new ParseException("unexpected input");
-            }
-        }
-
-        private void parseLog() throws ParseException {
-            if (getToken() == TOK_LITERAL) {
-                logFilename = getTokenValue();
-                nextToken();
-            } else {
-                throw new ParseException("log file name expected");
             }
         }
 

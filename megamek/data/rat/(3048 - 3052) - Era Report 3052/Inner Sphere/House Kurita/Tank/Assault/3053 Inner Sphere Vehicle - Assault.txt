@@ -1,5 +1,5 @@
 3053 Inner Sphere Vehicle - Assault
-Sturmfeur Heavy Tank (Standard),1
+SturmFeur Heavy Tank (Standard),1
 Behemoth Heavy Tank (Standard),2
 Ontos Heavy Tank (3053 Upgrade),3
 Ontos Heavy Tank (Standard),4

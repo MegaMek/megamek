@@ -1,7 +1,7 @@
 3085 Clan Nova Cat Assault Tank Front Line
 Demolisher Heavy Tank (Gauss),1
 Ontos Heavy Tank (Standard),2
-Sturmfeur Heavy Tank (Standard),3
+SturmFeur Heavy Tank (Standard),3
 Rhino Fire Support Tank (Standard),4
 Ontos Heavy Tank (3053 Upgrade),5
 Heimdall Ground Monitor Tank Prime,6

@@ -34,7 +34,6 @@ import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -824,6 +823,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The current target of the Blood Stalker SPA.
      */
     private int bloodStalkerTarget = Entity.NONE;
+    
+    /**
+     * The location the unit is bracing as per TacOps:AR page 82
+     */
+    private int braceLocation = Entity.LOC_NONE;
     
     /**
      * Generates a new, blank, entity.
@@ -9941,7 +9945,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if you're charging or finding a club, it's already declared
         if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()
             || isFindingClub() || isOffBoard() || isAssaultDropInProgress()
-            || isDropping()) {
+            || isDropping() || isBracing()) {
             return false;
         }
 
@@ -15981,5 +15985,30 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean canActivateBloodStalker() {
         return hasAbility(OptionsConstants.GUNNERY_BLOOD_STALKER) &&
                 (getBloodStalkerTarget() == Entity.NONE);
+    }
+    
+    public int braceLocation() {
+        return braceLocation;
+    }
+    
+    public void setBraceLocation(int location) {
+        braceLocation = location;
+    }
+    
+    @Override
+    public boolean isBracing() {
+        return braceLocation != Entity.LOC_NONE;
+    }
+    
+    public boolean canBrace() {
+        return false;
+    }
+    
+    public int getBraceMPCost() {
+        return Entity.LOC_NONE;
+    }
+    
+    public List<Integer> getValidBraceLocations() {
+        return Collections.emptyList();
     }
 }

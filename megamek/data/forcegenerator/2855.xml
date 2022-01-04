@@ -3703,13 +3703,13 @@
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
 		<availability>IS:2+</availability>
 		<model name='PHX-HK1'>
-			<availability>IS:4</availability>
+			<availability>IS:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
 		<availability>IS:4</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<availability>IS:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -4898,13 +4898,13 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-100A'>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
-		<availability>IS:2</availability>
+		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

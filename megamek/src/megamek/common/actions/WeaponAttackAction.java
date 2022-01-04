@@ -919,6 +919,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return Messages.getString("WeaponAttackAction.OutOfAmmo");
         }
         
+        // are we bracing a location that's not where the weapon is located?
+        if (ae.isBracing() && (ae.braceLocation() != weapon.getLocation())) {
+            return String.format(Messages.getString("WeaponAttackAction.BracingOtherLocation"), 
+                    ae.getLocationName(ae.braceLocation()), ae.getLocationName(weapon.getLocation()));
+        }
+        
         // Ammo-specific Reasons
         if (atype != null) {
             // Are we dumping that ammo?
@@ -3240,6 +3246,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData();
         }
         
+        // if we don't have a weapon, that we are attacking with, then the rest of this is 
+        // either meaningless or likely to fail
+        if (weaponId == WeaponType.WEAPON_NA) {
+            return toHit;
+        }
+        
         // Modifiers related to an action the attacker is taking
         
         // attacker movement
@@ -3304,6 +3316,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Quadvee converting to a new mode
         if (ae instanceof QuadVee && ae.isConvertingNow()) {
             toHit.addModifier(+3, Messages.getString("WeaponAttackAction.QuadVeeConverting"));
+        }
+        
+        // we are bracing
+        if (ae.isBracing() && (ae.braceLocation() == weapon.getLocation())) {
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracing"));
         }
         
         // Secondary targets modifier,
@@ -4560,14 +4577,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return false;
         }
         
-        Hex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
+        Entity targetEntity = (Entity) target;
+        
+        Hex targetHex = targetEntity.getGame().getBoard().getHex(target.getPosition());
         if (targetHex == null) {
             return false;
         }
         
+        // the idea here is that we're in a building that provides partial cover
+        // if the unit involved is tall (at least 2 levels, e.g. mech or superheavy vehicle)
+        // and its height above the hex ceiling (i.e building roof) is 1
+        // the height determination takes being prone into account
         return targetHex.containsTerrain(Terrains.BUILDING) &&
-                (((Entity) target).getHeight() > 0) &&
-                (((Entity) target).relHeight() == targetHex.ceiling());
+                (targetEntity.getHeight() > 0) &&
+                (targetEntity.relHeight() == 1);
     }
     
     /**

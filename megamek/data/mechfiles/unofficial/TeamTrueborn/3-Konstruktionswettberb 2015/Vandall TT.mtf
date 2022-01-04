@@ -1,0 +1,156 @@
+Version:1.1
+Vandall
+TT
+
+Config:Biped Omnimech
+techbase:Inner Sphere
+era:3145
+source:TeamTrueborn
+rules level:5
+
+mass:65
+engine:325 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Standard Gyro
+
+heat sinks:12 IS Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:8
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:6
+Snub-Nose PPC, Left Arm
+Large X-Pulse Laser, Right Arm
+Small Laser, Left Torso
+C3 Computer [Master], Right Torso
+Laser AMS, Head
+Laser AMS, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISSNPPC
+ISSNPPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Life Support
+Supercharger
+ISAngelECMSuite
+ISAngelECMSuite
+Small Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Life Support
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

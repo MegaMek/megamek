@@ -56,7 +56,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT;
+        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE;
         
         /**
          * Whether this move step type will result in the unit entering a new hex
@@ -192,8 +192,8 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, target, pos));
     }
 
-    public MovePath addStep(final MoveStepType type, final int mineToLay) {
-        return addStep(type, -1, mineToLay);
+    public MovePath addStep(final MoveStepType type, final int additionalIntData) {
+        return addStep(new MoveStep(this, type, additionalIntData));
     }
 
     public MovePath addStep(final MoveStepType type, final int recover, final int mineToLay) {
@@ -430,6 +430,12 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
+        if (step.getType() == MoveStepType.BRACE) {
+            if (!isValidPositionForBrace(step)){
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
+        
         // If the new step is legal and is a different position than
         // the previous step, then update the older steps, letting
         // them know that they are no longer the end of the path.
@@ -529,6 +535,8 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);
             } else if (step.getMineToLay() != -1) {
                 step = new MoveStep(this, step.getType(), step.getMineToLay());
+            } else if (step.getBraceLocation() != Entity.LOC_NONE) {
+                step = new MoveStep(this, step.getType(), step.getBraceLocation());
             } else if (step.getLaunched().size() > 0) {
                 step = new MoveStep(this, step.getType(), step.getLaunched());
             } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
@@ -653,6 +661,46 @@ public class MovePath implements Cloneable, Serializable {
 
     public void clear() {
         steps.removeAllElements();
+    }
+    
+    public boolean isValidPositionForBrace(MoveStep step) {
+        return isValidPositionForBrace(step.getPosition(), step.getFacing());
+    }
+    
+    /**
+     * Given a set of coordinates and a facing, is the entity taking this path in a valid 
+     * position to execute a brace?
+     */
+    public boolean isValidPositionForBrace(Coords coords, int facing) {
+        // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomech
+        if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
+            return false;
+        }
+        
+        // for mechs, the check is complicated - you have to be directly in front of a hex with either
+        // a) level 1 level higher than your hex level
+        // b) building/bridge ceiling 1 level higher than your hex level (?)
+        if (getEntity() instanceof Mech) {
+            boolean onBoard = getGame().getBoard().contains(coords);
+            Coords nextPosition = coords.translated(facing);
+            boolean nextHexOnBoard = getGame().getBoard().contains(nextPosition);
+            
+            if (!onBoard || !nextHexOnBoard) {
+                return false;
+            }
+            
+            Hex nextHex = getGame().getBoard().getHex(nextPosition);
+            Hex currentHex = getGame().getBoard().getHex(coords);
+            
+            int curHexLevel = currentHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
+                    currentHex.ceiling() : currentHex.floor();
+            int nextHexLevel = nextHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
+                    nextHex.ceiling() : nextHex.floor();
+            
+            return onBoard && nextHexOnBoard && (nextHexLevel == curHexLevel + 1);
+        }
+        
+        return true;
     }
 
     public Enumeration<MoveStep> getSteps() {

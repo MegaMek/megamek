@@ -13,7 +13,7 @@
 	</faction>
 	<faction key='BH'/>
 	<faction key='CC'>
-		<salvage pct='6'>FWL:4,FS:10,TC:1</salvage>
+		<salvage pct='6'>FWL:4,FS:10,TC:1</salvage> 
 	</faction>
 	<faction key='NC'>
 		<salvage pct='5'>HL:10</salvage>
@@ -5516,7 +5516,7 @@
 			<availability>CGS:1</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>LA:6,FRR:2,FS:4</availability>
 		<model name='(SRM)'>
 			<availability>LA:3,FS:3</availability>

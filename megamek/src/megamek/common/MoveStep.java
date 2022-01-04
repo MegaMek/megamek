@@ -151,6 +151,8 @@ public class MoveStep implements Serializable {
     // is this step part of a maneuver?
     private boolean maneuver = false;
 
+    int braceLocation = Entity.LOC_NONE;
+    
     private Minefield mf;
 
     /**
@@ -240,14 +242,20 @@ public class MoveStep implements Serializable {
      * @param path
      * @param type      - should match one of the MovePath constants, but this is not
      *                  currently checked.
-     * @param mineToLay - the <code>int</code> that is the id of the mine that should
-     *                  be laid in this step.
+     * @param additionalIntData - 
+     *              "mineToLay" by default to retain compatibility with existing code
+     *              "braceLocation" if the move step type is BRACE
      */
-    public MoveStep(MovePath path, MoveStepType type, int mineToLay) {
+    public MoveStep(MovePath path, MoveStepType type, int additionalIntData) {
         this(path, type);
-        this.mineToLay = mineToLay;
+        
+        if (type == MoveStepType.BRACE) {
+            this.braceLocation = additionalIntData;
+        } else {
+            this.mineToLay = additionalIntData;
+        }
     }
-
+    
     /**
      * Create a step with the units to launch or drop.
      *
@@ -385,6 +393,8 @@ public class MoveStep implements Serializable {
                 return "Yaw";
             case HOVER:
                 return "Hover";
+            case BRACE:
+                return "Brace";
             default:
                 return "???";
         }
@@ -1086,6 +1096,9 @@ public class MoveStep implements Serializable {
                 reverseFacing();
                 setMp(2);
                 break;
+            case BRACE:
+                setMp(entity.getBraceMPCost());
+                break;
             default:
                 setMp(0);
         }
@@ -1209,6 +1222,7 @@ public class MoveStep implements Serializable {
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
         thisStepBackwards = entity.inReverse;
+        
         // Moving in reverse prohibits running
         if (thisStepBackwards) {
             isRunProhibited = true;
@@ -2128,8 +2142,8 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         }
         
-        // Taking cover should happen as the last action
-        if (prev.isTakingCover) {
+        // Taking cover or bracing should happen as the last action
+        if (prev.isTakingCover || (prev.braceLocation != Entity.LOC_NONE)) {
             return;
         }
         
@@ -2341,9 +2355,10 @@ public class MoveStep implements Serializable {
                 && !(getEntity() instanceof VTOL)) {
             tmpWalkMP = entity.getJumpMP();
         }
-        // check for valid walk/run mp
+        
+        // check for valid walk/run mp; BRACE is a special case for protomechs
         if (!isJumping() && !entity.isStuck() && (tmpWalkMP > 0)
-                && (getMp() > 0)) {
+                && ((getMp() > 0) || (stepType == MoveStepType.BRACE))) {
             // Prone mechs can only spend MP to turn or get up
             if ((stepType != MoveStepType.TURN_LEFT)
                     && (stepType != MoveStepType.TURN_RIGHT)
@@ -2775,6 +2790,12 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
+        
+        // can't brace when jumping, prone, wrong unit type or no eligible locations
+        if ((stepType == MoveStepType.BRACE) && (this.isJumping() || !entity.canBrace())) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
 
 
         if (stepType == MoveStepType.MOUNT) {
@@ -3166,9 +3187,8 @@ public class MoveStep implements Serializable {
             return true;
         }
 
-        // super-easy
-        if (entity.isImmobile()) {
-            // System.err.println("illegal - immobile");
+        // super-easy, but not any more
+        if (entity.isImmobile() && !entity.isBracing()) {
             return false;
         }
 
@@ -3182,7 +3202,6 @@ public class MoveStep implements Serializable {
 
         // another easy check
         if (!game.getBoard().contains(dest)) {
-            // System.err.println("board doesn't contain destination");
             return false;
         }
 
@@ -3696,6 +3715,14 @@ public class MoveStep implements Serializable {
 
     protected void setMineToLay(int mineId) {
         mineToLay = mineId;
+    }
+    
+    public int getBraceLocation() {
+        return braceLocation;
+    }
+    
+    protected void setBraceLocation(int value) {
+        braceLocation = value;
     }
 
     protected void setVelocity(int vel) {

@@ -553,6 +553,7 @@ public class MovePath implements Cloneable, Serializable {
         setEntity(en);
         final Vector<MoveStep> temp = new Vector<>(steps);
         steps.removeAllElements();
+        containedStepTypes.clear();
         for (int i = 0; i < temp.size(); i++) {
             MoveStep step = temp.elementAt(i);
             if ((step.getTargetPosition() != null) && (step.getTarget(getGame()) != null)) {

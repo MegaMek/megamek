@@ -299,7 +299,6 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         steps.addElement(step);
-        containedStepTypes.add(step.getType());
         
         final MoveStep prev = getStep(steps.size() - 2);
 
@@ -311,94 +310,7 @@ public class MovePath implements Cloneable, Serializable {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }
-
-
-        // check for illegal jumps
-        final Coords start = getEntity().getPosition();
-        final Coords land = step.getPosition();
-        if ((start == null) || (land == null)) {
-            // If we have null for either coordinate then we know the step
-            // isn't legal.
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        } else {
-            // if we're jumping without a mechanical jump booster (?)
-            // or we're acting like a spheroid dropship in the atmosphere
-            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
-                    (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
-                int distance = start.distance(land);
-                
-                if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
-                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                }
-            }
-        }
         
-        // Can't move backwards and Evade
-        if (!entity.isAirborne() && contains(MoveStepType.BACKWARDS)
-                && contains(MoveStepType.EVADE)) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
-        
-        // If jumpships turn, they can't do anything else 
-        if (game.getBoard().inSpace()
-                && (entity instanceof Jumpship)
-                && !(entity instanceof Warship)
-                && !step.isFirstStep()
-                && (contains(MoveStepType.TURN_LEFT) 
-                        || contains(MoveStepType.TURN_RIGHT))) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
-        
-        // Ensure we only lay one mine
-        if ((step.getType() == MoveStepType.LAY_MINE)) {
-            boolean containsOtherLayMineStep = false;
-            for (int i = 0; i < steps.size() - 1; i++) {
-                if (steps.get(i).getType() == MoveStepType.LAY_MINE) {
-                    containsOtherLayMineStep = true;
-                }
-            }
-            if (containsOtherLayMineStep) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
-        }
-
-        // Ensure we only bomb one hex
-        if (step.isVTOLBombingStep()) {
-            boolean containsOtherBombStep = false;
-            for (int i = 0; i < steps.size() - 1; i++) {
-                if (steps.get(i).isVTOLBombingStep()) {
-                    containsOtherBombStep = true;
-                }
-            }
-            if (containsOtherBombStep) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
-        }
-        
-        // Make sure we are not turning or changing elevation while strafing, and that we are not
-        // starting a second group of hexes during the same round
-        if (step.isStrafingStep() && steps.size() > 1) {
-            MoveStep last = steps.get(steps.size() - 2);
-            // If the previous step is a strafing step, make sure we have the same facing and elevation
-            // and we are not exceeding the maximum five hexes.
-            if (last.isStrafingStep()) {
-                if (step.getFacing() != last.getFacing()
-                        || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
-                            != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
-                        || steps.stream().filter(s -> s.isStrafingStep()).count() > 5) {
-                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                }
-            } else {
-                // If the previous step is not a strafing step, make sure that the new step is the only strafing
-                // step we have in the path.
-                for (int i = 0; i < steps.size() - 2; i++) {
-                    if (steps.get(i).isStrafingStep()) {
-                        step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                    }
-                }
-            }
-        }
-
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             Hex hex = game.getBoard().getHex(step.getPosition());
@@ -410,30 +322,11 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        // VTOLs using maneuvering ace to make lateral shifts can't flank
-        // unless using controlled sideslip
-        if (containsLateralShift() && getEntity().isUsingManAce()
-                && (getEntity() instanceof VTOL)
-                && getMpUsed() > getCachedEntityState().getWalkMP()
-                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
+        final Coords start = getEntity().getPosition();
+        final Coords land = step.getPosition();
         
-        if (shouldMechanicalJumpCauseFallDamage()) {
-            step.setDanger(true);
-        }
-       
-        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
-        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
-        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds. 
-        if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
-        
-        if (step.getType() == MoveStepType.BRACE) {
-            if (!isValidPositionForBrace(step)){
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
+        if (step.getMovementType(false) != EntityMovementType.MOVE_ILLEGAL) {
+            performIllegalCheck(step, start, land);
         }
         
         // If the new step is legal and is a different position than
@@ -449,26 +342,9 @@ public class MovePath implements Cloneable, Serializable {
             }
 
         } // End step-is-legal
-
-        // If using TacOps reverse gear option, cannot mix forward and backward movement
-        // in the same round except VTOLs.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
-                && ((entity instanceof Tank && !(entity instanceof VTOL))
-                        || (entity instanceof QuadVee
-                                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
-            boolean fwd = false;
-            boolean rev = false;
-            for (MoveStep s : steps) {
-                fwd |=  s.getType() == MoveStepType.FORWARDS
-                        || s.getType() == MoveStepType.LATERAL_LEFT
-                        || s.getType() == MoveStepType.LATERAL_RIGHT;
-                rev |=  s.getType() == MoveStepType.BACKWARDS
-                        || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
-                        || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
-            }
-            if (fwd && rev) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
+        
+        if (shouldMechanicalJumpCauseFallDamage()) {
+            step.setDanger(true);
         }
                 
         // If we are using turn modes, go back through the path and mark danger for any turn
@@ -513,9 +389,161 @@ public class MovePath implements Cloneable, Serializable {
         	fliesOverEnemy = true;
         }
 
+        // having checked for illegality and other things, add it to the set of contained step types
+        containedStepTypes.add(step.getType());
+        
         return this;
     }
 
+    /**
+     * Perform all the possible "is this illegal" checks.
+     * Short-circuits to omit unnecessary checks once the move has been declared illegal
+     */
+    private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
+        // can't do anything after loading
+        if (contains(MoveStepType.LOAD)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+
+        // check for illegal jumps
+
+        if ((start == null) || (land == null)) {
+            // If we have null for either coordinate then we know the step
+            // isn't legal.
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        } else {
+            // if we're jumping without a mechanical jump booster (?)
+            // or we're acting like a spheroid dropship in the atmosphere
+            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
+                    (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
+                int distance = start.distance(land);
+                
+                if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            }
+        }
+        
+        // Can't move backwards and Evade
+        if (!entity.isAirborne() && contains(MoveStepType.BACKWARDS)
+                && contains(MoveStepType.EVADE)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        
+        // If jumpships turn, they can't do anything else 
+        if (game.getBoard().inSpace()
+                && (entity instanceof Jumpship)
+                && !(entity instanceof Warship)
+                && !step.isFirstStep()
+                && (contains(MoveStepType.TURN_LEFT) 
+                        || contains(MoveStepType.TURN_RIGHT))) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        
+        // Ensure we only lay one mine
+        if ((step.getType() == MoveStepType.LAY_MINE)) {
+            boolean containsOtherLayMineStep = false;
+            for (int i = 0; i < steps.size() - 1; i++) {
+                if (steps.get(i).getType() == MoveStepType.LAY_MINE) {
+                    containsOtherLayMineStep = true;
+                }
+            }
+            if (containsOtherLayMineStep) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
+            }
+        }
+
+        // Ensure we only bomb one hex
+        if (step.isVTOLBombingStep()) {
+            boolean containsOtherBombStep = false;
+            for (int i = 0; i < steps.size() - 1; i++) {
+                if (steps.get(i).isVTOLBombingStep()) {
+                    containsOtherBombStep = true;
+                }
+            }
+            if (containsOtherBombStep) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
+            }
+        }
+        
+        // Make sure we are not turning or changing elevation while strafing, and that we are not
+        // starting a second group of hexes during the same round
+        if (step.isStrafingStep() && steps.size() > 1) {
+            MoveStep last = steps.get(steps.size() - 2);
+            // If the previous step is a strafing step, make sure we have the same facing and elevation
+            // and we are not exceeding the maximum five hexes.
+            if (last.isStrafingStep()) {
+                if (step.getFacing() != last.getFacing()
+                        || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
+                            != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
+                        || steps.stream().filter(s -> s.isStrafingStep()).count() > 5) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            } else {
+                // If the previous step is not a strafing step, make sure that the new step is the only strafing
+                // step we have in the path.
+                for (int i = 0; i < steps.size() - 2; i++) {
+                    if (steps.get(i).isStrafingStep()) {
+                        step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // VTOLs using maneuvering ace to make lateral shifts can't flank
+        // unless using controlled sideslip
+        if (containsLateralShift() && getEntity().isUsingManAce()
+                && (getEntity() instanceof VTOL)
+                && getMpUsed() > getCachedEntityState().getWalkMP()
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+       
+        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
+        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
+        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds. 
+        if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        }
+        
+        if ((step.getType() == MoveStepType.BRACE) && !isValidPositionForBrace(step)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        
+        // If using TacOps reverse gear option, cannot mix forward and backward movement
+        // in the same round except VTOLs.
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
+                && ((entity instanceof Tank && !(entity instanceof VTOL))
+                        || (entity instanceof QuadVee
+                                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            boolean fwd = false;
+            boolean rev = false;
+            for (MoveStep s : steps) {
+                fwd |=  s.getType() == MoveStepType.FORWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT
+                        || s.getType() == MoveStepType.LATERAL_RIGHT;
+                rev |=  s.getType() == MoveStepType.BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
+            }
+            if (fwd && rev) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
+            }
+        }
+    }
+    
     public void compile(final Game g, final Entity en) {
         compile(g, en, true);
     }

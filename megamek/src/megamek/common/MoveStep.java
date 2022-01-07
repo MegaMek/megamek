@@ -3271,12 +3271,6 @@ public class MoveStep implements Serializable {
 
         // The entity is trying to load. Check for a valid move.
         if (type == MoveStepType.LOAD) {
-
-            // Transports can't load after the first step.
-            if (!firstStep) {
-                return false;
-            }
-
             // Find the unit being loaded.
             Entity other = null;
             Iterator<Entity> entities = game.getEntities(src);

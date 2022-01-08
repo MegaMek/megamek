@@ -14,8 +14,6 @@ structure:IS Standard
 myomer:Standard
 
 heat sinks:10 Single
-nocrit:Standard:None
-nocrit:Standard:None
 walk mp:8
 jump mp:8
 
@@ -147,20 +145,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Ostscout was designed as a pure recon BattleMech by Ostmann Industries. To that end, it was built entirely around gathering data and getting out of trouble, tasks for which it is exceptional. 
 
-Overview: A 'Mech of the Ostmann legacy, the Ostscout was most likely one of the most successful and reknown scouts of the Star League era. Built with some of the best sensor arrays ever to be carried on a BattleMech, themselves enhanced by superior targeting systems, the Ostscout is a commander's dream Reconnaissance platform. Even the communications systems are quite a bit above average, letting the Ostscout transmit information even deep within enemy territory.
+capabilities:The Ostscout is quick enough to escape most traps, and very few other designs can match it in terms of speed and maneuverability. However its ability to run and leap out of danger came at the expense of offensive capability. In fact were it not for aggressive lobbying on the part of its test pilots the final production model would have been completely weaponless. As it is, the Ostscout would be hard-pressed to win a fight against all but the lightest 'Mechs. A poor combatant, the 'Mech excels at operating deep behind enemy lines, gathering as much information as possible about the terrain and the disposition of enemy forces. The true centerpiece of the design is its advanced sensor systems, including the TRSS.2L3 target-tracking system and powerful narrow-band Barret 4000 comm system. The sensor arrays themselves are mounted outside the main chassis due to their delicate nature, with the Ostscout using its arms to aim them. Everything from hydrological to geological data is recorded, so much data in fact that the 'Mech's computer cannot process it fast enough. This forces the Ostscout to move slowly when traveling through an area of interest, waving its arms seemingly at random, which makes it one of the few times the 'Mech is vulnerable to the enemy. However so long as the enemy's first salvo doesn't cripple it, the Ostscout will likely escape from an ambush.
 
-Capabilities: The Ostscout is built around its electronic package. Its speed, manueverability, and protection are all to enable the Ostscout to bring its electronics into range, while its rugged durability are there to help it get any sensitive data back to friendly lines intact. Firepower has always been secondary to the Ostscout's role; the base model was barely armed, and few have changed this paradigm. It was this hyper-specialization that made the Ostscout a difficult BattleMech to use during the latter part of the Succession Wars; in an era where every component was valuable, risking such an important asset such as an Ostscout in combat was considered to be folly.
+deployment:The Ostscout carries a single Tronel II Medium Laser mounted in its center torso. This weapon, while not extremely powerful, is enough to dissuade most light scout assets from attempting to pursue. The ten heat sinks the 'Mech carries is more than enough to handle the heat output of this single laser - indeed the Ostscout can jump 210 meters and fire laser at the same time without overheating at all. While it is protected by four and a half tons of armor, the real protection for the 'Mech is its speed and maneuverability. A massive sixteen-ton fusion engine more commonly seen in 'Mechs twice its size propels the Ostscout to a cruising speed of 86.4 km/h. Eight jump jets built into the left and right legs give it a maximum jumping distance of 240 meters, rivaling that of the Spider.
 
-Deployment: The Ostscout might be a rare sight on battlefields, but this is not to say it is trememdously rare. Every Successor State and power of note made use of the design during the Succession Wars, even if the original variant had not been produced since the early 29th century. But even the original OTT-7J, known for its cautious deployment and ruggedness, would not last beyond the conflicts of the 3070s and 3080s. None of the original models are known to have survived the Jihad.
+history:Starting in 2600 Ostmann built and sold the Ostscout to fulfill many armies' need for a swift reconnaissance 'Mech, but eventually found that demand was outstripping their production ability. Rather than sacrifice their popular Ostroc line of urban-combat 'Mechs, the company licensed Kong Interstellar to start building the 'Mech in 2700, an arrangement similar to that struck regarding the Ostsol. Kong would continue to build Ostscouts for the next hundred years until the destruction of their factory on Connaught at the outset of the Succession Wars. Deprive of the possibility of replacement, many commanders began to hoard their Ostscouts like valuable treasure, parceling them out only for special missions. Most Ostscout pilots would not even attempt to engage enemy 'Mechs, as the advanced sensor system became extremely rare and nearly impossible to replace. This unwillingness to put the 'Mech in danger meant many survived the Succession Wars in practically mint condition, although many which suffered damage to their advanced sensors were forced to replace them with inferior, albeit more robust, systems. Besides the Great Houses, ComStar also utilized the Ostscout, and in the aftermath of the Clan Invasion and ComStar Schism began developing a new Ostscout variant for their Com Guards. This new model would maintain the same maneuverability and intelligence-gathering capabilities of the original while improving its offensive and defensive capabilities. Debuting with success in 3064, within the next three years nearly half of all Com Guard Ostscouts had been upgraded to the new variant; however it was soon discovered that both the Lyran Alliance and Word of Blake were fielding their own updated Ostscouts identical to ComStar's. The intelligence leak would be confirmed and traced back to Dag Kesselring, former Precentor of the 66th Division, who passed on information about the program to both the Lyrans and Blakists. Used by both sides in the Blakist Jihad, the newborn Republic of the Sphere would maintain production of the 11J model Ostscout after the fall of Terra both for its own relatively limited needs as well as export sales to the Federated Suns and Lyran Commonwealth. Still produced during the Dark Age era, aside from the Krupp plant's combat focused Phoenix models both Kong Interstellar and Robinson Standard BattleWorks reintroduced variants that lean more heavily towards the original look and recon aspects of the venerable 7J model.
 
-systemmanufacturer:CHASSIS:Kell
-systemmode:CHASSIS:/S
-systemmanufacturer:ENGINE:VOX
-systemmode:ENGINE:280
-systemmanufacturer:ARMOR:Durallex
-systemmode:ARMOR:Light
-systemmanufacturer:COMMUNICATIONS:Barret
-systemmode:COMMUNICATIONS:4000
-systemmanufacturer:TARGETING:TRSS
-systemmode:TARGETING:.2L3
+manufacturer:Kong Interstellar Corporation,Kong Interstellar Corporation,Ostmann Industries
+primaryfactory:Connaught,Loxley,Terra
+systemmanufacturer:CHASSIS:Kell /S
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Durallex Light
+systemmanufacturer:COMMUNICATIONS:Barret 4000
+systemmanufacturer:TARGETING:TRSS.2L3
+systemmanufacturer:JUMPJET:Ostmann Sct-A
+

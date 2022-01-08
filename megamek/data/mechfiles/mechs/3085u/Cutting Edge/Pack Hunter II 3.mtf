@@ -148,4 +148,19 @@ Clan Improved Jump Jet
 -Empty-
 -Empty-
 
+overview:The Pack Hunter II is a light BattleMech produced by Clan Wolf-in-Exile on Arc-Royal during the Jihad.
 
+capabilities:The 'Mech's legs are protected from possible Battle Armor attack by having a B-Pod mounted in each leg. The 'Mech's weapons and movement heat is managed by 10 Double Heat Sinks, but it's not adequate enough to handle the 'Mech's heat load.
+
+deployment:An Experimental Tech variant developed in 3082, this version utilizes Improved Jump Jets. The variant also drops all its weapons with the exception of the ER PPC. To make room for the new Jump equipment, the 'Mech loses a ton of armor and gains an XL Gyro.
+
+history:The 'Mech would first appear in combat in 3077 after a considerable amount of delays in its development. The design was originally seen as the OmniMech successor to the original Pack Hunter, however the Blakist attack against Arc-Royal and other priorities caused the delays. The Pack Hunter II improves on its predecessor’s qualities. Among the things the 'Mech has been fitted with, the designers made a substantial improvement in armor and weaponry while retaining the original's speed. In a bid to improve survival rates of pilots, the design also includes a Full-Head Ejection System to prevent the loss of a warrior in combat. The design had been seen deployed by 3085 with toumans of Clan Hell's Horses, the Draconis Combine and the Republic of the Sphere
+
+manufacturer:WC Site 3
+primaryfactory:Arc-Royal
+systemmanufacturer:CHASSIS:Type AR1 Endo Steel
+systemmanufacturer:ENGINE:Light Force (ExtraLight) 210
+systemmanufacturer:ARMOR:Royal-7a Ferro-Fibrous
+systemmanufacturer:JUMPJET:Leaper Model, L5 (Imp)
+systemmanufacturer:COMMUNICATIONS:Trueborn Ultra 945B
+systemmanufacturer:TARGETING:Hunter 5 Dedicated TTS

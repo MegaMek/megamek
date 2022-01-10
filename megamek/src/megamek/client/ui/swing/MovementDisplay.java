@@ -2796,9 +2796,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // If the current entity has moved, disable "Load" and "Tow" buttons.
         setLoadEnabled(false);
         setTowEnabled(false);
-        if ((cmd.length() == 0) && (cen != Entity.NONE)) {
+        if (cen != Entity.NONE) {
+            Coords currentPathEndpoint = cmd.getFinalCoords();
+            
             // Check the other entities in the current hex for friendly units.
-            for (Entity other : game.getEntitiesVector(ce.getPosition())) {
+            for (Entity other : game.getEntitiesVector(currentPathEndpoint)) {
                 // If the other unit is friendly and not the current entity
                 // and the current entity has at least 1 MP, if it can
                 // transport the other unit, and if the other hasn't moved
@@ -2810,17 +2812,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     break;
                 }
             } // Check the next entity in this position.
-            //Now check all eligible hexes for towable trailers
-            for (Coords c : ce.getHitchLocations()) {
-                for (Entity other : game.getEntitiesVector(c)) {
-                    // If the other unit is friendly and not the current entity
-                    // if it can tow the other unit, and if the other hasn't moved
-                    // then enable the "Tow" button.
-                    if (ce.canTow(other.getId())) {
-                        setTowEnabled(true);
-                        break;
-                    }
-                } // Check the next entity.
+            
+            // Now check all eligible hexes for towable trailers            
+            if (cmd.length() == 0) {
+                for (Coords c : ce.getHitchLocations()) {
+                    for (Entity other : game.getEntitiesVector(c)) {
+                        // If the other unit is friendly and not the current entity
+                        // if it can tow the other unit, and if the other hasn't moved
+                        // then enable the "Tow" button.
+                        if (ce.canTow(other.getId())) {
+                            setTowEnabled(true);
+                            break;
+                        }
+                    } // Check the next entity.
+                }
             }
         } // End ce-hasn't-moved
     } // private void updateLoadButtons
@@ -2928,7 +2933,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         Entity choice = null;
 
         Vector<Entity> choices = new Vector<>();
-        for (Entity other : game.getEntitiesVector(ce().getPosition())) {
+        for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
             if (other.isLoadableThisTurn() && (ce() != null)
                 && ce().canLoad(other, false)) {
                 choices.addElement(other);

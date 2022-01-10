@@ -356,7 +356,7 @@ public class MovePath implements Cloneable, Serializable {
             int nStraight = 0;
             MoveStep prevStep = steps.get(0);
             for (MoveStep s : steps) {
-                if (s.isTurning() && nStraight < turnMode) {
+                if (s.isTurning() && (nStraight < turnMode)) {
                     prevStep.setDanger(true);
                 }
                 nStraight = s.getNStraight();

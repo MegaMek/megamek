@@ -106,8 +106,8 @@ public class MovePath implements Cloneable, Serializable {
     private Set<MoveStepType> containedStepTypes = new HashSet<>();
     
     // whether this movePath take us directly over an enemy unit
-    // useful for aircraft
-    private boolean fliesOverEnemy;
+    // useful for debugging aircraft on ground maps
+    //private boolean fliesOverEnemy;
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 500;
 
@@ -153,9 +153,9 @@ public class MovePath implements Cloneable, Serializable {
             sb.append("OUT!");
         }
         
-        if (this.getFliesOverEnemy()) {
+        /*if (this.getFliesOverEnemy()) {
             sb.append("E! ");
-        }
+        }*/
         
         return sb.toString();
     }
@@ -351,7 +351,7 @@ public class MovePath implements Cloneable, Serializable {
         // that now exceeds turn mode requirement. We want to show danger on the previous step
         // so the StepSprite will show danger. Hiding the previous step instead would make turning costs
         // show in the turning hex for units tracking turn mode, unlike other units.
-        if (entity.usesTurnMode() && getMpUsed() > 5) {
+        if (entity.usesTurnMode() && (getMpUsed() > 5)) {
             int turnMode = getMpUsed() / 5;
             int nStraight = 0;
             MoveStep prevStep = steps.get(0);
@@ -376,18 +376,21 @@ public class MovePath implements Cloneable, Serializable {
                 s.setDanger(s.isDanger() || Compute.isPilotingSkillNeeded(game, entity.getId(),
                         prevStep.getPosition(), s.getPosition(), lastStep.getMovementType(true),
                         prevStep.isTurning(), prevStep.isPavementStep(), prevStep.getElevation(),
-                                s.getElevation(), s));
+                        s.getElevation(), s));
                 s.setPastDanger(s.isPastDanger() || s.isDanger());
                 prevStep = s;
             }
         }
         
-        if (step.useAeroAtmosphere(game, entity)
-        		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
-        		&& step.getPosition() != null  											//null
-        		&& game.getFirstEnemyEntity(step.getPosition(), entity) != null) {
+        // if we're an aerospace unit on a ground map and have passed over a hostile unit
+        // record this fact - it is useful for debugging thus we leave the commented out code here
+        // but for performance reasons, we don't actually do it.
+        /*if (step.useAeroAtmosphere(game, entity)
+        		&& game.getBoard().onGround()
+        		&& (step.getPosition() != null)
+        		&& (game.getFirstEnemyEntity(step.getPosition(), entity) != null)) {
         	fliesOverEnemy = true;
-        }
+        }*/
 
         // having checked for illegality and other things, add it to the set of contained step types
         containedStepTypes.add(step.getType());
@@ -781,9 +784,9 @@ public class MovePath implements Cloneable, Serializable {
      * if the target moves.
      * @return Whether or not this flight path takes us over an enemy unit
      */
-    public boolean getFliesOverEnemy() {
+    /*public boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
-    }
+    }*/
     
     /**
      * Method that determines whether a given path goes through a given set of x/y coordinates
@@ -1588,7 +1591,7 @@ public class MovePath implements Cloneable, Serializable {
         copy.steps = new Vector<>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
-        copy.fliesOverEnemy = fliesOverEnemy;
+        //copy.fliesOverEnemy = fliesOverEnemy;
         copy.cachedEntityState = cachedEntityState; // intentional pointer copy
     }
 

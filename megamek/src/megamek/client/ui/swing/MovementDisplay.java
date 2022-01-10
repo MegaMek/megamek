@@ -2813,7 +2813,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             } // Check the next entity in this position.
             
-            //Now check all eligible hexes for towable trailers            
+            // Now check all eligible hexes for towable trailers            
             if (cmd.length() == 0) {
                 for (Coords c : ce.getHitchLocations()) {
                     for (Entity other : game.getEntitiesVector(c)) {

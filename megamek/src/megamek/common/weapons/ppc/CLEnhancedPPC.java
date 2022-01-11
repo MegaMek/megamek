@@ -60,7 +60,7 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.maxRange = RANGE_LONG;
         rulesRefs = "95,IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
+            .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
             .setClanAdvancement(2822, 2823, DATE_NONE, 2831, 3080)
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CWV).setProductionFactions(F_CWV)

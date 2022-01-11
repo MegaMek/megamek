@@ -60,7 +60,7 @@ public class ISLightPPC extends PPCWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(3064, 3067, 3068, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_DC)

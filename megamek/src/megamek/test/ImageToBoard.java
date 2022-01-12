@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2014 Nicholas Walczak (walczak@cs.umn.edu)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2014 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.test;
 
@@ -25,22 +25,21 @@ import javax.imageio.ImageIO;
 
 /**
  * This program was designed to test the idea of turning an image into a board
- * file for Megamek.  It takes an image, and then cuts the image the image into
+ * file for MegaMek. It takes an image, and then cuts the image into
  * hex-sized bits and saves each of those hex images as a file.  It also
  * generates a board file with each hex image mapped to a fluff number for the
- * hex it belongs to.  The fluff numbers are also written to a file that can be
+ * hex it belongs to. The fluff numbers are also written to a file that can be
  * added to a tileset file.
  * 
  * This program really isn't complete, so many of the parameters are just hard
- * coded.  The basic premise works, although it needs more refinement.  I also
+ * coded. The basic premise works, although it needs more refinement. I also
  * think that using terrain fluff to map an image to each hex is kind of an
  * abuse of the framework.
  * 
  * @author arlith
- * @date October 2014
+ * @since October 2014
  */
 public class ImageToBoard {
-    
     boolean loaded = false;
     
     int hexCols = 41;
@@ -132,7 +131,7 @@ public class ImageToBoard {
                 for (int i = 0; i < hexWidth; i++) {
                     for (int j = 0; j < hexHeight; j++) {
                         if (hexTemplate.getRGB(i, j) == black) {
-                            hexImg.setRGB(i,j, transparent);
+                            hexImg.setRGB(i, j, transparent);
                         }
                     }
                 }

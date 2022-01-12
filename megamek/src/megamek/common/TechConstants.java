@@ -13,20 +13,13 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
-/*
- * TechConstants.java
- *
- * Created on June 11, 2002, 4:35 PM
- */
-
 package megamek.common;
 
 /**
  * Contains some constants representing equipment/unit tech levels
  *
  * @author Ben
- * @version
+ * @since June 11, 2002, 4:35 PM
  */
 public class TechConstants {
 

@@ -393,7 +393,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
     /**
      * Returns a map of all computed longest paths. This only includes one
-     * longest path to one Coords,Facing pair.
+     * longest path to one Coords, Facing pair.
      *
      * @return a map of all computed shortest paths.
      */

@@ -321,8 +321,8 @@ public class RATGeneratorEditor extends JFrame {
         gbc.gridwidth = 2;
         panEditTab.add(scroll, gbc);
 
-        txtFaction.setMinimumSize(new Dimension(60,25));
-        txtFaction.setPreferredSize(new Dimension(60,25));
+        txtFaction.setMinimumSize(new Dimension(60, 25));
+        txtFaction.setPreferredSize(new Dimension(60, 25));
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
@@ -502,8 +502,8 @@ public class RATGeneratorEditor extends JFrame {
         gbc.gridheight = 1;
         panFactionEditorTab.add(scroll, gbc);
 
-        txtSalvageFaction.setMinimumSize(new Dimension(60,25));
-        txtSalvageFaction.setPreferredSize(new Dimension(60,25));
+        txtSalvageFaction.setMinimumSize(new Dimension(60, 25));
+        txtSalvageFaction.setPreferredSize(new Dimension(60, 25));
         gbc.gridx = 6;
         gbc.gridy = 2;
         gbc.gridwidth = 1;

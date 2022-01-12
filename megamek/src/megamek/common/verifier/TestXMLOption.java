@@ -1,16 +1,16 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.verifier;
 
@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * 
  * @author Reinhard Vicinus
  */
 public class TestXMLOption implements TestEntityOption {
@@ -146,8 +145,8 @@ public class TestXMLOption implements TestEntityOption {
 
     @Override
     public boolean ignoreFailedEquip(String name) {
-        for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-            if (ignoreFailedEquip.get(i).equals(name)) {
+        for (String s : ignoreFailedEquip) {
+            if (s.equals(name)) {
                 return true;
             }
         }
@@ -196,45 +195,45 @@ public class TestXMLOption implements TestEntityOption {
 
     public String printIgnoredFailedEquip() {
         System.out.println("--->printIgnoredFailedEquip");
-        String ret = "";
-        for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-            ret += "  " + ignoreFailedEquip.get(i) + "\n";
+        StringBuilder sb = new StringBuilder();
+        for (String s : ignoreFailedEquip) {
+            sb.append("  ").append(s).append("\n");
         }
-        return ret;
+        return sb.toString();
     }
 
     public String printOptions() {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
                 + showOverweightedEntity() + "\n" + "Max Overweight: "
-                + Double.toString(getMaxOverweight()) + "\n"
+                + getMaxOverweight() + "\n"
                 + "Show Underweighted Entity: " + showUnderweightedEntity()
                 + "\n" + "Min Underweight: "
-                + Double.toString(getMinUnderweight()) + "\n"
+                + getMinUnderweight() + "\n"
                 + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
                 + "Show bad Critical Allocation: " + showCorrectCritical()
                 + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
                 + "\n" + "Show Incorrect Intro Year: " + showIncorrectIntroYear()
                 + "\n" + "Margin of error for Intro Year: " + getIntroYearMargin()
                 + "\n" + "Weight Ceiling Engine: "
-                + Double.toString(1 / getWeightCeilingEngine().mult) + "\n"
+                + 1 / getWeightCeilingEngine().mult + "\n"
                 + "Weight Ceiling Structure: "
-                + Double.toString(1 / getWeightCeilingStructure().mult) + "\n"
+                + 1 / getWeightCeilingStructure().mult + "\n"
                 + "Weight Ceiling Armor: "
-                + Double.toString(1 / getWeightCeilingArmor().mult) + "\n"
+                + 1 / getWeightCeilingArmor().mult + "\n"
                 + "Weight Ceiling Controls: "
-                + Double.toString(1 / getWeightCeilingControls().mult) + "\n"
+                + 1 / getWeightCeilingControls().mult + "\n"
                 + "Weight Ceiling Weapons: "
-                + Double.toString(1 / getWeightCeilingWeapons().mult) + "\n"
+                + 1 / getWeightCeilingWeapons().mult + "\n"
                 + "Weight Ceiling TargComp: "
-                + Double.toString(1 / getWeightCeilingTargComp().mult) + "\n"
+                + 1 / getWeightCeilingTargComp().mult + "\n"
                 + "Weight Ceiling Gyro: "
-                + Double.toString(1 / getWeightCeilingGyro().mult) + "\n"
+                + 1 / getWeightCeilingGyro().mult + "\n"
                 + "Weight Ceiling Turret: "
-                + Double.toString(1 / getWeightCeilingTurret().mult) + "\n"
+                + 1 / getWeightCeilingTurret().mult + "\n"
                 + "Weight Ceiling Lifting:"
-                + Double.toString(1 / getWeightCeilingLifting().mult) + "\n"
+                + 1 / getWeightCeilingLifting().mult + "\n"
                 + "Weight Ceiling PowerAmp: "
-                + Double.toString(1 / getWeightCeilingPowerAmp().mult) + "\n"
+                + 1 / getWeightCeilingPowerAmp().mult + "\n"
                 + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
     

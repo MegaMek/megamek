@@ -51,12 +51,12 @@ class FovHighlightingAndDarkening {
     public void die() {
         gs.removePreferenceChangeListener(ringsChangeListner);
         this.boardView1.game.removeGameListener(cacheGameListner);
-    };
+    }
 
 
     /**
      * Checks if options for darkening and highlighting are turned on and the
-     * respectively: If there is no LOS from curently selected hex/entity, then
+     * respectively: If there is no LOS from currently selected hex/entity, then
      * darkens hex c. If there is a LOS from the hex c to the selected
      * hex/entity, then hex c is colored according to distance.
      * 
@@ -232,8 +232,7 @@ class FovHighlightingAndDarkening {
      */
     public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest) {
         ArrayList<StepSprite> pathSprites = boardView1.pathSprites;
-        StepSprite lastStepSprite = pathSprites.size() > 0 ? pathSprites
-                .get(pathSprites.size() - 1) : null;
+        StepSprite lastStepSprite = pathSprites.isEmpty() ? null : pathSprites.get(pathSprites.size() - 1);
         // lets check if cache should be cleared
         if ((cachedSelectedEntity != this.boardView1.selectedEntity)
                 || (cachedStepSprite != lastStepSprite)
@@ -243,9 +242,7 @@ class FovHighlightingAndDarkening {
             cachedStepSprite = lastStepSprite;
             cachedSrc = src;
             cacheGameChanged = false;
-            cachedAllECMInfo = ComputeECM
-                    .computeAllEntitiesECMInfo(boardView1.game
-                            .getEntitiesVector());
+            cachedAllECMInfo = ComputeECM.computeAllEntitiesECMInfo(boardView1.game.getEntitiesVector());
         }
 
         LosEffects los = losCache.get(dest);
@@ -259,18 +256,14 @@ class FovHighlightingAndDarkening {
         return los;
     }
 
-    /**Parses the properties of rings received from GUIPreferencess.
-     *
+    /**
+     * Parses the properties of rings received from GUIPreferences
      */
     private void updateRingsProperties() {
         //prepare the parameters for processing bracket by bracket
-        String[] dRingsRadiiRaw = gs
-                .getString(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII).trim()
-                .split("\\s+");
-        String[] dRingsColorsRaw = gs.getString(
-                GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB).split(";");
-        final int highlight_alpha = gs
-                .getInt(GUIPreferences.FOV_HIGHLIGHT_ALPHA);
+        String[] dRingsRadiiRaw = gs.getString(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII).trim().split("\\s+");
+        String[] dRingsColorsRaw = gs.getString(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB).split(";");
+        final int highlight_alpha = gs.getInt(GUIPreferences.FOV_HIGHLIGHT_ALPHA);
         final int max_dist = 60;
 
         ringsRadii= new ArrayList<>();
@@ -279,12 +272,10 @@ class FovHighlightingAndDarkening {
         for (String rrRaw: dRingsRadiiRaw) {
             try {
                 int rr = Integer.parseInt(rrRaw.trim());
-                ringsRadii.add( Math.min(rr, max_dist) );
-            } catch (NumberFormatException e) {
-                System.err.printf("%s parameter unparsable '%s'"
-                        ,GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw );
-                e.printStackTrace();
-                System.err.flush();
+                ringsRadii.add(Math.min(rr, max_dist));
+            } catch (Exception e) {
+                LogManager.getLogger().error(String.format("Cannot parse %s parameter '%s'",
+                        GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII, rrRaw), e);
                 break;
             }
         }
@@ -292,16 +283,14 @@ class FovHighlightingAndDarkening {
         for (String rcr: dRingsColorsRaw) {
             try {
                 String[] hsbr = rcr.trim().split("\\s+");
-                float h = Float.parseFloat( hsbr[0] );
-                float s = Float.parseFloat( hsbr[1] );
-                float b = Float.parseFloat( hsbr[2] );
-                Color tc = new Color( Color.HSBtoRGB(h, s, b) );
+                float h = Float.parseFloat(hsbr[0]);
+                float s = Float.parseFloat(hsbr[1]);
+                float b = Float.parseFloat(hsbr[2]);
+                Color tc = new Color(Color.HSBtoRGB(h, s, b));
                 ringsColors.add(new Color(tc.getRed(), tc.getGreen(), tc.getBlue(), highlight_alpha));
-            } catch (NumberFormatException e) {
-                System.err.printf("%s parameter unparsable '%s'"
-                        ,GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr );
-                e.printStackTrace();
-                System.err.flush();
+            } catch (Exception e) {
+                LogManager.getLogger().error(String.format("Cannot parse %s parameter '%s'",
+                        GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB, rcr), e);
                 break;
             }
         }

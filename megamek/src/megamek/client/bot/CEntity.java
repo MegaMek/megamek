@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,44 +14,20 @@
  */
 package megamek.client.bot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import megamek.client.Client;
 import megamek.client.ui.SharedUtility;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
 
+import java.util.*;
+
 public class CEntity {
-
     static class Table extends HashMap<Integer, CEntity> {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = 6437109733397107056L;
         private TestBot tb;
 
@@ -64,8 +40,8 @@ public class CEntity {
         }
 
         public CEntity get(Entity es) {
-            CEntity result = null;
-            if ((result = super.get(Integer.valueOf(es.getId()))) == null) {
+            CEntity result;
+            if ((result = super.get(es.getId())) == null) {
                 result = new CEntity(es, tb);
                 this.put(result);
             }
@@ -1056,7 +1032,7 @@ public class CEntity {
     }
 
     public Integer getKey() {
-        return Integer.valueOf(entity.getId());
+        return entity.getId();
     }
 
     public MoveOption.Table getAllMoves(Client client) {
@@ -1070,8 +1046,7 @@ public class CEntity {
      * From the current state, explore based upon an implementation of
      * Dijkstra's algorithm.
      */
-    protected MoveOption.Table calculateMoveOptions(MoveOption base,
-            Client client) {
+    protected MoveOption.Table calculateMoveOptions(MoveOption base, Client client) {
         // New array of movement options
         ArrayList<MoveOption> possible = new ArrayList<>();
         MoveOption.Table discovered = new MoveOption.Table();
@@ -1092,13 +1067,11 @@ public class CEntity {
             // Get the first movement option, while stripping it from the
             // arraylist
             MoveOption min = possible.remove(0);
-            Iterator<MovePath> adjacent = min.getNextMoves(true, true)
-                    .iterator();
+            Iterator<MovePath> adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();
                 if ((entity instanceof Mech) && (((Mech) entity).countBadLegs() >= 1)
-                        && (((Mech) entity).isLocationBad(Mech.LOC_LARM) && ((Mech) entity)
-                                .isLocationBad(Mech.LOC_RARM))) {
+                        && (entity.isLocationBad(Mech.LOC_LARM) && entity.isLocationBad(Mech.LOC_RARM))) {
                     MoveOption eject = next.clone();
                     eject.addStep(MoveStepType.EJECT);
                     discovered.put(eject.clone());
@@ -1108,8 +1081,7 @@ public class CEntity {
                 } else if (next.isMoveLegal()) {
                     // relax edges;
                     if ((discovered.get(next) == null)
-                            || (next.getDistUtility() < discovered.get(next)
-                                    .getDistUtility())) {
+                            || (next.getDistUtility() < discovered.get(next).getDistUtility())) {
                         discovered.put(next);
                         if (next.isJumping()) {
                             MoveOption left = next.clone();
@@ -1126,8 +1098,7 @@ public class CEntity {
                             right.addStep(MoveStepType.TURN_RIGHT);
                             discovered.put(right);
                         }
-                        int index = Collections.<MoveOption> binarySearch(
-                                possible, next, MoveOption.DISTANCE_COMPARATOR);
+                        int index = Collections.binarySearch(possible, next, MoveOption.DISTANCE_COMPARATOR);
                         if (index < 0) {
                             index = -index - 1;
                         }
@@ -1306,13 +1277,12 @@ public class CEntity {
             rack_size = 2;
         }
 
-        if ((wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
+        if (wt.getAmmoType() == AmmoType.T_AC_ROTARY) {
             use_table = true;
             rack_size = 4;
         }
 
-        if (use_table == true) {
-
+        if (use_table) {
             int linked_ammo = wt.getAmmoType();
 
             // MMLs and ATMS change damage and range by ammo type,
@@ -1324,9 +1294,7 @@ public class CEntity {
                 damage_value = hits_by_racksize[rack_size] * 1.2;
 
                 // Use ER ammo damage as a default
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
                 // All three types: use ER ranges, with HE for "short" range,
                 // std for "medium" range, and ER for "long" range damages
@@ -1408,9 +1376,7 @@ public class CEntity {
                 }
 
                 // Use LRM damage as a default
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
                 // If SRM ammo is available, use it for short and medium range
                 if (applicable_ranges[0]) {
@@ -1456,9 +1422,7 @@ public class CEntity {
                     damage_value *= 2.0;
                 }
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
             }
 
@@ -1474,9 +1438,7 @@ public class CEntity {
                     damage_value *= 0.9;
                 }
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
             }
 
@@ -1485,17 +1447,13 @@ public class CEntity {
 
                 damage_value = rack_size * 2.0;
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
             }
             if (linked_ammo == AmmoType.T_LRM_STREAK) {
                 damage_value = rack_size;
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
             }
 
             // HAGs get a bonus at short range and a penalty at long range

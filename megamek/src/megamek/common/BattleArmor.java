@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,17 +25,14 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * This class represents a squad or point of battle armor equiped infantry,
+ * This class represents a squad or point of battle armor equipped infantry,
  * sometimes referred to as "Elementals". Much of the behaviour of a battle
  * armor unit is identical to that of an infantry platoon, and is rather
- * different than that of a Mek or Tank.
+ * different from that of a Mek or Tank.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $revision:$
- */
-/*
- * PLEASE NOTE!!! My programming style is to put constants first in tests so the
- * compiler catches my "= for ==" errors.
+ * This was originally coded using the legacy programming style of putting constants first in tests
+ * so the compiler catches the "= for ==" errors.
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class BattleArmor extends Infantry {
     private static final long serialVersionUID = 4594311535026187825L;
@@ -888,8 +885,7 @@ public class BattleArmor extends Infantry {
      *            calculate just the BV of a single trooper
      * @return the battlevalue
      */
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot,
-            boolean singleTrooper) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot, boolean singleTrooper) {
         if (useManualBV) {
             return manualBV;
         }
@@ -928,142 +924,126 @@ public class BattleArmor extends Infantry {
                 if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                     if (weapon.getLocation() == LOC_SQUAD) {
                         dBV += weapon.getType().getBV(this);
-                    }
-
-                    else {
+                    } else {
                         // squad support, count at 1/troopercount
-                        dBV += weapon.getType().getBV(this)
-                                / getTotalOInternal();
+                        dBV += weapon.getType().getBV(this) / getTotalOInternal();
                     }
                 }
             }
             int runMP = getWalkMP(false, false, true, true, false);
             int umuMP = getActiveUMUCount();
-            int tmmRan = Compute.getTargetMovementModifier(Math.max(runMP,umuMP), false, false,
-                    game).getValue();
+            int tmmRan = Compute.getTargetMovementModifier(Math.max(runMP, umuMP), false, false, game).getValue();
             // get jump MP, ignoring burden
             int rawJump = getJumpMP(false, true, true);
-            int tmmJumped = (rawJump > 0) ? Compute.
-                    getTargetMovementModifier(rawJump, true, false, game).
-                    getValue() : 0;
-                    double targetMovementModifier = Math.max(tmmRan, tmmJumped);
-                    double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
-                    if (hasCamoSystem) {
-                        tmmFactor += 0.2;
+            int tmmJumped = (rawJump > 0)
+                    ? Compute.getTargetMovementModifier(rawJump, true, false, game).getValue() : 0;
+            double targetMovementModifier = Math.max(tmmRan, tmmJumped);
+            double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
+            if (hasCamoSystem) {
+                tmmFactor += 0.2;
+            }
+            if (isStealthy) {
+                tmmFactor += 0.2;
+            }
+            // improved stealth get's an extra 0.1, for 0.3 total
+            if ((stealthName != null) && stealthName.equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
+                tmmFactor += 0.1;
+            }
+            if (isMimetic) {
+                tmmFactor += 0.3;
+            }
+
+            dBV *= tmmFactor;
+            double oBV = 0;
+            for (Mounted weapon : getWeaponList()) {
+                // infantry weapons don't count at all
+                if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                    continue;
+                }
+
+                if (weapon.getLocation() == LOC_SQUAD) {
+                    // Squad support, count at 1/troopercount
+                    if (weapon.isSquadSupportWeapon()) {
+                        oBV += weapon.getType().getBV(this) / getTotalOInternal();
+                    } else {
+                        oBV += weapon.getType().getBV(this);
                     }
-                    if (isStealthy) {
-                        tmmFactor += 0.2;
+                } else {
+                    oBV += weapon.getType().getBV(this) / getTotalOInternal();
+                }
+            }
+
+            for (Mounted misc : getMisc()) {
+                if (misc.getType().hasFlag(MiscType.F_MINE)) {
+                    if (misc.getLocation() == LOC_SQUAD) {
+                        oBV += misc.getType().getBV(this);
+                    } else {
+                        oBV += misc.getType().getBV(this) / getTotalOInternal();
                     }
-                    // improved stealth get's an extra 0.1, for 0.3 total
-                    if ((stealthName != null)
-                            && stealthName.equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
-                        tmmFactor += 0.1;
+                }
+                if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                    if (misc.getLocation() == LOC_SQUAD) {
+                        oBV += misc.getType().getBV(this);
+                    } else {
+                        oBV += misc.getType().getBV(this) / getTotalOInternal();
                     }
-                    if (isMimetic) {
-                        tmmFactor += 0.3;
+                }
+            }
+            for (Mounted ammo : getAmmo()) {
+                int loc = ammo.getLocation();
+                // don't count oneshot ammo
+                if (loc == LOC_NONE) {
+                    continue;
+                }
+                if ((loc == LOC_SQUAD) || (loc == i)) {
+                    double ammoBV = ((AmmoType) ammo.getType()).getBABV();
+                    oBV += ammoBV;
+                }
+            }
+            if (canMakeAntiMekAttacks()) {
+                // all non-missile and non-body mounted direct fire weapons counted again
+                for (Mounted weapon : getWeaponList()) {
+                    // infantry weapons don't count at all
+                    if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                        continue;
                     }
 
-                    dBV *= tmmFactor;
-                    double oBV = 0;
-                    for (Mounted weapon : getWeaponList()) {
-                        // infantry weapons don't count at all
-                        if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                            continue;
-                        }
-
-                        if (weapon.getLocation() == LOC_SQUAD) {
-                            // Squad support, count at 1/troopercount
-                            if (weapon.isSquadSupportWeapon()) {
-                                oBV += weapon.getType().getBV(this) / getTotalOInternal();
-                            } else {
-                                oBV += weapon.getType().getBV(this);
-                            }
-                        } else {
-                            oBV += weapon.getType().getBV(this) / getTotalOInternal();
-                        }
-                    }
-
-                    for (Mounted misc : getMisc()) {
-                        if (misc.getType().hasFlag(MiscType.F_MINE)) {
-                            if (misc.getLocation() == LOC_SQUAD) {
-                                oBV += misc.getType().getBV(this);
-                            } else {
-                                oBV += misc.getType().getBV(this) / getTotalOInternal();
-                            }
-                        }
-                        if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                            if (misc.getLocation() == LOC_SQUAD) {
-                                oBV += misc.getType().getBV(this);
-                            } else {
-                                oBV += misc.getType().getBV(this) / getTotalOInternal();
-                            }
-                        }
-                    }
-                    for (Mounted ammo : getAmmo()) {
-                        int loc = ammo.getLocation();
-                        // don't count oneshot ammo
-                        if (loc == LOC_NONE) {
-                            continue;
-                        }
-                        if ((loc == LOC_SQUAD) || (loc == i)) {
-                            double ammoBV = ((AmmoType) ammo.getType()).getBABV();
-                            oBV += ammoBV;
-                        }
-                    }
-                    if (canMakeAntiMekAttacks()) {
-                        // all non-missile and non-body mounted direct fire weapons
-                        // counted again
-                        for (Mounted weapon : getWeaponList()) {
-                            // infantry weapons don't count at all
-                            if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                                continue;
-                            }
-                            if (weapon.getLocation() == LOC_SQUAD) {
-                                if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)
-                                        && !weapon.isBodyMounted()) {
-                                    oBV += weapon.getType().getBV(this);
-                                }
-                            } else {
-                                // squad support, count at 1/troopercount
-                                oBV += weapon.getType().getBV(this)
-                                        / getTotalOInternal();
-                            }
-                        }
-                        // magnetic claws and vibro claws counted again
-                        for (Mounted misc : getMisc()) {
-                            if ((misc.getLocation() == LOC_SQUAD)
-                                    || (misc.getLocation() == i)) {
-                                if (misc.getType().hasFlag(MiscType.F_MAGNET_CLAW)
-                                        || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
-                                    oBV += misc.getType().getBV(this);
-                                }
-                            }
-                        }
-                    }
-                    // getJumpMP won't return UMU MP, so weed need to count that extra
-                    int movement = Math.max(getWalkMP(false, false, true, true, false),
-                            Math.max(getJumpMP(false, true, true), getActiveUMUCount()));
-                    double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
-                    speedFactor = Math.round(speedFactor * 100) / 100.0;
-                    oBV *= speedFactor;
-
-                    double soldierBV;
-                    if (useGeometricMeanBV()) {
-                        soldierBV = 2 * Math.sqrt(oBV * dBV);
-                        if (soldierBV == 0) {
-                            soldierBV = oBV + dBV;
+                    if (weapon.getLocation() == LOC_SQUAD) {
+                        if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !weapon.isBodyMounted()) {
+                            oBV += weapon.getType().getBV(this);
                         }
                     } else {
-                        soldierBV = oBV + dBV;
+                        // squad support, count at 1/troopercount
+                        oBV += weapon.getType().getBV(this) / getTotalOInternal();
                     }
+                }
+                // magnetic claws and vibro claws counted again
+                for (Mounted misc : getMisc()) {
+                    if ((misc.getLocation() == LOC_SQUAD) || (misc.getLocation() == i)) {
+                        if (misc.getType().hasFlag(MiscType.F_MAGNET_CLAW) || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
+                            oBV += misc.getType().getBV(this);
+                        }
+                    }
+                }
+            }
+            // getJumpMP won't return UMU MP, so weed need to count that extra
+            int movement = Math.max(getWalkMP(false, false, true, true, false),
+                    Math.max(getJumpMP(false, true, true), getActiveUMUCount()));
+            double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
+            speedFactor = Math.round(speedFactor * 100) / 100.0;
+            oBV *= speedFactor;
 
-                    squadBV += soldierBV;
+            double soldierBV;
+            if (useGeometricMeanBV()) {
+                soldierBV = 2 * Math.sqrt(oBV * dBV);
+                if (soldierBV == 0) {
+                    soldierBV = oBV + dBV;
+                }
+            } else {
+                soldierBV = oBV + dBV;
+            }
 
-                    /*
-                     * if (i == 1) { System.out.println(getChassis()+getModel());
-                     * System.out.println(dBV); System.out.println(oBV);
-                     * System.out.println((oBV+dBV)); }
-                     */
+            squadBV += soldierBV;
         }
         // we have now added all troopers, divide by current strength to then
         // multiply by the unit size mod
@@ -1072,6 +1052,7 @@ public class BattleArmor extends Infantry {
         if (singleTrooper) {
             return (int) Math.round(squadBV);
         }
+
         switch (getShootingStrength()) {
             case 1:
                 break;
@@ -1763,7 +1744,7 @@ public class BattleArmor extends Infantry {
             } else {
                 buff.append("Standard:");
             }
-            buff.append(String.valueOf(getTurretCapacity()));
+            buff.append(getTurretCapacity());
             buff.append("</turret>");
             buff.append(newline);
         }

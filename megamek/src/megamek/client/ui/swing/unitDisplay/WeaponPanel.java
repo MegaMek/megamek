@@ -12,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -176,7 +175,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
          */
         public void addWeapon(Mounted w) {
             weapons.add(w);
-            fireIntervalAdded(this,weapons.size()-1, weapons.size()-1);
+            fireIntervalAdded(this, weapons.size() - 1, weapons.size() - 1);
         }
 
         /**
@@ -324,21 +323,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
          * @param comparator
          */
         public void sort(Comparator<Mounted> comparator) {
-            Collections.sort(weapons, comparator);
+            weapons.sort(comparator);
             fireContentsChanged(this, 0, weapons.size() - 1);
         }
 
     }
-    
-    
-    /**
-     * 
-     */
+
     private final UnitDisplay unitDisplay;
-    
-    /**
-     *
-     */
+
     private static final long serialVersionUID = -5728839963281503332L;
     private JComboBox<String> weapSortOrder;
     public JList<String> weaponList;
@@ -2093,7 +2085,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).FieldOfFire(entity, ranges, arc, loc);
         }
     }
 

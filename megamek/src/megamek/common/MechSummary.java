@@ -1,17 +1,16 @@
 /*
- * MechSummary.java - Copyright (C) 2002,2003,2004 Josh Yockey
+ * MechSummary.java - Copyright (C) 2002-2004 Josh Yockey
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.File;
@@ -21,15 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
-
 /**
  * Contains minimal information about a single entity
  */
-
 public class MechSummary implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -6635709122122038237L;
     private String m_sName;
     private String m_sChassis;

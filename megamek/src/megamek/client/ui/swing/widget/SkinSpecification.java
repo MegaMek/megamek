@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.widget;
 
@@ -24,11 +24,10 @@ import megamek.common.annotations.Nullable;
  * A class that contains state information that specifies a skin.
  * 
  * @author arlith
- *
  */
 public class SkinSpecification {
 
-    public static enum UIComponents {
+    public enum UIComponents {
         DefaultUIElement("defaultElement"),
         DefaultButton("defaultButton"),
         BoardView("BoardViewBorder"),
@@ -39,8 +38,7 @@ public class SkinSpecification {
         MainMenuBorder("MainMenuBorder"),
         ChatLounge("ChatLoungeBorder"),
         ChatLoungeDoneButton("ChatLoungeDoneButton"),
-        UnitDisplay("UnitDisplay"),
-        ;
+        UnitDisplay("UnitDisplay");
 
         private final String comp;
 
@@ -48,13 +46,13 @@ public class SkinSpecification {
          * Constructions a new UIComponent with the given internalcomponent name
          * @param comp The internal name of this component
          */
-        private UIComponents(final String comp) {
+        UIComponents(final String comp) {
             this.comp = comp;
         }
 
         /**
          * Returns a string representation of this component, which is just the
-         * intenral name.
+         * internal name.
          *
          * @see java.lang.Enum#toString()
          */
@@ -99,7 +97,7 @@ public class SkinSpecification {
             }
             return null;
         }
-    };
+    }
     
     /**
      * Indicates the maximum number of colors a skin specification can have.

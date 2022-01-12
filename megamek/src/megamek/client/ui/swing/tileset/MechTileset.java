@@ -466,7 +466,7 @@ public class MechTileset {
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
                 LogManager.getLogger().warn("Received null image from ImageUtil.loadImageFromFile! File: "
-                        + fin.toString());
+                        + fin);
             }
         }
     }

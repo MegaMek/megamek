@@ -91,8 +91,7 @@ public class Terrains implements Serializable {
 
     // special types
     public static final int IMPASSABLE = 35;
-    public static final int ELEVATOR = 36; // level=elevation it moves
-                                           // to,exits=d6 rolls it moves on
+    public static final int ELEVATOR = 36; // level = elevation it moves to, exits = d6 rolls it moves on
     public static final int FORTIFIED = 37;
     public static final int SCREEN = 38;
 

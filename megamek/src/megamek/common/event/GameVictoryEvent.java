@@ -86,7 +86,7 @@ public class GameVictoryEvent extends GameEvent {
      * Returns the entity with the given id number, if any.
      */
     public Entity getEntity(int id) {
-        return entityIds.get(Integer.valueOf(id));
+        return entityIds.get(id);
     }
 
     /**

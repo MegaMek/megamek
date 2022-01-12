@@ -68,12 +68,8 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     private boolean getBoolean(Properties p, String name) {
-        String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return BOOLEAN_DEFAULT;
-        if (value.equals(IPreferenceStore.TRUE))
-            return true;
-        return false;
+        final String value = p != null ? p.getProperty(name) : null;
+        return (value == null) ? BOOLEAN_DEFAULT : value.equals(IPreferenceStore.TRUE);
     }
 
     @Override
@@ -83,12 +79,14 @@ class PreferenceStore implements IPreferenceStore {
 
     private double getDouble(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
+        if (value == null) {
             return DOUBLE_DEFAULT;
+        }
         double ival = DOUBLE_DEFAULT;
         try {
-            ival = Double.valueOf(value).doubleValue();
-        } catch (NumberFormatException e) {
+            ival = Double.parseDouble(value);
+        } catch (Exception ignored) {
+
         }
         return ival;
     }
@@ -99,13 +97,15 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     private float getFloat(Properties p, String name) {
-        String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
+        final String value = (p != null) ? p.getProperty(name) : null;
+        if (value == null) {
             return FLOAT_DEFAULT;
+        }
         float ival = FLOAT_DEFAULT;
         try {
             ival = Float.parseFloat(value);
-        } catch (NumberFormatException e) {
+        } catch (Exception ignored) {
+
         }
         return ival;
     }
@@ -117,12 +117,14 @@ class PreferenceStore implements IPreferenceStore {
 
     private int getInt(Properties p, String name) {
         String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
+        if (value == null) {
             return INT_DEFAULT;
+        }
         int ival = 0;
         try {
             ival = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
+        } catch (Exception ignored) {
+
         }
         return ival;
     }
@@ -133,13 +135,15 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     private long getLong(Properties p, String name) {
-        String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
+        String value = (p != null) ? p.getProperty(name) : null;
+        if (value == null) {
             return LONG_DEFAULT;
+        }
         long ival = LONG_DEFAULT;
         try {
             ival = Long.parseLong(value);
-        } catch (NumberFormatException e) {
+        } catch (Exception ignored) {
+
         }
         return ival;
     }
@@ -150,10 +154,8 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     private String getString(Properties p, String name) {
-        String value = p != null ? p.getProperty(name) : null;
-        if (value == null)
-            return STRING_DEFAULT;
-        return value;
+        final String value = (p != null) ? p.getProperty(name) : null;
+        return (value == null) ? STRING_DEFAULT : value;
     }
 
     @Override
@@ -192,8 +194,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, Double.valueOf(oldValue), Double.valueOf(
-                    value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -203,7 +204,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, Float.valueOf(oldValue), Float.valueOf(value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -213,8 +214,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, Integer.valueOf(oldValue), Integer.valueOf(
-                    value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -224,7 +224,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, Long.valueOf(oldValue), Long.valueOf(value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -244,8 +244,7 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, Boolean.valueOf(oldValue), Boolean.valueOf(
-                    value));
+            firePropertyChangeEvent(name, oldValue, value);
         }
     }
 
@@ -279,8 +278,7 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     private void setValue(Properties p, String name, boolean value) {
-        put(p, name, value == true ? IPreferenceStore.TRUE
-                : IPreferenceStore.FALSE);
+        put(p, name, Boolean.toString(value));
     }
 
     protected void put(Properties p, String name, String value) {

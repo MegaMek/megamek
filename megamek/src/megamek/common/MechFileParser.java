@@ -1,5 +1,5 @@
 /*
- * MechFileParser.java - Copyright (C) 2002,2003,2004 Josh Yockey
+ * MechFileParser.java - Copyright (C) 2002-2004 Josh Yockey
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -63,6 +63,7 @@ import megamek.common.weapons.ppc.ISHeavyPPC;
 import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
+import org.apache.logging.log4j.LogManager;
 
 /*
  * Switches between the various type-specific parsers depending on suffix
@@ -77,8 +78,7 @@ public class MechFileParser {
         this(f, null);
     }
 
-    public MechFileParser(File f, String entryName)
-            throws EntityLoadingException {
+    public MechFileParser(File f, String entryName) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
@@ -98,8 +98,7 @@ public class MechFileParser {
             // try zip file
             try {
                 ZipFile zFile = new ZipFile(f.getAbsolutePath());
-                parse(zFile.getInputStream(zFile.getEntry(entryName)),
-                        entryName);
+                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
                 zFile.close();
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
@@ -814,13 +813,14 @@ public class MechFileParser {
                         }
                     }
                     Collections.sort(canonUnitNames);
-                } catch (FileNotFoundException e) {
+                } catch (Exception ignored) {
+
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception ignored) {
+
         }
-        int index = Collections.binarySearch(canonUnitNames,
-                ent.getShortNameRaw()); 
+        int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
         if (index >= 0) {
             ent.setCanon(true);
         }        
@@ -943,9 +943,8 @@ public class MechFileParser {
         Entity entity = null;
         try {
             entity = new MechFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString());
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
         return entity;
     }

@@ -126,8 +126,8 @@ public class Jumpship extends Aero {
         return UnitType.JUMPSHIP;
     }
 
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
+    // ASEW Missile Effects, per location
+    // Values correspond to Locations: NOS, FLS, FRS, AFT, ALS, ARS
     private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0 };
     
     /*
@@ -422,8 +422,8 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Old style method for adding N large grav decks.  A default value is chosen that is half-way between the standard
-     * and huge sizes.
+     * Old style method for adding N large grav decks. A default value is chosen that is half-way
+     * between the standard and huge sizes.
      *
      * @param n
      */
@@ -449,8 +449,8 @@ public class Jumpship extends Aero {
     }
 
     /**
-     * Old style method for adding N huge grav decks.  A default value is chosen that is the current large maximum plus
-     * half that value.
+     * Old style method for adding N huge grav decks. A default value is chosen that is the current
+     * large maximum plus half that value.
      *
      * @param n
      */

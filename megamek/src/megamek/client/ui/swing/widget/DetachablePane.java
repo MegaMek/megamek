@@ -11,7 +11,6 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.BorderLayout;
@@ -43,9 +42,7 @@ import javax.swing.JLabel;
  * with an attach button.
  */
 public class DetachablePane extends JComponent {
-
-
-    private class ActionButton extends JButton {
+    private static class ActionButton extends JButton {
 
         private ActionButton(Action action) {
             super(action);
@@ -65,7 +62,7 @@ public class DetachablePane extends JComponent {
         EXPANDED,
         // XXX Not yet implemented
         // COLLAPSED,
-        DETACHED;
+        DETACHED
     }
 
     private Mode state = Mode.EXPANDED;

@@ -4569,7 +4569,7 @@ v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug: Mechs register as crippled after first sensor hit.
 + Bug 3722: NPE error in Princess Precognition in round 2 when Immediate Withdrawal is selected.
 + Bug: Mechs with destroyed side torso not registering as crippled.
-+ Data: Vehicle file fixes,new images,fixed RAT's
++ Data: Vehicle file fixes, new images, fixed RAT's
 + Bug 3733: Battlearmor with UMUs can't use all of their UMU MP
 + Bug 3741: Movement path decals aren't removed with /reset command
 + Updated MechView to display UMU MP separately.  Now uses #/#/#/# for Walk/Cruis/Jump/UMU
@@ -8360,19 +8360,18 @@ v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Bug: Fragmentation ammo not doing double damage to woods
 + Bug: Missiles not hitting for full damage against woods
 + Bug 1859840: Leg damage in Partial Cover
-+ Bug: Last Entity Targetted was not being saved
++ Bug: Last Entity Targeted was not being saved
 + Bug 1862748: 0.33.14 dev incorrect handling of cluster weapons
 + Bug: LAC not using AC special Munitions.
 + Bug: Infantry flamers can't cause heat and have wrong range
 + Bug: Missing BA MGs
 + Bug: Under a variety of circumstances savegames would stop working
 + Bug 1853753: Reflective armor not working
-+ Bug 1866014: Arrow IV fireing double Shots
++ Bug 1866014: Arrow IV firing double Shots
 + Bug: Fix clearing woods
 + Data 1865963: Updated BA Files
 + Data 1843823: White Flame sprite
-+ Data 1845005: Solaris Map Update, corrected Boreal Reach map and Colosseum
-    in chaos mode
++ Data 1845005: Solaris Map Update, corrected Boreal Reach map and Colosseum in chaos mode
 + Data 1831037: Vehicles from 3050 Upgrades
 + Bug: Artillery only doing splash damage
 + Bug 1858586: AP Gauss Rifle doesn't read ammo 0.33.14 dev

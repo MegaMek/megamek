@@ -1,19 +1,15 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
 /*
- * Created on Oct 19, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.gaussrifles;
 
@@ -27,16 +23,11 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
+ * @since Oct 19, 2004
  */
 public class ISGaussRifle extends GaussWeapon {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -8454131645293473685L;
 
-    /**
-     * 
-     */
     public ISGaussRifle() {
         super();
 
@@ -63,16 +54,15 @@ public class ISGaussRifle extends GaussWeapon {
         rulesRefs = "219,TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2587, 2590, 3045, 2865, 3040)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH)
-        .setReintroductionFactions(F_FC,F_FW,F_DC);	
-
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
+                .setISAdvancement(2587, 2590, 3045, 2865, 3040)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FC, F_FW, F_DC);
     }
 
     /*
@@ -84,9 +74,8 @@ public class ISGaussRifle extends GaussWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new GRHandler(toHit, waa, game, server);
     }
-
 }

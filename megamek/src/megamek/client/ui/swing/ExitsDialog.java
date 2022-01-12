@@ -138,7 +138,7 @@ public class ExitsDialog extends JDialog implements ActionListener {
             button.setSelectedIcon(new ImageIcon(imageButton));
         }
 
-        button.setMargin(new Insets(0,0,0,0));
+        button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(BorderFactory.createEmptyBorder());
         
         return button;

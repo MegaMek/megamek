@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -137,9 +137,7 @@ public abstract class BotClient extends Client {
                     case Packet.COMMAND_CFR_AMS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
-                        WeaponAttackAction waa =
-                            Compute.getHighestExpectedDamage(game,
-                                    evt.getWAAs(), true);
+                        WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
                     case Packet.COMMAND_CFR_APDS_ASSIGN:
@@ -1198,7 +1196,7 @@ public abstract class BotClient extends Client {
         return boardClusterTracker;
     }
 
-    private class RankedCoords implements Comparable<RankedCoords> {
+    private static class RankedCoords implements Comparable<RankedCoords> {
         private Coords coords;
         private double fitness;
 

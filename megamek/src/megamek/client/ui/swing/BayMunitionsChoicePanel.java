@@ -79,7 +79,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             for (int i = 0; i < row.munitions.size(); i++) {
                 int shots = (Integer) row.spinners.get(i).getValue();
                 if (shots > 0) {
-                    Mounted mounted = null;
+                    Mounted mounted;
                     if (mountIndex >= row.ammoMounts.size()) {
                         mounted = new Mounted(entity, row.munitions.get(i));
                         try {
@@ -137,7 +137,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         private final List<JSpinner> spinners;
         private final List<AmmoType> munitions;
         
-        private double tonnage = 0;
+        private double tonnage;
         
         AmmoRowPanel(Mounted bay, int at, int rackSize, List<Mounted> ammoMounts) {
             this.bay = bay;
@@ -148,16 +148,16 @@ public class BayMunitionsChoicePanel extends JPanel {
             Dimension spinnerSize =new Dimension(55, 25);
             
             final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
-                    .map(wNum -> entity.getEquipment(wNum))
+                    .map(entity::getEquipment)
                     .map(m -> (WeaponType) m.getType()).findAny();
             
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech base
-            this.techBase = wtype.isPresent() ? wtype.get().getTechBase() : WeaponType.TECH_BASE_ALL;
+            this.techBase = wtype.map(EquipmentType::getTechBase).orElse(WeaponType.TECH_BASE_ALL);
             
             munitions = AmmoType.getMunitionsFor(at).stream()
                     .filter(this::includeMunition).collect(Collectors.toList());
-            tonnage = ammoMounts.stream().mapToDouble(m -> m.getSize()).sum();
+            tonnage = ammoMounts.stream().mapToDouble(Mounted::getSize).sum();
             Map<String,Integer> starting = new HashMap<>();
             ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
             for (AmmoType atype : munitions) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
@@ -208,7 +208,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
     private BoardView previewBV;
-    Dimension currentMapButtonSize = new Dimension(0,0);
+    Dimension currentMapButtonSize = new Dimension(0, 0);
     
     private ArrayList<String> invalidBoards = new ArrayList<>();
     private ArrayList<String> serverBoards = new ArrayList<>();
@@ -609,7 +609,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTopRows.add(panMapType);
         panTopRows.add(panSettings);
         
-        JPanel panHelp = new JPanel(new GridLayout(1,1));
+        JPanel panHelp = new JPanel(new GridLayout(1, 1));
         panHelp.add(butHelp);
         
         FixedYPanel panTopRowsHelp = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));
@@ -802,7 +802,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     .collect(Collectors.toList());
             List<String> byTags = boardTags.entrySet().stream()
                     .filter(e -> e.getValue().contains(token))
-                    .map(e -> e.getKey())
+                    .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
             List<String> tokenResult = CollectionUtil.union(byFilename, byTags);
             result = result.stream().filter(tokenResult::contains).collect(toList());
@@ -2294,11 +2294,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * <P>See also {@link #isEditable(Entity)}
      */
     boolean canEditAny(Collection<Entity> entities) {
-        return entities.stream().anyMatch(e -> isEditable(e));
+        return entities.stream().anyMatch(this::isEditable);
     }
     
     /**
-     * Returns true if the local player can see all of the given entities.
+     * Returns true if the local player can see all the given entities.
      * This is true except when a blind drop option is active and one or more
      * of the entities are not on his team.
      */
@@ -2676,7 +2676,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             switch (command[0]) {
                 case MapListPopup.MLP_BOARD:
-                    boolean rotate = (command.length > 3) && Boolean.valueOf(command[3]);
+                    boolean rotate = (command.length > 3) && Boolean.parseBoolean(command[3]);
                     String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
 
                     changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));
@@ -2911,7 +2911,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * <P>See also {@link #isEditable(Entity)} 
      */
     private Set<Entity> editableEntities(Collection<Entity> entities) {
-        return entities.stream().filter(e -> isEditable(e)).collect(Collectors.toSet());
+        return entities.stream().filter(this::isEditable).collect(Collectors.toSet());
     }
     
    
@@ -3169,7 +3169,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else {
                 changeSorter(e);
             }
-        };
+        }
         
         private void sorterPopup(MouseEvent e) {
             ScalingPopup popup = new ScalingPopup();

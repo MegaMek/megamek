@@ -27,7 +27,7 @@ import megamek.common.Game;
  * be stored in the context-object NOTE: if you delegate from one victory-class
  * instance to other, they must be created in similar fashion (ie. constructed
  * at the same time and destroyed at the same time) to guarantee proper working
- * also , if you delegate, you should delegate each time to guarantee that
+ * also, if you delegate, you should delegate each time to guarantee that
  * victorypoint-counting and duration-counting implementations get access to
  * game state every round. NOTE2: calling victory 1 time or n times per round
  * should not make a difference! victories counting rounds must not assume that

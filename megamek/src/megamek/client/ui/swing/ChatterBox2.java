@@ -465,7 +465,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         if (slideOffset == getMaxSlideOffset()) {
             graph.drawImage(maxbutton, 10 + clipBounds.x, yOffset + 3, bv);
         } else {
-            graph.drawImage(minbutton, 10 + clipBounds.x , yOffset + 3, bv);
+            graph.drawImage(minbutton, 10 + clipBounds.x, yOffset + 3, bv);
         }
 
         // Title

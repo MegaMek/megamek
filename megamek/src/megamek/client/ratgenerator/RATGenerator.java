@@ -543,11 +543,10 @@ public class RATGenerator {
                     /* Go through the weight class groups and adjust the table weights so the
                      * total of each group corresponds to the distribution for this faction. */
                     for (int i : weightGroups.keySet()) {
-                        double totalWeight = weightGroups.get(i).stream()
-                                .mapToDouble(unitWeights::get).sum();
+                        double totalWeight = weightGroups.get(i).stream().mapToDouble(unitWeights::get).sum();
                         if (totalWeight > 0) {
                             double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
-                            weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x,y) -> x*y));
+                            weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x, y) -> x * y));
                         }
                     }
                 }
@@ -1101,8 +1100,7 @@ public class RATGenerator {
         if (initialized) {
             // Possibility of adding a new listener during notification.
             for (ActionListener l : new ArrayList<>(listeners)) {
-                l.actionPerformed(new ActionEvent(
-                        this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
             }
         }
     }
@@ -1113,8 +1111,7 @@ public class RATGenerator {
     public void notifyListenersEraLoaded() {
         if (initialized) {
             for (ActionListener l : listeners) {
-                l.actionPerformed(new ActionEvent(
-                        this,ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
             }
         }
     }
@@ -1233,7 +1230,7 @@ public class RATGenerator {
                                             StringJoiner sj = new StringJoiner(",");
                                             mr.getDeployedWith().forEach(sj::add);
                                             mr.getRequiredUnits().forEach(s -> sj.add("req:" + s));
-                                            pw.print(sj.toString());
+                                            pw.print(sj);
                                             pw.println("</deployedWith>");
                                         }
                                         pw.print("\t\t\t<availability>");

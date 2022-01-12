@@ -89,7 +89,7 @@ public class FactionRecord {
     private HashMap<Integer, Integer> techMargin;
     private HashMap<Integer, Integer> upgradeMargin;
 
-    private HashMap<Integer, HashMap<Integer,ArrayList<Integer>>> weightDistribution;
+    private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
     private ArrayList<String> parentFactions;
 
     public FactionRecord() {
@@ -700,7 +700,7 @@ public class FactionRecord {
                 sj.add(faction + ":" + salvage.get(era).get(faction));
             }
             factionRecordBuilder.append("\t\t<salvage pct='").append(pct).append("'>")
-                .append(sj.toString()).append("</salvage>\n");
+                .append(sj).append("</salvage>\n");
         }
         final int[] unitWeightKeys = { UnitType.MEK, UnitType.TANK, UnitType.AERO };
         if (weightDistribution.containsKey(era)) {

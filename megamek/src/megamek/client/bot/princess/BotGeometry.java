@@ -112,8 +112,8 @@ public class BotGeometry {
      *        +y
      * ------------------------------
      * Direction is stored as above, but the meaning of 'intercept' depends
-     * on the direction.  For directions 0,3, intercept means the y=0 intercept
-     * for directions 1,2,4,5 intercept is the x=0 intercept
+     * on the direction.  For directions 0, 3, intercept means the y=0 intercept
+     * for directions 1, 2, 4, 5 intercept is the x=0 intercept
      */
     public static class HexLine {
         private int intercept;
@@ -179,7 +179,7 @@ public class BotGeometry {
         }
 
         /**
-         * This function only makes sense for directions 1,2,4,5
+         * This function only makes sense for directions 1, 2, 4, 5
          * Note that the function getXfromY would be multvalued
          */
         public int getYfromX(int x) {
@@ -470,8 +470,6 @@ public class BotGeometry {
             msg.append("\n\tTesting that center lies in lines... ");
             boolean passed = true;
             for (int i = 0; i < 6; i++) {
-                //System.err.println("direction="+i);
-                //System.err.println("0="+lines[i].judgePoint(center));
                 if (lines[i].judgePoint(center) != 0) {
                     passed = false;
                 }
@@ -486,9 +484,6 @@ public class BotGeometry {
                                                                                                                6)) !=
                                                                          0)) {
                     passed = false;
-                    //System.err.println("direction="+i);
-                    //System.err.println("0="+lines[i].judgePoint(center.translated(i)));
-                    //System.err.println("0="+lines[i].judgePoint(center.translated((i+3)%6)));
                 }
             }
             msg.append(passed ? PASSED : FAILED);
@@ -496,20 +491,15 @@ public class BotGeometry {
             passed = true;
             msg.append("\n\tTesting points to left and right of lines... ");
             for (int i = 0; i < 6; i++) {
-                //            System.err.println("direction="+i);
-                //          System.err.println("-1="+lines[i].judgePoint(center.translated((i+5)%6)));
                 if (-1 != lines[i].judgePoint(center.translated((i + 5) % 6))) {
                     passed = false;
                 }
-                //        System.err.println("-1="+lines[i].judgePoint(center.translated((i+4)%6)));
                 if (-1 != lines[i].judgePoint(center.translated((i + 4) % 6))) {
                     passed = false;
                 }
-                //      System.err.println("1="+lines[i].judgePoint(center.translated((i+1)%6)));
                 if (1 != lines[i].judgePoint(center.translated((i + 1) % 6))) {
                     passed = false;
                 }
-                //    System.err.println("1="+lines[i].judgePoint(center.translated((i+2)%6)));
                 if (1 != lines[i].judgePoint(center.translated((i + 2) % 6))) {
                     passed = false;
                 }

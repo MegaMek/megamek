@@ -38,7 +38,6 @@ public class ScalingPopup extends JPopupMenu {
     
     /** Returns a spacer (empty, small menu item) for a scaling popup menu. */
     public static JMenuItem spacer() {
-
         JMenuItem result = new JMenuItem() {
             private static final long serialVersionUID = 1249257644704746075L;
 
@@ -51,5 +50,4 @@ public class ScalingPopup extends JPopupMenu {
         result.setEnabled(false);
         return result;
     }
-
-};
+}

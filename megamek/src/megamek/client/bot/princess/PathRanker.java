@@ -161,15 +161,15 @@ public abstract class PathRanker implements IPathRanker {
                 continue;
             }
 
-            StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
+            StringBuilder msg = new StringBuilder("Validating Path: ").append(path);
 
             try {
                 // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
             	if (isAirborneAeroOnGroundMap) {
             		// if we have no bombs, we want to make sure our altitude is above 1
             		// if we do have bombs, we may consider altitude bombing (in the future)
-            		if ((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
-            		        (path.getFinalAltitude() < 2)) {
+            		if (path.getEntity().getBombs(BombType.F_GROUND_BOMB).isEmpty()
+                            && (path.getFinalAltitude() < 2)) {
             		    msg.append("\n\tNo bombs but at altitude 1. No way.");
             		    continue;
             		}

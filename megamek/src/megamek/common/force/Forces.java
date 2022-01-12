@@ -97,7 +97,7 @@ public final class Forces implements Serializable {
     
     /** Returns a List of the top-level forces. */
     public List<Force> getTopLevelForces() {
-        return forces.values().stream().filter(f -> f.isTopLevel()).collect(toList());
+        return forces.values().stream().filter(Force::isTopLevel).collect(toList());
     }
     
     /** 

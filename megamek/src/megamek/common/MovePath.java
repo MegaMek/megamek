@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -486,7 +486,7 @@ public class MovePath implements Cloneable, Serializable {
                 if (step.getFacing() != last.getFacing()
                         || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
                             != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
-                        || steps.stream().filter(s -> s.isStrafingStep()).count() > 5) {
+                        || steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
@@ -1434,12 +1434,13 @@ public class MovePath implements Cloneable, Serializable {
                             "for path!");
                 }
             }
-        } // end while
-        //System.out.println("iteration count: " + loopcount);
+        }
+
         if (getFinalCoords().distance(dest) > bestPath.getFinalCoords().distance(dest)) {
             // Make the path we found, this path.
             steps = bestPath.steps;
         }
+
         if (!getFinalCoords().equals(dest)) {
             lazyPathfinder(dest, type);
         }
@@ -1697,7 +1698,7 @@ public class MovePath implements Cloneable, Serializable {
                         && moved == 4)) {
             return false;
         }
-        if (getEntity().wigeLiftoffHover() || steps.stream().map(s -> s.getType())
+        if (getEntity().wigeLiftoffHover() || steps.stream().map(MoveStep::getType)
                 .anyMatch(st -> st == MoveStepType.UP
                         || st == MoveStepType.HOVER)) {
             return false;

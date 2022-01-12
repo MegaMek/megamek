@@ -56,15 +56,15 @@ public class CheckBVTeamCommand extends ServerCommand {
             if (initialTeamBV != 0) {
                 percentage = ((currentTeamBV + 0.0) / initialTeamBV) * 100;
             }
-            StringBuffer cb = new StringBuffer();
-            cb.append(team.toString()).append(": ");
+            StringBuilder sb = new StringBuilder();
+            sb.append(team).append(": ");
             if (suppressEnemyBV && enemyTeam) {
-                cb.append(" Enemy BV suppressed");
+                sb.append(" Enemy BV suppressed");
             } else {
-                cb.append(currentTeamBV).append("/").append(initialTeamBV);
-                cb.append(String.format(" (%1$3.2f%%)",percentage));
+                sb.append(currentTeamBV).append("/").append(initialTeamBV);
+                sb.append(String.format(" (%1$3.2f%%)", percentage));
             }
-            server.sendServerChat(connId, cb.toString());
+            server.sendServerChat(connId, sb.toString());
         }
         server.sendServerChat(connId, "end list");
     }

@@ -896,26 +896,25 @@ public class LosEffects {
                     //75% cover, left
                     leftLos.targetCover  = COVER_75LEFT;
                     rightLos.targetCover = COVER_75LEFT;
-                    setSecondaryCover(leftLos,rightLos);                                       
+                    setSecondaryCover(leftLos, rightLos);                                       
                     losBlockedByCover = true;                    
                 } else if (leftLos.targetCover == COVER_HORIZONTAL && 
                           rightLos.targetCover == COVER_FULL) { 
                     //75% cover, right
                     leftLos.targetCover  = COVER_75RIGHT;
                     rightLos.targetCover = COVER_75RIGHT;
-                    setSecondaryCover(leftLos,rightLos);
+                    setSecondaryCover(leftLos, rightLos);
                     losBlockedByCover = true;
                 } else if (leftLos.targetCover == COVER_HORIZONTAL && 
                         rightLos.targetCover == COVER_HORIZONTAL) { 
-                    //50% cover
-                    //Cover will be set properly, but we need to set secondary
+                    // 50% cover
+                    // Cover will be set properly, but we need to set secondary
                     // cover in case there are two buildings providing 25% cover
-                    setSecondaryCover(leftLos,rightLos);
+                    setSecondaryCover(leftLos, rightLos);
                 }
-                //In the case of vertical and 75% cover, LoS will be blocked.  
+                // In the case of vertical and 75% cover, LoS will be blocked.  
                 // We need to unblock it, unless Los is already blocked.
-                if (!los.blocked && (!leftLos.blocked || !rightLos.blocked) &&
-                        losBlockedByCover) {                   
+                if (!los.blocked && (!leftLos.blocked || !rightLos.blocked) && losBlockedByCover) {                   
                     leftLos.blocked = false;
                     rightLos.blocked = false;
                 }                

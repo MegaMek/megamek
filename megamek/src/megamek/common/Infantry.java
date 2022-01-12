@@ -33,12 +33,10 @@ import java.util.stream.Collectors;
  * I've never seen the rules for powered armor, "anti-mech" troops, or
  * Immortals.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $revision:$
- */
-/*
  * PLEASE NOTE!!! My programming style is to put constants first in tests so the
  * compiler catches my "= for ==" errors.
+ *
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Infantry extends Entity {
     private static final long serialVersionUID = -8706716079307721282L;
@@ -103,7 +101,6 @@ public class Infantry extends Entity {
     /**
      * Infantry armor
      */
-
     private double damageDivisor = 1.0;
     private boolean encumbering = false;
     private boolean spaceSuit = false;
@@ -121,7 +118,6 @@ public class Infantry extends Entity {
      * For mechanized VTOL infantry, stores whether the platoon are microlite troops,
      * which need to enter a hex every turn to remain in flight.
      */
-
     private boolean microlite = false;
 
     /**
@@ -135,7 +131,7 @@ public class Infantry extends Entity {
      */
     private static final int[] NUM_OF_SLOTS = { 20, 20 };
     private static final String[] LOCATION_ABBRS = { "MEN", "FGUN" };
-    private static final String[] LOCATION_NAMES = { "Men" , "Field Guns"};
+    private static final String[] LOCATION_NAMES = { "Men", "Field Guns"};
 
     public int turnsLayingExplosives = -1;
 

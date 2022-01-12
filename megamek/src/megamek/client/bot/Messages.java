@@ -13,7 +13,7 @@
  */
 package megamek.client.bot;
 
-import megamek.common.preference.PreferenceManager;
+import megamek.MegaMek;
 import megamek.common.util.EncodeControl;
 
 import java.text.MessageFormat;
@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 public class Messages {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.bot.messages",
-            PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
+            MegaMek.getMMOptions().getLocale(), new EncodeControl());
 
     private Messages() {
     }

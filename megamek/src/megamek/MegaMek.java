@@ -43,6 +43,7 @@ import java.util.Vector;
  */
 public class MegaMek {
     private static MMPreferences preferences = null;
+    private static MMOptions mmOptions = new MMOptions();
 
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
@@ -135,6 +136,10 @@ public class MegaMek {
         }
 
         return preferences;
+    }
+
+    public static MMOptions getMMOptions() {
+        return mmOptions;
     }
 
     /**

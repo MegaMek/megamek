@@ -18,7 +18,7 @@
  */
 package megamek.client.generator.enums;
 
-import megamek.common.preference.PreferenceManager;
+import megamek.MegaMek;
 import megamek.common.util.EncodeControl;
 
 import java.util.ResourceBundle;
@@ -38,7 +38,7 @@ public enum SkillGeneratorType {
     //region Constructors
     SkillGeneratorType(final String name, final String toolTipText) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.client.messages",
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale(), new EncodeControl());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }

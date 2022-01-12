@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (c) 2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -51,10 +51,12 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.maxRange = RANGE_LONG;
         rulesRefs = "95, IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
+                .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
                 .setClanAdvancement(2822, 2823, DATE_NONE, 2831, 3080)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CWV).setProductionFactions(F_CWV)
-                .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setPrototypeFactions(F_CWV)
+                .setProductionFactions(F_CWV)
+                .setReintroductionFactions(F_EI)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

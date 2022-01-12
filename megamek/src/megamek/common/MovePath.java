@@ -56,7 +56,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT;
+        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE;
         
         /**
          * Whether this move step type will result in the unit entering a new hex
@@ -106,8 +106,8 @@ public class MovePath implements Cloneable, Serializable {
     private Set<MoveStepType> containedStepTypes = new HashSet<>();
     
     // whether this movePath take us directly over an enemy unit
-    // useful for aircraft
-    private boolean fliesOverEnemy;
+    // useful for debugging aircraft on ground maps
+    //private boolean fliesOverEnemy;
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 500;
 
@@ -153,9 +153,9 @@ public class MovePath implements Cloneable, Serializable {
             sb.append("OUT!");
         }
         
-        if (this.getFliesOverEnemy()) {
+        /*if (this.getFliesOverEnemy()) {
             sb.append("E! ");
-        }
+        }*/
         
         return sb.toString();
     }
@@ -192,8 +192,8 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, target, pos));
     }
 
-    public MovePath addStep(final MoveStepType type, final int mineToLay) {
-        return addStep(type, -1, mineToLay);
+    public MovePath addStep(final MoveStepType type, final int additionalIntData) {
+        return addStep(new MoveStep(this, type, additionalIntData));
     }
 
     public MovePath addStep(final MoveStepType type, final int recover, final int mineToLay) {
@@ -299,7 +299,6 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         steps.addElement(step);
-        containedStepTypes.add(step.getType());
         
         final MoveStep prev = getStep(steps.size() - 2);
 
@@ -311,94 +310,7 @@ public class MovePath implements Cloneable, Serializable {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }
-
-
-        // check for illegal jumps
-        final Coords start = getEntity().getPosition();
-        final Coords land = step.getPosition();
-        if ((start == null) || (land == null)) {
-            // If we have null for either coordinate then we know the step
-            // isn't legal.
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        } else {
-            // if we're jumping without a mechanical jump booster (?)
-            // or we're acting like a spheroid dropship in the atmosphere
-            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
-                    (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
-                int distance = start.distance(land);
-                
-                if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
-                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                }
-            }
-        }
         
-        // Can't move backwards and Evade
-        if (!entity.isAirborne() && contains(MoveStepType.BACKWARDS)
-                && contains(MoveStepType.EVADE)) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
-        
-        // If jumpships turn, they can't do anything else 
-        if (game.getBoard().inSpace()
-                && (entity instanceof Jumpship)
-                && !(entity instanceof Warship)
-                && !step.isFirstStep()
-                && (contains(MoveStepType.TURN_LEFT) 
-                        || contains(MoveStepType.TURN_RIGHT))) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
-        
-        // Ensure we only lay one mine
-        if ((step.getType() == MoveStepType.LAY_MINE)) {
-            boolean containsOtherLayMineStep = false;
-            for (int i = 0; i < steps.size() - 1; i++) {
-                if (steps.get(i).getType() == MoveStepType.LAY_MINE) {
-                    containsOtherLayMineStep = true;
-                }
-            }
-            if (containsOtherLayMineStep) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
-        }
-
-        // Ensure we only bomb one hex
-        if (step.isVTOLBombingStep()) {
-            boolean containsOtherBombStep = false;
-            for (int i = 0; i < steps.size() - 1; i++) {
-                if (steps.get(i).isVTOLBombingStep()) {
-                    containsOtherBombStep = true;
-                }
-            }
-            if (containsOtherBombStep) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
-        }
-        
-        // Make sure we are not turning or changing elevation while strafing, and that we are not
-        // starting a second group of hexes during the same round
-        if (step.isStrafingStep() && steps.size() > 1) {
-            MoveStep last = steps.get(steps.size() - 2);
-            // If the previous step is a strafing step, make sure we have the same facing and elevation
-            // and we are not exceeding the maximum five hexes.
-            if (last.isStrafingStep()) {
-                if (step.getFacing() != last.getFacing()
-                        || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
-                            != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
-                        || steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
-                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                }
-            } else {
-                // If the previous step is not a strafing step, make sure that the new step is the only strafing
-                // step we have in the path.
-                for (int i = 0; i < steps.size() - 2; i++) {
-                    if (steps.get(i).isStrafingStep()) {
-                        step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                    }
-                }
-            }
-        }
-
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             Hex hex = game.getBoard().getHex(step.getPosition());
@@ -410,24 +322,11 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        // VTOLs using maneuvering ace to make lateral shifts can't flank
-        // unless using controlled sideslip
-        if (containsLateralShift() && getEntity().isUsingManAce()
-                && (getEntity() instanceof VTOL)
-                && getMpUsed() > getCachedEntityState().getWalkMP()
-                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-        }
+        final Coords start = getEntity().getPosition();
+        final Coords land = step.getPosition();
         
-        if (shouldMechanicalJumpCauseFallDamage()) {
-            step.setDanger(true);
-        }
-       
-        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
-        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
-        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds. 
-        if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
-            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        if (step.getMovementType(false) != EntityMovementType.MOVE_ILLEGAL) {
+            performIllegalCheck(step, start, land);
         }
         
         // If the new step is legal and is a different position than
@@ -443,38 +342,21 @@ public class MovePath implements Cloneable, Serializable {
             }
 
         } // End step-is-legal
-
-        // If using TacOps reverse gear option, cannot mix forward and backward movement
-        // in the same round except VTOLs.
-        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
-                && ((entity instanceof Tank && !(entity instanceof VTOL))
-                        || (entity instanceof QuadVee
-                                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
-            boolean fwd = false;
-            boolean rev = false;
-            for (MoveStep s : steps) {
-                fwd |=  s.getType() == MoveStepType.FORWARDS
-                        || s.getType() == MoveStepType.LATERAL_LEFT
-                        || s.getType() == MoveStepType.LATERAL_RIGHT;
-                rev |=  s.getType() == MoveStepType.BACKWARDS
-                        || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
-                        || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
-            }
-            if (fwd && rev) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
+        
+        if (shouldMechanicalJumpCauseFallDamage()) {
+            step.setDanger(true);
         }
                 
         // If we are using turn modes, go back through the path and mark danger for any turn
         // that now exceeds turn mode requirement. We want to show danger on the previous step
         // so the StepSprite will show danger. Hiding the previous step instead would make turning costs
         // show in the turning hex for units tracking turn mode, unlike other units.
-        if (entity.usesTurnMode() && getMpUsed() > 5) {
+        if (entity.usesTurnMode() && (getMpUsed() > 5)) {
             int turnMode = getMpUsed() / 5;
             int nStraight = 0;
             MoveStep prevStep = steps.get(0);
             for (MoveStep s : steps) {
-                if (s.isTurning() && nStraight < turnMode) {
+                if (s.isTurning() && (nStraight < turnMode)) {
                     prevStep.setDanger(true);
                 }
                 nStraight = s.getNStraight();
@@ -494,22 +376,177 @@ public class MovePath implements Cloneable, Serializable {
                 s.setDanger(s.isDanger() || Compute.isPilotingSkillNeeded(game, entity.getId(),
                         prevStep.getPosition(), s.getPosition(), lastStep.getMovementType(true),
                         prevStep.isTurning(), prevStep.isPavementStep(), prevStep.getElevation(),
-                                s.getElevation(), s));
+                        s.getElevation(), s));
                 s.setPastDanger(s.isPastDanger() || s.isDanger());
                 prevStep = s;
             }
         }
         
-        if (step.useAeroAtmosphere(game, entity)
-        		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
-        		&& step.getPosition() != null  											//null
-        		&& game.getFirstEnemyEntity(step.getPosition(), entity) != null) {
+        // if we're an aerospace unit on a ground map and have passed over a hostile unit
+        // record this fact - it is useful for debugging thus we leave the commented out code here
+        // but for performance reasons, we don't actually do it.
+        /*if (step.useAeroAtmosphere(game, entity)
+        		&& game.getBoard().onGround()
+        		&& (step.getPosition() != null)
+        		&& (game.getFirstEnemyEntity(step.getPosition(), entity) != null)) {
         	fliesOverEnemy = true;
-        }
+        }*/
 
+        // having checked for illegality and other things, add it to the set of contained step types
+        containedStepTypes.add(step.getType());
+        
         return this;
     }
 
+    /**
+     * Perform all the possible "is this illegal" checks.
+     * Short-circuits to omit unnecessary checks once the move has been declared illegal
+     */
+    private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
+        // can't do anything after loading
+        if (contains(MoveStepType.LOAD)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+
+        // check for illegal jumps
+
+        if ((start == null) || (land == null)) {
+            // If we have null for either coordinate then we know the step
+            // isn't legal.
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        } else {
+            // if we're jumping without a mechanical jump booster (?)
+            // or we're acting like a spheroid dropship in the atmosphere
+            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
+                    (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
+                int distance = start.distance(land);
+                
+                if (step.isThisStepBackwards() || (step.getDistance() > distance)) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            }
+        }
+        
+        // Can't move backwards and Evade
+        if (!entity.isAirborne() && contains(MoveStepType.BACKWARDS)
+                && contains(MoveStepType.EVADE)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        
+        // If jumpships turn, they can't do anything else 
+        if (game.getBoard().inSpace()
+                && (entity instanceof Jumpship)
+                && !(entity instanceof Warship)
+                && !step.isFirstStep()
+                && (contains(MoveStepType.TURN_LEFT) 
+                        || contains(MoveStepType.TURN_RIGHT))) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        
+        // Ensure we only lay one mine
+        if ((step.getType() == MoveStepType.LAY_MINE)) {
+            boolean containsOtherLayMineStep = false;
+            for (int i = 0; i < steps.size() - 1; i++) {
+                if (steps.get(i).getType() == MoveStepType.LAY_MINE) {
+                    containsOtherLayMineStep = true;
+                }
+            }
+            if (containsOtherLayMineStep) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
+            }
+        }
+
+        // Ensure we only bomb one hex
+        if (step.isVTOLBombingStep()) {
+            boolean containsOtherBombStep = false;
+            for (int i = 0; i < steps.size() - 1; i++) {
+                if (steps.get(i).isVTOLBombingStep()) {
+                    containsOtherBombStep = true;
+                }
+            }
+            if (containsOtherBombStep) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
+            }
+        }
+        
+        // Make sure we are not turning or changing elevation while strafing, and that we are not
+        // starting a second group of hexes during the same round
+        if (step.isStrafingStep() && steps.size() > 1) {
+            MoveStep last = steps.get(steps.size() - 2);
+            // If the previous step is a strafing step, make sure we have the same facing and elevation
+            // and we are not exceeding the maximum five hexes.
+            if (last.isStrafingStep()) {
+                if (step.getFacing() != last.getFacing()
+                        || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
+                            != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
+                        || steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    return;
+                }
+            } else {
+                // If the previous step is not a strafing step, make sure that the new step is the only strafing
+                // step we have in the path.
+                for (int i = 0; i < steps.size() - 2; i++) {
+                    if (steps.get(i).isStrafingStep()) {
+                        step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // VTOLs using maneuvering ace to make lateral shifts can't flank
+        // unless using controlled sideslip
+        if (containsLateralShift() && getEntity().isUsingManAce()
+                && (getEntity() instanceof VTOL)
+                && getMpUsed() > getCachedEntityState().getWalkMP()
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+       
+        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
+        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
+        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds. 
+        if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        }
+        
+        if ((step.getType() == MoveStepType.BRACE) && !isValidPositionForBrace(step)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            return;
+        }
+        
+        // If using TacOps reverse gear option, cannot mix forward and backward movement
+        // in the same round except VTOLs.
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
+                && ((entity instanceof Tank && !(entity instanceof VTOL))
+                        || (entity instanceof QuadVee
+                                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
+            boolean fwd = false;
+            boolean rev = false;
+            for (MoveStep s : steps) {
+                fwd |=  s.getType() == MoveStepType.FORWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT
+                        || s.getType() == MoveStepType.LATERAL_RIGHT;
+                rev |=  s.getType() == MoveStepType.BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
+            }
+            if (fwd && rev) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return;
+            }
+        }
+    }
+    
     public void compile(final Game g, final Entity en) {
         compile(g, en, true);
     }
@@ -519,6 +556,7 @@ public class MovePath implements Cloneable, Serializable {
         setEntity(en);
         final Vector<MoveStep> temp = new Vector<>(steps);
         steps.removeAllElements();
+        containedStepTypes.clear();
         for (int i = 0; i < temp.size(); i++) {
             MoveStep step = temp.elementAt(i);
             if ((step.getTargetPosition() != null) && (step.getTarget(getGame()) != null)) {
@@ -529,6 +567,8 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);
             } else if (step.getMineToLay() != -1) {
                 step = new MoveStep(this, step.getType(), step.getMineToLay());
+            } else if (step.getBraceLocation() != Entity.LOC_NONE) {
+                step = new MoveStep(this, step.getType(), step.getBraceLocation());
             } else if (step.getLaunched().size() > 0) {
                 step = new MoveStep(this, step.getType(), step.getLaunched());
             } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
@@ -654,6 +694,46 @@ public class MovePath implements Cloneable, Serializable {
     public void clear() {
         steps.removeAllElements();
     }
+    
+    public boolean isValidPositionForBrace(MoveStep step) {
+        return isValidPositionForBrace(step.getPosition(), step.getFacing());
+    }
+    
+    /**
+     * Given a set of coordinates and a facing, is the entity taking this path in a valid 
+     * position to execute a brace?
+     */
+    public boolean isValidPositionForBrace(Coords coords, int facing) {
+        // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomech
+        if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
+            return false;
+        }
+        
+        // for mechs, the check is complicated - you have to be directly in front of a hex with either
+        // a) level 1 level higher than your hex level
+        // b) building/bridge ceiling 1 level higher than your hex level (?)
+        if (getEntity() instanceof Mech) {
+            boolean onBoard = getGame().getBoard().contains(coords);
+            Coords nextPosition = coords.translated(facing);
+            boolean nextHexOnBoard = getGame().getBoard().contains(nextPosition);
+            
+            if (!onBoard || !nextHexOnBoard) {
+                return false;
+            }
+            
+            Hex nextHex = getGame().getBoard().getHex(nextPosition);
+            Hex currentHex = getGame().getBoard().getHex(coords);
+            
+            int curHexLevel = currentHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
+                    currentHex.ceiling() : currentHex.floor();
+            int nextHexLevel = nextHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
+                    nextHex.ceiling() : nextHex.floor();
+            
+            return onBoard && nextHexOnBoard && (nextHexLevel == curHexLevel + 1);
+        }
+        
+        return true;
+    }
 
     public Enumeration<MoveStep> getSteps() {
         return steps.elements();
@@ -704,9 +784,9 @@ public class MovePath implements Cloneable, Serializable {
      * if the target moves.
      * @return Whether or not this flight path takes us over an enemy unit
      */
-    public boolean getFliesOverEnemy() {
+    /*public boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
-    }
+    }*/
     
     /**
      * Method that determines whether a given path goes through a given set of x/y coordinates
@@ -1512,7 +1592,7 @@ public class MovePath implements Cloneable, Serializable {
         copy.steps = new Vector<>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
-        copy.fliesOverEnemy = fliesOverEnemy;
+        //copy.fliesOverEnemy = fliesOverEnemy;
         copy.cachedEntityState = cachedEntityState; // intentional pointer copy
     }
 

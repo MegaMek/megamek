@@ -154,21 +154,16 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:Versatile and powerful, the BattleMaster was one of the best known BattleMechs in existence. Hollis Industries began production in 2633, originally designing it to be the largest and most powerful 'Mech for the Star League armies at that time.
 
+capabilities:Indeed the sheer size of the BattleMaster, combined with the costs and resources needed to build one, meant the 'Mech could only be manufactured on a few planets. Still, those lucky enough to pilot a BattleMaster can attest to some of the stories surrounding the 'Mech. With good reliability, firepower and armoring, the BattleMaster is equally adept anchoring an assault lance or serving as a command vehicle.
 
-Overview: A storied and well-regarded assault 'Mech, the BattleMaster is likely one of the most recognizable command vehicles to be found in the armies of the Inner Sphere. Durable and reliable, the design has served in many key line regiments since its inception in 2633. Though nearly every MechWarrior is familiar with its abilities, few are able to use their knowledge to their advantage when facing this formidable BattleMech.
+history:Although only produced in modest numbers, examples of the BattleMaster could be found in the arsenals of all the Great Houses and technicians have gone to great lengths in order to repair one. During the First Succession War Hollis' BattleMaster factories on Corey were attacked, their production lines destroyed and any finished BattleMasters purloined by the various House forces. While production of new BattleMasters was taken up by Earthwerks Incorporated on Keystone, Trellshire Heavy Industries on Twycross, and Red Devil Industries on Pandora, they could build only a handful of new 'Mechs every year. This was enough though to make House Steiner and House Marik the largest users of BattleMasters during the Succession Wars. House Liao also fielded a large number of BattleMasters, at least until the devastation of the Fourth Succession War when many fell into the hands of the Federated Suns, themselves lacking any BattleMaster factories. By fortuitous accident the Draconis Combine also came into possession of a large number of BattleMasters when a hapless ComStar Precentor, intending to ship unmodified versions of advanced BattleMasters to Com Guard units, sent them to the Combine instead. These BattleMasters served as excellent command vehicles during the War of 3039. New models of the BattleMaster would be introduced in time to take part in the Clan Invasion. Although the manufacture of new BattleMasters was disrupted when Twycross fell to Clan Jade Falcon, the recapture of that world allowed for a brief resumption of production. While Pandora did not fall during the Invasion an effort was made to relocate its BattleMaster factory, but the haphazard nature of the factory and feet-dragging by the planet's corrupt nobility delayed this effort. It wasn't until 3061 that the Red Devil factory was finally ready to be closed when the nobility's lobbying paid off and instead funds were allocated by Archon Katherine Steiner-Davion to refurbish the factory. As part of the arrangement a deal was struck with J.B. BattleMechs Incorporated to produce a new variant, the BLR-4S. Initial units were built starting in 3062 but the FedCom Civil War would delay full-scale production until 3064, by which time the second Jade Falcon Incursion captured the planet and put these new BattleMasters to work in their second-line units. This left the hard-pressed J.B. BattleMechs' factory on Storfors to build the BLR-4S for the Lyran Alliance, while the Free Worlds League and Combine would come out with their own variants.
 
-Capabilities: The BattleMaster's combination of long-ranged, short-ranged, and anti-infantry firepower give it an intimidating and flexible damage profile. Even flankers have to take care, as the BattleMaster is one of the rare designs to mount rear-facing lasers on the base variant. Additionally, the large cockpit lends itself well to the needs of commanding officers. Spacious and well-equipped, it is often modified into a dedicated command console, though the large viewport makes the head slightly more vulnerable to enemy fire than other more armored designs.
-
-Deployment: Although never produced in great numbers, the BattleMaster remains common due to the efforts of commands to keep each machine functional. Due to their production lines, Houses Steiner and Marik fielded the greatest concentrations of the design during the Succession Wars, though every Great House could lay claim to more than a few. The BLR-1G-DC, a simple upgrade, removes certain minor systems in order to mount an advanced Command Console. Extremely popular as a command platform, the addition of a dedicated MechWarrior lets the commanding offer focus on coordinating the battle at hand. The capabilities of this variant are barely reduced in return, so it comes to no surprise that every Successor State has more than a few of these specialized BattleMasters.
-
-systemmanufacturer:CHASSIS:Hollis
-systemmode:CHASSIS:Mark X
-systemmanufacturer:ENGINE:VOX
-systemmode:ENGINE:340
-systemmanufacturer:ARMOR:StarGuard
-systemmode:ARMOR:IV
-systemmanufacturer:COMMUNICATIONS:HarfordCo
-systemmode:COMMUNICATIONS:COM 4000
-systemmanufacturer:TARGETING:HarfordCo
-systemmode:TARGETING:XKZ 1
+manufacturer:Unknown
+primaryfactory:Unknown
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown

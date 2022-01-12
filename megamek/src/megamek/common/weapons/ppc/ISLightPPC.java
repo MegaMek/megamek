@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (c) 2004-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -51,7 +51,7 @@ public class ISLightPPC extends PPCWeapon {
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3064, 3067, 3068, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(F_DC)

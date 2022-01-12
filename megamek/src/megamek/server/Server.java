@@ -7450,6 +7450,10 @@ public class Server implements Runnable {
             if (step.getType() == MoveStepType.EVADE) {
                 entity.setEvading(true);
             }
+            
+            if (step.getType() == MoveStepType.BRACE) {
+                entity.setBraceLocation(step.getBraceLocation());
+            }
 
             if (step.getType() == MoveStepType.SHUTDOWN) {
                 entity.performManualShutdown();
@@ -8629,6 +8633,12 @@ public class Server implements Runnable {
             prevHex = curHex;
 
             firstStep = false;
+            
+            // if we moved at all, we are no longer bracing "for free", except for when 
+            // the current step IS bracing
+            if ((mpUsed > 0) && (step.getType() != MoveStepType.BRACE)) {
+                entity.setBraceLocation(Entity.LOC_NONE);
+            }
         }
 
         // set entity parameters

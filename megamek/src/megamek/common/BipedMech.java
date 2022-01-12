@@ -16,6 +16,9 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.options.OptionsConstants;
 
 public class BipedMech extends Mech {
@@ -851,4 +854,35 @@ public class BipedMech extends Mech {
                 && !isProne();
     }
 
+    /**
+     * Based on the mech's current damage status, return valid brace locations.
+     */
+    public List<Integer> getValidBraceLocations() {
+        List<Integer> validLocations = new ArrayList<>();
+        
+        if (!isLocationBad(Mech.LOC_RARM)) {
+            validLocations.add(Mech.LOC_RARM);
+        }
+        
+        if (!isLocationBad(Mech.LOC_LARM)) {
+            validLocations.add(Mech.LOC_LARM);
+        }
+        
+        return validLocations;
+    }
+
+    @Override
+    public boolean canBrace() {
+        return getCrew().isActive()
+                && !isShutDown()
+                // needs to have at least one functional arm
+                && (!isLocationBad(Mech.LOC_RARM)
+                || !isLocationBad(Mech.LOC_LARM))
+                && !isProne();
+    }
+    
+    @Override
+    public int getBraceMPCost() {
+        return 1;
+    }
 }

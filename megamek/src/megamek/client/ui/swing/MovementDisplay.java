@@ -118,6 +118,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF),
         MOVE_SWIM("moveSwim", CMD_MECH),
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL),
+        MOVE_BRACE("moveBrace", CMD_MECH),
         //Convert command for a single button, which can cycle through modes because MovePath state is available
         MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER),
         //Convert commands used for menus, where the MovePath state is unknown.
@@ -842,6 +843,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateDropButton();
         updateConvertModeButton();
         updateRecklessButton();
+        updateBraceButton();
         updateHoverButton();
         updateManeuverButton();
         updateStrafeButton();
@@ -1037,6 +1039,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setDisconnectEnabled(false);
         setClearEnabled(false);
         setHullDownEnabled(false);
+        setBraceEnabled(false);
         setSwimEnabled(false);
         setModeConvertEnabled(false);
         setAccEnabled(false);
@@ -1138,6 +1141,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateDropButton();
         updateConvertModeButton();
         updateRecklessButton();
+        updateBraceButton();
         updateHoverButton();
         updateManeuverButton();
         updateAeroButtons();
@@ -1728,7 +1732,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             + "</b></html>");
                    
                 }
-                return;
             } else {
                 clientgui.getBoardView().select(b.getCoords());
             }
@@ -1929,6 +1932,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateDropButton();
             updateConvertModeButton();
             updateRecklessButton();
+            updateBraceButton();
             updateHoverButton();
             updateManeuverButton();
             updateSpeedButtons();
@@ -2598,6 +2602,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setRecklessEnabled((null == cmd) || (cmd.length() == 0));
         }
     }
+    
+    private void updateBraceButton() {
+        if (null == ce()) {
+            return;
+        }        
+        
+        MovePath movePath = cmd;
+        if (null == movePath) {
+            movePath = new MovePath(this.getClientgui().getClient().getGame(), ce());
+        }
+        
+        if (!movePath.contains(MoveStepType.BRACE) && 
+                movePath.isValidPositionForBrace(movePath.getFinalCoords(), movePath.getFinalFacing())) {
+            setBraceEnabled(true);
+        } else {
+            setBraceEnabled(false);
+        }
+    }
 
     private void updateManeuverButton() {
 
@@ -2750,9 +2772,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // If the current entity has moved, disable "Load" and "Tow" buttons.
         setLoadEnabled(false);
         setTowEnabled(false);
-        if ((cmd.length() == 0) && (cen != Entity.NONE)) {
+        if (cen != Entity.NONE) {
+            Coords currentPathEndpoint = cmd.getFinalCoords();
+            
             // Check the other entities in the current hex for friendly units.
-            for (Entity other : game.getEntitiesVector(ce.getPosition())) {
+            for (Entity other : game.getEntitiesVector(currentPathEndpoint)) {
                 // If the other unit is friendly and not the current entity
                 // and the current entity has at least 1 MP, if it can
                 // transport the other unit, and if the other hasn't moved
@@ -2764,17 +2788,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     break;
                 }
             } // Check the next entity in this position.
-            //Now check all eligible hexes for towable trailers
-            for (Coords c : ce.getHitchLocations()) {
-                for (Entity other : game.getEntitiesVector(c)) {
-                    // If the other unit is friendly and not the current entity
-                    // if it can tow the other unit, and if the other hasn't moved
-                    // then enable the "Tow" button.
-                    if (ce.canTow(other.getId())) {
-                        setTowEnabled(true);
-                        break;
-                    }
-                } // Check the next entity.
+            
+            // Now check all eligible hexes for towable trailers            
+            if (cmd.length() == 0) {
+                for (Coords c : ce.getHitchLocations()) {
+                    for (Entity other : game.getEntitiesVector(c)) {
+                        // If the other unit is friendly and not the current entity
+                        // if it can tow the other unit, and if the other hasn't moved
+                        // then enable the "Tow" button.
+                        if (ce.canTow(other.getId())) {
+                            setTowEnabled(true);
+                            break;
+                        }
+                    } // Check the next entity.
+                }
             }
         } // End ce-hasn't-moved
     } // private void updateLoadButtons
@@ -2882,7 +2909,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         Entity choice = null;
 
         Vector<Entity> choices = new Vector<>();
-        for (Entity other : game.getEntitiesVector(ce().getPosition())) {
+        for (Entity other : game.getEntitiesVector(cmd.getFinalCoords())) {
             if (other.isLoadableThisTurn() && (ce() != null)
                 && ce().canLoad(other, false)) {
                 choices.addElement(other);
@@ -4714,6 +4741,31 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             clientgui.getBoardView().drawMovementData(ce(), cmd);
             butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
+        } else if (actionCmd.equals(MoveCommand.MOVE_BRACE.getCmd())) {
+            var options = ce().getValidBraceLocations();
+            if (options.size() == 1) {
+                cmd.addStep(MoveStepType.BRACE, options.get(0));
+                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+            } else if (options.size() > 1) {
+                String[] locationNames = new String[options.size()];
+                
+                for (int x = 0; x < options.size(); x++) {
+                    locationNames[x] = ce().getLocationName(options.get(x));
+                }
+                
+                // Dialog for choosing which location to brace
+                String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
+                                "Choose the location to brace:",
+                                "Choose Brace Location", JOptionPane.QUESTION_MESSAGE, null,
+                                locationNames, locationNames[0]);
+    
+                // Verify that we have a valid option...
+                if (option != null) {
+                    int id = options.get(Arrays.asList(locationNames).indexOf(option));
+                    cmd.addStep(MoveStepType.BRACE, id);
+                    butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+                }
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.EscapeDialog.title"),
@@ -5187,6 +5239,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateRollButton();
         updateTakeCoverButton();
         updateLayMineButton();
+        updateBraceButton();
         checkFuel();
         checkOOC();
         checkAtmosphere();
@@ -5457,6 +5510,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setHullDownEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_HULL_DOWN).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_HULL_DOWN.getCmd(), enabled);
+    }
+    
+    private void setBraceEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_BRACE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BRACE.getCmd(), enabled);
     }
 
     private void setClearEnabled(boolean enabled) {

@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
 0.49.7-SNAPSHOT
++ PR #3347: TacOps: AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
++ PR #3346: Logging: Default Global Exception Handler and Standardized Legacy Logging
++ Data: New Sprites, Fluff, Issue #3355, and some general mechset fixes.
++ PR #3358: Per latest errata, transports now load infantry at the end of their movement; the infantry unit has to not have moved yet
++ Data: Fixing Dark Age availability for the Light PPC and Enhanced PPC.
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

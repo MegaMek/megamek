@@ -1915,7 +1915,7 @@ public abstract class Mech extends Entity {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
             return false;
         }
-        return !isProne();
+        return !isProne() && !isBracing();
     }
 
     /**

@@ -14,13 +14,15 @@
  */
 package megamek.utils;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import megamek.common.Board;
 import megamek.common.Configuration;
-import org.apache.logging.log4j.LogManager;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class provides a utility to read in all the boards and check their validity.
@@ -86,15 +88,16 @@ public class BoardsValidator {
                 b.load(is, errBuff, false);
             } catch (Exception e) {
                 numBoardErrors++;
-                LogManager.getLogger().error("Found invalid board: " + boardFile, e);
+                System.err.println("Found invalid board: " + boardFile);
+                e.printStackTrace();
                 return;
             }
 
             if (errBuff.length() > 0) {
                 numBoardErrors++;
-                LogManager.getLogger().error("Found invalid board: " + boardFile);
+                System.err.println("Found invalid board: " + boardFile);
                 if (isVerbose) {
-                    LogManager.getLogger().error(errBuff);
+                    System.err.println(errBuff);
                 }
             }
         }

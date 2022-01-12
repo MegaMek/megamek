@@ -18,15 +18,18 @@
  */
 package megamek.utils;
 
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
-import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
 
 /** 
  * Scans all boards and applies automated tags to them.
@@ -35,7 +38,6 @@ import org.apache.logging.log4j.LogManager;
  * they may be removed accordingly and will also not be applied twice.  
  * 
  * @author Simon (Juliez)
- *
  */
 public class BoardsTagger {
 
@@ -119,7 +121,8 @@ public class BoardsTagger {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
         } catch (Exception ex) {
-            LogManager.getLogger().fatal("Board tagger cannot scan boards", ex);
+            System.out.println("Board tagger cannot scan boards");
+            ex.printStackTrace();
             System.exit(64);
         }
         System.out.println("Finished.");
@@ -316,12 +319,11 @@ public class BoardsTagger {
             // Re-save the board
             try (OutputStream os = new FileOutputStream(boardFile)) {
                 board.save(os);
-            } catch (IOException e) {
+            } catch (Exception ex) {
                 System.out.println("Error: Could not save board: " + boardFile);
-                e.printStackTrace();
+                ex.printStackTrace();
             }
 
         }
     }
-
 }

@@ -459,7 +459,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         // transport values
         String unused = en.getUnusedString();
-        if (unused.isEmpty()) {
+        if (unused.isBlank()) {
             unused = Messages.getString("MechDisplay.None");
         }
         unusedR.setText(unused);

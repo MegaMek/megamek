@@ -757,7 +757,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (!localName.isEmpty()) {
+        if (!localName.isBlank()) {
             // initialize game
             client = new Client(playerName, "localhost", port);
             gui = new ClientGUI(client, controller);

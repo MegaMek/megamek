@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.49.7-SNAPSHOT
++ Issue #504 adding View Active Unit, to view active unit in Unit Display and target previously viewed unit
 + PR #3347: TacOps: AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
 + PR #3346: Logging: Default Global Exception Handler and Standardized Legacy Logging
 + Data: New Sprites, Fluff, Issue #3355, and some general mechset fixes.
@@ -44,7 +45,7 @@ VERSION HISTORY:
 + PR #3298: Entity::assignAMS Performance Refactor
 + PR #3307: Log4j2 2.17.1 Swapover From Log4j1 1.2.17
 + Data: Tech Progression update. Merging the tables from TRO Prototypes and 3145 NTNU. Moves
-	Static tech levels for lots of equipment to 3145 per those table. 
+    Static tech levels for lots of equipment to 3145 per those table.
 + PR #3315: LGTM Code Issues: Fixes Round 2
 + PR #3316: Fixing a NPE in AeroGroundPathFinder::ForwardToTheEnd
 + Data: New Units (Rec Guides 19, 20), new sprites, TP fixes, and updated Camos
@@ -97,8 +98,8 @@ VERSION HISTORY:
 + PR #3162: Suite Version Tracking: Adding Full Versioning and Version Protection
 + PR #3176: Fixing ForceGeneratorViewUi NPE
 + PR #3177: Properly reveal vibrabombs detonated during a unit's movement
-	allows active probes to reveal minefields during movement as per TacOps Active Probe rules (unit movement stops if a minefield is revealed)
-	prevent soft-lock when stopping a unit's movement due to minefield detonation with "simultaneous movement phase" turned on
+    allows active probes to reveal minefields during movement as per TacOps Active Probe rules (unit movement stops if a minefield is revealed)
+    prevent soft-lock when stopping a unit's movement due to minefield detonation with "simultaneous movement phase" turned on
 + PR #3190: Vibrabombs and other non-conventional/inferno mines always reduce density when detonated per current TacOps rules.
 + Issue #3147: Dead-fire missiles behave according to updated IO rules (no auto-hotload, cluster hit penalties, 5 point clustering for LRMs)
 + Issue #2894: Allow airborne microlite VTOL infantry to flee
@@ -116,7 +117,7 @@ VERSION HISTORY:
 + Issue #3175: Fix concurrent modification issue preventing multi-bot replacement
 + Data: Fixes for #3208, #3188, #3155, #3146, #3141, #3117, #3064, #3040, #3034, #2949, #2647, and #2637
 + Data: Numerous Fluff entries added, new sprites, new camos, and largest board in MegaMek added
-	Stonewall072 Ocoee (50x700)
+    Stonewall072 Ocoee (50x700)
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging
@@ -125,13 +126,13 @@ VERSION HISTORY:
 + PR #2971: Fixing the Magistracy of Canopus Planetary Militia Force Generator Faction
 + PR #2987: Remove unwanted water terrain exits from boards
 + PR #2990, 2993: Fix errors discovered while play-testing on potato-grade computer:
-	- prevent tooltip errors when mousing over non-unit spotting target
-	- prevent player camo color related force rendering error in lobby due to slow MekHQ->MegaMek data transfer
-	- improved bot ability to avoid flying off-board on space maps in newtonian flight model
-	- prevent ejected aerospace pilots from crashing the server when drifting off-board on space map
-	- prevent attempts to use searchlights on non-existent buildings
-	- "Nearest" destination zone is now respected properly by the bot
-	- Fix several "stuttering"/"jumping" issues when moving around the map
+    - prevent tooltip errors when mousing over non-unit spotting target
+    - prevent player camo color related force rendering error in lobby due to slow MekHQ->MegaMek data transfer
+    - improved bot ability to avoid flying off-board on space maps in newtonian flight model
+    - prevent ejected aerospace pilots from crashing the server when drifting off-board on space map
+    - prevent attempts to use searchlights on non-existent buildings
+    - "Nearest" destination zone is now respected properly by the bot
+    - Fix several "stuttering"/"jumping" issues when moving around the map
 + Issue #2995: Critical Hits not being applied
 + PR #2998: Advanced Map Generator Panel: Fixing Woods Size Text
 + Issue #2988, 2989: Multiple fixes to errors encountered when using fighter squadrons
@@ -182,7 +183,7 @@ VERSION HISTORY:
 + PR #2896: Base Components: Using proper locale
 + PR #2903: Camouflage: Layered Overlay
 + Issue #2883: Can once again issue flee command to allied bots, but need to specify an edge (see docs); 
-	Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
+    Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
 + PR #2912: Show all locations for spreadable equipment in summary view
 + PR #2916: CommonMenuBar maintenance (checkbox items)
 + Issue #2897: Princess will now attack with swarming BA
@@ -325,13 +326,13 @@ VERSION HISTORY:
 0.47.16 (RC2) (2021-01-05 1700 UTC)
 + Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill
 + Issue #2513, #907: Adjust message for gun emplacement ammo criticals to more clearly indicate if no damage has occurred; 
-		implement non-weapon/ammo critical hits (e.g. ECM) on gun emplacements
+        implement non-weapon/ammo critical hits (e.g. ECM) on gun emplacements
 + Issue #2517: Ensure AmmoType::canSwitchToAmmo ignores munition types
 + PR #2519: Open up Compute and MMRandom to allow mocking in tests
 + Issue #2522: Vehicular Grenade Launchers smoke munitions not working
 + Issue #2533: Explosive Ammunition BV Penalty Errata
 + Issue #2537: Prevent soft-lock when processing nuclear blasts near the edge of the board; 
-		improved error recovery when loading games after processing failure in certain cases
+        improved error recovery when loading games after processing failure in certain cases
 + Issue #2535: Remove nag for airborne unit entering rubble hex
 + Issue #2499: Separating Colour Camouflage and Player Colours
 + Issue #2544: Rear or turret-mounted weapons failing to load
@@ -417,7 +418,7 @@ VERSION HISTORY:
 + PR #2334: Modernizing Multiple Visual Configs
 + PR #2351: Prevent aerospace units from sometimes showing as crippled after rolling for but not confirming a crit
 + PR #2357: Restored(?) full head ejection system to a lot of Wolfhound/Hatchetman variants;
-	ejection now hits the cockpit or blows off the head for full head ejection - mostly relevant for MekHQ
+    ejection now hits the cockpit or blows off the head for full head ejection - mostly relevant for MekHQ
 + Issue #2246: "Change Tileset Theme" menu entry disabled outside the Board Editor
 + Issues #2349, #2347. #2339 Various Data fixes
 + Data: New Sprites
@@ -484,7 +485,7 @@ VERSION HISTORY:
 + Issue #2089: Generate Names from Specified Historical Ethnicity
 + PR #2158: Press ctrl-k for a handy summary of keyboard shortcuts
 + PR #2103: Graphical upgrade for all unit wrecks, except mechs and infantry. 
-	Immobilized tanks also have a visual indicator depending on motive type and power plant.
+    Immobilized tanks also have a visual indicator depending on motive type and power plant.
 + Data New Sprites, add Rec Guide Vol 1/2 and Golden Century.
 + Data: Updated Maps including AGoAC maps
 + PR #2168: Improvements to Princess behavior when attempting to navigate to a destination/retreat edge
@@ -530,7 +531,7 @@ VERSION HISTORY:
 + PR #2050: Entities which sprinted no longer report as being able to spot since that's illegal anyway
 + PR #2058: Fixed missing paren for damaged aero heat sinks in aerospace unit "Mech View"
 + PR #2042: Remove incorrect minimum range penalty on direct fire artillery vs aerospace units
-		Enable Princess to use artillery in direct-fire mode (vs both ground and air units), including artillery cannons
+        Enable Princess to use artillery in direct-fire mode (vs both ground and air units), including artillery cannons
 + PR #2060: Fix game freeze for bot-controlled ejected pilots and hot-dropped infantry on ground maps
 + PR #2061: Random Callsign Generator
 + PR #2041: Remove weird 'Hardened' on the equipment section of some Combat Vehicles
@@ -674,8 +675,8 @@ VERSION HISTORY:
 + Issue #377: Ask user if they want to quit MegaMek when attempting to close the window.
 + PR #1765: Fix several board validation issues with map editor concerning buildings and bridges; performance improvement for map editor.
 + Issue #1767: When randomly generating a map, picking a theme is reflected in the map editor.
-+ PR #1790: various improvements and fixes around random map dialog;	
-	ability to directly open map definition file from map editor
++ PR #1790: various improvements and fixes around random map dialog;
+    ability to directly open map definition file from map editor
 + Issue #1787: user can now manually reset mini-map and mech info card positions
 + PR #1795: Corrections to invalid data in some unofficial boards
 + PR #1779: Counter-battery fire
@@ -758,8 +759,8 @@ v0.47.1 (2019-11-05 0300 UTC)
 + Updating the Simon Landmine Map Pack.
 + PR #1519: Validation for support vehicles, corrections to many of the support vehicle unit files.
 + PR #1521: Multiple fixes and errata related to handling of large craft missile weapons;
-	grounded dropships can now fire missiles as artillery;
-	grounded dropships cannot directly fire capital weapons at ground targets;
+    grounded dropships can now fire missiles as artillery;
+    grounded dropships cannot directly fire capital weapons at ground targets;
 + PR #1527/Issue #1303: Mostly implemented current TW rules for movement of spheroid dropships in atmosphere
 + PR #1530: Treat fixed wing support vehicles as support vehicles instead of conventional fighters for cost calculation.
 + Issue #1516: Rotary RAC does not generate extra heat when rapid firing
@@ -770,17 +771,17 @@ v0.47.1 (2019-11-05 0300 UTC)
 v0.47.0 (2019-08-21 0300 UTC)
 + Issue #1315: add support for map annotations and description to .board files.
 + PR #1323: implement "#sitrep" client command which can be used to display, 
-	in the console, a list of units near the entity with the given ID.
+    in the console, a list of units near the entity with the given ID.
 + PR #1329: Princess will now fire at multiple targets with units that have no secondary target penalty. 
-	This should be most noticeable with dropships and other large spacecraft.
+    This should be most noticeable with dropships and other large spacecraft.
 + PR #1358: Princess properly operates really slow aircraft on ground maps and can actually drop thunder bombs now.
 + PR #1354: Support for detailed large craft parts (K-F boom, grav deck, CIC, etc)
 + PR #1401: Improved bot behavior using field gun infantry.
 + PR #1404: Princess can now use rapid-fire autocannons; will respect "no AMS as weapon" setting
 + PR #1405: Introduced Princess capability for indirect fire at spotted units
 + PR #1409: Dropship artillery bays now fully functional
-	Dropships can optionally load/fire alternate artillery munitions
-	Copperhead ammo functions as homing rounds
+    Dropships can optionally load/fire alternate artillery munitions
+    Copperhead ammo functions as homing rounds
 + Issue #1351: When a homing round lands, the firing player will now get asked which tagged unit gets clobbered.
 + PR #1406: Princess can now spot units for indirect fire
 + PR #1413: Performance and functionality improvements for space sensors
@@ -825,7 +826,7 @@ v0.45.4 (2019-03-24 1700 UTC)
 + PR #1250: Disallow loading trailers during deployment
 + Data: New Sprites and Unit fixes.
 + PR #1258: Aero Sanity 2.0! Fixes a number of reporting bugs and adds full support for Advanced Point Defense, 
-	Glancing/Direct blows, S2S nuclear weapons and Bearings-Only Capital Missiles
+    Glancing/Direct blows, S2S nuclear weapons and Bearings-Only Capital Missiles
 + Issue #1272: Clan BA SRM missing Multi-Purpose Missiles
 + Data: New Sprites and New Units.
 + Issue #1256: Magna Laser Rifle has range 0 instead of 2
@@ -896,7 +897,7 @@ v0.45.1 (2018-09-03 2300 UTC)
 + Data: Moving old and out of date Read.me file.
 + PR #1092: Fixes for force generator (some unit rating mismatches, skill calculations, a few faction rule fixes)
 + PR #1100: Changed a long-standing bot behavior where a bot with "immediate withdrawal" 
-		on would ignore "forced withdrawal" rules and keep firing with its crippled units.
+        on would ignore "forced withdrawal" rules and keep firing with its crippled units.
 + Data: New Sprites and some unit fixes.
 + PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
 + Issue #612: [Feature] Year setting in various random unit generation mechanisms now gets set to the game year whenever that changes.
@@ -927,10 +928,10 @@ v0.45.0 (2018-08-02 0200 UTC)
 + Issue #1060: Allow Princess to properly consider paths that take her aircraft (VTOL and ASF) over low-CF fixed structures
 + Issue #1056: Rotary AC Ammo Does Not Populate Munitions Carried Lists
 + PR #1041: Force Generator
-	Available as tab in Random Army Dialog; generates faction- and era-appropriate forces up to a regiment
-	(larger for some factions) with optional support combat and transport forces. Some or all of the
-	force can be added to the forces in the lounge or exported to a MUL.
-	See documentation: docs/RAT Stuff/force-generator.txt
+    Available as tab in Random Army Dialog; generates faction- and era-appropriate forces up to a regiment
+    (larger for some factions) with optional support combat and transport forces. Some or all of the
+    force can be added to the forces in the lounge or exported to a MUL.
+    See documentation: docs/RAT Stuff/force-generator.txt
 + PR #1070: Makes the advanced search dialog smaller by default and resizable.
 + PR #1071 - Mech Sprites
 + Data - New Sprites
@@ -949,8 +950,8 @@ v0.43.11-RC5 (2018-06-04 0100 UTC)
 + PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
 + PR #696: Fixes #974: Edge Reroll for Superchargers Breaks Superchargers
 + PR #983: Implement "waypoint launch" for capital missiles
-		Prevent capital missiles from being fired in anything other than normal mode on non-space maps
-		Fix inability to switch firing modes on capital missiles
+        Prevent capital missiles from being fired in anything other than normal mode on non-space maps
+        Fix inability to switch firing modes on capital missiles
 + PR #963: Fix for glitchy-looking empty hexes near window edges when rendering large/zoomed maps in isometric mode
 + Data: New and Updated Sprites.
 + Updated RAT generator files with dropship name changes and conformed mechs and vehicles to MUL early SW era.
@@ -963,65 +964,65 @@ v0.43.11-RC5 (2018-06-04 0100 UTC)
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix
-	Fixes issue #864: SRMs properly deal damage to airborne targets in the event that they hit
+    Fixes issue #864: SRMs properly deal damage to airborne targets in the event that they hit
 + PR #964: Aero Sensor Suites and Visibility in Atmosphere/Low Vis Conditions
-	Fixes issue #387: Fixed aero targeting in limited-visibility scenarios
+    Fixes issue #387: Fixed aero targeting in limited-visibility scenarios
 + PR #946: shaky stick logic adjustment
-	Fixes issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
+    Fixes issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
 + PR #945: Fix (Again) for Tooltip Problems
-	Fixes issue #943: Setting tooltip dismiss delay to -1 no longer freezes clint
+    Fixes issue #943: Setting tooltip dismiss delay to -1 no longer freezes clint
 + PR #947: Fix for #936 && PR #938: Fix for tooltip NPEs
-	Fixes issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.
+    Fixes issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.
 + PR #959: Fixed cost for CASE
-	Fixes issue #949: Kraken (Bane) 3 costs over 5 billion c-bills
+    Fixes issue #949: Kraken (Bane) 3 costs over 5 billion c-bills
 + Issue #948: Error in armor of Reptar and Araña
 + PR #940: Fixed number of crits for Clan endo-composite
 + PR #939: Unit type adds for mhq
 + PR #937: Artillery Class Cast Errors
-	Cleans up Server.assignAMS() regarding NPE caused by non-homing artillery rounds
-	Partially fixes #936: 0.43.9-RC3 Princess crashes
+    Cleans up Server.assignAMS() regarding NPE caused by non-homing artillery rounds
+    Partially fixes #936: 0.43.9-RC3 Princess crashes
 + PR #950: Make Mount List Submenus
-	Fixes issues #764: Mount List Too Long
+    Fixes issues #764: Mount List Too Long
 + PR #967: Ant bulid.xml fix
-	Fixes issue with ant build.xml not seeing localized messages.properties files
+    Fixes issue with ant build.xml not seeing localized messages.properties files
 + PR #956: Added cost for T_AEROSPACE_ARMOR
-	Fixes issue mekhq#671: aerospace armor costs -5
+    Fixes issue mekhq#671: aerospace armor costs -5
 + PR #941: Unload Stranded Bug fix and Voluntary Infantry Unloading Implementation
-	Fixes princess throwing NPEs when she has stranded units in the deployment phase
+    Fixes princess throwing NPEs when she has stranded units in the deployment phase
 + PR #953: Make weapon mode button handling better
-	Fixes issues #829: Switching off PPC Field Inhibitor has no effect
+    Fixes issues #829: Switching off PPC Field Inhibitor has no effect
 
 
 v0.43.9-RC3 (2018-03-13 18:00 UTC)
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
 + PR #916: Make MUL files work for tracking ammo on GunEmplacements
 + PR #928: Corrections to scenarios, new keyword for handling random maps
-	Fixes Issue #927: Scenario random maps don't work with the new board directory structure
+    Fixes Issue #927: Scenario random maps don't work with the new board directory structure
 + PR #924: Fix for #215: Entity Sprites displacement in Deployment
-	Fixes Issue #215: Entity Sprites displacement in Deployment
+    Fixes Issue #215: Entity Sprites displacement in Deployment
 + PR #921: Fixes boardview tooltip NPEs
 + PR #919: Pavement hexes not turned to mud in rainy conditions
-	Fixes Issue #546: Can get bogged down on pavement
+    Fixes Issue #546: Can get bogged down on pavement
 + PR #915: Board Background / BoardEditor fixes
 + PR #839: Add check to ignore SI damage for squadron status display
 + PR #917: Implemented break in PD heat checks instead of continue
 + PR #909: Add MiscType entry for Clan Endo-Composite structure
-	Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
+    Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
 + PR #923: Bogdown after DFA
-	Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
+    Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
 + Remove duplicate Glancing Blow and Direct Blow report messages
 + PR #930: Fix the image cache
 + PR #931: Observer Initiative & TacGen ICB Reset
-	Fixes Issue #339: Init streak compensation
-	Fixes Issue #345: Using Tactical Genius should not reset Initiative Streak Compensation
-	Fixes Issue #804: Initiative Streak Compensation Counts Observers
-	Fixes round reports showing initiative for observers
-	Fixes round reports showing BV information for players who never had any (original observers)
+    Fixes Issue #339: Init streak compensation
+    Fixes Issue #345: Using Tactical Genius should not reset Initiative Streak Compensation
+    Fixes Issue #804: Initiative Streak Compensation Counts Observers
+    Fixes round reports showing initiative for observers
+    Fixes round reports showing BV information for players who never had any (original observers)
 + PR #932: Add Handle override to CapitalMissileBayHandler
-	Fixes Glancing/Direct Blow with capital missiles
-	Fixes handling of AMS vs. capital missiles
+    Fixes Glancing/Direct Blow with capital missiles
+    Fixes handling of AMS vs. capital missiles
 + PR #933: Fully amphibious water travel fix
-	Fixes Issue #913: [.43.8 RC2] Bridge has a basement for some reason
+    Fixes Issue #913: [.43.8 RC2] Bridge has a basement for some reason
 
 v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.
@@ -1088,9 +1089,9 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + Cleaning up the Docs folder, and adding some other files.
 + Issue #684: Alternative Proto-AC ammo in the process of Implementing the Proto-AC Ammo, 
     I noticed the Clan Improved AC's didn't have them implemented
-+ PR #693: Show unit roles in summary view.	
++ PR #693: Show unit roles in summary view.
 + Bug: Infantry weights calculated wrong, due to double adding of AntiMek training. 
-	Fixing unit files to include standard Foot infantry and AntiMek Trained one.
+    Fixing unit files to include standard Foot infantry and AntiMek Trained one.
 + PR #699: Errata: Mechs should not become stuck in mud
 + PR #701: Space stations now require 2 pilots, which fixes issues in MHQ
 + Issue #680: Updated startup.sh to handle Java 9
@@ -8550,7 +8551,7 @@ v0.33.9 (2007-09-02, 17:47 GMT+2)
 + ejected MechWarriors don't need to make consciousness rolls now
 + Bug 1771542: MASC bug
 + Fixed a null pointer server crash releated to the camo image in swing. Note
-   that the	camo image is still behaving very odd.
+   that the camo image is still behaving very odd.
 + Begun making client commands in the swing GUI. Client commands start with a #
 + Help command for client commands added.
 + More client commands and slight improvements to chatting using the swing GUI.
@@ -8864,11 +8865,11 @@ v0.33.1 (2006-10-31 22:40 GMT+9)
 + RFE 1585610: Mark mechs with multiple TAG units as invalid
 + Bug: mule kicks used front leg criticals to detemine damage instead of rear
 + Patch 1556051:
-+	Silver bullet gauss rifle (aka IS HAG/15) from unbound
-+	Dead fire missiles from THB
-+	Heat seeking missiles from maxtech
-+	Tandem charge SRMs from THB
-+	Follow the Leader LRMs from THB
++    Silver bullet gauss rifle (aka IS HAG/15) from unbound
++    Dead fire missiles from THB
++    Heat seeking missiles from maxtech
++    Tandem charge SRMs from THB
++    Follow the Leader LRMs from THB
 + Update build.xml to work with retroweaver 1.2.5, updated retroweaver rt lib
     to 1.2.5
 + cleaned some unused variable warnings

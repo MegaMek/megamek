@@ -35,6 +35,7 @@ Next Target (No Allies) ----- Ctrl-C
 Previous Target (No Allies) ----- Ctrl-Z
 Next Valid Target (No Allies) ----- Ctrl-Shift-C
 Previous Valid Target (No Allies) -----Ctrl-Shift-Z
+View Acting Unit----- V
 Previous Weapon Mode----- Shift-Tab
 Next Weapon Mode----- Tab
 Previous Weapon----- Q

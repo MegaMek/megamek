@@ -145,7 +145,7 @@ public class MMPreferences {
             }
         } catch (FileNotFoundException ignored) {
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogManager.getLogger().error("Error reading from the user preferences file: " + filePath, e);
         }
     }

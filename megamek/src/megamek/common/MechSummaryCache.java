@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import megamek.MegaMek;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -200,7 +201,7 @@ public class MechSummaryCache {
             // check the cache
             try {
                 if (unit_cache_path.exists()
-                        && (unit_cache_path.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
+                        && (unit_cache_path.lastModified() >= MegaMek.TIMESTAMP)) {
                     loadReport.append("  Reading from unit cache file...\n");
                     lLastCheck = unit_cache_path.lastModified();
                     InputStream istream = new BufferedInputStream(
@@ -234,7 +235,7 @@ public class MechSummaryCache {
             } catch (Exception e) {
                 loadReport.append("  Unable to load unit cache: ")
                         .append(e.getMessage()).append("\n");
-                LogManager.getLogger().error("", e);
+                LogManager.getLogger().error(loadReport.toString(), e);
             }
         }
 
@@ -301,12 +302,12 @@ public class MechSummaryCache {
     private void logReport() {
         loadReport.append(m_data.length).append(" units loaded.\n");
 
-        if (hFailedFiles.size() > 0) {
+        if (!hFailedFiles.isEmpty()) {
             loadReport.append("  ").append(hFailedFiles.size())
                     .append(" units failed to load...\n");
         }
 
-        LogManager.getLogger().info(loadReport.toString());
+        LogManager.getLogger().debug(loadReport.toString());
     }
 
     private void done() {

@@ -1,5 +1,5 @@
 /*
- * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
+ * MechSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
  * Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
  * Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
  * This program is free software; you can redistribute it and/or modify it
@@ -373,7 +373,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = gridBagConstraints.weighty = 1;
         getContentPane().add(splitPane, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(5,0,5,0);
+        gridBagConstraints.insets = new Insets(5, 0, 5, 0);
         gridBagConstraints.weightx = gridBagConstraints.weighty = 0;
         gridBagConstraints.gridy = 1;
         getContentPane().add(panelButtons, gridBagConstraints);

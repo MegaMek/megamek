@@ -18,14 +18,18 @@
  */
 package megamek.utils;
 
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
-import megamek.common.*;
 
 /** 
  * Scans all boards and applies automated tags to them.
@@ -34,7 +38,6 @@ import megamek.common.*;
  * they may be removed accordingly and will also not be applied twice.  
  * 
  * @author Simon (Juliez)
- *
  */
 public class BoardsTagger {
 
@@ -113,13 +116,13 @@ public class BoardsTagger {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         try {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
-        } catch (IOException e) {
-            System.out.println("Something is not quite right.");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            System.out.println("Board tagger cannot scan boards");
+            ex.printStackTrace();
             System.exit(64);
         }
         System.out.println("Finished.");
@@ -297,14 +300,14 @@ public class BoardsTagger {
         Set<String> toRemove = board.getTags().stream().filter(t -> t.contains(AUTO_SUFFIX)).collect(toSet());
 
         // Find any applicable tags to give the board
-        Set<String> toAdd = matchingTags.keySet().stream().filter(t -> matchingTags.get(t)).map(Tags::getName).collect(toSet());
+        Set<String> toAdd = matchingTags.keySet().stream().filter(matchingTags::get).map(Tags::getName).collect(toSet());
 
         if (DEBUG) {
             System.out.println("----- Board: " + boardFile);
             if (toRemove.equals(toAdd)) {
                 System.out.println("No changes");
             } else {
-                toAdd.stream().forEach(System.out::println);
+                toAdd.forEach(System.out::println);
             }
         }
         
@@ -316,12 +319,11 @@ public class BoardsTagger {
             // Re-save the board
             try (OutputStream os = new FileOutputStream(boardFile)) {
                 board.save(os);
-            } catch (IOException e) {
+            } catch (Exception ex) {
                 System.out.println("Error: Could not save board: " + boardFile);
-                e.printStackTrace();
+                ex.printStackTrace();
             }
 
         }
     }
-
 }

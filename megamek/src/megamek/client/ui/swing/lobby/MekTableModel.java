@@ -295,7 +295,7 @@ public class MekTableModel extends AbstractTableModel {
             }
 
             setIconTextGap(UIUtil.scaleForGUI(10));
-            setText("<HTML>" + value.toString());
+            setText("<HTML>" + value);
             boolean compact = chatLounge.isCompact();
             if (compact) {
                 setIcon(null);

@@ -175,8 +175,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         description.deleteCharAt(description.length() - 1);
         description.deleteCharAt(description.length() - 1);
         
-        description.append("; ").append(Integer.toString(size()))
-                                .append(" weapons fired ");
+        description.append("; ").append(size()).append(" weapons fired ");
         
         if (detailed) {
             for (WeaponFireInfo weaponFireInfo : this) {

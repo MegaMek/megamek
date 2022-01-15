@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur
  * (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -28,13 +28,10 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/3/13 8:48 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class ComputeECMTest {
     
     @Test
@@ -91,7 +88,7 @@ public class ComputeECMTest {
             TestCase.fail(e.getMessage());
         }
         
-        Coords pos = new Coords(0,0);
+        Coords pos = new Coords(0, 0);
         archer.setPosition(pos);
         archer.setOwner(mockPlayer);
         archer.setGame(mockGame);
@@ -227,7 +224,7 @@ public class ComputeECMTest {
         // Same Hex Tests
         
         // Attack Entity ECM Info
-        Coords aePos = new Coords(6,6);
+        Coords aePos = new Coords(6, 6);
         ECMInfo aeNullECM = null;
         ECMInfo aeECM = new ECMInfo(6, aePos, mockPlayer, 1, 0);
         ECMInfo aeAngelECM = new ECMInfo(6, aePos, mockPlayer, 0, 1);
@@ -313,7 +310,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(true, result);
         
         // Add some Angel ECM to eliminate the ECCM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 0, 1);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -389,7 +386,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(false, result);
         
         // Add in another enemy basic ECM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 1, 0);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -475,7 +472,7 @@ public class ComputeECMTest {
         // Same Hex Tests
         
         // Attack Entity ECM Info
-        Coords aePos = new Coords(2,2);
+        Coords aePos = new Coords(2, 2);
         ECMInfo aeNullECM = null;
         ECMInfo aeECM = new ECMInfo(6, aePos, mockPlayer, 1, 0);
         ECMInfo aeAngelECM = new ECMInfo(6, aePos, mockPlayer, 0, 1);
@@ -503,7 +500,7 @@ public class ComputeECMTest {
         Mockito.when(ae.getOwner()).thenReturn(mockPlayer);
         Mockito.when(ae.getECMInfo()).thenReturn(aeNullECM);
         
-        Coords targetPos = new Coords(3,20);
+        Coords targetPos = new Coords(3, 20);
         
         /*********************************************************************/
         // Basic ECM Test
@@ -563,7 +560,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(true, result);
         
         // Add some Angel ECM to eliminate the ECCM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 0, 1);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -639,7 +636,7 @@ public class ComputeECMTest {
         TestCase.assertEquals(false, result);
         
         // Add in another enemy basic ECM
-        enemyPos = new Coords(4,4);
+        enemyPos = new Coords(4, 4);
         enemyECMInfo = new ECMInfo(6, enemyPos, mockEnemy, 1, 0);
         Mockito.when(additionalEnemy.getECMInfo()).thenReturn(enemyECMInfo);
         entitiesVector.add(additionalEnemy);
@@ -668,7 +665,7 @@ public class ComputeECMTest {
         //  Shoud be affected by ECM, no Angel, no ECCM
         entitiesVector = new Vector<>();
         Entity enemy1 = Mockito.mock(Mech.class);
-        Coords ecm1Pos = new Coords(14,14);
+        Coords ecm1Pos = new Coords(14, 14);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, mockEnemy, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(mockEnemy);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -704,7 +701,7 @@ public class ComputeECMTest {
         
         // Add Entity with ECM
         Entity enemy1 = Mockito.mock(Mech.class);
-        Coords ecm1Pos = new Coords(5,5);
+        Coords ecm1Pos = new Coords(5, 5);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, owner, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -713,7 +710,7 @@ public class ComputeECMTest {
         
         // Add Entity with ECM out of range
         enemy1 = Mockito.mock(Mech.class);
-        ecm1Pos = new Coords(20,20);
+        ecm1Pos = new Coords(20, 20);
         ecm1 = new ECMInfo(6, ecm1Pos, owner, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -761,7 +758,7 @@ public class ComputeECMTest {
         
         // Attacking Entity
         Entity enemy1 = Mockito.mock(Mech.class);
-        Coords ecm1Pos = new Coords(5,5);
+        Coords ecm1Pos = new Coords(5, 5);
         ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, owner, 0, 1);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
@@ -770,7 +767,7 @@ public class ComputeECMTest {
         
         // Add Entity with ECM out of range
         enemy1 = Mockito.mock(Mech.class);
-        ecm1Pos = new Coords(20,20);
+        ecm1Pos = new Coords(20, 20);
         ecm1 = new ECMInfo(6, ecm1Pos, owner, 1, 0);
         Mockito.when(enemy1.getOwner()).thenReturn(owner);
         Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);

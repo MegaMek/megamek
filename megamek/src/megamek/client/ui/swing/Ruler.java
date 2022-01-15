@@ -325,11 +325,11 @@ public class Ruler extends JDialog implements BoardViewListener {
         ToHitData thd;
         if (flip) {
             thd = LosEffects.calculateLos(client.getGame(),
-                    buildAttackInfo(start, end, h1, h2,cboIsMech1.isSelected(),
+                    buildAttackInfo(start, end, h1, h2, cboIsMech1.isSelected(),
                             cboIsMech2.isSelected())).losModifiers(client.getGame());
         } else {
             thd = LosEffects.calculateLos(client.getGame(),
-                    buildAttackInfo(end, start, h2, h1,cboIsMech2.isSelected(),
+                    buildAttackInfo(end, start, h2, h1, cboIsMech2.isSelected(),
                             cboIsMech1.isSelected())).losModifiers(client.getGame());
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -339,11 +339,11 @@ public class Ruler extends JDialog implements BoardViewListener {
 
         if (flip) {
             thd = LosEffects.calculateLos(client.getGame(),
-                    buildAttackInfo(end, start, h2, h1,cboIsMech2.isSelected(),
+                    buildAttackInfo(end, start, h2, h1, cboIsMech2.isSelected(),
                             cboIsMech1.isSelected())).losModifiers(client.getGame());
         } else {
             thd = LosEffects.calculateLos(client.getGame(),
-                    buildAttackInfo(start, end, h1, h2,cboIsMech1.isSelected(),
+                    buildAttackInfo(start, end, h1, h2, cboIsMech1.isSelected(),
                             cboIsMech2.isSelected())).losModifiers(client.getGame());
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {

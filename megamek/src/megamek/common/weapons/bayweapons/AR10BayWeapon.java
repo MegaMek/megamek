@@ -1,18 +1,14 @@
-/* MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
-/*
- * Created on Sep 25, 2004
+/* MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
 package megamek.common.weapons.bayweapons;
 
@@ -27,16 +23,11 @@ import megamek.server.Server;
 
 /**
  * @author Jay Lawson
+ * @since Sep 25, 2004
  */
 public class AR10BayWeapon extends AmmoBayWeapon {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 8756042527483383101L;
 
-    /**
-     * 
-     */
     public AR10BayWeapon() {
         super();
         // tech levels are a little tricky
@@ -59,17 +50,17 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         this.capital = true;
         rulesRefs = "210,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
-            .setISAdvancement(2540, 2550, 3055, 2950, 3051)
-            .setISApproximate(true, false, false, true, false)
-            .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FS,F_LC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+                .setISAdvancement(2540, 2550, 3055, 2950, 3051)
+                .setISApproximate(true, false, false, true, false)
+                .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS, F_LC);
     }
 
     /*
@@ -80,10 +71,9 @@ public class AR10BayWeapon extends AmmoBayWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        Mounted weapon = game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId());
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
         if (weapon.isInBearingsOnlyMode() && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {

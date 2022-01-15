@@ -1,27 +1,15 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software* Foundation; either version 2 of the
+ * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
 package megamek.common;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
@@ -32,9 +20,15 @@ import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
- * Represents any type of equipment mounted on a 'Mek, excluding systems and
- * actuators.
+ * Represents any type of equipment mounted on a 'Mek, excluding systems and actuators.
  *
  * @author Ben
  * @since April 1, 2002, 1:35 PM
@@ -587,7 +581,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Sets the modes that this type of equipment can be in. By default the
+     * Sets the modes that this type of equipment can be in. By default, the
      * EquipmentType doesn't have the modes, so don't try to call this method
      * with null or empty argument.
      *
@@ -1141,7 +1135,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @deprecated Use {@link #calcEraAvailability(int,boolean) calcEraAvailability to get availability
+     * @deprecated Use {@link #calcEraAvailability(int, boolean) calcEraAvailability to get availability
      *      for IS/Clan in a given year, or {@link #getBaseAvailability(int) getBaseAvailability}
      *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
      */
@@ -1151,7 +1145,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * @deprecated Use {@link #getYearAvailabilityName(int,boolean) getYearAvailabilityName}
+     * @deprecated Use {@link #getYearAvailabilityName(int, boolean) getYearAvailabilityName}
      *      to get availability for IS or Clan in a specific year,
      *      or {@link #getEraAvailabilityName(int) getEraAvailabilityName to get code(s) for the era.
      */
@@ -1297,7 +1291,7 @@ public class EquipmentType implements ITechnology {
     public static void writeEquipmentDatabase(File f) {
         try {
             BufferedWriter w = new BufferedWriter(new FileWriter(f));
-            w.write("Megamek Equipment Database");
+            w.write("MegaMek Equipment Database");
             w.newLine();
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqdb ");
             w.write(f.toString());
@@ -1367,7 +1361,7 @@ public class EquipmentType implements ITechnology {
 
                 // Gather the unique tech levels for this equipment ...
                 List<Integer> levels = type.getTechLevels().keySet().stream()
-                        .map(year -> type.getTechLevel(year))
+                        .map(type::getTechLevel)
                         .sorted()   // ordered for ease of use
                         .distinct()
                         .collect(Collectors.toList());

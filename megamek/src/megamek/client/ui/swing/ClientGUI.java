@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -353,7 +353,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } else {
             frame.setSize(800, 600);
         }
-        frame.setMinimumSize(new Dimension(640,480));
+        frame.setMinimumSize(new Dimension(640, 480));
         UIUtil.updateWindowBounds(frame);
 
         frame.setBackground(SystemColor.menu);
@@ -2037,7 +2037,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         }
                     }
                     //Set up the selection pane
-                    String i18nString = "TeleMissileTargetDialog.message";;
+                    String i18nString = "TeleMissileTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TeleMissileTargetDialog.title";
                     title = Messages.getString(i18nString);
@@ -2068,8 +2068,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             TAGTargetDescriptions.add(tgt.getDisplayName());
                         }
                     }
-                    //Set up the selection pane
-                    i18nString = "TAGTargetDialog.message";;
+                    // Set up the selection pane
+                    i18nString = "TAGTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TAGTargetDialog.title";
                     title = Messages.getString(i18nString);

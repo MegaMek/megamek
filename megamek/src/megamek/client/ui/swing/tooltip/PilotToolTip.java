@@ -156,7 +156,7 @@ public final class PilotToolTip {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
         result.append(guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA));
-        result.append(getOptionList(crew.getOptions().getGroups(), grp -> crew.countOptions(grp), detailed));
+        result.append(getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed));
         result.append("</FONT>");
         return result; 
     }

@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2018 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -2821,7 +2821,7 @@ public abstract class Mech extends Entity {
     public void autoSetInternal() {
         // stupid irregular table... grr.
         switch ((int) weight) {
-        // H, CT,TSO,ARM,LEG
+        // H, CT, TSO, ARM, LEG
             case 10:
                 setInternal(3, 4, 3, 1, 2);
                 break;
@@ -2995,15 +2995,14 @@ public abstract class Mech extends Entity {
     @Override
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
-        addEquipment(mounted,loc,rearMounted,-1);
+        addEquipment(mounted, loc, rearMounted, -1);
     }
 
     /**
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted,
-            int critSlot)
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted, int critSlot)
             throws LocationFullException {
         // if there's no actual location or this is a LAM capital fighter weapons group,
         // or ammo for a LAM bomb weapon then don't add criticals
@@ -8173,7 +8172,7 @@ public abstract class Mech extends Entity {
                 { 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5,
                     5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10 },
                 { 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4,
-                    5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8 ,8, 8, 8, 8, 9 },
+                    5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 9 },
                 { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4,
                     4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8 },
                 { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3,

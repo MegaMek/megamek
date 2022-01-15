@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur
  * (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 10/30/13 9:25 AM
  */
 @RunWith(JUnit4.class)

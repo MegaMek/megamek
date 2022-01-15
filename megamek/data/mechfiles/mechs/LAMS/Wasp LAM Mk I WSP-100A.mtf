@@ -146,4 +146,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Designed right after the Stinger LAM proved the Land-Air 'Mech concept, the aerodynamic Wasp chassis also seemed to promise a successful conversion. However, weapon accuracy was severely hampered on initial prototypes. Only after the Harvard Company hired Katherine Piscalla was a successful Wasp LAM actually produced.
 
+capabilities:The Wasp LAM is similar to the Stinger LAM, maintaining the same ground and air speed. The only real difference is in the armament.
+
+deployment:This version of the Wasp LAM replaces the bomb bay with an LRM-10 launcher and an extra jump jet. This variant was later used as the inspiration for the Valkyrie.
+
+history:The Wasp LAM is able to convert from BattleMech to Aerospace Fighter faster than any other Land-Air 'Mech. The Wasp LAM also mounts no lostech (save the conversion equipment). The ease of use and ability to drop bombs from bomb bays made the Wasp LAM especially successful in air-to-ground strikes, no matter where that ground may be. During its first operation, Wasp LAMs were tasked with destroying a nuclear weapons facility orbiting in the Terran Oort Cloud in 2690. Generations of SLDF ground soldiers loved the Wasp LAM so much, they bestowed upon it the moniker "angels on our shoulders". The Wasp LAM was a highly sought-after prize, and a jealously guarded commodity when most of the Wasp LAM production facilities were destroyed shortly after the start of the First Succession War. By the thirty-first century, the Wasp LAM was an exceedingly rare sight within the Inner Sphere.
+
+manufacturer:Harvard Company, Inc.
+primaryfactory:Epsilon Eridani
+systemmanufacturer:CHASSIS:Harvard 12K
+systemmanufacturer:ENGINE:GM 150
+systemmanufacturer:ARMOR:Durallex Light
+systemmanufacturer:JUMPJET:GM ATO 100
+systemmanufacturer:COMMUNICATIONS:Rand 1200
+systemmanufacturer:TARGETING:Rand LAMTar 100

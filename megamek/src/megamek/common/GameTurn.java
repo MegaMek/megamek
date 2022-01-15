@@ -1,24 +1,17 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * GameTurn.java
- *
- * Created on September 6, 2002, 11:52 AM
- */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -35,12 +28,9 @@ import megamek.common.options.OptionsConstants;
  * any entity.
  *
  * @author Ben
+ * @since September 6, 2002, 11:52 AM
  */
 public class GameTurn implements Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8340385894504735190L;
 
     private int playerId;
@@ -74,7 +64,7 @@ public class GameTurn implements Serializable {
      *         <code>false</code> if the entity is not valid for this turn.
      */
     public boolean isValidEntity(Entity entity, Game game) {
-        return isValidEntity(entity,game,true);
+        return isValidEntity(entity, game, true);
     }
     
     /**

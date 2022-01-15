@@ -82,7 +82,7 @@ public class MoveCommand extends ClientCommand {
                     return "Entity " + ce().toString()
                             + " selected for movement.";
                 } catch (Exception e) {
-                    return "Not an entity ID or valid number." + e.toString();
+                    return "Not an entity ID or valid number." + e;
                 }
             } else if (ce() != null) {
                 if (args[1].equalsIgnoreCase("JUMP")) {

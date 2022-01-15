@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -470,7 +470,7 @@ public class Board implements Serializable {
     }
     
     /** 
-     * Checks all hex edges of the hex at (x,y) if automatically handled 
+     * Checks all hex edges of the hex at (x, y) if automatically handled 
      * terrains such as inclines must be placed or removed.
      * @param x The hex X-coord.
      * @param y The hex Y-coord.

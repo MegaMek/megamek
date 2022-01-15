@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
  * This program is free software; you can redistribute it and/or modify it
@@ -145,7 +145,7 @@ public class WarshipMapSet implements DisplayMapSet {
         vLabels[11].setValue(getCriticalHitTally(t.getLeftThrustHits(), 3));
         vLabels[12].setValue(getCriticalHitTally(t.getRightThrustHits(), 3));
         vLabels[13].setValue(collarDamageString);
-        vLabels[14].setValue(getCriticalHitTally(t.getTotalDamagedGravDeck(),t.getTotalGravDeck()));
+        vLabels[14].setValue(getCriticalHitTally(t.getTotalDamagedGravDeck(), t.getTotalGravDeck()));
         vLabels[15].setValue(kfDamageString);
         vLabels[16].setValue(sailDamageString);
 
@@ -206,7 +206,7 @@ public class WarshipMapSet implements DisplayMapSet {
         labels[Jumpship.LOC_ARS] = WidgetUtils.createLabel("ARS", fm, Color.black, 83, 120);
         labels[Jumpship.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black, 50, 160);
         labels[6] = WidgetUtils.createLabel("SI", fm, Color.black, 50, 90);
-        labels[7] = WidgetUtils.createLabel("Avionics:", fm, Color.white,10, 210);
+        labels[7] = WidgetUtils.createLabel("Avionics:", fm, Color.white, 10, 210);
         labels[8] = WidgetUtils.createLabel("CIC:", fm, Color.white, 10, 225);
         labels[9] = WidgetUtils.createLabel("Engine:", fm, Color.white, 10, 240);
         labels[10] = WidgetUtils.createLabel("Sensors:", fm, Color.white, 10, 255);

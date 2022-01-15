@@ -647,10 +647,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             
             for (MissionRole role : MissionRole.values()) {
                 if (role.fitsUnitType(unitType)) {
-                    JCheckBox chk = new JCheckBox(Messages.getString("MissionRole."
-                            + role.toString()));
-                    chk.setToolTipText(Messages.getString("MissionRole."
-                            + role.toString() + ".tooltip"));
+                    JCheckBox chk = new JCheckBox(Messages.getString("MissionRole." + role));
+                    chk.setToolTipText(Messages.getString("MissionRole." + role + ".tooltip"));
                     chk.setName(role.toString());
                     roleChecks.add(chk);
                 }
@@ -660,7 +658,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.gridwidth = 1;
             c.fill = GridBagConstraints.NONE;
             c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.0;
             c.weighty = 0.0;
             for (int i = 0; i < roleChecks.size(); i++) {
                 c.gridx = i % 3;

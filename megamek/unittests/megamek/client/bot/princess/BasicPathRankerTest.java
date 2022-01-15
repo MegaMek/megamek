@@ -32,7 +32,6 @@ import java.util.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 12/5/13 10:19 AM
  */
 @RunWith(JUnit4.class)
@@ -88,8 +87,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.getUnitBehaviorTracker()).thenReturn(mockBehaviorTracker);
     }
 
-    private void assertRankedPathEquals(final RankedPath expected,
-                                        final RankedPath actual) {
+    private void assertRankedPathEquals(final RankedPath expected, final RankedPath actual) {
         Assert.assertNotNull("Actual path is null.", actual);
         final StringBuilder failure = new StringBuilder();
         if (!expected.getReason().equals(actual.getReason())) {
@@ -97,8 +95,8 @@ public class BasicPathRankerTest {
             failure.append("\nActual   :").append(actual.getReason());
         }
         if (!expected.getPath().equals(actual.getPath())) {
-            failure.append("\nExpected :").append(expected.toString());
-            failure.append("\nActual   :").append(actual.toString());
+            failure.append("\nExpected :").append(expected);
+            failure.append("\nActual   :").append(actual);
         }
         final int expectedRank = (int) (expected.getRank() * (1 / TOLERANCE));
         final int actualRank = (int) (actual.getRank() * (1 / TOLERANCE));

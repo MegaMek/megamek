@@ -1,18 +1,14 @@
 /*
  * MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Jun 17, 2007
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
@@ -23,12 +19,9 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class Warship extends Jumpship {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4650692419224312511L;
 
     // additional Warship locations
@@ -50,10 +43,10 @@ public class Warship extends Jumpship {
         return UnitType.WARSHIP;
     }
 
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
-    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0};
-    
+    // ASEW Missile Effects, per location
+    // Values correspond to Locations, as seen above: NOS, FLS, FRS, AFT, ALS, ARS, LBS, RBS
+    private int[] asewAffectedTurns = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
     /*
      * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
      */
@@ -73,7 +66,7 @@ public class Warship extends Jumpship {
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        // Primitives don't distinguish between jumpships and warships.
+        // Primitives don't distinguish between JumpShips and WarShips.
         if (isPrimitive()) {
             return super.getConstructionTechAdvancement();
         }
@@ -107,7 +100,7 @@ public class Warship extends Jumpship {
         int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
-        //Helium Tanks make up about 2/3 of the drive core.
+        // Helium Tanks make up about 2/3 of the drive core.
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
     
@@ -334,7 +327,6 @@ public class Warship extends Jumpship {
         bvText.append(startTable);
         // find the maximum length of the columns.
         for (int l = 0; l < left.length; l++) {
-
             if (l == 21) {
                 getWeaponsAndEquipmentCost(true);
             } else {
@@ -604,7 +596,7 @@ public class Warship extends Jumpship {
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
         
-        return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
+        return (getFacing() + (rotate >= 3 ? 5 : 1)) % 6;
     }
     
     /**

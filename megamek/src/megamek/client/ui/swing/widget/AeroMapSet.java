@@ -1,16 +1,16 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 
 package megamek.client.ui.swing.widget;
@@ -35,7 +35,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent ASF unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
 public class AeroMapSet implements DisplayMapSet {
 
@@ -51,8 +51,7 @@ public class AeroMapSet implements DisplayMapSet {
     // private static final int INT_STR_OFFSET = 4;
     // Polygons for all areas
     private Polygon noseArmor = new Polygon(
-            new int[] { 45, 50, 60, 65, 75, 80 }, new int[] { 80, 20, 0, 0, 20,
-                    80 }, 6);
+            new int[] { 45, 50, 60, 65, 75, 80 }, new int[] { 80, 20, 0, 0, 20, 80 }, 6);
     // front internal structure
     private Polygon Structure = new Polygon(new int[] { 50, 50, 75, 75 },
             new int[] { 80, 160, 160, 80 }, 4);
@@ -141,11 +140,11 @@ public class AeroMapSet implements DisplayMapSet {
         	if (ds.isKFBoomDamaged()) {
         		kfboom = 1;
         	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom,1));
+        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
         	if (ds.isDockCollarDamaged()) {
         		collar = 1;
         	}
-        	vLabels[12].setValue(getCriticalHitTally(collar,1));
+        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }
@@ -193,11 +192,11 @@ public class AeroMapSet implements DisplayMapSet {
         // Labels for Front view
         // Prefer to use message thingy but don't know how
         labels[Aero.LOC_NOSE] = WidgetUtils.createLabel("NOS", fm, Color.black, 62, 30);
-        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black,10,57);
+        //   labels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.FrontIS"), fm, Color.black, 10, 57);
         labels[Aero.LOC_LWING] = WidgetUtils.createLabel("LWG", fm, Color.black, 32, 120);
-        //    labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black,10,106);
+        //    labels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.LIS"), fm, Color.black, 10, 106);
         labels[Aero.LOC_RWING] = WidgetUtils.createLabel("RWG", fm, Color.black, 92, 120);
-        //    labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black,10,106);
+        //    labels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createLabel(Messages.getString("TankMapSet.RIS"), fm, Color.black, 10, 106);
         labels[Aero.LOC_AFT] = WidgetUtils.createLabel("AFT", fm, Color.black, 62, 170);
         labels[4] = WidgetUtils.createLabel("SI", fm, Color.black, 62, 120);
         labels[5] = WidgetUtils.createLabel("Avionics:", fm, Color.white, 10, 210);
@@ -294,11 +293,11 @@ public class AeroMapSet implements DisplayMapSet {
 
     private void translateAreas() {
         areas[Aero.LOC_NOSE].translate(0, 0);
-        // areas[Aero.LOC_NOSE + INT_STR_OFFSET].translate(8,29);
+        // areas[Aero.LOC_NOSE + INT_STR_OFFSET].translate(8, 29);
         areas[Aero.LOC_LWING].translate(0, 0);
-        // areas[Aero.LOC_LWING + INT_STR_OFFSET].translate(8,29);
+        // areas[Aero.LOC_LWING + INT_STR_OFFSET].translate(8, 29);
         areas[Aero.LOC_RWING].translate(0, 0);
-        // areas[Aero.LOC_RWING + INT_STR_OFFSET].translate(8,29);
+        // areas[Aero.LOC_RWING + INT_STR_OFFSET].translate(8, 29);
         areas[Aero.LOC_AFT].translate(0, 0);
         areas[4].translate(0, 0);
     }

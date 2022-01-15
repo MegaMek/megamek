@@ -1,23 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * DfaAttackAction.java
- *
- * Created on March 16, 2002, 11:43 AM
- */
-
 package megamek.common.actions;
 
 import java.util.Enumeration;
@@ -28,12 +21,9 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * @author Ben
+ * @since March 16, 2002, 11:43 AM
  */
 public class DfaAttackAction extends DisplacementAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 3953889779582616903L;
 
     /**

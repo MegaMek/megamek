@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.io.PrintWriter;
@@ -25,9 +24,6 @@ import megamek.common.preference.PreferenceManager;
  * Protomechs. Level 2 Clan equipment.
  */
 public class Protomech extends Entity {
-    /**
-     *
-     */
     private static final long serialVersionUID = -1376410042751538158L;
 
     public static final int NUM_PMECH_LOCATIONS = 7;
@@ -35,8 +31,7 @@ public class Protomech extends Entity {
     private static final String[] LOCATION_NAMES = { "Body", "Head", "Torso",
             "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
-    private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA",
-            "L", "MG" };
+    private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA", "L", "MG" };
 
     // Crew damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
@@ -839,10 +834,9 @@ public class Protomech extends Entity {
      */
     @Override
     public void autoSetInternal() {
-        int mainGunIS = hasMainGun() ? (getWeight() > 9 ? 2 : 1)
-                : IArmorState.ARMOR_NA;
+        int mainGunIS = hasMainGun() ? (getWeight() > 9 ? 2 : 1) : IArmorState.ARMOR_NA;
         switch ((int) weight) {
-        // H, TSO,ARM,LEGS,MainGun
+        // H, TSO, ARM, LEGS, MainGun
             case 2:
                 setInternal(1, 2, isQuad() ? IArmorState.ARMOR_NA : 1,
                         isQuad() ? 4 : 2, mainGunIS);

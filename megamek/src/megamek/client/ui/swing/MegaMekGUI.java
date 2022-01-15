@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
  *
@@ -163,7 +163,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
                 for (int x = 0; x < w; x += iW) {
                     for (int y = 0; y < h; y += iH) {
-                        g.drawImage(backgroundIcon, x, y,null);
+                        g.drawImage(backgroundIcon, x, y, null);
                     }
                 }
             }
@@ -236,7 +236,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         MegamekButton quitB;
         JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
                 JLabel.CENTER);
-        labVersion.setPreferredSize(new Dimension(250,15));
+        labVersion.setPreferredSize(new Dimension(250, 15));
         if (skinSpec.fontColors.size() > 0) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
@@ -757,7 +757,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (!"".equals(localName)) {
+        if (!localName.isBlank()) {
             // initialize game
             client = new Client(playerName, "localhost", port);
             gui = new ClientGUI(client, controller);
@@ -807,7 +807,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Connect to to a game and then launch the chat lounge.
+     * Connect to a game and then launch the chat lounge.
      */
     void connect() {
         ConnectDialog cd = new ConnectDialog(frame);

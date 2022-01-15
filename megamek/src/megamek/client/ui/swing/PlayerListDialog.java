@@ -40,7 +40,7 @@ public class PlayerListDialog extends JDialog {
         add(new JButton(new CloseAction(this)), BorderLayout.PAGE_END);
 
         refreshPlayerList();
-        setMinimumSize(new Dimension(300,260));
+        setMinimumSize(new Dimension(300, 260));
         pack();
         setResizable(false);
         setLocation(parent.getLocation().x + (parent.getSize().width / 2) 

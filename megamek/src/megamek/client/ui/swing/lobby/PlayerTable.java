@@ -18,28 +18,27 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
+import megamek.MegaMek;
+import megamek.client.bot.BotClient;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.IStartingPositions;
+import megamek.common.Player;
+import megamek.common.options.OptionsConstants;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Point;
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.*;
-import javax.swing.table.*;
-
-import megamek.client.bot.BotClient;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 class PlayerTable extends JTable {
     private static final long serialVersionUID = 6252953920509362407L;
@@ -154,7 +153,7 @@ class PlayerTable extends JTable {
         private static final long serialVersionUID = 4947299735765324311L;
 
         public PlayerRenderer() {
-            setLayout(new GridLayout(1,1,5,0));
+            setLayout(new GridLayout(1, 1, 5, 0));
             setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         }
 
@@ -203,7 +202,7 @@ class PlayerTable extends JTable {
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
             result.append("BV: ");
-            NumberFormat formatter = NumberFormat.getIntegerInstance(PreferenceManager.getClientPreferences().getLocale());
+            NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getLocale());
             result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
             result.append("</FONT>");
 

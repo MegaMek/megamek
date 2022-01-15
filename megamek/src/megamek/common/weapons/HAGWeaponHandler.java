@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * Created on Sep 24, 2004
+ * @since Sep 24, 2004
  */
 public class HAGWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -8193801876308832102L;

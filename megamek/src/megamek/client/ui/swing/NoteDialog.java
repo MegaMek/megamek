@@ -61,8 +61,8 @@ public class NoteDialog extends JDialog implements ActionListener {
         JPanel layout;
         
         noteText.setLineWrap(true);
-        noteText.setMinimumSize(new Dimension(getWidth(),200));
-        noteText.setPreferredSize(new Dimension(getWidth(),200));
+        noteText.setMinimumSize(new Dimension(getWidth(), 200));
+        noteText.setPreferredSize(new Dimension(getWidth(), 200));
         
         noteLbl = new JLabel(Messages.getString("NoteDialog.note"));
         visibilityLbl = new JLabel(Messages.getString("NoteDialog.visibility"));

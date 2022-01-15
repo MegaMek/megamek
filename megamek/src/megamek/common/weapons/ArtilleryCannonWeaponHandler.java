@@ -1,18 +1,17 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -36,15 +35,11 @@ import megamek.server.Server;
  * @author Numien, based work by Sebastian Brocks
  */
 public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     boolean handledAmmoAndReport = false;
 
     /**
-     * This consructor may only be used for deserialization.
+     * This constructor may only be used for deserialization.
      */
     protected ArtilleryCannonWeaponHandler() {
         super();
@@ -79,8 +74,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -149,8 +143,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            targetPos = Compute.scatter(targetPos,
-                    (Math.abs(toHit.getMoS()) + 1) / 2);
+            targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS()) + 1) / 2);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {

@@ -33,7 +33,7 @@ import java.util.Vector;
  */
 public class MechSearchFilter {
 
-    public enum BoolOp { AND, OR, NOP };
+    public enum BoolOp { AND, OR, NOP }
     public String sWalk;
     public String sJump;
     public int iWalk;
@@ -87,7 +87,7 @@ public class MechSearchFilter {
             throws FilterParsingException {
         equipmentCriteria = new ExpressionTree();
         if (!toks.isEmpty()) {
-            equipmentCriteria.root = createFTFromTokensRecursively(toks.iterator(),null);
+            equipmentCriteria.root = createFTFromTokensRecursively(toks.iterator(), null);
             checkEquipment = true;
         } else {
             checkEquipment = false;
@@ -107,14 +107,13 @@ public class MechSearchFilter {
         if (filterTok instanceof AdvancedSearchDialog.ParensFT) {
             if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals("(")) {
                 if (currNode == null) {
-                    return createFTFromTokensRecursively(toks,null);
+                    return createFTFromTokensRecursively(toks, null);
                 } else {
-                    currNode.children.add(
-                            createFTFromTokensRecursively(toks,null));
+                    currNode.children.add(createFTFromTokensRecursively(toks, null));
                     return currNode;
                 }
             } else if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals(")")) {
-                ExpNode nextNode = createFTFromTokensRecursively(toks,null);
+                ExpNode nextNode = createFTFromTokensRecursively(toks, null);
                 // This right paren is the end of the expression
                 if (nextNode == null) {
                     return currNode;
@@ -125,28 +124,25 @@ public class MechSearchFilter {
             }
         }
 
-        //Parsing an Operation
+        // Parsing an Operation
         if (filterTok instanceof AdvancedSearchDialog.OperationFT) {
             AdvancedSearchDialog.OperationFT ft = (AdvancedSearchDialog.OperationFT) filterTok;
             ExpNode newNode = new ExpNode();
             // If currNode is null, we came from a right paren
             if (currNode == null) {
                 newNode.operation = ft.op;
-                ExpNode nextNode = createFTFromTokensRecursively(toks,null);
-                if (nextNode.operation == newNode.operation ||
-                        nextNode.operation == BoolOp.NOP) {
+                ExpNode nextNode = createFTFromTokensRecursively(toks, null);
+                if ((nextNode.operation == newNode.operation) || (nextNode.operation == BoolOp.NOP)) {
                     newNode.children.addAll(nextNode.children);
                 } else {
                     newNode.children.add(nextNode);
                 }
                 return newNode;
-            // If we are already working on the same operation, keeping adding
-            //  children to it
-            } else if (currNode.operation == ft.op ||
-                    currNode.operation == BoolOp.NOP) {
+            // If we are already working on the same operation, keeping adding children to it
+            } else if ((currNode.operation == ft.op) || (currNode.operation == BoolOp.NOP)) {
                 currNode.operation = ft.op;
-                //We're already parsing this operation, continue on
-                return createFTFromTokensRecursively(toks,currNode);
+                // We're already parsing this operation, continue on
+                return createFTFromTokensRecursively(toks, currNode);
             } else { //Mismatching operation
                 // In the case of an AND, since AND has a higher precedence,
                 //  take the last seen operand, then the results of further
@@ -155,7 +151,7 @@ public class MechSearchFilter {
                     ExpNode leaf = currNode.children.remove(currNode.children.size() - 1);
                     newNode.operation = BoolOp.AND;
                     newNode.children.add(leaf);
-                    ExpNode sibling = createFTFromTokensRecursively(toks,newNode);
+                    ExpNode sibling = createFTFromTokensRecursively(toks, newNode);
                     if (sibling.operation == currNode.operation) {
                         currNode.children.addAll(sibling.children);
                     } else {
@@ -165,7 +161,7 @@ public class MechSearchFilter {
                 } else { //BoolOp.OR
                     newNode.operation = BoolOp.OR;
                     newNode.children.add(currNode);
-                    newNode.children.add(createFTFromTokensRecursively(toks,null));
+                    newNode.children.add(createFTFromTokensRecursively(toks, null));
                     return newNode;
                 }
             }
@@ -177,9 +173,9 @@ public class MechSearchFilter {
               currNode = new ExpNode();
           }
           AdvancedSearchDialog.EquipmentFT ft = (AdvancedSearchDialog.EquipmentFT) filterTok;
-          ExpNode newChild = new ExpNode(ft.internalName,ft.qty);
+          ExpNode newChild = new ExpNode(ft.internalName, ft.qty);
           currNode.children.add(newChild);
-          return createFTFromTokensRecursively(toks,currNode);
+          return createFTFromTokensRecursively(toks, currNode);
 
         }
         return null;
@@ -251,9 +247,10 @@ public class MechSearchFilter {
         int jump = -1;
         try {
             jump = Integer.parseInt(f.sJump);
-        } catch (NumberFormatException ne) {
-            //ignore
+        } catch (Exception ignored) {
+
         }
+
         if (jump > -1) {
             if (f.iJump == 0) { // at least
                 if (mech.getJumpMp() < jump) {
@@ -313,26 +310,28 @@ public class MechSearchFilter {
         List<String> eqNames = mech.getEquipmentNames();
         List<Integer> qty = mech.getEquipmentQuantities();
         //Evaluate the expression tree, if there's not a match, return false
-        if (f.checkEquipment && !f.evaluate(eqNames,qty))
+        if (f.checkEquipment && !f.evaluate(eqNames, qty)) {
             return false;
+        }
 
-        //Check year criteria
+        // Check year criteria
         int startYear = Integer.MIN_VALUE;
         int endYear = Integer.MAX_VALUE;
         try {
             startYear = Integer.parseInt(f.sStartYear);
-        } catch (NumberFormatException ne) {
-            //ignore
+        } catch (Exception ignored) {
+
         }
+
         try {
             endYear = Integer.parseInt(f.sEndYear);
-        } catch (NumberFormatException ne) {
-            //ignore
+        } catch (Exception ignored) {
+
         }
+
         if ((mech.getYear() < startYear) || (mech.getYear() > endYear)) {
             return false;
         }
-
 
         return true;
     }

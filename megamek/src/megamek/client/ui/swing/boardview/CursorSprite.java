@@ -45,7 +45,7 @@ class CursorSprite extends Sprite {
         }
 
         // fill with key color
-        graph.setColor(new Color(0,0,0,0));
+        graph.setColor(new Color(0, 0, 0, 0));
         graph.fillRect(0, 0, bounds.width, bounds.height);
         // draw attack poly
         graph.setColor(color);

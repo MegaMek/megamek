@@ -20,7 +20,6 @@ package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
 import megamek.client.ui.preferences.PreferencesNode;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
@@ -55,7 +54,7 @@ public abstract class AbstractPanel extends JPanel {
      */
     protected AbstractPanel(final JFrame frame, final String name, final boolean isDoubleBuffered) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages",
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()),
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()),
                 name, new FlowLayout(), isDoubleBuffered);
     }
 
@@ -74,7 +73,7 @@ public abstract class AbstractPanel extends JPanel {
     protected AbstractPanel(final JFrame frame, final String name,
                             final LayoutManager layoutManager, final boolean isDoubleBuffered) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages",
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()),
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()),
                 name, layoutManager, isDoubleBuffered);
     }
 

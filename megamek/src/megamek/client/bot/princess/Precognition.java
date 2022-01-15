@@ -319,12 +319,6 @@ public class Precognition implements Runnable {
                 if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
                      || (!getPathEnumerator().getLastKnownLocations().get(entity.getId())
                                              .equals(CoordFacingCombo.createCoordFacingCombo(entity))))) {
-                    // System.err.println("entity "+entity.getDisplayName()+" not where I left it");
-                    // if (pathEnumerator.last_known_location.containsKey(entity.getId()))
-                    // System.err.println("  I thought it was at "+pathEnumerator.last_known_location.get(entity
-                    // .getId()).coords+" but its actually at "+entity.getPosition());
-                    // else
-                    // System.err.println("  I had no idea where it was");
                     dirtifyUnit(entity.getId());
                 }
             }
@@ -351,7 +345,6 @@ public class Precognition implements Runnable {
     public void run() {
         try {
             // todo There's probably a better way to handle this than a loop that only exits on an error.
-            //noinspection InfiniteLoopStatement
             while (!getDone().get()) {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
@@ -421,7 +414,7 @@ public class Precognition implements Runnable {
                 if (event == null) {
                     continue;
                 }
-                LogManager.getLogger().debug("Processing " + event.toString());
+                LogManager.getLogger().debug("Processing " + event);
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // Ignore entity changes that don't happen during movement

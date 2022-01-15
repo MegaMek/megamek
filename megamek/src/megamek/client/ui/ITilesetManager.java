@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *

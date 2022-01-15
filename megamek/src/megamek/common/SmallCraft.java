@@ -9,9 +9,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
 
 import java.util.HashMap;
@@ -21,6 +18,7 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class SmallCraft extends Aero {
 
@@ -28,10 +26,8 @@ public class SmallCraft extends Aero {
     
     public static final int LOC_HULL = 4;
     
-    private static String[] LOCATION_ABBRS =
-        { "NOS", "LS", "RS", "AFT", "HULL" };
-    private static String[] LOCATION_NAMES =
-        { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT", "HULL" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nOfficers = 0;
@@ -39,7 +35,7 @@ public class SmallCraft extends Aero {
     private int nBattleArmor = 0;
     private int nOtherPassenger = 0;
     
-    // Maps transported crew,passengers,marines to a host ship so we can match them up again post-game
+    // Maps transported crew, passengers, marines to a host ship so we can match them up again post-game
     private Map<String,Integer> nOtherCrew = new HashMap<>();
     private Map<String,Integer> passengers = new HashMap<>();
     
@@ -255,7 +251,7 @@ public class SmallCraft extends Aero {
     }
     
     /**
-     * Returns the total number of life boats launched so far
+     * Returns the total number of lifeboats launched so far
      */
     @Override
     public int getLaunchedLifeBoats() {
@@ -263,7 +259,7 @@ public class SmallCraft extends Aero {
     }
     
     /**
-     * Updates the total number of life boats launched so far
+     * Updates the total number of lifeboats launched so far
      * @param n The number to change
      */
     @Override

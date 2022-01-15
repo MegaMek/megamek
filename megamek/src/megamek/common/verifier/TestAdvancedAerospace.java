@@ -684,7 +684,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + Integer.toString(wert) + "!";
+        return " is greater than " + wert + "!";
     }
 
     /**

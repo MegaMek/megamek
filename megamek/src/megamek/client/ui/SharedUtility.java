@@ -872,7 +872,7 @@ public class SharedUtility {
 
             Coords c = in.get(i);
             // check for split hexes
-            // check for some number after a multiple of 3 (1,4,7,etc)
+            // check for some number after a multiple of 3 (1, 4, 7, etc)
             if (((i % 3) == 1) && split) {
 
                 Coords left = in.get(i);

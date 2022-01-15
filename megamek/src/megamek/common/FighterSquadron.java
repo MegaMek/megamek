@@ -186,8 +186,7 @@ public class FighterSquadron extends Aero {
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
 
         // movement effects
-        // some question as to whether "above safe thrust" applies to thrust or
-        // velocity
+        // some question whether "above safe thrust" applies to thrust or velocity
         // I will treat it as thrust until it is resolved
         if (moved == EntityMovementType.MOVE_OVER_THRUST) {
             prd.addModifier(+1, "Used more than safe thrust");
@@ -283,15 +282,13 @@ public class FighterSquadron extends Aero {
 
     public void resetHeatCapacity() {
         List<Entity> activeFighters = getActiveSubEntities();
-        heatcap = activeFighters.stream()
-                .mapToInt(ent -> ent.getHeatCapacity(true)).sum();
-        heatcapNoRHS = activeFighters.stream()
-                .mapToInt(ent -> ent.getHeatCapacity(false)).sum();
+        heatcap = activeFighters.stream().mapToInt(ent -> ent.getHeatCapacity(true)).sum();
+        heatcapNoRHS = activeFighters.stream().mapToInt(ent -> ent.getHeatCapacity(false)).sum();
     }
 
     @Override
     public double getWeight() {
-        return getActiveSubEntities().stream().mapToDouble(ent -> ent.getWeight()).sum();
+        return getActiveSubEntities().stream().mapToDouble(Entity::getWeight).sum();
     }
 
     public double getAveWeight() {
@@ -300,7 +297,7 @@ public class FighterSquadron extends Aero {
                 : (getWeight() / activeFighters.size());
     }
 
-    /***
+    /**
      * rather than keeping track of weapons on each fighter, every new round
      * just collect the current weapon groups by cycling through each fighter
      * and then create a new weaponGroupList. This will be trickier in terms of
@@ -309,7 +306,7 @@ public class FighterSquadron extends Aero {
      */
 
     /**
-     * Fighter Squadron units can only get hit in undestroyed fighters.
+     * Fighter Squadron units can only get hit in destroyed fighters.
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
@@ -768,7 +765,7 @@ public class FighterSquadron extends Aero {
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independant from the under- lying
+     *         returned <code>List</code> is independent from the under- lying
      *         data structure; modifying one does not affect the other.
      */
     @Override
@@ -896,14 +893,14 @@ public class FighterSquadron extends Aero {
     @Override
     public List<Entity> getSubEntities() {
         return fighters.stream().map(fid -> game.getEntity(fid))
-                .filter(entity -> entity != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
     
     @Override
     public List<Entity> getActiveSubEntities() {
         return fighters.stream().map(fid -> game.getEntity(fid))
-                .filter(entity -> entity != null)
+                .filter(Objects::nonNull)
                 .filter(ACTIVE_CHECK)
                 .collect(Collectors.toList());
     }

@@ -1,18 +1,15 @@
-/* MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
 /*
- * Created on Sep 25, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
 package megamek.common.weapons.capitalweapons;
 
@@ -20,16 +17,11 @@ import megamek.common.AmmoType;
 
 /**
  * @author Jay Lawson
+ * @since Sep 25, 2004
  */
 public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 8756042527483383101L;
 
-    /**
-     * 
-     */
     public CapMissTeleBarracudaWeapon() {
         super();
         this.name = "Tele-operated Missile (Barracuda-T)";
@@ -60,13 +52,13 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.toHitModifier = -2;
         rulesRefs = "210,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CS,F_DC)
-            .setProductionFactions(F_DC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3053, 3056, 3060, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_CS, F_DC)
+                .setProductionFactions(F_DC);
     }
 }

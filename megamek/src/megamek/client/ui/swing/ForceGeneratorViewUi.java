@@ -70,7 +70,7 @@ public class ForceGeneratorViewUi {
     }
 
     private void initUi() {
-        panControls = new ForceGeneratorOptionsView(clientGui, fd -> setGeneratedForce(fd));
+        panControls = new ForceGeneratorOptionsView(clientGui, this::setGeneratedForce);
 
         rightPanel = new JPanel();
         rightPanel = new JPanel(new GridBagLayout());
@@ -484,7 +484,7 @@ public class ForceGeneratorViewUi {
             ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
-                String uname = "";
+                String uname;
                 if (fd.getCo() == null) {
                     name.append("<font color='red'>")
                         .append(Messages.getString("ForceGeneratorDialog.noCrew"))
@@ -497,7 +497,7 @@ public class ForceGeneratorViewUi {
                 if (fd.getFluffName() != null) {
                     uname += "<br /><i>" + fd.getFluffName() + "</i>";
                 }
-                setText("<html>" + name.toString() + ", " + uname + "</html>");
+                setText("<html>" + name + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
                     try {
                         clientGui.loadPreviewImage(this, fd.getEntity(),
@@ -553,15 +553,14 @@ public class ForceGeneratorViewUi {
             fireTableDataChanged();
         }
 
-        public void removeEntities(int[] selectedRows) {
+        public void removeEntities(int... selectedRows) {
             for (int r : selectedRows) {
                 if ((r >= 0) && (r < entities.size())) {
                     entityIds.remove(entities.get(r).getExternalIdAsString());
                 }
             }
-            List<Entity> newList = entities.stream().filter(e -> entityIds.contains(e.getExternalIdAsString()))
+            entities = entities.stream().filter(e -> entityIds.contains(e.getExternalIdAsString()))
                     .collect(Collectors.toList());
-            entities = newList;
             fireTableDataChanged();
         }
 
@@ -571,9 +570,8 @@ public class ForceGeneratorViewUi {
                     addEntity(fd.getEntity());
                 }
             }
-            fd.getSubforces().stream().forEach(sf -> addEntities(sf));
-            fd.getAttached().stream().forEach(sf -> addEntities(sf));
-            
+            fd.getSubforces().forEach(this::addEntities);
+            fd.getAttached().forEach(this::addEntities);
         }
         
         public List<Entity> allEntities() {

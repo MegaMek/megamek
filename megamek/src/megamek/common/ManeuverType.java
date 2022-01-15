@@ -89,13 +89,13 @@ public class ManeuverType {
                         MovePath tmpMp = mp.clone();                    
                         for (int i = 0; i < 8; i++) {
                             if (type == MAN_SIDE_SLIP_LEFT) {
-                                tmpMp.addStep(MoveStepType.LATERAL_LEFT,true,true);
+                                tmpMp.addStep(MoveStepType.LATERAL_LEFT, true, true);
                             } else {
-                                tmpMp.addStep(MoveStepType.LATERAL_RIGHT,true,true);
+                                tmpMp.addStep(MoveStepType.LATERAL_RIGHT, true, true);
                             }
                         }
                         for (int i = 0; i < 8; i++) {
-                            tmpMp.addStep(MoveStepType.FORWARDS,true,true);
+                            tmpMp.addStep(MoveStepType.FORWARDS, true, true);
                         }                    
                         return tmpMp.getLastStep().isLegal(tmpMp);
                     } else {

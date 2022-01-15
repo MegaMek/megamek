@@ -1,19 +1,15 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 23, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -37,11 +33,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 23, 2004
  */
 public class VehicleFlamerHandler extends AmmoWeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1130274470571109915L;
 
     /**
@@ -136,8 +130,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -154,8 +147,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -188,6 +180,5 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,8 +32,7 @@ import java.util.Vector;
  */
 public class HexSetTest {
 
-    private static class StringCompCaseInsensitive implements
-            Comparator<String> {
+    private static class StringCompCaseInsensitive implements Comparator<String> {
         @Override
         public int compare(String arg0, String arg1) {
             return arg0.compareToIgnoreCase(arg1);

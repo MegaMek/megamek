@@ -75,7 +75,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         }
         
         setBorder(new MegamekBorder(borderSkinComp));
-        butDone = new MegamekButton("",buttonSkinComp);
+        butDone = new MegamekButton("", buttonSkinComp);
         butDone.setActionCommand("doneButton");
         if (clientgui != null) {
             butDone.addActionListener(new AbstractAction() {

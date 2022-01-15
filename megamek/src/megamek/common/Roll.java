@@ -1,23 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
-
-/*
- * Roll.java
  *
- * Created on July 20, 2004, 4:21 PM
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 /**
@@ -26,6 +19,7 @@ package megamek.common;
  * will <b>finally</b> stop questioning whether the RNG is any good.
  * 
  * @author Suvarov454
+ * @since July 20, 2004, 4:21 PM
  */
 public abstract class Roll {
 
@@ -115,7 +109,7 @@ public abstract class Roll {
         System.out.print(roll.getIntValue());
         System.out.println(".");
         System.out.print("The string total is ");
-        System.out.print(roll.toString());
+        System.out.print(roll);
         System.out.println(".");
         System.out.print("The string report is ");
         System.out.print(roll.getReport());

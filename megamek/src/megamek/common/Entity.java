@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2018 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -1252,9 +1252,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     protected static final TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(3061, 3082,DATE_NONE,DATE_NONE,DATE_NONE)
-            .setISApproximate(false,true,false,false,false)
+            .setISApproximate(false, true, false, false, false)
             .setClanAdvancement(3061, 3082,DATE_NONE,DATE_NONE,DATE_NONE)
-            .setClanApproximate(false,true,false,false,false)
+            .setClanApproximate(false, true, false, false, false)
             .setPrototypeFactions(F_CSF,F_FW).setProductionFactions(F_CJF,F_FW)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -2409,7 +2409,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns the elevation of the entity's highest point relative to
-     * the surface of the hex the entity is in , i.e.
+     * the surface of the hex the entity is in, i.e.
      * relHeight() == getElevation() + getHeight()
      */
     @Override
@@ -2417,7 +2417,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getElevation() + height();
     }
 
-    /*
+    /**
      * Convenience method to determine whether this entity is on a ground map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
@@ -5063,7 +5063,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Does the mech have an active shield This should only be called by
-     * hasActiveShield(location,rear)
+     * hasActiveShield(location, rear)
      */
     public boolean hasActiveShield(int location) {
         return false;
@@ -5079,7 +5079,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Does the mech have a passive shield This should only be called by
-     * hasPassiveShield(location,rear)
+     * hasPassiveShield(location, rear)
      */
     public boolean hasPassiveShield(int location) {
         return false;
@@ -6167,8 +6167,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Active Mek Stealth prevents entity from participating in C3.
         // Turn off the stealth, and your back in the network.
-        if (((this instanceof Mech) || (this instanceof Tank))
-            && isStealthActive()) {
+        if (((this instanceof Mech) || (this instanceof Tank)) && isStealthActive()) {
             return false;
         }
         if (((e instanceof Mech) || (e instanceof Tank)) && e.isStealthActive()) {
@@ -6181,16 +6180,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (ignoreECM) {
                 return true;
             }
-            return !(ComputeECM.isAffectedByECM(e, e.getPosition(),
-                                                e.getPosition()))
-                   && !(ComputeECM.isAffectedByECM(this, getPosition(),
-                                                   getPosition()));
+            return !(ComputeECM.isAffectedByECM(e, e.getPosition(), e.getPosition()))
+                   && !(ComputeECM.isAffectedByECM(this, getPosition(), getPosition()));
         }
 
         // NC3 is easy too - if they both have NC3, and their net ID's match,
         // they're on the same network!
         if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
-            int distance = Compute.effectiveDistance(game,this,e,false);
+            int distance = Compute.effectiveDistance(game, this, e, false);
             //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
             if (game.getRoundCount() > 0) {
                 if (distance > 60) {
@@ -14687,14 +14684,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return;
         }
 
-        // System.out.println("Loading quirks for " + getChassis() + " " +
-        // getModel());
-
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
-
-            // System.out.print("  " + q.toLog() + "... ");
-
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
             if (StringUtil.isNullOrEmpty(q.getLocation())) {
@@ -14706,13 +14697,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                        + " - Invalid quirk!");
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);
-                // System.out.println("Loaded.");
-                continue;
+                getQuirks().getOption(q.getQuirk()).setValue(true);continue;
             }
 
             // Get the weapon in the indicated location and slot.
-            // System.out.print("Getting CriticalSlot... ");
             CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()),
                                           q.getSlot());
             if (cs == null) {
@@ -14731,7 +14719,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             // Make sure this is a weapon.
-            // System.out.print("Getting WeaponType... ");
             if (!(m.getType() instanceof WeaponType)
                     && !(m.getType().hasFlag(MiscType.F_CLUB))) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
@@ -14741,12 +14728,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             // Make sure it is the weapon we expect.
-            // System.out.print("Matching weapon... ");
             boolean matchFound = false;
             Enumeration<String> typeNames = m.getType().getNames();
             while (typeNames.hasMoreElements()) {
                 String typeName = typeNames.nextElement();
-                // System.out.print(typeName + "... ");
                 if (typeName.equals(q.getWeaponName())) {
                     matchFound = true;
                     break;
@@ -14760,14 +14745,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
 
             // Activate the weapon quirk.
-            // System.out.print("Activating quirk... ");
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
                                    + " " + getModel() + " - Invalid quirk!");
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
-            // System.out.println("Loaded.");
         }
     }
 

@@ -414,7 +414,6 @@ public class BoardEdgePathFinder {
                 connectedPaths.put(trunk, new ArrayList<>());
             }
 
-            //System.out.println("Next path connects to " + trunk.toString() + " at coordinates " + path.getFinalCoords().toString());
             connectedPaths.get(trunk).add(path);
         }
 

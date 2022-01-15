@@ -39,6 +39,8 @@ import java.util.List;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
+import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Generic utility methods for image data
@@ -181,7 +183,6 @@ public final class ImageUtil {
 
     /**
      * Interface that defines methods for an ImageLoader.
-     *
      */
     public interface ImageLoader {
 
@@ -194,16 +195,15 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader implementation that expects a path to an image file, and that file is loaded directly and the loaded
-     * image is returned.
-     *
+     * ImageLoader implementation that expects a path to an image file, and that file is loaded
+     * directly and the loaded image is returned.
      */
     public static class AWTImageLoader implements ImageLoader {
         @Override
-        public Image loadImage(String fileName) {
+        public @Nullable Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                System.out.println(String.format("Trying to load image for a non-existent file! Path: %s", fileName));
+                LogManager.getLogger().error("Trying to load image for a non-existent file " + fileName);
                 return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
@@ -251,7 +251,6 @@ public final class ImageUtil {
         /**
          * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
          * sub-image within the original image and return that sub-image.
-         *
          */
         @Override
         public Image loadImage(String fileName) {

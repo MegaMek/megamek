@@ -163,7 +163,7 @@ public class CreateImageAtlases {
             y = row * hexHeight;
 
             // Update imageFileToAtlas map
-            atlasLoc = atlasFile.toString() + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
+            atlasLoc = atlasFile + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
             File atlasLocFile = new File(atlasLoc);
             imgFileToAtlasMap.put(imgFile.toPath(), atlasLocFile.toPath());
             imagesStored.add(imgFile.toString());

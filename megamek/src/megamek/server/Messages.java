@@ -1,17 +1,19 @@
 package megamek.server;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import megamek.common.preference.PreferenceManager;
+import megamek.MegaMek;
 import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 public class Messages {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.server.messages",
-        PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
+        MegaMek.getMMOptions().getLocale(), new EncodeControl());
 
-    private Messages() {}
+    private Messages() {
+        
+    }
 
     public static String getString(String key) {
         try {

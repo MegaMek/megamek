@@ -16,21 +16,15 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
-
-/*
- * Created on July 5, 2005
- */
 package megamek.common;
 
 import java.io.Serializable;
 
 /**
  * A simple class to specify a location and facing for a unit.
+ * @since July 5, 2005
  */
 public class UnitLocation implements Serializable {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3989732522854387850L;
 
     /** The entity ID of the unit at this location. */

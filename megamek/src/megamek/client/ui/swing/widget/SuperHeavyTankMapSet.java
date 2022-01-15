@@ -1,18 +1,17 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -34,7 +33,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Tank unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
 public class SuperHeavyTankMapSet implements DisplayMapSet {
 
@@ -113,8 +112,7 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
             new int[] { 87, 87, 84, 80, 71, 59,  59,  75,  90,  90,  80,  65,
             65,  115, 115, 100, 90,  90,  105, 121, 121, 109, 100, 96, 93, 93 },
             new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
-            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87 , 80, 80, 42 },
-            26);
+            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87, 80, 80, 42 }, 26);
     // Turret internal structure
     private Polygon turretIS = new Polygon(
             new int[] { 65,  65,  80,  100, 115, 115 },
@@ -244,7 +242,7 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
         vLabels[10] = WidgetUtils.createValueLabel(43, 65, "", fm);
         vLabels[11] = WidgetUtils.createValueLabel(145, 140, "", fm);
         vLabels[12] = WidgetUtils.createValueLabel(43, 140, "", fm);
-        vLabels[13] = WidgetUtils.createValueLabel(113,187, "", fm);
+        vLabels[13] = WidgetUtils.createValueLabel(113, 187, "", fm);
         vLabels[14] = WidgetUtils.createValueLabel(110, 32, "", fm);
     }
 

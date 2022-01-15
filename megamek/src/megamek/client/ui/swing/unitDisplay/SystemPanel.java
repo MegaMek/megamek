@@ -799,8 +799,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");
                             m_chMode.addItem("Aimed shot");
-                            m_chMode.setSelectedItem(Integer.valueOf(
-                                    ((Mech) en).getCockpitStatusNextRound()));
+                            m_chMode.setSelectedItem(((Mech) en).getCockpitStatusNextRound());
                         }
                     }
                 }

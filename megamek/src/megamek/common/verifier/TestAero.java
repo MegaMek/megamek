@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -668,13 +668,11 @@ public class TestAero extends TestEntity {
      */
     public boolean correctArmor(StringBuffer buff) {
         boolean correct = true;
-        int maxArmorPoints = maxArmorPoints(aero,aero.getWeight());
+        int maxArmorPoints = maxArmorPoints(aero, aero.getWeight());
         int armorTotal = 0;
         for (int loc = 0; loc < aero.locations(); loc++) {
             if (aero.getOArmor(loc) > maxArmorPoints) {
-                buff.append(printArmorLocation(loc))
-                        .append(printArmorLocProp(loc,
-                                maxArmorPoints)).append("\n");
+                buff.append(printArmorLocation(loc)).append(printArmorLocProp(loc, maxArmorPoints)).append("\n");
                 correct = false;
             }
             armorTotal += aero.getOArmor(loc);
@@ -1187,14 +1185,10 @@ public class TestAero extends TestEntity {
                 if (slot == null) {
                     j = getEntity().getNumberOfCriticals(i);                    
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
-                        buff.append(Integer.toString(j)
-                                + ". UNKNOWN SYSTEM NAME");
-                        buff.append("\n");
+                        buff.append(j).append(". UNKNOWN SYSTEM NAME").append("\n");
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     EquipmentType e = getEntity().getEquipmentType(slot);
-                    buff.append(Integer.toString(j) + ". "
-                            + e.getInternalName());
-                    buff.append("\n");
+                    buff.append(j).append(". ").append(e.getInternalName()).append("\n");
                 }
             }
         }

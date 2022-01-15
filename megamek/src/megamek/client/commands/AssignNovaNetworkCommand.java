@@ -158,7 +158,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         // now set the network ID of the remaining units to something different.
         String newID = network.get(0).getOriginalNovaC3NetId(); // this resets the C3i network name to the default 'Nova.ID'
         for (Entity e : network) {
-            setNewNetworkID(e,newID);
+            setNewNetworkID(e, newID);
         }
         // finally set the unlinked units network ID to default value.
         setNewNetworkID(ent, ent.getOriginalNovaC3NetId());
@@ -214,7 +214,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         StringBuilder rval = new StringBuilder();
         Entity ent = client.getEntity(id);
         if (ent != null) {
-            for (Entity e : listNetwork(ent,planned)) {
+            for (Entity e : listNetwork(ent, planned)) {
                 rval.append("+ ").append(e.getId()).append(" ").append(e.getDisplayName()).append("\n");
             }
         }

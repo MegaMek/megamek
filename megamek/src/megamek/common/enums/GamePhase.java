@@ -18,9 +18,9 @@
  */
 package megamek.common.enums;
 
+import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import java.util.Objects;
@@ -61,7 +61,7 @@ public enum GamePhase {
     //region Constructors
     GamePhase(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale(), new EncodeControl());
         this.name = resources.getString(name);
     }
     //endregion Constructors

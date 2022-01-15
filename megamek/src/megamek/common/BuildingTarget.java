@@ -22,7 +22,7 @@ import java.util.Map;
  * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexes.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  * @version $Revision$
  */
 public class BuildingTarget implements Targetable {

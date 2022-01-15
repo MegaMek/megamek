@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2006 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
 * Copyright (C) 2018 The MegaMek Team
 *
@@ -855,7 +855,7 @@ public class SkinXMLHandler {
     }
 
     public static SkinSpecification getSkin(String component) {
-        return getSkin(component,false, false);
+        return getSkin(component, false, false);
     }
 
     public static SkinSpecification getSkin(String component, boolean defaultToPlain) {

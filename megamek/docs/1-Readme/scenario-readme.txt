@@ -65,7 +65,7 @@ MapHeight=17
 
 7. Map(s) placement 
 # Maps can be specified by name. The order is left-to-right, top-to-bottom 
-# Any unspecified boards will be set to RANDOM Maps=deserthills,mountainlake 
+# Any unspecified boards will be set to RANDOM Maps=deserthills,mountainlake
 # If the map is in a subdirectory, the syntax is subdirectory/mapname:
 # buildings/militarybase1, for example.
 #

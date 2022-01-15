@@ -48,7 +48,7 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
      */
     protected AbstractTabbedPane(final JFrame frame, final String name) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", 
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name);
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name);
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -526,8 +526,8 @@ public class TestMech extends TestEntity {
         }
 
         allocation.addElement(mounted);
-        allocation.addElement(Integer.valueOf(criticals));
-        allocation.addElement(Integer.valueOf(count));
+        allocation.addElement(criticals);
+        allocation.addElement(count);
         return false;
     }
 
@@ -681,7 +681,7 @@ public class TestMech extends TestEntity {
     }
 
     public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + Integer.toString(wert) + "!";
+        return " is greater than " + wert + "!";
     }
 
     public boolean correctArmor(StringBuffer buff) {

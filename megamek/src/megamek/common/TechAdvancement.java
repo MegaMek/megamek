@@ -12,7 +12,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.util.Arrays;
@@ -23,7 +22,6 @@ import java.util.StringJoiner;
  * phases. Calculates current rules level for IS or Clan.
  *
  * @author Neoancient
- *
  */
 public class TechAdvancement implements ITechnology {
 
@@ -549,7 +547,7 @@ public class TechAdvancement implements ITechnology {
                 }
             }
             if (sj.length() > 0) {
-                sb.append("(").append(sj.toString()).append(")");
+                sb.append("(").append(sj).append(")");
             }
         }
         return sb.toString();

@@ -162,6 +162,13 @@
     </KeyBind>
 
     <KeyBind>
+        <command>viewActingUnit</command> <!-- V -->
+        <keyCode>86</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
          <command>undoLastStep</command> <!-- Backspace -->
         <keyCode>8</keyCode>
         <modifier>0</modifier>

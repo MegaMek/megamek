@@ -1349,7 +1349,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     private boolean canActivateBloodStalker() {
         // can be activated if the entity can do it and haven't done it already 
         // and the target is something that can be blood-stalked
-        return ce().canActivateBloodStalker() &&
+        return (ce() != null) && ce().canActivateBloodStalker() &&
                 (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
                 attacks.stream().noneMatch(item -> item instanceof ActivateBloodStalkerAction);
     }

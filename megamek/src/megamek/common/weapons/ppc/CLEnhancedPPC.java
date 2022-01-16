@@ -31,6 +31,7 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.addLookupName("Wolverine ER PPC");
         this.addLookupName("ISEHERPPC");
         this.addLookupName("IS EH ER PPC");
+        sortingName = "PPC Enhanced";
         this.heat = 15;
         this.damage = 12;
         this.shortRange = 7;

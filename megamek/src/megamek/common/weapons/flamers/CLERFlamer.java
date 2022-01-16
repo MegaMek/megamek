@@ -28,6 +28,7 @@ public class CLERFlamer extends FlamerWeapon {
         name = "ER Flamer";
         setInternalName("CLERFlamer");
         addLookupName("CL ER Flamer");
+        sortingName = "Flamer ER";
         flags = flags.or(WeaponType.F_ER_FLAMER);
         heat = 4;
         damage = 2;

@@ -32,6 +32,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         addLookupName("Clan Heavy Flamer");
         addLookupName("CL Heavy Flamer");
         addLookupName("CLHeavyFlamer");
+        sortingName = "Flamer D";
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;

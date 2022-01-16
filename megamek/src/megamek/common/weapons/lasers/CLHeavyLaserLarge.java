@@ -22,27 +22,28 @@ public class CLHeavyLaserLarge extends LaserWeapon {
 
     public CLHeavyLaserLarge() {
         super();
-        this.name = "Heavy Large Laser";
-        this.setInternalName("CLHeavyLargeLaser");
-        this.addLookupName("Clan Large Heavy Laser");
-        this.heat = 18;
-        this.damage = 16;
-        this.toHitModifier = 1;
-        this.shortRange = 5;
-        this.mediumRange = 10;
-        this.longRange = 15;
-        this.extremeRange = 20;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 6;
-        this.waterLongRange = 9;
-        this.waterExtremeRange = 12;
-        this.tonnage = 4.0;
-        this.criticals = 3;
-        this.bv = 244;
-        this.cost = 250000;
-        this.shortAV = 16;
-        this.medAV = 16;
-        this.maxRange = RANGE_MED;
+        name = "Heavy Large Laser";
+        setInternalName("CLHeavyLargeLaser");
+        addLookupName("Clan Large Heavy Laser");
+        sortingName = "Laser Heavy D";
+        heat = 18;
+        damage = 16;
+        toHitModifier = 1;
+        shortRange = 5;
+        mediumRange = 10;
+        longRange = 15;
+        extremeRange = 20;
+        waterShortRange = 3;
+        waterMediumRange = 6;
+        waterLongRange = 9;
+        waterExtremeRange = 12;
+        tonnage = 4.0;
+        criticals = 3;
+        bv = 244;
+        cost = 250000;
+        shortAV = 16;
+        medAV = 16;
+        maxRange = RANGE_MED;
         rulesRefs = "226, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

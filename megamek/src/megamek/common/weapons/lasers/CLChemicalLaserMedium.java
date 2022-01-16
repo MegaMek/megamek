@@ -27,6 +27,7 @@ public class CLChemicalLaserMedium extends CLChemicalLaserWeapon {
         setInternalName("CLMediumChemicalLaser");
         addLookupName("CLMediumChemLaser");
         addLookupName("Medium Chem Laser");
+        sortingName = "Chem Laser C";
         heat = 2;
         damage = 5;
         rackSize = 5;

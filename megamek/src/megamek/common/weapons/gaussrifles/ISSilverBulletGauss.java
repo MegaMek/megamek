@@ -37,6 +37,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         setInternalName("ISSBGR");
         addLookupName("IS Silver Bullet Gauss Rifle");
         addLookupName("ISSBGaussRifle");
+        sortingName = "Gauss X";
         heat = 1;
         damage = 15;
         rackSize = 15;

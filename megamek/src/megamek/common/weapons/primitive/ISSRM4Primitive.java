@@ -32,26 +32,26 @@ public class ISSRM4Primitive extends SRMWeapon {
 
     public ISSRM4Primitive() {
         super();
-
-        this.name = "Primitive Prototype SRM 4";
-        this.setInternalName(this.name);
-        this.addLookupName("IS SRM-4 Primitive");
-        this.addLookupName("ISSRM4p");
-        this.addLookupName("IS SRM 4 Primitive");
-        this.shortName = "SRM/4p";
+        name = "Primitive Prototype SRM 4";
+        setInternalName(this.name);
+        addLookupName("IS SRM-4 Primitive");
+        addLookupName("ISSRM4p");
+        addLookupName("IS SRM 4 Primitive");
+        shortName = "SRM/4p";
+        sortingName = "SRM Proto 4";
         flags = flags.or(F_PROTOTYPE).andNot(F_ARTEMIS_COMPATIBLE);
-        this.heat = 3;
-        this.rackSize = 4;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
-        this.tonnage = 2.0;
-        this.criticals = 1;
-        this.bv = 39;
-        this.cost = 60000;
-        this.shortAV = 4;
-        this.maxRange = RANGE_SHORT;
+        heat = 3;
+        rackSize = 4;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
+        tonnage = 2.0;
+        criticals = 1;
+        bv = 39;
+        cost = 60000;
+        shortAV = 4;
+        maxRange = RANGE_SHORT;
         ammoType = AmmoType.T_SRM_PRIMITIVE;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This to cover some of the back worlds in the Periphery.

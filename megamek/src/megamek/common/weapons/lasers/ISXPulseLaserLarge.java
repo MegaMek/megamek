@@ -1,7 +1,3 @@
-package megamek.common.weapons.lasers;
-
-import megamek.common.SimpleTechLevel;
-
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
@@ -15,29 +11,24 @@ import megamek.common.SimpleTechLevel;
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-/*
- * Created on Sep 8, 20045
- *
- */
+package megamek.common.weapons.lasers;
+
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 8, 2005
  */
 public class ISXPulseLaserLarge extends PulseLaserWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = -8159582350685114767L;
 
-    /**
-     *
-     */
     public ISXPulseLaserLarge() {
         super();
         name = "Large X-Pulse Laser";
         setInternalName("ISLargeXPulseLaser");
         addLookupName("IS X-Pulse Large Laser");
         addLookupName("IS Large X-Pulse Laser");
+        sortingName = "Laser XPULSE D";
         heat = 14;
         damage = 9;
         toHitModifier = -2;

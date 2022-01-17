@@ -27,8 +27,9 @@ public class SubCapCannonWeaponMedium extends SubCapCannonWeapon {
         name = "Sub-Capital Cannon (Medium)";
         setInternalName(name);
         addLookupName("MediumSCC");
-        this.addLookupName("Medium Sub-Capital Cannon");
-        this.shortName = "Medium SCC";
+        addLookupName("Medium Sub-Capital Cannon");
+        shortName = "Medium SCC";
+        sortingName = "Sub-Capital Cannon C";
         heat = 30;
         damage = 5;
         rackSize = 5;

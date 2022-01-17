@@ -22,25 +22,26 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
 
     public NPPCWeaponHeavy() {
         super();
-        this.name = "Naval PPC (Heavy)";
-        this.setInternalName(this.name);
-        this.addLookupName("HeavyNPPC");
-        this.addLookupName("Heavy NPPC (Clan)");
-        this.shortName = "Heavy NPPC";
-        this.heat = 225;
-        this.damage = 15;
-        this.shortRange = 13;
-        this.mediumRange = 26;
-        this.longRange = 39;
-        this.extremeRange = 52;
-        this.tonnage = 3000.0;
-        this.bv = 3780;
-        this.cost = 9050000;
-        this.shortAV = 15;
-        this.medAV = 15;
-        this.longAV = 15;
-        this.extAV = 15;
-        this.maxRange = RANGE_EXT;
+        name = "Naval PPC (Heavy)";
+        setInternalName(this.name);
+        addLookupName("HeavyNPPC");
+        addLookupName("Heavy NPPC (Clan)");
+        shortName = "Heavy NPPC";
+        sortingName = "PPC Naval D";
+        heat = 225;
+        damage = 15;
+        shortRange = 13;
+        mediumRange = 26;
+        longRange = 39;
+        extremeRange = 52;
+        tonnage = 3000.0;
+        bv = 3780;
+        cost = 9050000;
+        shortAV = 15;
+        medAV = 15;
+        longAV = 15;
+        extAV = 15;
+        maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

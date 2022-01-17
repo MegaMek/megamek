@@ -30,6 +30,7 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         addLookupName("ISLVSPL");
         addLookupName("ISLargeVariableSpeedLaser");
         addLookupName("ISLargeVSP");
+        sortingName = "Laser VSP D";
         heat = 10;
         damage = WeaponType.DAMAGE_VARIABLE;
         toHitModifier = -4;

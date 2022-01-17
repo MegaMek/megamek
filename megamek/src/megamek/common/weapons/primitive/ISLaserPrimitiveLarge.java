@@ -26,28 +26,29 @@ public class ISLaserPrimitiveLarge extends LaserWeapon {
     public ISLaserPrimitiveLarge() {
         super();
 
-        this.name = "Primitive Prototype Large Laser";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Large Laser Prototype");
-        this.addLookupName("ISLargeLaserPrototype");
-        this.shortName = "Large Laser p";
-        this.heat = 12;
-        this.damage = 8;
-        this.shortRange = 5;
-        this.mediumRange = 10;
-        this.longRange = 15;
-        this.extremeRange = 20;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 6;
-        this.waterLongRange = 9;
-        this.waterExtremeRange = 12;
-        this.tonnage = 5.0;
-        this.criticals = 2;
-        this.bv = 123;
-        this.cost = 100000;
-        this.shortAV = 8;
-        this.medAV = 8;
-        this.maxRange = RANGE_MED;
+        name = "Primitive Prototype Large Laser";
+        setInternalName(this.name);
+        addLookupName("IS Large Laser Prototype");
+        addLookupName("ISLargeLaserPrototype");
+        shortName = "Large Laser p";
+        sortingName = "Laser Proto D";
+        heat = 12;
+        damage = 8;
+        shortRange = 5;
+        mediumRange = 10;
+        longRange = 15;
+        extremeRange = 20;
+        waterShortRange = 3;
+        waterMediumRange = 6;
+        waterLongRange = 9;
+        waterExtremeRange = 12;
+        tonnage = 5.0;
+        criticals = 2;
+        bv = 123;
+        cost = 100000;
+        shortAV = 8;
+        medAV = 8;
+        maxRange = RANGE_MED;
         // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
         // they would always be around. This is to cover some of the back worlds in the Periphery.
         flags = flags.or(F_PROTOTYPE);

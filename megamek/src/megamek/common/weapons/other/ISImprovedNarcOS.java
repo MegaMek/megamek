@@ -23,11 +23,11 @@ public class ISImprovedNarcOS extends NarcWeapon {
 
     public ISImprovedNarcOS() {
         super();
-
         name = "iNarc (OS)";
         setInternalName("ISImprovedNarc (OS)");
         addLookupName("IS OS iNarc Beacon");
         addLookupName("IS iNarc Missile Beacon (OS)");
+        sortingName = "Narc X OS";
         ammoType = AmmoType.T_INARC;
         heat = 0;
         rackSize = 1;

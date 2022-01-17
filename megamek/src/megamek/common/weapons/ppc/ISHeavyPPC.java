@@ -26,6 +26,7 @@ public class ISHeavyPPC extends PPCWeapon {
         setInternalName(name);
         addLookupName("ISHeavyPPC");
         addLookupName("ISHPPC");
+        sortingName = "PPC D";
         heat = 15;
         damage = 15;
         minimumRange = 3;

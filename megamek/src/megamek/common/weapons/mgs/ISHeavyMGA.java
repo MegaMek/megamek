@@ -35,6 +35,7 @@ public class ISHeavyMGA extends AmmoWeapon {
         name = "Heavy Machine Gun Array";
         setInternalName("ISHMGA");
         addLookupName("IS Heavy Machine Gun Array");
+        sortingName = "MGA D";
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
@@ -80,5 +81,10 @@ public class ISHeavyMGA extends AmmoWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               Server server) {
         return new MGAWeaponHandler(toHit, waa, game, server);
+    }
+
+    @Override
+    public String getNaturalNameSortingString() {
+        return "MG X Array D";
     }
 }

@@ -29,4 +29,9 @@ public abstract class EnhancedLRMWeapon extends LRMWeapon {
         super();
         ammoType = AmmoType.T_NLRM;
     }
+
+    @Override
+    public String getNaturalNameSortingString() {
+        return "Enhanced LRM " + ((rackSize < 10) ? "0" + rackSize : rackSize);
+    }
 }

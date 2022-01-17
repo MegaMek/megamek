@@ -30,6 +30,7 @@ public class ISAC2 extends ACWeapon {
         addLookupName("AC/2");
         addLookupName("ISAC2");
         addLookupName("IS Autocannon/2");
+        sortingName = "AC/02";
         heat = 1;
         damage = 2;
         rackSize = 2;

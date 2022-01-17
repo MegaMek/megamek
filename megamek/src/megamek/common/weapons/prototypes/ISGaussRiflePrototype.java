@@ -11,10 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-/*
- * Created on Oct 19, 2004
- *
- */
 package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
@@ -29,22 +25,18 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Oct 19, 2004
  */
 public class ISGaussRiflePrototype extends GaussWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = 317770140657000258L;
 
-    /**
-     *
-     */
     public ISGaussRiflePrototype() {
         super();
         name = "Prototype Gauss Rifle";
         setInternalName("ISGaussRiflePrototype");
         addLookupName("IS Gauss Rifle Prototype");
         shortName = "Gauss Rifle (P)";
+        sortingName = "Gauss PROTO";
         heat = 1;
         damage = 15;
         ammoType = AmmoType.T_GAUSS;
@@ -75,14 +67,6 @@ public class ISGaussRiflePrototype extends GaussWeapon {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {

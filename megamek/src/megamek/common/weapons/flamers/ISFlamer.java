@@ -24,24 +24,25 @@ public class ISFlamer extends FlamerWeapon {
 
     public ISFlamer() {
         super();
-        this.name = "Flamer";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Flamer");
-        this.addLookupName("ISFlamer");
-        this.heat = 3;
-        this.damage = 2;
-        this.infDamageClass = WeaponType.WEAPON_BURST_4D6;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.tonnage = 1;
-        this.criticals = 1;
-        this.bv = 6;
-        this.cost = 7500;
-        this.shortAV = 2;
-        this.maxRange = RANGE_SHORT;
-        this.atClass = CLASS_POINT_DEFENSE;
+        name = "Flamer";
+        setInternalName(this.name);
+        addLookupName("IS Flamer");
+        addLookupName("ISFlamer");
+        sortingName = "Flamer C";
+        heat = 3;
+        damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_4D6;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        tonnage = 1;
+        criticals = 1;
+        bv = 6;
+        cost = 7500;
+        shortAV = 2;
+        maxRange = RANGE_SHORT;
+        atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "218, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(true)

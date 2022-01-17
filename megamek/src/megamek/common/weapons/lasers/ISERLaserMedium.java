@@ -22,26 +22,27 @@ public class ISERLaserMedium extends LaserWeapon {
 
     public ISERLaserMedium() {
         super();
-        this.name = "ER Medium Laser";
-        this.setInternalName("ISERMediumLaser");
-        this.addLookupName("IS ER Medium Laser");
-        this.heat = 5;
-        this.damage = 5;
-        this.shortRange = 4;
-        this.mediumRange = 8;
-        this.longRange = 12;
-        this.extremeRange = 16;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 5;
-        this.waterLongRange = 8;
-        this.waterExtremeRange = 10;
-        this.tonnage = 1.0;
-        this.criticals = 1;
-        this.bv = 62;
-        this.cost = 80000;
-        this.shortAV = 5;
-        this.medAV = 5;
-        this.maxRange = RANGE_MED;
+        name = "ER Medium Laser";
+        setInternalName("ISERMediumLaser");
+        addLookupName("IS ER Medium Laser");
+        sortingName = "ER Laser C";
+        heat = 5;
+        damage = 5;
+        shortRange = 4;
+        mediumRange = 8;
+        longRange = 12;
+        extremeRange = 16;
+        waterShortRange = 3;
+        waterMediumRange = 5;
+        waterLongRange = 8;
+        waterExtremeRange = 10;
+        tonnage = 1.0;
+        criticals = 1;
+        bv = 62;
+        cost = 80000;
+        shortAV = 5;
+        medAV = 5;
+        maxRange = RANGE_MED;
         rulesRefs = "226, TM";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         // December 2021 - Errata request to change common date

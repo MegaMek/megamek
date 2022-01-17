@@ -25,27 +25,28 @@ public class ISERLaserLarge extends LaserWeapon {
 
     public ISERLaserLarge() {
         super();
-        this.name = "ER Large Laser";
-        this.setInternalName("ISERLargeLaser");
-        this.addLookupName("IS ER Large Laser");
-        this.heat = 12;
-        this.damage = 8;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 19;
-        this.extremeRange = 28;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 9;
-        this.waterLongRange = 12;
-        this.waterExtremeRange = 18;
-        this.tonnage = 5.0;
-        this.criticals = 2;
-        this.bv = 163;
-        this.cost = 200000;
-        this.shortAV = 8;
-        this.medAV = 8;
-        this.longAV = 8;
-        this.maxRange = RANGE_LONG;
+        name = "ER Large Laser";
+        setInternalName("ISERLargeLaser");
+        addLookupName("IS ER Large Laser");
+        sortingName = "ER Laser D";
+        heat = 12;
+        damage = 8;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 19;
+        extremeRange = 28;
+        waterShortRange = 3;
+        waterMediumRange = 9;
+        waterLongRange = 12;
+        waterExtremeRange = 18;
+        tonnage = 5.0;
+        criticals = 2;
+        bv = 163;
+        cost = 200000;
+        shortAV = 8;
+        medAV = 8;
+        longAV = 8;
+        maxRange = RANGE_LONG;
         rulesRefs = "226, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

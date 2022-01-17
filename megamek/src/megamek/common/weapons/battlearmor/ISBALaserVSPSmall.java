@@ -30,6 +30,7 @@ public class ISBALaserVSPSmall extends VariableSpeedPulseLaserWeapon {
         addLookupName("ISBASVSPL");
         addLookupName("ISBASmallVariableSpeedLaser");
         addLookupName("ISBASmallVSP");
+        sortingName = "Laser VSP B";
         heat = 3;
         damage = WeaponType.DAMAGE_VARIABLE;
         toHitModifier = -4;

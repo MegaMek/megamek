@@ -22,27 +22,27 @@ public class CLUAC5 extends UACWeapon {
 
     public CLUAC5() {
         super();
-
-        this.name = "Ultra AC/5";
-        this.setInternalName("CLUltraAC5");
-        this.addLookupName("Clan Ultra AC/5");
-        this.heat = 1;
-        this.damage = 5;
-        this.rackSize = 5;
-        this.minimumRange = 0;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 7.0;
-        this.criticals = 3;
-        this.bv = 122;
-        this.cost = 200000;
-        this.shortAV = 7;
-        this.medAV = 7;
-        this.longAV = 7;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = damage;
+        name = "Ultra AC/5";
+        setInternalName("CLUltraAC5");
+        addLookupName("Clan Ultra AC/5");
+        sortingName = "Ultra AC/05";
+        heat = 1;
+        damage = 5;
+        rackSize = 5;
+        minimumRange = 0;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        tonnage = 7.0;
+        criticals = 3;
+        bv = 122;
+        cost = 200000;
+        shortAV = 7;
+        medAV = 7;
+        longAV = 7;
+        maxRange = RANGE_LONG;
+        explosionDamage = damage;
         rulesRefs = "208,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

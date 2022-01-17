@@ -4934,6 +4934,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Shield (Small)";
         misc.setInternalName("ISSmallShield");
         misc.addLookupName("Small Shield");
+        misc.sortingName = "Shield B";
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 50000;
@@ -4962,6 +4963,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Shield (Medium)";
         misc.setInternalName("ISMediumShield");
         misc.addLookupName("Medium Shield");
+        misc.sortingName = "Shield C";
         misc.tonnage = 4;
         misc.criticals = 5;
         misc.cost = 100000;
@@ -4990,6 +4992,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Shield (Large)";
         misc.setInternalName("ISLargeShield");
         misc.addLookupName("Large Shield");
+        misc.sortingName = "Shield D";
         misc.tonnage = 6;
         misc.criticals = 7;
         misc.cost = 300000;
@@ -5076,6 +5079,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Vibroblade (Small)";
         misc.setInternalName("ISSmallVibroblade");
         misc.addLookupName("Small Vibroblade");
+        misc.sortingName = "Vibro B";
         misc.tonnage = 3;
         misc.criticals = 1;
         misc.cost = 150000;
@@ -5100,6 +5104,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Vibroblade (Medium)";
         misc.setInternalName("ISMediumVibroblade");
         misc.addLookupName("Medium Vibroblade");
+        misc.sortingName = "Vibro C";
         misc.tonnage = 5;
         misc.criticals = 2;
         misc.cost = 400000;
@@ -5124,6 +5129,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Vibroblade (Large)";
         misc.setInternalName("ISLargeVibroblade");
         misc.addLookupName("Large Vibroblade");
+        misc.sortingName = "Vibro D";
         misc.tonnage = 7;
         misc.criticals = 4;
         misc.cost = 750000;
@@ -7098,6 +7104,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 5;
         misc.name = "Bridge Layer (Light)";
         misc.setInternalName("LightBridgeLayer");
+        misc.sortingName = "Bridge B";
         misc.flags = misc.flags.or(F_LIGHT_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
@@ -7120,6 +7127,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 10;
         misc.name = "Bridge Layer (Medium)";
         misc.setInternalName("MediumBridgeLayer");
+        misc.sortingName = "Bridge C";
         misc.flags = misc.flags.or(F_MEDIUM_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
@@ -7142,6 +7150,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 20;
         misc.name = "Bridge Layer (Heavy)";
         misc.setInternalName("HeavyBridgeLayer");
+        misc.sortingName = "Bridge D";
         misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;

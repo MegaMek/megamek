@@ -83,8 +83,4 @@ public class ISHeavyMGA extends AmmoWeapon {
         return new MGAWeaponHandler(toHit, waa, game, server);
     }
 
-    @Override
-    public String getNaturalNameSortingString() {
-        return "MG X Array D";
-    }
 }

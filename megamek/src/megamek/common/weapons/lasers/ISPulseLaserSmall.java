@@ -24,30 +24,31 @@ public class ISPulseLaserSmall extends PulseLaserWeapon {
 
     public ISPulseLaserSmall() {
         super();
-        this.name = "Small Pulse Laser";
-        this.setInternalName("ISSmallPulseLaser");
-        this.addLookupName("IS Small Pulse Laser");
-        this.addLookupName("ISSmall Pulse Laser");
-        this.heat = 2;
-        this.damage = 3;
-        this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
-        this.toHitModifier = -2;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.waterShortRange = 1;
-        this.waterMediumRange = 2;
-        this.waterLongRange = 2;
-        this.waterExtremeRange = 4;
-        this.tonnage = 1.0;
-        this.criticals = 1;
-        this.bv = 12;
-        this.cost = 16000;
-        this.shortAV = 3;
-        this.maxRange = RANGE_SHORT;
-        this.atClass = CLASS_POINT_DEFENSE;
-        this.flags = flags.or(F_BURST_FIRE);
+        name = "Small Pulse Laser";
+        setInternalName("ISSmallPulseLaser");
+        addLookupName("IS Small Pulse Laser");
+        addLookupName("ISSmall Pulse Laser");
+        sortingName = "Laser Pulse B";
+        heat = 2;
+        damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
+        toHitModifier = -2;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 2;
+        waterExtremeRange = 4;
+        tonnage = 1.0;
+        criticals = 1;
+        bv = 12;
+        cost = 16000;
+        shortAV = 3;
+        maxRange = RANGE_SHORT;
+        atClass = CLASS_POINT_DEFENSE;
+        flags = flags.or(F_BURST_FIRE);
         rulesRefs = "226, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

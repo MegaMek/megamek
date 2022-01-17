@@ -29,6 +29,7 @@ public class ISRifleMedium extends RifleWeapon {
         shortName = "Medium Rifle";
         addLookupName("IS Medium Rifle");
         addLookupName("ISMediumRifle");
+        sortingName = "Rifle Cannon C";
         heat = 2;
         damage = 6;
         rackSize = 6;

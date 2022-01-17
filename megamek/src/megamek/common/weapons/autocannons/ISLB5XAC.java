@@ -22,25 +22,26 @@ public class ISLB5XAC extends LBXACWeapon {
 
     public ISLB5XAC() {
         super();
-        this.name = "LB 5-X AC";
-        this.setInternalName("ISLBXAC5");
-        this.addLookupName("IS LB 5-X AC");
-        this.heat = 1;
-        this.damage = 5;
-        this.rackSize = 5;
-        this.minimumRange = 3;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 8.0;
-        this.criticals = 5;
-        this.bv = 83;
-        this.cost = 250000;
-        this.shortAV = 5;
-        this.medAV = 5;
-        this.longAV = 5;
-        this.maxRange = RANGE_LONG;
+        name = "LB 5-X AC";
+        setInternalName("ISLBXAC5");
+        addLookupName("IS LB 5-X AC");
+        sortingName = "LB 05-X AC";
+        heat = 1;
+        damage = 5;
+        rackSize = 5;
+        minimumRange = 3;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        tonnage = 8.0;
+        criticals = 5;
+        bv = 83;
+        cost = 250000;
+        shortAV = 5;
+        medAV = 5;
+        longAV = 5;
+        maxRange = RANGE_LONG;
         rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

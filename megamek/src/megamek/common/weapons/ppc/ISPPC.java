@@ -27,6 +27,7 @@ public class ISPPC extends PPCWeapon {
         addLookupName("Particle Cannon");
         addLookupName("IS PPC");
         addLookupName("ISPPC");
+        sortingName = "PPC C";
         heat = 10;
         damage = 10;
         minimumRange = 3;

@@ -38,7 +38,8 @@ public class ISLRM20Primitive extends LRMWeapon {
         addLookupName("IS LRM-20 Primitive");
         addLookupName("ISLRM20p");
         addLookupName("IS LRM 20 Primitive");
-        this.shortName = "LRM/20 p";
+        shortName = "LRM/20 p";
+        sortingName = name;
         flags = flags.or(F_PROTOTYPE).andNot(F_ARTEMIS_COMPATIBLE);
         heat = 6;
         rackSize = 20;

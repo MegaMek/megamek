@@ -29,6 +29,7 @@ public class ISRifleHeavy extends RifleWeapon {
         shortName = "Heavy Rifle";
         addLookupName("IS Heavy Rifle");
         addLookupName("ISHeavyRifle");
+        sortingName = "Rifle Cannon D";
         heat = 4;
         damage = 9;
         rackSize = 9;

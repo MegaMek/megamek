@@ -31,7 +31,8 @@ public class ISPPCPrimitive extends PPCWeapon {
         addLookupName("Particle Cannon Primitive");
         addLookupName("IS PPCp");
         addLookupName("ISPPCp");
-        this.shortName = "PPCp";
+        shortName = "PPCp";
+        sortingName = "PPC Proto C";
         heat = 15;
         damage = 10;
         minimumRange = 3;

@@ -27,6 +27,7 @@ public class CLPulseLaserMicro extends PulseLaserWeapon {
         name = "Micro Pulse Laser";
         setInternalName("CLMicroPulseLaser");
         addLookupName("Clan Micro Pulse Laser");
+        sortingName = "Laser Pulse A";
         heat = 1;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

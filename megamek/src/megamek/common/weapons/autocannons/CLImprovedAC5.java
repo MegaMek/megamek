@@ -25,10 +25,10 @@ public class CLImprovedAC5 extends ACWeapon {
 
     public CLImprovedAC5() {
         super();
-
         name = "Improved Autocannon/5";
         setInternalName("Improved Autocannon/5");
         addLookupName("CLIMPAC5");
+        sortingName = "Improved Autocannon/05";
         heat = 1;
         damage = 5;
         rackSize = 5;

@@ -37,7 +37,7 @@ dependencies {
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:4.1.0'
+    testImplementation 'org.mockito:mockito-core:4.2.0'
 }
 
 mainClassName = 'megamek.MegaMek'

@@ -1,7 +1,7 @@
 plugins {
     id 'application'
     id 'maven-publish'
-    id 'edu.sc.seis.launch4j' version '2.4.4'
+    id 'edu.sc.seis.launch4j' version '2.5.1'
 }
 
 sourceSets {
@@ -44,7 +44,7 @@ mainClassName = 'megamek.MegaMek'
 
 ext {
     jvmOptions = ['-Xmx2048m']
-	userdata = "userdata"
+    userdata = "userdata"
     data = "data"
     conf = "mmconf"
     log = "logs"

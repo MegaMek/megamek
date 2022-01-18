@@ -23,9 +23,10 @@ public class CLChemicalLaserMedium extends CLChemicalLaserWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLChemicalLaserMedium() {
-        name = "Medium Chem Laser";
+        name = "Medium Chemical Laser";
         setInternalName("CLMediumChemicalLaser");
-        setInternalName("CLMediumChemLaser");
+        addLookupName("CLMediumChemLaser");
+        addLookupName("Medium Chem Laser");
         heat = 2;
         damage = 5;
         rackSize = 5;

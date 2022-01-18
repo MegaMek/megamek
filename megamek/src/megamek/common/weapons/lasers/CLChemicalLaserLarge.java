@@ -23,9 +23,10 @@ public class CLChemicalLaserLarge extends CLChemicalLaserWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLChemicalLaserLarge() {
-        name = "Large Chem Laser";
+        name = "Large Chemical Laser";
         setInternalName("CLLargeChemicalLaser");
-        setInternalName("CLLargeChemLaser");
+        addLookupName("CLLargeChemLaser");
+        addLookupName("Large Chem Laser");
         heat = 6;
         damage = 8;
         rackSize = 1;

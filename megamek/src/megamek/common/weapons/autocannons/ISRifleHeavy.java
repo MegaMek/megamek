@@ -26,6 +26,7 @@ public class ISRifleHeavy extends RifleWeapon {
         super();
         name = "Rifle (Cannon, Heavy)";
         setInternalName(name);
+        shortName = "Heavy Rifle";
         addLookupName("IS Heavy Rifle");
         addLookupName("ISHeavyRifle");
         heat = 4;

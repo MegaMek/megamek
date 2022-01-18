@@ -11446,7 +11446,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Compact Narc Ammo";
-        ammo.shortName = "Compact Narc";
+        ammo.shortName = "Narc";
         ammo.setInternalName(BattleArmor.DISPOSABLE_NARC_AMMO);
         ammo.addLookupName("BACompactNarc Ammo");
         ammo.damagePerShot = 2; // only used for ammo crits

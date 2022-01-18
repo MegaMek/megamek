@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-package megamek.common.weapons.other;
+package megamek.common.weapons.c3;
 
 import megamek.common.AmmoType;
 import megamek.common.Game;

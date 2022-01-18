@@ -13,6 +13,8 @@ VERSION HISTORY:
 + Updating to Apache FreeMarker 2.3.31 from 2.3.28
 + Updating to Jackson Core 2.13.1 from 2.9.8
 + Issue #3357: Updating to Jakarta.Mail 2.0.1 from Javax.Mail 1.6.2
++ Data: Equipment Name fixes/standardizations identified with recent changes to MML equipment tab.  Biggest change was removing duplicate C3 Master 
+			entries and consolidating them in a C3 weapons folder. Includes fixes to impacted unit files. 
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

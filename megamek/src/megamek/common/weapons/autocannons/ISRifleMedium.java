@@ -26,6 +26,7 @@ public class ISRifleMedium extends RifleWeapon {
         super();
         name = "Rifle (Cannon, Medium)";
         setInternalName(name);
+        shortName = "Medium Rifle";
         addLookupName("IS Medium Rifle");
         addLookupName("ISMediumRifle");
         heat = 2;

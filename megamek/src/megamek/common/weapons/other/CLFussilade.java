@@ -27,11 +27,13 @@ public class CLFussilade extends CLIATMWeapon {
     public CLFussilade() {
         super();
         //TODO Game Rules.
-        this.name = "Fusillade";
+        this.name = "Fusillade Launcher";
         setInternalName("Fusillade");
         addLookupName("Fussilade");
         flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
-                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT);
+                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT)
+                .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON);
         rackSize = 3;
         minimumRange = 4;
         shortRange = 5;

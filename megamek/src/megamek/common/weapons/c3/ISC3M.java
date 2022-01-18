@@ -11,7 +11,9 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.common.weapons.tag;
+package megamek.common.weapons.c3;
+
+import megamek.common.weapons.tag.TAGWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -22,10 +24,12 @@ public class ISC3M extends TAGWeapon {
 
     public ISC3M() {
         super();
-        name = "C3 Computer [Master]";
+        name = "C3 Computer (Master)";
+        shortName = "C3 Master";
         setInternalName("ISC3MasterUnit");
         addLookupName("IS C3 Computer");
         addLookupName("ISC3MasterComputer");
+        addLookupName("C3 Computer [Master]");
         tonnage = 5;
         criticals = 5;
         tankslots = 1;

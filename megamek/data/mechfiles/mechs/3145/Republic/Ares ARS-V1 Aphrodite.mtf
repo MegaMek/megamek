@@ -15,7 +15,7 @@ myomer:Standard
 cockpit:Superheavy Tripod Cockpit
 gyro:Superheavy Gyro
 
-heat sinks:15 Double
+heat sinks:15 IS Double
 base chassis heat sinks:10
 walk mp:2
 jump mp:0
@@ -43,68 +43,68 @@ ER Medium Laser, Left Torso
 ER Small Laser, Left Torso
 LRM 5, Left Torso
 SRM 2, Left Torso
-C3 Computer [Master], Left Torso
+C3 Computer (Master), Left Torso
 ER Medium Laser, Right Torso
 ER Small Laser, Right Torso
 LRM 5, Right Torso
 SRM 2, Right Torso
-C3 Computer [Master], Right Torso
+C3 Computer (Master), Right Torso
 ER Small Laser, Center Torso
 SRM 2, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLRotaryAC5 (omnipod)
-CLRotaryAC5 (omnipod)
-CLRotaryAC5 (omnipod)
-CLRotaryAC5 (omnipod)
-CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (omnipod)
-CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (omnipod)
-ISCASEII (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo|CLRotaryAC5 Ammo (OMNIPOD)
+ISCASEII (OMNIPOD)
 IS Endo-Composite
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLStreakLRM5 (omnipod)
-CLStreakLRM5 (omnipod)
-CLStreakLRM5 (omnipod)
-Clan Streak LRM 5 Ammo|Clan Streak LRM 5 Ammo (omnipod)
-ISCASEII (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+Clan Streak LRM 5 Ammo|Clan Streak LRM 5 Ammo (OMNIPOD)
+ISCASEII (OMNIPOD)
 IS Endo-Composite
 -Empty-
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 CLERMediumLaser
 CLERSmallLaser
 LRM 5
 SRM 2
 IS Ammo LRM-5
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
 ISCASEII
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 CLERMediumLaser
 CLERSmallLaser
 LRM 5
 SRM 2
 IS Ammo SRM-2
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
 ISCASEII
 -Empty-
 
@@ -114,11 +114,11 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 CLERSmallLaser
 SRM 2
-ISAngelECMSuite (omnipod)
+ISAngelECMSuite (OMNIPOD)
 IS Endo-Composite
 -Empty-
 

@@ -2192,9 +2192,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLPartialWing() {
         MiscType misc = new MiscType();
 
-        misc.name = "Partial Wing (Clan)";
+        misc.name = "Partial Wing";
         misc.setInternalName("CLPartialWing");
         misc.addLookupName("Clan Partial Wing");
+        misc.addLookupName("Partial Wing (Clan)");
         misc.shortName = "Partial Wing";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 6;
@@ -5200,9 +5201,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createC3S() {
         MiscType misc = new MiscType();
 
-        misc.name = "C3 Computer [Slave]";
+        misc.name = "C3 Computer (Slave)";
         misc.setInternalName("ISC3SlaveUnit");
         misc.addLookupName("IS C3 Slave");
+        misc.addLookupName("C3 Computer [Slave]");
         misc.shortName = "C3 Slave";
         misc.tonnage = 1;
         misc.criticals = 1;
@@ -5249,9 +5251,10 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createC3SBS() {
         MiscType misc = new MiscType();
-        misc.name = "C3 Boosted System (C3BS) [Slave]";
+        misc.name = "C3 Boosted System (Slave)";
         misc.setInternalName("ISC3BoostedSystemSlaveUnit");
         misc.addLookupName("IS C3 Boosted System Slave");
+        misc.addLookupName("C3 Boosted System (C3BS) [Slave]");
         misc.shortName = "C3 Boosted Slave";
         misc.tonnage = 3;
         misc.criticals = 2;
@@ -5273,10 +5276,11 @@ public class MiscType extends EquipmentType {
     public static MiscType createEmergencyC3M() {
         MiscType misc = new MiscType();
 
-        misc.name = "C3 Emergency Master (C3EM)";
+        misc.name = "C3 Emergency Master";
         misc.shortName = "C3 Emergency Master";
         misc.setInternalName("ISC3EmergencyMaster");
         misc.addLookupName("Emergency C3 Master");
+        misc.addLookupName("C3 Emergency Master (C3EM)");
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.tankslots = 1;
@@ -5302,9 +5306,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createBC3() {
         MiscType misc = new MiscType();
 
-        misc.name = "Battle Armor C3 (BC3)";
+        misc.name = "Battle Armor C3";
         misc.setInternalName("BattleArmorC3");
         misc.addLookupName("IS BattleArmor C3");
+        misc.addLookupName("Battle Armor C3 (BC3)");
         misc.shortName = "BC3";
         misc.tonnage = .250;
         misc.criticals = 1;
@@ -5326,10 +5331,11 @@ public class MiscType extends EquipmentType {
     public static MiscType createBC3i() {
         MiscType misc = new MiscType();
 
-        misc.name = "Battle Armor Improved C3 (BC3I)";
+        misc.name = "Battle Armor Improved C3";
         misc.setInternalName("ISBC3i");
         misc.addLookupName("IS BC3i");
         misc.addLookupName("IS BattleArmor C3i");
+        misc.addLookupName("Battle Armor Improved C3 (BC3I)");
         misc.shortName = "BC3i";
         misc.tonnage = .350;
         misc.criticals = 1;
@@ -6164,11 +6170,12 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.name = "Active Probe [Clan]";
+        misc.name = "Active Probe";
         misc.setInternalName(Sensor.CLAN_AP);
         misc.addLookupName("Active Probe");
         misc.addLookupName("Clan Active Probe");
         misc.addLookupName("ClActiveProbe");
+        misc.addLookupName("Active Probe [Clan]");
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
@@ -6266,9 +6273,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLECM() {
         MiscType misc = new MiscType();
 
-        misc.name = "ECM Suite [Clan]";
+        misc.name = "ECM Suite";
         misc.setInternalName("CLECMSuite");
         misc.addLookupName("Clan ECM Suite");
+        misc.addLookupName("ECM Suite [Clan]");
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
@@ -6499,9 +6507,11 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISLookDownRadar() {
         MiscType misc = new MiscType();
-        misc.name = "Satellite Imager [Look-Down Radar]";
+        misc.name = "Satellite Imager (Look-Down Radar)";
         misc.setInternalName("ISLookDownRadar");
+        misc.shortName = "Look-Down Radar";
         misc.addLookupName("CLLookDownRadar");
+        misc.addLookupName("Satellite Imager [Look-Down Radar]");
         misc.tonnage = 5;
         misc.cost = 400000;
         misc.criticals = 1;
@@ -6521,9 +6531,11 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISInfraredImager() {
         MiscType misc = new MiscType();
-        misc.name = "Satellite Imager [Infrared Imager]";
+        misc.name = "Satellite Imager (Infrared Imager)";
+        misc.shortName = "Infrared Imager";
         misc.setInternalName("ISInfraredImager");
         misc.addLookupName("CLInfraredImager");
+        misc.addLookupName("Satellite Imager [Infrared Imager]");
         misc.tonnage = 5;
         misc.cost = 250000;
         misc.flags = misc.flags.or(F_INFRARED_IMAGER).or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
@@ -6543,9 +6555,11 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISHyperspectralImager() {
         MiscType misc = new MiscType();
-        misc.name = "Satellite Imager [Hyperspectral Imager]";
+        misc.name = "Satellite Imager (Hyperspectral Imager)";
+        misc.shortName = "Hyperspectral Image";
         misc.setInternalName("ISHypersprectralImager");
         misc.addLookupName("ISHyperspectralImager");
+        misc.addLookupName("Satellite Imager [Hyperspectral Imager]");
         misc.tonnage = 7.5;
         misc.cost = 550000;
         misc.criticals = 1;
@@ -6564,9 +6578,11 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISHIResImager() {
         MiscType misc = new MiscType();
-        misc.name = "Satellite Imager [High-Resolution (Hi-Res) Imager]";
+        misc.name = "Satellite Imager (High-Resolution Imager)";
         misc.setInternalName("ISHighResImager");
+        misc.shortName = "Hi-Res Imager";
         misc.addLookupName("CLHighResImager");
+        misc.addLookupName("Satellite Imager [High-Resolution (Hi-Res) Imager]");
         misc.tonnage = 2.5;
         misc.cost = 150000;
         misc.criticals = 1;
@@ -6755,9 +6771,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createISTargComp() {
         MiscType misc = new MiscType();
 
-        misc.name = "Targeting Computer [IS]";
+        misc.name = "Targeting Computer";
         misc.setInternalName("ISTargeting Computer");
         misc.addLookupName("IS Targeting Computer");
+        misc.addLookupName("Targeting Computer [IS]");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -6781,9 +6798,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLTargComp() {
         MiscType misc = new MiscType();
 
-        misc.name = "Targeting Computer [Clan]";
+        misc.name = "Targeting Computer";
         misc.setInternalName("CLTargeting Computer");
         misc.addLookupName("Clan Targeting Computer");
+        misc.addLookupName("Targeting Computer [Clan]");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -6812,8 +6830,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createMechSprayer() {
         MiscType misc = new MiscType();
 
-        misc.name = "Sprayer [Mech]";
+        misc.name = "Sprayer (Mech)";
         misc.setInternalName("MechSprayer");
+        misc.addLookupName("Sprayer [Mech]");
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 1000;
@@ -6833,8 +6852,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createTankSprayer() {
         MiscType misc = new MiscType();
 
-        misc.name = "Sprayer [Vehicular]";
+        misc.name = "Sprayer (Vehicular)";
         misc.setInternalName("Tank Sprayer");
+        misc.addLookupName("Sprayer [Vehicular]");
         misc.shortName = "Sprayer";
         misc.tonnage = 0.015;
         misc.criticals = 1;
@@ -7331,8 +7351,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createLightFluidSuctionSystemMech() {
         MiscType misc = new MiscType();
-        misc.name = "Light Fluid Suction System (Mech)";
+        misc.name = "Fluid Suction System (Light - Mech)";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Light Fluid Suction System (Mech)");
         misc.criticals = 1;
         misc.tonnage = .5;
         misc.cost = 1000;
@@ -7350,8 +7371,9 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createLightFluidSuctionSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Light Fluid Suction System (Vehicle)";
+        misc.name = "Fluid Suction System (Light - Vehicle)";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Light Fluid Suction System (Vehicle)");
         misc.criticals = 1;
         misc.tankslots = 1;
         misc.tonnage = 0.015;
@@ -7371,9 +7393,10 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createFluidSuctionSystem() {
         MiscType misc = new MiscType();
-        misc.name = "Fluid Suction System[Standard]";
+        misc.name = "Fluid Suction System (Standard)";
         misc.setInternalName(misc.name);
         misc.addLookupName("Fluid Suction System");
+        misc.addLookupName("Fluid Suction System[Standard]");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 1;
@@ -7468,9 +7491,10 @@ public class MiscType extends EquipmentType {
     public static MiscType createManipulator() {
         MiscType misc = new MiscType();
 
-        misc.name = "Manipulator [Non-Mech/Non-Battle Armor]";
-        misc.addLookupName("Manipulator");
+        misc.name = "Manipulator (Non-Mech/Non-Battle Armor)";
         misc.setInternalName(misc.name);
+        misc.addLookupName("Manipulator");
+        misc.addLookupName("Manipulator [Non-Mech/Non-Battle Armor]");
         misc.shortName = "Manipulator";
         misc.flags = misc.flags.or(F_MANIPULATOR).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT);
@@ -9188,9 +9212,11 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISFlotationHull() {
         MiscType misc = new MiscType();
-        misc.name = "Combat Vehicle Chassis Mod [Flotation Hull]";
+        misc.name = "Combat Vehicle Chassis Mod (Flotation Hull)";
         misc.setInternalName("ISFlotationHull");
+        misc.shortName = "Flotation Hull";
         misc.addLookupName("ClanFlotationHull");
+        misc.addLookupName("Combat Vehicle Chassis Mod [Flotation Hull]");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -10828,7 +10854,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISBADropChuteStd() {
         MiscType misc = new MiscType();
         // TODO: game rules
-        misc.name = "BattleArmor DropChute(Standard)";
+        misc.name = "BattleArmor DropChute (Standard)";
         misc.setInternalName("ISBADropChuteStd");
         misc.tonnage = 0.2;
         misc.criticals = 0;

@@ -1519,7 +1519,7 @@ public class EquipmentType implements ITechnology {
      * order instead of the order AC10/2/20/5 and S/M/L Lasers will be grouped together.
      * @return A String similar to getName() but modified to support a better sorting
      */
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         return (sortingName != null) ? sortingName : name;
     }
 }

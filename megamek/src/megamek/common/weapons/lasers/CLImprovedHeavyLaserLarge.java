@@ -28,6 +28,7 @@ public class CLImprovedHeavyLaserLarge extends LaserWeapon {
         shortName = "Imp. Heavy Large Laser";
         setInternalName("CLImprovedHeavyLargeLaser");
         addLookupName("Clan Improved Large Heavy Laser");
+        sortingName = "Laser Heavy Imp D";
         heat = 18;
         damage = 16;
         shortRange = 5;

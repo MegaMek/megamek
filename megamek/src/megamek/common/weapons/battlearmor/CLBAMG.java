@@ -31,6 +31,7 @@ public class CLBAMG extends BAMGWeapon {
         addLookupName("IS BA Machine Gun");
         addLookupName("ISBAMachine Gun");
         addLookupName("ISBAMachineGun");
+        sortingName = "MG C";
         heat = 0;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

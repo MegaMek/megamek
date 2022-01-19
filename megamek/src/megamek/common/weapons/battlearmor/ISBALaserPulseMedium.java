@@ -28,6 +28,7 @@ public class ISBALaserPulseMedium extends PulseLaserWeapon {
         setInternalName("ISBAMediumPulseLaser");
         addLookupName("IS BA Pulse Med Laser");
         addLookupName("IS BA Medium Pulse Laser");
+        sortingName = "Laser Pulse C";
         damage = 6;
         toHitModifier = -2;
         shortRange = 2;

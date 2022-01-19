@@ -29,6 +29,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         setInternalName("CLBAFlamer");
         addLookupName("Clan BA Flamer");
         addLookupName("ISBAFlamer");
+        sortingName = "Flamer C";
         heat = 3;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;

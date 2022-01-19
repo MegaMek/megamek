@@ -31,6 +31,7 @@ public class CLBAERPulseLaserSmall extends PulseLaserWeapon {
         addLookupName("Clan BA ER Pulse Small Laser");
         addLookupName("Clan BA ER Small Pulse Laser");
         addLookupName("Clan BA ERSmallPulseLaser");
+        sortingName = "Laser Pulse ER B";
         heat = 3;
         damage = 5;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

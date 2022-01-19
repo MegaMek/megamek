@@ -29,6 +29,7 @@ public class ISBALaserPulseSmall extends PulseLaserWeapon {
         setInternalName("ISBASmallPulseLaser");
         addLookupName("IS BA Small Pulse Laser");
         addLookupName("ISBASmall Pulse Laser");
+        sortingName = "Laser Pulse B";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         toHitModifier = -2;

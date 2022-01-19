@@ -30,6 +30,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         name = "Heavy Flamer [BA]";
         setInternalName("ISBAHeavyFlamer");
         addLookupName("IS BA Heavy Flamer");
+        sortingName = "Flamer D";
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;

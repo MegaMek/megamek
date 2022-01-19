@@ -24,29 +24,30 @@ public class CLBAPulseLaserMedium extends PulseLaserWeapon {
 
     public CLBAPulseLaserMedium() {
         super();
-        this.name = "Medium Pulse Laser";
-        this.setInternalName("CLBAMediumPulseLaser");
-        this.addLookupName("Clan BA Pulse Med Laser");
-        this.addLookupName("Clan BA Medium Pulse Laser");
-        this.heat = 4;
-        this.damage = 7;
-        this.toHitModifier = -2;
-        this.shortRange = 4;
-        this.mediumRange = 8;
-        this.longRange = 12;
-        this.extremeRange = 16;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 5;
-        this.waterLongRange = 8;
-        this.waterExtremeRange = 10;
-        this.tonnage = .8;
-        this.criticals = 3;
-        this.bv = 111;
-        this.cost = 60000;
-        this.shortAV = 7;
-        this.medAV = 7;
-        this.maxRange = RANGE_MED;
-        this.flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        name = "Medium Pulse Laser";
+        setInternalName("CLBAMediumPulseLaser");
+        addLookupName("Clan BA Pulse Med Laser");
+        addLookupName("Clan BA Medium Pulse Laser");
+        sortingName = "Laser Pulse C";
+        heat = 4;
+        damage = 7;
+        toHitModifier = -2;
+        shortRange = 4;
+        mediumRange = 8;
+        longRange = 12;
+        extremeRange = 16;
+        waterShortRange = 3;
+        waterMediumRange = 5;
+        waterLongRange = 8;
+        waterExtremeRange = 10;
+        tonnage = .8;
+        criticals = 3;
+        bv = 111;
+        cost = 60000;
+        shortAV = 7;
+        medAV = 7;
+        maxRange = RANGE_MED;
+        flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

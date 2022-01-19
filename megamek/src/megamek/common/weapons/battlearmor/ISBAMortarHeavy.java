@@ -32,6 +32,7 @@ public class ISBAMortarHeavy extends Weapon {
         name = "Heavy Mortar";
         setInternalName("ISBAHeavyMortar");
         addLookupName("IS BA Heavy Mortar");
+        sortingName = "Mortar D";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;

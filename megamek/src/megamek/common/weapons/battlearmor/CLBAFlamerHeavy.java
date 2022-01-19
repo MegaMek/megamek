@@ -28,6 +28,7 @@ public class CLBAFlamerHeavy extends BAFlamerWeapon {
         setInternalName("CLBAHeavyFlamer");
         addLookupName("ISBAHeavyFlamer");
         addLookupName("IS BA Heavy Flamer");
+        sortingName = "Flamer D";
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;

@@ -30,6 +30,7 @@ public class CLBAMGLight extends BAMGWeapon {
         addLookupName("ISBALightMachineGun");
         addLookupName("IS BA Light Machine Gun");
         addLookupName("ISBALightMG");
+        sortingName = "MG B";
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_HALFD6;

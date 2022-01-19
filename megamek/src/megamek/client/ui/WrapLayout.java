@@ -105,7 +105,7 @@ public class WrapLayout extends FlowLayout {
             int targetWidth;
             Container container = target;
 
-            while ((container.getSize().width) == 0 && (container.getParent() != null)) {
+            while ((container.getSize().width == 0) && (container.getParent() != null)) {
                 container = container.getParent();
             }
 

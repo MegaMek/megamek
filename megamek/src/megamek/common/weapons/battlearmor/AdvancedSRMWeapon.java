@@ -76,7 +76,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         if (sortingName != null) {
             return sortingName;
         } else {

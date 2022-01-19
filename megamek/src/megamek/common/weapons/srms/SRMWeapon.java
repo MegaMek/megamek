@@ -104,7 +104,7 @@ public abstract class SRMWeapon extends MissileWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         if (sortingName != null) {
             return sortingName;
         } else {

@@ -52,7 +52,7 @@ public class CLImprovedLRM5 extends LRMWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         // revert LRMWeapon's override here as the name is not just "LRM xx"
         return "Improved LRM 05";
     }

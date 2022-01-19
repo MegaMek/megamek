@@ -64,7 +64,7 @@ public abstract class ATMWeapon extends MissileWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         return "ATM " + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

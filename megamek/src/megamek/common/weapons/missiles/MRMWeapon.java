@@ -64,7 +64,7 @@ public abstract class MRMWeapon extends MissileWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "XIOS ";

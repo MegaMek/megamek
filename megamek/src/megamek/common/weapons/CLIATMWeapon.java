@@ -102,7 +102,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         return "ATM IMP " + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

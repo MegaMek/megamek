@@ -78,7 +78,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
         if (name.contains("I-OS")) {
             oneShotTag = "OSI ";

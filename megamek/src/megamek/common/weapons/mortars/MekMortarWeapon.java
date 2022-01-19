@@ -101,7 +101,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         return "Mek Mortar " + rackSize;
     }
 }

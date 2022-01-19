@@ -52,7 +52,7 @@ public class CLImprovedSRM6 extends SRMWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         return "SRM IMP 6";
     }
 }

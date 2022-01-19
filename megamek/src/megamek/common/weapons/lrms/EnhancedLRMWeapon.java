@@ -31,7 +31,7 @@ public abstract class EnhancedLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    public String getNaturalNameSortingString() {
+    public String getSortingName() {
         return "Enhanced LRM " + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

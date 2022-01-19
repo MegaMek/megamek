@@ -22,26 +22,27 @@ public class ISLB2XAC extends LBXACWeapon {
 
     public ISLB2XAC() {
         super();
-        this.name = "LB 2-X AC";
-        this.setInternalName("ISLBXAC2");
-        this.addLookupName("IS LB 2-X AC");
-        this.heat = 1;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.minimumRange = 4;
-        this.shortRange = 9;
-        this.mediumRange = 18;
-        this.longRange = 27;
-        this.extremeRange = 36;
-        this.tonnage = 6.0;
-        this.criticals = 4;
-        this.bv = 42;
-        this.cost = 150000;
-        this.shortAV = 2;
-        this.medAV = 2;
-        this.longAV = 2;
-        this.extAV = 2;
-        this.maxRange = RANGE_EXT;
+        name = "LB 2-X AC";
+        setInternalName("ISLBXAC2");
+        addLookupName("IS LB 2-X AC");
+        sortingName = "LB 02-X AC";
+        heat = 1;
+        damage = 2;
+        rackSize = 2;
+        minimumRange = 4;
+        shortRange = 9;
+        mediumRange = 18;
+        longRange = 27;
+        extremeRange = 36;
+        tonnage = 6.0;
+        criticals = 4;
+        bv = 42;
+        cost = 150000;
+        shortAV = 2;
+        medAV = 2;
+        longAV = 2;
+        extAV = 2;
+        maxRange = RANGE_EXT;
         rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

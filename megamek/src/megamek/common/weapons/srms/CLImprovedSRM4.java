@@ -24,23 +24,22 @@ public class CLImprovedSRM4 extends SRMWeapon {
 
     public CLImprovedSRM4() {
         super();
-
-        this.name = "Improved SRM 4";
-        this.setInternalName(this.name);
-        this.addLookupName("CLImprovedSRM4");
-        this.heat = 3;
-        this.rackSize = 4;
+        name = "Improved SRM 4";
+        setInternalName(this.name);
+        addLookupName("CLImprovedSRM4");
+        heat = 3;
+        rackSize = 4;
         shortRange = 4;
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        this.tonnage = 2.0;
-        this.criticals = 1;
-        this.bv = 39;
-        this.cost = 60000;
-        this.shortAV = 6;
-        this.medAV = 6;
-        this.maxRange = RANGE_MED;
+        tonnage = 2.0;
+        criticals = 1;
+        bv = 39;
+        cost = 60000;
+        shortAV = 6;
+        medAV = 6;
+        maxRange = RANGE_MED;
         ammoType = AmmoType.T_SRM_IMP;
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);
@@ -50,5 +49,10 @@ public class CLImprovedSRM4 extends SRMWeapon {
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(F_CCC).setProductionFactions(F_CCC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public String getSortingName() {
+        return "SRM IMP 4";
     }
 }

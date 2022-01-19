@@ -22,25 +22,26 @@ public class NPPCWeaponMedium extends NPPCWeapon {
 
     public NPPCWeaponMedium() {
         super();
-        this.name = "Naval PPC (Medium)";
-        this.setInternalName(this.name);
-        this.addLookupName("MediumNPPC");
-        this.addLookupName("Medium NPPC (Clan)");
-        this.shortName = "Medium NPPC";
-        this.heat = 135;
-        this.damage = 9;
-        this.shortRange = 12;
-        this.mediumRange = 24;
-        this.longRange = 36;
-        this.extremeRange = 48;
-        this.tonnage = 1800.0;
-        this.bv = 2268;
-        this.cost = 3250000;
-        this.shortAV = 9;
-        this.medAV = 9;
-        this.longAV = 9;
-        this.extAV = 9;
-        this.maxRange = RANGE_EXT;
+        name = "Naval PPC (Medium)";
+        setInternalName(this.name);
+        addLookupName("MediumNPPC");
+        addLookupName("Medium NPPC (Clan)");
+        shortName = "Medium NPPC";
+        sortingName = "PPC Naval C";
+        heat = 135;
+        damage = 9;
+        shortRange = 12;
+        mediumRange = 24;
+        longRange = 36;
+        extremeRange = 48;
+        tonnage = 1800.0;
+        bv = 2268;
+        cost = 3250000;
+        shortAV = 9;
+        medAV = 9;
+        longAV = 9;
+        extAV = 9;
+        maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

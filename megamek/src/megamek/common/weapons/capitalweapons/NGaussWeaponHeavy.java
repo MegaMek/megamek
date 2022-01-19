@@ -24,27 +24,28 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
 
     public NGaussWeaponHeavy() {
         super();
-        this.name = "Naval Gauss (Heavy)";
-        this.setInternalName(this.name);
-        this.addLookupName("HeavyNGauss");
-        this.addLookupName("CLHeavyNGauss");
-        this.addLookupName("Heavy N-Gauss (Clan)");
-        this.shortName = "Heavy NGauss";
-        this.heat = 18;
-        this.damage = 30;
-        this.ammoType = AmmoType.T_HEAVY_NGAUSS;
-        this.shortRange = 12;
-        this.mediumRange = 24;
-        this.longRange = 36;
-        this.extremeRange = 48;
-        this.tonnage = 7000;
-        this.bv = 6048;
-        this.cost = 50050000;
-        this.shortAV = 30;
-        this.medAV = 30;
-        this.longAV = 30;
-        this.extAV = 30;
-        this.maxRange = RANGE_EXT;
+        name = "Naval Gauss (Heavy)";
+        setInternalName(this.name);
+        addLookupName("HeavyNGauss");
+        addLookupName("CLHeavyNGauss");
+        addLookupName("Heavy N-Gauss (Clan)");
+        sortingName = "Gauss Naval D";
+        shortName = "Heavy NGauss";
+        heat = 18;
+        damage = 30;
+        ammoType = AmmoType.T_HEAVY_NGAUSS;
+        shortRange = 12;
+        mediumRange = 24;
+        longRange = 36;
+        extremeRange = 48;
+        tonnage = 7000;
+        bv = 6048;
+        cost = 50050000;
+        shortAV = 30;
+        medAV = 30;
+        longAV = 30;
+        extAV = 30;
+        maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

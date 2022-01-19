@@ -62,4 +62,9 @@ public abstract class ATMWeapon extends MissileWeapon {
         }
         return damage;
     }
+
+    @Override
+    public String getSortingName() {
+        return "ATM " + ((rackSize < 10) ? "0" + rackSize : rackSize);
+    }
 }

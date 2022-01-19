@@ -28,6 +28,7 @@ public class CLBALaserSmall extends LaserWeapon {
         setInternalName("CLBASmall Laser");
         addLookupName("CL BA Small Laser");
         addLookupName("CLBASmallLaser");
+        sortingName = "Laser B";
         heat = 1;
         damage = 3;
         shortRange = 1;

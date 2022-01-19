@@ -25,26 +25,26 @@ public class ISLightMG extends MGWeapon {
 
     public ISLightMG() {
         super();
-
-        this.name = "Light Machine Gun";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Light Machine Gun");
-        this.addLookupName("ISLightMG");
-        this.ammoType = AmmoType.T_MG_LIGHT;
-        this.heat = 0;
-        this.damage = 1;
-        this.infDamageClass = WeaponType.WEAPON_BURST_1D6;
-        this.rackSize = 1;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
-        this.tonnage = 0.5;
-        this.criticals = 1;
-        this.bv = 5;
-        this.cost = 5000;
-        this.shortAV = 1;
-        this.maxRange = RANGE_SHORT;
+        name = "Light Machine Gun";
+        setInternalName(this.name);
+        addLookupName("IS Light Machine Gun");
+        addLookupName("ISLightMG");
+        sortingName = "MG B";
+        ammoType = AmmoType.T_MG_LIGHT;
+        heat = 0;
+        damage = 1;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
+        rackSize = 1;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        tonnage = 0.5;
+        criticals = 1;
+        bv = 5;
+        cost = 5000;
+        shortAV = 1;
+        maxRange = RANGE_SHORT;
         rulesRefs = "228, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

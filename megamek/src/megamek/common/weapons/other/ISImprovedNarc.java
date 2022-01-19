@@ -23,22 +23,22 @@ public class ISImprovedNarc extends NarcWeapon {
 
     public ISImprovedNarc() {
         super();
-
-        this.name = "iNarc";
-        this.setInternalName("ISImprovedNarc");
-        this.addLookupName("IS iNarc Beacon");
-        this.addLookupName("IS iNarc Missile Beacon");
-        this.ammoType = AmmoType.T_INARC;
-        this.heat = 0;
-        this.rackSize = 1;
-        this.shortRange = 4;
-        this.mediumRange = 9;
-        this.longRange = 15;
-        this.extremeRange = 18;
-        this.tonnage = 5.0;
-        this.criticals = 3;
-        this.bv = 75;
-        this.cost = 250000;
+        name = "iNarc";
+        setInternalName("ISImprovedNarc");
+        addLookupName("IS iNarc Beacon");
+        addLookupName("IS iNarc Missile Beacon");
+        sortingName = "Narc X";
+        ammoType = AmmoType.T_INARC;
+        heat = 0;
+        rackSize = 1;
+        shortRange = 4;
+        mediumRange = 9;
+        longRange = 15;
+        extremeRange = 18;
+        tonnage = 5.0;
+        criticals = 3;
+        bv = 75;
+        cost = 250000;
         rulesRefs = "232,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)

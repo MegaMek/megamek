@@ -22,26 +22,27 @@ public class ISLaserMedium extends LaserWeapon {
 
     public ISLaserMedium() {
         super();
-        this.name = "Medium Laser";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Medium Laser");
-        this.addLookupName("ISMediumLaser");
-        this.heat = 3;
-        this.damage = 5;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 4;
-        this.waterLongRange = 6;
-        this.waterExtremeRange = 8;
-        this.tonnage = 1.0;
-        this.criticals = 1;
-        this.bv = 46;
-        this.cost = 40000;
-        this.shortAV = 5;
-        this.maxRange = RANGE_SHORT;
+        name = "Medium Laser";
+        setInternalName(this.name);
+        addLookupName("IS Medium Laser");
+        addLookupName("ISMediumLaser");
+        sortingName = "Laser C";
+        heat = 3;
+        damage = 5;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
+        waterShortRange = 2;
+        waterMediumRange = 4;
+        waterLongRange = 6;
+        waterExtremeRange = 8;
+        tonnage = 1.0;
+        criticals = 1;
+        bv = 46;
+        cost = 40000;
+        shortAV = 5;
+        maxRange = RANGE_SHORT;
         rulesRefs = "227, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(true)

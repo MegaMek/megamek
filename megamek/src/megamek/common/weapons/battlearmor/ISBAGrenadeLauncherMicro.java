@@ -30,6 +30,7 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
         addLookupName("IS BA Micro Grenade Launcher");
         addLookupName("CL BA Micro Grenade Launcher");
         addLookupName("CLBAMicroGrenadeLauncher");
+        sortingName = "Grenade Launcher A";
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_HALFD6;

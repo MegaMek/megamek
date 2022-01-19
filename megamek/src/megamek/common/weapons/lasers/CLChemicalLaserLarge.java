@@ -27,6 +27,7 @@ public class CLChemicalLaserLarge extends CLChemicalLaserWeapon {
         setInternalName("CLLargeChemicalLaser");
         addLookupName("CLLargeChemLaser");
         addLookupName("Large Chem Laser");
+        sortingName = "Chem Laser D";
         heat = 6;
         damage = 8;
         rackSize = 1;

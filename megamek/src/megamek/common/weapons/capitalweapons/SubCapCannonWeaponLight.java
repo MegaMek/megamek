@@ -24,25 +24,26 @@ public class SubCapCannonWeaponLight extends SubCapCannonWeapon {
 
     public SubCapCannonWeaponLight() {
         super();
-        this.name = "Sub-Capital Cannon (Light)";
-        this.setInternalName(this.name);
-        this.addLookupName("LightSCC");
-        this.addLookupName("Light Sub-Capital Cannon");
-        this.shortName = "Light SCC";
-        this.heat = 12;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.shortRange = 11;
-        this.mediumRange = 22;
-        this.longRange = 33;
-        this.extremeRange = 44;
-        this.tonnage = 200.0;
-        this.bv = 379;
-        this.cost = 330000;
-        this.shortAV = 2;
-        this.medAV = 2;
-        this.longAV = 2;
-        this.maxRange = RANGE_LONG;
+        name = "Sub-Capital Cannon (Light)";
+        setInternalName(this.name);
+        addLookupName("LightSCC");
+        addLookupName("Light Sub-Capital Cannon");
+        shortName = "Light SCC";
+        sortingName = "Sub-Capital Cannon B";
+        heat = 12;
+        damage = 2;
+        rackSize = 2;
+        shortRange = 11;
+        mediumRange = 22;
+        longRange = 33;
+        extremeRange = 44;
+        tonnage = 200.0;
+        bv = 379;
+        cost = 330000;
+        shortAV = 2;
+        medAV = 2;
+        longAV = 2;
+        maxRange = RANGE_LONG;
         rulesRefs = "343, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)

@@ -29,6 +29,7 @@ public class ISHVAC2 extends HVACWeapon {
         addLookupName("IS Hyper Velocity Auto Cannon/2");
         addLookupName("ISHVAC2");
         addLookupName("IS Hyper Velocity Autocannon/2");
+        sortingName = "HVAC/02";
         heat = 1;
         damage = 2;
         rackSize = 2;

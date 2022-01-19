@@ -30,6 +30,7 @@ public class CLBAERPulseLaserMedium extends PulseLaserWeapon {
         addLookupName("CLBAERMediumPulseLaser");
         addLookupName("BA Clan ER Pulse Med Laser");
         addLookupName("BA Clan ER Medium Pulse Laser");
+        sortingName = "Laser Pulse ER C";
         heat = 6;
         damage = 7;
         toHitModifier = -1;

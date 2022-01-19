@@ -28,6 +28,7 @@ public class CLERPulseLaserMedium extends PulseLaserWeapon {
         setInternalName("CLERMediumPulseLaser");
         addLookupName("Clan ER Pulse Med Laser");
         addLookupName("Clan ER Medium Pulse Laser");
+        sortingName = "Laser Pulse ER C";
         heat = 6;
         damage = 7;
         toHitModifier = -1;

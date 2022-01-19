@@ -26,6 +26,7 @@ public class ISPulseLaserLarge extends PulseLaserWeapon {
         setInternalName("ISLargePulseLaser");
         addLookupName("IS Pulse Large Laser");
         addLookupName("IS Large Pulse Laser");
+        sortingName = "Laser Pulse D";
         heat = 10;
         damage = 9;
         toHitModifier = -2;

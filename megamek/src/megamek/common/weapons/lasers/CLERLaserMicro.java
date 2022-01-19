@@ -25,6 +25,7 @@ public class CLERLaserMicro extends LaserWeapon {
         name = "ER Micro Laser";
         setInternalName("CLERMicroLaser");
         addLookupName("Clan ER Micro Laser");
+        sortingName = "Laser ER A";
         heat = 1;
         damage = 2;
         shortRange = 1;

@@ -25,6 +25,7 @@ public class CLERLaserSmall extends LaserWeapon {
         name = "ER Small Laser";
         setInternalName("CLERSmallLaser");
         addLookupName("Clan ER Small Laser");
+        sortingName = "Laser ER B";
         heat = 2;
         damage = 5;
         shortRange = 2;

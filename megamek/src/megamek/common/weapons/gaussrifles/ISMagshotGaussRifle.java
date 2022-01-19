@@ -28,6 +28,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
 
         name = "MagShot";
         setInternalName("ISMagshotGR");
+        sortingName = "Gauss Z";
         heat = 1;
         damage = 2;
         ammoType = AmmoType.T_MAGSHOT;

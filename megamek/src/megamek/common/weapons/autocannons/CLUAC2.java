@@ -22,28 +22,28 @@ public class CLUAC2 extends UACWeapon {
 
     public CLUAC2() {
         super();
-
-        this.name = "Ultra AC/2";
-        this.setInternalName("CLUltraAC2");
-        this.addLookupName("Clan Ultra AC/2");
-        this.heat = 1;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.minimumRange = 2;
-        this.shortRange = 9;
-        this.mediumRange = 18;
-        this.longRange = 27;
-        this.extremeRange = 36;
-        this.tonnage = 5.0;
-        this.criticals = 2;
-        this.bv = 62;
-        this.cost = 120000;
-        this.shortAV = 3;
-        this.medAV = 3;
-        this.longAV = 3;
-        this.extAV = 3;
-        this.maxRange = RANGE_EXT;
-        this.explosionDamage = damage;
+        name = "Ultra AC/2";
+        setInternalName("CLUltraAC2");
+        addLookupName("Clan Ultra AC/2");
+        sortingName = "Ultra AC/02";
+        heat = 1;
+        damage = 2;
+        rackSize = 2;
+        minimumRange = 2;
+        shortRange = 9;
+        mediumRange = 18;
+        longRange = 27;
+        extremeRange = 36;
+        tonnage = 5.0;
+        criticals = 2;
+        bv = 62;
+        cost = 120000;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
+        extAV = 3;
+        maxRange = RANGE_EXT;
+        explosionDamage = damage;
         rulesRefs = "208,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

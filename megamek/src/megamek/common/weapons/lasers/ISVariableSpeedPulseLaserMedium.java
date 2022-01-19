@@ -29,6 +29,7 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         addLookupName("ISMVSPL");
         addLookupName("ISMediumVariableSpeedLaser");
         addLookupName("ISMediumVSP");
+        sortingName = "Laser VSP C";
         heat = 7;
         damage = DAMAGE_VARIABLE;
         toHitModifier = -4;

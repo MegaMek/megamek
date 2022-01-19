@@ -30,28 +30,28 @@ public class ISLGaussRifle extends GaussWeapon {
 
     public ISLGaussRifle() {
         super();
-
-        this.name = "Light Gauss Rifle";
-        this.setInternalName("ISLightGaussRifle");
-        this.addLookupName("IS Light Gauss Rifle");
-        this.heat = 1;
-        this.damage = 8;
-        this.ammoType = AmmoType.T_GAUSS_LIGHT;
-        this.minimumRange = 3;
-        this.shortRange = 8;
-        this.mediumRange = 17;
-        this.longRange = 25;
-        this.extremeRange = 34;
-        this.tonnage = 12.0;
-        this.criticals = 5;
-        this.bv = 159;
-        this.cost = 275000;
-        this.shortAV = 8;
-        this.medAV = 8;
-        this.longAV = 8;
-        this.extAV = 8;
-        this.maxRange = RANGE_EXT;
-        this.explosionDamage = 16;
+        name = "Light Gauss Rifle";
+        setInternalName("ISLightGaussRifle");
+        addLookupName("IS Light Gauss Rifle");
+        sortingName = "Gauss B";
+        heat = 1;
+        damage = 8;
+        ammoType = AmmoType.T_GAUSS_LIGHT;
+        minimumRange = 3;
+        shortRange = 8;
+        mediumRange = 17;
+        longRange = 25;
+        extremeRange = 34;
+        tonnage = 12.0;
+        criticals = 5;
+        bv = 159;
+        cost = 275000;
+        shortAV = 8;
+        medAV = 8;
+        longAV = 8;
+        extAV = 8;
+        maxRange = RANGE_EXT;
+        explosionDamage = 16;
         rulesRefs = "219, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

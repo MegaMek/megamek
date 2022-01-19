@@ -28,6 +28,7 @@ public class ISReengineeredLaserLarge extends ReengineeredLaserWeapon {
         setInternalName(name);
         addLookupName("ISLargeReengineeredLaser");
         addLookupName("ISLargeRELaser");
+        sortingName = "Laser REENG D";
         toHitModifier = -1;
         heat = 9;
         damage = 9;

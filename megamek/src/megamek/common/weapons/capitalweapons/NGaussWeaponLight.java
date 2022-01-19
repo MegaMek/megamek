@@ -24,27 +24,28 @@ public class NGaussWeaponLight extends NGaussWeapon {
 
     public NGaussWeaponLight() {
         super();
-        this.name = "Naval Gauss (Light)";
-        this.setInternalName(this.name);
-        this.addLookupName("LightNGauss");
-        this.addLookupName("CLLightNGauss");
-        this.addLookupName("Light N-Gauss (Clan)");
-        this.shortName = "Light NGauss";
-        this.heat = 9;
-        this.damage = 15;
-        this.ammoType = AmmoType.T_LIGHT_NGAUSS;
-        this.shortRange = 14;
-        this.mediumRange = 28;
-        this.longRange = 40;
-        this.extremeRange = 56;
-        this.tonnage = 4500;
-        this.bv = 3024;
-        this.cost = 20300000;
-        this.shortAV = 15;
-        this.medAV = 15;
-        this.longAV = 15;
-        this.extAV = 15;
-        this.maxRange = RANGE_EXT;
+        name = "Naval Gauss (Light)";
+        setInternalName(this.name);
+        addLookupName("LightNGauss");
+        addLookupName("CLLightNGauss");
+        addLookupName("Light N-Gauss (Clan)");
+        sortingName = "Gauss Naval B";
+        shortName = "Light NGauss";
+        heat = 9;
+        damage = 15;
+        ammoType = AmmoType.T_LIGHT_NGAUSS;
+        shortRange = 14;
+        mediumRange = 28;
+        longRange = 40;
+        extremeRange = 56;
+        tonnage = 4500;
+        bv = 3024;
+        cost = 20300000;
+        shortAV = 15;
+        medAV = 15;
+        longAV = 15;
+        extAV = 15;
+        maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

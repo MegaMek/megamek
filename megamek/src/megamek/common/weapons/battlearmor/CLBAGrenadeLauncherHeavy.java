@@ -37,6 +37,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         //Per TM Errata the original Grenade Launcher becomes the Heavy. Lookups below to keep unit files consistent.
         addLookupName("ISBAGrenadeLauncher");
       	addLookupName("IS BA Grenade Launcher");
+        sortingName = "Grenade Launcher D";
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

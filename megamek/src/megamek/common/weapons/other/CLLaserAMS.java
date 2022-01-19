@@ -30,6 +30,7 @@ public class CLLaserAMS extends LaserWeapon {
         setInternalName("CLLaserAntiMissileSystem");
         addLookupName("Clan Laser Anti-Missile Sys");
         addLookupName("Clan Laser AMS");
+        sortingName = "Anti-Missile System Laser";
         heat = 5;
         rackSize = 2;
         damage = 3; // for manual operation
@@ -45,8 +46,7 @@ public class CLLaserAMS extends LaserWeapon {
         criticals = 1;
         bv = 45;
         atClass = CLASS_AMS;
-        // we need to remove the direct fire flag again, so TC weight is not
-        // affected
+        // we need to remove the direct fire flag again, so TC weight is not affected
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .andNot(F_PROTO_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_ENERGY)
                 .and(F_DIRECT_FIRE.not());

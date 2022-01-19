@@ -30,10 +30,10 @@ public class CLMGA extends AmmoWeapon {
 
     public CLMGA() {
         super();
-
         name = "Machine Gun Array";
         addLookupName("Clan Machine Gun Array");
         setInternalName("CLMGA");
+        sortingName = "MGA C";
         heat = 0;
         damage = 2;
         rackSize = 2;
@@ -46,8 +46,7 @@ public class CLMGA extends AmmoWeapon {
         tonnage = 0.25;
         criticals = 1;
         bv = 0; // we'll have to calculate this in calculateBV(),
-        // because it depends on the number of MGs linked to
-        // the MGA
+        // because it depends on the number of MGs linked to the MGA
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_PROTO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
         cost = 1250;
@@ -65,14 +64,6 @@ public class CLMGA extends AmmoWeapon {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               Server server) {

@@ -27,6 +27,7 @@ public class CLBALaserERMedium extends LaserWeapon {
         name = "ER Medium Laser";
         setInternalName("CLBAERMediumLaser");
         addLookupName("Clan BA ER Medium Laser");
+        sortingName = "Laser ER C";
         heat = 5;
         damage = 7;
         shortRange = 5;

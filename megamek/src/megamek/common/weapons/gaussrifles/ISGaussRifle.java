@@ -31,26 +31,27 @@ public class ISGaussRifle extends GaussWeapon {
     public ISGaussRifle() {
         super();
 
-        this.name = "Gauss Rifle";
-        this.setInternalName("ISGaussRifle");
-        this.addLookupName("IS Gauss Rifle");
-        this.heat = 1;
-        this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS;
-        this.minimumRange = 2;
-        this.shortRange = 7;
-        this.mediumRange = 15;
-        this.longRange = 22;
-        this.extremeRange = 30;
-        this.tonnage = 15.0;
-        this.criticals = 7;
-        this.bv = 320;
-        this.cost = 300000;
-        this.shortAV = 15;
-        this.medAV = 15;
-        this.longAV = 15;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = 20;
+        name = "Gauss Rifle";
+        setInternalName("ISGaussRifle");
+        addLookupName("IS Gauss Rifle");
+        sortingName = "Gauss C";
+        heat = 1;
+        damage = 15;
+        ammoType = AmmoType.T_GAUSS;
+        minimumRange = 2;
+        shortRange = 7;
+        mediumRange = 15;
+        longRange = 22;
+        extremeRange = 30;
+        tonnage = 15.0;
+        criticals = 7;
+        bv = 320;
+        cost = 300000;
+        shortAV = 15;
+        medAV = 15;
+        longAV = 15;
+        maxRange = RANGE_LONG;
+        explosionDamage = 20;
         rulesRefs = "219,TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
@@ -65,14 +66,6 @@ public class ISGaussRifle extends GaussWeapon {
                 .setReintroductionFactions(F_FC, F_FW, F_DC);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               Server server) {

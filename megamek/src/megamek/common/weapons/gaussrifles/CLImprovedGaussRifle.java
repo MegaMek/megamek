@@ -31,27 +31,27 @@ public class CLImprovedGaussRifle extends GaussWeapon {
 
     public CLImprovedGaussRifle() {
         super();
-
-        this.name = "Improved Gauss Rifle";
-        this.setInternalName("Improved Gauss Rifle");
-        this.addLookupName("CLIMPGaussRifle");
-        this.heat = 1;
-        this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS_IMP;
-        this.minimumRange = 2;
-        this.shortRange = 7;
-        this.mediumRange = 15;
-        this.longRange = 22;
-        this.extremeRange = 30;
-        this.tonnage = 13.0;
-        this.criticals = 6;
-        this.bv = 320;
-        this.cost = 300000;
-        this.shortAV = 15;
-        this.medAV = 15;
-        this.longAV = 15;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = 20;
+        name = "Improved Gauss Rifle";
+        setInternalName("Improved Gauss Rifle");
+        addLookupName("CLIMPGaussRifle");
+        sortingName = "Gauss Imp";
+        heat = 1;
+        damage = 15;
+        ammoType = AmmoType.T_GAUSS_IMP;
+        minimumRange = 2;
+        shortRange = 7;
+        mediumRange = 15;
+        longRange = 22;
+        extremeRange = 30;
+        tonnage = 13.0;
+        criticals = 6;
+        bv = 320;
+        cost = 300000;
+        shortAV = 15;
+        medAV = 15;
+        longAV = 15;
+        maxRange = RANGE_LONG;
+        explosionDamage = 20;
         rulesRefs = "96, IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
@@ -63,14 +63,6 @@ public class CLImprovedGaussRifle extends GaussWeapon {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               Server server) {

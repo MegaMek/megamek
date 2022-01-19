@@ -22,24 +22,25 @@ public class NPPCWeaponLight extends NPPCWeapon {
 
     public NPPCWeaponLight() {
         super();
-        this.name = "Naval PPC (Light)";
-        this.setInternalName(this.name);
-        this.addLookupName("LightNPPC");
-        this.addLookupName("Light NPPC (Clan)");
-        this.shortName = "Light NPPC";
-        this.heat = 105;
-        this.damage = 7;
-        this.shortRange = 11;
-        this.mediumRange = 22;
-        this.longRange = 33;
-        this.extremeRange = 44;
-        this.tonnage = 1400.0;
-        this.bv = 1659;
-        this.cost = 2000000;
-        this.shortAV = 7;
-        this.medAV = 7;
-        this.longAV = 7;
-        this.maxRange = RANGE_LONG;
+        name = "Naval PPC (Light)";
+        setInternalName(this.name);
+        addLookupName("LightNPPC");
+        addLookupName("Light NPPC (Clan)");
+        shortName = "Light NPPC";
+        sortingName = "PPC Naval B";
+        heat = 105;
+        damage = 7;
+        shortRange = 11;
+        mediumRange = 22;
+        longRange = 33;
+        extremeRange = 44;
+        tonnage = 1400.0;
+        bv = 1659;
+        cost = 2000000;
+        shortAV = 7;
+        medAV = 7;
+        longAV = 7;
+        maxRange = RANGE_LONG;
         rulesRefs = "333, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

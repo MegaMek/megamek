@@ -34,6 +34,7 @@ public class ISHGaussRifle extends GaussWeapon {
         name = "Heavy Gauss Rifle";
         setInternalName("ISHeavyGaussRifle");
         addLookupName("IS Heavy Gauss Rifle");
+        sortingName = "Gauss D";
         heat = 2;
         damage = DAMAGE_VARIABLE;
         ammoType = AmmoType.T_GAUSS_HEAVY;
@@ -79,14 +80,6 @@ public class ISHGaussRifle extends GaussWeapon {
         return damageLong;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               Server server) {

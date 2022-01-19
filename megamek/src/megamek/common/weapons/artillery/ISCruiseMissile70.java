@@ -25,21 +25,22 @@ public class ISCruiseMissile70 extends ArtilleryWeapon {
 
     public ISCruiseMissile70() {
         super();
-        this.name = "Cruise Missile/70";
-        this.setInternalName("ISCruiseMissile70");
-        this.heat = 70;
-        this.rackSize = 70;
-        this.ammoType = AmmoType.T_CRUISE_MISSILE;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 90;
-        this.extremeRange = 90; // No extreme range.
-        this.tonnage = 80;
-        this.criticals = 80;
-        this.svslots = 35;
-        this.flags = flags.or(F_CRUISE_MISSILE);
-        this.bv = 1031;
-        this.cost = 1250000;
+        name = "Cruise Missile/70";
+        setInternalName("ISCruiseMissile70");
+        sortingName = "Cruise Missile/070";
+        heat = 70;
+        rackSize = 70;
+        ammoType = AmmoType.T_CRUISE_MISSILE;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 90;
+        extremeRange = 90; // No extreme range.
+        tonnage = 80;
+        criticals = 80;
+        svslots = 35;
+        flags = flags.or(F_CRUISE_MISSILE);
+        bv = 1031;
+        cost = 1250000;
         rulesRefs = "284,TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)

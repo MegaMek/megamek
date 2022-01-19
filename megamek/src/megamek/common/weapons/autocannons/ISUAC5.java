@@ -25,6 +25,7 @@ public class ISUAC5 extends UACWeapon {
         name = "Ultra AC/5";
         setInternalName("ISUltraAC5");
         addLookupName("IS Ultra AC/5");
+        sortingName = "Ultra AC/05";
         heat = 1;
         damage = 5;
         rackSize = 5;

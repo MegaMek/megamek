@@ -23,27 +23,28 @@ public class ISPulseLaserMedium extends PulseLaserWeapon {
 
     public ISPulseLaserMedium() {
         super();
-        this.name = "Medium Pulse Laser";
-        this.setInternalName("ISMediumPulseLaser");
-        this.addLookupName("IS Pulse Med Laser");
-        this.addLookupName("IS Medium Pulse Laser");
-        this.heat = 4;
-        this.damage = 6;
-        this.toHitModifier = -2;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
-        this.waterShortRange = 2;
-        this.waterMediumRange = 3;
-        this.waterLongRange = 4;
-        this.waterExtremeRange = 6;
-        this.tonnage = 2.0;
-        this.criticals = 1;
-        this.bv = 48;
-        this.cost = 60000;
-        this.shortAV = 6;
-        this.maxRange = RANGE_SHORT;
+        name = "Medium Pulse Laser";
+        setInternalName("ISMediumPulseLaser");
+        addLookupName("IS Pulse Med Laser");
+        addLookupName("IS Medium Pulse Laser");
+        sortingName = "Laser Pulse C";
+        heat = 4;
+        damage = 6;
+        toHitModifier = -2;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        waterShortRange = 2;
+        waterMediumRange = 3;
+        waterLongRange = 4;
+        waterExtremeRange = 6;
+        tonnage = 2.0;
+        criticals = 1;
+        bv = 48;
+        cost = 60000;
+        shortAV = 6;
+        maxRange = RANGE_SHORT;
         rulesRefs = "226, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

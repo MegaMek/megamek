@@ -20,14 +20,8 @@ import megamek.common.AmmoType;
  */
 public abstract class ExtendedLRMWeapon extends LRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -1266251778897684302L;
 
-    /**
-     *
-     */
     public ExtendedLRMWeapon() {
         super();
         ammoType = AmmoType.T_EXLRM;
@@ -43,5 +37,10 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
+    }
+
+    @Override
+    public String getSortingName() {
+        return "Extended LRM " + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

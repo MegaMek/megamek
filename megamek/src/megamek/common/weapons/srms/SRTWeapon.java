@@ -28,14 +28,8 @@ import megamek.server.Server;
  */
 public abstract class SRTWeapon extends MissileWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 2209880229033489588L;
 
-    /**
-     *
-     */
     public SRTWeapon() {
         super();
         ammoType = AmmoType.T_SRM_TORPEDO;
@@ -50,14 +44,7 @@ public abstract class SRTWeapon extends MissileWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {
@@ -77,5 +64,14 @@ public abstract class SRTWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_TORP;
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS ";
+        }
+        return "SRT " + oneShotTag + rackSize;
     }
 }

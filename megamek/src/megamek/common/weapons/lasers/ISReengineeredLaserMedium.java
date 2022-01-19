@@ -28,6 +28,7 @@ public class ISReengineeredLaserMedium extends ReengineeredLaserWeapon {
         setInternalName(name);
         addLookupName("ISMediumReengineeredLaser");
         addLookupName("ISMediumRELaser");
+        sortingName = "Laser REENG C";
         toHitModifier = -1;
         heat = 6;
         damage = 6;

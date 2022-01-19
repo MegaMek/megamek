@@ -28,6 +28,7 @@ public class CLImprovedPPC extends PPCWeapon {
         setInternalName(name);
         addLookupName("Improved Particle Cannon");
         addLookupName("CLIMPPPC");
+        sortingName = "PPC IMP";
         heat = 10;
         damage = 10;
         minimumRange = 3;

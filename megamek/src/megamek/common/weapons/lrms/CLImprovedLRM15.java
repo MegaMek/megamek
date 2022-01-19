@@ -21,17 +21,10 @@ import megamek.common.SimpleTechLevel;
  */
 public class CLImprovedLRM15 extends LRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 603060073432118270L;
 
-    /**
-     *
-     */
     public CLImprovedLRM15() {
         super();
-
         name = "Improved LRM 15";
         setInternalName(name);
         addLookupName("CLImprovedLRM15");
@@ -55,5 +48,11 @@ public class CLImprovedLRM15 extends LRMWeapon {
             .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
             .setPrototypeFactions(F_CCY).setProductionFactions(F_CCY)
             .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public String getSortingName() {
+        // revert LRMWeapon's override here as the name is not just "LRM xx"
+        return name;
     }
 }

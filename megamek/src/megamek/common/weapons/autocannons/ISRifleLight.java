@@ -29,6 +29,7 @@ public class ISRifleLight extends RifleWeapon {
         shortName = "Light Rifle";
         addLookupName("IS Light Rifle");
         addLookupName("ISLightRifle");
+        sortingName = "Rifle Cannon B";
         heat = 1;
         damage = 3;
         rackSize = 3;

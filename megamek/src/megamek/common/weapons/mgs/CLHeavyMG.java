@@ -25,26 +25,26 @@ public class CLHeavyMG extends MGWeapon {
 
     public CLHeavyMG() {
         super();
-
-        this.name = "Heavy Machine Gun";
-        this.setInternalName("CLHeavyMG");
-        this.addLookupName("Clan Heavy Machine Gun");
-        this.heat = 0;
-        this.damage = 3;
-        this.infDamageClass = WeaponType.WEAPON_BURST_3D6;
-        this.rackSize = 3;
-        this.ammoType = AmmoType.T_MG_HEAVY;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 2;
-        this.extremeRange = 2;
-        this.tonnage = 0.5;
-        this.criticals = 1;
-        this.bv = 6;
-        this.cost = 7500;
-        this.shortAV = 3;
-        this.maxRange = RANGE_SHORT;
-        this.atClass = CLASS_POINT_DEFENSE;
+        name = "Heavy Machine Gun";
+        setInternalName("CLHeavyMG");
+        addLookupName("Clan Heavy Machine Gun");
+        sortingName = "MG D";
+        heat = 0;
+        damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_3D6;
+        rackSize = 3;
+        ammoType = AmmoType.T_MG_HEAVY;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 2;
+        extremeRange = 2;
+        tonnage = 0.5;
+        criticals = 1;
+        bv = 6;
+        cost = 7500;
+        shortAV = 3;
+        maxRange = RANGE_SHORT;
+        atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

@@ -24,7 +24,6 @@ public class CLImprovedSRM2 extends SRMWeapon {
 
     public CLImprovedSRM2() {
         super();
- 
         name = "Improved SRM 2";
         setInternalName(name);
         addLookupName("CLImprovedSRM2");
@@ -51,5 +50,10 @@ public class CLImprovedSRM2 extends SRMWeapon {
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(F_CCC).setProductionFactions(F_CCC)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public String getSortingName() {
+        return "SRM IMP 2";
     }
 }

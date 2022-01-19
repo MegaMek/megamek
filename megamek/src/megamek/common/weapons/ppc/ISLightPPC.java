@@ -26,6 +26,7 @@ public class ISLightPPC extends PPCWeapon {
         setInternalName(name);
         addLookupName("ISLightPPC");
         addLookupName("ISLPPC");
+        sortingName = "PPC B";
         heat = 5;
         damage = 5;
         minimumRange = 3;

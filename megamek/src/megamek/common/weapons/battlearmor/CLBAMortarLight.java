@@ -34,6 +34,7 @@ public class CLBAMortarLight extends Weapon {
         addLookupName("CL BA Light Mortar");
         addLookupName("ISBALightMortar");
         addLookupName("IS BA Light Mortar");
+        sortingName = "Mortar B";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;

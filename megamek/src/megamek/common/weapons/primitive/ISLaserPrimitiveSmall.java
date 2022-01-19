@@ -29,7 +29,8 @@ public class ISLaserPrimitiveSmall extends LaserWeapon {
         setInternalName(name);
         addLookupName("ISSmall Laser Primitive");
         addLookupName("ISSmallLaserPrimitive");
-        this.shortName = "Small Laser p";
+        shortName = "Small Laser p";
+        sortingName = "Laser Proto B";
         heat = 2;
         damage = 3;
         shortRange = 1;

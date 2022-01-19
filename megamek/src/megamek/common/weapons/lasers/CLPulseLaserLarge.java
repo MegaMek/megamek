@@ -22,29 +22,30 @@ public class CLPulseLaserLarge extends PulseLaserWeapon {
 
     public CLPulseLaserLarge() {
         super();
-        this.name = "Large Pulse Laser";
-        this.setInternalName("CLLargePulseLaser");
-        this.addLookupName("Clan Pulse Large Laser");
-        this.addLookupName("Clan Large Pulse Laser");
-        this.heat = 10;
-        this.damage = 10;
-        this.toHitModifier = -2;
-        this.shortRange = 6;
-        this.mediumRange = 14;
-        this.longRange = 20;
-        this.extremeRange = 28;
-        this.waterShortRange = 4;
-        this.waterMediumRange = 10;
-        this.waterLongRange = 14;
-        this.waterExtremeRange = 20;
-        this.tonnage = 6.0;
-        this.criticals = 2;
-        this.bv = 265;
-        this.cost = 175000;
-        this.shortAV = 10;
-        this.medAV = 10;
-        this.longAV = 10;
-        this.maxRange = RANGE_LONG;
+        name = "Large Pulse Laser";
+        setInternalName("CLLargePulseLaser");
+        addLookupName("Clan Pulse Large Laser");
+        addLookupName("Clan Large Pulse Laser");
+        sortingName = "Laser Pulse D";
+        heat = 10;
+        damage = 10;
+        toHitModifier = -2;
+        shortRange = 6;
+        mediumRange = 14;
+        longRange = 20;
+        extremeRange = 28;
+        waterShortRange = 4;
+        waterMediumRange = 10;
+        waterLongRange = 14;
+        waterExtremeRange = 20;
+        tonnage = 6.0;
+        criticals = 2;
+        bv = 265;
+        cost = 175000;
+        shortAV = 10;
+        medAV = 10;
+        longAV = 10;
+        maxRange = RANGE_LONG;
         rulesRefs = "226, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

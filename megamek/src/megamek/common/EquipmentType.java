@@ -148,6 +148,9 @@ public class EquipmentType implements ITechnology {
 
     protected String internalName = null;
 
+    /** Sorting lists of equipment by this string groups and sorts equipment better. */
+    protected String sortingName;
+
     private Vector<String> namesVector = new Vector<>();
 
     protected double tonnage = 0;
@@ -1508,5 +1511,15 @@ public class EquipmentType implements ITechnology {
      */
     public int getHeat() {
         return 0;
+    }
+
+    /**
+     * Sorting with the String returned by this method results in an improved ordering and grouping
+     * of equipment than by getName(); for example, AC2/5/10/20 will appear in that
+     * order instead of the order AC10/2/20/5 and S/M/L Lasers will be grouped together.
+     * @return A String similar to getName() but modified to support a better sorting
+     */
+    public String getSortingName() {
+        return (sortingName != null) ? sortingName : name;
     }
 }

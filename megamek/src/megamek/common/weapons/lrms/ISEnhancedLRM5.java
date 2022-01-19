@@ -20,14 +20,8 @@ import megamek.common.SimpleTechLevel;
  */
 public class ISEnhancedLRM5 extends EnhancedLRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3287950524687857609L;
 
-    /**
-     *
-     */
     public ISEnhancedLRM5() {
         super();
         name = "Enhanced LRM 5";

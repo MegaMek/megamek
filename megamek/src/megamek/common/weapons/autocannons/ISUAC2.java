@@ -22,27 +22,28 @@ public class ISUAC2 extends UACWeapon {
 
     public ISUAC2() {
         super();
-        this.name = "Ultra AC/2";
-        this.setInternalName("ISUltraAC2");
-        this.addLookupName("IS Ultra AC/2");
-        this.heat = 1;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.minimumRange = 3;
-        this.shortRange = 8;
-        this.mediumRange = 17;
-        this.longRange = 25;
-        this.extremeRange = 34;
-        this.tonnage = 7.0;
-        this.criticals = 3;
-        this.bv = 56;
-        this.cost = 120000;
-        this.shortAV = 3;
-        this.medAV = 3;
-        this.longAV = 3;
-        this.extAV = 3;
-        this.maxRange = RANGE_EXT;
-        this.explosionDamage = damage;
+        name = "Ultra AC/2";
+        setInternalName("ISUltraAC2");
+        addLookupName("IS Ultra AC/2");
+        sortingName = "Ultra AC/02";
+        heat = 1;
+        damage = 2;
+        rackSize = 2;
+        minimumRange = 3;
+        shortRange = 8;
+        mediumRange = 17;
+        longRange = 25;
+        extremeRange = 34;
+        tonnage = 7.0;
+        criticals = 3;
+        bv = 56;
+        cost = 120000;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
+        extAV = 3;
+        maxRange = RANGE_EXT;
+        explosionDamage = damage;
         rulesRefs = "208, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

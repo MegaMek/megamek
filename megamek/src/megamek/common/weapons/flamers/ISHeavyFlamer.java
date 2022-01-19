@@ -31,6 +31,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         setInternalName(name);
         addLookupName("IS Heavy Flamer");
         addLookupName("ISHeavyFlamer");
+        sortingName = "Flamer D";
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;

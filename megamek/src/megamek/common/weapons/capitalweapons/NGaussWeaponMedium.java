@@ -24,27 +24,28 @@ public class NGaussWeaponMedium extends NGaussWeapon {
 
     public NGaussWeaponMedium() {
         super();
-        this.name = "Naval Gauss (Medium)";
-        this.setInternalName(this.name);
-        this.addLookupName("MediumNGauss");
-        this.addLookupName("CLMediumNGauss");
-        this.addLookupName("Medium N-Gauss (Clan)");
-        this.shortName = "Medium NGauss";
-        this.heat = 15;
-        this.damage = 25;
-        this.ammoType = AmmoType.T_MED_NGAUSS;
-        this.shortRange = 13;
-        this.mediumRange = 26;
-        this.longRange = 39;
-        this.extremeRange = 52;
-        this.tonnage = 5500;
-        this.bv = 5040;
-        this.cost = 30350000;
-        this.shortAV = 25;
-        this.medAV = 25;
-        this.longAV = 25;
-        this.extAV = 25;
-        this.maxRange = RANGE_EXT;
+        name = "Naval Gauss (Medium)";
+        setInternalName(this.name);
+        addLookupName("MediumNGauss");
+        addLookupName("CLMediumNGauss");
+        addLookupName("Medium N-Gauss (Clan)");
+        shortName = "Medium NGauss";
+        sortingName = "Gauss Naval C";
+        heat = 15;
+        damage = 25;
+        ammoType = AmmoType.T_MED_NGAUSS;
+        shortRange = 13;
+        mediumRange = 26;
+        longRange = 39;
+        extremeRange = 52;
+        tonnage = 5500;
+        bv = 5040;
+        cost = 30350000;
+        shortAV = 25;
+        medAV = 25;
+        longAV = 25;
+        extAV = 25;
+        maxRange = RANGE_EXT;
         rulesRefs = "333, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

@@ -31,10 +31,10 @@ public class ISLightMGA extends AmmoWeapon {
 
     public ISLightMGA() {
         super();
-
         name = "Light Machine Gun Array";
         addLookupName("IS Light Machine Gun Array");
         setInternalName("ISLMGA");
+        sortingName = "MGA B";
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
@@ -68,14 +68,6 @@ public class ISLightMGA extends AmmoWeapon {
                 .setProductionFactions(F_TC);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               Server server) {

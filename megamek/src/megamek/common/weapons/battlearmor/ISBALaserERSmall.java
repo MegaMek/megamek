@@ -27,6 +27,7 @@ public class ISBALaserERSmall extends LaserWeapon {
          name = "ER Small Laser";
         setInternalName("ISBAERSmallLaser");
         addLookupName("IS BA ER Small Laser");
+        sortingName = "Laser ER B";
         damage = 3;
         shortRange = 2;
         mediumRange = 4;

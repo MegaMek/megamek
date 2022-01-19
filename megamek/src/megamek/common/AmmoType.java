@@ -1850,9 +1850,11 @@ public class AmmoType extends EquipmentType {
                         .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "371,TO"));
 
+        //Note of Swarms the intro dates in IntOps are off and it allows Swarm-I to appear before Swarm during the 
+        //Clan Invasion. Proposed errata makes 3052 for Swarm-I a hard date, and 3053 for Swarm re-iintroduction a flexible date.
         munitions.add(new MunitionMutator("Swarm", 1, M_SWARM, new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
                 .setUnofficial(false).setTechRating(RATING_E).setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
-                .setISAdvancement(2615, 2621, 3058, 2833, 3053).setISApproximate(true, false, false, false, false)
+                .setISAdvancement(2615, 2621, 3058, 2833, 3053).setISApproximate(true, false, false, false, true)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "371,TO"));
 
@@ -1860,7 +1862,7 @@ public class AmmoType extends EquipmentType {
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                         .setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
                         .setISAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
-                        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)
+                        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FW)
                         .setProductionFactions(F_FW).setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "371,TO"));
 

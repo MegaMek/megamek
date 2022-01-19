@@ -38,6 +38,8 @@ public class CLStreakSRM3 extends StreakSRMWeapon {
         this.tonnage = 1.5;
         this.criticals = 0;
         this.bv = 59;
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
+        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But SRM Tech Base and Avail Ratings.
         rulesRefs = "230,TM";

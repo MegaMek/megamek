@@ -41,7 +41,8 @@ public class CLSRT3 extends SRTWeapon {
         bv = 30;
         tonnage = 0.75;
         criticals = 1;
-        flags = flags.or(F_NO_FIRES);
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
+        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         cost = 80000;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But LRM Tech Base and Avail Ratings.

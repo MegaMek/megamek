@@ -38,7 +38,7 @@ public class ISImprovedNarcOS extends NarcWeapon {
         tonnage = 5.5;
         criticals = 2;
         bv = 15;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 250000;
         rulesRefs = "232,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

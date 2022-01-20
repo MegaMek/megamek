@@ -32,6 +32,8 @@ public class CLLRM3 extends LRMWeapon {
         bv = 35;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         // But LRM Tech Base and Avail Ratings.
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
+        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = "231, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)

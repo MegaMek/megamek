@@ -16509,7 +16509,11 @@ public class Server implements Runnable {
             }
 
             if (caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
+                if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                    applyZweihanderSelfDamage(ae, true, Mech.LOC_RARM, Mech.LOC_LARM);
+                } else {
+                    applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
+                }
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -16570,7 +16574,11 @@ public class Server implements Runnable {
             }
 
             if (caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
+                if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                    applyZweihanderSelfDamage(ae, true, Mech.LOC_RARM, Mech.LOC_LARM);
+                } else {
+                    applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
+                }
             }
             return;
         }
@@ -16592,16 +16600,20 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if (caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                    applyZweihanderSelfDamage(ae, false, Mech.LOC_RARM, Mech.LOC_LARM);
+
                     // the club breaks
                     r = new Report(4150);
                     r.subject = ae.getId();
                     r.add(caa.getClub().getName());
                     addReport(r);
                     ae.removeMisc(caa.getClub().getName());
+                } else {
+                    applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
                 }
             }
+
             // And we're done!
             return;
         }
@@ -16784,7 +16796,11 @@ public class Server implements Runnable {
         addNewLines();
 
         if (caa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
+            if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
+                applyZweihanderSelfDamage(ae, false, Mech.LOC_RARM, Mech.LOC_LARM);
+            } else {
+                applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
+            }
         }
 
         // If the attacker is Zweihandering with an improvised club, it will break on the attack.

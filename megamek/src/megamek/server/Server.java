@@ -15019,18 +15019,18 @@ public class Server implements Runnable {
      * 
      * @param ae the attacking entity
      * @param missed did the attack miss? If so, a PSR is necessary.
-     * @param criticalLocs the locations for possible criticals, should be one or both arms
-     *                     depending on if it was an unarmed attack (both arms) or a weapon attack
-     *                     (the arm with the weapon).
+     * @param criticalLocations the locations for possible criticals, should be one or both arms
+     *                          depending on if it was an unarmed attack (both arms) or a weapon
+     *                          attack (the arm with the weapon).
      */
-    private void applyZweihanderSelfDamage(Entity ae, boolean missed, List<Integer> criticalLocs) {
+    private void applyZweihanderSelfDamage(Entity ae, boolean missed, int... criticalLocations) {
         Report r = new Report(4022);
         r.subject = ae.getId();
         r.indent();
         r.addDesc(ae);
         addReport(r);
-        for (Integer loc : criticalLocs) {
-            addReport(criticalEntity(ae, loc, false, 0, 1));
+        for (int location : criticalLocations) {
+            addReport(criticalEntity(ae, location, false, 0, 1));
         }
 
         if (missed) {
@@ -15155,10 +15155,7 @@ public class Server implements Runnable {
             }
 
             if (paa.isZweihandering()) {
-                ArrayList<Integer> criticalLocs = new ArrayList<>();
-                criticalLocs.add(Mech.LOC_RARM);
-                criticalLocs.add(Mech.LOC_LARM);
-                applyZweihanderSelfDamage(ae, true, criticalLocs);
+                applyZweihanderSelfDamage(ae, true, Mech.LOC_RARM, Mech.LOC_LARM);
             }
 
             return;
@@ -15181,10 +15178,7 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if (paa.isZweihandering()) {
-                ArrayList<Integer> criticalLocs = new ArrayList<>();
-                criticalLocs.add(Mech.LOC_RARM);
-                criticalLocs.add(Mech.LOC_LARM);
-                applyZweihanderSelfDamage(ae, false, criticalLocs);
+                applyZweihanderSelfDamage(ae, false,  Mech.LOC_RARM, Mech.LOC_LARM);
             }
 
             // And we're done!
@@ -15291,10 +15285,7 @@ public class Server implements Runnable {
         addNewLines();
 
         if (paa.isZweihandering()) {
-            ArrayList<Integer> criticalLocs = new ArrayList<>();
-            criticalLocs.add(Mech.LOC_RARM);
-            criticalLocs.add(Mech.LOC_LARM);
-            applyZweihanderSelfDamage(ae, false, criticalLocs);
+            applyZweihanderSelfDamage(ae, false,  Mech.LOC_RARM, Mech.LOC_LARM);
         }
 
         addNewLines();
@@ -16472,9 +16463,7 @@ public class Server implements Runnable {
             }
 
             if (caa.isZweihandering()) {
-                ArrayList<Integer> criticalLocs = new ArrayList<>();
-                criticalLocs.add(caa.getClub().getLocation());
-                applyZweihanderSelfDamage(ae, true, criticalLocs);
+                applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
             }
             return;
         }
@@ -16501,9 +16490,7 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 addReport(r);
                 if (caa.isZweihandering()) {
-                    ArrayList<Integer> criticalLocs = new ArrayList<>();
-                    criticalLocs.add(caa.getClub().getLocation());
-                    applyZweihanderSelfDamage(ae, true, criticalLocs);
+                    applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
                 }
                 return;
             }
@@ -16524,9 +16511,7 @@ public class Server implements Runnable {
             }
 
             if (caa.isZweihandering()) {
-                ArrayList<Integer> criticalLocs = new ArrayList<>();
-                criticalLocs.add(caa.getClub().getLocation());
-                applyZweihanderSelfDamage(ae, true, criticalLocs);
+                applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -16594,9 +16579,7 @@ public class Server implements Runnable {
             }
 
             if (caa.isZweihandering()) {
-                ArrayList<Integer> criticalLocs = new ArrayList<>();
-                criticalLocs.add(caa.getClub().getLocation());
-                applyZweihanderSelfDamage(ae, true, criticalLocs);
+                applyZweihanderSelfDamage(ae, true, caa.getClub().getLocation());
             }
             return;
         }
@@ -16618,9 +16601,7 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if (caa.isZweihandering()) {
-                ArrayList<Integer> criticalLocs = new ArrayList<>();
-                criticalLocs.add(caa.getClub().getLocation());
-                applyZweihanderSelfDamage(ae, false, criticalLocs);
+                applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
                     // the club breaks
                     r = new Report(4150);
@@ -16821,9 +16802,7 @@ public class Server implements Runnable {
         }
 
         if (caa.isZweihandering()) {
-            List<Integer> criticalLocs = new ArrayList<>();
-            criticalLocs.add(caa.getClub().getLocation());
-            applyZweihanderSelfDamage(ae, false, criticalLocs);
+            applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
         }
 
         // If the attacker is Zweihandering with an improvised club, it will break on the attack.

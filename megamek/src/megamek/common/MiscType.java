@@ -281,7 +281,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
 
     // Secondary Flags for Physical Weapons
-    public static final long S_CLUB = 1L << 0; // BMR
+    public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club
     public static final long S_TREE_CLUB = 1L << 1;// BMR
     public static final long S_HATCHET = 1L << 2; // BMR
     public static final long S_SWORD = 1L << 3; // BMR

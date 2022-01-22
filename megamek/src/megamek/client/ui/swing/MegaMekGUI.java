@@ -918,7 +918,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     static void quit() {
-        MegaMek.getMMPreferences().saveToFile(MegaMek.PREFERENCES_FILE);
+        MegaMek.getMMPreferences().saveToFile(MMConstants.MM_PREFERENCES_FILE);
         PreferenceManager.getInstance().save();
 
         try {

@@ -16411,7 +16411,6 @@ public class Server implements Runnable {
 
         Report r;
 
-
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
@@ -16786,7 +16785,7 @@ public class Server implements Runnable {
                 grappleResult.toHit = grappleHit;
                 grappleResult.roll = Compute.d6(2);
                 resolveGrappleAttack(grappleResult, lastEntityId, grappleSide,
-                        hit.getLocation() == Mech.LOC_RARM ? Entity.GRAPPLE_RIGHT : Entity.GRAPPLE_LEFT);
+                        (hit.getLocation() == Mech.LOC_RARM) ? Entity.GRAPPLE_RIGHT : Entity.GRAPPLE_LEFT);
             }
         }
 
@@ -16875,8 +16874,8 @@ public class Server implements Runnable {
                 targetPushResult = tpr;
             }
         }
-        // if our target has a push against us,
-        // and we are hitting, we need to resolve both now
+
+        // if our target has a push against us, and we are hitting, we need to resolve both now
         if ((targetPushResult != null) && !targetPushResult.pushBackResolved
             && (roll >= toHit.getValue())) {
             targetPushResult.pushBackResolved = true;

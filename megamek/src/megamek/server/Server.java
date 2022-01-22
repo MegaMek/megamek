@@ -16500,8 +16500,7 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            if (caa.getClub().getType().hasSubType(MiscType.S_MACE)
-                    || caa.getClub().getType().hasSubType(MiscType.S_MACE_THB)) {
+            if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
                 if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
                     game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
                 } else {
@@ -16549,13 +16548,6 @@ public class Server implements Runnable {
             r = new Report(4035);
             r.subject = ae.getId();
             addReport(r);
-            if (caa.getClub().getType().hasSubType(MiscType.S_MACE_THB)) {
-                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                    game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
-                } else {
-                    game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a mace attack"));
-                }
-            }
 
             if (caa.getClub().getType().hasSubType(MiscType.S_MACE)) {
                 if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {

@@ -83,8 +83,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
         if (mType.hasSubType(MiscType.S_SWORD)) {
             nDamage = (int) (Math.ceil(entity.getWeight() / 10.0) + 1.0);
-        } else if (mType.hasSubType(MiscType.S_MACE_THB)) {
-            nDamage *= 2;
         } else if (mType.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
             nDamage = (int) Math.ceil(entity.getWeight() / 10.0);
         } else if (mType.hasSubType(MiscType.S_MACE)) {
@@ -202,8 +200,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 || clubType.hasSubType(MiscType.S_ROCK_CUTTER)
                 || clubType.hasSubType(MiscType.S_WRECKING_BALL)
                 || clubType.hasSubType(MiscType.S_LANCE)
-                || clubType.hasSubType(MiscType.S_MACE)
-                || clubType.hasSubType(MiscType.S_MACE_THB)) {
+                || clubType.hasSubType(MiscType.S_MACE)) {
             return 1;
         } else if (clubType.hasSubType(MiscType.S_CHAINSAW)
                 || clubType.hasSubType(MiscType.S_DUAL_SAW)

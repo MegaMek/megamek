@@ -39,11 +39,12 @@ import java.util.Date;
 import java.util.Vector;
 
 /**
- * @author mev This is the class where the execution of the megamek game starts.
+ * This is the primary MegaMek class.
+ * @author mev
  */
 public class MegaMek {
-    private static MMPreferences preferences = null;
-    private static MMOptions mmOptions = new MMOptions();
+    private static final MMPreferences mmPreferences = new MMPreferences();
+    private static final MMOptions mmOptions = new MMOptions();
 
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
@@ -80,7 +81,7 @@ public class MegaMek {
                 return;
             }
 
-            getPreferences().loadFromFile(PREFERENCES_FILE);
+            getMMPreferences().loadFromFile(PREFERENCES_FILE);
 
             if (cp.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);
@@ -130,12 +131,8 @@ public class MegaMek {
         }
     }
 
-    public static MMPreferences getPreferences() {
-        if (preferences == null) {
-            preferences = new MMPreferences();
-        }
-
-        return preferences;
+    public static MMPreferences getMMPreferences() {
+        return mmPreferences;
     }
 
     public static MMOptions getMMOptions() {
@@ -226,7 +223,7 @@ public class MegaMek {
         final long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
                 + File.separator + "timestamp").lastModified();
         // echo some useful stuff
-        String msg = "Starting MegaMek v" + MegaMekConstants.VERSION;
+        String msg = "Starting MegaMek v" + MMConstants.VERSION;
         if (TIMESTAMP > 0) {
             msg += "\n\tCompiled on " + new Date(TIMESTAMP);
         }

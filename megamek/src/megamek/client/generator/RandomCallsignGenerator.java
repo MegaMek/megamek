@@ -18,7 +18,7 @@
  */
 package megamek.client.generator;
 
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.common.util.weightedMaps.WeightedIntMap;
 import org.apache.logging.log4j.LogManager;
 
@@ -104,8 +104,8 @@ public class RandomCallsignGenerator implements Serializable {
     private void populateCallsigns() {
         setWeightedCallsigns(new WeightedIntMap<>());
         final Map<String, Integer> callsigns = new HashMap<>();
-        loadCallsignsFromFile(new File(MegaMekConstants.CALLSIGN_FILE_PATH), callsigns);
-        loadCallsignsFromFile(new File(MegaMekConstants.USER_CALLSIGN_FILE_PATH), callsigns);
+        loadCallsignsFromFile(new File(MMConstants.CALLSIGN_FILE_PATH), callsigns);
+        loadCallsignsFromFile(new File(MMConstants.USER_CALLSIGN_FILE_PATH), callsigns);
 
         for (final Map.Entry<String, Integer> entry : callsigns.entrySet()) {
             getWeightedCallsigns().add(entry.getValue(), entry.getKey());

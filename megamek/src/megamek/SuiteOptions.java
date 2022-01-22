@@ -18,11 +18,14 @@
  */
 package megamek;
 
-import megamek.common.preference.PreferenceManager;
-
 import java.util.Locale;
+import java.util.prefs.Preferences;
 
 public class SuiteOptions {
+    //region Variable Declarations
+    protected static final Preferences userPreferences = Preferences.userRoot();
+    //endregion Variable Declarations
+
     //region Constructors
     protected SuiteOptions() {
 
@@ -34,14 +37,14 @@ public class SuiteOptions {
      * This is a temporary Locale getter, which sets the stage for suite-wide localization.
      */
     public Locale getLocale() {
-        return PreferenceManager.getClientPreferences().getLocale();
+        return Locale.US;
     }
 
     /**
      * This is a temporary Locale getter for dates, which sets the stage for suite-wide localization.
      */
     public Locale getDateLocale() {
-        return PreferenceManager.getClientPreferences().getLocale();
+        return Locale.US;
     }
     //endregion Temporary
 }

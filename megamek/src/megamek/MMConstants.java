@@ -1,7 +1,5 @@
 /*
- * MegaMekConstants.java
- *
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,8 +18,20 @@
  */
 package megamek;
 
-public final class MegaMekConstants extends SuiteConstants {
+/**
+ * These are constants that hold across MegaMek.
+ */
+public final class MMConstants extends SuiteConstants {
+    //region General Constants
+    //endregion General Constants
 
+    //region GUI Constants
+    //endregion GUI Constants
+
+    //region MMOptions
+    //endregion MMOptions
+
+    //region File Paths
     // This holds all required file paths not saved as part of MegaMek Options
     public static final String NAME_FACTIONS_DIRECTORY_PATH = "data/names/factions/";
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = "userdata/data/names/factions/";
@@ -35,4 +45,5 @@ public final class MegaMekConstants extends SuiteConstants {
     public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
     public static final String SURNAME_FILE = "data/names/surnames.csv";
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
+    //endregion File Paths
 }

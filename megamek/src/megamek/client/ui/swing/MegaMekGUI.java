@@ -18,7 +18,7 @@ package megamek.client.ui.swing;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -195,7 +195,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
-                    Messages.getString("MegaMek.welcome.title") + MegaMekConstants.VERSION,
+                    Messages.getString("MegaMek.welcome.title") + MMConstants.VERSION,
                     Messages.getString("MegaMek.welcome.message"), true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
@@ -234,7 +234,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION,
                 JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250, 15));
         if (skinSpec.fontColors.size() > 0) {
@@ -500,9 +500,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        if (!MegaMekConstants.VERSION.is(newGame.getVersion())) {
+        if (!MMConstants.VERSION.is(newGame.getVersion())) {
             final String message = String.format(Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
-                    newGame.getVersion(), MegaMekConstants.VERSION);
+                    newGame.getVersion(), MMConstants.VERSION);
             JOptionPane.showMessageDialog(frame, message,
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error(message);
@@ -918,7 +918,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     static void quit() {
-        MegaMek.getPreferences().saveToFile(MegaMek.PREFERENCES_FILE);
+        MegaMek.getMMPreferences().saveToFile(MegaMek.PREFERENCES_FILE);
         PreferenceManager.getInstance().save();
 
         try {

@@ -17,7 +17,7 @@ package megamek.client;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -1367,7 +1367,7 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_SERVER_VERSION_CHECK:
                 send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, new Object[] {
-                        MegaMekConstants.VERSION, MegaMek.getMegaMekSHA256() }));
+                        MMConstants.VERSION, MegaMek.getMegaMekSHA256() }));
                 break;
             case Packet.COMMAND_SERVER_GREETING:
                 connected = true;
@@ -1380,7 +1380,7 @@ public class Client implements IClientCommandHandler {
                 final Version serverVersion = (Version) c.getObject(0);
                 final String message = String.format(
                         "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
-                        getHost(), serverVersion, MegaMekConstants.VERSION);
+                        getHost(), serverVersion, MMConstants.VERSION);
                 JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
                         JOptionPane.ERROR_MESSAGE);
                 LogManager.getLogger().error(message);

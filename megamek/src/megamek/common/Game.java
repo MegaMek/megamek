@@ -14,7 +14,7 @@
  */
 package megamek.common;
 
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.GameTurn.SpecificEntityTurn;
@@ -54,7 +54,7 @@ public class Game implements Serializable {
     /**
      * Stores the version of MM, so that it can be serialized in saved games.
      */
-    public final Version version = MegaMekConstants.VERSION;
+    public final Version version = MMConstants.VERSION;
 
     private GameOptions options = new GameOptions();
 

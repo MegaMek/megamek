@@ -15,7 +15,7 @@
  */
 package megamek;
 
-import megamek.client.ui.preferences.MMPreferences;
+import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.client.ui.swing.MegaMekGUI;
 import megamek.common.*;
@@ -43,7 +43,7 @@ import java.util.Vector;
  * @author mev
  */
 public class MegaMek {
-    private static final MMPreferences mmPreferences = new MMPreferences();
+    private static final SuitePreferences mmPreferences = new SuitePreferences();
     private static final MMOptions mmOptions = new MMOptions();
 
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
@@ -131,7 +131,7 @@ public class MegaMek {
         }
     }
 
-    public static MMPreferences getMMPreferences() {
+    public static SuitePreferences getMMPreferences() {
         return mmPreferences;
     }
 

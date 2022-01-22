@@ -54,7 +54,6 @@ public class MegaMek {
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
             + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
             + "(-eqedb) (-oul)] [<args>]";
-    public static final String PREFERENCES_FILE = "mmconf/megamek.preferences";
 
     public static void main(String... args) {
         // First, create a global default exception handler
@@ -81,7 +80,7 @@ public class MegaMek {
                 return;
             }
 
-            getMMPreferences().loadFromFile(PREFERENCES_FILE);
+            getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
 
             if (cp.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);

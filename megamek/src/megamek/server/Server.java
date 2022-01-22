@@ -16792,15 +16792,6 @@ public class Server implements Runnable {
 
         addNewLines();
 
-        if (caa.getClub().getType().hasSubType(MiscType.S_TREE_CLUB)) {
-            // the club breaks
-            r = new Report(4150);
-            r.subject = ae.getId();
-            r.add(caa.getClub().getName());
-            addReport(r);
-            ae.removeMisc(caa.getClub().getName());
-        }
-
         if (caa.isZweihandering()) {
             applyZweihanderSelfDamage(ae, false, caa.getClub().getLocation());
         }

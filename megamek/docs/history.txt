@@ -21,6 +21,7 @@ VERSION HISTORY:
 + Data: Cleaning up some missing equipment flags
 + PR #3389: TAG flag correction, unused ISLightTag removed
 + Issue #3365: Removing Force Generator's Broken 2786 Setup
++ Issue #3343: Improving the Forced Victory Phase Skip tool tip
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

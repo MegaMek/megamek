@@ -20,6 +20,8 @@ VERSION HISTORY:
 + Issue: #3384 - Swarm LRMs not available, but Swarm-I are
 + Data: Cleaning up some missing equipment flags
 + PR #3389: TAG flag correction, unused ISLightTag removed
++ Issue: #3393:Inner Sphere AC/2s Use Wrong Aerospace Range
++ New Sprites. 
 + Issue #3365: Removing Force Generator's Broken 2786 Setup
 + Issue #3343: Improving the Forced Victory Phase Skip tool tip
 

@@ -1932,9 +1932,11 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_IMPROVED;
         misc.bv = 0;
         misc.rulesRefs = "225,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3070, 3071, DATE_NONE, DATE_NONE)
+        //Jan 22 - Errata issued by CGL (Greekfire) for IJJs    
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        		.setISAdvancement(3067, 3068, 3069, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(3060, 3069, 3071, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(3060, 3068, 3069, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CWX)
                 .setProductionFactions(F_CWX, F_CWF, F_LC).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);

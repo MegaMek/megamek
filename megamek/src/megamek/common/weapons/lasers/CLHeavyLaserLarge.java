@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Andrew Hunter
  * @since Sep 12, 2004
@@ -45,14 +47,17 @@ public class CLHeavyLaserLarge extends LaserWeapon {
         medAV = 16;
         maxRange = RANGE_MED;
         rulesRefs = "226, TM";
+        //Jan 22 - Errata issued by CGL (Greekfire) for Heavy Lasers
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
-                .setClanAdvancement(3057, 3059, 3064, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
+                .setClanAdvancement(3057, 3058, 3059, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
                 .setPrototypeFactions(F_CBR, F_CSA)
-                .setProductionFactions(F_CSA);
+                .setProductionFactions(F_CSA)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+
     }
 }

@@ -51,7 +51,7 @@ public class CLERFlamer extends FlamerWeapon {
                 .setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setClanAdvancement(DATE_NONE, 3067, 3081, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, true, false, false)
+                .setClanApproximate(false, false, true, false, false)
                 .setPrototypeFactions(F_CJF)
                 .setProductionFactions(F_CJF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

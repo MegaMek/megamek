@@ -1944,8 +1944,8 @@ public class Aero extends Entity implements IAero, IBomber {
             }
 
             // half heat for streaks
-            if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+            if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) ||
+                    (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;
             }
             String name = wtype.getName();

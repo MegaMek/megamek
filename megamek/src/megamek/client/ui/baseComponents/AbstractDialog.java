@@ -155,7 +155,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * for MekHQ usage
      */
     protected void setPreferences() {
-        setPreferences(MegaMek.getPreferences().forClass(getClass()));
+        setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**

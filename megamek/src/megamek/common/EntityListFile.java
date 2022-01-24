@@ -13,7 +13,7 @@
  */
 package megamek.common;
 
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
@@ -513,7 +513,7 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
-        output.write("<unit version=\"" + MegaMekConstants.VERSION + "\" >\n\n");
+        output.write("<unit version=\"" + MMConstants.VERSION + "\" >\n\n");
 
         writeEntityList(output, list);
 
@@ -551,7 +551,7 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
-        output.write("<record version=\"" + MegaMekConstants.VERSION + "\" >");
+        output.write("<record version=\"" + MMConstants.VERSION + "\" >");
 
         ArrayList<Entity> living = new ArrayList<>();
         ArrayList<Entity> allied = new ArrayList<>();

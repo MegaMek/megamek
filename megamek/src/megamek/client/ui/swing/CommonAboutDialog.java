@@ -31,7 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -88,7 +88,7 @@ public class CommonAboutDialog extends JDialog {
         // Version text
         StringBuffer buff = new StringBuffer();
         buff.append(Messages.getString("CommonAboutDialog.version"))
-                .append(MegaMekConstants.VERSION).append(
+                .append(MMConstants.VERSION).append(
                         Messages.getString("CommonAboutDialog.timestamp"))
                 .append(new Date(TIMESTAMP)).append(
                         Messages.getString("CommonAboutDialog.javaVendor"))

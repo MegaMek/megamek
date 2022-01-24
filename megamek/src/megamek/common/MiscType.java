@@ -285,8 +285,8 @@ public class MiscType extends EquipmentType {
     public static final long S_TREE_CLUB = 1L << 1;// BMR
     public static final long S_HATCHET = 1L << 2; // BMR
     public static final long S_SWORD = 1L << 3; // BMR
-    // This used to be S_MACE_THB, at 1L << 4;
-    // This used to be S_CLAW_THB, at 1L << 5;
+    public static final long S_MACE_THB = 1L << 4; // Unused and Unsupported
+    public static final long S_CLAW_THB = 1L << 5; // Unused and Unsupported
     public static final long S_MACE = 1L << 6;
     public static final long S_DUAL_SAW = 1L << 7;
     public static final long S_FLAIL = 1L << 8;

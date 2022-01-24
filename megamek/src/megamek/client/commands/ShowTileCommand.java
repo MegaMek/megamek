@@ -1,6 +1,3 @@
-/**
- *
- */
 package megamek.client.commands;
 
 import java.util.HashSet;
@@ -14,14 +11,13 @@ import megamek.common.Hex;
 import megamek.common.options.OptionsConstants;
 
 /**
+ * This command exists to print tile information to the chat window, it's primarily intended for
+ * visually impaired users.
  * @author dirk
- *         This command exists to print tile information to the chat
- *         window, it's primarily intended for vissually impaired users.
  */
-
 public class ShowTileCommand extends ClientCommand {
     public final static Set<String> directions = new HashSet<>();
-    {
+    static {
         directions.add("N");
         directions.add("NW");
         directions.add("NE");
@@ -50,7 +46,7 @@ public class ShowTileCommand extends ClientCommand {
     public String run(String[] args) {
         try {
             int i = 3;
-            String str = "", report = "";
+            String str, report = "";
             Coords coord;
             if ((args.length >= 1) && directions.contains(args[0].toUpperCase())) {
                 i = 1;
@@ -69,19 +65,16 @@ public class ShowTileCommand extends ClientCommand {
                 getClient().setCurrentHex(hex);
                 if (hex != null) {
                     str = "Details for hex (" + (coord.getX() + 1) + ", "
-                          + (coord.getY() + 1) + ") : " + hex.toString();
+                          + (coord.getY() + 1) + ") : " + hex;
 
-                    // if we are not playing in double blind mode also list the
+                    // if we are not playing in double-blind mode also list the
                     // units in this tile.
                     if (!getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-                        Iterator<Entity> entList = getClient().getGame()
-                                                              .getEntities(coord);
+                        Iterator<Entity> entList = getClient().getGame().getEntities(coord);
                         if (entList.hasNext()) {
-                            str = str + "; Contains entities: "
-                                  + entList.next().getId();
+                            str = str + "; Contains entities: " + entList.next().getId();
                             while (entList.hasNext()) {
-                                str = str + ", "
-                                      + entList.next().getId();
+                                str = str + ", " + entList.next().getId();
                             }
                         }
                     }
@@ -100,9 +93,8 @@ public class ShowTileCommand extends ClientCommand {
             } while (i <= args.length);
 
             return report;
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (Exception ignored) {
+
         }
 
         return "Error parsing the command.";

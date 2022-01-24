@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,7 +14,7 @@
  */
 package megamek.common;
 
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.GameTurn.SpecificEntityTurn;
@@ -54,7 +54,7 @@ public class Game implements Serializable {
     /**
      * Stores the version of MM, so that it can be serialized in saved games.
      */
-    public final Version version = MegaMekConstants.VERSION;
+    public final Version version = MMConstants.VERSION;
 
     private GameOptions options = new GameOptions();
 
@@ -1551,7 +1551,7 @@ public class Game implements Serializable {
      * Returns an Enumeration of the active entities at the given coordinates.
      */
     public Iterator<Entity> getEntities(Coords c, boolean ignore) {
-        return getEntitiesVector(c,ignore).iterator();
+        return getEntitiesVector(c, ignore).iterator();
     }
 
     /**

@@ -23,7 +23,7 @@ import megamek.common.util.generator.SimplexGenerator;
 import java.util.*;
 
 public class BoardUtilities {
-    private static List<ElevationGenerator> elevationGenerators = new ArrayList<>();
+    private static final List<ElevationGenerator> elevationGenerators = new ArrayList<>();
     static {
         // TODO: make this externally accessible via registerElevationGenerator()
         elevationGenerators.add(new SimplexGenerator());
@@ -512,12 +512,11 @@ public class BoardUtilities {
      * Searching starting from one Hex, all Terrains not matching terrainType,
      * next to one of terrainType.
      *
-     * @param terrainType The terrainType which the searching hexes should not
-     *            have.
-     * @param alreadyUsed The hexes which should not looked at (because they are
-     *            already supposed to visited in some way)
-     * @param unUsed In this set the resulting hexes are stored. They are stored
-     *            in addition to all previously stored.
+     * @param terrainType The terrainType which the searching hexes should not have.
+     * @param alreadyUsed The hexes which should not looked at (because they are already supposed
+     *                    to visited in some way)
+     * @param unUsed In this set the resulting hexes are stored. They are stored in addition to all
+     *               previously stored.
      * @param searchFrom The Hex where to start
      */
     private static void findAllUnused(Board board, int terrainType, Set<Hex> alreadyUsed,

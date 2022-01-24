@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -125,7 +126,7 @@ class LobbyMekCellFormatter {
         if (forceView) {
             result.append(DOT_SPACER);
         }
-        NumberFormat formatter = NumberFormat.getNumberInstance(PreferenceManager.getClientPreferences().getLocale());
+        NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
         result.append(formatter.format(entity.getWeight()));
         result.append(Messages.getString("ChatLounge.Tons"));
         result.append("</FONT>");
@@ -714,7 +715,6 @@ class LobbyMekCellFormatter {
             result.append(DOT_SPACER).append("</FONT>");
             
             PlayerColour ownerColour = (owner.getColour() == null) ?
-
                     PlayerColour.FIRE_BRICK : owner.getColour();
             result.append(guiScaledFontHTML(ownerColour.getColour(), size));
             result.append("\u2691 ");

@@ -21,14 +21,8 @@ import megamek.common.SimpleTechLevel;
  */
 public class ISThunderBolt5 extends ThunderBoltWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 5295837076559643763L;
 
-    /**
-     *
-     */
     public ISThunderBolt5() {
         super();
         name = "Thunderbolt 5";
@@ -36,6 +30,7 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         addLookupName("IS Thunderbolt-5");
         addLookupName("ISThunderbolt5");
         addLookupName("IS Thunderbolt 5");
+        sortingName = "Thunderbolt 05";
         ammoType = AmmoType.T_TBOLT_5;
         heat = 3;
         minimumRange = 5;

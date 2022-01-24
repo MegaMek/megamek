@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@ package megamek.client;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -524,75 +524,63 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip), Integer.valueOf(nMode) };
-        send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, nEntity, nEquip, nMode));
     }
 
     /**
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip), Integer.valueOf(nFacing) };
-        send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, nEntity, nEquip, nFacing));
     }
 
     /**
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip) };
-        send(new Packet(Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE, nEntity, nEquip));
     }
 
     /**
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nSystem), Integer.valueOf(nMode) };
-        send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, nEntity, nSystem, nMode));
     }
 
     /**
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nWeapon), Integer.valueOf(nAmmo) };
-        send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, nEntity, nWeapon, nAmmo));
     }
 
     /**
      * Send sensor-change data to the server
      */
     public void sendSensorChange(int nEntity, int nSensor) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nSensor) };
-        send(new Packet(Packet.COMMAND_ENTITY_SENSORCHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_SENSORCHANGE, nEntity, nSensor));
     }
 
     /**
      * Send sinks-change data to the server
      */
     public void sendSinksChange(int nEntity, int activeSinks) {
-        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(activeSinks) };
-        send(new Packet(Packet.COMMAND_ENTITY_SINKSCHANGE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_SINKSCHANGE, nEntity, activeSinks));
     }
 
     /**
      * Send activate hidden data to the server
      */
     public void sendActivateHidden(int nEntity, GamePhase phase) {
-        send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, new Object[] { nEntity, phase }));
+        send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, nEntity, phase));
     }
 
     /**
      * Send movement data for the given entity to the server.
      */
     public void moveEntity(int id, MovePath md) {
-        Object[] data = new Object[2];
-
-        data[0] = Integer.valueOf(id);
-        data[1] = md;
-
-        send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
+        send(new Packet(Packet.COMMAND_ENTITY_MOVE, id, md));
     }
 
     /**
@@ -629,15 +617,15 @@ public class Client implements IClientCommandHandler {
         int packetCount = 6 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
-        data[index++] = Integer.valueOf(id);
+        data[index++] = id;
         data[index++] = c;
-        data[index++] = Integer.valueOf(nFacing);
-        data[index++] = Integer.valueOf(elevation);
-        data[index++] = Integer.valueOf(loadedUnits.size());
-        data[index++] = Boolean.valueOf(assaultDrop);
+        data[index++] = nFacing;
+        data[index++] = elevation;
+        data[index++] = loadedUnits.size();
+        data[index++] = assaultDrop;
 
         for (Entity ent : loadedUnits) {
-            data[index++] = Integer.valueOf(ent.getId());
+            data[index++] = ent.getId();
         }
 
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
@@ -770,7 +758,7 @@ public class Client implements IClientCommandHandler {
     
     /** Sends the given forces to the server to be made top-level forces. */
     public void sendForceParent(Collection<Force> forceList, int newParentId) {
-        send(new Packet(Packet.COMMAND_FORCE_PARENT, new Object[] { forceList, newParentId }));
+        send(new Packet(Packet.COMMAND_FORCE_PARENT, forceList, newParentId));
     }
 
     /**
@@ -804,7 +792,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendAddSquadron(FighterSquadron fs, Collection<Integer> fighterIds) {
         checkDuplicateNamesDuringAdd(fs);
-        send(new Packet(Packet.COMMAND_SQUADRON_ADD, new Object[] { fs, fighterIds }));
+        send(new Packet(Packet.COMMAND_SQUADRON_ADD, fs, fighterIds));
     }
 
     /**
@@ -1337,7 +1325,7 @@ public class Client implements IClientCommandHandler {
      * @param net
      */
     public void sendNovaChange(int ID, String net) {
-        Object[] data = { Integer.valueOf(ID), new String(net) };
+        Object[] data = { ID, net };
         Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
         send(packet);
     }
@@ -1358,7 +1346,7 @@ public class Client implements IClientCommandHandler {
      * send all buffered packets on their way this should be called after
      * everything which causes us to wait for a reply. For example "done" button
      * presses etc. to make stuff more efficient, this should only be called
-     * after a batch of packets is sent,not separately for each packet
+     * after a batch of packets is sent, not separately for each packet
      */
     protected void flushConn() {
         if (connection != null) {
@@ -1379,7 +1367,7 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_SERVER_VERSION_CHECK:
                 send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, new Object[] {
-                        MegaMekConstants.VERSION, MegaMek.getMegaMekSHA256() }));
+                        MMConstants.VERSION, MegaMek.getMegaMekSHA256() }));
                 break;
             case Packet.COMMAND_SERVER_GREETING:
                 connected = true;
@@ -1392,7 +1380,7 @@ public class Client implements IClientCommandHandler {
                 final Version serverVersion = (Version) c.getObject(0);
                 final String message = String.format(
                         "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
-                        getHost(), serverVersion, MegaMekConstants.VERSION);
+                        getHost(), serverVersion, MMConstants.VERSION);
                 JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
                         JOptionPane.ERROR_MESSAGE);
                 LogManager.getLogger().error(message);

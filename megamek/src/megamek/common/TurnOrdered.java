@@ -361,9 +361,13 @@ public abstract class TurnOrdered implements ITurnOrdered {
             }
 
             if (item instanceof Entity) {
-                Entity e = (Entity) item;
-                bonus = e.getGame().getTeamForPlayer(e.getOwner()).getTotalInitBonus(false)
-                        + e.getCrew().getInitBonus();
+                final Entity entity = (Entity) item;
+                if (entity.getGame() != null) {
+                    final Team team = entity.getGame().getTeamForPlayer(entity.getOwner());
+                    if (team != null) {
+                        bonus = team.getTotalInitBonus(false) + entity.getCrew().getInitBonus();
+                    }
+                }
             }
 
             if (rerollRequests == null) { // normal init roll

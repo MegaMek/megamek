@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
 * Copyright (C) 2018-2021 - The MegaMek Team. All Rights Reserved.
 *
@@ -18,7 +18,7 @@ package megamek.server;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -503,10 +503,10 @@ public class Server implements Runnable {
      */
     private String createMotd() {
         StringBuilder motd = new StringBuilder();
-        motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMekConstants.VERSION)
+        motd.append("Welcome to MegaMek.  Server is running version ").append(MMConstants.VERSION)
                 .append(", build date ");
         if (MegaMek.TIMESTAMP > 0L) {
-            motd.append(new Date(MegaMek.TIMESTAMP).toString());
+            motd.append(new Date(MegaMek.TIMESTAMP));
         } else {
             motd.append("unknown");
         }
@@ -691,9 +691,9 @@ public class Server implements Runnable {
 
     private boolean receivePlayerVersion(Packet packet, int connId) {
         final Version version = (Version) packet.getObject(0);
-        if (!MegaMekConstants.VERSION.is(version)) {
+        if (!MMConstants.VERSION.is(version)) {
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
-                    version, MegaMekConstants.VERSION);
+                    version, MMConstants.VERSION);
             LogManager.getLogger().error(message);
 
             final Player player = getPlayer(connId);
@@ -6375,7 +6375,7 @@ public class Server implements Runnable {
                         legalPos = step.getTargetPosition();
                     }
                 }
-                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()),legalPos));
+                addReport(ejectSpacecraft(ship, ship.isSpaceborne(), (ship.isAirborne() && !ship.isSpaceborne()), legalPos));
                 //If we're grounded or destroyed by crew loss, end movement
                 if (entity.isDoomed() || (!entity.isSpaceborne() && !entity.isAirborne())) {
                     return;
@@ -7335,7 +7335,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMekConstants.VERSION
+                            + " is running MegaMek " + MMConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7382,7 +7382,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMekConstants.VERSION
+                            + " is running MegaMek " + MMConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7408,7 +7408,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMekConstants.VERSION
+                            + " is running MegaMek " + MMConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -14978,7 +14978,7 @@ public class Server implements Runnable {
                 }
             } else {
                 LogManager.getLogger().error("Removing duplicate phys attack for id#" + entityId
-                                + "\n\t\taction was " + action.toString());
+                        + "\n\t\taction was " + action);
             }
         }
 
@@ -18369,7 +18369,7 @@ public class Server implements Runnable {
                     addReport(r);
                 } else if (attackerLocation2 == Entity.LOC_NONE) {
                     addReport(damageEntity(attacker, new HitData(attackerLocation), 2, false,
-                            DamageType.NONE,false, false, false));
+                            DamageType.NONE, false, false, false));
                 } else {
                     addReport(damageEntity(attacker, new HitData(attackerLocation), 1, false,
                             DamageType.NONE, false, false, false));
@@ -28559,7 +28559,7 @@ public class Server implements Runnable {
      * @param roll     - the <code>TargetRoll</code> for the ignition roll
      * @param bInferno - <code>true</code> if the fire is an inferno fire. If this
      *                 value is <code>false</code> the hex will be lit only if it
-     *                 contains Woods,jungle or a Building.
+     *                 contains Woods, jungle or a Building.
      * @param entityId - the entityId responsible for the ignite attempt. If the
      *                 value is Entity.NONE, then the roll attempt will not be
      *                 included in the report.
@@ -30169,7 +30169,7 @@ public class Server implements Runnable {
         updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
 
         // Units that get deleted must not receive updates
-        updateCandidates.removeIf(e -> delEntities.contains(e));
+        updateCandidates.removeIf(delEntities::contains);
         if (!updateCandidates.isEmpty()) {
             send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }
@@ -31038,7 +31038,7 @@ public class Server implements Runnable {
                 if (valid) {
                     sendToPending(connId, new Packet(Packet.COMMAND_SERVER_GREETING));
                 } else {
-                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MegaMekConstants.VERSION));
+                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MMConstants.VERSION));
                     getPendingConnection(connId).close();
                 }
                 break;
@@ -31346,9 +31346,9 @@ public class Server implements Runnable {
                     ConnectionWatchdog w = new ConnectionWatchdog(this, id);
                     watchdogTimer.schedule(w, 1000, 500);
                 }
-            } catch (InterruptedIOException ignored) {
-                // ignore , just SOTimeout blowing..
-            } catch (IOException ignored) { }
+            } catch (Exception ignored) {
+
+            }
         }
     }
 
@@ -31827,7 +31827,7 @@ public class Server implements Runnable {
                 numLoads++;
             }
             if (numLoads < 1) {
-                LogManager.getLogger().error("Check for collapse: hex " + coords.toString() 
+                LogManager.getLogger().error("Check for collapse: hex " + coords
                         + " has no bridge or building");
                 return false;
             }
@@ -33617,7 +33617,7 @@ public class Server implements Runnable {
                 r.add(nEscaped);
                 vDesc.addElement(r);
             }
-            EscapePods pods = new EscapePods(entity,totalLaunched,isPod);
+            EscapePods pods = new EscapePods(entity, totalLaunched, isPod);
             entity.addEscapeCraft(pods.getExternalIdAsString());
             //Update the personnel numbers
             
@@ -33634,7 +33634,7 @@ public class Server implements Runnable {
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                 pods.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
-                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                vDesc.addAll(damageCrew(entity, entity.getCrew().calculateHits()));
                 if (entity.getCrew().getHits() >= Crew.DEATH) {
                     //Then we've finished ejecting
                     entity.getCrew().setEjected(true);
@@ -33706,7 +33706,7 @@ public class Server implements Runnable {
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                 crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
                 //*Damage* the host ship's crew to account for the people that left
-                vDesc.addAll(damageCrew(entity,entity.getCrew().calculateHits()));
+                vDesc.addAll(damageCrew(entity, entity.getCrew().calculateHits()));
                 if (entity.getCrew().getHits() >= Crew.DEATH) {
                     //Then we've finished ejecting
                     entity.getCrew().setEjected(true);
@@ -33755,9 +33755,8 @@ public class Server implements Runnable {
             // Sent entity info to clients
             entityUpdate(crew.getId());
             // Check if the crew lands in a minefield
-            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
-                    entity.getPosition(), entity.getPosition(),
-                    entity.getElevation()));
+            vDesc.addAll(doEntityDisplacementMinefieldCheck(crew, entity.getPosition(),
+                    entity.getPosition(), entity.getElevation()));
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
@@ -33769,8 +33768,8 @@ public class Server implements Runnable {
         return vDesc;
     }
 
-    public static PilotingRollData getEjectModifiers(Game game,
-            Entity entity, int crewPos, boolean autoEject) {
+    public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos,
+                                                     boolean autoEject) {
         int facing = entity.getFacing();
         if (entity.isPartOfFighterSquadron()) {
             // Because the components of a squadron have no position and will pass the next test
@@ -33783,8 +33782,7 @@ public class Server implements Runnable {
             return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
         }
         Coords targetCoords = entity.getPosition().translated((facing + 3) % 6);
-        return getEjectModifiers(game, entity, crewPos, autoEject, targetCoords,
-                "ejecting");
+        return getEjectModifiers(game, entity, crewPos, autoEject, targetCoords, "ejecting");
     }
 
     public static PilotingRollData getEjectModifiers(Game game, Entity entity, int crewPos,
@@ -33811,11 +33809,8 @@ public class Server implements Runnable {
             rollTarget.addModifier(entity.getCrew().getHits(), "Crew hits");
         }
         if ((entity instanceof Mech)
-                && (entity.getInternal(Mech.LOC_HEAD) < entity
-                        .getOInternal(Mech.LOC_HEAD))) {
-            rollTarget.addModifier(
-                    entity.getOInternal(Mech.LOC_HEAD)
-                            - entity.getInternal(Mech.LOC_HEAD),
+                && (entity.getInternal(Mech.LOC_HEAD) < entity.getOInternal(Mech.LOC_HEAD))) {
+            rollTarget.addModifier(entity.getOInternal(Mech.LOC_HEAD) - entity.getInternal(Mech.LOC_HEAD),
                     "Head Internal Structure Damage");
         }
         Hex targetHex = game.getBoard().getHex(targetCoords);
@@ -33853,11 +33848,11 @@ public class Server implements Runnable {
             }
         }
         if (!entity.isSpaceborne()) {
-            //At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
-            //That's a fix for another day, probably when I get around to space terrain and 'weather'
+            // At present, the UI lets you set these atmospheric conditions for a space battle, but it shouldn't
+            // That's a fix for another day, probably when I get around to space terrain and 'weather'
             if (game.getPlanetaryConditions().getGravity() == 0) {
                 rollTarget.addModifier(3, "Zero-G");
-            } else if (game.getPlanetaryConditions().getGravity() < .8) {
+            } else if (game.getPlanetaryConditions().getGravity() < 0.8) {
                 rollTarget.addModifier(2, "Low-G");
             } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
                 rollTarget.addModifier(2, "High-G");
@@ -35441,7 +35436,7 @@ public class Server implements Runnable {
                         && (game.getPhase() != GamePhase.UNKNOWN)) {
                     content += "&close=yes";
                 }
-                content += "&version=" + MegaMekConstants.VERSION;
+                content += "&version=" + MMConstants.VERSION;
                 if (isPassworded()) {
                     content += "&pw=yes";
                 }

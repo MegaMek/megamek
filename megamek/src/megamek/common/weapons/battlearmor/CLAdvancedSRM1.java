@@ -18,14 +18,8 @@ package megamek.common.weapons.battlearmor;
  */
 public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6709245485008575199L;
 
-    /**
-     *
-     */
     public CLAdvancedSRM1() {
         super();
         name = "Advanced SRM 1";

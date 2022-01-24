@@ -27,12 +27,8 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-
 public abstract class StreakLRMWeapon extends LRMWeapon {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -2552069184709782928L;
 
     public StreakLRMWeapon() {
@@ -57,14 +53,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {
@@ -86,5 +75,14 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "OSI ";
+        }
+        return "LRM STREAK " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

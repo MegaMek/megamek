@@ -37,9 +37,6 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
 
     private static final long serialVersionUID = -4887277242270179970L;
 
-    /**
-     *
-     */
     public MekMortarWeapon() {
         super();
         ammoType = AmmoType.T_MEK_MORTAR;
@@ -50,14 +47,6 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {
@@ -109,5 +98,10 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
             removeMode("");
             removeMode("Indirect");
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        return "Mek Mortar " + rackSize;
     }
 }

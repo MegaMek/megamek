@@ -1,34 +1,25 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 13, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.ppc;
 
 /**
  * @author Andrew Hunter
+ * @since Sep 13, 2004
  */
 public class ISPPC extends PPCWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = 5775665622863346537L;
 
-    /**
-     *
-     */
     public ISPPC() {
         super();
         name = "PPC";
@@ -36,6 +27,7 @@ public class ISPPC extends PPCWeapon {
         addLookupName("Particle Cannon");
         addLookupName("IS PPC");
         addLookupName("ISPPC");
+        sortingName = "PPC C";
         heat = 10;
         damage = 10;
         minimumRange = 3;
@@ -56,19 +48,17 @@ public class ISPPC extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        rulesRefs = "234,TM";
+        rulesRefs = "234, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(true)
-        	.setUnofficial(false)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-            .setISAdvancement(2440, 2460, 2500, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setClanAdvancement(2440, 2460, 2500, 2825, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
-
+                .setIntroLevel(true)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setISAdvancement(2440, 2460, 2500, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setClanAdvancement(2440, 2460, 2500, 2825, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH);
     }
-
 }

@@ -79,12 +79,12 @@ public final class TipUtil {
      * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
      * The list is 40 characters wide with \u2B1D as option separator.
      */
-    public static String getOptionList(Enumeration<IOptionGroup> optGroups, 
-            Function<String, Integer> counter, boolean detailed) {
+    public static String getOptionList(Enumeration<IOptionGroup> optGroups,
+                                       Function<String, Integer> counter, boolean detailed) {
         if (detailed) {
-            return optionListFull(optGroups, counter, e -> e.getDisplayableName());
+            return optionListFull(optGroups, counter, IOptionGroup::getDisplayableName);
         } else {
-            return optionListShort(optGroups, counter, e -> e.getDisplayableName());
+            return optionListShort(optGroups, counter, IOptionGroup::getDisplayableName);
         }
     }
 

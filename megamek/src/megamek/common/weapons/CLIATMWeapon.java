@@ -100,4 +100,9 @@ public abstract class CLIATMWeapon extends MissileWeapon {
             removeMode("Indirect");
         }
     }
+
+    @Override
+    public String getSortingName() {
+        return "ATM IMP " + ((rackSize < 10) ? "0" + rackSize : rackSize);
+    }
 }

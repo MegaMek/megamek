@@ -571,7 +571,7 @@ public class LobbyActions {
                     m.setMode("");
                 }
                 updateCandidates.add(entity);
-            };
+            }
         }
         sendUpdates(updateCandidates);
     }
@@ -1241,7 +1241,7 @@ public class LobbyActions {
     }
     
     boolean areForcesEditable(Collection<Force> forces) {
-        return forces.stream().allMatch(f -> isEditable(f));
+        return forces.stream().allMatch(this::isEditable);
     }
     
     /**

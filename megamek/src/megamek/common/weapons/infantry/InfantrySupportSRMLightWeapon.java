@@ -37,6 +37,7 @@ public class InfantrySupportSRMLightWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("InfantrySRM");
 		addLookupName("Light SRM Launcher");
+		sortingName = "SRM Launcher B";
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 2.91;

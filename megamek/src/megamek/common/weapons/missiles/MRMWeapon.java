@@ -31,9 +31,6 @@ public abstract class MRMWeapon extends MissileWeapon {
 
     private static final long serialVersionUID = 274817921444431878L;
 
-    /**
-     *
-     */
     public MRMWeapon() {
         super();
         ammoType = AmmoType.T_MRM;
@@ -41,14 +38,6 @@ public abstract class MRMWeapon extends MissileWeapon {
         atClass = CLASS_MRM;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {
@@ -72,5 +61,14 @@ public abstract class MRMWeapon extends MissileWeapon {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS ";
+        }
+        return "MRM " + oneShotTag + rackSize;
     }
 }

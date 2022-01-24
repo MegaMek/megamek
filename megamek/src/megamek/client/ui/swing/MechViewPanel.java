@@ -1,5 +1,5 @@
 /*
- * MCopyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MCopyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.ComponentOrientation;
@@ -34,7 +33,10 @@ import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.*;
 import megamek.common.templates.TROView;
 
-/* Created on November 2, 2009 by Jay Lawson */
+/**
+ * @author Jay Lawson
+ * @since November 2, 2009
+ */
 public class MechViewPanel extends JPanel {
 
     private static final long serialVersionUID = 2438490306644271135L;
@@ -90,7 +92,7 @@ public class MechViewPanel extends JPanel {
 
     public void setMech(Entity entity, boolean useAlternateCost) {
         MechView mechView = new MechView(entity, false, useAlternateCost);
-        setMech(entity,mechView);
+        setMech(entity, mechView);
     }
 
     private void setFluffImage(Entity entity) {

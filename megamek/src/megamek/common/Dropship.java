@@ -26,10 +26,10 @@ public class Dropship extends SmallCraft {
     private static final long serialVersionUID = 1528728632696989565L;
     
     // ASEW Missile Effects, per location
-    // Values correspond to Locations: NOS,Left,Right,AFT
+    // Values correspond to Locations: NOS, Left, Right, AFT
     private int[] asewAffectedTurns = { 0, 0, 0, 0 };
     
-    /*
+    /**
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
      * @param turns - integer specifying the number of end phases that the effects last through
@@ -41,7 +41,7 @@ public class Dropship extends SmallCraft {
         }
     }
     
-    /*
+    /**
      * Returns the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
      */
@@ -157,10 +157,7 @@ public class Dropship extends SmallCraft {
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
         if (isAirborne()) {
-            if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-                return true;
-            }
-            return false;
+            return hex.containsTerrain(Terrains.IMPASSABLE);
         }
         // Check prohibited terrain
         // treat grounded Dropships like wheeled tanks,

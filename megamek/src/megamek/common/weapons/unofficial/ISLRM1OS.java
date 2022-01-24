@@ -38,9 +38,13 @@ public class ISLRM1OS extends LRMWeapon {
         minimumRange = 6;
         bv = 3;
         flags = flags.or(F_ONESHOT);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2676, 2800, 3030);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        rulesRefs = "Unofficial";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(true)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false);
     }
 }

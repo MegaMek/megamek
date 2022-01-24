@@ -11,10 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-/*
- * Created on Sep 8, 2005
- *
- */
 package megamek.common.weapons.lasers;
 
 import megamek.common.SimpleTechLevel;
@@ -22,22 +18,18 @@ import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 8, 2005
  */
 public class ISXPulseLaserSmall extends PulseLaserWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = 5322977585378755226L;
 
-    /**
-     *
-     */
     public ISXPulseLaserSmall() {
         super();
         name = "Small X-Pulse Laser";
         setInternalName("ISSmallXPulseLaser");
         addLookupName("IS X-Pulse Small Laser");
         addLookupName("IS Small X-Pulse Laser");
+        sortingName = "Laser XPULSE B";
         heat = 3;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

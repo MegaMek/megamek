@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,9 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Sep 23, 2011
- */
 package megamek.common.weapons.flamers;
 
 import megamek.common.AmmoType;
@@ -22,16 +19,11 @@ import megamek.common.WeaponType;
 
 /**
  * @author Klaus Mittag (based on ISHeavyFlamer by Andrew Hunter)
+ * @since Sep 23, 2011
  */
 public class CLHeavyFlamer extends VehicleFlamerWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3957472644909347725L;
 
-    /**
-     *
-     */
     public CLHeavyFlamer() {
         super();
 
@@ -40,6 +32,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         addLookupName("Clan Heavy Flamer");
         addLookupName("CL Heavy Flamer");
         addLookupName("CLHeavyFlamer");
+        sortingName = "Flamer D";
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;
@@ -56,17 +49,17 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         cost = 11250;
-        rulesRefs = "312,TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        rulesRefs = "312, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-    	.setTechRating(RATING_C)
-    	.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setClanAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, true, false, false)
-        .setPrototypeFactions(F_CJF)
-        .setProductionFactions(F_CJF)
-        .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setClanAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, true, false, false)
+                .setPrototypeFactions(F_CJF)
+                .setProductionFactions(F_CJF)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

@@ -1,27 +1,24 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.net;
 
 import megamek.common.annotations.Nullable;
 
 /**
- * Application layer data packet used to exchange information between client and
- * server.
+ * Application layer data packet used to exchange information between client and server.
  */
 public class Packet {
-
     public static final int COMMAND_CLOSE_CONNECTION = 0;
     public static final int COMMAND_SERVER_VERSION_CHECK = 9;
     public static final int COMMAND_SERVER_GREETING = 10;
@@ -153,33 +150,12 @@ public class Packet {
     private Object[] data;
 
     /**
-     * Contructs a new Packet with just the command and no data.
-     *
-     * @param command the command.
-     */
-    public Packet(int command) {
-        this(command, null);
-    }
-
-    /**
-     * Creates a <code>Packet</code> with a command and a single object
-     *
-     * @param command
-     * @param object
-     */
-    public Packet(int command, Object object) {
-        this.command = command;
-        data = new Object[1];
-        data[0] = object;
-    }
-
-    /**
      * Creates a <code>Packet</code> with a command and an array of objects
      *
      * @param command
      * @param data
      */
-    public Packet(int command, Object[] data) {
+    public Packet(int command, Object... data) {
         this.command = command;
         this.data = data;
     }
@@ -223,10 +199,9 @@ public class Packet {
      * index
      *
      * @param index the index of the desired object
-     * @return the <code>boolean</code> value of the object at the specified
-     *         index
+     * @return the <code>boolean</code> value of the object at the specified index
      */
     public boolean getBooleanValue(int index) {
-        return ((Boolean) getObject(index)).booleanValue();
+        return (Boolean) getObject(index);
     }
 }

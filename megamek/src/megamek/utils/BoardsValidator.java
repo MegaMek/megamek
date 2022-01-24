@@ -1,37 +1,33 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.utils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import megamek.common.Board;
 import megamek.common.Configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * This class provides a utility to read in all of the boards and check their validity.
+ * This class provides a utility to read in all the boards and check their validity.
  * 
  * @author arlith
- *
  */
 public class BoardsValidator {
     
@@ -73,36 +69,35 @@ public class BoardsValidator {
     }
 
     /**
-     * Check whether the supplied file is a valid board file or not.  Ignores files that don't end in .board.  Any
-     * errors are logged to System.out.
-     * 
-     * @param boardFile
-     * @throws FileNotFoundException
+     * Check whether the supplied file is a valid board file or not. Ignores files that don't end
+     * in .board. Any errors are logged to System.out.
+     *
+     * @param boardFile the board file to check
      */
-    private void validateBoard(File boardFile) throws FileNotFoundException, IOException {
+    private void validateBoard(File boardFile) throws IOException {
         // If this isn't a board, ignore it
         if (!boardFile.toString().endsWith(".board")) {
             return;
         }
         
-        try (java.io.InputStream is = new FileInputStream(boardFile)) {
+        try (InputStream is = new FileInputStream(boardFile)) {
             StringBuffer errBuff = new StringBuffer();
             Board b = new Board();
 
             try {
                 b.load(is, errBuff, false);
             } catch (Exception e) {
-                errBuff.append(e.toString());
-                StringWriter writer = new StringWriter();
-                e.printStackTrace(new PrintWriter(writer));
-                errBuff.append(writer.toString());
+                numBoardErrors++;
+                System.err.println("Found invalid board: " + boardFile);
+                e.printStackTrace();
+                return;
             }
 
             if (errBuff.length() > 0) {
                 numBoardErrors++;
-                System.out.println("Found Invalid Board! Board: " + boardFile);
+                System.err.println("Found invalid board: " + boardFile);
                 if (isVerbose) {
-                    System.out.println(errBuff);
+                    System.err.println(errBuff);
                 }
             }
         }

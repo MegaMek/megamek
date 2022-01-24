@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,9 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Sep 24, 2004
- */
 package megamek.common.weapons.flamers;
 
 import megamek.common.AmmoType;
@@ -22,16 +19,11 @@ import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
+ * @since Sep 24, 2004
  */
 public class ISHeavyFlamer extends VehicleFlamerWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3957472644909347725L;
 
-    /**
-     *
-     */
     public ISHeavyFlamer() {
         super();
 
@@ -39,6 +31,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         setInternalName(name);
         addLookupName("IS Heavy Flamer");
         addLookupName("ISHeavyFlamer");
+        sortingName = "Flamer D";
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;
@@ -57,17 +50,17 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         atClass = CLASS_POINT_DEFENSE;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);
-        rulesRefs = "312,TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        rulesRefs = "312, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, true,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC)
-        .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setPrototypeFactions(F_LC)
+                .setProductionFactions(F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

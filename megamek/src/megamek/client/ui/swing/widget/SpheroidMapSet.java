@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
  * This program is free software; you can redistribute it and/or modify it 
@@ -71,8 +71,6 @@ public class SpheroidMapSet implements DisplayMapSet{
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
-
-
     public SpheroidMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
         comp = c;
@@ -84,6 +82,7 @@ public class SpheroidMapSet implements DisplayMapSet{
     }
 
     public void setRest() {
+
     }
 
     @Override
@@ -114,15 +113,15 @@ public class SpheroidMapSet implements DisplayMapSet{
         WidgetUtils.setAreaColor(areas[4], vLabels[4], (double) a / (double) a0);
 
         //now for the vitals
-        vLabels[5].setValue(getCriticalHitTally(t.getAvionicsHits(),3));
-        vLabels[6].setValue(getCriticalHitTally(t.getEngineHits(),t.getMaxEngineHits()));
-        vLabels[7].setValue(getCriticalHitTally(t.getFCSHits(),3));
-        vLabels[8].setValue(getCriticalHitTally(t.getSensorHits(),3));
+        vLabels[5].setValue(getCriticalHitTally(t.getAvionicsHits(), 3));
+        vLabels[6].setValue(getCriticalHitTally(t.getEngineHits(), t.getMaxEngineHits()));
+        vLabels[7].setValue(getCriticalHitTally(t.getFCSHits(), 3));
+        vLabels[8].setValue(getCriticalHitTally(t.getSensorHits(), 3));
         if (t instanceof SmallCraft) {
             //add in thrusters
             SmallCraft sc = (SmallCraft) t;
-            vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(),3));
-            vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(),3));
+            vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(), 3));
+            vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(), 3));
         } else {
             vLabels[9].setValue("-");
             vLabels[10].setValue("-");
@@ -135,11 +134,11 @@ public class SpheroidMapSet implements DisplayMapSet{
         	if (ds.isKFBoomDamaged()) {
         		kfboom = 1;
         	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom,1));
+        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
         	if (ds.isDockCollarDamaged()) {
         		collar = 1;
         	}
-        	vLabels[12].setValue(getCriticalHitTally(collar,1));
+        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }

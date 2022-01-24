@@ -28,22 +28,21 @@ import java.awt.geom.Point2D;
 
  * 
  * @author Simon
- *
  */
 public class HexDrawUtilities {
 
     public static final double HEX_WID = BoardView.HEX_W;
-    public static final double HEX_HGT = HEX_WID*Math.sqrt(3)/2;
+    public static final double HEX_HGT = HEX_WID * Math.sqrt(3) / 2;
 
-    public static final Point2D.Double HEX_CTR = new Point2D.Double(HEX_WID/2,HEX_HGT/2);
-    public static final Point2D.Double HEX_UL = new Point2D.Double(HEX_WID*0.25,0);
-    public static final Point2D.Double HEX_UR = new Point2D.Double(HEX_WID*0.75,0);
-    public static final Point2D.Double HEX_ML = new Point2D.Double(0,HEX_HGT/2);
-    public static final Point2D.Double HEX_MR = new Point2D.Double(HEX_WID,HEX_HGT/2);
-    public static final Point2D.Double HEX_LL = new Point2D.Double(HEX_WID*0.25,HEX_HGT);
-    public static final Point2D.Double HEX_LR = new Point2D.Double(HEX_WID*0.75,HEX_HGT);
+    public static final Point2D.Double HEX_CTR = new Point2D.Double(HEX_WID / 2,HEX_HGT / 2);
+    public static final Point2D.Double HEX_UL = new Point2D.Double(HEX_WID * 0.25, 0);
+    public static final Point2D.Double HEX_UR = new Point2D.Double(HEX_WID * 0.75, 0);
+    public static final Point2D.Double HEX_ML = new Point2D.Double(0,HEX_HGT / 2);
+    public static final Point2D.Double HEX_MR = new Point2D.Double(HEX_WID,HEX_HGT / 2);
+    public static final Point2D.Double HEX_LL = new Point2D.Double(HEX_WID * 0.25, HEX_HGT);
+    public static final Point2D.Double HEX_LR = new Point2D.Double(HEX_WID * 0.75, HEX_HGT);
     
-    public static final double PerfectHextoHexY = ((double) BoardView.HEX_H)/HEX_HGT;
+    public static final double PerfectHextoHexY = ((double) BoardView.HEX_H) / HEX_HGT;
     
     public static final AffineTransform PerfectHextoHex = 
             AffineTransform.getScaleInstance(1, PerfectHextoHexY);
@@ -64,13 +63,12 @@ public class HexDrawUtilities {
     // the slope of the side hex faces, multiplying by y gives x distance
     private static final double slopeXoverY = 1 / slopeYoverX;
     
-    // the weaker slope from the upper left corner to the right mid corner
+    // the weaker slope from the upper left corner to the right mid-corner
     private static final double slopeWYoverX = slopeYoverX / 3;
 
     
     // Internal functions that will return perfect hex shapes
-    //
-    
+
     private static Shape getHBLU() {
         Path2D.Double border = new Path2D.Double();
         border.moveTo(HEX_UL.x, HEX_UL.y);
@@ -110,8 +108,9 @@ public class HexDrawUtilities {
     private static Shape getHFBLU(double inset) {
         Path2D.Double area = new Path2D.Double();
         area.append(getHBLU(CUT_INSIDE, inset), false);
-        for (int dir = 1; dir < 6; dir++)
+        for (int dir = 1; dir < 6; dir++) {
             area.append(getHBLU(dir, CUT_INSIDE, inset), true);
+        }
         area.closePath();
         return area; 
     }
@@ -120,22 +119,32 @@ public class HexDrawUtilities {
     private static double getDeltaL(int cuttype, double thickness) {
         double DX = slopeXoverY * thickness;
         double LX;
-        if ((cuttype & CUT_LBORDER) == CUT_LBORDER) LX = -DX;
-        else if ((cuttype & CUT_LVERT) == CUT_LVERT) LX = 0;
-        else /* CUT_LINSIDE */ LX = DX; 
+        if ((cuttype & CUT_LBORDER) == CUT_LBORDER) {
+            LX = -DX;
+        } else if ((cuttype & CUT_LVERT) == CUT_LVERT) {
+            LX = 0;
+        } else {
+            // CUT_LINSIDE
+            LX = DX;
+        }
         return LX;
     }
     
     private static double getDeltaR(int cuttype, double thickness) {
         double DX = slopeXoverY * thickness;
         double RX;
-        if ((cuttype & CUT_RBORDER) == CUT_RBORDER) RX = DX;
-        else if ((cuttype & CUT_RVERT) == CUT_RVERT) RX = 0;
-        else /* CUT_RINSIDE */ RX = -DX; 
+        if ((cuttype & CUT_RBORDER) == CUT_RBORDER) {
+            RX = DX;
+        } else if ((cuttype & CUT_RVERT) == CUT_RVERT) {
+            RX = 0;
+        } else {
+            // CUT_RINSIDE
+            RX = -DX;
+        }
         return RX;
     }
     
-    // a border for the facings 0,1,2; crossing the hex
+    // a border for the facings 0, 1, 2; crossing the hex
     private static Shape getHCLU012() {
         Path2D.Double border = new Path2D.Double();
         border.moveTo(HEX_UL.x, HEX_UL.y);
@@ -160,7 +169,7 @@ public class HexDrawUtilities {
         return area;        
     }    
     
-    // a border for the facings 0,1; crossing the hex
+    // a border for the facings 0, 1; crossing the hex
     private static Shape getHCLU01() {
         Path2D.Double border = new Path2D.Double();
         border.moveTo(HEX_UL.x, HEX_UL.y);
@@ -179,7 +188,7 @@ public class HexDrawUtilities {
         return area;        
     }    
     
-    // a border for the facings 0,1,2,3; crossing the hex
+    // a border for the facings 0, 1, 2, 3; crossing the hex
     private static Shape getHCLU0123() {
         Path2D.Double border = new Path2D.Double();
         // the 5/8 is chosen arbitrarily
@@ -208,7 +217,7 @@ public class HexDrawUtilities {
         return area;        
     }    
     
-    // a border for the facings 0,1,2,3,4; crossing the hex
+    // a border for the facings 0, 1, 2, 3, 4; crossing the hex
     private static Shape getHCLU01234() {
         Path2D.Double border = new Path2D.Double();
         border.moveTo(HEX_UL.x, HEX_UL.y);
@@ -240,7 +249,6 @@ public class HexDrawUtilities {
     }
     
     // external functions that will return shapes scaled to the real hex
-    //
     
     public static Shape getHexBorderLine(int hexFace, int cuttype, double inset) {
         return PerfectHextoHex.createTransformedShape(
@@ -248,12 +256,11 @@ public class HexDrawUtilities {
     }
     
     public static AffineTransform getHexRotation(int facing) {
-        return AffineTransform.getRotateInstance(Math.toRadians(facing*60), BoardView.HEX_W/2, BoardView.HEX_H/2);
+        return AffineTransform.getRotateInstance(Math.toRadians(facing * 60), BoardView.HEX_W / 2, BoardView.HEX_H / 2);
     }
     
     public static Shape getHexBorderLine(int hexFace) {
-        return PerfectHextoHex.createTransformedShape(
-                getHBLU(hexFace));
+        return PerfectHextoHex.createTransformedShape(getHBLU(hexFace));
     }
     
     public static Shape getHexFullBorderLine(double inset) {
@@ -377,6 +384,4 @@ public class HexDrawUtilities {
         return PerfectHextoHex.createTransformedShape(
                 getHRU(hexFace).createTransformedShape(getHCLU01234()));
     }
-    
-    
 }

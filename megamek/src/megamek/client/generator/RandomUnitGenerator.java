@@ -178,8 +178,7 @@ public class RandomUnitGenerator implements Serializable {
     public void notifyListenersOfInitialization() {
         if (initialized) {
             for (ActionListener l : listeners) {
-                l.actionPerformed(new ActionEvent(
-                        this,ActionEvent.ACTION_PERFORMED,"rugInitialized"));
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"rugInitialized"));
             }
         }
     }

@@ -1,15 +1,15 @@
-/**
- * MegaMek - Copyright (C) 2004,2005,2006,2007 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2004, 2005, 2006, 2007 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.mgs;
 
@@ -27,10 +27,6 @@ import megamek.server.Server;
  * @author Sebastian Brocks
  */
 public class ISHeavyMGA extends AmmoWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2647621717483237437L;
 
     public ISHeavyMGA() {
@@ -39,6 +35,7 @@ public class ISHeavyMGA extends AmmoWeapon {
         name = "Heavy Machine Gun Array";
         setInternalName("ISHMGA");
         addLookupName("IS Heavy Machine Gun Array");
+        sortingName = "MGA D";
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
@@ -55,21 +52,21 @@ public class ISHeavyMGA extends AmmoWeapon {
         // because it depends on the number of MGs linked to
         // the MGA
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
+                .or(F_PROTO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
         cost = 1250;
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        rulesRefs = "228,TM";
+        rulesRefs = "228, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-            .setISAdvancement(3066, 3068, 3070, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_TC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setISAdvancement(3066, 3068, 3070, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_TC);
     }
 
     /*
@@ -81,8 +78,8 @@ public class ISHeavyMGA extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new MGAWeaponHandler(toHit, waa, game, server);
     }
 

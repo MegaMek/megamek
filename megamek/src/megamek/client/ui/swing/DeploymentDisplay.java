@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -544,7 +544,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         for (int loop = 1; loop < height; loop++) {
             if (Compute.stackingViolation(game, ce(), loop, moveto, null) == null) {
-                floorNames.add(Messages.getString("DeploymentDisplay.floor") + Integer.toString(loop));
+                floorNames.add(Messages.getString("DeploymentDisplay.floor") + loop);
                 floorValues.add(loop);
             }
         }
@@ -756,9 +756,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } // End have-choices
             else {
                 JOptionPane.showMessageDialog(clientgui.frame,
-                                Messages.getString("DeploymentDisplay.alertDialog2.message", ce().getShortName()), 
-                                Messages.getString("DeploymentDisplay.alertDialog2.title"), 
-                                JOptionPane.ERROR_MESSAGE); 
+                        Messages.getString("DeploymentDisplay.alertDialog2.message", ce().getShortName()),
+                        Messages.getString("DeploymentDisplay.alertDialog2.title"),
+                        JOptionPane.ERROR_MESSAGE);
             }
         } // End unload-unit
         else if (actionCmd.equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
@@ -776,7 +776,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages.getString("DeploymentDisplay.assaultDrop"));
             }
         }
-    } // End public void actionPerformed(ActionEvent ev)
+    }
 
     @Override
     public void clear() {
@@ -892,7 +892,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     // before loading on the client side, and the loaded unit may have been reset
                     // by the resulting update from the server.
                     && !ce().getLoadedUnits().contains(other)
-                    // If you want to load a trailer into a dropship or large support vee, do it in the lobby
+                    // If you want to load a trailer into a DropShip or large support vehicle, do it in the lobby
                     // The 'load' button should not allow trailers - that's what 'tow' is for.
                     && !other.isTrailer()) {
                 choices.add(other);

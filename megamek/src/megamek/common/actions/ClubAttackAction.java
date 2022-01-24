@@ -1,23 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2001-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * ClubAttackAction.java
- *
- * Created on April 3, 2002, 2:37 PM
- */
-
 package megamek.common.actions;
 
 import megamek.common.Compute;
@@ -40,12 +33,9 @@ import megamek.common.options.OptionsConstants;
  * weapons like hatchets.
  *
  * @author Ben
+ * @since April 3, 2002, 2:37 PM
  */
 public class ClubAttackAction extends PhysicalAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8744665286254604559L;
     private Mounted club;
     private int aiming;
@@ -65,7 +55,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
      * Creates a new club attack
      * @param entityId - id of entity performing the attack
      * @param targetType - type of target
-     * @param targetId - id of targeet
+     * @param targetId - id of target
      * @param club - The <code>Mounted</code> of the weapon doing the attack
      * @param aimTable
      * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)

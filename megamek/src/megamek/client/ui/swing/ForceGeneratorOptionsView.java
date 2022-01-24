@@ -34,7 +34,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private static final long serialVersionUID = 5269823128861856001L;
 
     private int currentYear;
-    private Consumer<ForceDescriptor> onGenerate = null;
+    private Consumer<ForceDescriptor> onGenerate;
 
     private ForceDescriptor forceDesc = new ForceDescriptor();
 
@@ -577,11 +577,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
-        List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList()
-                .stream().filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
-                .collect(Collectors.toList());
-        sorted.sort(Comparator.comparing(fr -> fr.getName(currentYear)));
-        sorted.forEach(fr -> cbFaction.addItem(fr));
+        RATGenerator.getInstance().getFactionList().stream()
+                .filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
+                .sorted(Comparator.comparing(fr -> fr.getName(currentYear)))
+                .forEach(fr -> cbFaction.addItem(fr));
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
                 !cbFaction.getSelectedItem().toString().equals(oldFaction.toString())) {
@@ -958,8 +957,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         }
-        fd.getSubforces().forEach(sf -> configureNetworks(sf));
-        fd.getAttached().forEach(sf -> configureNetworks(sf));
+        fd.getSubforces().forEach(this::configureNetworks);
+        fd.getAttached().forEach(this::configureNetworks);
     }
 
     private void setFormation(String esch) {
@@ -1023,7 +1022,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         public CBRenderer(String nullVal, Function<T,String> strConverter) {
             this.nullVal = nullVal;
             if (strConverter == null) {
-                toString = obj -> obj.toString();
+                toString = Object::toString;
             } else {
                 toString = strConverter;
             }
@@ -1040,7 +1039,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
             return this;
         }
-    };
+    }
 
     static class ForceTreeModel implements TreeModel {
 
@@ -1134,7 +1133,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
-                String uname = "";
+                String uname;
                 if (fd.getCo() == null) {
                     name.append("<font color='red'>")
                     .append(Messages.getString("ForceGeneratorDialog.noCrew"))
@@ -1147,7 +1146,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 if (fd.getFluffName() != null) {
                     uname += "<br /><i>" + fd.getFluffName() + "</i>";
                 }
-                setText("<html>" + name.toString() + ", " + uname + "</html>");
+                setText("<html>" + name + ", " + uname + "</html>");
             } else {
                 StringBuilder desc = new StringBuilder("<html>");
                 desc.append(fd.parseName()).append("<br />").append(fd.getDescription());

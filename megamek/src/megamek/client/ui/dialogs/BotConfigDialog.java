@@ -667,7 +667,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 popup.add(deleteItem);
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
-        };
+        }
         
         @Override
         public void mouseClicked(MouseEvent evt) {

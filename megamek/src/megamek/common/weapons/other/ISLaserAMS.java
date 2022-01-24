@@ -1,18 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 25, 2004
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.other;
 
@@ -22,11 +19,9 @@ import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 25, 2004
  */
 public class ISLaserAMS extends LaserWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = -7448728413011101076L;
 
     public ISLaserAMS() {
@@ -36,6 +31,7 @@ public class ISLaserAMS extends LaserWeapon {
         addLookupName("IS Laser Anti-Missile System");
         addLookupName("IS Laser AMS");
         addLookupName("ISLaserAMS");
+        sortingName = "Anti-Missile System Laser";
         heat = 7;
         rackSize = 2;
         damage = 3; // for manual operation
@@ -58,15 +54,15 @@ public class ISLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
-        rulesRefs = "322,TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+        rulesRefs = "322, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(DATE_NONE, 3059, 3079, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, true, false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(DATE_NONE, 3059, 3079, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

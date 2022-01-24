@@ -18,13 +18,13 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.MegaMek;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.AbstractIconChooser;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
@@ -52,7 +52,7 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     public AbstractIconChooserDialog(final JFrame frame, final String name, final String title,
                                      final AbstractIconChooser chooser, final boolean doubleClick) {
         this(frame, true, ResourceBundle.getBundle("megamek.client.messages",
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name,
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name,
                 title, chooser, doubleClick);
     }
 

@@ -151,8 +151,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
             return cfw;
         }
-
-        ;
     }
 
     /**
@@ -172,7 +170,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public boolean shouldStay(MovePath edge) {
             if (edge.getEntity().isAero()) {
                 /*
-                 * isMovemementPossible is currently not working for aero units,
+                 * isMovementPossible is currently not working for aero units,
                  * so we have to use a substitute.
                  */
                 if (edge.length() == 0) {

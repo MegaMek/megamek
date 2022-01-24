@@ -42,8 +42,8 @@ class MovementEnvelopeSprite extends HexSprite {
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);
 
-        graph.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10f, new float[] { 5f, 3f } , 0f));
+        graph.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                10f, new float[] { 5f, 3f }, 0f));
 
         // cycle through directions
         for (int i=0;i<6;i++) {

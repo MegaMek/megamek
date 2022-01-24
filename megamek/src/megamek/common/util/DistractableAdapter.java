@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.util;
 
 import java.io.Serializable;
@@ -21,16 +20,12 @@ import java.io.Serializable;
 /**
  * This class implements the <code>Distractable</code> interface. It is
  * intended to be the underlying implementation for any class that implements
- * the interface. Created on February 29, 2004
+ * the interface.
  *
  * @author James Damour
- * @version 1
+ * @since February 29, 2004
  */
 public class DistractableAdapter implements Distractable, Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -9093831078254025400L;
     /** Current state of distraction. */
     private boolean isDistracted;

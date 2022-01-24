@@ -1,17 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -137,8 +136,8 @@ public class ChatterBox implements KeyListener {
         playerChatSplit.setResizeWeight(0.01);
         
         JPanel subPanel = new JPanel(new BorderLayout());
-        subPanel.setPreferredSize(new Dimension(284,100));
-        subPanel.setMinimumSize(new Dimension(284,100));
+        subPanel.setPreferredSize(new Dimension(284, 100));
+        subPanel.setMinimumSize(new Dimension(284, 100));
         subPanel.add(playerChatSplit, BorderLayout.CENTER);
         subPanel.add(inputField, BorderLayout.SOUTH);
 
@@ -155,7 +154,7 @@ public class ChatterBox implements KeyListener {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = .13; gbc.weighty = .05;
         chatPanel.add(butDone, gbc);
-        butDone.setSize(AbstractPhaseDisplay.DONE_BUTTON_WIDTH,butDone.getHeight());
+        butDone.setSize(AbstractPhaseDisplay.DONE_BUTTON_WIDTH, butDone.getHeight());
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());

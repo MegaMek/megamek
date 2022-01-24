@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -163,7 +163,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                             == Terrains.FIRE_LVL_INFERNO) {
                         //inferno fires should become regular fires
                         currentHex.removeTerrain(Terrains.FIRE);
-                        currentHex.addTerrain(new Terrain(Terrains.FIRE,1));
+                        currentHex.addTerrain(new Terrain(Terrains.FIRE, 1));
                         server.getHexUpdateSet().add(currentCoords);
                     // Check Inferno Bombs
                     } else if (currentHex.terrainLevel(Terrains.FIRE) 

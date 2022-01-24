@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
  *
@@ -18,7 +18,7 @@ package megamek.client.ui.swing;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -163,7 +163,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
                 for (int x = 0; x < w; x += iW) {
                     for (int y = 0; y < h; y += iH) {
-                        g.drawImage(backgroundIcon, x, y,null);
+                        g.drawImage(backgroundIcon, x, y, null);
                     }
                 }
             }
@@ -195,7 +195,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
-                    Messages.getString("MegaMek.welcome.title") + MegaMekConstants.VERSION,
+                    Messages.getString("MegaMek.welcome.title") + MMConstants.VERSION,
                     Messages.getString("MegaMek.welcome.message"), true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
@@ -234,9 +234,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION,
                 JLabel.CENTER);
-        labVersion.setPreferredSize(new Dimension(250,15));
+        labVersion.setPreferredSize(new Dimension(250, 15));
         if (skinSpec.fontColors.size() > 0) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
@@ -500,9 +500,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        if (!MegaMekConstants.VERSION.is(newGame.getVersion())) {
+        if (!MMConstants.VERSION.is(newGame.getVersion())) {
             final String message = String.format(Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
-                    newGame.getVersion(), MegaMekConstants.VERSION);
+                    newGame.getVersion(), MMConstants.VERSION);
             JOptionPane.showMessageDialog(frame, message,
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error(message);
@@ -757,7 +757,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;
-        if (!"".equals(localName)) {
+        if (!localName.isBlank()) {
             // initialize game
             client = new Client(playerName, "localhost", port);
             gui = new ClientGUI(client, controller);
@@ -807,7 +807,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Connect to to a game and then launch the chat lounge.
+     * Connect to a game and then launch the chat lounge.
      */
     void connect() {
         ConnectDialog cd = new ConnectDialog(frame);
@@ -918,7 +918,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     static void quit() {
-        MegaMek.getPreferences().saveToFile(MegaMek.PREFERENCES_FILE);
+        MegaMek.getMMPreferences().saveToFile(MMConstants.MM_PREFERENCES_FILE);
         PreferenceManager.getInstance().save();
 
         try {

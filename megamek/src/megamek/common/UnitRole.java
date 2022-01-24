@@ -1,6 +1,3 @@
-/**
- * 
- */
 package megamek.common;
 
 /**
@@ -8,38 +5,36 @@ package megamek.common;
  * in ASC and Campaign Operations
  * 
  * @author Neoancient
- *
  */
-
 public enum UnitRole {
-	UNDETERMINED (false),
-	AMBUSHER (true),
-	BRAWLER (true),
-	JUGGERNAUT (true),
-	MISSILE_BOAT (true),
-	SCOUT (true),
-	SKIRMISHER (true),
-	SNIPER (true),
-	STRIKER (true),
-	ATTACK_FIGHTER (false),
-	DOGFIGHTER (false),
-	FAST_DOGFIGHTER (false),
-	FIRE_SUPPORT (false),
-	INTERCEPTOR (false),
-	TRANSPORT (false);
+    UNDETERMINED (false),
+    AMBUSHER (true),
+    BRAWLER (true),
+    JUGGERNAUT (true),
+    MISSILE_BOAT (true),
+    SCOUT (true),
+    SKIRMISHER (true),
+    SNIPER (true),
+    STRIKER (true),
+    ATTACK_FIGHTER (false),
+    DOGFIGHTER (false),
+    FAST_DOGFIGHTER (false),
+    FIRE_SUPPORT (false),
+    INTERCEPTOR (false),
+    TRANSPORT (false);
 
-	private boolean ground;
+    private boolean ground;
 
-	UnitRole(boolean ground) {
-		this.ground = ground;
-	}
+    UnitRole(boolean ground) {
+        this.ground = ground;
+    }
 
-	public boolean isGroundRole() {
-		return ground;
-	}
+    public boolean isGroundRole() {
+        return ground;
+    }
 
-	public static UnitRole parseRole(String role) {
-		switch (role.toLowerCase()) {
+    public static UnitRole parseRole(String role) {
+        switch (role.toLowerCase()) {
             case "ambusher":
                 return AMBUSHER;
             case "brawler":
@@ -77,34 +72,34 @@ public enum UnitRole {
             default:
                 System.err.println("Could not parse AS Role " + role);
                 return UNDETERMINED;
-		}
-	}
-	
+        }
+    }
+
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
      * qualifies for a particular role. As the canon unit roles do not themselves adhere
      * strictly to the guidelines, there is some allowance for fuzziness in applying the
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
-     * 
+     *
      * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
-     * 
+     *
      * @param entity      The unit to be checked for role qualification
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(Entity entity) {
         return qualifiesForRole(new AlphaStrikeElement(entity), 0);
     }
-    
+
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
      * qualifies for a particular role. As the canon unit roles do not themselves adhere
      * strictly to the guidelines, there is some allowance for fuzziness in applying the
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
-     * 
+     *
      * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
-     * 
+     *
      * @param entity      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
      *                  more or less by the book, while values < 0 are more liberal and > 0 are
@@ -114,38 +109,38 @@ public enum UnitRole {
     public boolean qualifiesForRole(Entity entity, double tolerance) {
         return qualifiesForRole(new AlphaStrikeElement(entity), tolerance);
     }
-    
+
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
      * qualifies for a particular role. As the canon unit roles do not themselves adhere
      * strictly to the guidelines, there is some allowance for fuzziness in applying the
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
-     * 
+     *
      * @param unit      The unit to be checked for role qualification
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
-	public boolean qualifiesForRole(AlphaStrikeElement unit) {
-		return qualifiesForRole(unit, 0);
-	}
-	
-	/**
-	 * Applies the criteria from Alpha Strike Companion to determine whether a unit
-	 * qualifies for a particular role. As the canon unit roles do not themselves adhere
-	 * strictly to the guidelines, there is some allowance for fuzziness in applying the
-	 * criteria by computing a score. Stats outside the given ranges lower the score, and
-	 * special abilities that are useful for a role raise the score.
-	 * 
-	 * @param unit		The unit to be checked for role qualification
-	 * @param tolerance	A measure of how strictly to apply the qualifications. A value of zero is
-	 * 					more or less by the book, while values < 0 are more liberal and > 0 are
-	 * 					more strict.
-	 * @return			Boolean value indicating whether the unit meets the qualifications for this role.
-	 */
-	public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
-		double score = 0;
-		int speed = unit.getPrimaryMovementValue();
-		switch (this) {
+    public boolean qualifiesForRole(AlphaStrikeElement unit) {
+        return qualifiesForRole(unit, 0);
+    }
+
+    /**
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit
+     * qualifies for a particular role. As the canon unit roles do not themselves adhere
+     * strictly to the guidelines, there is some allowance for fuzziness in applying the
+     * criteria by computing a score. Stats outside the given ranges lower the score, and
+     * special abilities that are useful for a role raise the score.
+     *
+     * @param unit		The unit to be checked for role qualification
+     * @param tolerance	A measure of how strictly to apply the qualifications. A value of zero is
+     * 					more or less by the book, while values < 0 are more liberal and > 0 are
+     * 					stricter.
+     * @return			Boolean value indicating whether the unit meets the qualifications for this role.
+     */
+    public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
+        double score = 0;
+        int speed = unit.getPrimaryMovementValue();
+        switch (this) {
             case AMBUSHER:
                 /* Slow, light armor, preference for short range */
                 score -= Math.max(0, speed - 6) * 0.5;
@@ -359,19 +354,18 @@ public enum UnitRole {
                         || (unit.hasSPA(BattleForceSPA.CT) && unit.getSPA(BattleForceSPA.CT) >= 50);
             default:
                 break;
-		}
-		return score >= tolerance;
-	}
+        }
+        return score >= tolerance;
+    }
 
-	/* Convert all but initial letter(s) to lower case */
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		for (String word : name().split("_")) {
-			sb.append(Character.toUpperCase(word.charAt(0)))
-			.append(word.substring(1).toLowerCase()).append(" ");
-		}
-		return sb.toString().trim();
-	}
-};
-
+    /* Convert all but initial letter(s) to lower case */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (String word : name().split("_")) {
+            sb.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1).toLowerCase()).append(" ");
+        }
+        return sb.toString().trim();
+    }
+}

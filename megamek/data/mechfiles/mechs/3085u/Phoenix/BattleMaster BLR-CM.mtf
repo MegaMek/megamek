@@ -3,40 +3,40 @@ BattleMaster
 BLR-CM
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3064
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3064
+source:TRO Clan Invasion - Civil War
+rules level:2
 
-Mass:85
-Engine:255 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:255 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:3
-Jump MP:3
+heat sinks:16 IS Double
+walk mp:3
+jump mp:3
 
-Armor:Standard(Inner Sphere)
-LA Armor:27
-RA Armor:27
-LT Armor:26
-RT Armor:26
-CT Armor:40
-HD Armor:9
-LL Armor:35
-RL Armor:35
-RTL Armor:9
-RTR Armor:9
-RTC Armor:13
+armor:Standard(Inner Sphere)
+LA armor:27
+RA armor:27
+LT armor:26
+RT armor:26
+CT armor:40
+HD armor:9
+LL armor:35
+RL armor:35
+RTL armor:9
+RTR armor:9
+RTC armor:13
 
 Weapons:6
 ER PPC, Right Arm
 MRM 30, Left Torso
 ER Medium Laser, Left Torso
 ER Medium Laser, Left Torso
-C3 Master with TAG, Left Torso
-C3 Master with TAG, Right Torso
+C3 Computer (Master), Left Torso
+C3 Computer (Master), Right Torso
 
 Left Arm:
 Shoulder
@@ -150,4 +150,16 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Versatile and powerful, the BattleMaster was one of the best known BattleMechs in existence. Hollis Industries began production in 2633, originally designing it to be the largest and most powerful 'Mech for the Star League armies at that time.
+capabilities:Indeed the sheer size of the BattleMaster, combined with the costs and resources needed to build one, meant the 'Mech could only be manufactured on a few planets. Still, those lucky enough to pilot a BattleMaster can attest to some of the stories surrounding the 'Mech. With good reliability, firepower and armoring, the BattleMaster is equally adept anchoring an assault lance or serving as a command vehicle.
+deployment:The CM variant of the BattleMaster was built by the Kuritans in 3064 to command a C3 company. A smaller engine means the 'Mech's speed has been reduced to 54.0 km/h in order to allow it to carry two C3 Master Computers. The 'Mech is armed with an ER PPC, two ER medium lasers, and a Shigunga MRM 30. It is armored with sixteen tons of armor to better protect the valuable computers that allow it to coordinate an entire company.
+history:Although only produced in modest numbers, examples of the BattleMaster could be found in the arsenals of all the Great Houses and technicians have gone to great lengths in order to repair one. During the First Succession War Hollis' BattleMaster factories on Corey were attacked, their production lines destroyed and any finished BattleMasters purloined by the various House forces. While production of new BattleMasters was taken up by Earthwerks Incorporated on Keystone, Trellshire Heavy Industries on Twycross, and Red Devil Industries on Pandora, they could build only a handful of new 'Mechs every year. This was enough though to make House Steiner and House Marik the largest users of BattleMasters during the Succession Wars. House Liao also fielded a large number of BattleMasters, at least until the devastation of the Fourth Succession War when many fell into the hands of the Federated Suns, themselves lacking any BattleMaster factories. By fortuitous accident the Draconis Combine also came into possession of a large number of BattleMasters when a hapless ComStar Precentor, intending to ship unmodified versions of advanced BattleMasters to Com Guard units, sent them to the Combine instead. These BattleMasters served as excellent command vehicles during the War of 3039. New models of the BattleMaster would be introduced in time to take part in the Clan Invasion. Although the manufacture of new BattleMasters was disrupted when Twycross fell to Clan Jade Falcon, the recapture of that world allowed for a brief resumption of production. While Pandora did not fall during the Invasion an effort was made to relocate its BattleMaster factory, but the haphazard nature of the factory and feet-dragging by the planet's corrupt nobility delayed this effort. It wasn't until 3061 that the Red Devil factory was finally ready to be closed when the nobility's lobbying paid off and instead funds were allocated by Archon Katherine Steiner-Davion to refurbish the factory. As part of the arrangement a deal was struck with J.B. BattleMechs Incorporated to produce a new variant, the BLR-4S. Initial units were built starting in 3062 but the FedCom Civil War would delay full-scale production until 3064, by which time the second Jade Falcon Incursion captured the planet and put these new BattleMasters to work in their second-line units. This left the hard-pressed J.B. BattleMechs' factory on Storfors to build the BLR-4S for the Lyran Alliance, while the Free Worlds League and Combine would come out with their own variants.
+manufacturer:Blankenburg Technologies
+primaryfactory:Soul
+systemmanufacturer:CHASSIS:Hollis Mark X
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:StarGuard IV
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:HarfordCo COM 4000
+systemmanufacturer:TARGETING:HarfordCo XKZ 1
 

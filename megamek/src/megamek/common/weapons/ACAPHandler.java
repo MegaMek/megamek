@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,7 +30,7 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
- * Created on Sep 25, 2004
+ * @since Sep 25, 2004
  */
 public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
@@ -44,7 +44,6 @@ public class ACAPHandler extends ACWeaponHandler {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
-
 
     /*
      * (non-Javadoc)

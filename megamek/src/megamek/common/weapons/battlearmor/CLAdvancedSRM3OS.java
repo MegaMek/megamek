@@ -37,7 +37,7 @@ public class CLAdvancedSRM3OS extends AdvancedSRMWeapon {
         extremeRange = 16;
         bv = 9;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .105;
+        tonnage = .80;
         criticals = 4;
         cost = 22500;
         rulesRefs = "261,TM";

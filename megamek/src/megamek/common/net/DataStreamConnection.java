@@ -105,7 +105,7 @@ class DataStreamConnection extends AbstractConnection {
         
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
-                    getOutputStream(),getSendBufferSize()));
+                    getOutputStream(), getSendBufferSize()));
         }
         synchronized (out) {
             out.writeBoolean(iszipped);
@@ -196,5 +196,5 @@ class DataStreamConnection extends AbstractConnection {
 
 enum PacketReadState {
     Header, // next will be header data
-    Data;
+    Data
 }

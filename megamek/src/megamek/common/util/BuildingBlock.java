@@ -275,7 +275,7 @@ public class BuildingBlock {
         // fill up the data array with the raw data we want...
         for (int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
             try {
-                // Bug with people placing , in the fuel strings like 18,000
+                // Bug with people placing ',' in the fuel strings like 18,000
                 // Should probably change this to a method to weed out all
                 // non-numeric
                 // variables but this is the most common.

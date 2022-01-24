@@ -17,7 +17,6 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.panels.CamoChooser;
-import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
@@ -73,6 +72,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
                 okButtonActionPerformed(evt);
             }));
         }
+
         panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText",
                 this::cancelActionPerformed));
         panel.add(new MMButton("btnRefresh", resources, "RefreshDirectory.text",

@@ -548,7 +548,7 @@ public class BipedMech extends Mech {
 
     /**
      * Does the mech have an active shield This should only be called by
-     * hasActiveShield(location,rear)
+     * hasActiveShield(location, rear)
      */
     @Override
     public boolean hasActiveShield(int location) {
@@ -618,7 +618,7 @@ public class BipedMech extends Mech {
 
     /**
      * Does the mech have a passive shield This should only be called by
-     * hasPassiveShield(location,rear)
+     * hasPassiveShield(location, rear)
      */
     @Override
     public boolean hasPassiveShield(int location) {

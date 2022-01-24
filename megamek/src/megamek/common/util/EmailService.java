@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2021 - The MegaMek Team. All Rights Reserved.
+* Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -14,14 +14,14 @@
 */
 package megamek.common.util;
 
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
 import org.apache.logging.log4j.LogManager;
 
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -212,5 +212,4 @@ public class EmailService {
             }
         }
     }
-
 }

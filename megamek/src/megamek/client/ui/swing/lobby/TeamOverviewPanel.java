@@ -49,7 +49,7 @@ public class TeamOverviewPanel extends JPanel {
 
     private static final long serialVersionUID = -4754010220963493049L;
      
-    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS };
+    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS }
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final TableColumnManager teamOverviewManager = new TableColumnManager(teamOverviewTable, false);
@@ -121,7 +121,7 @@ public class TeamOverviewPanel extends JPanel {
                     teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
                 }
             }
-        };
+        }
     };
     
     /** Adapts the row heights and headers to the current GUI scaling. */

@@ -37,14 +37,8 @@ import megamek.server.Server;
  */
 public abstract class SRMWeapon extends MissileWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3636219178276978444L;
 
-    /**
-     *
-     */
     public SRMWeapon() {
         super();
         ammoType = AmmoType.T_SRM;
@@ -52,7 +46,6 @@ public abstract class SRMWeapon extends MissileWeapon {
         flags = flags.or(F_PROTO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
     }
 
-    
     @Override
     public double getTonnage(Entity entity, int location, double size) {
         if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
@@ -62,14 +55,6 @@ public abstract class SRMWeapon extends MissileWeapon {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {
@@ -116,5 +101,18 @@ public abstract class SRMWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SRM;
+    }
+
+    @Override
+    public String getSortingName() {
+        if (sortingName != null) {
+            return sortingName;
+        } else {
+            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            if (name.contains("I-OS")) {
+                oneShotTag = "OSI ";
+            }
+            return "SRM " + oneShotTag + rackSize;
+        }
     }
 }

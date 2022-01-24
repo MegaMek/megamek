@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -34,7 +34,7 @@ import java.util.Vector;
 public class HmpFile implements IMechLoader {
     private String name;
     private String model;
-    private String fluff = null;
+    private String fluff;
 
     private ChassisType chassisType;
 
@@ -791,852 +791,848 @@ public class HmpFile implements IMechLoader {
     private static final Hashtable<Object, Serializable> criticals = new Hashtable<>();
     static {
         // common criticals
-        criticals.put(Long.valueOf(0x00), "-Empty-");
-        criticals.put(Long.valueOf(0x01), "Shoulder");
-        criticals.put(Long.valueOf(0x02), "Upper Arm Actuator");
-        criticals.put(Long.valueOf(0x03), "Lower Arm Actuator");
-        criticals.put(Long.valueOf(0x04), "Hand Actuator");
-        criticals.put(Long.valueOf(0x05), "Hip");
-        criticals.put(Long.valueOf(0x06), "Upper Leg Actuator");
-        criticals.put(Long.valueOf(0x07), "Lower Leg Actuator");
-        criticals.put(Long.valueOf(0x08), "Foot Actuator");
-        criticals.put(Long.valueOf(0x09), "Heat Sink");
+        criticals.put(0x00L, "-Empty-");
+        criticals.put(0x01L, "Shoulder");
+        criticals.put(0x02L, "Upper Arm Actuator");
+        criticals.put(0x03L, "Lower Arm Actuator");
+        criticals.put(0x04L, "Hand Actuator");
+        criticals.put(0x05L, "Hip");
+        criticals.put(0x06L, "Upper Leg Actuator");
+        criticals.put(0x07L, "Lower Leg Actuator");
+        criticals.put(0x08L, "Foot Actuator");
+        criticals.put(0x09L, "Heat Sink");
 
-        criticals.put(Long.valueOf(0x0B), "Jump Jet");
-        criticals.put(Long.valueOf(0x0C), "Life Support");
-        criticals.put(Long.valueOf(0x0D), "Sensors");
-        criticals.put(Long.valueOf(0x0E), "Cockpit");
-        criticals.put(Long.valueOf(0x0F), "Fusion Engine");
-        criticals.put(Long.valueOf(0x10), "Gyro");
+        criticals.put(0x0BL, "Jump Jet");
+        criticals.put(0x0CL, "Life Support");
+        criticals.put(0x0DL, "Sensors");
+        criticals.put(0x0EL, "Cockpit");
+        criticals.put(0x0FL, "Fusion Engine");
+        criticals.put(0x10L, "Gyro");
 
-        criticals.put(Long.valueOf(0x13), "Turret");
-        criticals.put(Long.valueOf(0x14), "Endo Steel");
-        criticals.put(Long.valueOf(0x15), "Ferro-Fibrous");
-        criticals.put(Long.valueOf(0x16), "Triple Strength Myomer");
+        criticals.put(0x13L, "Turret");
+        criticals.put(0x14L, "Endo Steel");
+        criticals.put(0x15L, "Ferro-Fibrous");
+        criticals.put(0x16L, "Triple Strength Myomer");
 
-        criticals.put(Long.valueOf(0x1a), "Variable Range TargSys");
-        criticals.put(Long.valueOf(0x1b), "Multi-Trac II");
-        criticals.put(Long.valueOf(0x1c), "Reactive Armor");
-        criticals.put(Long.valueOf(0x1d), "Laser-Reflective Armor");
-        criticals.put(Long.valueOf(0x1e), "Jump Booster");
-        criticals.put(Long.valueOf(0x20), "Supercharger");
-        criticals.put(Long.valueOf(0x21), "Light Ferro-Fibrous");
-        criticals.put(Long.valueOf(0x22), "Heavy Ferro-Fibrous");
-        criticals.put(Long.valueOf(0x25), "IS2 Compact Heat Sinks");
-        criticals.put(Long.valueOf(0x27), "Null Signature System");
-        criticals.put(Long.valueOf(0x28), "Coolant Pod");
-        criticals.put(Long.valueOf(0x2B), "Claw (THB)");
-        criticals.put(Long.valueOf(0x2C), "Mace (THB)");
-        criticals.put(Long.valueOf(0x2d), "Armored Cowl");
-        criticals.put(Long.valueOf(0x2e), "Buzzsaw (UB)");
+        criticals.put(0x1aL, "Variable Range TargSys");
+        criticals.put(0x1bL, "Multi-Trac II");
+        criticals.put(0x1cL, "Reactive Armor");
+        criticals.put(0x1dL, "Laser-Reflective Armor");
+        criticals.put(0x1eL, "Jump Booster");
+        criticals.put(0x20L, "Supercharger");
+        criticals.put(0x21L, "Light Ferro-Fibrous");
+        criticals.put(0x22L, "Heavy Ferro-Fibrous");
+        criticals.put(0x25L, "IS2 Compact Heat Sinks");
+        criticals.put(0x27L, "Null Signature System");
+        criticals.put(0x28L, "Coolant Pod");
+        criticals.put(0x2BL, "Claw (THB)");
+        criticals.put(0x2CL, "Mace (THB)");
+        criticals.put(0x2dL, "Armored Cowl");
+        criticals.put(0x2eL, "Buzzsaw (UB)");
 
-        criticals.put(Long.valueOf(0xF8), "Combine");
-        criticals.put(Long.valueOf(0xF9), "Lift Hoist");
-        criticals.put(Long.valueOf(0xFA), "Chainsaw");
+        criticals.put(0xF8L, "Combine");
+        criticals.put(0xF9L, "Lift Hoist");
+        criticals.put(0xFAL, "Chainsaw");
 
-        criticals.put(Long.valueOf(0xFC), "CLATM3");
-        criticals.put(Long.valueOf(0xFD), "CLATM6");
-        criticals.put(Long.valueOf(0xFE), "CLATM9");
-        criticals.put(Long.valueOf(0xFF), "CLATM12");
-        criticals.put(Long.valueOf(0x100), "SB Gauss Rifle (UB)");
-        criticals.put(Long.valueOf(0x101), "Caseless AC/2 (THB)");
-        criticals.put(Long.valueOf(0x102), "Caseless AC/5 (THB)");
-        criticals.put(Long.valueOf(0x103), "Caseless AC/10 (THB)");
-        criticals.put(Long.valueOf(0x104), "Caseless AC/20 (THB)");
-        criticals.put(Long.valueOf(0x105), "Heavy AC/2 (THB)");
-        criticals.put(Long.valueOf(0x106), "Heavy AC/5 (THB)");
-        criticals.put(Long.valueOf(0x107), "Heavy AC/10 (THB)");
-        criticals.put(Long.valueOf(0x108), "ISTHBLBXAC2");
-        criticals.put(Long.valueOf(0x109), "ISTHBLBXAC5");
-        criticals.put(Long.valueOf(0x10A), "ISTHBLBXAC20");
-        criticals.put(Long.valueOf(0x10B), "ISUltraAC2 (THB)");
-        criticals.put(Long.valueOf(0x10C), "ISUltraAC10 (THB)");
-        criticals.put(Long.valueOf(0x10D), "ISUltraAC20 (THB)");
-        criticals.put(Long.valueOf(0x10E), "ELRM-5 (THB)");
-        criticals.put(Long.valueOf(0x10F), "ELRM-10 (THB)");
-        criticals.put(Long.valueOf(0x110), "ELRM-15 (THB)");
-        criticals.put(Long.valueOf(0x111), "ELRM-20 (THB)");
-        criticals.put(Long.valueOf(0x112), "LR DFM-5 (THB)");
-        criticals.put(Long.valueOf(0x113), "LR DFM-10 (THB)");
-        criticals.put(Long.valueOf(0x114), "LR DFM-15 (THB)");
-        criticals.put(Long.valueOf(0x115), "LR DFM-20 (THB)");
-        criticals.put(Long.valueOf(0x116), "SR DFM-2 (THB)");
-        criticals.put(Long.valueOf(0x117), "SR DFM-4 (THB)");
-        criticals.put(Long.valueOf(0x118), "SR DFM-6 (THB)");
-        criticals.put(Long.valueOf(0x119), "Thunderbolt-5 (THB)");
-        criticals.put(Long.valueOf(0x11A), "Thunderbolt-10 (THB)");
-        criticals.put(Long.valueOf(0x11B), "Thunderbolt-15 (THB)");
-        criticals.put(Long.valueOf(0x11C), "Thunderbolt-20 (THB)");
-        criticals.put(Long.valueOf(0x11F), "Watchdog ECM (THB)");
-        criticals.put(Long.valueOf(0x120), "IS Laser AMS (THB)");
-        criticals.put(Long.valueOf(0x121), "ISRotaryAC2");
-        criticals.put(Long.valueOf(0x122), "ISRotaryAC5");
+        criticals.put(0xFCL, "CLATM3");
+        criticals.put(0xFDL, "CLATM6");
+        criticals.put(0xFEL, "CLATM9");
+        criticals.put(0xFFL, "CLATM12");
+        criticals.put(0x100L, "SB Gauss Rifle (UB)");
+        criticals.put(0x101L, "Caseless AC/2 (THB)");
+        criticals.put(0x102L, "Caseless AC/5 (THB)");
+        criticals.put(0x103L, "Caseless AC/10 (THB)");
+        criticals.put(0x104L, "Caseless AC/20 (THB)");
+        criticals.put(0x105L, "Heavy AC/2 (THB)");
+        criticals.put(0x106L, "Heavy AC/5 (THB)");
+        criticals.put(0x107L, "Heavy AC/10 (THB)");
+        criticals.put(0x108L, "ISTHBLBXAC2");
+        criticals.put(0x109L, "ISTHBLBXAC5");
+        criticals.put(0x10AL, "ISTHBLBXAC20");
+        criticals.put(0x10BL, "ISUltraAC2 (THB)");
+        criticals.put(0x10CL, "ISUltraAC10 (THB)");
+        criticals.put(0x10DL, "ISUltraAC20 (THB)");
+        criticals.put(0x10EL, "ELRM-5 (THB)");
+        criticals.put(0x10FL, "ELRM-10 (THB)");
+        criticals.put(0x110L, "ELRM-15 (THB)");
+        criticals.put(0x111L, "ELRM-20 (THB)");
+        criticals.put(0x112L, "LR DFM-5 (THB)");
+        criticals.put(0x113L, "LR DFM-10 (THB)");
+        criticals.put(0x114L, "LR DFM-15 (THB)");
+        criticals.put(0x115L, "LR DFM-20 (THB)");
+        criticals.put(0x116L, "SR DFM-2 (THB)");
+        criticals.put(0x117L, "SR DFM-4 (THB)");
+        criticals.put(0x118L, "SR DFM-6 (THB)");
+        criticals.put(0x119L, "Thunderbolt-5 (THB)");
+        criticals.put(0x11AL, "Thunderbolt-10 (THB)");
+        criticals.put(0x11BL, "Thunderbolt-15 (THB)");
+        criticals.put(0x11CL, "Thunderbolt-20 (THB)");
+        criticals.put(0x11FL, "Watchdog ECM (THB)");
+        criticals.put(0x120L, "IS Laser AMS (THB)");
+        criticals.put(0x121L, "ISRotaryAC2");
+        criticals.put(0x122L, "ISRotaryAC5");
 
-        criticals.put(Long.valueOf(0x124), "CLRotaryAC2");
-        criticals.put(Long.valueOf(0x125), "CLRotaryAC5");
-        criticals.put(Long.valueOf(0x126), "CLRotaryAC10");
-        criticals.put(Long.valueOf(0x127), "CLRotaryAC20");
-        criticals.put(Long.valueOf(0x128), "CLPlasmaRifle");
-        criticals.put(Long.valueOf(0x129), "ISRocketLauncher10");
-        criticals.put(Long.valueOf(0x12A), "ISRocketLauncher15");
-        criticals.put(Long.valueOf(0x12B), "ISRocketLauncher20");
-        criticals.put(Long.valueOf(0x12C), "Mortar/1 (THB)");
-        criticals.put(Long.valueOf(0x12D), "Mortar/2 (THB)");
-        criticals.put(Long.valueOf(0x12E), "Mortar/4 (THB)");
-        criticals.put(Long.valueOf(0x12F), "Mortar/8 (THB)");
-        criticals.put(Long.valueOf(0x130), "Backhoe");
-        criticals.put(Long.valueOf(0x131), "Drill");
-        criticals.put(Long.valueOf(0x132), "Rock Cutter");
-        criticals.put(Long.valueOf(0x133), "CLStreakLRM5 (OS)"); // ?
-        criticals.put(Long.valueOf(0x134), "CLStreakLRM10 (OS)"); // ?
-        criticals.put(Long.valueOf(0x135), "CLStreakLRM15 (OS)");// ?
-        criticals.put(Long.valueOf(0x136), "CLStreakLRM20 (OS)");// ?
+        criticals.put(0x124L, "CLRotaryAC2");
+        criticals.put(0x125L, "CLRotaryAC5");
+        criticals.put(0x126L, "CLRotaryAC10");
+        criticals.put(0x127L, "CLRotaryAC20");
+        criticals.put(0x128L, "CLPlasmaRifle");
+        criticals.put(0x129L, "ISRocketLauncher10");
+        criticals.put(0x12AL, "ISRocketLauncher15");
+        criticals.put(0x12BL, "ISRocketLauncher20");
+        criticals.put(0x12CL, "Mortar/1 (THB)");
+        criticals.put(0x12DL, "Mortar/2 (THB)");
+        criticals.put(0x12EL, "Mortar/4 (THB)");
+        criticals.put(0x12FL, "Mortar/8 (THB)");
+        criticals.put(0x130L, "Backhoe");
+        criticals.put(0x131L, "Drill");
+        criticals.put(0x132L, "Rock Cutter");
+        criticals.put(0x133L, "CLStreakLRM5 (OS)"); // ?
+        criticals.put(0x134L, "CLStreakLRM10 (OS)"); // ?
+        criticals.put(0x135L, "CLStreakLRM15 (OS)");// ?
+        criticals.put(0x136L, "CLStreakLRM20 (OS)");// ?
 
-        criticals.put(Long.valueOf(0x28c), "CLATM3 Ammo");
-        criticals.put(Long.valueOf(0x28d), "CLATM6 Ammo");
-        criticals.put(Long.valueOf(0x28e), "CLATM9 Ammo");
-        criticals.put(Long.valueOf(0x28f), "CLATM12 Ammo");
-        criticals.put(Long.valueOf(0x290), "SB Gauss Rifle Ammo (UB)");
-        criticals.put(Long.valueOf(0x291), "Caseless AC/2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x292), "Caseless AC/5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x293), "Caseless AC/10 Ammo (THB)");
-        criticals.put(Long.valueOf(0x294), "Caseless AC/20 Ammo (THB)");
-        criticals.put(Long.valueOf(0x295), "Heavy AC/2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x296), "Heavy AC/5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x297), "Heavy AC/10 Ammo (THB)");
-        criticals.put(Long.valueOf(0x298), "ISLBXAC2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x299), "ISLBXAC5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x29A), "ISLBXAC20 Ammo (THB)");
-        criticals.put(Long.valueOf(0x29B), "IS Ultra AC/2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x29C), "IS Ultra AC/10 Ammo (THB)");
-        criticals.put(Long.valueOf(0x29D), "IS Ultra AC/20 Ammo (THB)");
+        criticals.put(0x28cL, "CLATM3 Ammo");
+        criticals.put(0x28dL, "CLATM6 Ammo");
+        criticals.put(0x28eL, "CLATM9 Ammo");
+        criticals.put(0x28fL, "CLATM12 Ammo");
+        criticals.put(0x290L, "SB Gauss Rifle Ammo (UB)");
+        criticals.put(0x291L, "Caseless AC/2 Ammo (THB)");
+        criticals.put(0x292L, "Caseless AC/5 Ammo (THB)");
+        criticals.put(0x293L, "Caseless AC/10 Ammo (THB)");
+        criticals.put(0x294L, "Caseless AC/20 Ammo (THB)");
+        criticals.put(0x295L, "Heavy AC/2 Ammo (THB)");
+        criticals.put(0x296L, "Heavy AC/5 Ammo (THB)");
+        criticals.put(0x297L, "Heavy AC/10 Ammo (THB)");
+        criticals.put(0x298L, "ISLBXAC2 Ammo (THB)");
+        criticals.put(0x299L, "ISLBXAC5 Ammo (THB)");
+        criticals.put(0x29AL, "ISLBXAC20 Ammo (THB)");
+        criticals.put(0x29BL, "IS Ultra AC/2 Ammo (THB)");
+        criticals.put(0x29CL, "IS Ultra AC/10 Ammo (THB)");
+        criticals.put(0x29DL, "IS Ultra AC/20 Ammo (THB)");
 
-        criticals.put(Long.valueOf(0x2B1), "ISRotaryAC2 Ammo");
-        criticals.put(Long.valueOf(0x2B2), "ISRotaryAC5 Ammo");
+        criticals.put(0x2B1L, "ISRotaryAC2 Ammo");
+        criticals.put(0x2B2L, "ISRotaryAC5 Ammo");
 
-        criticals.put(Long.valueOf(0x2b4), "CLRotaryAC2 Ammo");
-        criticals.put(Long.valueOf(0x2b5), "CLRotaryAC5 Ammo");
-        criticals.put(Long.valueOf(0x2b6), "CLRotaryAC10 Ammo");
-        criticals.put(Long.valueOf(0x2b7), "CLRotaryAC20 Ammo");
+        criticals.put(0x2b4L, "CLRotaryAC2 Ammo");
+        criticals.put(0x2b5L, "CLRotaryAC5 Ammo");
+        criticals.put(0x2b6L, "CLRotaryAC10 Ammo");
+        criticals.put(0x2b7L, "CLRotaryAC20 Ammo");
 
-        criticals.put(Long.valueOf(0x2BC), "Mortar/1 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2BD), "Mortar/2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2BE), "Mortar/4 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2BF), "Mortar/8 Ammo (THB)");
-        criticals.put(Long.valueOf(0x29E), "ELRM-5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x29F), "ELRM-10 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A0), "ELRM-15 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A1), "ELRM-20 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A2), "LR DFM-5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A3), "LR DFM-10 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A4), "LR DFM-15 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A5), "LR DFM-20 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A6), "SR DFM-2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A7), "SR DFM-4 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A8), "SR DFM-6 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2A9), "Thunderbolt-5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2AA), "Thunderbolt-10 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2AB), "Thunderbolt-15 Ammo (THB)");
-        criticals.put(Long.valueOf(0x2AC), "Thunderbolt-20 Ammo (THB)");
+        criticals.put(0x2BCL, "Mortar/1 Ammo (THB)");
+        criticals.put(0x2BDL, "Mortar/2 Ammo (THB)");
+        criticals.put(0x2BEL, "Mortar/4 Ammo (THB)");
+        criticals.put(0x2BFL, "Mortar/8 Ammo (THB)");
+        criticals.put(0x29EL, "ELRM-5 Ammo (THB)");
+        criticals.put(0x29FL, "ELRM-10 Ammo (THB)");
+        criticals.put(0x2A0L, "ELRM-15 Ammo (THB)");
+        criticals.put(0x2A1L, "ELRM-20 Ammo (THB)");
+        criticals.put(0x2A2L, "LR DFM-5 Ammo (THB)");
+        criticals.put(0x2A3L, "LR DFM-10 Ammo (THB)");
+        criticals.put(0x2A4L, "LR DFM-15 Ammo (THB)");
+        criticals.put(0x2A5L, "LR DFM-20 Ammo (THB)");
+        criticals.put(0x2A6L, "SR DFM-2 Ammo (THB)");
+        criticals.put(0x2A7L, "SR DFM-4 Ammo (THB)");
+        criticals.put(0x2A8L, "SR DFM-6 Ammo (THB)");
+        criticals.put(0x2A9L, "Thunderbolt-5 Ammo (THB)");
+        criticals.put(0x2AAL, "Thunderbolt-10 Ammo (THB)");
+        criticals.put(0x2ABL, "Thunderbolt-15 Ammo (THB)");
+        criticals.put(0x2ACL, "Thunderbolt-20 Ammo (THB)");
 
         // Criticals for mechs with a base type of Inner Sphere.
         Hashtable<Long, String> isCriticals = new Hashtable<>();
         criticals.put(TechType.INNER_SPHERE, isCriticals);
-        isCriticals.put(Long.valueOf(0x0A), "ISDouble Heat Sink");
+        isCriticals.put(0x0AL, "ISDouble Heat Sink");
 
-        isCriticals.put(Long.valueOf(0x11), "Hatchet");
-        isCriticals.put(Long.valueOf(0x12), "ISTargeting Computer");
+        isCriticals.put(0x11L, "Hatchet");
+        isCriticals.put(0x12L, "ISTargeting Computer");
 
-        isCriticals.put(Long.valueOf(0x17), "ISMASC");
-        isCriticals.put(Long.valueOf(0x18), "ISArtemisIV");
-        isCriticals.put(Long.valueOf(0x19), "ISCASE");
+        isCriticals.put(0x17L, "ISMASC");
+        isCriticals.put(0x18L, "ISArtemisIV");
+        isCriticals.put(0x19L, "ISCASE");
 
-        isCriticals.put(Long.valueOf(0x1F), "Sword");
+        isCriticals.put(0x1FL, "Sword");
 
-        isCriticals.put(Long.valueOf(0x23), "Stealth Armor");
-        isCriticals.put(Long.valueOf(0x24), "Blue Shield (UB)");
+        isCriticals.put(0x23L, "Stealth Armor");
+        isCriticals.put(0x24L, "Blue Shield (UB)");
 
-        isCriticals.put(Long.valueOf(0x26), "ISCASEII");
+        isCriticals.put(0x26L, "ISCASEII");
 
-        isCriticals.put(Long.valueOf(0x33), "ISERLargeLaser");
-        isCriticals.put(Long.valueOf(0x34), "ISERPPC");
-        isCriticals.put(Long.valueOf(0x35), "ISFlamer");
-        isCriticals.put(Long.valueOf(0x36), "ISLaserAntiMissileSystem");
-        isCriticals.put(Long.valueOf(0x37), "ISLargeLaser");
-        isCriticals.put(Long.valueOf(0x38), "ISMediumLaser");
-        isCriticals.put(Long.valueOf(0x39), "ISSmallLaser");
-        isCriticals.put(Long.valueOf(0x3A), "ISPPC");
-        isCriticals.put(Long.valueOf(0x3B), "ISLargePulseLaser");
-        isCriticals.put(Long.valueOf(0x3C), "ISMediumPulseLaser");
-        isCriticals.put(Long.valueOf(0x3D), "ISSmallPulseLaser");
-        isCriticals.put(Long.valueOf(0x3E), "ISAC2");
-        isCriticals.put(Long.valueOf(0x3F), "ISAC5");
-        isCriticals.put(Long.valueOf(0x40), "ISAC10");
-        isCriticals.put(Long.valueOf(0x41), "ISAC20");
-        isCriticals.put(Long.valueOf(0x42), "ISAntiMissileSystem");
-        isCriticals.put(Long.valueOf(0x43), "Long Tom Cannon");
-        isCriticals.put(Long.valueOf(0x44), "Sniper Cannon");
-        isCriticals.put(Long.valueOf(0x45), "Thumper Cannon");
-        isCriticals.put(Long.valueOf(0x46), "ISLightGaussRifle");
-        isCriticals.put(Long.valueOf(0x47), "ISGaussRifle");
-        isCriticals.put(Long.valueOf(0x48), "ISLargeXPulseLaser");
-        isCriticals.put(Long.valueOf(0x49), "ISMediumXPulseLaser");
-        isCriticals.put(Long.valueOf(0x4A), "ISSmallXPulseLaser");
-        isCriticals.put(Long.valueOf(0x4B), "ISLBXAC2");
-        isCriticals.put(Long.valueOf(0x4C), "ISLBXAC5");
-        isCriticals.put(Long.valueOf(0x4D), "ISLBXAC10");
-        isCriticals.put(Long.valueOf(0x4E), "ISLBXAC20");
-        isCriticals.put(Long.valueOf(0x4F), "ISMachine Gun");
+        isCriticals.put(0x33L, "ISERLargeLaser");
+        isCriticals.put(0x34L, "ISERPPC");
+        isCriticals.put(0x35L, "ISFlamer");
+        isCriticals.put(0x36L, "ISLaserAntiMissileSystem");
+        isCriticals.put(0x37L, "ISLargeLaser");
+        isCriticals.put(0x38L, "ISMediumLaser");
+        isCriticals.put(0x39L, "ISSmallLaser");
+        isCriticals.put(0x3AL, "ISPPC");
+        isCriticals.put(0x3BL, "ISLargePulseLaser");
+        isCriticals.put(0x3CL, "ISMediumPulseLaser");
+        isCriticals.put(0x3DL, "ISSmallPulseLaser");
+        isCriticals.put(0x3EL, "ISAC2");
+        isCriticals.put(0x3FL, "ISAC5");
+        isCriticals.put(0x40L, "ISAC10");
+        isCriticals.put(0x41L, "ISAC20");
+        isCriticals.put(0x42L, "ISAntiMissileSystem");
+        isCriticals.put(0x43L, "Long Tom Cannon");
+        isCriticals.put(0x44L, "Sniper Cannon");
+        isCriticals.put(0x45L, "Thumper Cannon");
+        isCriticals.put(0x46L, "ISLightGaussRifle");
+        isCriticals.put(0x47L, "ISGaussRifle");
+        isCriticals.put(0x48L, "ISLargeXPulseLaser");
+        isCriticals.put(0x49L, "ISMediumXPulseLaser");
+        isCriticals.put(0x4AL, "ISSmallXPulseLaser");
+        isCriticals.put(0x4BL, "ISLBXAC2");
+        isCriticals.put(0x4CL, "ISLBXAC5");
+        isCriticals.put(0x4DL, "ISLBXAC10");
+        isCriticals.put(0x4EL, "ISLBXAC20");
+        isCriticals.put(0x4FL, "ISMachine Gun");
 
-        isCriticals.put(Long.valueOf(0x50), "ISLAC2");
-        isCriticals.put(Long.valueOf(0x51), "ISLAC5");
-        isCriticals.put(Long.valueOf(0x52), "ISHeavyFlamer");
-        isCriticals.put(Long.valueOf(0x53), "ISPPCCapacitor"); // HMP uses this
+        isCriticals.put(0x50L, "ISLAC2");
+        isCriticals.put(0x51L, "ISLAC5");
+        isCriticals.put(0x52L, "ISHeavyFlamer");
+        isCriticals.put(0x53L, "ISPPCCapacitor"); // HMP uses this
         // code for ERPPC
-        isCriticals.put(Long.valueOf(0x54), "ISUltraAC2");
-        isCriticals.put(Long.valueOf(0x55), "ISUltraAC5");
-        isCriticals.put(Long.valueOf(0x56), "ISUltraAC10");
-        isCriticals.put(Long.valueOf(0x57), "ISUltraAC20");
-        isCriticals.put(Long.valueOf(0x58), "CLERMicroLaser");
-        isCriticals.put(Long.valueOf(0x59), "ISPPCCapacitor"); // HMP uses this
+        isCriticals.put(0x54L, "ISUltraAC2");
+        isCriticals.put(0x55L, "ISUltraAC5");
+        isCriticals.put(0x56L, "ISUltraAC10");
+        isCriticals.put(0x57L, "ISUltraAC20");
+        isCriticals.put(0x58L, "CLERMicroLaser");
+        isCriticals.put(0x59L, "ISPPCCapacitor"); // HMP uses this
         // code for standard
         // PPC
-        isCriticals.put(Long.valueOf(0x5A), "ISERMediumLaser");
-        isCriticals.put(Long.valueOf(0x5B), "ISERSmallLaser");
-        isCriticals.put(Long.valueOf(0x5C), "ISAntiPersonnelPod");
+        isCriticals.put(0x5AL, "ISERMediumLaser");
+        isCriticals.put(0x5BL, "ISERSmallLaser");
+        isCriticals.put(0x5CL, "ISAntiPersonnelPod");
 
-        isCriticals.put(Long.valueOf(0x5E), "CLLightMG");
-        isCriticals.put(Long.valueOf(0x5F), "CLHeavyMG");
-        isCriticals.put(Long.valueOf(0x60), "ISLRM5");
-        isCriticals.put(Long.valueOf(0x61), "ISLRM10");
-        isCriticals.put(Long.valueOf(0x62), "ISLRM15");
-        isCriticals.put(Long.valueOf(0x63), "ISLRM20");
-        isCriticals.put(Long.valueOf(0x64), "CLLightActiveProbe");
-        isCriticals.put(Long.valueOf(0x65), "CLLightTAG");
-        isCriticals.put(Long.valueOf(0x66), "ISImprovedNarc");
-        isCriticals.put(Long.valueOf(0x67), "ISSRM2");
-        isCriticals.put(Long.valueOf(0x68), "ISSRM4");
-        isCriticals.put(Long.valueOf(0x69), "ISSRM6");
-        isCriticals.put(Long.valueOf(0x6A), "ISStreakSRM2");
-        isCriticals.put(Long.valueOf(0x6B), "ISStreakSRM4");
-        isCriticals.put(Long.valueOf(0x6C), "ISStreakSRM6");
-        isCriticals.put(Long.valueOf(0x6D), "Thunderbolt-5");
-        isCriticals.put(Long.valueOf(0x6E), "Thunderbolt-10");
-        isCriticals.put(Long.valueOf(0x6F), "Thunderbolt-15");
-        isCriticals.put(Long.valueOf(0x70), "Thunderbolt-20");
-        isCriticals.put(Long.valueOf(0x71), "ISArrowIVSystem");
-        isCriticals.put(Long.valueOf(0x72), "ISAngelECMSuite");
-        isCriticals.put(Long.valueOf(0x73), "ISBeagleActiveProbe");
-        isCriticals.put(Long.valueOf(0x74), "ISBloodhoundActiveProbe");
-        isCriticals.put(Long.valueOf(0x75), "ISC3MasterComputer");
-        isCriticals.put(Long.valueOf(0x76), "ISC3SlaveUnit");
-        isCriticals.put(Long.valueOf(0x77), "ISImprovedC3CPU");
-        isCriticals.put(Long.valueOf(0x78), "ISGuardianECM");
-        isCriticals.put(Long.valueOf(0x79), "ISNarcBeacon");
-        isCriticals.put(Long.valueOf(0x7A), "ISTAG");
-        isCriticals.put(Long.valueOf(0x7B), "ISLRM5 (OS)");
-        isCriticals.put(Long.valueOf(0x7C), "ISLRM10 (OS)");
-        isCriticals.put(Long.valueOf(0x7D), "ISLRM15 (OS)");
-        isCriticals.put(Long.valueOf(0x7E), "ISLRM20 (OS)");
-        isCriticals.put(Long.valueOf(0x7F), "ISSRM2 (OS)");
-        isCriticals.put(Long.valueOf(0x80), "ISSRM4 (OS)");
-        isCriticals.put(Long.valueOf(0x81), "ISSRM6 (OS)");
-        isCriticals.put(Long.valueOf(0x82), "ISStreakSRM2 (OS)");
-        isCriticals.put(Long.valueOf(0x83), "ISStreakSRM4 (OS)");
-        isCriticals.put(Long.valueOf(0x84), "ISStreakSRM6 (OS)");
-        isCriticals.put(Long.valueOf(0x85), "ISVehicleFlamer");
-        isCriticals.put(Long.valueOf(0x86), "ISLongTomArtillery");
-        isCriticals.put(Long.valueOf(0x87), "ISSniperArtillery");
-        isCriticals.put(Long.valueOf(0x88), "ISThumperArtillery");
-        isCriticals.put(Long.valueOf(0x89), "ISMRM10");
-        isCriticals.put(Long.valueOf(0x8A), "ISMRM20");
-        isCriticals.put(Long.valueOf(0x8B), "ISMRM30");
-        isCriticals.put(Long.valueOf(0x8C), "ISMRM40");
-        isCriticals.put(Long.valueOf(0x8D), "Grenade Launcher");
-        isCriticals.put(Long.valueOf(0x8E), "ISMRM10 (OS)");
-        isCriticals.put(Long.valueOf(0x8F), "ISMRM20 (OS)");
-        isCriticals.put(Long.valueOf(0x90), "ISMRM30 (OS)");
-        isCriticals.put(Long.valueOf(0x91), "ISMRM40 (OS)");
-        isCriticals.put(Long.valueOf(0x92), "ISLRTorpedo5");
-        isCriticals.put(Long.valueOf(0x93), "ISLRTorpedo10");
-        isCriticals.put(Long.valueOf(0x94), "ISLRTorpedo15");
-        isCriticals.put(Long.valueOf(0x95), "ISLRTorpedo20");
-        isCriticals.put(Long.valueOf(0x96), "ISSRT2");
-        isCriticals.put(Long.valueOf(0x97), "ISSRT4");
-        isCriticals.put(Long.valueOf(0x98), "ISSRT6");
-        isCriticals.put(Long.valueOf(0x99), "ISLRM5 (I-OS)");
-        isCriticals.put(Long.valueOf(0x9A), "ISLRM10 (I-OS)");
-        isCriticals.put(Long.valueOf(0x9B), "ISLRM15 (I-OS)");
-        isCriticals.put(Long.valueOf(0x9C), "ISLRM20 (I-OS)");
-        isCriticals.put(Long.valueOf(0x9D), "ISSRM2 (I-OS)");
-        isCriticals.put(Long.valueOf(0x9E), "ISSRM4 (I-OS)");
-        isCriticals.put(Long.valueOf(0x9f), "ISSRM6 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA0), "ISStreakSRM2 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA1), "ISStreakSRM4 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA2), "ISStreakSRM6 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA3), "ISMRM10 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA4), "ISMRM20 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA5), "ISMRM30 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA6), "ISMRM40 (I-OS)");
-        isCriticals.put(Long.valueOf(0xA7), "CLERLargeLaser");
-        isCriticals.put(Long.valueOf(0xA8), "CLERMediumLaser");
-        isCriticals.put(Long.valueOf(0xA9), "CLERSmallLaser");
+        isCriticals.put(0x5EL, "CLLightMG");
+        isCriticals.put(0x5FL, "CLHeavyMG");
+        isCriticals.put(0x60L, "ISLRM5");
+        isCriticals.put(0x61L, "ISLRM10");
+        isCriticals.put(0x62L, "ISLRM15");
+        isCriticals.put(0x63L, "ISLRM20");
+        isCriticals.put(0x64L, "CLLightActiveProbe");
+        isCriticals.put(0x65L, "CLLightTAG");
+        isCriticals.put(0x66L, "ISImprovedNarc");
+        isCriticals.put(0x67L, "ISSRM2");
+        isCriticals.put(0x68L, "ISSRM4");
+        isCriticals.put(0x69L, "ISSRM6");
+        isCriticals.put(0x6AL, "ISStreakSRM2");
+        isCriticals.put(0x6BL, "ISStreakSRM4");
+        isCriticals.put(0x6CL, "ISStreakSRM6");
+        isCriticals.put(0x6DL, "Thunderbolt-5");
+        isCriticals.put(0x6EL, "Thunderbolt-10");
+        isCriticals.put(0x6FL, "Thunderbolt-15");
+        isCriticals.put(0x70L, "Thunderbolt-20");
+        isCriticals.put(0x71L, "ISArrowIVSystem");
+        isCriticals.put(0x72L, "ISAngelECMSuite");
+        isCriticals.put(0x73L, "ISBeagleActiveProbe");
+        isCriticals.put(0x74L, "ISBloodhoundActiveProbe");
+        isCriticals.put(0x75L, "ISC3MasterComputer");
+        isCriticals.put(0x76L, "ISC3SlaveUnit");
+        isCriticals.put(0x77L, "ISImprovedC3CPU");
+        isCriticals.put(0x78L, "ISGuardianECM");
+        isCriticals.put(0x79L, "ISNarcBeacon");
+        isCriticals.put(0x7AL, "ISTAG");
+        isCriticals.put(0x7BL, "ISLRM5 (OS)");
+        isCriticals.put(0x7CL, "ISLRM10 (OS)");
+        isCriticals.put(0x7DL, "ISLRM15 (OS)");
+        isCriticals.put(0x7EL, "ISLRM20 (OS)");
+        isCriticals.put(0x7FL, "ISSRM2 (OS)");
+        isCriticals.put(0x80L, "ISSRM4 (OS)");
+        isCriticals.put(0x81L, "ISSRM6 (OS)");
+        isCriticals.put(0x82L, "ISStreakSRM2 (OS)");
+        isCriticals.put(0x83L, "ISStreakSRM4 (OS)");
+        isCriticals.put(0x84L, "ISStreakSRM6 (OS)");
+        isCriticals.put(0x85L, "ISVehicleFlamer");
+        isCriticals.put(0x86L, "ISLongTomArtillery");
+        isCriticals.put(0x87L, "ISSniperArtillery");
+        isCriticals.put(0x88L, "ISThumperArtillery");
+        isCriticals.put(0x89L, "ISMRM10");
+        isCriticals.put(0x8AL, "ISMRM20");
+        isCriticals.put(0x8BL, "ISMRM30");
+        isCriticals.put(0x8CL, "ISMRM40");
+        isCriticals.put(0x8DL, "Grenade Launcher");
+        isCriticals.put(0x8EL, "ISMRM10 (OS)");
+        isCriticals.put(0x8FL, "ISMRM20 (OS)");
+        isCriticals.put(0x90L, "ISMRM30 (OS)");
+        isCriticals.put(0x91L, "ISMRM40 (OS)");
+        isCriticals.put(0x92L, "ISLRTorpedo5");
+        isCriticals.put(0x93L, "ISLRTorpedo10");
+        isCriticals.put(0x94L, "ISLRTorpedo15");
+        isCriticals.put(0x95L, "ISLRTorpedo20");
+        isCriticals.put(0x96L, "ISSRT2");
+        isCriticals.put(0x97L, "ISSRT4");
+        isCriticals.put(0x98L, "ISSRT6");
+        isCriticals.put(0x99L, "ISLRM5 (I-OS)");
+        isCriticals.put(0x9AL, "ISLRM10 (I-OS)");
+        isCriticals.put(0x9BL, "ISLRM15 (I-OS)");
+        isCriticals.put(0x9CL, "ISLRM20 (I-OS)");
+        isCriticals.put(0x9DL, "ISSRM2 (I-OS)");
+        isCriticals.put(0x9EL, "ISSRM4 (I-OS)");
+        isCriticals.put(0x9fL, "ISSRM6 (I-OS)");
+        isCriticals.put(0xA0L, "ISStreakSRM2 (I-OS)");
+        isCriticals.put(0xA1L, "ISStreakSRM4 (I-OS)");
+        isCriticals.put(0xA2L, "ISStreakSRM6 (I-OS)");
+        isCriticals.put(0xA3L, "ISMRM10 (I-OS)");
+        isCriticals.put(0xA4L, "ISMRM20 (I-OS)");
+        isCriticals.put(0xA5L, "ISMRM30 (I-OS)");
+        isCriticals.put(0xA6L, "ISMRM40 (I-OS)");
+        isCriticals.put(0xA7L, "CLERLargeLaser");
+        isCriticals.put(0xA8L, "CLERMediumLaser");
+        isCriticals.put(0xA9L, "CLERSmallLaser");
 
-        isCriticals.put(Long.valueOf(0xAA), "CLERPPC");
-        isCriticals.put(Long.valueOf(0xAB), "CLFlamer");
+        isCriticals.put(0xAAL, "CLERPPC");
+        isCriticals.put(0xABL, "CLFlamer");
 
-        isCriticals.put(Long.valueOf(0xAF), "CLLaserAntiMissileSystem");
-        isCriticals.put(Long.valueOf(0xB0), "CLLargePulseLaser");
-        isCriticals.put(Long.valueOf(0xB1), "CLMediumPulseLaser");
-        isCriticals.put(Long.valueOf(0xB2), "CLSmallPulseLaser");
-        isCriticals.put(Long.valueOf(0xB3), "CLAngelECMSuite");
-        isCriticals.put(Long.valueOf(0xB4), "CLAntiMissileSystem");
-        isCriticals.put(Long.valueOf(0xB5), "CLGaussRifle");
-        isCriticals.put(Long.valueOf(0xB6), "CLLBXAC2");
-        isCriticals.put(Long.valueOf(0xB7), "CLLBXAC5");
-        isCriticals.put(Long.valueOf(0xB8), "CLLBXAC10");
-        isCriticals.put(Long.valueOf(0xB9), "CLLBXAC20");
+        isCriticals.put(0xAFL, "CLLaserAntiMissileSystem");
+        isCriticals.put(0xB0L, "CLLargePulseLaser");
+        isCriticals.put(0xB1L, "CLMediumPulseLaser");
+        isCriticals.put(0xB2L, "CLSmallPulseLaser");
+        isCriticals.put(0xB3L, "CLAngelECMSuite");
+        isCriticals.put(0xB4L, "CLAntiMissileSystem");
+        isCriticals.put(0xB5L, "CLGaussRifle");
+        isCriticals.put(0xB6L, "CLLBXAC2");
+        isCriticals.put(0xB7L, "CLLBXAC5");
+        isCriticals.put(0xB8L, "CLLBXAC10");
+        isCriticals.put(0xB9L, "CLLBXAC20");
 
-        isCriticals.put(Long.valueOf(0xBA), "CLMG");
-        isCriticals.put(Long.valueOf(0xBB), "CLUltraAC2");
-        isCriticals.put(Long.valueOf(0xBC), "CLUltraAC5");
-        isCriticals.put(Long.valueOf(0xBD), "CLUltraAC10");
-        isCriticals.put(Long.valueOf(0xBE), "CLUltraAC20");
-        isCriticals.put(Long.valueOf(0xBF), "CLLRM5");
-        isCriticals.put(Long.valueOf(0xC0), "CLLRM10");
-        isCriticals.put(Long.valueOf(0xC1), "CLLRM15");
-        isCriticals.put(Long.valueOf(0xC2), "CLLRM20");
-        isCriticals.put(Long.valueOf(0xC3), "CLSRM2");
-        isCriticals.put(Long.valueOf(0xC4), "CLSRM4");
-        isCriticals.put(Long.valueOf(0xC5), "CLSRM6");
-        isCriticals.put(Long.valueOf(0xC6), "CLStreakSRM2");
-        isCriticals.put(Long.valueOf(0xC7), "CLStreakSRM4");
-        isCriticals.put(Long.valueOf(0xC8), "CLStreakSRM6");
-        isCriticals.put(Long.valueOf(0xC9), "CLArrowIVSystem");
-        isCriticals.put(Long.valueOf(0xCA), "CLAntiPersonnelPod");
-        isCriticals.put(Long.valueOf(0xCB), "CLActiveProbe");
-        isCriticals.put(Long.valueOf(0xCC), "CLECMSuite");
-        isCriticals.put(Long.valueOf(0xCD), "CLNarcBeacon");
-        isCriticals.put(Long.valueOf(0xCE), "CLTAG");
-        isCriticals.put(Long.valueOf(0xCF), "Thunderbolt (OS)");
-        isCriticals.put(Long.valueOf(0xD0), "CLLRM5 (OS)");
-        isCriticals.put(Long.valueOf(0xD1), "CLLRM10 (OS)");
-        isCriticals.put(Long.valueOf(0xD2), "CLLRM15 (OS)");
-        isCriticals.put(Long.valueOf(0xD3), "CLLRM20 (OS)");
-        isCriticals.put(Long.valueOf(0xD4), "CLSRM2 (OS)");
-        isCriticals.put(Long.valueOf(0xD5), "CLSRM2 (OS)");
-        isCriticals.put(Long.valueOf(0xD6), "CLSRM2 (OS)");
-        isCriticals.put(Long.valueOf(0xD7), "CLStreakSRM2 (OS)");
-        isCriticals.put(Long.valueOf(0xD8), "CLStreakSRM4 (OS)");
-        isCriticals.put(Long.valueOf(0xD9), "CLStreakSRM6 (OS)");
-        isCriticals.put(Long.valueOf(0xDA), "CLVehicleFlamer");
-        isCriticals.put(Long.valueOf(0xDB), "CLLongTomArtillery");
-        isCriticals.put(Long.valueOf(0xDC), "CLSniperArtillery");
-        isCriticals.put(Long.valueOf(0xDD), "CLThumperArtillery");
-        isCriticals.put(Long.valueOf(0xDE), "CLLRTorpedo5");
-        isCriticals.put(Long.valueOf(0xDF), "CLLRTorpedo10");
-        isCriticals.put(Long.valueOf(0xE0), "CLLRTorpedo15");
-        isCriticals.put(Long.valueOf(0xE1), "CLLRTorpedo20");
-        isCriticals.put(Long.valueOf(0xE2), "CLSRT2");
-        isCriticals.put(Long.valueOf(0xE3), "CLSRT4");
-        isCriticals.put(Long.valueOf(0xE4), "CLSRT6");
-        isCriticals.put(Long.valueOf(0xE5), "CLStreakLRM5");
-        isCriticals.put(Long.valueOf(0xE6), "CLStreakLRM10");
-        isCriticals.put(Long.valueOf(0xE7), "CLStreakLRM15");
-        isCriticals.put(Long.valueOf(0xE8), "CLStreakLRM20");
-        isCriticals.put(Long.valueOf(0xE9), "CLGrenadeLauncher");
-        isCriticals.put(Long.valueOf(0xEA), "CLLRM5 (I-OS)");
-        isCriticals.put(Long.valueOf(0xEB), "CLLRM10 (I-OS)");
-        isCriticals.put(Long.valueOf(0xEC), "CLLRM15 (I-OS)");
-        isCriticals.put(Long.valueOf(0xED), "CLLRM20 (I-OS)");
-        isCriticals.put(Long.valueOf(0xEE), "CLSRM2 (I-OS)");
-        isCriticals.put(Long.valueOf(0xEF), "CLSRM4 (I-OS)");
-        isCriticals.put(Long.valueOf(0xF0), "CLSRM6 (I=OS)");
-        isCriticals.put(Long.valueOf(0xF1), "CLStreakSRM2 (I-OS)");
-        isCriticals.put(Long.valueOf(0xF2), "CLStreakSRM4 (I-OS)");
-        isCriticals.put(Long.valueOf(0xF3), "CLStreakSRM6 (I=OS)");
-        isCriticals.put(Long.valueOf(0xF4), "CLHeavyLargeLaser");
-        isCriticals.put(Long.valueOf(0xF5), "CLHeavyMediumLaser");
-        isCriticals.put(Long.valueOf(0xF6), "CLHeavySmallLaser");
+        isCriticals.put(0xBAL, "CLMG");
+        isCriticals.put(0xBBL, "CLUltraAC2");
+        isCriticals.put(0xBCL, "CLUltraAC5");
+        isCriticals.put(0xBDL, "CLUltraAC10");
+        isCriticals.put(0xBEL, "CLUltraAC20");
+        isCriticals.put(0xBFL, "CLLRM5");
+        isCriticals.put(0xC0L, "CLLRM10");
+        isCriticals.put(0xC1L, "CLLRM15");
+        isCriticals.put(0xC2L, "CLLRM20");
+        isCriticals.put(0xC3L, "CLSRM2");
+        isCriticals.put(0xC4L, "CLSRM4");
+        isCriticals.put(0xC5L, "CLSRM6");
+        isCriticals.put(0xC6L, "CLStreakSRM2");
+        isCriticals.put(0xC7L, "CLStreakSRM4");
+        isCriticals.put(0xC8L, "CLStreakSRM6");
+        isCriticals.put(0xC9L, "CLArrowIVSystem");
+        isCriticals.put(0xCAL, "CLAntiPersonnelPod");
+        isCriticals.put(0xCBL, "CLActiveProbe");
+        isCriticals.put(0xCCL, "CLECMSuite");
+        isCriticals.put(0xCDL, "CLNarcBeacon");
+        isCriticals.put(0xCEL, "CLTAG");
+        isCriticals.put(0xCFL, "Thunderbolt (OS)");
+        isCriticals.put(0xD0L, "CLLRM5 (OS)");
+        isCriticals.put(0xD1L, "CLLRM10 (OS)");
+        isCriticals.put(0xD2L, "CLLRM15 (OS)");
+        isCriticals.put(0xD3L, "CLLRM20 (OS)");
+        isCriticals.put(0xD4L, "CLSRM2 (OS)");
+        isCriticals.put(0xD5L, "CLSRM2 (OS)");
+        isCriticals.put(0xD6L, "CLSRM2 (OS)");
+        isCriticals.put(0xD7L, "CLStreakSRM2 (OS)");
+        isCriticals.put(0xD8L, "CLStreakSRM4 (OS)");
+        isCriticals.put(0xD9L, "CLStreakSRM6 (OS)");
+        isCriticals.put(0xDAL, "CLVehicleFlamer");
+        isCriticals.put(0xDBL, "CLLongTomArtillery");
+        isCriticals.put(0xDCL, "CLSniperArtillery");
+        isCriticals.put(0xDDL, "CLThumperArtillery");
+        isCriticals.put(0xDEL, "CLLRTorpedo5");
+        isCriticals.put(0xDFL, "CLLRTorpedo10");
+        isCriticals.put(0xE0L, "CLLRTorpedo15");
+        isCriticals.put(0xE1L, "CLLRTorpedo20");
+        isCriticals.put(0xE2L, "CLSRT2");
+        isCriticals.put(0xE3L, "CLSRT4");
+        isCriticals.put(0xE4L, "CLSRT6");
+        isCriticals.put(0xE5L, "CLStreakLRM5");
+        isCriticals.put(0xE6L, "CLStreakLRM10");
+        isCriticals.put(0xE7L, "CLStreakLRM15");
+        isCriticals.put(0xE8L, "CLStreakLRM20");
+        isCriticals.put(0xE9L, "CLGrenadeLauncher");
+        isCriticals.put(0xEAL, "CLLRM5 (I-OS)");
+        isCriticals.put(0xEBL, "CLLRM10 (I-OS)");
+        isCriticals.put(0xECL, "CLLRM15 (I-OS)");
+        isCriticals.put(0xEDL, "CLLRM20 (I-OS)");
+        isCriticals.put(0xEEL, "CLSRM2 (I-OS)");
+        isCriticals.put(0xEFL, "CLSRM4 (I-OS)");
+        isCriticals.put(0xF0L, "CLSRM6 (I=OS)");
+        isCriticals.put(0xF1L, "CLStreakSRM2 (I-OS)");
+        isCriticals.put(0xF2L, "CLStreakSRM4 (I-OS)");
+        isCriticals.put(0xF3L, "CLStreakSRM6 (I=OS)");
+        isCriticals.put(0xF4L, "CLHeavyLargeLaser");
+        isCriticals.put(0xF5L, "CLHeavyMediumLaser");
+        isCriticals.put(0xF6L, "CLHeavySmallLaser");
 
-        isCriticals.put(Long.valueOf(0x11D), "ISTHBAngelECMSuite");
-        isCriticals.put(Long.valueOf(0x11E), "ISTHBBloodhoundActiveProbe");
+        isCriticals.put(0x11DL, "ISTHBAngelECMSuite");
+        isCriticals.put(0x11EL, "ISTHBBloodhoundActiveProbe");
 
-        isCriticals.put(Long.valueOf(0x123), "ISHeavyGaussRifle");
+        isCriticals.put(0x123L, "ISHeavyGaussRifle");
 
-        isCriticals.put(Long.valueOf(0x01CE), "ISAC2 Ammo");
-        isCriticals.put(Long.valueOf(0x01CF), "ISAC5 Ammo");
-        isCriticals.put(Long.valueOf(0x01D0), "ISAC10 Ammo");
-        isCriticals.put(Long.valueOf(0x01d1), "ISAC20 Ammo");
-        isCriticals.put(Long.valueOf(0x01d2), "ISAMS Ammo");
-        isCriticals.put(Long.valueOf(0x01d3), "Long Tom Cannon Ammo");
-        isCriticals.put(Long.valueOf(0x01d4), "Sniper Cannon Ammo");
-        isCriticals.put(Long.valueOf(0x01d5), "Thumper Cannon Ammo");
-        isCriticals.put(Long.valueOf(0x01d6), "ISLightGauss Ammo");
-        isCriticals.put(Long.valueOf(0x01d7), "ISGauss Ammo");
+        isCriticals.put(0x01CEL, "ISAC2 Ammo");
+        isCriticals.put(0x01CFL, "ISAC5 Ammo");
+        isCriticals.put(0x01D0L, "ISAC10 Ammo");
+        isCriticals.put(0x01d1L, "ISAC20 Ammo");
+        isCriticals.put(0x01d2L, "ISAMS Ammo");
+        isCriticals.put(0x01d3L, "Long Tom Cannon Ammo");
+        isCriticals.put(0x01d4L, "Sniper Cannon Ammo");
+        isCriticals.put(0x01d5L, "Thumper Cannon Ammo");
+        isCriticals.put(0x01d6L, "ISLightGauss Ammo");
+        isCriticals.put(0x01d7L, "ISGauss Ammo");
 
-        isCriticals.put(Long.valueOf(0x01db), "ISLBXAC2 Ammo");
-        isCriticals.put(Long.valueOf(0x01dc), "ISLBXAC5 Ammo");
-        isCriticals.put(Long.valueOf(0x01dd), "ISLBXAC10 Ammo");
-        isCriticals.put(Long.valueOf(0x01de), "ISLBXAC20 Ammo");
-        isCriticals.put(Long.valueOf(0x01df), "ISMG Ammo");
+        isCriticals.put(0x01dbL, "ISLBXAC2 Ammo");
+        isCriticals.put(0x01dcL, "ISLBXAC5 Ammo");
+        isCriticals.put(0x01ddL, "ISLBXAC10 Ammo");
+        isCriticals.put(0x01deL, "ISLBXAC20 Ammo");
+        isCriticals.put(0x01dfL, "ISMG Ammo");
 
-        isCriticals.put(Long.valueOf(0x1e0), "ISLAC2 Ammo");
-        isCriticals.put(Long.valueOf(0x1e1), "ISLAC5 Ammo");
-        isCriticals.put(Long.valueOf(0x1e2), "ISHeavyFlamer Ammo");
+        isCriticals.put(0x1e0L, "ISLAC2 Ammo");
+        isCriticals.put(0x1e1L, "ISLAC5 Ammo");
+        isCriticals.put(0x1e2L, "ISHeavyFlamer Ammo");
 
-        isCriticals.put(Long.valueOf(0x01e4), "ISUltraAC2 Ammo");
-        isCriticals.put(Long.valueOf(0x01e5), "ISUltraAC5 Ammo");
-        isCriticals.put(Long.valueOf(0x01e6), "ISUltraAC10 Ammo");
-        isCriticals.put(Long.valueOf(0x01e7), "ISUltraAC20 Ammo");
+        isCriticals.put(0x01e4L, "ISUltraAC2 Ammo");
+        isCriticals.put(0x01e5L, "ISUltraAC5 Ammo");
+        isCriticals.put(0x01e6L, "ISUltraAC10 Ammo");
+        isCriticals.put(0x01e7L, "ISUltraAC20 Ammo");
 
-        isCriticals.put(Long.valueOf(0x01EE), "CLLightMG Ammo");
-        isCriticals.put(Long.valueOf(0x01EF), "CLHeavyMG Ammo");
-        isCriticals.put(Long.valueOf(0x01f0), "ISLRM5 Ammo");
-        isCriticals.put(Long.valueOf(0x01f1), "ISLRM10 Ammo");
-        isCriticals.put(Long.valueOf(0x01f2), "ISLRM15 Ammo");
-        isCriticals.put(Long.valueOf(0x01f3), "ISLRM20 Ammo");
+        isCriticals.put(0x01EEL, "CLLightMG Ammo");
+        isCriticals.put(0x01EFL, "CLHeavyMG Ammo");
+        isCriticals.put(0x01f0L, "ISLRM5 Ammo");
+        isCriticals.put(0x01f1L, "ISLRM10 Ammo");
+        isCriticals.put(0x01f2L, "ISLRM15 Ammo");
+        isCriticals.put(0x01f3L, "ISLRM20 Ammo");
 
-        isCriticals.put(Long.valueOf(0x01f6), "ISiNarc Pods");
-        isCriticals.put(Long.valueOf(0x01f7), "ISSRM2 Ammo");
-        isCriticals.put(Long.valueOf(0x01f8), "ISSRM4 Ammo");
-        isCriticals.put(Long.valueOf(0x01f9), "ISSRM6 Ammo");
-        isCriticals.put(Long.valueOf(0x01fa), "ISStreakSRM2 Ammo");
-        isCriticals.put(Long.valueOf(0x01fb), "ISStreakSRM4 Ammo");
-        isCriticals.put(Long.valueOf(0x01FC), "ISStreakSRM6 Ammo");
-        isCriticals.put(Long.valueOf(0x01FD), "Thunderbolt-5 Ammo");
-        isCriticals.put(Long.valueOf(0x01FE), "Thunderbolt-10 Ammo");
-        isCriticals.put(Long.valueOf(0x01FF), "Thunderbolt-15 Ammo");
-        isCriticals.put(Long.valueOf(0x0200), "Thunderbolt-20 Ammo");
-        isCriticals.put(Long.valueOf(0x0201), "ISArrowIV Ammo");
+        isCriticals.put(0x01f6L, "ISiNarc Pods");
+        isCriticals.put(0x01f7L, "ISSRM2 Ammo");
+        isCriticals.put(0x01f8L, "ISSRM4 Ammo");
+        isCriticals.put(0x01f9L, "ISSRM6 Ammo");
+        isCriticals.put(0x01faL, "ISStreakSRM2 Ammo");
+        isCriticals.put(0x01fbL, "ISStreakSRM4 Ammo");
+        isCriticals.put(0x01FCL, "ISStreakSRM6 Ammo");
+        isCriticals.put(0x01FDL, "Thunderbolt-5 Ammo");
+        isCriticals.put(0x01FEL, "Thunderbolt-10 Ammo");
+        isCriticals.put(0x01FFL, "Thunderbolt-15 Ammo");
+        isCriticals.put(0x0200L, "Thunderbolt-20 Ammo");
+        isCriticals.put(0x0201L, "ISArrowIV Ammo");
 
-        isCriticals.put(Long.valueOf(0x0209), "ISNarc Pods");
+        isCriticals.put(0x0209L, "ISNarc Pods");
 
-        isCriticals.put(Long.valueOf(0x0215), "ISVehicleFlamer Ammo");
-        isCriticals.put(Long.valueOf(0x0216), "ISLongTom Ammo");
-        isCriticals.put(Long.valueOf(0x0217), "ISSniper Ammo");
-        isCriticals.put(Long.valueOf(0x0218), "ISThumper Ammo");
-        isCriticals.put(Long.valueOf(0x0219), "ISMRM10 Ammo");
-        isCriticals.put(Long.valueOf(0x021a), "ISMRM20 Ammo");
-        isCriticals.put(Long.valueOf(0x021b), "ISMRM30 Ammo");
-        isCriticals.put(Long.valueOf(0x021c), "ISMRM40 Ammo");
+        isCriticals.put(0x0215L, "ISVehicleFlamer Ammo");
+        isCriticals.put(0x0216L, "ISLongTom Ammo");
+        isCriticals.put(0x0217L, "ISSniper Ammo");
+        isCriticals.put(0x0218L, "ISThumper Ammo");
+        isCriticals.put(0x0219L, "ISMRM10 Ammo");
+        isCriticals.put(0x021aL, "ISMRM20 Ammo");
+        isCriticals.put(0x021bL, "ISMRM30 Ammo");
+        isCriticals.put(0x021cL, "ISMRM40 Ammo");
 
-        isCriticals.put(Long.valueOf(0x0222), "ISLRTorpedo5 Ammo");
-        isCriticals.put(Long.valueOf(0x0223), "ISLRTorpedo10 Ammo");
-        isCriticals.put(Long.valueOf(0x0224), "ISLRTorpedo15 Ammo");
-        isCriticals.put(Long.valueOf(0x0225), "ISLRTorpedo20 Ammo");
-        isCriticals.put(Long.valueOf(0x0226), "ISSRT2 Ammo");
-        isCriticals.put(Long.valueOf(0x0227), "ISSRT4 Ammo");
-        isCriticals.put(Long.valueOf(0x0228), "ISSRT6 Ammo");
+        isCriticals.put(0x0222L, "ISLRTorpedo5 Ammo");
+        isCriticals.put(0x0223L, "ISLRTorpedo10 Ammo");
+        isCriticals.put(0x0224L, "ISLRTorpedo15 Ammo");
+        isCriticals.put(0x0225L, "ISLRTorpedo20 Ammo");
+        isCriticals.put(0x0226L, "ISSRT2 Ammo");
+        isCriticals.put(0x0227L, "ISSRT4 Ammo");
+        isCriticals.put(0x0228L, "ISSRT6 Ammo");
 
-        isCriticals.put(Long.valueOf(0x0244), "CLAMS Ammo");
-        isCriticals.put(Long.valueOf(0x0245), "CLGauss Ammo");
-        isCriticals.put(Long.valueOf(0x0246), "CLLBXAC2 Ammo");
-        isCriticals.put(Long.valueOf(0x0247), "CLLBXAC5 Ammo");
-        isCriticals.put(Long.valueOf(0x0248), "CLLBXAC10 Ammo");
-        isCriticals.put(Long.valueOf(0x0249), "CLLBXAC20 Ammo");
-        isCriticals.put(Long.valueOf(0x024A), "CLMG Ammo");
-        isCriticals.put(Long.valueOf(0x024B), "CLUltraAC2 Ammo");
-        isCriticals.put(Long.valueOf(0x024C), "CLUltraAC5 Ammo");
-        isCriticals.put(Long.valueOf(0x024D), "CLUltraAC10 Ammo");
-        isCriticals.put(Long.valueOf(0x024E), "CLUltraAC20 Ammo");
-        isCriticals.put(Long.valueOf(0x024F), "CLLRM5 Ammo");
-        isCriticals.put(Long.valueOf(0x0250), "CLLRM10 Ammo");
-        isCriticals.put(Long.valueOf(0x0251), "CLLRM15 Ammo");
-        isCriticals.put(Long.valueOf(0x0252), "CLLRM20 Ammo");
-        isCriticals.put(Long.valueOf(0x0253), "CLSRM2 Ammo");
-        isCriticals.put(Long.valueOf(0x0254), "CLSRM4 Ammo");
-        isCriticals.put(Long.valueOf(0x0255), "CLSRM6 Ammo");
-        isCriticals.put(Long.valueOf(0x0256), "CLStreakSRM2 Ammo");
-        isCriticals.put(Long.valueOf(0x0257), "CLStreakSRM4 Ammo");
-        isCriticals.put(Long.valueOf(0x0258), "CLStreakSRM6 Ammo");
-        isCriticals.put(Long.valueOf(0x0259), "CLArrowIV Ammo");
+        isCriticals.put(0x0244L, "CLAMS Ammo");
+        isCriticals.put(0x0245L, "CLGauss Ammo");
+        isCriticals.put(0x0246L, "CLLBXAC2 Ammo");
+        isCriticals.put(0x0247L, "CLLBXAC5 Ammo");
+        isCriticals.put(0x0248L, "CLLBXAC10 Ammo");
+        isCriticals.put(0x0249L, "CLLBXAC20 Ammo");
+        isCriticals.put(0x024AL, "CLMG Ammo");
+        isCriticals.put(0x024BL, "CLUltraAC2 Ammo");
+        isCriticals.put(0x024CL, "CLUltraAC5 Ammo");
+        isCriticals.put(0x024DL, "CLUltraAC10 Ammo");
+        isCriticals.put(0x024EL, "CLUltraAC20 Ammo");
+        isCriticals.put(0x024FL, "CLLRM5 Ammo");
+        isCriticals.put(0x0250L, "CLLRM10 Ammo");
+        isCriticals.put(0x0251L, "CLLRM15 Ammo");
+        isCriticals.put(0x0252L, "CLLRM20 Ammo");
+        isCriticals.put(0x0253L, "CLSRM2 Ammo");
+        isCriticals.put(0x0254L, "CLSRM4 Ammo");
+        isCriticals.put(0x0255L, "CLSRM6 Ammo");
+        isCriticals.put(0x0256L, "CLStreakSRM2 Ammo");
+        isCriticals.put(0x0257L, "CLStreakSRM4 Ammo");
+        isCriticals.put(0x0258L, "CLStreakSRM6 Ammo");
+        isCriticals.put(0x0259L, "CLArrowIV Ammo");
 
-        isCriticals.put(Long.valueOf(0x025D), "CLNarc Pods");
+        isCriticals.put(0x025DL, "CLNarc Pods");
 
-        isCriticals.put(Long.valueOf(0x026A), "CLVehicleFlamer Ammo");
-        isCriticals.put(Long.valueOf(0x026B), "CLLongTom Ammo");
-        isCriticals.put(Long.valueOf(0x026C), "CLSniper Ammo");
-        isCriticals.put(Long.valueOf(0x026D), "CLThumper Ammo");
-        isCriticals.put(Long.valueOf(0x026E), "CLLRTorpedo5 Ammo");
-        isCriticals.put(Long.valueOf(0x026F), "CLLRTorpedo10 Ammo");
-        isCriticals.put(Long.valueOf(0x0270), "CLLRTorpedo15 Ammo");
-        isCriticals.put(Long.valueOf(0x0271), "CLLRTorpedo20 Ammo");
-        isCriticals.put(Long.valueOf(0x0272), "CLSRT2 Ammo");
-        isCriticals.put(Long.valueOf(0x0273), "CLSRT4 Ammo");
-        isCriticals.put(Long.valueOf(0x0274), "CLSRT6 Ammo");
-        isCriticals.put(Long.valueOf(0x0275), "CLStreakLRM5 Ammo");
-        isCriticals.put(Long.valueOf(0x0276), "CLStreakLRM10 Ammo");
-        isCriticals.put(Long.valueOf(0x0277), "CLStreakLRM15 Ammo");
-        isCriticals.put(Long.valueOf(0x0278), "CLStreakLRM20 Ammo");
+        isCriticals.put(0x026AL, "CLVehicleFlamer Ammo");
+        isCriticals.put(0x026BL, "CLLongTom Ammo");
+        isCriticals.put(0x026CL, "CLSniper Ammo");
+        isCriticals.put(0x026DL, "CLThumper Ammo");
+        isCriticals.put(0x026EL, "CLLRTorpedo5 Ammo");
+        isCriticals.put(0x026FL, "CLLRTorpedo10 Ammo");
+        isCriticals.put(0x0270L, "CLLRTorpedo15 Ammo");
+        isCriticals.put(0x0271L, "CLLRTorpedo20 Ammo");
+        isCriticals.put(0x0272L, "CLSRT2 Ammo");
+        isCriticals.put(0x0273L, "CLSRT4 Ammo");
+        isCriticals.put(0x0274L, "CLSRT6 Ammo");
+        isCriticals.put(0x0275L, "CLStreakLRM5 Ammo");
+        isCriticals.put(0x0276L, "CLStreakLRM10 Ammo");
+        isCriticals.put(0x0277L, "CLStreakLRM15 Ammo");
+        isCriticals.put(0x0278L, "CLStreakLRM20 Ammo");
 
-        isCriticals.put(Long.valueOf(0x02b3), "ISHeavyGauss Ammo");
+        isCriticals.put(0x02b3L, "ISHeavyGauss Ammo");
 
         // criticals for mechs with a base type of clan
         Hashtable<Long, String> clanCriticals = new Hashtable<>();
         criticals.put(TechType.CLAN, clanCriticals);
-        clanCriticals.put(Long.valueOf(0x0A), "CLDouble Heat Sink");
+        clanCriticals.put(0x0AL, "CLDouble Heat Sink");
 
-        clanCriticals.put(Long.valueOf(0x12), "CLTargeting Computer");
+        clanCriticals.put(0x12L, "CLTargeting Computer");
 
-        clanCriticals.put(Long.valueOf(0x17), "CLMASC");
-        clanCriticals.put(Long.valueOf(0x18), "CLArtemisIV");
+        clanCriticals.put(0x17L, "CLMASC");
+        clanCriticals.put(0x18L, "CLArtemisIV");
 
-        clanCriticals.put(Long.valueOf(0x21), "Light Ferro-Fibrous"); // ?
-        clanCriticals.put(Long.valueOf(0x22), "Heavy Ferro-Fibrous"); // ?
+        clanCriticals.put(0x21L, "Light Ferro-Fibrous"); // ?
+        clanCriticals.put(0x22L, "Heavy Ferro-Fibrous"); // ?
 
-        clanCriticals.put(Long.valueOf(0x26), "CLCASEII");
+        clanCriticals.put(0x26L, "CLCASEII");
 
-        clanCriticals.put(Long.valueOf(0x33), "CLERLargeLaser");
-        clanCriticals.put(Long.valueOf(0x34), "CLERMediumLaser");
-        clanCriticals.put(Long.valueOf(0x35), "CLERSmallLaser");
-        clanCriticals.put(Long.valueOf(0x36), "CLERPPC");
-        clanCriticals.put(Long.valueOf(0x37), "CLFlamer");
-        clanCriticals.put(Long.valueOf(0x38), "CLERLargePulseLaser");
-        clanCriticals.put(Long.valueOf(0x39), "CLERMediumPulseLaser");
-        clanCriticals.put(Long.valueOf(0x3A), "CLERSmallPulseLaser");
-        clanCriticals.put(Long.valueOf(0x3B), "CLLaserAMS");
-        clanCriticals.put(Long.valueOf(0x3C), "CLLargePulseLaser");
-        clanCriticals.put(Long.valueOf(0x3D), "CLMediumPulseLaser");
-        clanCriticals.put(Long.valueOf(0x3E), "CLSmallPulseLaser");
-        clanCriticals.put(Long.valueOf(0x3F), "CLAngelECMSuite");
-        clanCriticals.put(Long.valueOf(0x40), "CLAntiMissileSystem");
-        clanCriticals.put(Long.valueOf(0x41), "CLGaussRifle");
-        clanCriticals.put(Long.valueOf(0x42), "CLLBXAC2");
-        clanCriticals.put(Long.valueOf(0x43), "CLLBXAC5");
-        clanCriticals.put(Long.valueOf(0x44), "CLLBXAC10");
-        clanCriticals.put(Long.valueOf(0x45), "CLLBXAC20");
-        clanCriticals.put(Long.valueOf(0x46), "CLMG");
-        clanCriticals.put(Long.valueOf(0x47), "CLUltraAC2");
-        clanCriticals.put(Long.valueOf(0x48), "CLUltraAC5");
-        clanCriticals.put(Long.valueOf(0x49), "CLUltraAC10");
-        clanCriticals.put(Long.valueOf(0x4A), "CLUltraAC20");
-        clanCriticals.put(Long.valueOf(0x4B), "CLLRM5");
-        clanCriticals.put(Long.valueOf(0x4C), "CLLRM10");
-        clanCriticals.put(Long.valueOf(0x4D), "CLLRM15");
-        clanCriticals.put(Long.valueOf(0x4E), "CLLRM20");
-        clanCriticals.put(Long.valueOf(0x4F), "CLSRM2");
-        clanCriticals.put(Long.valueOf(0x50), "CLSRM4");
-        clanCriticals.put(Long.valueOf(0x51), "CLSRM6");
-        clanCriticals.put(Long.valueOf(0x52), "CLStreakSRM2");
-        clanCriticals.put(Long.valueOf(0x53), "CLStreakSRM4");
-        clanCriticals.put(Long.valueOf(0x54), "CLStreakSRM6");
-        clanCriticals.put(Long.valueOf(0x55), "CLArrowIVSystem");
-        clanCriticals.put(Long.valueOf(0x56), "CLAntiPersonnelPod");
-        clanCriticals.put(Long.valueOf(0x57), "CLActiveProbe");
-        clanCriticals.put(Long.valueOf(0x58), "CLECMSuite");
-        clanCriticals.put(Long.valueOf(0x59), "CLNarcBeacon");
-        clanCriticals.put(Long.valueOf(0x5A), "CLTAG");
-        clanCriticals.put(Long.valueOf(0x5B), "CLERMicroLaser");
-        clanCriticals.put(Long.valueOf(0x5C), "CLLRM5 (OS)");
-        clanCriticals.put(Long.valueOf(0x5D), "CLLRM10 (OS)");
-        clanCriticals.put(Long.valueOf(0x5E), "CLLRM15 (OS)");
-        clanCriticals.put(Long.valueOf(0x5F), "CLLRM20 (OS)");
-        clanCriticals.put(Long.valueOf(0x60), "CLSRM2 (OS)");
-        clanCriticals.put(Long.valueOf(0x61), "CLSRM4 (OS)");
-        clanCriticals.put(Long.valueOf(0x62), "CLSRM6 (OS)");
-        clanCriticals.put(Long.valueOf(0x63), "CLStreakSRM2 (OS)");
-        clanCriticals.put(Long.valueOf(0x64), "CLStreakSRM4 (OS)");
-        clanCriticals.put(Long.valueOf(0x65), "CLStreakSRM6 (OS)");
-        clanCriticals.put(Long.valueOf(0x66), "CLVehicleFlamer");
-        clanCriticals.put(Long.valueOf(0x67), "CLLongTomArtillery");
-        clanCriticals.put(Long.valueOf(0x68), "CLSniperArtillery");
-        clanCriticals.put(Long.valueOf(0x69), "CLThumperArtillery");
-        clanCriticals.put(Long.valueOf(0x6A), "CLLRTorpedo5");
-        clanCriticals.put(Long.valueOf(0x6B), "CLLRTorpedo10");
-        clanCriticals.put(Long.valueOf(0x6C), "CLLRTorpedo15");
-        clanCriticals.put(Long.valueOf(0x6D), "CLLRTorpedo20");
-        clanCriticals.put(Long.valueOf(0x6E), "CLSRT2");
-        clanCriticals.put(Long.valueOf(0x6F), "CLSRT4");
-        clanCriticals.put(Long.valueOf(0x70), "CLSRT6");
+        clanCriticals.put(0x33L, "CLERLargeLaser");
+        clanCriticals.put(0x34L, "CLERMediumLaser");
+        clanCriticals.put(0x35L, "CLERSmallLaser");
+        clanCriticals.put(0x36L, "CLERPPC");
+        clanCriticals.put(0x37L, "CLFlamer");
+        clanCriticals.put(0x38L, "CLERLargePulseLaser");
+        clanCriticals.put(0x39L, "CLERMediumPulseLaser");
+        clanCriticals.put(0x3AL, "CLERSmallPulseLaser");
+        clanCriticals.put(0x3BL, "CLLaserAMS");
+        clanCriticals.put(0x3CL, "CLLargePulseLaser");
+        clanCriticals.put(0x3DL, "CLMediumPulseLaser");
+        clanCriticals.put(0x3EL, "CLSmallPulseLaser");
+        clanCriticals.put(0x3FL, "CLAngelECMSuite");
+        clanCriticals.put(0x40L, "CLAntiMissileSystem");
+        clanCriticals.put(0x41L, "CLGaussRifle");
+        clanCriticals.put(0x42L, "CLLBXAC2");
+        clanCriticals.put(0x43L, "CLLBXAC5");
+        clanCriticals.put(0x44L, "CLLBXAC10");
+        clanCriticals.put(0x45L, "CLLBXAC20");
+        clanCriticals.put(0x46L, "CLMG");
+        clanCriticals.put(0x47L, "CLUltraAC2");
+        clanCriticals.put(0x48L, "CLUltraAC5");
+        clanCriticals.put(0x49L, "CLUltraAC10");
+        clanCriticals.put(0x4AL, "CLUltraAC20");
+        clanCriticals.put(0x4BL, "CLLRM5");
+        clanCriticals.put(0x4CL, "CLLRM10");
+        clanCriticals.put(0x4DL, "CLLRM15");
+        clanCriticals.put(0x4EL, "CLLRM20");
+        clanCriticals.put(0x4FL, "CLSRM2");
+        clanCriticals.put(0x50L, "CLSRM4");
+        clanCriticals.put(0x51L, "CLSRM6");
+        clanCriticals.put(0x52L, "CLStreakSRM2");
+        clanCriticals.put(0x53L, "CLStreakSRM4");
+        clanCriticals.put(0x54L, "CLStreakSRM6");
+        clanCriticals.put(0x55L, "CLArrowIVSystem");
+        clanCriticals.put(0x56L, "CLAntiPersonnelPod");
+        clanCriticals.put(0x57L, "CLActiveProbe");
+        clanCriticals.put(0x58L, "CLECMSuite");
+        clanCriticals.put(0x59L, "CLNarcBeacon");
+        clanCriticals.put(0x5AL, "CLTAG");
+        clanCriticals.put(0x5BL, "CLERMicroLaser");
+        clanCriticals.put(0x5CL, "CLLRM5 (OS)");
+        clanCriticals.put(0x5DL, "CLLRM10 (OS)");
+        clanCriticals.put(0x5EL, "CLLRM15 (OS)");
+        clanCriticals.put(0x5FL, "CLLRM20 (OS)");
+        clanCriticals.put(0x60L, "CLSRM2 (OS)");
+        clanCriticals.put(0x61L, "CLSRM4 (OS)");
+        clanCriticals.put(0x62L, "CLSRM6 (OS)");
+        clanCriticals.put(0x63L, "CLStreakSRM2 (OS)");
+        clanCriticals.put(0x64L, "CLStreakSRM4 (OS)");
+        clanCriticals.put(0x65L, "CLStreakSRM6 (OS)");
+        clanCriticals.put(0x66L, "CLVehicleFlamer");
+        clanCriticals.put(0x67L, "CLLongTomArtillery");
+        clanCriticals.put(0x68L, "CLSniperArtillery");
+        clanCriticals.put(0x69L, "CLThumperArtillery");
+        clanCriticals.put(0x6AL, "CLLRTorpedo5");
+        clanCriticals.put(0x6BL, "CLLRTorpedo10");
+        clanCriticals.put(0x6CL, "CLLRTorpedo15");
+        clanCriticals.put(0x6DL, "CLLRTorpedo20");
+        clanCriticals.put(0x6EL, "CLSRT2");
+        clanCriticals.put(0x6FL, "CLSRT4");
+        clanCriticals.put(0x70L, "CLSRT6");
 
-        clanCriticals.put(Long.valueOf(0x71), "CLStreakLRM5");
-        clanCriticals.put(Long.valueOf(0x72), "CLStreakLRM10");
-        clanCriticals.put(Long.valueOf(0x73), "CLStreakLRM15");
-        clanCriticals.put(Long.valueOf(0x74), "CLStreakLRM20");
-        clanCriticals.put(Long.valueOf(0x75), "CLGrenadeLauncher");
-        clanCriticals.put(Long.valueOf(0x76), "CLLRM5 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x77), "CLLRM10 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x78), "CLLRM15 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x79), "CLLRM20 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x7a), "CLSRM2 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x7b), "CLSRM4 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x7c), "CLSRM6 (I=OS)");
-        clanCriticals.put(Long.valueOf(0x7d), "CLStreakSRM2 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x7e), "CLStreakSRM4 (I-OS)");
-        clanCriticals.put(Long.valueOf(0x7f), "CLStreakSRM6 (I=OS)");
-        clanCriticals.put(Long.valueOf(0x80), "CLHeavyLargeLaser");
-        clanCriticals.put(Long.valueOf(0x81), "CLHeavyMediumLaser");
-        clanCriticals.put(Long.valueOf(0x82), "CLHeavySmallLaser");
-        clanCriticals.put(Long.valueOf(0x83), "ISERLargeLaser");
-        clanCriticals.put(Long.valueOf(0x84), "ISERPPC");
-        clanCriticals.put(Long.valueOf(0x85), "ISFlamer");
-        clanCriticals.put(Long.valueOf(0x86), "ISLaserAMS");
-        clanCriticals.put(Long.valueOf(0x87), "ISLargeLaser");
-        clanCriticals.put(Long.valueOf(0x88), "ISMediumLaser");
-        clanCriticals.put(Long.valueOf(0x89), "ISSmallLaser");
-        clanCriticals.put(Long.valueOf(0x8A), "ISPPC");
-        clanCriticals.put(Long.valueOf(0x8B), "ISLargePulseLaser");
-        clanCriticals.put(Long.valueOf(0x8C), "ISMediumPulseLaser");
-        clanCriticals.put(Long.valueOf(0x8D), "ISSmallPulseLaser");
-        clanCriticals.put(Long.valueOf(0x8E), "ISAC2");
-        clanCriticals.put(Long.valueOf(0x8F), "ISAC5");
-        clanCriticals.put(Long.valueOf(0x90), "ISAC10");
-        clanCriticals.put(Long.valueOf(0x91), "ISAC20");
-        clanCriticals.put(Long.valueOf(0x92), "ISAntiMissileSystem");
-        clanCriticals.put(Long.valueOf(0x93), "Long Tom Cannon");
-        clanCriticals.put(Long.valueOf(0x94), "Sniper Cannon");
-        clanCriticals.put(Long.valueOf(0x95), "Thumper Cannon");
-        clanCriticals.put(Long.valueOf(0x96), "ISLightGaussRifle");
-        clanCriticals.put(Long.valueOf(0x97), "ISGaussRifle");
-        clanCriticals.put(Long.valueOf(0x98), "ISLargeXPulseLaser");
-        clanCriticals.put(Long.valueOf(0x99), "ISMediumXPulseLaser");
-        clanCriticals.put(Long.valueOf(0x9A), "ISSmallXPulseLaser");
-        clanCriticals.put(Long.valueOf(0x9B), "ISLBXAC2");
-        clanCriticals.put(Long.valueOf(0x9C), "ISLBXAC5");
-        clanCriticals.put(Long.valueOf(0x9D), "ISLBXAC10");
-        clanCriticals.put(Long.valueOf(0x9E), "ISLBXAC20");
-        clanCriticals.put(Long.valueOf(0x9F), "ISMachine Gun");
-        clanCriticals.put(Long.valueOf(0xA0), "ISLAC2");
-        clanCriticals.put(Long.valueOf(0xA1), "ISLAC5");
+        clanCriticals.put(0x71L, "CLStreakLRM5");
+        clanCriticals.put(0x72L, "CLStreakLRM10");
+        clanCriticals.put(0x73L, "CLStreakLRM15");
+        clanCriticals.put(0x74L, "CLStreakLRM20");
+        clanCriticals.put(0x75L, "CLGrenadeLauncher");
+        clanCriticals.put(0x76L, "CLLRM5 (I-OS)");
+        clanCriticals.put(0x77L, "CLLRM10 (I-OS)");
+        clanCriticals.put(0x78L, "CLLRM15 (I-OS)");
+        clanCriticals.put(0x79L, "CLLRM20 (I-OS)");
+        clanCriticals.put(0x7aL, "CLSRM2 (I-OS)");
+        clanCriticals.put(0x7bL, "CLSRM4 (I-OS)");
+        clanCriticals.put(0x7cL, "CLSRM6 (I=OS)");
+        clanCriticals.put(0x7dL, "CLStreakSRM2 (I-OS)");
+        clanCriticals.put(0x7eL, "CLStreakSRM4 (I-OS)");
+        clanCriticals.put(0x7fL, "CLStreakSRM6 (I=OS)");
+        clanCriticals.put(0x80L, "CLHeavyLargeLaser");
+        clanCriticals.put(0x81L, "CLHeavyMediumLaser");
+        clanCriticals.put(0x82L, "CLHeavySmallLaser");
+        clanCriticals.put(0x83L, "ISERLargeLaser");
+        clanCriticals.put(0x84L, "ISERPPC");
+        clanCriticals.put(0x85L, "ISFlamer");
+        clanCriticals.put(0x86L, "ISLaserAMS");
+        clanCriticals.put(0x87L, "ISLargeLaser");
+        clanCriticals.put(0x88L, "ISMediumLaser");
+        clanCriticals.put(0x89L, "ISSmallLaser");
+        clanCriticals.put(0x8AL, "ISPPC");
+        clanCriticals.put(0x8BL, "ISLargePulseLaser");
+        clanCriticals.put(0x8CL, "ISMediumPulseLaser");
+        clanCriticals.put(0x8DL, "ISSmallPulseLaser");
+        clanCriticals.put(0x8EL, "ISAC2");
+        clanCriticals.put(0x8FL, "ISAC5");
+        clanCriticals.put(0x90L, "ISAC10");
+        clanCriticals.put(0x91L, "ISAC20");
+        clanCriticals.put(0x92L, "ISAntiMissileSystem");
+        clanCriticals.put(0x93L, "Long Tom Cannon");
+        clanCriticals.put(0x94L, "Sniper Cannon");
+        clanCriticals.put(0x95L, "Thumper Cannon");
+        clanCriticals.put(0x96L, "ISLightGaussRifle");
+        clanCriticals.put(0x97L, "ISGaussRifle");
+        clanCriticals.put(0x98L, "ISLargeXPulseLaser");
+        clanCriticals.put(0x99L, "ISMediumXPulseLaser");
+        clanCriticals.put(0x9AL, "ISSmallXPulseLaser");
+        clanCriticals.put(0x9BL, "ISLBXAC2");
+        clanCriticals.put(0x9CL, "ISLBXAC5");
+        clanCriticals.put(0x9DL, "ISLBXAC10");
+        clanCriticals.put(0x9EL, "ISLBXAC20");
+        clanCriticals.put(0x9FL, "ISMachine Gun");
+        clanCriticals.put(0xA0L, "ISLAC2");
+        clanCriticals.put(0xA1L, "ISLAC5");
 
-        clanCriticals.put(Long.valueOf(0xA3), "ISPPCCapacitor"); // HMP uses this
-        // code for
-        // ERPPC
-        clanCriticals.put(Long.valueOf(0xA4), "ISUltraAC2");
-        clanCriticals.put(Long.valueOf(0xA5), "ISUltraAC5");
-        clanCriticals.put(Long.valueOf(0xA6), "ISUltraAC10");
-        clanCriticals.put(Long.valueOf(0xA7), "ISUltraAC20");
-        clanCriticals.put(Long.valueOf(0xA8), "CLMicroPulseLaser");
-        clanCriticals.put(Long.valueOf(0xA9), "ISPPCCapacitor"); // HMP uses this
-        // code for PPC
+        clanCriticals.put(0xA3L, "ISPPCCapacitor"); // HMP uses this code for ERPPC
+        clanCriticals.put(0xA4L, "ISUltraAC2");
+        clanCriticals.put(0xA5L, "ISUltraAC5");
+        clanCriticals.put(0xA6L, "ISUltraAC10");
+        clanCriticals.put(0xA7L, "ISUltraAC20");
+        clanCriticals.put(0xA8L, "CLMicroPulseLaser");
+        clanCriticals.put(0xA9L, "ISPPCCapacitor"); // HMP uses this code for PPC
 
-        clanCriticals.put(Long.valueOf(0xAA), "ISERMediumLaser");
-        clanCriticals.put(Long.valueOf(0xAB), "ISERSmallLaser");
-        clanCriticals.put(Long.valueOf(0xAC), "ISAntiPersonnelPod");
+        clanCriticals.put(0xAAL, "ISERMediumLaser");
+        clanCriticals.put(0xABL, "ISERSmallLaser");
+        clanCriticals.put(0xACL, "ISAntiPersonnelPod");
 
-        clanCriticals.put(Long.valueOf(0xAD), "CLLightMG");
-        clanCriticals.put(Long.valueOf(0xAE), "CLHeavyMG");
-        clanCriticals.put(Long.valueOf(0xAF), "CLLightActiveProbe");
+        clanCriticals.put(0xADL, "CLLightMG");
+        clanCriticals.put(0xAEL, "CLHeavyMG");
+        clanCriticals.put(0xAFL, "CLLightActiveProbe");
 
-        clanCriticals.put(Long.valueOf(0xB0), "ISLRM5");
-        clanCriticals.put(Long.valueOf(0xB1), "ISLRM10");
-        clanCriticals.put(Long.valueOf(0xB2), "ISLRM15");
-        clanCriticals.put(Long.valueOf(0xB3), "ISLRM20");
-        clanCriticals.put(Long.valueOf(0xB4), "CLLightTAG");
-        clanCriticals.put(Long.valueOf(0xCF), "Thunderbolt (OS)");
-        clanCriticals.put(Long.valueOf(0xB6), "ISImprovedNarc");
-        clanCriticals.put(Long.valueOf(0xB7), "ISSRM2");
-        clanCriticals.put(Long.valueOf(0xB8), "ISSRM4");
-        clanCriticals.put(Long.valueOf(0xB9), "ISSRM6");
-        clanCriticals.put(Long.valueOf(0xBA), "ISStreakSRM2");
-        clanCriticals.put(Long.valueOf(0xBB), "ISStreakSRM4");
-        clanCriticals.put(Long.valueOf(0xBC), "ISStreakSRM6");
-        clanCriticals.put(Long.valueOf(0xBD), "ISThunderbolt5");
-        clanCriticals.put(Long.valueOf(0xBE), "ISThunderbolt10");
-        clanCriticals.put(Long.valueOf(0xBF), "ISThunderbolt15");
-        clanCriticals.put(Long.valueOf(0xC0), "ISThunderbolt20");
+        clanCriticals.put(0xB0L, "ISLRM5");
+        clanCriticals.put(0xB1L, "ISLRM10");
+        clanCriticals.put(0xB2L, "ISLRM15");
+        clanCriticals.put(0xB3L, "ISLRM20");
+        clanCriticals.put(0xB4L, "CLLightTAG");
+        clanCriticals.put(0xCFL, "Thunderbolt (OS)");
+        clanCriticals.put(0xB6L, "ISImprovedNarc");
+        clanCriticals.put(0xB7L, "ISSRM2");
+        clanCriticals.put(0xB8L, "ISSRM4");
+        clanCriticals.put(0xB9L, "ISSRM6");
+        clanCriticals.put(0xBAL, "ISStreakSRM2");
+        clanCriticals.put(0xBBL, "ISStreakSRM4");
+        clanCriticals.put(0xBCL, "ISStreakSRM6");
+        clanCriticals.put(0xBDL, "ISThunderbolt5");
+        clanCriticals.put(0xBEL, "ISThunderbolt10");
+        clanCriticals.put(0xBFL, "ISThunderbolt15");
+        clanCriticals.put(0xC0L, "ISThunderbolt20");
 
-        clanCriticals.put(Long.valueOf(0xC2), "ISAngelECMSuite");
-        clanCriticals.put(Long.valueOf(0xC3), "ISBeagleActiveProbe");
-        clanCriticals.put(Long.valueOf(0xC4), "ISBloodhoundActiveProbe");
-        clanCriticals.put(Long.valueOf(0xC5), "ISC3MasterComputer");
-        clanCriticals.put(Long.valueOf(0xC6), "ISC3SlaveUnit");
-        clanCriticals.put(Long.valueOf(0xC7), "ISImprovedC3CPU");
-        clanCriticals.put(Long.valueOf(0xC8), "ISGuardianECM");
-        clanCriticals.put(Long.valueOf(0xC9), "ISNarcBeacon");
-        clanCriticals.put(Long.valueOf(0xCA), "ISTAG");
+        clanCriticals.put(0xC2L, "ISAngelECMSuite");
+        clanCriticals.put(0xC3L, "ISBeagleActiveProbe");
+        clanCriticals.put(0xC4L, "ISBloodhoundActiveProbe");
+        clanCriticals.put(0xC5L, "ISC3MasterComputer");
+        clanCriticals.put(0xC6L, "ISC3SlaveUnit");
+        clanCriticals.put(0xC7L, "ISImprovedC3CPU");
+        clanCriticals.put(0xC8L, "ISGuardianECM");
+        clanCriticals.put(0xC9L, "ISNarcBeacon");
+        clanCriticals.put(0xCAL, "ISTAG");
 
-        clanCriticals.put(Long.valueOf(0xCB), "ISLRM5 (OS)");
-        clanCriticals.put(Long.valueOf(0xCC), "ISLRM10 (OS)");
-        clanCriticals.put(Long.valueOf(0xCD), "ISLRM15 (OS)");
-        clanCriticals.put(Long.valueOf(0xCE), "ISLRM20 (OS)");
-        clanCriticals.put(Long.valueOf(0xCF), "ISSRM2 (OS)");
-        clanCriticals.put(Long.valueOf(0xD0), "ISSRM4 (OS)");
-        clanCriticals.put(Long.valueOf(0xD1), "ISSRM6 (OS)");
-        clanCriticals.put(Long.valueOf(0xD2), "ISStreakSRM2 (OS)");
-        clanCriticals.put(Long.valueOf(0xD3), "ISStreakSRM4 (OS)");
-        clanCriticals.put(Long.valueOf(0xD4), "ISStreakSRM6 (OS)");
-        clanCriticals.put(Long.valueOf(0xD5), "ISVehicleFlamer");
-        clanCriticals.put(Long.valueOf(0xD6), "ISLongTomArtillery");
-        clanCriticals.put(Long.valueOf(0xD7), "ISSniperArtillery");
-        clanCriticals.put(Long.valueOf(0xD8), "ISThumperArtillery");
-        clanCriticals.put(Long.valueOf(0xD9), "ISMRM10");
-        clanCriticals.put(Long.valueOf(0xDA), "ISMRM20");
-        clanCriticals.put(Long.valueOf(0xDB), "ISMRM30");
-        clanCriticals.put(Long.valueOf(0xDC), "ISMRM40");
-        clanCriticals.put(Long.valueOf(0xDD), "Grenade Launcher");
-        clanCriticals.put(Long.valueOf(0xDE), "ISMRM10 (OS)");
-        clanCriticals.put(Long.valueOf(0xDF), "ISMRM20 (OS)");
-        clanCriticals.put(Long.valueOf(0xE0), "ISMRM30 (OS)");
-        clanCriticals.put(Long.valueOf(0xE1), "ISMRM40 (OS)");
-        clanCriticals.put(Long.valueOf(0xE2), "ISLRTorpedo5");
-        clanCriticals.put(Long.valueOf(0xE3), "ISLRTorpedo10");
-        clanCriticals.put(Long.valueOf(0xE4), "ISLRTorpedo15");
-        clanCriticals.put(Long.valueOf(0xE5), "ISLRTorpedo20");
-        clanCriticals.put(Long.valueOf(0xE6), "ISSRT2");
-        clanCriticals.put(Long.valueOf(0xE7), "ISSRT4");
-        clanCriticals.put(Long.valueOf(0xE8), "ISSRT6");
-        clanCriticals.put(Long.valueOf(0xE9), "ISLRM5 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xEA), "ISLRM10 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xEB), "ISLRM15 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xEC), "ISLRM20 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xED), "ISSRM2 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xEE), "ISSRM4 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xEf), "ISSRM6 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF0), "ISStreakSRM2 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF1), "ISStreakSRM4 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF2), "ISStreakSRM6 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF3), "ISMRM10 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF4), "ISMRM20 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF5), "ISMRM30 (I-OS)");
-        clanCriticals.put(Long.valueOf(0xF6), "ISMRM40 (I-OS)");
+        clanCriticals.put(0xCBL, "ISLRM5 (OS)");
+        clanCriticals.put(0xCCL, "ISLRM10 (OS)");
+        clanCriticals.put(0xCDL, "ISLRM15 (OS)");
+        clanCriticals.put(0xCEL, "ISLRM20 (OS)");
+        clanCriticals.put(0xD0L, "ISSRM4 (OS)");
+        clanCriticals.put(0xD1L, "ISSRM6 (OS)");
+        clanCriticals.put(0xD2L, "ISStreakSRM2 (OS)");
+        clanCriticals.put(0xD3L, "ISStreakSRM4 (OS)");
+        clanCriticals.put(0xD4L, "ISStreakSRM6 (OS)");
+        clanCriticals.put(0xD5L, "ISVehicleFlamer");
+        clanCriticals.put(0xD6L, "ISLongTomArtillery");
+        clanCriticals.put(0xD7L, "ISSniperArtillery");
+        clanCriticals.put(0xD8L, "ISThumperArtillery");
+        clanCriticals.put(0xD9L, "ISMRM10");
+        clanCriticals.put(0xDAL, "ISMRM20");
+        clanCriticals.put(0xDBL, "ISMRM30");
+        clanCriticals.put(0xDCL, "ISMRM40");
+        clanCriticals.put(0xDDL, "Grenade Launcher");
+        clanCriticals.put(0xDEL, "ISMRM10 (OS)");
+        clanCriticals.put(0xDFL, "ISMRM20 (OS)");
+        clanCriticals.put(0xE0L, "ISMRM30 (OS)");
+        clanCriticals.put(0xE1L, "ISMRM40 (OS)");
+        clanCriticals.put(0xE2L, "ISLRTorpedo5");
+        clanCriticals.put(0xE3L, "ISLRTorpedo10");
+        clanCriticals.put(0xE4L, "ISLRTorpedo15");
+        clanCriticals.put(0xE5L, "ISLRTorpedo20");
+        clanCriticals.put(0xE6L, "ISSRT2");
+        clanCriticals.put(0xE7L, "ISSRT4");
+        clanCriticals.put(0xE8L, "ISSRT6");
+        clanCriticals.put(0xE9L, "ISLRM5 (I-OS)");
+        clanCriticals.put(0xEAL, "ISLRM10 (I-OS)");
+        clanCriticals.put(0xEBL, "ISLRM15 (I-OS)");
+        clanCriticals.put(0xECL, "ISLRM20 (I-OS)");
+        clanCriticals.put(0xEDL, "ISSRM2 (I-OS)");
+        clanCriticals.put(0xEEL, "ISSRM4 (I-OS)");
+        clanCriticals.put(0xEfL, "ISSRM6 (I-OS)");
+        clanCriticals.put(0xF0L, "ISStreakSRM2 (I-OS)");
+        clanCriticals.put(0xF1L, "ISStreakSRM4 (I-OS)");
+        clanCriticals.put(0xF2L, "ISStreakSRM6 (I-OS)");
+        clanCriticals.put(0xF3L, "ISMRM10 (I-OS)");
+        clanCriticals.put(0xF4L, "ISMRM20 (I-OS)");
+        clanCriticals.put(0xF5L, "ISMRM30 (I-OS)");
+        clanCriticals.put(0xF6L, "ISMRM40 (I-OS)");
 
         // clanCriticals.put(Long.valueOf(0x01ce), "CLAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d0), "CLAMS Ammo");
+        clanCriticals.put(0x01d0L, "CLAMS Ammo");
         // clanCriticals.put(Long.valueOf(0x01cf), "CLAC5 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d1), "CLGauss Ammo");
-        clanCriticals.put(Long.valueOf(0x01d2), "CLLBXAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d3), "CLLBXAC5 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d4), "CLLBXAC10 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d5), "CLLBXAC20 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d6), "CLMG Ammo");
-        clanCriticals.put(Long.valueOf(0x01d7), "CLUltraAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d8), "CLUltraAC5 Ammo");
-        clanCriticals.put(Long.valueOf(0x01d9), "CLUltraAC10 Ammo");
-        clanCriticals.put(Long.valueOf(0x01da), "CLUltraAC20 Ammo");
-        clanCriticals.put(Long.valueOf(0x01db), "CLLRM5 Ammo");
-        clanCriticals.put(Long.valueOf(0x01dc), "CLLRM10 Ammo");
-        clanCriticals.put(Long.valueOf(0x01dd), "CLLRM15 Ammo");
-        clanCriticals.put(Long.valueOf(0x01de), "CLLRM20 Ammo");
-        clanCriticals.put(Long.valueOf(0x01df), "CLSRM2 Ammo");
-        clanCriticals.put(Long.valueOf(0x01e0), "CLSRM4 Ammo");
-        clanCriticals.put(Long.valueOf(0x01e1), "CLSRM6 Ammo");
-        clanCriticals.put(Long.valueOf(0x01e2), "CLStreakSRM2 Ammo");
-        clanCriticals.put(Long.valueOf(0x01e3), "CLStreakSRM4 Ammo");
-        clanCriticals.put(Long.valueOf(0x01e4), "CLStreakSRM6 Ammo");
-        clanCriticals.put(Long.valueOf(0x01e5), "CLArrowIV Ammo");
-        clanCriticals.put(Long.valueOf(0x01e9), "CLNarc Pods");
+        clanCriticals.put(0x01d1L, "CLGauss Ammo");
+        clanCriticals.put(0x01d2L, "CLLBXAC2 Ammo");
+        clanCriticals.put(0x01d3L, "CLLBXAC5 Ammo");
+        clanCriticals.put(0x01d4L, "CLLBXAC10 Ammo");
+        clanCriticals.put(0x01d5L, "CLLBXAC20 Ammo");
+        clanCriticals.put(0x01d6L, "CLMG Ammo");
+        clanCriticals.put(0x01d7L, "CLUltraAC2 Ammo");
+        clanCriticals.put(0x01d8L, "CLUltraAC5 Ammo");
+        clanCriticals.put(0x01d9L, "CLUltraAC10 Ammo");
+        clanCriticals.put(0x01daL, "CLUltraAC20 Ammo");
+        clanCriticals.put(0x01dbL, "CLLRM5 Ammo");
+        clanCriticals.put(0x01dcL, "CLLRM10 Ammo");
+        clanCriticals.put(0x01ddL, "CLLRM15 Ammo");
+        clanCriticals.put(0x01deL, "CLLRM20 Ammo");
+        clanCriticals.put(0x01dfL, "CLSRM2 Ammo");
+        clanCriticals.put(0x01e0L, "CLSRM4 Ammo");
+        clanCriticals.put(0x01e1L, "CLSRM6 Ammo");
+        clanCriticals.put(0x01e2L, "CLStreakSRM2 Ammo");
+        clanCriticals.put(0x01e3L, "CLStreakSRM4 Ammo");
+        clanCriticals.put(0x01e4L, "CLStreakSRM6 Ammo");
+        clanCriticals.put(0x01e5L, "CLArrowIV Ammo");
+        clanCriticals.put(0x01e9L, "CLNarc Pods");
         // clanCriticals.put(Long.valueOf(0x0215), "CLFlamer Ammo");
 
-        clanCriticals.put(Long.valueOf(0x01f0), "CLLRM5 Ammo");
-        clanCriticals.put(Long.valueOf(0x01f1), "CLLRM10 Ammo");
-        clanCriticals.put(Long.valueOf(0x01f2), "CLLRM15 Ammo");
-        clanCriticals.put(Long.valueOf(0x01f3), "CLLRM20 Ammo");
-        clanCriticals.put(Long.valueOf(0x01f6), "CLVehicleFlamer Ammo");
-        clanCriticals.put(Long.valueOf(0x01f7), "CLLongTom Ammo");
-        clanCriticals.put(Long.valueOf(0x01f8), "CLSniper Ammo");
-        clanCriticals.put(Long.valueOf(0x01f9), "CLThumper Ammo");
-        clanCriticals.put(Long.valueOf(0x01fa), "CLLRTorpedo5 Ammo");
-        clanCriticals.put(Long.valueOf(0x01fb), "CLLRTorpedo10 Ammo");
-        clanCriticals.put(Long.valueOf(0x01fc), "CLLRTorpedo15 Ammo");
-        clanCriticals.put(Long.valueOf(0x01fd), "CLLRTorpedo20 Ammo");
-        clanCriticals.put(Long.valueOf(0x01fe), "CLSRT2 Ammo");
-        clanCriticals.put(Long.valueOf(0x01ff), "CLSRT4 Ammo");
-        clanCriticals.put(Long.valueOf(0x0200), "CLSRT6 Ammo");
-        clanCriticals.put(Long.valueOf(0x0201), "CLStreakLRM5 Ammo");
-        clanCriticals.put(Long.valueOf(0x0202), "CLStreakLRM10 Ammo");
-        clanCriticals.put(Long.valueOf(0x0203), "CLStreakLRM15 Ammo");
-        clanCriticals.put(Long.valueOf(0x0204), "CLStreakLRM20 Ammo");
+        clanCriticals.put(0x01f0L, "CLLRM5 Ammo");
+        clanCriticals.put(0x01f1L, "CLLRM10 Ammo");
+        clanCriticals.put(0x01f2L, "CLLRM15 Ammo");
+        clanCriticals.put(0x01f3L, "CLLRM20 Ammo");
+        clanCriticals.put(0x01f6L, "CLVehicleFlamer Ammo");
+        clanCriticals.put(0x01f7L, "CLLongTom Ammo");
+        clanCriticals.put(0x01f8L, "CLSniper Ammo");
+        clanCriticals.put(0x01f9L, "CLThumper Ammo");
+        clanCriticals.put(0x01faL, "CLLRTorpedo5 Ammo");
+        clanCriticals.put(0x01fbL, "CLLRTorpedo10 Ammo");
+        clanCriticals.put(0x01fcL, "CLLRTorpedo15 Ammo");
+        clanCriticals.put(0x01fdL, "CLLRTorpedo20 Ammo");
+        clanCriticals.put(0x01feL, "CLSRT2 Ammo");
+        clanCriticals.put(0x01ffL, "CLSRT4 Ammo");
+        clanCriticals.put(0x0200L, "CLSRT6 Ammo");
+        clanCriticals.put(0x0201L, "CLStreakLRM5 Ammo");
+        clanCriticals.put(0x0202L, "CLStreakLRM10 Ammo");
+        clanCriticals.put(0x0203L, "CLStreakLRM15 Ammo");
+        clanCriticals.put(0x0204L, "CLStreakLRM20 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x021E), "ISAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x021F), "ISAC5 Ammo");
-        clanCriticals.put(Long.valueOf(0x0220), "ISAC10 Ammo");
-        clanCriticals.put(Long.valueOf(0x0221), "ISAC20 Ammo");
-        clanCriticals.put(Long.valueOf(0x0222), "ISAMS Ammo");
-        clanCriticals.put(Long.valueOf(0x0223), "Long Tom Cannon Ammo");
-        clanCriticals.put(Long.valueOf(0x0224), "Sniper Cannon Ammo");
-        clanCriticals.put(Long.valueOf(0x0225), "Thumper Cannon Ammo");
-        clanCriticals.put(Long.valueOf(0x0226), "ISLightGauss Ammo");
-        clanCriticals.put(Long.valueOf(0x0227), "ISGauss Ammo");
+        clanCriticals.put(0x021EL, "ISAC2 Ammo");
+        clanCriticals.put(0x021FL, "ISAC5 Ammo");
+        clanCriticals.put(0x0220L, "ISAC10 Ammo");
+        clanCriticals.put(0x0221L, "ISAC20 Ammo");
+        clanCriticals.put(0x0222L, "ISAMS Ammo");
+        clanCriticals.put(0x0223L, "Long Tom Cannon Ammo");
+        clanCriticals.put(0x0224L, "Sniper Cannon Ammo");
+        clanCriticals.put(0x0225L, "Thumper Cannon Ammo");
+        clanCriticals.put(0x0226L, "ISLightGauss Ammo");
+        clanCriticals.put(0x0227L, "ISGauss Ammo");
         // clanCriticals.put(Long.valueOf(0x0228), "CLSRTorpedo6 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x022B), "ISLBXAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x022C), "ISLBXAC5 Ammo");
-        clanCriticals.put(Long.valueOf(0x022D), "ISLBXAC10 Ammo");
-        clanCriticals.put(Long.valueOf(0x022E), "ISLBXAC20 Ammo");
-        clanCriticals.put(Long.valueOf(0x022F), "ISMG Ammo");
-        clanCriticals.put(Long.valueOf(0x0230), "ISLAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x0231), "ISLAC5 Ammo");
+        clanCriticals.put(0x022BL, "ISLBXAC2 Ammo");
+        clanCriticals.put(0x022CL, "ISLBXAC5 Ammo");
+        clanCriticals.put(0x022DL, "ISLBXAC10 Ammo");
+        clanCriticals.put(0x022EL, "ISLBXAC20 Ammo");
+        clanCriticals.put(0x022FL, "ISMG Ammo");
+        clanCriticals.put(0x0230L, "ISLAC2 Ammo");
+        clanCriticals.put(0x0231L, "ISLAC5 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x0234), "ISUltraAC2 Ammo");
-        clanCriticals.put(Long.valueOf(0x0235), "ISUltraAC5 Ammo");
-        clanCriticals.put(Long.valueOf(0x0236), "ISUltraAC10 Ammo");
-        clanCriticals.put(Long.valueOf(0x0237), "ISUltraAC20 Ammo");
+        clanCriticals.put(0x0234L, "ISUltraAC2 Ammo");
+        clanCriticals.put(0x0235L, "ISUltraAC5 Ammo");
+        clanCriticals.put(0x0236L, "ISUltraAC10 Ammo");
+        clanCriticals.put(0x0237L, "ISUltraAC20 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x023d), "CLLightMG Ammo");
-        clanCriticals.put(Long.valueOf(0x023e), "CLHeavyMG Ammo");
+        clanCriticals.put(0x023dL, "CLLightMG Ammo");
+        clanCriticals.put(0x023eL, "CLHeavyMG Ammo");
 
-        clanCriticals.put(Long.valueOf(0x0240), "ISLRM5 Ammo");
-        clanCriticals.put(Long.valueOf(0x0241), "ISLRM10 Ammo");
-        clanCriticals.put(Long.valueOf(0x0242), "ISLRM15 Ammo");
-        clanCriticals.put(Long.valueOf(0x0243), "ISLRM20 Ammo");
+        clanCriticals.put(0x0240L, "ISLRM5 Ammo");
+        clanCriticals.put(0x0241L, "ISLRM10 Ammo");
+        clanCriticals.put(0x0242L, "ISLRM15 Ammo");
+        clanCriticals.put(0x0243L, "ISLRM20 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x0246), "ISiNarc Pods");
-        clanCriticals.put(Long.valueOf(0x0247), "ISSRM2 Ammo");
-        clanCriticals.put(Long.valueOf(0x0248), "ISSRM4 Ammo");
-        clanCriticals.put(Long.valueOf(0x0249), "ISSRM6 Ammo");
-        clanCriticals.put(Long.valueOf(0x024A), "ISStreakSRM2 Ammo");
-        clanCriticals.put(Long.valueOf(0x024B), "ISStreakSRM4 Ammo");
-        clanCriticals.put(Long.valueOf(0x024C), "ISStreakSRM6 Ammo");
-        clanCriticals.put(Long.valueOf(0x024D), "ISThunderbolt5 Ammo");
-        clanCriticals.put(Long.valueOf(0x024E), "ISThunderbolt10 Ammo");
-        clanCriticals.put(Long.valueOf(0x024F), "ISThunderbolt15 Ammo");
-        clanCriticals.put(Long.valueOf(0x0250), "ISThunderbolt20 Ammo");
+        clanCriticals.put(0x0246L, "ISiNarc Pods");
+        clanCriticals.put(0x0247L, "ISSRM2 Ammo");
+        clanCriticals.put(0x0248L, "ISSRM4 Ammo");
+        clanCriticals.put(0x0249L, "ISSRM6 Ammo");
+        clanCriticals.put(0x024AL, "ISStreakSRM2 Ammo");
+        clanCriticals.put(0x024BL, "ISStreakSRM4 Ammo");
+        clanCriticals.put(0x024CL, "ISStreakSRM6 Ammo");
+        clanCriticals.put(0x024DL, "ISThunderbolt5 Ammo");
+        clanCriticals.put(0x024EL, "ISThunderbolt10 Ammo");
+        clanCriticals.put(0x024FL, "ISThunderbolt15 Ammo");
+        clanCriticals.put(0x0250L, "ISThunderbolt20 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x0259), "ISNarc Pods");
+        clanCriticals.put(0x0259L, "ISNarc Pods");
 
-        clanCriticals.put(Long.valueOf(0x0265), "ISVehicleFlamer Ammo");
-        clanCriticals.put(Long.valueOf(0x0266), "ISLongTomArtillery Ammo");
-        clanCriticals.put(Long.valueOf(0x0267), "ISSniperArtillery Ammo");
-        clanCriticals.put(Long.valueOf(0x0268), "ISThumperArtillery Ammo");
-        clanCriticals.put(Long.valueOf(0x0269), "ISMRM10 Ammo");
-        clanCriticals.put(Long.valueOf(0x026A), "ISMRM20 Ammo");
-        clanCriticals.put(Long.valueOf(0x026B), "ISMRM30 Ammo");
-        clanCriticals.put(Long.valueOf(0x026C), "ISMRM40 Ammo");
+        clanCriticals.put(0x0265L, "ISVehicleFlamer Ammo");
+        clanCriticals.put(0x0266L, "ISLongTomArtillery Ammo");
+        clanCriticals.put(0x0267L, "ISSniperArtillery Ammo");
+        clanCriticals.put(0x0268L, "ISThumperArtillery Ammo");
+        clanCriticals.put(0x0269L, "ISMRM10 Ammo");
+        clanCriticals.put(0x026AL, "ISMRM20 Ammo");
+        clanCriticals.put(0x026BL, "ISMRM30 Ammo");
+        clanCriticals.put(0x026CL, "ISMRM40 Ammo");
 
-        clanCriticals.put(Long.valueOf(0x0272), "ISLRTorpedo15 Ammo");
-        clanCriticals.put(Long.valueOf(0x0273), "ISLRTorpedo20 Ammo");
-        clanCriticals.put(Long.valueOf(0x0274), "ISLRTorpedo5 Ammo");
-        clanCriticals.put(Long.valueOf(0x0275), "ISLRTorpedo10 Ammo");
-        clanCriticals.put(Long.valueOf(0x0276), "ISSRT4 Ammo");
-        clanCriticals.put(Long.valueOf(0x0277), "ISSRT2 Ammo");
-        clanCriticals.put(Long.valueOf(0x0278), "ISSRT6 Ammo");
+        clanCriticals.put(0x0272L, "ISLRTorpedo15 Ammo");
+        clanCriticals.put(0x0273L, "ISLRTorpedo20 Ammo");
+        clanCriticals.put(0x0274L, "ISLRTorpedo5 Ammo");
+        clanCriticals.put(0x0275L, "ISLRTorpedo10 Ammo");
+        clanCriticals.put(0x0276L, "ISSRT4 Ammo");
+        clanCriticals.put(0x0277L, "ISSRT2 Ammo");
+        clanCriticals.put(0x0278L, "ISSRT6 Ammo");
 
         // special for ammo mutator
         // 28c-28f = atm
-        criticals.put(Long.valueOf(0x10000028cL), "CLATM3 ER Ammo");
-        criticals.put(Long.valueOf(0x20000028cL), "CLATM3 HE Ammo");
-        criticals.put(Long.valueOf(0x10000028dL), "CLATM6 ER Ammo");
-        criticals.put(Long.valueOf(0x20000028dL), "CLATM6 HE Ammo");
-        criticals.put(Long.valueOf(0x10000028eL), "CLATM9 ER Ammo");
-        criticals.put(Long.valueOf(0x20000028eL), "CLATM9 HE Ammo");
-        criticals.put(Long.valueOf(0x10000028fL), "CLATM12 ER Ammo");
-        criticals.put(Long.valueOf(0x20000028fL), "CLATM12 HE Ammo");
+        criticals.put(0x10000028cL, "CLATM3 ER Ammo");
+        criticals.put(0x20000028cL, "CLATM3 HE Ammo");
+        criticals.put(0x10000028dL, "CLATM6 ER Ammo");
+        criticals.put(0x20000028dL, "CLATM6 HE Ammo");
+        criticals.put(0x10000028eL, "CLATM9 ER Ammo");
+        criticals.put(0x20000028eL, "CLATM9 HE Ammo");
+        criticals.put(0x10000028fL, "CLATM12 ER Ammo");
+        criticals.put(0x20000028fL, "CLATM12 HE Ammo");
         // 1db-1de = is
         // 1d2-1d5 = cl
         // 298-299 = thb
         // 22B-22E = IS on clan
         // 246-249 = clan on IS
-        isCriticals.put(Long.valueOf(0x1000001dbL), "ISLBXAC2 CL Ammo");
-        isCriticals.put(Long.valueOf(0x1000001dcL), "ISLBXAC5 CL Ammo");
-        isCriticals.put(Long.valueOf(0x1000001ddL), "ISLBXAC10 CL Ammo");
-        isCriticals.put(Long.valueOf(0x1000001deL), "ISLBXAC20 CL Ammo");
-        isCriticals.put(Long.valueOf(0x100000246L), "CLLBXAC2 CL Ammo");
-        isCriticals.put(Long.valueOf(0x100000247L), "CLLBXAC5 CL Ammo");
-        isCriticals.put(Long.valueOf(0x100000248L), "CLLBXAC10 CL Ammo");
-        isCriticals.put(Long.valueOf(0x100000249L), "CLLBXAC20 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x10000022bL), "ISLBXAC2 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x10000022cL), "ISLBXAC5 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x10000022dL), "ISLBXAC10 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x10000022eL), "ISLBXAC20 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x1000001d2L), "CLLBXAC2 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x1000001d3L), "CLLBXAC5 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x1000001d4L), "CLLBXAC10 CL Ammo");
-        clanCriticals.put(Long.valueOf(0x1000001d5L), "CLLBXAC20 CL Ammo");
-        criticals.put(Long.valueOf(0x100000298L), "ISLBXAC2 Ammo (THB)");
-        criticals.put(Long.valueOf(0x100000299L), "ISLBXAC5 Ammo (THB)");
-        criticals.put(Long.valueOf(0x10000029AL), "ISLBXAC20 Ammo (THB)");
+        isCriticals.put(0x1000001dbL, "ISLBXAC2 CL Ammo");
+        isCriticals.put(0x1000001dcL, "ISLBXAC5 CL Ammo");
+        isCriticals.put(0x1000001ddL, "ISLBXAC10 CL Ammo");
+        isCriticals.put(0x1000001deL, "ISLBXAC20 CL Ammo");
+        isCriticals.put(0x100000246L, "CLLBXAC2 CL Ammo");
+        isCriticals.put(0x100000247L, "CLLBXAC5 CL Ammo");
+        isCriticals.put(0x100000248L, "CLLBXAC10 CL Ammo");
+        isCriticals.put(0x100000249L, "CLLBXAC20 CL Ammo");
+        clanCriticals.put(0x10000022bL, "ISLBXAC2 CL Ammo");
+        clanCriticals.put(0x10000022cL, "ISLBXAC5 CL Ammo");
+        clanCriticals.put(0x10000022dL, "ISLBXAC10 CL Ammo");
+        clanCriticals.put(0x10000022eL, "ISLBXAC20 CL Ammo");
+        clanCriticals.put(0x1000001d2L, "CLLBXAC2 CL Ammo");
+        clanCriticals.put(0x1000001d3L, "CLLBXAC5 CL Ammo");
+        clanCriticals.put(0x1000001d4L, "CLLBXAC10 CL Ammo");
+        clanCriticals.put(0x1000001d5L, "CLLBXAC20 CL Ammo");
+        criticals.put(0x100000298L, "ISLBXAC2 Ammo (THB)");
+        criticals.put(0x100000299L, "ISLBXAC5 Ammo (THB)");
+        criticals.put(0x10000029AL, "ISLBXAC20 Ammo (THB)");
     }
 
     private String getCriticalName(long critical) {
@@ -1649,13 +1645,13 @@ public class HmpFile implements IMechLoader {
         // what the fourth is.
 
         short ammoCount = 0;
-        if (critical.longValue() > Short.MAX_VALUE) {
+        if (critical > Short.MAX_VALUE) {
             // Grab the ammo count from the third byte. It is stored as
             // an unsigned 8-bit number, so we'll fit it into a signed
             // 16-bit number.
-            ammoCount = (short) ((critical.longValue() >> 16) & 0xFF);
+            ammoCount = (short) ((critical >> 16) & 0xFF);
             // Mask off everything but the first two bytes.
-            critical = Long.valueOf(critical.longValue() & 0xFFFF);
+            critical = critical & 0xFFFF;
         }
 
         // At this point, the critical value is an unsigned integer.
@@ -1676,15 +1672,12 @@ public class HmpFile implements IMechLoader {
                 } else if (critical.intValue() == 0x17) {
                     tType = myomerTechType;
                 } else {
-                    // Mixed tech mechs lookup most equipment using their "base"
-                    // or
-                    // "preferred" technology type.
+                    // Mixed tech mechs lookup most equipment using their "base" or "preferred" technology type.
                     tType = mixedBaseTechType;
                 }
             }
 
-            // Attempt to lookup equipment using the appropriate
-            // tech type.
+            // Attempt to lookup equipment using the appropriate tech type.
             Hashtable<?, ?> techCriticals = (Hashtable<?, ?>) criticals.get(tType);
             if (techCriticals != null) {
                 critName = (String) techCriticals.get(critical);
@@ -1698,7 +1691,7 @@ public class HmpFile implements IMechLoader {
             critName += " (" + ammoCount + ")";
         }
 
-        if ((critName == null) && (critical.longValue() == 0)) {
+        if ((critName == null) && (critical == 0)) {
             return "-Empty-";
         }
 
@@ -1716,7 +1709,6 @@ public class HmpFile implements IMechLoader {
         return critName;
     }
 
-    /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
     /**
      * This function moves all "empty" slots to the end of a location's critical
      * list. MegaMek adds equipment to the first empty slot available in a
@@ -1724,7 +1716,7 @@ public class HmpFile implements IMechLoader {
      * location), will cause the file crits and MegaMek's crits to become out of
      * sync.
      */
-    private void compactCriticals(long[] criticals) {
+    private void compactCriticals(long... criticals) {
         for (int x = 0; x < criticals.length; x++) {
             int firstEmpty = -1;
             for (int slot = 0; slot < criticals.length; slot++) {
@@ -1744,10 +1736,8 @@ public class HmpFile implements IMechLoader {
         }
     }
 
-    /* BLOCK_END */
-
     public String getMtf() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String nl = "\r\n"; // DOS friendly
 
         // Write Output MTF
@@ -1802,10 +1792,7 @@ public class HmpFile implements IMechLoader {
             sb.append(" (").append(armorTechType).append(")");
         }
         sb.append(nl);
-        boolean isPatchwork = false;
-        if (armorType == ArmorType.PATCHWORK) {
-            isPatchwork = true;
-        }
+        boolean isPatchwork = armorType == ArmorType.PATCHWORK;
         sb.append("LA Armor:").append(laArmor);
         if (isPatchwork) {
             sb.append(" (").append(laArmorType).append(")");
@@ -1923,7 +1910,7 @@ public class HmpFile implements IMechLoader {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         if (args.length == 0) {
             System.out.println("Hmpread (Java Edition) version 1.3");
             System.out.println("--------------------------------------");
@@ -1938,8 +1925,8 @@ public class HmpFile implements IMechLoader {
             }
             return;
         }
-        for (int i = 0; i < args.length; i++) {
-            String filename = args[i];
+        for (String arg : args) {
+            String filename = arg;
             if (!filename.endsWith(".hmp")) {
                 System.out.println("Error: Input file must have Heavy Metal Pro extension '.hmp'");
                 System.out.println();
@@ -1951,29 +1938,18 @@ public class HmpFile implements IMechLoader {
                 }
                 return;
             }
-            HmpFile hmpFile = null;
-            try (InputStream is = new FileInputStream(args[i])) {
+            HmpFile hmpFile;
+            try (InputStream is = new FileInputStream(arg)) {
                 hmpFile = new HmpFile(is);
             } catch (Exception e) {
                 LogManager.getLogger().error("", e);
                 return;
             }
-            filename = filename.substring(0, filename.lastIndexOf(".hmp"));
-            filename += ".mtf";
-            BufferedWriter out = null;
-            try {
-                out = new BufferedWriter(new FileWriter(new File(filename)));
+            filename = filename.substring(0, filename.lastIndexOf(".hmp")) + ".mtf";
+            try (FileWriter fw = new FileWriter(filename); BufferedWriter out = new BufferedWriter(fw)) {
                 out.write(hmpFile.getMtf());
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
-            } finally {
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException ex) {
-                        // ignore
-                    }
-                }
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
         }
     }
@@ -2003,7 +1979,7 @@ abstract class HMPType {
             return false;
         }
         final HMPType other = (HMPType) obj;
-        return Objects.equals(name, other.name) && Objects.equals(id, other.id);
+        return Objects.equals(name, other.name) && (id == other.id);
     }
     
     @Override
@@ -2012,43 +1988,24 @@ abstract class HMPType {
     }
 }
 
-class DesignType extends HMPType {
-    public static final Hashtable<Integer, DesignType> types = new Hashtable<>();
-
-    public static final DesignType STANDARD = new DesignType("Standard", 1);
-    public static final DesignType MODIFIED = new DesignType("Modified", 2);
-    public static final DesignType CUSTOM = new DesignType("Custom", 3);
-
-    private DesignType(String name, int id) {
-        super(name, id);
-        types.put(Integer.valueOf(id), this);
-    }
-
-    public static DesignType getType(int i) {
-        return types.get(Integer.valueOf(i));
-    }
-}
-
 class ArmorType extends HMPType {
     public static final Hashtable<Integer, ArmorType> types = new Hashtable<>();
 
     public static final ArmorType STANDARD = new ArmorType("Standard", 0);
-    public static final ArmorType FERRO_FIBROUS = new ArmorType("Ferro-Fibrous", 1);
     public static final ArmorType REACTIVE = new ArmorType("Reactive", 2);
     public static final ArmorType REFLECTIVE = new ArmorType("Reflective", 3);
     public static final ArmorType HARDENED = new ArmorType("Hardened", 4);
     public static final ArmorType LIGHT_FERRO_FIBROUS = new ArmorType("Light Ferro-Fibrous", 5);
-    public static final ArmorType HEAVY_FERRO_FIBROUS = new ArmorType("Heavy Ferro-Fibrous", 6);
     public static final ArmorType PATCHWORK = new ArmorType("Patchwork", 7);
     public static final ArmorType STEALTH = new ArmorType("Stealth", 8);
 
     private ArmorType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static ArmorType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2064,11 +2021,11 @@ class EngineType extends HMPType {
 
     private EngineType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static EngineType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2082,11 +2039,11 @@ class HeatSinkType extends HMPType {
 
     private HeatSinkType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static HeatSinkType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2102,11 +2059,11 @@ class ChassisType extends HMPType {
 
     private ChassisType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static ChassisType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2114,18 +2071,17 @@ class InternalStructureType extends HMPType {
     public static final Hashtable<Integer, InternalStructureType> types = new Hashtable<>();
 
     public static final InternalStructureType STANDARD = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD), 0);
-    public static final InternalStructureType ENDO_STEEL = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL), 1);
     public static final InternalStructureType COMPOSITE = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE), 2);
     public static final InternalStructureType REINFORCED = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED), 3);
     public static final InternalStructureType UTILITY = new InternalStructureType("Utility", 4);
 
     private InternalStructureType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static InternalStructureType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2138,11 +2094,11 @@ class TechType extends HMPType {
 
     private TechType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static TechType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2152,15 +2108,14 @@ class MyomerType extends HMPType {
     public static final MyomerType STANDARD = new MyomerType("Standard", 0);
     public static final MyomerType TRIPLE_STRENGTH = new MyomerType("Triple-Strength", 1);
     public static final MyomerType MASC = new MyomerType("MASC", 2);
-    public static final MyomerType INDUSTRIAL_TRIPLE_STRENGTH = new MyomerType("Industrial Triple-Strength", 3);
 
     private MyomerType(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static MyomerType getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
 }
 
@@ -2168,27 +2123,19 @@ class WeaponLocation extends HMPType {
     public static final Hashtable<Integer, WeaponLocation> types = new Hashtable<>();
 
     public static final WeaponLocation LEFT_ARM = new WeaponLocation("Left Arm", 1);
-    public static final WeaponLocation LEFT_TORSO = new WeaponLocation("Left Torso", 2);
     public static final WeaponLocation LEFT_LEG = new WeaponLocation("Left Leg", 3);
-    public static final WeaponLocation RIGHT_ARM = new WeaponLocation("Right Arm", 4);
     public static final WeaponLocation RIGHT_TORSO = new WeaponLocation("Right Torso", 5);
-    public static final WeaponLocation RIGHT_LEG = new WeaponLocation("Right Leg", 6);
     public static final WeaponLocation HEAD = new WeaponLocation("Head", 7);
-    public static final WeaponLocation CENTER_TORSO = new WeaponLocation("Center Torso", 8);
-    public static final WeaponLocation LEFT_TORSO_R = new WeaponLocation("Left Torso (R)", 11);
-    public static final WeaponLocation LEFT_LEG_R = new WeaponLocation("Left Leg (R)", 12);
-    public static final WeaponLocation RIGHT_TORSO_R = new WeaponLocation("Right Torso (R)", 14);
     public static final WeaponLocation RIGHT_LEG_R = new WeaponLocation("Right Leg (R)", 15);
     public static final WeaponLocation HEAD_R = new WeaponLocation("Head (R)", 16);
     public static final WeaponLocation CENTER_TORSO_R = new WeaponLocation("Center Torso (R)", 17);
 
     private WeaponLocation(String name, int id) {
         super(name, id);
-        types.put(Integer.valueOf(id), this);
+        types.put(id, this);
     }
 
     public static WeaponLocation getType(int i) {
-        return types.get(Integer.valueOf(i));
+        return types.get(i);
     }
-
 }

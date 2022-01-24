@@ -1,19 +1,15 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 13, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.other;
 
@@ -28,17 +24,11 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 13, 2004
  */
 public class ISCenturionWeaponSystem extends EnergyWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5355363156621487309L;
 
-    /**
-     *
-     */
     public ISCenturionWeaponSystem() {
         super();
         name = "Centurion Weapon System";
@@ -61,14 +51,13 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         waterLongRange = 10;
         waterExtremeRange = 14;
         maxRange = RANGE_MED;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_CWS);
-        rulesRefs = "85,IO";
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_CWS);
+        rulesRefs = "85, IO";
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_X)
-        .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
-        .setISApproximate(true, false, false, true, false)
-        .setPrototypeFactions(F_TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setAvailability(RATING_F, RATING_F, RATING_F, RATING_X)
+                .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
+                .setISApproximate(true, false, false, true, false)
+                .setPrototypeFactions(F_TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
     
     /*
@@ -80,9 +69,8 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new CenturionWeaponSystemHandler(toHit, waa, game, server);
-    }    
-
+    }
 }

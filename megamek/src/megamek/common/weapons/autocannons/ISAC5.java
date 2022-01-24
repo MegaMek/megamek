@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Sep 25, 2004
- */
 package megamek.common.weapons.autocannons;
 
 /**
  * @author Andrew Hunter
+ * @since Sep 25, 2004
  */
 public class ISAC5 extends ACWeapon {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8756042527483383101L;
 
-	/**
-	 * 
-	 */
 	public ISAC5() {
 		super();
 		name = "AC/5";
@@ -38,6 +30,7 @@ public class ISAC5 extends ACWeapon {
 		addLookupName("AutoCannon/5");
 		addLookupName("ISAC5");
 		addLookupName("IS Autocannon/5");
+		sortingName = "AC/05";
 		heat = 1;
 		damage = 5;
 		rackSize = 5;

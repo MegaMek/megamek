@@ -30,9 +30,6 @@ import megamek.server.Server;
  */
 public abstract class LRTWeapon extends MissileWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -7350712286691532142L;
 
     public LRTWeapon() {
@@ -50,14 +47,7 @@ public abstract class LRTWeapon extends MissileWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, Server server) {
@@ -81,5 +71,14 @@ public abstract class LRTWeapon extends MissileWeapon {
             removeMode("");
             removeMode("Indirect");
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS ";
+        }
+        return "LRT " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

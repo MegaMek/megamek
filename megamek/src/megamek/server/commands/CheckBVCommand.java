@@ -47,7 +47,7 @@ public class CheckBVCommand extends ServerCommand {
                 cb.append(" Enemy BV suppressed");
             } else {
                 cb.append(player.getBV()).append("/").append(player.getInitialBV());
-                cb.append(String.format(" (%1$3.2f%%)",percentage));
+                cb.append(String.format(" (%1$3.2f%%)", percentage));
             }
             server.sendServerChat(connId, cb.toString());
         }

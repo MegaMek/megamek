@@ -1082,22 +1082,16 @@ public class FireControl {
         }
 
         String ret = "";
-        final WeaponFireInfo guessInfo = new WeaponFireInfo(shooter,
-                                                            new EntityState(shooter),
-                                                            target,
-                                                            null,
-                                                            weapon,
-                                                            game,
-                                                            true,
-                                                            owner);
+        final WeaponFireInfo guessInfo = new WeaponFireInfo(shooter, new EntityState(shooter),
+                target, null, weapon, game, true, owner);
         final WeaponFireInfo accurateInfo = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
 
         if (guessInfo.getToHit().getValue() != accurateInfo.getToHit().getValue()) {
             ret += "Incorrect To Hit prediction, weapon " + weapon.getName() + " (" + shooter.getChassis() + " vs " +
                    target.getDisplayName() + ")" + ":\n";
-            ret += " Guess: " + Integer.toString(guessInfo.getToHit().getValue()) + " " +
+            ret += " Guess: " + guessInfo.getToHit().getValue() + " " +
                    guessInfo.getToHit().getDesc() + "\n";
-            ret += " Real:  " + Integer.toString(accurateInfo.getToHit().getValue()) + " " +
+            ret += " Real:  " + accurateInfo.getToHit().getValue() + " " +
                    accurateInfo.getToHit().getDesc() + "\n";
         }
         return ret;
@@ -1376,7 +1370,7 @@ public class FireControl {
             return 0;
         }
         final Entity entity = (Entity) target;
-        return getMaxDamageAtRange(entity,1,false,false);
+        return getMaxDamageAtRange(entity, 1, false, false);
     }
 
     /**

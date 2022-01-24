@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -131,9 +131,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     protected int lastTargetID = -1;
 
     protected AimedShotHandler ash;
-    
+
     protected boolean isStrafing = false;
-    
+
     /**
      * Keeps track of the Coords that are in a strafing run.
      */
@@ -550,6 +550,37 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                         jumpToTarget(false, true, true);
                     }
                 });
+
+        // Register the action for VIEW_ACTING_UNIT
+        controller.registerCommandAction(KeyCommandBind.VIEW_ACTING_UNIT.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.getBoardView().getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        if (!Objects.equals(ce(), clientgui.mechD.getCurrentEntity())
+                                && clientgui.mechD.isVisible()) {
+                            Entity en_Target = clientgui.mechD.getCurrentEntity();
+                            // Avoided using selectEntity(), to avoid centering on active unit
+                            clientgui.mechD.displayEntity(ce());
+                            clientgui.mechD.showPanel("weapons");
+                            clientgui.mechD.wPan.selectFirstWeapon();
+                            target(en_Target);
+                        }
+                    }
+                });
+
         // Register the action for NEXT_MODE
         controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
                 new CommandAction() {
@@ -665,11 +696,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             clearAttacks();
             refreshAll();
         }
-        
+
         if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
-        
+
         if (clientgui.getClient().isMyTurn()) {
             setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
         }
@@ -752,7 +783,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         } else {
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
-        
+
 
         if (GUIPreferences.getInstance().getBoolean("FiringSolutions")) {
             setFiringSolutions();
@@ -1051,7 +1082,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             //If we've cycled through all visible targets without finding a valid one, stop looping
             count++;
             if (count > visibleTargets.length) {
-            	return null;
+                return null;
             }
             // Store target
             result = visibleTargets[lastTargetID];
@@ -1211,7 +1242,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 }
             }
         }
-        
+
         // If the user picked a hex along the flight path, server needs to know
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
             Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(cen);
@@ -1279,26 +1310,26 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             }
         }
     }
-    
+
     /**
      * This pops up a menu allowing the user to choose one of several 
      * SPAs, and then performs the appropriate steps.
      */
     private void doActivateSpecialAbility() {
         Map<String, String> skillNames = new HashMap<>();
-        
-        if (canActivateBloodStalker() && (target != null)) {                
+
+        if (canActivateBloodStalker() && (target != null)) {
             skillNames.put("Blood Stalker", OptionsConstants.GUNNERY_BLOOD_STALKER);
         }
-        
-        String targetString = (target != null) ? 
+
+        String targetString = (target != null) ?
                 String.format("\nTarget: %s", target.getDisplayName()) : "";
-        
-        String input = (String) JOptionPane.showInputDialog(clientgui, 
-                String.format("Pick a Special Pilot Ability to activate.%s", targetString), 
-                "Activate Special Pilot Ability", 
+
+        String input = (String) JOptionPane.showInputDialog(clientgui,
+                String.format("Pick a Special Pilot Ability to activate.%s", targetString),
+                "Activate Special Pilot Ability",
                 JOptionPane.QUESTION_MESSAGE, null, skillNames.keySet().toArray(), null);
-        
+
         // unsafe, but since we're generating it right here, it should be fine.
         switch (skillNames.get(input)) {
             case OptionsConstants.GUNNERY_BLOOD_STALKER:
@@ -1308,17 +1339,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 ce().setBloodStalkerTarget(target.getTargetId());
                 break;
         }
-        
+
         updateActivateSPA();
     }
-    
+
     /**
      * Worker function that determines if we can activate the "blood stalker" ability
      */
     private boolean canActivateBloodStalker() {
         // can be activated if the entity can do it and haven't done it already 
         // and the target is something that can be blood-stalked
-        return ce().canActivateBloodStalker() &&
+        return (ce() != null) && ce().canActivateBloodStalker() &&
                 (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
                 attacks.stream().noneMatch(item -> item instanceof ActivateBloodStalkerAction);
     }
@@ -1348,16 +1379,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         // refresh weapon panel, as bth will have changed
         updateTarget();
     }
-    
+
     private void doStrafe() {
         target(null);
-        clearAttacks();        
+        clearAttacks();
         isStrafing = true;
         setStatusBarText(Messages
                 .getString("FiringDisplay.Strafing.StatusLabel"));
         refreshAll();
     }
-    
+
     private void updateStrafingTargets() {
         final Game game = clientgui.getClient().getGame();
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
@@ -1376,7 +1407,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 if (Compute.isInBuilding(game, t) && (t instanceof Infantry)) {
                     continue;
                 }
-                
+
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
                         Entity.LOC_NONE, AimingMode.NONE, true);
                 toHitBuff.append(t.getShortName() + ": ");
@@ -1387,7 +1418,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     setFireEnabled(false);
                 }
             }
-            Building bldg = game.getBoard().getBuildingAt(c); 
+            Building bldg = game.getBoard().getBuildingAt(c);
             if (bldg != null) {
                 Targetable t = new BuildingTarget(c, game.getBoard(), false);
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
@@ -1505,7 +1536,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (isStrafing) {
             for (Coords c : strafingCoords) {
                 targets.add(new HexTarget(c, Targetable.TYPE_HEX_CLEAR));
-                Building bldg = game.getBoard().getBuildingAt(c); 
+                Building bldg = game.getBoard().getBuildingAt(c);
                 if (bldg != null) {
                     targets.add(new BuildingTarget(c, game.getBoard(), false));
                 }
@@ -1521,10 +1552,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         } else {
             targets.add(target);
         }
-        
+
         boolean firstShot = true;
         for (Targetable t : targets) {
-        
+
             WeaponAttackAction waa;
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
                     || (mounted.getType() instanceof CapitalMissileWeapon
@@ -1556,7 +1587,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 AmmoType ammoType = (AmmoType) ammoMount.getType();
                 waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
                 waa.setAmmoCarrier(ammoMount.getEntity().getId());
-                if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && 
+                if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) &&
                         ((ammoType.getAmmoType() == AmmoType.T_LRM)
                         || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (ammoType.getAmmoType() == AmmoType.T_MML)))
@@ -1584,7 +1615,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
             // and add it into the game, temporarily
             game.addAction(waa);
-        
+
         }
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -1701,12 +1732,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         isStrafing = false;
         strafingCoords.clear();
         clientgui.getBoardView().clearStrafingCoords();
-        
+
         // We may not have an entity selected yet (race condition).
         if (ce() == null) {
             return;
         }
-        
+
         // remove attacks, set weapons available again
         Enumeration<AbstractEntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
@@ -1777,7 +1808,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             return;
         }
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
-        Mounted weapon = ce().getEquipment(weaponId); 
+        Mounted weapon = ce().getEquipment(weaponId);
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing;
@@ -1788,7 +1819,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             }
             facing = (facing + weapon.getFacing()) % 6;
             Coords c = ce().getPosition().translated(facing);
-            Targetable hexTarget = 
+            Targetable hexTarget =
                     new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
             // Ignore events that will be generated by the select/cursor calls
             setIgnoringEvents(true);
@@ -1882,7 +1913,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("FiringDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-            			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
+                    || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode()) {
@@ -1913,7 +1944,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             adaptFireModeEnabled(ce().getEquipment(weaponId));
         } else {
             setFireModeEnabled(false);
-        } 
+        }
 
         updateSearchlight();
         updateActivateSPA();
@@ -1948,7 +1979,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             isStrafing = true;
         }
     }
-    
+
     /**
      * Torso twist in the proper direction.
      */
@@ -2067,7 +2098,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
                 } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
-                    if ((targ instanceof Entity) 
+                    if ((targ instanceof Entity)
                             && Compute.isGroundToAir(ce(), targ)) {
                         Entity entTarg = (Entity) targ;
                         boolean alreadyShotAt = false;
@@ -2078,7 +2109,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                                 continue;
                             }
                             AttackAction aa = (AttackAction) action;
-                            if ((action.getEntityId() == cen) 
+                            if ((action.getEntityId() == cen)
                                     && (aa.getTargetId() == entTarg.getId())) {
                                 alreadyShotAt = true;
                             }
@@ -2110,7 +2141,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
-        
+
         if (clientgui.getClient().getGame().getPhase() == GamePhase.FIRING) {
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
@@ -2134,7 +2165,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() 
+        if (clientgui.getClient().getGame().getPhase()
                 == GamePhase.LOUNGE) {
             endMyTurn();
         }
@@ -2264,7 +2295,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             setStrafeEnabled(false);
         }
     }
-    
+
     private void updateActivateSPA() {
         setActivateSPAEnabled(canActivateBloodStalker());
     }
@@ -2313,12 +2344,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
     }
-    
+
     /**
      * Enables the mode button when mode switching is allowed
      * (always true except for LAMs with certain weapons) and
      * the weapon has modes. Disables otherwise.
-     *  
+     *
      * @param m The active weapon
      */
     protected void adaptFireModeEnabled(Mounted m) {
@@ -2343,13 +2374,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     protected void setStrafeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_STRAFE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_STRAFE.getCmd(), enabled);
-    }    
-    
+    }
+
     protected void setNextEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
     }
-    
+
     protected void setActivateSPAEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_ACTIVATE_SPA).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ACTIVATE_SPA.getCmd(), enabled);
@@ -2371,7 +2402,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if ((ce() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
             ce().setBloodStalkerTarget(Entity.NONE);
         }
-        clearAttacks();        
+        clearAttacks();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();
@@ -2464,21 +2495,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted weap = ce().getEquipment(wn);
-        
+
         // Check for weapon/ammo types that should automatically target hexes
-        if ((weap != null) && (weap.getLinked() != null) 
+        if ((weap != null) && (weap.getLinked() != null)
                 && (weap.getLinked().getType() instanceof AmmoType)) {
             AmmoType aType = (AmmoType) weap.getLinked().getType();
             long munitionType = aType.getMunitionType();
             // Mek mortar flares should default to deliver flare
-            if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
+            if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     && (munitionType == AmmoType.M_FLARE)) {
                 return new HexTarget(pos, Targetable.TYPE_FLARE_DELIVER);
             // Certain mek mortar types and LRMs should target hexes
             } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     || (aType.getAmmoType() == AmmoType.T_LRM)
                     || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
-                    && ((munitionType == AmmoType.M_AIRBURST) 
+                    && ((munitionType == AmmoType.M_AIRBURST)
                             || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
                 return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
             } else if (munitionType == AmmoType.M_MINE_CLEARANCE) {
@@ -2509,10 +2540,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 targets.add(t);
             }
         }
-        
+
         // If there aren't other targets, check for targets flying over pos
         if (targets.size() == 0) {
-            List<Entity> flyovers = 
+            List<Entity> flyovers =
                     clientgui.getBoardView().getEntitiesFlyingOver(pos);
             for (Entity e : flyovers) {
                 if (!targets.contains(e)) {
@@ -2528,7 +2559,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
                     .getBoard(), false));
         }
-        
+
         // If we clicked on a wooded hex with no other targets, clear woods
         if (targets.size() == 0) {
             Hex hex = game.getBoard().getHex(pos);
@@ -2563,44 +2594,44 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     public Targetable getTarget() {
         return target;
     }
-    
+
     private boolean validStrafingCoord(Coords newCoord) {
         // Only Aeros can strafe...
         if (ce() == null || !ce().isAero()) {
             return false;
         }
-        
+
         // Can't update strafe hexes after weapons are fired, otherwise we'd
         // have to have a way to update the attacks vector
         if (!attacks.isEmpty()) {
             return false;
         }
-        
+
         // Can only strafe hexes that were flown over
         if (!ce().passedThrough(newCoord)) {
             return false;
         }
-        
+
         // No more limitations if it's the first hex
         if (strafingCoords.isEmpty()) {
             return true;
         }
-        
+
         // We can only select at most 5 hexes
         if (strafingCoords.size() >= 5) {
             return false;
         }
-        
+
         // Can't strafe the same hex twice
         if (strafingCoords.contains(newCoord)) {
             return false;
         }
-        
+
         boolean isConsecutive = false;
         for (Coords c : strafingCoords) {
             isConsecutive |= (c.distance(newCoord) == 1);
         }
-        
+
         boolean isInaLine = true;
         // If there is only one other coord, then they're linear
         if (strafingCoords.size() > 1) {
@@ -2615,18 +2646,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
         return isConsecutive && isInaLine;
     }
-    
+
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the movement phase
         if (!clientgui.getClient().getGame().getPhase().isFiring()) {
             return;
         }
-        
+
         clientgui.getBoardView().fieldofFireUnit = unit;
         clientgui.getBoardView().fieldofFireRanges = ranges;
         clientgui.getBoardView().fieldofFireWpArc = arc;
         clientgui.getBoardView().fieldofFireWpLoc = loc;
-        
+
         clientgui.getBoardView().setWeaponFieldofFire(facing, unit.getPosition());
     }
 }

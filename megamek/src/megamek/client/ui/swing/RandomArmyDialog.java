@@ -301,8 +301,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        c.insets = new Insets(0,10,0,0);
-        m_pRAT.add(m_ratStatus,c);
+        c.insets = new Insets(0, 10, 0, 0);
+        m_pRAT.add(m_ratStatus, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -446,16 +446,16 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_bRoll.addActionListener(this);
-        m_pPreview.add(m_bRoll,c);
+        m_pPreview.add(m_bRoll, c);
         c.gridx = 1;
         m_bAddAll.addActionListener(this);
-        m_pPreview.add(m_bAddAll,c);
+        m_pPreview.add(m_bAddAll, c);
         c.gridx = 2;
         m_bAdd.addActionListener(this);
-        m_pPreview.add(m_bAdd,c);
+        m_pPreview.add(m_bAdd, c);
         c.gridx = 3;
         m_bClear.addActionListener(this);
-        m_pPreview.add(m_bClear,c);
+        m_pPreview.add(m_bClear, c);
         armyModel = new UnitTableModel();
         m_lArmy = new JTable();
         m_lArmy.setModel(armyModel);

@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,15 +17,8 @@ package megamek.common.weapons.lrms;
  * @author Sebastian Brocks
  */
 public class CLLRM10IOS extends LRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1260890574819347313L;
 
-    /**
-     *
-     */
     public CLLRM10IOS() {
         super();
         name = "LRM 10 (I-OS)";
@@ -44,15 +37,15 @@ public class CLLRM10IOS extends LRMWeapon {
         medAV = 6;
         longAV = 6;
         maxRange = RANGE_LONG;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, true, false,false, false)
-            .setPrototypeFactions(F_CNC)
-            .setProductionFactions(F_CNC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, true, false, false, false)
+                .setPrototypeFactions(F_CNC)
+                .setProductionFactions(F_CNC);
     }
 }

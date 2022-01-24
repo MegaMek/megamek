@@ -13,22 +13,21 @@ VERSION HISTORY:
 + Updating to Apache FreeMarker 2.3.31 from 2.3.28
 + Updating to Jackson Core 2.13.1 from 2.9.8
 + Issue #3357: Updating to Jakarta.Mail 2.0.1 from Javax.Mail 1.6.2
-+ Data: Equipment Name fixes/standardizations identified with recent changes to MML equipment tab.  Biggest change was removing duplicate C3 Master 
-			entries and consolidating them in a C3 weapons folder. Includes fixes to impacted unit files. 
++ Data: Equipment Name fixes/standardizations identified with recent changes to MML equipment tab.  Biggest change was removing duplicate C3 Master entries and consolidating them in a C3 weapons folder. Includes fixes to impacted unit files. 
 + Issue #3371: Fixing TurnOrdered NPEs for null Entity game and null Player team
 + Data: Updated EVS Map Pack (I like big maps I cannot lie)
-+ Issue: #3384 - Swarm LRMs not available, but Swarm-I are
++ Issue: #3384: Swarm LRMs not available, but Swarm-I are
 + Data: Cleaning up some missing equipment flags
 + PR #3389: TAG flag correction, unused ISLightTag removed
-+ Issue: #3393:Inner Sphere AC/2s Use Wrong Aerospace Range
++ Issue: #3393: Inner Sphere AC/2s Use Wrong Aerospace Range
 + New Sprites. 
 + Issue #3365: Removing Force Generator's Broken 2786 Setup
 + Issue #3343: Improving the Forced Victory Phase Skip tool tip
 + Issue #3394: Restoring Save Mul Menu Item in Top Bar
 + Issues #1896 and #3378: Adding MapTextColor and WarningColor to the advanced client options
 + PR #3391: SuiteOptions: Naming standardization and finishing initial setup
-+ Data: Removing Hawk SRM and Phoenix LRMs. They were ammo only and no weapon could use them.
-           Allow a few more requested Tech Progression Fixes. 
++ Data: Removing Hawk SRM and Phoenix LRMs. They were ammo only and no weapon could use them. Allow a few more requested Tech Progression Fixes. 
++ PR #3402: Updating FlatLaf from 1.6.5 to 2.0
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

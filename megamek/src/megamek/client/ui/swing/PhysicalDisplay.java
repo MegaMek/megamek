@@ -1216,35 +1216,23 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 boolean canAim = false;
                 for (Mounted club : ce().getClubs()) {
                     if (club != null) {
-                        ToHitData clubToHit = ClubAttackAction.toHit(clientgui
-                                .getClient().getGame(), cen, target, club, ash
-                                .getAimTable(), false);
+                        ToHitData clubToHit = ClubAttackAction.toHit(clientgui.getClient().getGame(),
+                                cen, target, club, ash.getAimTable(), false);
                         canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
                         // assuming S7 vibroswords count as swords and maces
                         // count as hatchets
                         if (club.getType().hasSubType(MiscType.S_SWORD)
-                                || club.getType()
-                                        .hasSubType(MiscType.S_HATCHET)
-                                || club.getType().hasSubType(
-                                        MiscType.S_VIBRO_SMALL)
-                                || club.getType().hasSubType(
-                                        MiscType.S_VIBRO_MEDIUM)
-                                || club.getType().hasSubType(
-                                        MiscType.S_VIBRO_LARGE)
+                                || club.getType().hasSubType(MiscType.S_HATCHET)
+                                || club.getType().hasSubType(MiscType.S_VIBRO_SMALL)
+                                || club.getType().hasSubType(MiscType.S_VIBRO_MEDIUM)
+                                || club.getType().hasSubType(MiscType.S_VIBRO_LARGE)
                                 || club.getType().hasSubType(MiscType.S_MACE)
-                                || club.getType().hasSubType(
-                                        MiscType.S_MACE_THB)
                                 || club.getType().hasSubType(MiscType.S_LANCE)
-                                || club.getType().hasSubType(
-                                        MiscType.S_CHAIN_WHIP)
-                                || club.getType().hasSubType(
-                                        MiscType.S_RETRACTABLE_BLADE)
-                                || club.getType().hasSubType(
-                                        MiscType.S_SHIELD_LARGE)
-                                || club.getType().hasSubType(
-                                        MiscType.S_SHIELD_MEDIUM)
-                                || club.getType().hasSubType(
-                                        MiscType.S_SHIELD_SMALL)) {
+                                || club.getType().hasSubType(MiscType.S_CHAIN_WHIP)
+                                || club.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                || club.getType().hasSubType(MiscType.S_SHIELD_LARGE)
+                                || club.getType().hasSubType(MiscType.S_SHIELD_MEDIUM)
+                                || club.getType().hasSubType(MiscType.S_SHIELD_SMALL)) {
                             canAim = true;
                         }
                     }

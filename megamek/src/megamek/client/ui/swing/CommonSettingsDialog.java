@@ -582,8 +582,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
                 }
             }
 
-	        gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
-	        gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
+            gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
+            gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
 
             skinFiles.removeAllItems();
             List<String> xmlFiles = new ArrayList<>(Arrays

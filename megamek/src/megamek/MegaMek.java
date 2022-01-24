@@ -15,7 +15,7 @@
  */
 package megamek;
 
-import megamek.client.ui.preferences.MMPreferences;
+import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.client.ui.swing.MegaMekGUI;
 import megamek.common.*;
@@ -39,11 +39,12 @@ import java.util.Date;
 import java.util.Vector;
 
 /**
- * @author mev This is the class where the execution of the megamek game starts.
+ * This is the primary MegaMek class.
+ * @author mev
  */
 public class MegaMek {
-    private static MMPreferences preferences = null;
-    private static MMOptions mmOptions = new MMOptions();
+    private static final SuitePreferences mmPreferences = new SuitePreferences();
+    private static final MMOptions mmOptions = new MMOptions();
 
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
@@ -53,7 +54,6 @@ public class MegaMek {
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
             + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
             + "(-eqedb) (-oul)] [<args>]";
-    public static final String PREFERENCES_FILE = "mmconf/megamek.preferences";
 
     public static void main(String... args) {
         // First, create a global default exception handler
@@ -80,7 +80,7 @@ public class MegaMek {
                 return;
             }
 
-            getPreferences().loadFromFile(PREFERENCES_FILE);
+            getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
 
             if (cp.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);
@@ -130,12 +130,8 @@ public class MegaMek {
         }
     }
 
-    public static MMPreferences getPreferences() {
-        if (preferences == null) {
-            preferences = new MMPreferences();
-        }
-
-        return preferences;
+    public static SuitePreferences getMMPreferences() {
+        return mmPreferences;
     }
 
     public static MMOptions getMMOptions() {
@@ -226,7 +222,7 @@ public class MegaMek {
         final long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
                 + File.separator + "timestamp").lastModified();
         // echo some useful stuff
-        String msg = "Starting MegaMek v" + MegaMekConstants.VERSION;
+        String msg = "Starting MegaMek v" + MMConstants.VERSION;
         if (TIMESTAMP > 0) {
             msg += "\n\tCompiled on " + new Date(TIMESTAMP);
         }

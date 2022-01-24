@@ -94,6 +94,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_USE_CAMO_OVERLAY = "AdvancedUseCamoOverlay";
+    public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
+    public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     /* --End advanced settings-- */
 
     public static final String SHOW_COORDS = "showCoords";
@@ -138,7 +140,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LOBBY_MEKTABLE_PILOT_WIDTH = "LobbyMektablePilotWidth";
     public static final String LOBBY_MEKTABLE_PLAYER_WIDTH = "LobbyMektablePlayerWidth";
     public static final String LOBBY_MEKTABLE_BV_WIDTH = "LobbyMektableBVWidth";
-    public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
     public static final String MECH_SELECTOR_INCLUDE_NAME = "MechSelectorIncludeName";
@@ -231,7 +232,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
-    public static final String WARNING_COLOR = "WarningColor";
     public static final String ALLY_UNIT_COLOR = "AllyUnitColor";
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
@@ -290,7 +290,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(180, 180, 100));  // medium yellow
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(150, 80, 80));  // medium dark red  
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
-        setDefault(WARNING_COLOR, Color.RED);
+        setDefault(ADVANCED_WARNING_COLOR, Color.RED);
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         setDefault(ADVANCED_USE_CAMO_OVERLAY, true);
@@ -352,7 +352,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
         store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
-        setDefault(MAP_TEXT_COLOR, Color.BLACK);
+        setDefault(ADVANCED_MAP_TEXT_COLOR, Color.BLACK);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_NAME, true);
@@ -609,7 +609,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public Color getMapTextColor() {
-        return getColor(MAP_TEXT_COLOR);
+        return getColor(ADVANCED_MAP_TEXT_COLOR);
     }
 
     public int getMapZoomIndex() {
@@ -1539,11 +1539,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public Color getWarningColor() {
-        return getColor(WARNING_COLOR);
+        return getColor(ADVANCED_WARNING_COLOR);
     }
 
     public void setWarningColor(Color color) {
-        store.setValue(WARNING_COLOR, getColorString(color));
+        store.setValue(ADVANCED_WARNING_COLOR, getColorString(color));
     }
     
     /** Sets the user preference for the Unit Display window to active. */

@@ -18,10 +18,32 @@
  */
 package megamek;
 
+import megamek.common.preference.PreferenceManager;
+
+import java.util.Locale;
+
 public class MMOptions extends SuiteOptions {
     //region Constructors
     public MMOptions() {
         super();
     }
     //endregion Constructors
+
+    //region Temporary
+    /**
+     * This is a temporary Locale getter, which sets the stage for suite-wide localization.
+     */
+    @Override
+    public Locale getLocale() {
+        return PreferenceManager.getClientPreferences().getLocale();
+    }
+
+    /**
+     * This is a temporary Locale getter for dates, which sets the stage for suite-wide localization.
+     */
+    @Override
+    public Locale getDateLocale() {
+        return PreferenceManager.getClientPreferences().getLocale();
+    }
+    //endregion Temporary
 }

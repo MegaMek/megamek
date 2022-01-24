@@ -47,7 +47,6 @@ public class ISAC2 extends ACWeapon {
         shortAV = 2;
         medAV = 2;
         longAV = 2;
-        extAV = 2;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
         rulesRefs = "208,TM";

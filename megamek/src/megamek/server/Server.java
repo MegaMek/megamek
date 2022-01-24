@@ -18,7 +18,7 @@ package megamek.server;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -503,7 +503,7 @@ public class Server implements Runnable {
      */
     private String createMotd() {
         StringBuilder motd = new StringBuilder();
-        motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMekConstants.VERSION)
+        motd.append("Welcome to MegaMek.  Server is running version ").append(MMConstants.VERSION)
                 .append(", build date ");
         if (MegaMek.TIMESTAMP > 0L) {
             motd.append(new Date(MegaMek.TIMESTAMP));
@@ -691,9 +691,9 @@ public class Server implements Runnable {
 
     private boolean receivePlayerVersion(Packet packet, int connId) {
         final Version version = (Version) packet.getObject(0);
-        if (!MegaMekConstants.VERSION.is(version)) {
+        if (!MMConstants.VERSION.is(version)) {
             final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
-                    version, MegaMekConstants.VERSION);
+                    version, MMConstants.VERSION);
             LogManager.getLogger().error(message);
 
             final Player player = getPlayer(connId);
@@ -7335,7 +7335,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMekConstants.VERSION
+                            + " is running MegaMek " + MMConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7382,7 +7382,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMekConstants.VERSION
+                            + " is running MegaMek " + MMConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7408,7 +7408,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMekConstants.VERSION
+                            + " is running MegaMek " + MMConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -30973,7 +30973,7 @@ public class Server implements Runnable {
                 if (valid) {
                     sendToPending(connId, new Packet(Packet.COMMAND_SERVER_GREETING));
                 } else {
-                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MegaMekConstants.VERSION));
+                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MMConstants.VERSION));
                     getPendingConnection(connId).close();
                 }
                 break;
@@ -35371,7 +35371,7 @@ public class Server implements Runnable {
                         && (game.getPhase() != GamePhase.UNKNOWN)) {
                     content += "&close=yes";
                 }
-                content += "&version=" + MegaMekConstants.VERSION;
+                content += "&version=" + MMConstants.VERSION;
                 if (isPassworded()) {
                     content += "&pw=yes";
                 }

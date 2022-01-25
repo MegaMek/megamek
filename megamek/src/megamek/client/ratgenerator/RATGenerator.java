@@ -835,7 +835,7 @@ public class RATGenerator {
             dispose = false;
         }
     }
-    
+
     /**
      * If the year is equal to one of the era marks, it loads that era. If it is between two, it
      * loads eras on both sides. Otherwise, just load the closest era.
@@ -856,9 +856,9 @@ public class RATGenerator {
             loadEra(getEraSet().ceiling(year));
         }
     }
-    
+
     private void loadFactions(File dir) {
-        File file = new MegaMekFile(dir, "factions.xml").getFile();
+        File file = new MegaMekFile(dir, "factions.xml").getFile(); // TODO : Remove inline file path
         FileInputStream fis;
         try {
             fis = new FileInputStream(file);
@@ -921,8 +921,8 @@ public class RATGenerator {
         while (!MechSummaryCache.getInstance().isInitialized()) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ex) {
-                //do nothing
+            } catch (InterruptedException ignored) {
+
             }
         }
 
@@ -953,8 +953,7 @@ public class RATGenerator {
                             if (rec != null) {
                                 rec.loadEra(wn, era);
                             } else {
-                                LogManager.getLogger().error("Faction " + fKey + " not found in "
-                                        + file.getPath());
+                                LogManager.getLogger().error("Faction " + fKey + " not found in " + file.getPath());
                             }
                         } else {
                             LogManager.getLogger().error("Faction key not found in " + file.getPath());
@@ -1010,7 +1009,7 @@ public class RATGenerator {
         boolean omni = false;
         String chassisName = wn.getAttributes().getNamedItem("name").getTextContent();
         String unitType = wn.getAttributes().getNamedItem("unitType").getTextContent();
-        String chassisKey = chassisName + "[" + unitType + "]";
+        String chassisKey = chassisName + '[' + unitType + ']';
         if (wn.getAttributes().getNamedItem("omni") != null) {
             omni = true;
             if (wn.getAttributes().getNamedItem("omni").getTextContent().equalsIgnoreCase("IS")) {
@@ -1027,11 +1026,11 @@ public class RATGenerator {
             cr.setClan(chassisKey.endsWith("ClanOmni"));
             chassis.put(chassisKey, cr);
         }
+
         for (int j = 0; j < wn.getChildNodes().getLength(); j++) {
             Node wn2 = wn.getChildNodes().item(j);
             if (wn2.getNodeName().equalsIgnoreCase("availability")) {
-                chassisIndex.get(era).put(chassisKey,
-                        new HashMap<>());
+                chassisIndex.get(era).put(chassisKey, new HashMap<>());
                 String[] codes = wn2.getTextContent().trim().split(",");
                 for (String code : codes) {
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
@@ -1045,7 +1044,7 @@ public class RATGenerator {
     }
     
     private void parseModelNode(int era, ChassisRecord cr, Node wn) {
-        String modelKey = (cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent()).trim();
+        String modelKey = (cr.getChassis() + ' ' + wn.getAttributes().getNamedItem("name").getTextContent()).trim();
         boolean newEntry = false;
         ModelRecord mr = models.get(modelKey);
         if (mr == null) {
@@ -1056,8 +1055,9 @@ public class RATGenerator {
                 mr.setOmni(cr.isOmni());
                 models.put(modelKey, mr);
             }
+
             if (mr == null) {
-                LogManager.getLogger().error(cr.getChassis() + " " 
+                LogManager.getLogger().error(cr.getChassis() + ' '
                         + wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
                 return;
             }
@@ -1117,31 +1117,28 @@ public class RATGenerator {
     }
     
     public void exportRATGen(File dir) {
-        File file;
         PrintWriter pw;
         
         FactionRecord[] factionRecs = factions.values().toArray(new FactionRecord[0]);
         Arrays.sort(factionRecs, (arg0, arg1) -> {
-            if (arg0.getParentFactions() == null && arg1.getParentFactions() != null) {
+            if ((arg0.getParentFactions() == null) && (arg1.getParentFactions() != null)) {
                 return -1;
-            }
-            if (arg0.getParentFactions() != null && arg1.getParentFactions() == null) {
+            } else if ((arg0.getParentFactions() != null) && (arg1.getParentFactions() == null)) {
                 return 1;
-            }
-            if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
+            } else if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
                 return 1;
-            }
-            if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
+            } else if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
                 return -1;
+            } else {
+                return arg0.getName().compareTo(arg1.getName());
             }
-            return arg0.getName().compareTo(arg1.getName());
         });
 
-        file = new File(dir + "/factions.xml");
+        File file = new File(dir + "/factions.xml"); // TODO : Remove inline file path
         try {
             pw = new PrintWriter(file, StandardCharsets.UTF_8);
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return;
         }
         pw.println("<?xml version='1.0' encoding='UTF-8'?>");
@@ -1183,9 +1180,10 @@ public class RATGenerator {
                                 avFields.add(av.toString());
                             }
                         }
-                        if (avFields.size() > 0) {
+
+                        if (!avFields.isEmpty()) {
                             String omni = "";
-                            if (cr.isOmni() && cr.getModels().size() > 0) {
+                            if (cr.isOmni() && !cr.getModels().isEmpty()) {
                                 omni = cr.getModels().iterator().next().isClan()
                                         ? "' omni='Clan" : "' omni='IS";
                             }
@@ -1202,7 +1200,7 @@ public class RATGenerator {
                             pw.println("</availability>");
 
                             for (ModelRecord mr : cr.getSortedModels()) {
-                                if (cr.getIntroYear() < nextEra
+                                if ((cr.getIntroYear() < nextEra)
                                         && modelIndex.get(era).containsKey(mr.getKey())) {
                                     avFields.clear();
                                     for (AvailabilityRating av : modelIndex.get(era).get(mr.getKey()).values()) {
@@ -1210,22 +1208,25 @@ public class RATGenerator {
                                             avFields.add(av.toString());
                                         }
                                     }
+
                                     for (String fKey : mr.getExcludedFactions()) {
                                         avFields.add(fKey + ":0");
                                     }
-                                    if (avFields.size() > 0) {
+
+                                    if (!avFields.isEmpty()) {
                                         pw.print("\t\t<model name='" + mr.getModel().replaceAll("'", "&apos;"));
                                         if (mr.getUnitType() == UnitType.BATTLE_ARMOR) {
                                             pw.print("' mechanized='" + mr.canDoMechanizedBA());
                                         }
                                         pw.println("'>");
-                                        if (mr.getRoles().size() > 0) {
+                                        if (!mr.getRoles().isEmpty()) {
                                             String str = mr.getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
-                                            if (str.length() > 0) {
+                                            if (!str.isEmpty()) {
                                                 pw.println("\t\t\t<roles>" + str + "</roles>");
                                             }
                                         }
-                                        if (mr.getDeployedWith().size() > 0 || mr.getRequiredUnits().size() > 0) {
+
+                                        if (!mr.getDeployedWith().isEmpty() || !mr.getRequiredUnits().isEmpty()) {
                                             pw.print("\t\t\t<deployedWith>");
                                             StringJoiner sj = new StringJoiner(",");
                                             mr.getDeployedWith().forEach(sj::add);
@@ -1252,15 +1253,14 @@ public class RATGenerator {
                 pw.println("</units>");
                 pw.println("</ratgen>");
                 pw.close();
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
         }
     }
 
     private boolean shouldExportAv(AvailabilityRating av, int era) {
-        FactionRecord fRec = factions.get(av.getFaction());
-        return fRec == null || fRec.isInEra(era);
+        final FactionRecord fRec = factions.get(av.getFaction());
+        return (fRec == null) || fRec.isInEra(era);
     }
-    
 }

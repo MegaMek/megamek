@@ -349,7 +349,7 @@ public class FactionRecord {
 
     public void setRatings(String str) {
         ratingLevels.clear();
-        if (str.length() > 0) {
+        if (!str.isBlank()) {
             String[] fields = str.split(",");
             Collections.addAll(ratingLevels, fields);
         }
@@ -367,12 +367,12 @@ public class FactionRecord {
             pctTech.put(category, new HashMap<>());
         }
         ArrayList<Integer> list = new ArrayList<>();
-        if (str != null && str.length() > 0) {
+        if ((str != null) && !str.isBlank()) {
             for (String pct : str.split(",")) {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
-                    LogManager.getLogger().error("While loading faction data for " + key);
+                    LogManager.getLogger().error("Failed to parse tech percent while loading faction data for " + key, ex);
                 }
             }
         }

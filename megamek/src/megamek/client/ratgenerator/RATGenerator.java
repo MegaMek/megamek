@@ -1221,7 +1221,7 @@ public class RATGenerator {
                                         pw.println("'>");
                                         if (!mr.getRoles().isEmpty()) {
                                             String str = mr.getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
-                                            if (!str.isEmpty()) {
+                                            if (!str.isBlank()) {
                                                 pw.println("\t\t\t<roles>" + str + "</roles>");
                                             }
                                         }

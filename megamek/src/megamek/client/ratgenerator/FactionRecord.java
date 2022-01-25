@@ -599,12 +599,12 @@ public class FactionRecord {
             pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(String.join(",", ratingLevels)) + "</ratingLevels>");
         }
 
-        if (parentFactions != null) {
+        if ((parentFactions != null) && !parentFactions.isEmpty()) {
             pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(String.join(",", parentFactions)) + "</parentFaction>");
         }       
         pw.println("\t</faction>");
     }
-    
+
     public void writeToXml(PrintWriter pw, int era) {
         StringBuilder factionRecordBuilder = new StringBuilder();
         if (pctTech.containsKey(TechCategory.OMNI)

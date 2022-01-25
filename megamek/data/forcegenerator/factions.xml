@@ -63,7 +63,6 @@
 	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='CBS' name='Clan Blood Spirit' minor='false' clan='true' periphery='false'>
 		<years>2807-3082</years>
@@ -298,7 +297,6 @@
 	<faction key='IS' name='Inner Sphere - General' minor='false' clan='false' periphery='false'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='KP' name='Kittery Prefecture' minor='true' clan='false' periphery='false'>
 		<years>3072-3081</years>
@@ -397,7 +395,6 @@
 	<faction key='Periphery' name='Periphery' minor='false' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='PIR' name='Pirate' minor='false' clan='false' periphery='true'>
 		<years>-</years>
@@ -497,7 +494,6 @@
 	<faction key='SL' name='Star League' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>
 		<ratingLevels>C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='SLIE' name='Star League-in-Exile' minor='false' clan='false' periphery='false'>
 		<years>2786-2801</years>
@@ -796,7 +792,6 @@
 	<faction key='Periphery.Deep' name='Deep Periphery' minor='false' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='FWL.DA' name='Defenders of Andurien' minor='false' clan='false' periphery='false'>
 		<years>2514-3039</years>

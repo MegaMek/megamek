@@ -13,13 +13,13 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import megamek.common.Building.BasementType;
-import megamek.common.annotations.Nullable;
 
 /**
  * Hex represents a single hex on the board.
@@ -185,7 +185,7 @@ public class Hex implements Serializable {
             // (hex == null) should usually look like ocean and 
             // therefore always gets connection to outside the board 
             if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
-            	cTerr.setExit(direction, true);
+                cTerr.setExit(direction, true);
             }
 
             // Roads exit into pavement, too.

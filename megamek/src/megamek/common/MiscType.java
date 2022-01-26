@@ -575,19 +575,23 @@ public class MiscType extends EquipmentType {
                 return RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05));
             }
         } else if (hasFlag(F_QUAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_HEAD_TURRET)) {
+            // Turrets weight 10% of the weight of equipment in them, not counting Heat Sinks, Ammo and Armor
             int locationToCheck = location;
             if (hasFlag(F_HEAD_TURRET)) {
                 locationToCheck = Mech.LOC_HEAD;
             }
-            // 10% of linked weapons' weight
-            double weaponWeight = 0;
-            for (Mounted m : entity.getWeaponList()) {
-                if ((m.getLocation() == locationToCheck) && m.isMechTurretMounted()) {
-                    weaponWeight += m.getTonnage();
+            double weight = 0;
+            for (Mounted m : entity.getEquipment()) {
+                if ((m.getLocation() == locationToCheck)
+                        && (m.isMechTurretMounted() || m.isSponsonTurretMounted())
+                        && !(m.getType() instanceof AmmoType)
+                        && !((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAT_SINK))
+                        && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
+                    weight += m.getTonnage();
                 }
             }
             // round to half ton
-            return defaultRounding.round(weaponWeight / 10.0, entity);
+            return defaultRounding.round(weight / 10.0, entity);
         } else if (hasFlag(F_SPONSON_TURRET)) {
             // For omni vehicles, this should be set as part of the base chassis.
             if ((entity.isOmni() && (entity instanceof Tank)

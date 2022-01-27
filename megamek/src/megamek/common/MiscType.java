@@ -572,19 +572,23 @@ public class MiscType extends EquipmentType {
                 return RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05));
             }
         } else if (hasFlag(F_QUAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_HEAD_TURRET)) {
+            // Turrets weight 10% of the weight of equipment in them, not counting Heat Sinks, Ammo and Armor
             int locationToCheck = location;
             if (hasFlag(F_HEAD_TURRET)) {
                 locationToCheck = Mech.LOC_HEAD;
             }
-            // 10% of linked weapons' weight
-            double weaponWeight = 0;
-            for (Mounted m : entity.getWeaponList()) {
-                if ((m.getLocation() == locationToCheck) && m.isMechTurretMounted()) {
-                    weaponWeight += m.getTonnage();
+            double equipmentWeight = 0;
+            for (Mounted m : entity.getEquipment()) {
+                if ((m.getLocation() == locationToCheck)
+                        && (m.isMechTurretMounted())
+                        && !(m.getType() instanceof AmmoType)
+                        && !((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAT_SINK))
+                        && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
+                    equipmentWeight += m.getTonnage();
                 }
             }
             // round to half ton
-            return defaultRounding.round(weaponWeight / 10.0, entity);
+            return defaultRounding.round(equipmentWeight / 10.0, entity);
         } else if (hasFlag(F_SPONSON_TURRET)) {
             // For omni vehicles, this should be set as part of the base chassis.
             if ((entity.isOmni() && (entity instanceof Tank)
@@ -593,18 +597,21 @@ public class MiscType extends EquipmentType {
                 return ((Tank) entity).getBaseChassisSponsonPintleWeight() /
                         entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
             }
-            /* The sponson turret mechanism is equal to 10% of the weight of all mounted weapons, rounded
+            /* The sponson turret mechanism is equal to 10% of the weight of mounted equipment, rounded
              * up to the half ton. Since the turrets come in pairs, splitting the weight between them
              * may result in a quarter-ton result for a single turret, but the overall unit weight will
              * be correct.
              */
-            double weaponWeight = 0;
-            for (Mounted m : entity.getWeaponList()) {
-                if (m.isSponsonTurretMounted()) {
-                    weaponWeight += m.getTonnage();
+            double equipmentWeight = 0;
+            for (Mounted m : entity.getEquipment()) {
+                if (m.isSponsonTurretMounted()
+                        && !(m.getType() instanceof AmmoType)
+                        && !((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAT_SINK))
+                        && (EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN)) {
+                    equipmentWeight += m.getTonnage();
                 }
             }
-            return defaultRounding.round(weaponWeight / 10.0,
+            return defaultRounding.round(equipmentWeight / 10.0,
                     entity) / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
         } else if (hasFlag(F_PINTLE_TURRET)) {
             // For omnivehicles the weight should be set as chassis fixed weight.
@@ -1926,9 +1933,11 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_IMPROVED;
         misc.bv = 0;
         misc.rulesRefs = "225,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3070, 3071, DATE_NONE, DATE_NONE)
+        //Jan 22 - Errata issued by CGL (Greekfire) for IJJs    
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        		.setISAdvancement(3067, 3068, 3069, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(3060, 3069, 3071, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(3060, 3068, 3069, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CWX)
                 .setProductionFactions(F_CWX, F_CWF, F_LC).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);

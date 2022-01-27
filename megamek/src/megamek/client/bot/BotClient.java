@@ -984,7 +984,6 @@ public abstract class BotClient extends Client {
 
             float fHits;
             if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
-                || (wt.getAmmoType() == AmmoType.T_MRM_STREAK)
                 || (wt.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 fHits = wt.getRackSize();
             } else if ((wt.getRackSize() == 40) || (wt.getRackSize() == 30)) {

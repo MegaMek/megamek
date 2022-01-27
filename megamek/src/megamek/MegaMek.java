@@ -66,7 +66,7 @@ public class MegaMek {
         });
 
         // Second, let's handle logging
-        showInfo();
+        showInfo(MMConstants.PROJECT_NAME);
         handleLegacyLogging();
 
         // Third, Command Line Arguments and Startup
@@ -215,10 +215,11 @@ public class MegaMek {
     }
 
     /**
-     * Prints some information about MegaMek. Used in log files to figure out the JVM and
-     * version of MegaMek.
+     * Prints some information about MegaMek. Used in log files to figure out the JVM and version of
+     * MegaMek.
+     * @param originProject the project launching MegaMek
      */
-    public static void showInfo() {
+    public static void showInfo(final String originProject) {
         final long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
                 + File.separator + "timestamp").lastModified();
         // echo some useful stuff
@@ -227,10 +228,11 @@ public class MegaMek {
             msg += "\n\tCompiled on " + new Date(TIMESTAMP);
         }
         msg += "\n\tToday is " + LocalDate.now()
+                + "\n\tOrigin Project: " + originProject
                 + "\n\tJava Vendor: " + System.getProperty("java.vendor")
                 + "\n\tJava Version: " + System.getProperty("java.version")
-                + "\n\tPlatform: " + System.getProperty("os.name") + " " + System.getProperty("os.version")
-                + " (" + System.getProperty("os.arch") + ")"
+                + "\n\tPlatform: " + System.getProperty("os.name") + ' ' + System.getProperty("os.version")
+                + " (" + System.getProperty("os.arch") + ')'
                 + "\n\tTotal memory available to MegaMek: "
                 + NumberFormat.getInstance().format(Runtime.getRuntime().maxMemory()) + " GB";
         LogManager.getLogger().info(msg);

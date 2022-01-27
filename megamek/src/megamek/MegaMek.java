@@ -35,7 +35,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Vector;
 
 /**
@@ -45,9 +44,6 @@ import java.util.Vector;
 public class MegaMek {
     private static final SuitePreferences mmPreferences = new SuitePreferences();
     private static final MMOptions mmOptions = new MMOptions();
-
-    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
-            + File.separator + "timestamp").lastModified();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
@@ -220,13 +216,7 @@ public class MegaMek {
      * @param originProject the project launching MegaMek
      */
     public static void showInfo(final String originProject) {
-        final long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
-                + File.separator + "timestamp").lastModified();
-        // echo some useful stuff
         String msg = "Starting MegaMek v" + MMConstants.VERSION;
-        if (TIMESTAMP > 0) {
-            msg += "\n\tCompiled on " + new Date(TIMESTAMP);
-        }
         msg += "\n\tToday is " + LocalDate.now()
                 + "\n\tOrigin Project: " + originProject
                 + "\n\tJava Vendor: " + System.getProperty("java.vendor")

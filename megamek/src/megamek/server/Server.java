@@ -502,17 +502,7 @@ public class Server implements Runnable {
      * it was found, the build timestamp
      */
     private String createMotd() {
-        StringBuilder motd = new StringBuilder();
-        motd.append("Welcome to MegaMek.  Server is running version ").append(MMConstants.VERSION)
-                .append(", build date ");
-        if (MegaMek.TIMESTAMP > 0L) {
-            motd.append(new Date(MegaMek.TIMESTAMP));
-        } else {
-            motd.append("unknown");
-        }
-        motd.append('.');
-
-        return motd.toString();
+        return "Welcome to MegaMek. Server is running version " + MMConstants.VERSION;
     }
 
     /**

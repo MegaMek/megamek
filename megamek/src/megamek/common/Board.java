@@ -14,8 +14,8 @@
  */
 package megamek.common;
 
-import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -1569,7 +1569,7 @@ public class Board implements Serializable {
         for (Building b : buildings) {
             for (Enumeration<Coords> coords = b.getCoords(); coords.hasMoreElements();) {
                 Coords c = coords.nextElement();
-                if (b.getBasement(c) == BasementType.UNKNOWN) {
+                if (b.getBasement(c).isUnknown()) {
                     b.setBasement(c, BasementType.NONE);
                 }
             }

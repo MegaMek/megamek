@@ -3916,14 +3916,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if (ae.isConventionalInfantry()) {
-            // check for pl-masc
-            // the rules are a bit vague, but assume that if the infantry didn't
-            // move or jumped, then they shouldn't get the penalty
-            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
-                    && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
-                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.PlMasc"));
-            }
-
             // check for cyber eye laser sighting on ranged attacks
             if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
                     && !(wtype instanceof InfantryAttack)) {
@@ -4011,6 +4003,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && te.moved == EntityMovementType.MOVE_RUN) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }
+
         }
         return toHit;
     }
@@ -4288,9 +4281,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // infantry squads are also hard to hit
-        if ((te != null) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
+        if ((te instanceof Infantry) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
         }
+
+        // pl-masc makes foot infantry harder to hit - IntOps p.84
+        if (te instanceof Infantry && te.hasAbility(OptionsConstants.MD_PL_MASC)
+                && te.getMovementMode() == EntityMovementMode.INF_LEG
+                && te.isConventionalInfantry()) {
+            toHit.addModifier(1, Messages.getString("WeaponAttackAction.PlMasc"));
+        }
+
 
         // Ejected MechWarriors are harder to hit
         if (te instanceof MechWarrior) {

@@ -15,7 +15,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -74,14 +74,7 @@ public class CommonAboutDialog extends JDialog {
         JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
 
         // Version text
-        StringBuffer buff = new StringBuffer();
-        buff.append(Messages.getString("CommonAboutDialog.version"))
-                .append(MMConstants.VERSION)
-                .append(Messages.getString("CommonAboutDialog.javaVendor"))
-                .append(System.getProperty("java.vendor"))
-                .append(Messages.getString("CommonAboutDialog.javaVersion"))
-                .append(System.getProperty("java.version"));
-        JTextArea lblVersion = new JTextArea(buff.toString());
+        JTextArea lblVersion = new JTextArea(MegaMek.createSetupMessage());
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
         

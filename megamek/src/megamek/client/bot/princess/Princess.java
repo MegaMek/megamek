@@ -1981,8 +1981,8 @@ public class Princess extends BotClient {
             return;
         }
         
-        Entity movingEntity = path.getEntity();
-        Coords pathEndpoint = path.getFinalCoords();
+        final Entity movingEntity = path.getEntity();
+        final Coords pathEndpoint = path.getFinalCoords();
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not unloading anything.

@@ -92,7 +92,7 @@ public abstract class PathRanker implements IPathRanker {
             pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
             
             BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
-                                      .round(new MathContext(0, RoundingMode.DOWN));
+                    .round(new MathContext(0, RoundingMode.DOWN));
             if (percent.compareTo(interval) >= 0) {
                 if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.INFO)) {
                     getOwner().sendChat("... " + percent.intValue() + "% complete.");
@@ -236,7 +236,8 @@ public abstract class PathRanker implements IPathRanker {
      * Find the closest enemy to a unit with a path
      */
     @Override
-    public Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets) {
+    public Targetable findClosestEnemy(Entity me, Coords position, Game game,
+                                       boolean includeStrategicTargets) {
         int range = 9999;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
@@ -245,7 +246,8 @@ public abstract class PathRanker implements IPathRanker {
             // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected
             // MechWarriors
             if (e.isAirborneAeroOnGroundMap() || 
-                    getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
+                    getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(),
+                            getOwner().getForcedWithdrawal())) {
                 continue;
             }
 

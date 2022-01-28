@@ -4286,8 +4286,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // pl-masc makes foot infantry harder to hit - IntOps p.84
-        if (te instanceof Infantry && te.hasAbility(OptionsConstants.MD_PL_MASC)
-                && te.getMovementMode() == EntityMovementMode.INF_LEG
+        if ((te instanceof Infantry) && te.hasAbility(OptionsConstants.MD_PL_MASC)
+                && te.getMovementMode().isLegInfantry()
                 && te.isConventionalInfantry()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.PlMasc"));
         }

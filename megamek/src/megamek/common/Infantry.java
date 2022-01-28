@@ -417,8 +417,8 @@ public class Infantry extends Entity {
         //  PL-MASC IntOps p.84
         if ((null != getCrew())
                 && hasAbility(OptionsConstants.MD_PL_MASC)
-                && getMovementMode() == EntityMovementMode.INF_LEG
-                    && isConventionalInfantry()) {
+                && getMovementMode().isLegInfantry()
+                && isConventionalInfantry()) {
             mp += 1;
         }
 

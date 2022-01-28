@@ -1983,6 +1983,11 @@ public class Princess extends BotClient {
         
         final Entity movingEntity = path.getEntity();
         final Coords pathEndpoint = path.getFinalCoords();
+        if (pathEndpoint == null) {
+            LogManager.getLogger().error("Can't unload infantry from " + movingEntity.getDisplayName()
+                    + " because of null path endpoint.");
+            return;
+        }
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not unloading anything.

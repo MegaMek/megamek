@@ -41,10 +41,10 @@ import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
-import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.*;
@@ -52,7 +52,10 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
-import megamek.common.preference.*;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -5552,7 +5555,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     txt.append(Messages.getString("BoardView1.Tooltip.Building",
                             mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(),
                             bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords),
-                            bldg.getBasement(mcoords).getDesc()));
+                            bldg.getBasement(mcoords).toString()));
 
                     if (bldg.getBasementCollapsed(mcoords)) {
                         txt.append(Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed"));

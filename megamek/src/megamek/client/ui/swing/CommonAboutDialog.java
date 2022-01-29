@@ -15,26 +15,15 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.MegaMek.TIMESTAMP;
-
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.util.Date;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
@@ -65,10 +54,10 @@ public class CommonAboutDialog extends JDialog {
             try {
                 tracker.waitForID(0);
                 imgTitleImage = image;
-            } catch (InterruptedException exp) {
-                exp.printStackTrace();
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
-        } // End load-imgTitleImage
+        }
 
         return imgTitleImage;
     }
@@ -86,16 +75,7 @@ public class CommonAboutDialog extends JDialog {
         JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
 
         // Version text
-        StringBuffer buff = new StringBuffer();
-        buff.append(Messages.getString("CommonAboutDialog.version"))
-                .append(MMConstants.VERSION).append(
-                        Messages.getString("CommonAboutDialog.timestamp"))
-                .append(new Date(TIMESTAMP)).append(
-                        Messages.getString("CommonAboutDialog.javaVendor"))
-                .append(System.getProperty("java.vendor"))
-                .append(Messages.getString("CommonAboutDialog.javaVersion"))
-                .append(System.getProperty("java.version"));
-        JTextArea lblVersion = new JTextArea(buff.toString());
+        JTextArea lblVersion = new JTextArea(MegaMek.getUnderlyingInformation(MMConstants.PROJECT_NAME));
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
         

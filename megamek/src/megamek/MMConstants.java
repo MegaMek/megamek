@@ -23,6 +23,7 @@ package megamek;
  */
 public final class MMConstants extends SuiteConstants {
     //region General Constants
+    public static final String PROJECT_NAME = "MegaMek";
     //endregion General Constants
 
     //region GUI Constants

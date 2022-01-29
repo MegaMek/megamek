@@ -1982,11 +1982,7 @@ public class Princess extends BotClient {
         }
 
         final Entity movingEntity = path.getEntity();
-        Coords pathEndpoint = path.getFinalCoords();
-        if (pathEndpoint == null) {
-            // The entity is stationary, so use their current position
-            pathEndpoint = movingEntity.getPosition();
-        }
+        final Coords pathEndpoint = path.getFinalCoords();
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not unloading anything.

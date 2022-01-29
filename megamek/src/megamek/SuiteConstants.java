@@ -18,12 +18,16 @@
  */
 package megamek;
 
+import java.time.LocalDate;
+
 /**
  * These are constants that hold across the entire MegaMek Suite of MegaMek, MegaMekLab, and MekHQ.
  */
 public abstract class SuiteConstants {
     //region General Constants
+    public static final String PROJECT_NAME = "MegaMek Suite";
     public static final Version VERSION = new Version("0.49.7-SNAPSHOT");
+    public static final LocalDate RELEASE_DATE = LocalDate.of(2021, 12, 31);
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file

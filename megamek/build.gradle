@@ -170,7 +170,6 @@ task stageFiles {
     
     doLast {
         mkdir "${fileStagingDir}/${log}"
-        ant.touch(file: "${fileStagingDir}/${log}/timestamp")
     }
 }
 

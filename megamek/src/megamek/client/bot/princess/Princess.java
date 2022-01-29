@@ -1980,13 +1980,12 @@ public class Princess extends BotClient {
         if (getBehaviorSettings().shouldAutoFlee()) {
             return;
         }
-        
+
         final Entity movingEntity = path.getEntity();
-        final Coords pathEndpoint = path.getFinalCoords();
+        Coords pathEndpoint = path.getFinalCoords();
         if (pathEndpoint == null) {
-            LogManager.getLogger().error("Can't unload infantry from " + movingEntity.getDisplayName()
-                    + " because of null path endpoint.");
-            return;
+            // The entity is stationary, so use their current position
+            pathEndpoint = movingEntity.getPosition();
         }
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
@@ -1995,9 +1994,9 @@ public class Princess extends BotClient {
         if ((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return;
         }
-        
+
         int distanceToClosestEnemy = pathEndpoint.distance(closestEnemy.getPosition());
-        
+
         // loop through all entities carried by the current entity
         for (Transporter transport : movingEntity.getTransports()) {
             // this operation is intended for entities on the ground

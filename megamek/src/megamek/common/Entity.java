@@ -9751,9 +9751,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isEligibleFor(GamePhase phase) {
         // only deploy in deployment phase
-        if ((phase == GamePhase.DEPLOYMENT) == isDeployed()) {
-            if (!isDeployed() && isEligibleForTargetingPhase()
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
+        if (phase.isDeployment() == isDeployed()) {
+            if (!isDeployed() && phase.isSetArtilleryAutohitHexes()
+                    && isEligibleForArtyAutoHitHexes()) {
                 LogManager.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
@@ -10037,8 +10037,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase()
-               && (isOffBoard() || game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
+               && (isOffBoard() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
     }
 
     public boolean isEligibleForTargetingPhase() {

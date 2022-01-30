@@ -6123,16 +6123,7 @@ public class Compute {
         return null;
     }
 
-    /**
-     * Gets a new target hex for a flight of smoke missiles fired at a hex, if
-     * there are remaining missiles.
-     */
-
-    /**
-     * * STUFF FOR VECTOR MOVEMENT CALCULATIONS **
-     */
-    public static Coords getFinalPosition(Coords curpos, int[] v) {
-
+    public static @Nullable Coords getFinalPosition(Coords curpos, int... v) {
         if ((v == null) || (v.length != 6) || (curpos == null)) {
             return curpos;
         }

@@ -1980,9 +1980,9 @@ public class Princess extends BotClient {
         if (getBehaviorSettings().shouldAutoFlee()) {
             return;
         }
-        
-        Entity movingEntity = path.getEntity();
-        Coords pathEndpoint = path.getFinalCoords();
+
+        final Entity movingEntity = path.getEntity();
+        final Coords pathEndpoint = path.getFinalCoords();
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not unloading anything.
@@ -1990,9 +1990,9 @@ public class Princess extends BotClient {
         if ((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return;
         }
-        
+
         int distanceToClosestEnemy = pathEndpoint.distance(closestEnemy.getPosition());
-        
+
         // loop through all entities carried by the current entity
         for (Transporter transport : movingEntity.getTransports()) {
             // this operation is intended for entities on the ground

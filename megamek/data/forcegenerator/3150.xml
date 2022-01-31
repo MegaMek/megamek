@@ -13150,6 +13150,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Patron MilitiaMech' unitType='Mek'>
 		<availability>FWL.pm:4,DA.pm:4,RF.pm:4,IS.pm:2</availability>
@@ -14517,7 +14520,7 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Ryoken III-XP' unitType='Mek' omni='IS'>
+	<chassis name='Ryoken III-XP (Skinwalker)' unitType='Mek' omni='IS'>
 		<availability>CWE:3</availability>
 		<model name='A'>
 			<availability>General:7</availability>

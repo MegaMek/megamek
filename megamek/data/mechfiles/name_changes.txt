@@ -213,6 +213,7 @@ Man O' War (Gargoyle) C|Gargoyle (Man O' War) C
 Man O' War (Gargoyle) D|Gargoyle (Man O' War) D
 Raijin RJN101-A:Raijin RJN-101-A
 Raijin RJN101-C:Raijin RJN-101-C
+'OMEGA' SHP-4X:OMEGA SHP-4X
 
 #Protomechs
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)

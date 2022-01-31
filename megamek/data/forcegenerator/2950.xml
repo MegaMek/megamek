@@ -4141,6 +4141,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
 		<availability>CC:9,MOC:8,HL:6,IS:9,Periphery.Deep:7,FS:9,CIR:8,Periphery:8,TC:8,OA:8,LA:9,FWL:10,DC:8</availability>
@@ -4163,7 +4166,7 @@
 	</chassis>
 	<chassis name='Pella' unitType='Aero'>
 		<availability>CCC:1,CCO:1</availability>
-		<model name=''>
+		<model name='(Standard)'>
 			<roles>recon</roles>
 			<availability>General:8</availability>
 		</model>

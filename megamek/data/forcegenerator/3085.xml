@@ -12150,6 +12150,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Patron MilitiaMech' unitType='Mek'>
 		<availability>PR:4-,DoO:4-,IS.pm:2,DO:4-,RCM.pm:4,FWL.pm:4,DA.pm:4,RF.pm:4,OP.pm:4,PG:4-,MSC.pm:4,TP:4-,DTA.pm:5,RFS:4-</availability>

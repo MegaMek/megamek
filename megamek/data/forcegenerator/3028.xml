@@ -13,7 +13,7 @@
 	</faction>
 	<faction key='BH'/>
 	<faction key='CC'>
-		<salvage pct='6'>FWL:4,FS:10,TC:1</salvage> 
+		<salvage pct='6'>FWL:4,FS:10,TC:1</salvage>
 	</faction>
 	<faction key='NC'>
 		<salvage pct='5'>HL:10</salvage>
@@ -4570,6 +4570,9 @@
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Patton Tank' unitType='Tank'>

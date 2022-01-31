@@ -1,48 +1,53 @@
 Version:1.0
 Goliath
-GOL-3M
+GOL-7K
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3047
-Source:Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3148
+source:Rec Guide:ilClan #22 - Dark Age
+rules level:2
 
-Mass:80
-Engine:320 XL Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:80
+engine:320 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Single
-Walk MP:4
-Jump MP:0
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-FLL Armor:26
-FRL Armor:26
-LT Armor:21
-RT Armor:21
-CT Armor:30
-HD Armor:9
-RLL Armor:31
-RRL Armor:31
-RTL Armor:13
-RTR Armor:13
-RTC Armor:19
+armor:Standard(Inner Sphere)
+FLL armor:30
+FRL armor:30
+LT armor:21
+RT armor:21
+CT armor:30
+HD armor:9
+RLL armor:31
+RRL armor:31
+RTL armor:13
+RTR armor:13
+RTC armor:19
 
-Weapons:5
-LRM 10, Left Torso
-Machine Gun, Left Torso
-Gauss Rifle, Right Torso
-LRM 10, Right Torso
+Weapons:10
+Heavy PPC, Right Torso
+MRM 10, Left Torso
+MRM 10, Right Torso
 Machine Gun, Center Torso
+Machine Gun, Left Torso
+M-Pod, Front Right Leg
+M-Pod, Front Left Leg
+M-Pod, Rear Right Leg
+M-Pod, Rear Left Leg
+M-Pod, Center Torso
 
 Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
+ISMPod
 -Empty-
 -Empty-
 -Empty-
@@ -56,7 +61,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
+ISMPod
 -Empty-
 -Empty-
 -Empty-
@@ -68,30 +73,30 @@ Heat Sink
 Left Torso:
 Fusion Engine
 Fusion Engine
-Fusion Engine
-LRM 10
-LRM 10
+MRM 10
+MRM 10
+ISApollo
 Machine Gun
-IS Ammo MG - Full
-IS Ammo MG - Full
-IS Ammo LRM-10
-IS Ammo LRM-10
-ISCASE
+IS Machine Gun Ammo - Half
+IS MRM 10 Ammo
+IS MRM 10 Ammo
+Supercharger
+ISCASEII
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Fusion Engine
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-LRM 10
-LRM 10
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+PPC Capacitor
+MRM 10
+MRM 10
+ISApollo
+-Empty-
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -104,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
+ISMPod
 Machine Gun
-IS Gauss Ammo
 
 Head:
 Life Support
 Sensors
 Cockpit
-Heat Sink
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -126,7 +131,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
+ISMPod
 -Empty-
 -Empty-
 -Empty-
@@ -140,7 +145,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
+ISMPod
 -Empty-
 -Empty-
 -Empty-
@@ -153,14 +158,15 @@ overview:The Goliath is used as a general assault 'Mech and until recently was n
 
 capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.
 
-deployment:The 3M is a 3047 upgrade of the Goliath that uses Star League technology. The 'Mech has had an Hermes 320 XL Engine installed to reduce the engine's weight by half. The 'Mech retains the LRM launchers and Machine Guns of the 1H model. The 'Mech replaces the PPC with a Zeus Slingshot Gauss Rifle which gives the Goliath devastating long-range firepower. The 'Mech still suffers from its close combat deficiencies but with its updated arsenal most 'Mechs are hard pressed to close to short range.
+deployment:Unknown
 
 history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. The Goliath is based on lessons that were learned from the Scorpion. The first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
 
-manufacturer:Corean Enterprises - MacAdams-Suharno	
-primaryfactory:Stewart
-systemmanufacturer:CHASSIS:Corean VIII
-systemmanufacturer:ENGINE:Hermes 320 XL
-systemmanufacturer:ARMOR:Starshield with CASE
-systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
-systemmanufacturer:TARGETING:Corean B-Tech
+manufacturer:Osaka Heavy Metrics
+primaryfactory:Togura
+systemmanufacturer:CHASSIS:Brigadier 1000F
+systemmanufacturer:ENGINE:Hermes 320 Light
+systemmanufacturer:ARMOR:Starshield with CASE II
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Daidouji 52 Enhanced Optical with Apollo FCS
+

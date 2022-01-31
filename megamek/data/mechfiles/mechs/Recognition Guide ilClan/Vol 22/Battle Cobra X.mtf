@@ -3,68 +3,68 @@ Battle Cobra
 X
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3073
-Source:TRO 3058 - Jihad
-Rules Level:4
+techbase:Clan
+era:3073
+source:Rec Guide:ilClan #22 - Jihad
+rules level:3
 
-Mass:40
-Engine:240 Fusion (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:40
+engine:240 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:18 Double
-Base Chassis Heat Sinks:9
-Walk MP:6
-Jump MP:0
+heat sinks:18 Clan Double
+base chassis heat sinks:9
+walk mp:6
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:11
-RA Armor:11
-LT Armor:14
-RT Armor:14
-CT Armor:16
-HD Armor:9
-LL Armor:17
-RL Armor:17
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+armor:Ferro-Fibrous(Clan)
+LA armor:11
+RA armor:11
+LT armor:14
+RT armor:14
+CT armor:16
+HD armor:9
+LL armor:17
+RL armor:17
+RTL armor:5
+RTR armor:5
+RTC armor:5
 
 Weapons:5
-Improved Heavy Medium Laser, Left Arm
-Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Right Arm
 Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 
 Left Torso:
 Clan Endo Steel
@@ -81,12 +81,12 @@ Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLTargeting Computer (omnipod)
+CLTargeting Computer (OMNIPOD)
 Sensors
 Life Support
 -Empty-

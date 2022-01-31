@@ -1,11 +1,11 @@
 Version:1.0
 Jade Phoenix
-Prime
+D
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
-source:ilClan - ilClan
+era:3148
+source:Rec Guide:ilClan #22 - Dark Age
 rules level:3
 
 mass:85
@@ -13,10 +13,10 @@ engine:340 XL (Clan) Engine(IS)
 structure:Clan Endo-Composite
 myomer:Standard
 
-heat sinks:18 Clan Double
+heat sinks:17 Clan Double
 base chassis heat sinks:13
 walk mp:4
-jump mp:4
+jump mp:0
 
 armor:Ferro-Fibrous(Clan)
 LA armor:26
@@ -31,10 +31,11 @@ RTL armor:10
 RTR armor:10
 RTC armor:10
 
-Weapons:3
+Weapons:4
 ER PPC, Left Arm
 ER PPC, Left Arm
-HAG/30, Right Arm
+Gauss Rifle, Right Arm
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -53,44 +54,44 @@ Clan Endo-Composite
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
-CLHAG30 (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing
-CLPartialWing
-CLPartialWing
-CLDoubleHeatSink (OMNIPOD)
-CLDoubleHeatSink (OMNIPOD)
-Jump Jet (OMNIPOD)
-Jump Jet (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing
-CLPartialWing
-CLPartialWing
-Jump Jet (OMNIPOD)
-Jump Jet (OMNIPOD)
-Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
-Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
-Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
+-Empty-
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -103,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (OMNIPOD)
-CLDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+-Empty-
 
 Head:
 Life Support
@@ -148,10 +149,11 @@ CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 
+overview:The Jade Phoenix is a workhorse OmniMech with astraightforward armament intended for clean and honorable fights.
 manufacturer:CJF Factory Zone 4
 primaryfactory:Alyina
 systemmanufacturer:CHASSIS:JF 8 Light Endo-Composite
-systemmanufacturer:ENGINE:General Systems 340 XL
+systemmanufacturer:ENGINE:JF 340 XL
 systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:JF Integrated
 systemmanufacturer:TARGETING:Goshawk E-Series

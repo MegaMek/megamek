@@ -1,52 +1,53 @@
 Version:1.0
 Raijin
-RJN-101-C
+RJN-101-B
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3062
-Source:TRO 3055 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3058
+source:Rec Guide:ilClan #23 - Clan Invasion
+rules level:2
 
-Mass:50
-Engine:300 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:6
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:20
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:13
+RA armor:13
+LT armor:13
+RT armor:13
+CT armor:18
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
-Weapons:5
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
-Streak SRM 6, Left Torso
-Large Pulse Laser, Right Torso
+Weapons:6
+Large Pulse Laser, Left Arm
+Medium Laser, Left Torso
+Flamer, Right Torso
+ER PPC, Right Torso
+Medium Laser, Right Torso
+Flamer, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+ISLargePulseLaser
+ISLargePulseLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -54,10 +55,10 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,13 +70,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM6
-ISStreakSRM6
-IS Streak SRM 6 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
--Empty-
+Medium Laser
+Flamer
+BeagleActiveProbe
+BeagleActiveProbe
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -83,14 +84,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLargePulseLaser
-ISLargePulseLaser
-ISC3iUnit
-ISC3iUnit
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
--Empty-
+ISERPPC
+ISERPPC
+ISERPPC
+Medium Laser
+Flamer
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -153,7 +154,7 @@ overview:The Raijin is designed to be highly mobile and capable of engaging an e
 
 capabilities: The 'Mech's relatively light armor can be a liability if it is engaged in close combat or finds itself in a protracted engagement. 
 
-deployment:A greatly improved version of the Raijin, the C model turns the 'Mech into a powerful close range brawler. This necessitated that the 'Mech's entire arsenal be stripped and replaced, as well as the addition of one and a half tons of armor. The 'Mech's primary weapon is a Large Pulse Laser, backed up by three ER Medium Lasers, and a Streak SRM-6. Finally, the 'Mech also incorporates an improved C3 system that allows it to provide targeting data to friendly units.
+deployment:The Raijin is built around a Vlar 300 XL Engine that gives it a top speed of 97.2 km/h. For added mobility, the Raijin carries six Rawlings 60 jump jets, allowing the 'Mech to jump up to one hundred and eighty meters. The Raijin carries seven tons of Krupp 200 Ferro-Fibrous armor. For long-range striking power, the Raijin carries a Blankenburg 200 ER PPC that can be used to engage a target at up to six hundred and ninety meters. For close combat, the Raijin has three highly accurate Blankenburg Technologies Medium Pulse Lasers. Additionally, to seek out any weak points in an enemy's armor, the Raijin has a Holly SRM-6 and an ammunition efficient Holly Streak SRM-2. 
 
 history:The Raijin was designed after the Battle of Tukayyid to rearm ComGuard units that had suffered losses in the campaign. Despite having stockpiled Star League-era BattleMechs at his disposal, Precentor Martial Focht wanted something unfamiliar to both the Inner Sphere and the Clans. The Raijin was redesigned after Word of Blake forces lost considerable amounts of the design during its taking of Terra from ComStar in 3058. Newly redesigned Raijin II units began to be deployed in 3066, with older versions of the 'Mech being refitted to RJN-200-A variant standards. While off-shoots of the 200-A were deployed to elite Divisions.
 

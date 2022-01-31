@@ -33,6 +33,7 @@ VERSION HISTORY:
 + MHQ Issue #3072, Part 2: Preventing the RAT Generator from writing empty parent faction tags
 + Issue #3397: Standardizing the BasementType Enum
 + PR #3412: Improved Initial Log Message
++ Issue #3319: Fixing Unofficial On Map Predesignate Invalid Turn Processing NPEs
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

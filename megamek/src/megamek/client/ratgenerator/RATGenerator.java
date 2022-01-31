@@ -1160,7 +1160,7 @@ public class RATGenerator {
 
         for (int i = 0; i < ERAS.size(); i++) {
             int era = ERAS.get(i);
-            int nextEra = (i < ERAS.size() - 1) ? ERAS.get(i + 1) : era;
+            int nextEra = (i < ERAS.size() - 1) ? ERAS.get(i + 1) : Integer.MAX_VALUE;
             try {
                 file = new File(dir + "/" + era + ".xml");
                 pw = new PrintWriter(file, StandardCharsets.UTF_8);

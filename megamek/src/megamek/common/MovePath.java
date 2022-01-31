@@ -823,6 +823,20 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * Check for Supercharger use
+     */
+    public boolean hasActiveSupercharger() {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
+            final MoveStep step = i.nextElement();
+            if (step.isUsingSupercharger()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * Returns the final coordinates if a mech were to perform all the steps in
      * this path.
      */

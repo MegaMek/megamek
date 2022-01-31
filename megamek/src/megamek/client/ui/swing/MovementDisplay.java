@@ -1270,6 +1270,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
+        if (cmd.hasActiveSupercharger() && GUIPreferences.getInstance().getNagForMASC()) {
+            // pop up are you sure dialog, use NagForMASC for superchargers as well
+            if (!((ce() instanceof VTOL) && ce().hasWorkingMisc(
+                    MiscType.F_JET_BOOSTER))) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmMoveRoll", ce().getSuperchargerTarget()),
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIPreferences.getInstance().setNagForMASC(false);
+                    }
+                } else {
+                    return;
+                }
+            }
+        }
+
         if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
                 || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)
                 && GUIPreferences.getInstance().getNagForSprint()

@@ -298,8 +298,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-            return (int) Math
-                    .ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * (hasArmedMASC() ? 2.5 : 2.0));
+//            MPBoosters mpBooster/s = getMPBoosters();
+//            return (int) Math
+//                    .ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * getMPBoosters().getRunMultiplier());
+            return getMPBoosters().calcSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -423,11 +425,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      * a supercharger.
      */
     @Override
-    public boolean hasArmedMASC() {
+    public MPBoosters getMPBoosters() {
         if (getConversionMode() == CONV_MODE_MECH) {
-            return super.hasArmedMASC();
+            return super.getMPBoosters();
         } else {
-            return false;
+            return MPBoosters.NONE;
+        }
+    }
+
+    @Override
+    public MPBoosters getArmedMPBoosters() {
+        if (getConversionMode() == CONV_MODE_MECH) {
+            return super.getArmedMPBoosters();
+        } else {
+            return MPBoosters.NONE;
         }
     }
 

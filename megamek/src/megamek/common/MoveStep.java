@@ -80,6 +80,8 @@ public class MoveStep implements Serializable {
     private boolean docking;
     private boolean isUsingMASC;
     private int targetNumberMASC; // psr
+    private boolean isUsingSupercharger;
+    private int targetNumberSupercharger; // psr
     private boolean firstStep; // check if no previous
     private boolean isTurning; // method
     private boolean isUnloaded;
@@ -1425,6 +1427,14 @@ public class MoveStep implements Serializable {
         return isUsingMASC;
     }
 
+    /**
+     * @return
+     */
+    public boolean isUsingSupercharger() {
+        return isUsingSupercharger;
+    }
+
+
     public boolean isEvading() {
         return isEvading;
     }
@@ -1766,6 +1776,12 @@ public class MoveStep implements Serializable {
     protected void setUsingMASC(boolean b) {
         isUsingMASC = b;
     }
+    /**
+     * @param b
+     */
+    protected void setUsingSupercharger(boolean b) {
+        isUsingSupercharger = b;
+    }
 
     /**
      * @param i
@@ -1803,6 +1819,10 @@ public class MoveStep implements Serializable {
 
     protected void setTargetNumberMASC(int i) {
         targetNumberMASC = i;
+    }
+
+    protected void setTargetNumberSupercharger(int i) {
+        targetNumberSupercharger = i;
     }
 
     protected void setThisStepBackwards(boolean b) {
@@ -2253,11 +2273,17 @@ public class MoveStep implements Serializable {
             entity.gotPavementBonus = true;
         }
         int tmpWalkMP = cachedEntityState.getWalkMP() + bonus;
+
         int runMP = cachedEntityState.getRunMP() + bonus;
         int runMPnoMASC = cachedEntityState.getRunMPwithoutMASC() + bonus;
+
+
         int sprintMP = cachedEntityState.getSprintMP() + bonus;
         int sprintMPnoMASC = cachedEntityState.getSprintMPwithoutMASC() + bonus;
-        final boolean isMASCUsed = entity.isMASCUsed();
+
+        final boolean isMASCUsedEntity = entity.isMASCUsed();
+        final boolean isSuperchargerUsedEntity = entity.isSuperchargerUsed();
+
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
 
@@ -2270,7 +2296,12 @@ public class MoveStep implements Serializable {
                     tmpWalkMP = ((LandAirMech) entity).getAirMechWalkMP();
                     runMPnoMASC = ((LandAirMech) entity).getAirMechRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
-                    runMP = ((LandAirMech) entity).hasArmedMASC() ? tmpWalkMP * 2 : runMPnoMASC;
+                    Entity.MPBoosters mpBoosters = ((LandAirMech)entity).getArmedMPBoosters();
+                    if (mpBoosters.hasMASCAndOrSupercharger()) {
+                        runMP = mpBoosters.calcRunMP(tmpWalkMP);
+                    } else {
+                        runMP = runMPnoMASC;
+                    }
                 } else {
                     // Only 1 ground MP for ground effect vehicles and glider protomechs
                     tmpWalkMP = runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = 1;
@@ -2389,7 +2420,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                 }
-            } else if ((((getMpUsed() <= runMP) && isMASCUsed)
+            } else if ((((getMpUsed() <= runMP) && isMASCUsedEntity)
                     || (getMpUsed() <= runMPnoMASC)) && !isRunProhibited()) {
                 // Poor performance requires spending all walk MP in the
                 //  previous round in order to flank
@@ -2407,8 +2438,11 @@ public class MoveStep implements Serializable {
                 }
             } else if ((getMpUsed() <= runMP) && !isRunProhibited()
                     && !isEvading()) {
+                //TODO decide if using MASC or Super or both
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
+                setUsingSupercharger(true);
+                setTargetNumberSupercharger(entity.getSuperchargerTarget());
                 if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else {
@@ -2416,7 +2450,7 @@ public class MoveStep implements Serializable {
                 }
             } else if (canUseSprint(game)
                     && ((getMpUsed() <= sprintMPnoMASC)
-                            || ((getMpUsed() <= sprintMP) && isMASCUsed))
+                            || ((getMpUsed() <= sprintMP) && isMASCUsedEntity))
                     && !isRunProhibited() && !isEvading()) {
                 if (entity.getMovementMode() == EntityMovementMode.VTOL
                         || (entity.getMovementMode() == EntityMovementMode.WIGE
@@ -2428,6 +2462,7 @@ public class MoveStep implements Serializable {
             } else if ((getMpUsed() <= sprintMP)
                     && !isRunProhibited() && !isEvading()
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
+                //TODO decide if using MASC or Super or both
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
                 if (entity.getMovementMode() == EntityMovementMode.VTOL) {

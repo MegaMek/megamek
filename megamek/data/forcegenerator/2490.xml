@@ -1202,9 +1202,9 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Patron I LoaderMech' unitType='Mek'>
+	<chassis name='Patron LoaderMech' unitType='Mek'>
 		<availability>FWL:6</availability>
-		<model name=''>
+		<model name='PTN-1'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

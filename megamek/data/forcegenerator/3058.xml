@@ -7058,6 +7058,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Patton Tank' unitType='Tank'>
 		<availability>LA:7,FRR:5,FS:7,MERC:5</availability>

@@ -4394,6 +4394,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
 		<availability>CC:9,MOC:7,HL:5,IS:9,Periphery.Deep:7,FS:9,CIR:7,Periphery:7,TC:7,OA:7,LA:9,FWL:9,DC:9</availability>
@@ -5288,7 +5291,7 @@
 			<availability>CGS:1</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>LA:4,FS:3</availability>
 		<model name='(Standard)'>
 			<roles>fire_support</roles>

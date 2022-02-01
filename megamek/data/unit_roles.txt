@@ -6026,6 +6026,103 @@ Atlas C:JUGGERNAUT
 Atlas C 2:JUGGERNAUT
 Atlas C 3:SNIPER
 Atlas II AS7-DK-H:BRAWLER
+#Too Be Sorted
+Cheetah IIC:INTERCEPTOR
+Lucifer III C:FIRE_SUPPORT
+Medium Strike Fighter Defender II C:DOGFIGHTER
+Seydlitz C:INTERCEPTOR
+Shikra SKR-4N:FIRE_SUPPORT
+Thrush TR-9:INTERCEPTOR
+#Cavalier II [Flamer]:UNKNOWN
+#Cavalier II [MRR]:UNKNOWN
+#Cavalier II [PPC]:UNKNOWN
+#Cavalier II [SRM]:UNKNOWN
+#IS Standard (Baka) [LRR]:UNKNOWN
+#IS Standard (Baka) [SL]:UNKNOWN
+#IS Standard (Fa Sure) [David]:UNKNOWN
+#IS Standard (Fa Sure) [MG]:UNKNOWN
+#Kanazuchi (Support):UNKNOWN
+#Longinus C [MRR]:UNKNOWN
+#Longinus C [PPC]:UNKNOWN
+#Vampire III:UNKNOWN
+Awesome AWS-11V:SNIPER
+BattleMaster BLR-6M:SNIPER
+BattleMaster C 2:BRAWLER
+Bombard BMB-016:SNIPER
+Brahma BRM-6T:BRAWLER
+Caesar CES-5D:BRAWLER
+Cerberus MR-7K:SNIPER
+Devastator DVS-10:JUGGERNAUT
+Enforcer III ENF-6R:SKIRMISHER
+Goshawk II 4:STRIKER
+Gotterdammerung GTD-20C:BRAWLER
+Gotterdammerung GTD-30S:BRAWLER
+Hatamoto-Kaze HTM-27V2:SNIPER
+Hatchetman HCT-7D:SKIRMISHER
+Helios HEL-7L:SNIPER
+Hercules HRC-LS-9003:SKIRMISHER
+Hercules HRC-LS-9004:SKIRMISHER
+Hollander BZK-G2:SNIPER
+Hunchback HBK-6P:JUGGERNAUT
+Huron Warrior HUR-WO-R5L:SKIRMISHER
+Icarus II ICR-2R:STRIKER
+Inquisitor II ITW-205:BRAWLER
+Juliano JLN-5B:BRAWLER
+Juliano JLN-5C:BRAWLER
+King Crab KGC-009C:JUGGERNAUT
+Kodiak II 3:JUGGERNAUT
+Lineholder KW2-LH10:BRAWLER
+Omega SHP-5R:SNIPER
+Orion C:BRAWLER
+Orochi OR-3K:SNIPER
+Pendragon PDG-3R:BRAWLER
+Penetrator PTR-7D:SKIRMISHER
+Perseus P1S:BRAWLER
+Prey Seeker PY-SR20:STRIKER
+Prey Seeker PY-SR30:SCOUT
+Raider JL-3A:JUGGERNAUT
+Raider JL-3B:BRAWLER
+Raider Mk II JL-3C:BRAWLER
+Shogun C 2:SNIPER
+Shogun SHG-3E:JUGGERNAUT
+Shrike "Black Rose":SNIPER
+Striker STC-2L:JUGGERNAUT
+Tempest C:SNIPER
+Tempest TMP-4M:SKIRMISHER
+Venom SDR-9KE:SCOUT
+Vixen (Incubus) 6:BRAWLER
+Watchman WTC-4DM2:STRIKER
+Yu Huang Y-H12GC:SNIPER
+Cecerops 5:AMBUSHER
+Gorgon 5:SNIPER
+Gorgon 6:STRIKER
+Roc 5:STRIKER
+Svartalfa 3:STRIKER
+Bardiche Heavy Strike Tank C:MISSILE_BOAT
+Bellona Hover Tank (XL):SNIPER
+Devastator II Superheavy Tank:JUGGERNAUT
+Fensalir Combat WiGE (3132 Upgrade):SKIRMISHER
+Fensalir Combat WiGE (3137 Upgrade):SNIPER
+Fensalir Combat WiGE (Stealth):SNIPER
+Galleon Light Tank GAL-105:STRIKER
+Hadur Fast Support Vehicle (LRM):MISSILE_BOAT
+Hadur Fast Support Vehicle (Reactive):MISSILE_BOAT
+Huitzilopochtli Assault Tank (LRM):MISSILE_BOAT
+Huitzilopochtli Assault Tank (Streak):SNIPER
+Kite Reconnaissance Vehicle (Fusion):SCOUT
+Mobile Long Tom Artillery LT-MOB-95:MISSILE_BOAT
+Padilla Tube Artillery Tank (AMS):MISSILE_BOAT
+Pandion Combat WiGE (3135 Upgrade):STRIKER
+Pandion Combat WiGE (3140 Upgrade):STRIKER
+Pilum Heavy Tank (ELRM):MISSILE_BOAT
+Predator Tank Destroyer (Elite):STRIKER
+Schildkrote Line Tank (HPPC):SNIPER
+Schildkrote Line Tank (Light Gauss):SNIPER
+Schildkrote Line Tank (Plasma):SNIPER
+Sekhmet Assault Vehicle (Streak):SNIPER
+Shun Transport VTOL (Support):SNIPER
+Skanda Light Tank (TSEMP):STRIKER
+Swallow Attack WiGE (Spotter):SCOUT
 #GoldenCentury
 Mongoose C:SCOUT
 Mongoose C 2:SCOUT
@@ -6209,7 +6306,4 @@ Archer ARC-5CS:MISSILE_BOAT
 Warhammer WHM-7CS:BRAWLER
 Black Knight BLK-9-KNT:BRAWLER
 Marauder MAD-5CS:SNIPER
-#ilClan
-Jade Phoenix Prime:SNIPER
-Jade Phoenix A:SKIRMISHER
-Jade Phoenix B:SKIRMISHER
+

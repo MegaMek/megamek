@@ -1,41 +1,42 @@
-Version:1.1
+Version:1.0
 Highlander
 HGN-732 (Colleen)
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2801
-Rules Level:4
+techbase:Inner Sphere
+era:2801
+source:Historical: Operation Klondike - Early Succession Wars
+rules level:4
 
-Mass:90
-Engine:270 Fusion Engine (Clan)
-Structure:Standard
-Myomer:Standard
+mass:90
+engine:270 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Double (Inner Sphere)
-Walk MP:3
-Jump MP:3
+heat sinks:14 IS Double
+walk mp:3
+jump mp:3
 
-Armor:Ferro-Fibrous (Inner Sphere)
-LA Armor:30
-RA Armor:30
-LT Armor:28
-RT Armor:28
-CT Armor:40
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:10
-RTR Armor:10
-RTC Armor:16
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:16
 
 Weapons:6
-1 ISMediumPulseLaser, Right Torso
-1 ISMediumPulseLaser, Right Torso
-1 ISLRM15, Left Torso, Ammo:32
-1 ISLRM15, Left Torso
-1 ISERPPC, Right Arm
-1 CLStreakSRM6Prototype, Left Arm, Ammo:15
+Prototype Streak SRM 6, Left Arm
+ER PPC, Right Arm
+LRM 15, Left Torso
+LRM 15, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -44,101 +45,115 @@ Lower Arm Actuator
 Hand Actuator
 CLStreakSRM6Prototype
 CLStreakSRM6Prototype
-CLStreakSRM6 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Streak SRM 6 Ammo
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Jump Jet
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
+LRM 15
+LRM 15
+LRM 15
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
 ISCASE
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Jump Jet
 ISMediumPulseLaser
 ISMediumPulseLaser
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 overview:The Highlander is one of the most well-known Star League Defense Force assault 'Mechs, serving with distinction for almost two centuries since first entering service in 2592.
-
-capabilities:Initially designed as a dedicated city and installation defender, the original model featured a variety of weaponry along with fifteen and a half tons of Ferro-Fibrous armor, but perhaps its most useful asset were the three Hildco jump jets giving it a jumping range of 90 meters. The heaviest 'Mech design to feature jump jets at the time, their original task was to allow the Highlander the ability to jump over inconvenient obstacles such as buildings and outpace other 'Mechs with a faster ground speed, but because of this increased mobility and its versatile weaponry the Highlander proved to be a capable fighter on any battlefield and within decades nearly every BattleMech regiment of the Regular and Royal Armies featured them. 
-
+capabilities:Initially designed as a dedicated city and installation defender, the original model featured a variety of weaponry along with fifteen and a half tons of Ferro-Fibrous armor, but perhaps its most useful asset were the three Hildco jump jets giving it a jumping range of 90 meters. The heaviest 'Mech design to feature jump jets at the time, their original task was to allow the Highlander the ability to jump over inconvenient obstacles such as buildings and outpace other 'Mechs with a faster ground speed, but because of this increased mobility and its versatile weaponry the Highlander proved to be a capable fighter on any battlefield and within decades nearly every BattleMech regiment of the Regular and Royal Armies featured them.
 deployment:This version replaced the standard weaponry with an ER PPC, a prototype Streak SRM-6, twin Medium Pulse Lasers, and a pair of LRM-15 missile launchers. Fourteen double heat sinks keep everything cool.
-
 history:during the design's initial trial runs that pilots began using these 'Mechs in what would infamously become known as the "Highlander Burial". Leaping into the air and landing directly on their enemy, a Highlander could literally drive a light 'Mech into the ground. So successful was this maneuver that the design team re-engineered the legs to withstand repeated death-from-above attacks and turned what had been a desperation move into an art form, giving Highlander pilots an additional psychological edge. As with other Star League era designs the Highlander would suffer the loss of technology brought about by the Succession Wars, and when StarCorps' factory on Son Hoa was devastated towards the end of the Second Succession War the original HGN-732 became virtually extinct. An agreement between StarCorps and Hollis Incorporated to rebuild destroyed chassis from scratch using readily-available technology kept the line going until the mid-3030s when limited production was restarted by StarCorps on Son Hoa and Corey, producing barely a dozen new 'Mechs per year. These HGN-733 Highlanders were used in small numbers by the Capellan Confederation and Lyran Commonwealth, commonly as part of lances containing Exterminators, Victors, Grasshoppers and Catapults. Unbeknownst to many, ComStar also maintained a large stock of Highlanders left over from the Star League, some of which they gifted to the Draconis Combine during the War of 3039. The appearance of so many seemingly rare 733s, along with a few 732s whose advanced technology managed to slip through ComStar screening, had a large impact on Lyran morale during that conflict. ComStar would also use the design in their own military forces, the Com Guard, and even during the Clan Invasion a few original 732s would take to the field as part of the Clans' fighting forces. The Northwind Highlanders especially favored this namesake Battlemech. In fact, during the Succession Wars, they were the only Inner Sphere army to keep a large number of them operational, along with ComStar. The Highlanders are specially skilled in delivering the famed Highlander Burial maneuver. By 3057 StarCorps' Son Hoa line was at full production, producing brand-new original-spec Highlanders for Lyran units of the Federated Commonwealth, just in time to take part in the FedCom Civil War. Highlanders would continue to be produced all the way through to the Jihad, where advanced variants fought both for and against the Word of Blake.
-
 manufacturer:Refit
 primaryfactory:Refit
 systemmanufacturer:CHASSIS:Star League XT
@@ -147,3 +162,4 @@ systemmanufacturer:ARMOR:Grumman-3 Ferro Fibrous with CASE
 systemmanufacturer:JUMPJET:HildCo Model 10
 systemmanufacturer:COMMUNICATIONS:Hector VII
 systemmanufacturer:TARGETING:Starlight LX-1
+

@@ -79,6 +79,7 @@ public class ModelRecord extends AbstractUnitRecord {
         if (unitType == UnitType.MEK) {
             //TODO: id quads and tripods
             movementMode = EntityMovementMode.BIPED;
+            omni = ms.getUnitSubType().equals("Omni");
         } else {
             movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
         }

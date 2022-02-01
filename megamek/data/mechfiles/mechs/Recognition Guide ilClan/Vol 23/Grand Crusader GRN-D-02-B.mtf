@@ -1,0 +1,154 @@
+Version:1.0
+Grand Crusader
+GRN-D-02-B
+
+Config:Biped
+techbase:Inner Sphere
+era:3057
+source:Rec Guide:ilClan #23 - Clan Invasion
+rules level:2
+
+mass:80
+engine:320 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:11 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:24
+RT armor:24
+CT armor:34
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:10
+RTR armor:10
+RTC armor:15
+
+Weapons:7
+ER Large Laser, Left Arm
+Medium Pulse Laser, Right Arm
+ER Large Laser, Right Arm
+Medium Pulse Laser, Left Arm
+LRM 20, Right Torso
+LRM 20, Left Torso
+Anti-Missile System, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+ISMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+ISMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAMS Ammo
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

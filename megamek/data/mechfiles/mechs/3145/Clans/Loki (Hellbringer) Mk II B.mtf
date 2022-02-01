@@ -3,35 +3,35 @@ Loki Mk II (Hel)
 B
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3121
-Source:TRO 3145 The Clans - Late Republic
-Rules Level:3
+techbase:Clan
+era:3121
+source:TRO 3145 The Clans - Late Republic
+rules level:3
 
-Mass:65
-Engine:260 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:65
+engine:260 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:10
-Walk MP:4
-Jump MP:0
+heat sinks:15 Clan Double
+base chassis heat sinks:10
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:20
-RA Armor:20
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
+armor:Ferro-Fibrous(Clan)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:7
+RTR armor:7
+RTC armor:7
 
 Weapons:6
 Long Tom Cannon, Left Torso
@@ -44,13 +44,13 @@ Medium Pulse Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -58,13 +58,13 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERLargeLaser (omnipod)
-CLMediumPulseLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -72,29 +72,29 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
-CLLongTomCannon (omnipod)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
+ISLongTomCannon (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLMediumPulseLaser (omnipod)
-CLMediumPulseLaser (omnipod)
-CLLongTomCannonAmmo (omnipod)
-CLLongTomCannonAmmo (omnipod)
-CLLongTomCannonAmmo (omnipod)
--Empty-
--Empty-
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+ISLongTomCannonAmmo (OMNIPOD)
+ISLongTomCannonAmmo (OMNIPOD)
+ISLongTomCannonAmmo (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -108,16 +108,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

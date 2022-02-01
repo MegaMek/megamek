@@ -1299,12 +1299,6 @@
 	</faction>
 </factions>
 <units>
-	<chassis name='&apos;OMEGA&apos;' unitType='Mek'>
-		<availability>WOB:2</availability>
-		<model name='SHP-4X'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='AA Jump Infantry' unitType='Infantry'>
 		<availability>FWL:2</availability>
 		<model name='292nd League Regulars'>
@@ -11936,6 +11930,12 @@
 			<availability>IS:2,Periphery:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Omega' unitType='Mek'>
+		<availability>WOB:2</availability>
+		<model name='SHP-4X'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Oni' unitType='Aero'>
 		<availability>FRR:3,CGB.FRR:3,CNC:3,DC:4</availability>
 		<model name='ON-1'>
@@ -12496,6 +12496,9 @@
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Patron MilitiaMech' unitType='Mek'>

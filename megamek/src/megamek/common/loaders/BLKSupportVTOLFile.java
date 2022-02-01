@@ -56,7 +56,9 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         } else {
             t.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         setTechLevel(t);
         setFluff(t);
         checkManualBV(t);

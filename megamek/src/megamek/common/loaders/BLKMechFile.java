@@ -89,7 +89,9 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find block.");
         }
         mech.setModel(dataFile.getDataAsString("Model")[0]);
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            mech.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         setTechLevel(mech);
         setFluff(mech);
         checkManualBV(mech);

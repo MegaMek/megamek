@@ -32,6 +32,7 @@ public class MtfFile implements IMechLoader {
 
     private final String name;
     private final String model;
+    private int mulId = -1;
 
     private String chassisConfig;
     private String techBase;
@@ -121,6 +122,7 @@ public class MtfFile implements IMechLoader {
     public static final String OMNIPOD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
     public static final String SIZE = ":SIZE:";
+    public static final String MUL_ID = "mul id:";
 
     /**
      * Creates new MtfFile
@@ -267,6 +269,7 @@ public class MtfFile implements IMechLoader {
             mech.setFullHeadEject(fullHead);
             mech.setChassis(name.trim());
             mech.setModel(model.trim());
+            mech.setMulId(mulId);
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
             mech.setSource(source.substring("Source:".length()).trim());
 
@@ -1175,6 +1178,11 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(BV)) {
             bv = Integer.parseInt(line.substring(BV.length()));
+            return true;
+        }
+
+        if (lineLower.startsWith(MUL_ID)) {
+            mulId = Integer.parseInt(line.substring(MUL_ID.length()));
             return true;
         }
 

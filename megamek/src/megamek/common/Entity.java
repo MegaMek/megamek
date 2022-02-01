@@ -156,6 +156,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean omni = false;
     protected String chassis;
     protected String model;
+    protected int mulId = -1;
     protected int year = 3071;
     protected int techLevel;
     private CompositeTechLevel compositeTechLevel;
@@ -15982,5 +15983,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     public List<Integer> getValidBraceLocations() {
         return Collections.emptyList();
+    }
+
+    public int getMulId() {
+        return mulId;
+    }
+
+    public void setMulId(int newId) {
+        mulId = newId;
     }
 }

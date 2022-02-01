@@ -3,32 +3,32 @@ Wight
 WGT-4NC 'Dezgra'
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3074
-Source:XTRO Phantoms - Jihad
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3074
+source:XTRO Phantoms - Jihad
+rules level:4
 
-Mass:35
-Engine:280 XL Engine(IS)
-Structure:IS Composite
-Myomer:Standard
+mass:35
+engine:280 XL Engine(IS)
+structure:IS Composite
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:7
+heat sinks:10 IS Double
+walk mp:8
+jump mp:7
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:11
-RA Armor:11
-LT Armor:11
-RT Armor:11
-CT Armor:15
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+armor:Ferro-Fibrous(Clan)
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:5
 
 Weapons:2
 Medium Pulse Laser, Left Torso
@@ -39,9 +39,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 Mek Null Signature System
 Chameleon Light Polarization Shield
 -Empty-
@@ -53,9 +53,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 Mek Null Signature System
 Chameleon Light Polarization Shield
 -Empty-
@@ -85,7 +85,7 @@ Jump Jet
 Jump Jet
 CLLargePulseLaser
 CLLargePulseLaser
-IS Ferro-Fibrous
+Clan Ferro-Fibrous
 Mek Null Signature System
 Chameleon Light Polarization Shield
 -Empty-

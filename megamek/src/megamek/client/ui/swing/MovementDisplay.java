@@ -1256,7 +1256,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     MiscType.F_JET_BOOSTER))) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMoveRoll", ce().getMASCTarget()),
+                        Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget()),
                         true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
@@ -1276,7 +1276,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     MiscType.F_JET_BOOSTER))) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMoveRoll", ce().getSuperchargerTarget()),
+                        Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
                         true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {

@@ -1170,8 +1170,19 @@ public abstract class Mech extends Entity {
      */
     @Override
     public String getRunMPasString() {
-        if (getMPBoosters() != MPBoosters.NONE) {
-            return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+        MPBoosters mpBoosters = getMPBoosters();
+        if (mpBoosters.hasMASCAndOrSupercharger()) {
+
+            String str =  getRunMPwithoutMASC() + "(" + getRunMP()+")";
+            if (game != null) {
+                MPBoosters armed = getArmedMPBoosters();
+
+                str += (mpBoosters.hasMASC() ? " MASC:"+getMASCTurns()
+                    + (armed.hasMASC() ? "("+getMASCTarget()+"+)" : "(NA)") : "")
+                    + (mpBoosters.hasSupercharger() ? " Supercharger:"+getSuperchargerTurns()
+                    + (armed.hasSupercharger() ? "("+getSuperchargerTarget()+"+)" : "(NA)") : "");
+            }
+            return str;
         }
         return Integer.toString(getRunMP());
     }

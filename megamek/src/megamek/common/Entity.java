@@ -14149,9 +14149,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getMASCTarget() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
+        if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
-        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
+        } else if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             return ALTERNATE_MASC_FAILURE[nMASCLevel];
         } else {
             return MASC_FAILURE[nMASCLevel];

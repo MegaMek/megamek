@@ -1211,7 +1211,7 @@ public class Princess extends BotClient {
                     msg += " is crippled and withdrawing.";
                 }
                 LogManager.getLogger().debug(msg);
-                sendChat(msg, Level.WARN);
+                sendChat(msg, Level.ERROR);
 
                 // If this entity is falling back, able to flee the board, on 
                 // its home edge, and must flee, do so.
@@ -1225,7 +1225,7 @@ public class Princess extends BotClient {
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
                     msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
                     LogManager.getLogger().info(msg);
-                    sendChat(msg, Level.WARN);
+                    sendChat(msg, Level.ERROR);
                     final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.EJECT);
                     return mp;

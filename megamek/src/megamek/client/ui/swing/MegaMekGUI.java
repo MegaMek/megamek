@@ -97,20 +97,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
-        // Set a couple of things to make the Swing GUI look more "Mac-like" on
-        // Macs
-        // Taken from:
-        // http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MegaMek");
-
-        // Add additional themes
-        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
-        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
-        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
-        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
-
-        // this should also help to make MegaMek look more system-specific
+        // TODO : Move Theme setup to MegaMek::initializeSuiteSetups as part of implementing it in
+        // TODO : SuiteOptions
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
         } catch (Exception e) {
@@ -118,12 +106,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             e.printStackTrace();
         }
 
+        // TODO : Move ToolTip setup to MegaMek::initializeSuiteSetups as part of implementing them
+        // TODO : in SuiteOptions
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
         if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());
         }
+
         frame = new JFrame("MegaMek");
         frame.addWindowListener(new WindowAdapter() {
             @Override

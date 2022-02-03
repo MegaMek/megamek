@@ -79,12 +79,11 @@ public class MegaMek {
             }
 
             getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
+            initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
 
             if (cp.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);
             } else {
-                // Load button ordering
-                ButtonOrderPreferences.getInstance().setButtonPriorities();
                 startGUI();
             }
         } catch (CommandLineParser.ParseException e) {
@@ -238,6 +237,29 @@ public class MegaMek {
                 System.getProperty("os.name"), System.getProperty("os.version"),
                 System.getProperty("os.arch"), Locale.getDefault(), currentProject,
                 Runtime.getRuntime().maxMemory() / Math.pow(2, 30));
+    }
+
+    /**
+     * This is used to initialize suite-wide graphical setups.
+     * @param currentProject the currently described project
+     */
+    public static void initializeSuiteGraphicalSetups(final String currentProject) {
+        // Setup Fonts
+        parseFontDirectory(new File(MMConstants.FONT_DIRECTORY));
+
+        // Setup Themes
+        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
+        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
+        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
+
+        // Set a couple of things to make the Swing GUI look more "Mac-like" on Macs
+        // Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", currentProject);
+
+        // Setup Button Order Preferences
+        ButtonOrderPreferences.getInstance().setButtonPriorities();
     }
 
     private static void parseFontDirectory(final File directory) {

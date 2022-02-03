@@ -40,7 +40,12 @@ public abstract class SuiteConstants {
     //region SuiteOptions
     //endregion SuiteOptions
 
+    //region File Formats
+    public static final String TRUETYPE_FONT = ".tts";
+    //endregion File Formats
+
     //region File Paths
+    public static final String FONT_DIRECTORY = "data/fonts/";
     public static final String MHQ_PREFERENCES_FILE = "mmconf/mhq.preferences";
     public static final String MM_PREFERENCES_FILE = "mmconf/mm.preferences";
     public static final String MML_PREFERENCES_FILE = "mmconf/mml.preferences";

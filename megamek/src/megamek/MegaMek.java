@@ -29,6 +29,7 @@ import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -237,6 +238,30 @@ public class MegaMek {
                 System.getProperty("os.name"), System.getProperty("os.version"),
                 System.getProperty("os.arch"), Locale.getDefault(), currentProject,
                 Runtime.getRuntime().maxMemory() / Math.pow(2, 30));
+    }
+
+    private static void parseFontDirectory(final File directory) {
+        final String[] filenames = directory.list();
+        if (filenames == null) {
+            return;
+        }
+
+        for (final String filename : filenames) {
+            if (filename.endsWith(MMConstants.TRUETYPE_FONT)) {
+                try (InputStream fis = new FileInputStream(filename)) {
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
+                            Font.createFont(Font.TRUETYPE_FONT, fis));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to parse font", ex);
+                }
+                continue;
+            }
+
+            final File file = new File(filename);
+            if (file.isDirectory()) {
+                parseFontDirectory(file);
+            }
+        }
     }
 
     /**

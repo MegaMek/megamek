@@ -523,7 +523,9 @@ public class BLKFile {
 
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
-        blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
+        if (t.hasMulId()) {
+            blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
+        }
         blk.writeBlockData("year", t.getYear());
         if (t.getOriginalBuildYear() >= 0) {
             blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());

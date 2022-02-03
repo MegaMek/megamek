@@ -15,6 +15,10 @@ Brutus Assault Tank
 <Model>
 (PPC)
 </Model>
+
+<mul id:>
+434
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

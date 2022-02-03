@@ -15,6 +15,10 @@ Flatbed Truck
 <Model>
 (LRM)
 </Model>
+
+<mul id:>
+1130
+</mul id:>
 <Tonnage>
 10
 </Tonnage>

@@ -17,6 +17,10 @@ Demolisher II Heavy Tank
 (Standard)
 </Model>
 
+<mul id:>
+866
+</mul id:>
+
 <Tonnage>
 100
 </Tonnage>

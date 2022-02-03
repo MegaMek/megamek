@@ -20,6 +20,10 @@ Ranger Armored Fighting Vehicle
 VV1 (MG)
 </Model>
 
+<mul id:>
+2639
+</mul id:>
+
 <Tonnage>
 45
 </Tonnage>

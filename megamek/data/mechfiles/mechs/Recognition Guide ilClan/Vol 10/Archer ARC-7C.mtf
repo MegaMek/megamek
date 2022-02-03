@@ -1,6 +1,7 @@
 Version:1.0
 Archer
 ARC-7C
+mul id:7731
 
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,7 @@
 Version:1.0
 DemolitionMech
 WI-DM2
+mul id:869
 
 Config:Biped
 TechBase:Inner Sphere

@@ -15,6 +15,10 @@ Tokugawa Heavy Tank
 <Model>
 TKG-151
 </Model>
+
+<mul id:>
+3266
+</mul id:>
 <Tonnage>
 60
 </Tonnage>

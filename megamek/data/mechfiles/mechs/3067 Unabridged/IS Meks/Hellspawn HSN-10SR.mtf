@@ -1,6 +1,7 @@
 Version:1.1
 Hellspawn
 HSN-10SR
+mul id:5674
 
 Config:Biped
 TechBase:Inner Sphere

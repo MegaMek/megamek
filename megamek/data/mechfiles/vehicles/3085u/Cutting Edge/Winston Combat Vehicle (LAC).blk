@@ -20,6 +20,10 @@ Winston Combat Vehicle
 (LAC)
 </Model>
 
+<mul id:>
+3552
+</mul id:>
+
 <Tonnage>
 70
 </Tonnage>

@@ -1,6 +1,7 @@
 Version:1.0
 Warhammer IIC
 (Standard)
+mul id:3500
 
 Config:Biped
 techbase:Clan

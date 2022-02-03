@@ -1,6 +1,7 @@
 Version:1.0
 Strider
 SR1-OH
+mul id:6917
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

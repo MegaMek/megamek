@@ -1,6 +1,7 @@
 Version:1.0
 Spider
 SDR-5D
+mul id:3008
 
 Config:Biped
 TechBase:Inner Sphere

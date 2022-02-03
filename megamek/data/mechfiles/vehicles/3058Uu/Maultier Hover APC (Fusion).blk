@@ -15,6 +15,10 @@ Maultier Hover APC
 <Model>
 (Fusion)
 </Model>
+
+<mul id:>
+2106
+</mul id:>
 <Tonnage>
 15
 </Tonnage>

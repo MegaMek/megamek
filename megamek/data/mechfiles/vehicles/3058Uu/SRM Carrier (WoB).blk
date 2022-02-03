@@ -15,6 +15,10 @@ SRM Carrier
 <Model>
 (WoB)
 </Model>
+
+<mul id:>
+3031
+</mul id:>
 <Tonnage>
 60
 </Tonnage>

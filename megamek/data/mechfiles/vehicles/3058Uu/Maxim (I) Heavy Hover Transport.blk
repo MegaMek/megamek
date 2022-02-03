@@ -15,6 +15,10 @@ Maxim (I) Heavy Hover Transport
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+2115
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

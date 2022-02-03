@@ -20,6 +20,10 @@ Kopis Assault Battle Armor
 (Anti-Infantry)
 </Model>
 
+<mul id:>
+1815
+</mul id:>
+
 <chassis>
 biped
 </chassis>

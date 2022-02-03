@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Wheeled)
 </Model>
 
+<mul id:>
+125
+</mul id:>
+
 <year>
 2500
 </year>

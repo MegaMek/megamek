@@ -15,6 +15,10 @@ Scorpion Light Tank
 <Model>
 (MRM)
 </Model>
+
+<mul id:>
+2845
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

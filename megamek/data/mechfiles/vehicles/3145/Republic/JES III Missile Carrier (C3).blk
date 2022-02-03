@@ -20,6 +20,10 @@ JES III Missile Carrier
 (C3)
 </Model>
 
+<mul id:>
+6700
+</mul id:>
+
 <year>
 3140
 </year>

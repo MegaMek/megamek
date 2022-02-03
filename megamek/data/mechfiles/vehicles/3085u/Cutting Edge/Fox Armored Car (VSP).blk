@@ -15,6 +15,10 @@ Fox Armored Car
 <Model>
 (VSP)
 </Model>
+
+<mul id:>
+1152
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

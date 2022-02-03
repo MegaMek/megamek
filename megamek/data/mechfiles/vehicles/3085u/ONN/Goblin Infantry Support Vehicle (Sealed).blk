@@ -15,6 +15,10 @@ Goblin Infantry Support Vehicle
 <Model>
 (Sealed)
 </Model>
+
+<mul id:>
+1221
+</mul id:>
 <Tonnage>
 45
 </Tonnage>

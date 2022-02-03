@@ -15,6 +15,10 @@ Centipede Scout Car
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+514
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

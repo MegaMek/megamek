@@ -17,6 +17,10 @@ JES II Strategic Missile Carrier
 (Standard)
 </Model>
 
+<mul id:>
+1705
+</mul id:>
+
 <Tonnage>
 95
 </Tonnage>

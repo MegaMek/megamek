@@ -15,6 +15,10 @@ Yellow Jacket Gunship
 <Model>
 (Arrow IV)
 </Model>
+
+<mul id:>
+3614
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

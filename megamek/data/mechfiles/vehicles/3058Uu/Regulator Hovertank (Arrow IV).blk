@@ -15,6 +15,10 @@ Regulator Hovertank
 <Model>
 (Arrow IV)
 </Model>
+
+<mul id:>
+2675
+</mul id:>
 <Tonnage>
 45
 </Tonnage>

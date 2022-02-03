@@ -15,6 +15,10 @@ Condor Heavy Hover Tank
 <Model>
 (Laser)
 </Model>
+
+<mul id:>
+681
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

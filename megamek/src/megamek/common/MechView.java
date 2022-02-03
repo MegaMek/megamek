@@ -252,6 +252,8 @@ public class MechView {
                     Messages.getString("MechView.Source")));
             if (!entity.getSource().isEmpty()) {
                 sHead.add(new LabeledElement("", entity.getSource()));
+            } else {
+                sHead.add(new LabeledElement("", "(unkown)"));
             }
         } else {
             if (!entity.getSource().isEmpty()) {

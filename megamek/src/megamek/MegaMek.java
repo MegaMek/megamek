@@ -1,4 +1,3 @@
-
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)

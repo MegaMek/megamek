@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -74,7 +73,6 @@ public class MechSummaryCache {
         }
         if (!m_instance.initialized && !m_instance.initializing) {
             m_instance.initializing = true;
-            m_instance.initialized = false;
             interrupted = false;
             disposeInstance = false;
             m_instance.loader = new Thread(() -> m_instance.loadMechData(ignoringUnofficial),
@@ -97,8 +95,7 @@ public class MechSummaryCache {
         interrupted = false;
         disposeInstance = false;
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
-        long lastModified = unit_cache_path.exists() ?
-                unit_cache_path.lastModified() : megamek.MegaMek.TIMESTAMP;
+        long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
 
         m_instance.loader = new Thread(() -> m_instance.refreshCache(lastModified, ignoreUnofficial),
                 "Mech Cache Loader");
@@ -200,8 +197,7 @@ public class MechSummaryCache {
                     FILENAME_UNITS_CACHE).getFile();
             // check the cache
             try {
-                if (unit_cache_path.exists()
-                        && (unit_cache_path.lastModified() >= MegaMek.TIMESTAMP)) {
+                if (unit_cache_path.exists()) {
                     loadReport.append("  Reading from unit cache file...\n");
                     lLastCheck = unit_cache_path.lastModified();
                     InputStream istream = new BufferedInputStream(

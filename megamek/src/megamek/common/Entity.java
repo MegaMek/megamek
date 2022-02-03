@@ -17,11 +17,11 @@ package megamek.common;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
@@ -2119,27 +2119,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         || (retVal > bldnex)) {
                     retVal = bldnex;
                 } else if ((bldnex + next.getLevel()) > (bldcur + current.getLevel())) {
-                    int nextBasement = next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE);
+                    BasementType nextBasement = BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
                     int collapsedBasement = next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climb || isJumpingNow) {
                         retVal = bldnex + next.getLevel();
                     // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0)
-                            && (nextBasement > BasementType.NONE.getValue())
+                            && !nextBasement.isUnknownOrNone()
                             && (collapsedBasement > 0)) {
-                        retVal -= BasementType.getType(
-                                next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
+                        retVal -= nextBasement.getDepth();
                     } else {
                         retVal += current.getLevel();
                         retVal -= next.getLevel();
                     }
                 } else if (elevation == -(current.depth(true))) {
+                    BasementType currentBasement = BasementType.getType(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
                     if (climb || isJumpingNow) {
                         retVal = bldnex + next.getLevel();
-                    } else if ((current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE.getValue())
-                               && (assumedElevation == -BasementType
-                            .getType(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                            .getDepth())) {
+                    } else if (!currentBasement.isUnknownOrNone()
+                               && (assumedElevation == -currentBasement.getDepth())) {
                         retVal = -BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
                     } else {
                         retVal += current.getLevel();
@@ -2147,6 +2145,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     }
                 }
             }
+
             if ((getMovementMode() != EntityMovementMode.NAVAL)
                     && (getMovementMode() != EntityMovementMode.HYDROFOIL)
                     && (next.containsTerrain(Terrains.BRIDGE) || current
@@ -2218,11 +2217,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case INF_JUMP:
             case INF_LEG:
             case INF_MOTORIZED:
-                minAlt -= Math.max(
-                        0,
-                        BasementType.getType(
-                                hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                    .getDepth());
+                minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
                 break;
             case WIGE:
                 // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
@@ -2286,12 +2281,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case BIPED:
             case QUAD:
                 if (this instanceof Protomech) {
-                    minAlt -= Math
-                            .max(0,
-                                 BasementType
-                                         .getType(
-                                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                         .getDepth());
+                    minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
                 } else {
                     return false;
                 }
@@ -9848,9 +9838,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isEligibleFor(GamePhase phase) {
         // only deploy in deployment phase
-        if ((phase == GamePhase.DEPLOYMENT) == isDeployed()) {
-            if (!isDeployed() && isEligibleForTargetingPhase()
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
+        if (phase.isDeployment() == isDeployed()) {
+            if (!isDeployed() && phase.isSetArtilleryAutohitHexes()
+                    && isEligibleForArtyAutoHitHexes()) {
                 LogManager.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
@@ -10134,8 +10124,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase()
-               && (isOffBoard() || game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
+               && (isOffBoard() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
     }
 
     public boolean isEligibleForTargetingPhase() {

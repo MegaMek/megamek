@@ -15,11 +15,11 @@
 */
 package megamek.common;
 
-import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
@@ -5976,9 +5976,7 @@ public class Compute {
         int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
         int basement = 0;
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
-            basement = BasementType.getType(
-                    curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                   .getDepth();
+            basement = BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
         }
 
         // Return true if the entity is in the range of building elevations.
@@ -6125,16 +6123,7 @@ public class Compute {
         return null;
     }
 
-    /**
-     * Gets a new target hex for a flight of smoke missiles fired at a hex, if
-     * there are remaining missiles.
-     */
-
-    /**
-     * * STUFF FOR VECTOR MOVEMENT CALCULATIONS **
-     */
-    public static Coords getFinalPosition(Coords curpos, int[] v) {
-
+    public static @Nullable Coords getFinalPosition(Coords curpos, int... v) {
         if ((v == null) || (v.length != 6) || (curpos == null)) {
             return curpos;
         }

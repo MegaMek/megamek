@@ -414,12 +414,14 @@ public class Infantry extends Entity {
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
+        //  PL-MASC IntOps p.84
         if ((null != getCrew())
                 && hasAbility(OptionsConstants.MD_PL_MASC)
-                && ((getMovementMode() == EntityMovementMode.INF_LEG)
-                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+                && getMovementMode().isLegInfantry()
+                && isConventionalInfantry()) {
             mp += 1;
         }
+
         if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                         || (getMovementMode() == EntityMovementMode.INF_JUMP))) {

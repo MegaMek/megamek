@@ -11019,6 +11019,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Patton Tank' unitType='Tank'>
 		<availability>LA:8,FRR:5,FS:6,MERC:5,CWIE:4</availability>
@@ -11745,10 +11748,10 @@
 	</chassis>
 	<chassis name='Raijin' unitType='Mek'>
 		<availability>CS:5,WOB:1</availability>
-		<model name='RJN101-A'>
+		<model name='RJN-101-A'>
 			<availability>General:6</availability>
 		</model>
-		<model name='RJN101-C'>
+		<model name='RJN-101-C'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

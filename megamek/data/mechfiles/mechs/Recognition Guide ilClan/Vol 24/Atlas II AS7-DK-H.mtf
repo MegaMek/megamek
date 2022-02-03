@@ -1,0 +1,165 @@
+Version:1.0
+Atlas II
+AS7-DK-H
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3139
+source:Rec Guide:ilClan #24 - Dark Ages
+rules level:2
+
+mass:100
+engine:400 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:33
+RA armor:33
+LT armor:31
+RT armor:31
+CT armor:42	
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:7
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
+SRM 6, Left Torso
+LRM 20, Right Torso
+Rotary AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser
+CLERLargeLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+CLERMediumLaser
+CLERMediumLaser
+Clan Ammo LRM-20
+Clan Ammo LRM-20
+IS Ammo SRM-6
+ISCASEII
+IS Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISCASEII
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The technologically-advanced Hegemony counterpart to the SLDF's regular army's AS7-D Atlas, the Atlas II was exclusively reserved for SLDF Royal Regiments.
+capabilities:The weapons payload gives the design more broad range attack ability versus the Atlas's brawling weaponry and its limited long range attack capacities.
+deployment:The Atlas II is armed with an array of weaponry, including an LB-X Autocannon/10, a pair of ER Large Lasers, and a 20-tube Long Range Missile Launcher for long range attacks. For close range combat, the 'Mech is equipped with a pair of Medium Pulse Lasers and a Holly Six Pack. In addition, the 'Mech has been given CASE for both sides of the torso in order to keep an ammunition cook-off from consuming the 'Mech.
+history:First fielded in 2765, the Atlas II was designed by the Hegemony Research and Development Department, Weapons Division of the original Star League to maintain the technological edge over the other Great Houses. It was exclusively for the SLDF's Royal Regiments. In 2785, when General Aleksandr Kerensky put out his call for loyal forces to join him in his Exodus, every Atlas II pilot responded and left with him. These 'Mechs are prized by the Clans when they were found. One such 'Mech was spotted in 3052 during the Battle of Tukayyid. In the early 3070s, the design was resurrected by the Word of Blake when they captured Hesperus II's factories. After the liberation of Defiance Industries, Devlin Stone's coalition forces kept the 'Mechs in production.
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Foundation Type 10X
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:StarSlab/2 Ferro Fibrous with CASE II
+systemmanufacturer:JUMPJET:Army Comm Class 5
+systemmanufacturer:COMMUNICATIONS:Army Corporation Type 29K
+

@@ -3,33 +3,33 @@ Karhu
 (Syngman)
 
 Config:Biped Omnimech
-TechBase:Mixed (Clan Chassis)
-Era:3085
-Source:TRO 3085/Lamenkov's Liability - Jihad
-Rules Level:4
+techbase:Mixed (Clan Chassis)
+era:3085
+source:TRO 3085/Lamenkov's Liability - Jihad
+rules level:4
 
-Mass:65
-Engine:325 XL (Clan) Engine
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:65
+engine:325 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:12
-Walk MP:5
-Jump MP:0
+heat sinks:15 Clan Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:20
-RA Armor:20
-LT Armor:23
-RT Armor:23
-CT Armor:30
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Ferro-Fibrous(Clan)
+LA armor:20
+RA armor:20
+LT armor:23
+RT armor:23
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:3
 Heavy PPC, Left Arm
@@ -39,13 +39,13 @@ Plasma Rifle, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-ISERMediumLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -55,21 +55,21 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISPlasmaRifle (omnipod)
-ISPlasmaRifle (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
+ISPlasmaRifle (OMNIPOD)
+ISPlasmaRifle (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
 Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-BeagleActiveProbe (omnipod)
-BeagleActiveProbe (omnipod)
-ISC3SlaveUnit (omnipod)
+BeagleActiveProbe (OMNIPOD)
+BeagleActiveProbe (OMNIPOD)
+ISC3SlaveUnit (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -81,12 +81,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-ISPlasmaRifleAmmo (omnipod)
-ISPlasmaRifleAmmo (omnipod)
-ISGuardianECMSuite (omnipod)
-ISGuardianECMSuite (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
+ISGuardianECMSuite (OMNIPOD)
+ISGuardianECMSuite (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support

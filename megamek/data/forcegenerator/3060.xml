@@ -8682,6 +8682,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Patton Tank' unitType='Tank'>
 		<availability>LA:7,FRR:5,FS:7,MERC:5,CWIE:3</availability>
@@ -9252,10 +9255,10 @@
 	</chassis>
 	<chassis name='Raijin' unitType='Mek'>
 		<availability>CS:5,WOB:5</availability>
-		<model name='RJN101-A'>
+		<model name='RJN-101-A'>
 			<availability>General:8</availability>
 		</model>
-		<model name='RJN101-C'>
+		<model name='RJN-101-C'>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -10675,7 +10678,7 @@
 			<availability>CLAN:8,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:4,CDS:3,HL:3,LA:7,FRR:1,CNC:4,SIC:1,MERC:3,FS:5,CWIE:4</availability>
 		<model name='(Heavy Gauss)'>
 			<availability>LA:5,CNC:5,CWIE:5</availability>

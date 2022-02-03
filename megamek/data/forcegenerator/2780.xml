@@ -13,6 +13,7 @@
 	<faction key='CIR'>
 		<salvage pct='6'>LA:10,FWL:9</salvage>
 	</faction>
+	<faction key='CS'/>
 	<faction key='DC'>
 		<salvage pct='6'>CC:1,LA:7,FS:10</salvage>
 		<weightDistribution era='2780' unitType='Mek'>4,2,3,1</weightDistribution>
@@ -56,6 +57,7 @@
 		<weightDistribution era='2780' unitType='Mek'>6,6,3,1</weightDistribution>
 		<weightDistribution era='2780' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
+	<faction key='PP'/>
 	<faction key='Periphery'>
 		<weightDistribution era='2780' unitType='Mek'>6,5,3,1</weightDistribution>
 		<weightDistribution era='2780' unitType='Tank'>3,4,2,1</weightDistribution>
@@ -70,6 +72,7 @@
 		<weightDistribution era='2780' unitType='Tank'>3,4,3,1</weightDistribution>
 		<weightDistribution era='2780' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
+	<faction key='SLIE'/>
 	<faction key='TC'>
 		<salvage pct='6'>CC:6,SL:10,FS:10</salvage>
 		<weightDistribution era='2780' unitType='Aero'>1,2,3</weightDistribution>
@@ -2692,6 +2695,9 @@
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>

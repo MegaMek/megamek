@@ -1,0 +1,161 @@
+Version:1.0
+Doom Courser
+C
+
+Config:Quad Omnimech
+techbase:Clan
+era:3147
+source:Rec Guide:ilClan #22 - Dark Age
+rules level:3
+
+mass:70
+engine:280 Fusion (Clan) Engine(IS)
+structure:Clan Endo-Composite
+myomer:Standard
+
+heat sinks:12 Clan Double
+base chassis heat sinks:11
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+FLL armor:30
+FRL armor:30
+LT armor:23
+RT armor:23
+CT armor:31
+HD armor:9
+RLL armor:30
+RRL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:10
+
+Weapons:5
+LRM 15, Right Torso
+LRM 15, Right Torso
+LRM 15, Right Torso
+LRM 15, Right Torso
+LRM 15, Left Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+CLCASEII (OMNIPOD)
+
+Right Torso:
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+CLLRM15 (T) (OMNIPOD)
+ISQuadTurret
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo-Composite
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Doom Coursers often deploy as the backbone of a Star of lighter BattleMechs and tanks, using their turreted guns to blast whatever prey the skirmishers flush out.
+manufacturer:Csesztreg Industriplex Alpha
+primaryfactory:Csesztreg
+systemmanufacturer:CHASSIS:Csesztreg Quad 70.1 Endo-Composite
+systemmanufacturer:ENGINE:Clan Standard 280 series
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:CH3V Series Integrated
+systemmanufacturer:TARGETING:Version Kappa-III TTS
+

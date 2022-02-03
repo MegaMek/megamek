@@ -2522,17 +2522,14 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Patron I LoaderMech' unitType='Mek'>
-		<availability>FWL:2</availability>
-		<model name=''>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Patron LoaderMech' unitType='Mek'>
 		<availability>FWL:8</availability>
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Pentagon' unitType='Dropship'>

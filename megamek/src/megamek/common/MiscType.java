@@ -281,14 +281,12 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
 
     // Secondary Flags for Physical Weapons
-    public static final long S_CLUB = 1L << 0; // BMR
+    public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club
     public static final long S_TREE_CLUB = 1L << 1;// BMR
     public static final long S_HATCHET = 1L << 2; // BMR
     public static final long S_SWORD = 1L << 3; // BMR
-    public static final long S_MACE_THB = 1L << 4;// Tac Handbook version
-    public static final long S_CLAW_THB = 1L << 5; // Not used yet, but...
-    // Hey, it's all for
-    // fun.
+    public static final long S_MACE_THB = 1L << 4; // Unused and Unsupported
+    public static final long S_CLAW_THB = 1L << 5; // Unused and Unsupported
     public static final long S_MACE = 1L << 6;
     public static final long S_DUAL_SAW = 1L << 7;
     public static final long S_FLAIL = 1L << 8;
@@ -304,15 +302,14 @@ public class MiscType extends EquipmentType {
     public static final long S_BACKHOE = 1L << 18;
     public static final long S_COMBINE = 1L << 19; // TODO
     public static final long S_CHAINSAW = 1L << 20;
-    public static final long S_ROCK_CUTTER = 1L << 21;
-    // TODO
+    public static final long S_ROCK_CUTTER = 1L << 21; // TODO
     public static final long S_BUZZSAW = 1L << 22; // Unbound;
     public static final long S_RETRACTABLE_BLADE = 1L << 23;
     public static final long S_CHAIN_WHIP = 1L << 24;
     public static final long S_SPOT_WELDER = 1L << 25; // TODO: add game rules
     public static final long S_MINING_DRILL = 1L << 26; // Miniatures
     
-    // Protomech physical weapons
+    // ProtoMek physical weapons
     public static final long S_PROTOMECH_WEAPON = 1L << 0;
     public static final long S_PROTO_QMS = 1L << 1;
 
@@ -533,7 +530,7 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
             return RoundWeight.nearestKg(entity.getWeight() / 5.0);
-        } else if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
+        } else if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
             return RoundWeight.nextTon(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             return RoundWeight.nextTon(entity.getWeight() / 20.0);
@@ -990,8 +987,7 @@ public class MiscType extends EquipmentType {
                     tDCCost = tDCCost * 2;
                     costValue = tDCCost;
                 }
-            } else if (hasFlag(MiscType.F_CLUB)
-                    && (hasSubType(MiscType.S_HATCHET) || hasSubType(MiscType.S_MACE_THB))) {
+            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_HATCHET)) {
                 int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
                 costValue = hatchetTons * 5000;
             } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_SWORD)) {
@@ -1089,7 +1085,7 @@ public class MiscType extends EquipmentType {
             return criticals;
         }
         // check for known formulas
-        if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_SWORD) || hasSubType(S_MACE_THB))) {
+        if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_SWORD))) {
             return (int) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             return (int) Math.ceil(entity.getWeight() / 20.0);
@@ -1402,8 +1398,6 @@ public class MiscType extends EquipmentType {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
             returnBV = Math.ceil((entity.getWeight() / 10.0) + 1) * 1.725 * tsmMod;
-        } else if (hasFlag(F_CLUB) && hasSubType(S_MACE_THB)) {
-            returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5 * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * tsmMod;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {

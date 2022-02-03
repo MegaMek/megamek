@@ -2874,7 +2874,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns run MP without considering MASC
+     * Returns run MP with only one MASC system
+     */
+    public int getRunMPwithOneMASC() {
+        return getRunMPwithOneMASC(true, false, false);
+    }
+
+    /**
+     * Returns run MP with one MASC system, optionally figuring in gravity
+     * and possibly ignoring heat
+     */
+    public int getRunMPwithOneMASC(boolean gravity,
+                                            boolean ignoreheat, boolean ignoremodulararmor) {
+    // only Mechs need to check if multiple systmes are availaible
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+    }
+    /**
+     * Returns run MP without considering any MASC systems
      */
     public int getRunMPwithoutMASC() {
         return getRunMPwithoutMASC(true, false, false);

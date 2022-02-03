@@ -1676,6 +1676,13 @@ public class MoveStep implements Serializable {
     /**
      * @return
      */
+    public int getTargetNumberSupercharger() {
+        return targetNumberSupercharger;
+    }
+
+    /**
+     * @return
+     */
     public boolean isThisStepBackwards() {
         return thisStepBackwards;
     }
@@ -2275,6 +2282,7 @@ public class MoveStep implements Serializable {
         int tmpWalkMP = cachedEntityState.getWalkMP() + bonus;
 
         int runMP = cachedEntityState.getRunMP() + bonus;
+        int runMPOneMASC = cachedEntityState.getRunMPwithOneMASC() + bonus;
         int runMPnoMASC = cachedEntityState.getRunMPwithoutMASC() + bonus;
 
 
@@ -2436,9 +2444,27 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
+            } else if ((getMpUsed() <= runMPOneMASC) && !isRunProhibited()
+                    && !isEvading()) {
+                // decide if using MASC or Supercharger if need only one
+                // choose Super if even
+                Entity.MPBoosters mpBoosters = ((Mech)entity).getMPBoosters();
+                int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
+                int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
+                if ( mascTarget < scTarget ) {
+                    setUsingMASC(true);
+                    setTargetNumberMASC(entity.getMASCTarget());
+                } else {
+                    setUsingSupercharger(true);
+                    setTargetNumberSupercharger(scTarget);
+                }
+                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                    movementType = EntityMovementType.MOVE_VTOL_RUN;
+                } else {
+                    movementType = EntityMovementType.MOVE_RUN;
+                }
             } else if ((getMpUsed() <= runMP) && !isRunProhibited()
                     && !isEvading()) {
-                //TODO decide if using MASC or Super or both
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
                 setUsingSupercharger(true);

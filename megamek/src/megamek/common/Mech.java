@@ -1125,23 +1125,28 @@ public abstract class Mech extends Entity {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
-        MPBoosters mpBoosters = getMPBoosters();
+        MPBoosters mpBoosters = getArmedMPBoosters();
         if (mpBoosters.hasMASCAndOrSupercharger()) {
             return mpBoosters.calcRunMP(
                     getWalkMP(gravity, ignoreheat, ignoremodulararmor))
                             - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
-//        if ( mpBoosters.hasMASCAndSupercharger()) {
-//            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat,
-//                    ignoremodulararmor) * 2.5))
-//                    - (hasMPReducingHardenedArmor() ? 1 : 0);
-//        }
-//        else if ( mpBoosters.hasMASCXorSupercharger()) {
-//            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2)
-//                    - (hasMPReducingHardenedArmor() ? 1 : 0);
-//        }
         return Math.max(0, super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
                 - (hasMPReducingHardenedArmor() ? 1 : 0));
+    }
+
+    @Override
+    public int getRunMPwithOneMASC(boolean gravity, boolean ignoreheat,
+                                   boolean ignoremodulararmor) {
+        MPBoosters mpBoosters = getArmedMPBoosters();
+        if (mpBoosters.hasMASCAndOrSupercharger()) {
+            return mpBoosters.MASC_ONLY.calcRunMP(
+                    getWalkMP(gravity, ignoreheat, ignoremodulararmor))
+                    - (hasMPReducingHardenedArmor() ? 1 : 0);
+        }
+
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
+                - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /*
@@ -1155,6 +1160,8 @@ public abstract class Mech extends Entity {
         return super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
                 - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
+
+
 
     /**
      * @return The mech's run MP without MASC or supercharger, but with any reduction

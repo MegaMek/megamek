@@ -2173,13 +2173,14 @@ public class Tank extends Entity {
     }
 
     /**
-     * Tanks don't have MASC
+     * Tanks have Superchargers but don't have MASC
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
+
 
     /*
      * (non-Javadoc)

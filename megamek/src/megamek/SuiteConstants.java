@@ -41,7 +41,7 @@ public abstract class SuiteConstants {
     //endregion SuiteOptions
 
     //region File Formats
-    public static final String TRUETYPE_FONT = ".tts";
+    public static final String TRUETYPE_FONT = ".ttf";
     //endregion File Formats
 
     //region File Paths

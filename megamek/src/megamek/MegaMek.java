@@ -1,3 +1,4 @@
+
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
@@ -262,6 +263,11 @@ public class MegaMek {
         ButtonOrderPreferences.getInstance().setButtonPriorities();
     }
 
+    /**
+     * Recursively search the provided directory, attempting to create and then register truetype
+     * fonts from .ttf files
+     * @param directory the directory to parse
+     */
     private static void parseFontDirectory(final File directory) {
         final String[] filenames = directory.list();
         if (filenames == null) {
@@ -269,8 +275,8 @@ public class MegaMek {
         }
 
         for (final String filename : filenames) {
-            if (filename.endsWith(MMConstants.TRUETYPE_FONT)) {
-                try (InputStream fis = new FileInputStream(filename)) {
+            if (filename.toLowerCase().endsWith(MMConstants.TRUETYPE_FONT)) {
+                try (InputStream fis = new FileInputStream(directory.getPath() + '/' + filename)) {
                     GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
                             Font.createFont(Font.TRUETYPE_FONT, fis));
                 } catch (Exception ex) {
@@ -279,7 +285,7 @@ public class MegaMek {
                 continue;
             }
 
-            final File file = new File(filename);
+            final File file = new File(directory, filename);
             if (file.isDirectory()) {
                 parseFontDirectory(file);
             }

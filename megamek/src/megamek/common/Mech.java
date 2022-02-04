@@ -734,91 +734,6 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have MASC, Supercharger or both?
-     *
-     * @return
-     */
-    public MPBoosters getMPBoosters(boolean onlyArmed)
-    {
-        boolean hasMASC = false;
-        boolean hasSupercharger = false;
-        for (Mounted m : getEquipment()) {
-            if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC) ) {
-                //Supercharger is a subtype of MASC in MiscType
-                if ( m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
-                    hasSupercharger = !onlyArmed || m.curMode().equals("Armed");
-                } else {
-                    hasMASC = !onlyArmed || m.curMode().equals("Armed");
-                }
-            }
-            if (hasMASC && hasSupercharger) break;
-        }
-
-        if (hasMASC && hasSupercharger) return  MPBoosters.MASC_AND_SUPERCHARGER;
-        if (hasMASC) return MPBoosters.MASC_ONLY;
-        if (hasSupercharger) return MPBoosters.SUPERCHARGER_ONLY;
-        return MPBoosters.NONE;
-    }
-
-    /**
-     * does this mech have MASC, Supercharger or both?
-     *
-     * @return
-     */
-    public MPBoosters getMPBoosters()
-    {
-        return getMPBoosters(false);
-    }
-
-    /**
-     * does this mech have MASC, Supercharger or both?
-     *
-     * @return
-     */
-    public MPBoosters getArmedMPBoosters()
-    {
-        return getMPBoosters(true);
-    }
-
-//    /**
-//     * does this mech mount MASC?
-//     *
-//     * @return
-//     */
-//    public boolean hasMASC() {
-//        for (Mounted mEquip : getMisc()) {
-//            MiscType mtype = (MiscType) mEquip.getType();
-//            if (mtype.hasFlag(MiscType.F_MASC) && !mEquip.isInoperable()) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    /**
-//     * checks if a mech has both a normal MASC system and a supercharger,
-//     * regardless of arming status
-//     */
-//    public boolean hasMASCAndSuperCharger() {
-//        boolean hasMASC = false;
-//        boolean hasSuperCharger = false;
-//        for (Mounted m : getEquipment()) {
-//            if (!m.isInoperable() && (m.getType() instanceof MiscType)
-//                    && m.getType().hasFlag(MiscType.F_MASC)
-//                    && m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
-//                hasSuperCharger = true;
-//            }
-//            if (!m.isInoperable() && (m.getType() instanceof MiscType)
-//                    && m.getType().hasFlag(MiscType.F_MASC)
-//                    && !m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
-//                hasMASC = true;
-//            }
-//        }
-//        return hasMASC && hasSuperCharger;
-//    }
-
-    /**
      * does this mech have working jump boosters?
      *
      * @return
@@ -1179,7 +1094,6 @@ public abstract class Mech extends Entity {
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
         if (mpBoosters.hasMASCAndOrSupercharger()) {
-
             String str =  getRunMPwithoutMASC() + "(" + getRunMP()+")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
@@ -1228,25 +1142,39 @@ public abstract class Mech extends Entity {
             return getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
 
-        MPBoosters mpBoosters = getMPBoosters();
+        MPBoosters mpBoosters = getArmedMPBoosters();
         if (mpBoosters.hasMASCAndOrSupercharger()) {
             return mpBoosters.calcSprintMP(
                     getWalkMP(gravity, ignoreheat, ignoremodulararmor))
             - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
-//        if (mpBoosters == MPBoosters.MASC_AND_SUPERCHARGER) {
-//            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat,
-//                    ignoremodulararmor) * 3.0))
-//                    - (hasMPReducingHardenedArmor() ? 1 : 0);
-//        }
-//        if (mpBoosters != mpBoosters.NONE) {
-//            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat,
-//                    ignoremodulararmor) * 2.5))
-//                    - (hasMPReducingHardenedArmor() ? 1 : 0);
-//        }
+
         return getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
+    @Override
+    public int getSprintMPwithOneMASC() {
+        return getSprintMPwithOneMASC(true, false, false);
+    }
+
+    @Override
+    public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreheat,
+                                      boolean ignoremodulararmor) {
+
+        if (hasHipCrit()) {
+            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+
+        MPBoosters mpBoosters = getArmedMPBoosters();
+        if (mpBoosters.hasMASCAndOrSupercharger()) {
+            return mpBoosters.MASC_ONLY.calcSprintMP(
+                    getWalkMP(gravity, ignoreheat, ignoremodulararmor))
+                    - (hasMPReducingHardenedArmor() ? 1 : 0);
+        }
+
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
+                - (hasMPReducingHardenedArmor() ? 1 : 0);
+    }
     /*
      * (non-Javadoc)
      *

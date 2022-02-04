@@ -2929,6 +2929,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns sprint MP without considering MASC
      */
+    public int getSprintMPwithOneMASC() {
+        return getRunMPwithOneMASC();
+    }
+
+    /**
+     * Returns sprint MP without considering MASC, optionally figuring in
+     * gravity and possibly ignoring heat
+     */
+    public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreheat,
+                                      boolean ignoremodulararmor) {
+        return getRunMPwithOneMASC(gravity, ignoreheat, ignoremodulararmor);
+    }
+
+    /**
+     * Returns sprint MP without considering MASC
+     */
     public int getSprintMPwithoutMASC() {
         return getRunMPwithoutMASC();
     }
@@ -16176,5 +16192,53 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     public List<Integer> getValidBraceLocations() {
         return Collections.emptyList();
+    }
+
+    /**
+     * does this mech have MASC, Supercharger or both?
+     *
+     * @return
+     */
+    public MPBoosters getMPBoosters(boolean onlyArmed)
+    {
+        boolean hasMASC = false;
+        boolean hasSupercharger = false;
+        for (Mounted m : getEquipment()) {
+            if (!m.isInoperable() && (m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_MASC) ) {
+                //Supercharger is a subtype of MASC in MiscType
+                if ( m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                    hasSupercharger = !onlyArmed || m.curMode().equals("Armed");
+                } else {
+                    hasMASC = !onlyArmed || m.curMode().equals("Armed");
+                }
+            }
+            if (hasMASC && hasSupercharger) break;
+        }
+
+        if (hasMASC && hasSupercharger) return  MPBoosters.MASC_AND_SUPERCHARGER;
+        if (hasMASC) return MPBoosters.MASC_ONLY;
+        if (hasSupercharger) return MPBoosters.SUPERCHARGER_ONLY;
+        return MPBoosters.NONE;
+    }
+
+    /**
+     * does this mech have MASC, Supercharger or both?
+     *
+     * @return
+     */
+    public MPBoosters getMPBoosters()
+    {
+        return getMPBoosters(false);
+    }
+
+    /**
+     * does this mech have MASC, Supercharger or both?
+     *
+     * @return
+     */
+    public MPBoosters getArmedMPBoosters()
+    {
+        return getMPBoosters(true);
     }
 }

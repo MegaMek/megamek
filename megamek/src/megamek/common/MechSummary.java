@@ -28,6 +28,7 @@ public class MechSummary implements Serializable {
     private String m_sName;
     private String m_sChassis;
     private String m_sModel;
+    private int mulId;
     private String m_sUnitType;
     private String m_sUnitSubType;
     private File m_sSourceFile;
@@ -117,6 +118,8 @@ public class MechSummary implements Serializable {
     public String getModel() {
         return (m_sModel);
     }
+
+    public int getMulId() { return mulId; }
 
     public String getUnitType() {
         return (m_sUnitType);
@@ -273,6 +276,10 @@ public class MechSummary implements Serializable {
 
     public void setModel(String m_sModel) {
         this.m_sModel = m_sModel;
+    }
+
+    public void setMulId(int mulId) {
+        this.mulId = mulId;
     }
 
     public void setUnitType(String m_sUnitType) {

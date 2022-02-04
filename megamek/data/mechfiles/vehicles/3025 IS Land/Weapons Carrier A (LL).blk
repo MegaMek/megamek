@@ -15,6 +15,10 @@ Weapons Carrier A
 <Model>
 (LL)
 </Model>
+
+<mul id:>
+5397
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

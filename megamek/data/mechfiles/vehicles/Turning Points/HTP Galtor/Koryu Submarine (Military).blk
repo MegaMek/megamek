@@ -18,6 +18,10 @@ Koryu Submarine
 (Military)
 </Model>
 
+<mul id:>
+1819
+</mul id:>
+
 <Tonnage>
 30
 </Tonnage>

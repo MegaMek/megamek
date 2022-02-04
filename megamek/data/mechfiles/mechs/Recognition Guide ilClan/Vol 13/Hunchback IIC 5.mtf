@@ -1,6 +1,7 @@
 Version:1.0
 Hunchback IIC
 5
+mul id:8130
 
 Config:Biped
 techbase:Clan

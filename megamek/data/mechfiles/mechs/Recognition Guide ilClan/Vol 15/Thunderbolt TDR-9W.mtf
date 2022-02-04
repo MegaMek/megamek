@@ -1,6 +1,7 @@
 Version:1.0
 Thunderbolt
 TDR-9W
+mul id:8192
 
 Config:Biped
 techbase:Mixed (IS Chassis)

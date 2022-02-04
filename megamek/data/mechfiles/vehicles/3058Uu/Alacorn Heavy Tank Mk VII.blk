@@ -15,6 +15,10 @@ Alacorn Heavy Tank
 <Model>
 Mk VII
 </Model>
+
+<mul id:>
+26
+</mul id:>
 <Tonnage>
 95
 </Tonnage>

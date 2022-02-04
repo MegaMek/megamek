@@ -20,6 +20,10 @@ Grenadier Battle Armor
 (Hunter-Killer)[SVSP/Magshot]
 </Model>
 
+<mul id:>
+6741
+</mul id:>
+
 <chassis>
 biped
 </chassis>

@@ -37,9 +37,9 @@ public class FontComboBox extends MMComboBox<FontDisplay> {
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
                                                           final int index, final boolean isSelected,
                                                           final boolean cellHasFocus) {
-                final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof FontDisplay) {
-                    label.setFont(((FontDisplay) value).getFont());
+                    setFont(((FontDisplay) value).getFont());
                     list.setToolTipText(value.toString());
                 }
                 return this;

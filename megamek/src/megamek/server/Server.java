@@ -9673,25 +9673,6 @@ public class Server implements Runnable {
                     supercharger.setMode("Off");
                 }
                 ApplyMASCOrSuperchargerCriticals(entity, md, crits);
-//                for (Integer loc : crits.keySet()) {
-//                    List<CriticalSlot> lcs = crits.get(loc);
-//                    for (CriticalSlot cs : lcs) {
-//                        // HACK: if loc is -1, we need to deal motive damage to
-//                        // the tank, the severity of which is stored in the critslot index
-//                        if (loc == -1) {
-//                            addReport(vehicleMotiveDamage((Tank) entity,
-//                                    0, true, cs.getIndex()));
-//                        } else {
-//                            addReport(applyCriticalHit(entity, loc, cs,
-//                                    true, 0, false));
-//                        }
-//                    }
-//                }
-//                // do any PSR immediately
-//                addReport(resolvePilotingRolls(entity));
-//                game.resetPSRs(entity);
-//                // let the player replot their move as MP might be changed
-//                md.clear();
                 return true;
             }
         } else {

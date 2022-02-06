@@ -94,7 +94,7 @@ public class GameTurn implements Serializable {
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
                 || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
-    }    
+    }
 
     /**
      * @return true if the player and entity are both valid.

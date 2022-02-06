@@ -37,7 +37,7 @@ VERSION HISTORY:
 + Data: New Sprites, Various name fixes in Force Generator Files adding final Rec Guides.
 + PR #3420: RAT Generator editor fixes
 + Issue #3363: Apply Zweihander damage to both arms when using an improvised club
- 
++ PR #3428: Creating a standard FontComboBox
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

@@ -756,48 +756,6 @@ public abstract class Mech extends Entity {
         return jumpBoosters;
     }
 
-//    /**
-//     * Checks if a mech has an armed MASC system. Note that the mech will have
-//     * to exceed its normal run to actually engage the MASC system
-//     */
-//    public boolean hasArmedMASC() {
-//        for (Mounted m : getEquipment()) {
-//            if (!m.isDestroyed() && !m.isBreached()
-//                    && (m.getType() instanceof MiscType)
-//                    && m.getType().hasFlag(MiscType.F_MASC)
-//                    && m.curMode().equals("Armed")) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * checks if a mech has both a normal armed MASC system and a armed super-
-//     * charger.
-//     */
-//    public boolean hasArmedMASCAndSuperCharger() {
-//        boolean hasMASC = false;
-//        boolean hasSuperCharger = false;
-//        for (Mounted m : getEquipment()) {
-//            if (!m.isDestroyed() && !m.isBreached()
-//                    && (m.getType() instanceof MiscType)
-//                    && m.getType().hasFlag(MiscType.F_MASC)
-//                    && m.curMode().equals("Armed")
-//                    && m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
-//                hasSuperCharger = true;
-//            }
-//            if (!m.isDestroyed() && !m.isBreached()
-//                    && (m.getType() instanceof MiscType)
-//                    && m.getType().hasFlag(MiscType.F_MASC)
-//                    && m.curMode().equals("Armed")
-//                    && !m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
-//                hasMASC = true;
-//            }
-//        }
-//        return hasMASC && hasSuperCharger;
-//    }
-
     /**
      * Does this mech have an extended retractable blade in working condition?
      */

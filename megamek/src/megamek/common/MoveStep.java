@@ -2448,7 +2448,7 @@ public class MoveStep implements Serializable {
             } else if ((getMpUsed() <= runMPOneMASC) && !isRunProhibited()
                     && !isEvading()) {
                 // decide which to use if both are active
-                Entity.MPBoosters mpBoosters = entity.getMPBoosters();
+                Entity.MPBoosters mpBoosters = entity.getArmedMPBoosters();
                 int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
                 int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
                 if ( mascTarget < scTarget ) {
@@ -2489,7 +2489,7 @@ public class MoveStep implements Serializable {
                     && !isEvading()) {
                 // decide if using MASC or Supercharger if need only one
                 // choose Super if even
-                Entity.MPBoosters mpBoosters = entity.getMPBoosters();
+                Entity.MPBoosters mpBoosters = entity.getArmedMPBoosters();
                 int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
                 int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
                 if ( mascTarget < scTarget ) {

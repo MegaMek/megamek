@@ -298,10 +298,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-//            MPBoosters mpBooster/s = getMPBoosters();
-//            return (int) Math
-//                    .ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * getMPBoosters().getRunMultiplier());
-            return getMPBoosters().calcSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
+            return getArmedMPBoosters().calcSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }

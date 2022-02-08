@@ -9558,46 +9558,6 @@ public class Server implements Runnable {
             // Check for failure and process it
             if (mascFailure) {
                 addReport(vReport);
-//                // If this is supercharger failure we need to damage the supercharger as well as
-//                // the additional criticals. For mechs this requires the additional step of finding
-//                // the slot and marking it as hit so it can't absorb future damage.
-//                Mounted supercharger = entity.getSuperCharger();
-//                if ((null != supercharger) && supercharger.curMode().equals("Armed")) {
-//                    if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-//                        final int loc = supercharger.getLocation();
-//                        for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
-//                            final CriticalSlot crit = entity.getCritical(loc, slot);
-//                            if ((null != crit) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)
-//                                    && (crit.getMount().getType().equals(supercharger.getType()))) {
-//                                addReport(applyCriticalHit(entity, loc, crit,
-//                                        true, 0, false));
-//                                break;
-//                            }
-//                        }
-//                    } else {
-//                        supercharger.setHit(true);
-//                    }
-//                    supercharger.setMode("Off");
-//                }
-//                for (Integer loc : crits.keySet()) {
-//                    List<CriticalSlot> lcs = crits.get(loc);
-//                    for (CriticalSlot cs : lcs) {
-//                        // HACK: if loc is -1, we need to deal motive damage to
-//                        // the tank, the severity of which is stored in the critslot index
-//                        if (loc == -1) {
-//                            addReport(vehicleMotiveDamage((Tank) entity,
-//                                    0, true, cs.getIndex()));
-//                        } else {
-//                            addReport(applyCriticalHit(entity, loc, cs,
-//                                    true, 0, false));
-//                        }
-//                    }
-//                }
-//                // do any PSR immediately
-//                addReport(resolvePilotingRolls(entity));
-//                game.resetPSRs(entity);
-//                // let the player replot their move as MP might be changed
-//                md.clear();
                 ApplyMASCOrSuperchargerCriticals(entity, md, crits);
                 return true;
             }

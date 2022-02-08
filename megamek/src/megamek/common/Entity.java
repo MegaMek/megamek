@@ -204,7 +204,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (hasMASCAndSupercharger()) {
                 return (int) Math.ceil(walkMP * 3);
             }
-            return 2;
+            return (int) Math.ceil(walkMP * 2);
         }
 
     }

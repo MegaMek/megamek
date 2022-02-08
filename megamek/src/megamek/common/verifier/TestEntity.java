@@ -418,12 +418,6 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return MPBoosters.NONE;
     }
-    //    private boolean hasMASC() {
-//        if (getEntity() instanceof Mech) {
-//            return ((Mech) getEntity()).hasMASC();
-//        }
-//        return false;
-//    }
     
     public String printShortMovement() {
         Entity.MPBoosters mpBoosters = getMPBoosters();

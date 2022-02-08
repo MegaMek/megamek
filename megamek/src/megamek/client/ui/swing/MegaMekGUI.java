@@ -49,6 +49,7 @@ import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -56,6 +57,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.MultiResolutionImage;
+import java.awt.image.BaseMultiResolutionImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -69,13 +72,15 @@ import java.util.zip.GZIPInputStream;
 import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
-    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
+    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";// "../misc/megamek-splash.jpg";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf";
+    private static final int DEFAULT_DISPLAY_DPI = 96;
+
 
     private JFrame frame;
     private Client client;
@@ -273,14 +278,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);
 
-        // Use the current monitor so we don't "overflow" computers whose primary
-        // displays aren't as large as their secondary displays.
-        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
 
-        String splashFilename;
+
         if (skinSpec.hasBackgrounds()) {
-            splashFilename = determineSplashScreen(skinSpec.backgrounds, 
-                    currentMonitor.getWidth(), currentMonitor.getHeight());
             if (skinSpec.backgrounds.size() > 1) {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
                         skinSpec.backgrounds.get(1)).getFile();
@@ -292,29 +292,36 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         } else {
-            splashFilename = FILENAME_MEGAMEK_SPLASH;
             backgroundIcon = null;
         }
-        File splashFile = new File(Configuration.widgetsDir(), splashFilename);
-        // Ensure we have a splash image, even if we have to fall back to default.
-        if (!splashFile.exists()) {
-            splashFilename = FILENAME_MEGAMEK_SPLASH;
-        }
-        // initialize splash image
-        Image imgSplash = frame.getToolkit()
-                .getImage(new MegaMekFile(Configuration.widgetsDir(), splashFilename).toString());
 
-        // wait for splash image to load completely
-        MediaTracker tracker = new MediaTracker(frame);
-        tracker.addImage(imgSplash, 0);
-        try {
-            tracker.waitForID(0);
-        } catch (InterruptedException e) {
-            // really should never come here
+        // Use the current monitor so we don't "overflow" computers whose primary
+        // displays aren't as large as their secondary displays.
+        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
+        int monitorW = currentMonitor.getWidth();
+        int monitorH = currentMonitor.getHeight();
+
+        int pixelPerInch= java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
+        int scaledMonitorW = (int)(DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
+        int scaledMonitorH = (int)(DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
+
+        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
+        // MultiResolutionImage is supposed to o the right thing with display scaling, but does not
+        // Image imgSplash = getMultiResolutionSplashScreen(skinSpec.backgrounds);
+        JLabel panTitle;
+        if (imgSplash != null) {
+            Icon icon = new ImageIcon(imgSplash);
+             panTitle = new JLabel(icon);
+        } else {
+            panTitle = new JLabel();
         }
-        // make splash image panel
-        ImageIcon icon = new ImageIcon(imgSplash);
-        JLabel panTitle = new JLabel(icon);
+        int splashW = imgSplash == null ? (int)(scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
+        int splashH = imgSplash == null ? (int)(scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
+
+        Dimension splashDim =  new Dimension((int)splashW, (int)splashH);
+        panTitle.setMaximumSize(splashDim);
+        panTitle.setMinimumSize(splashDim);
+        panTitle.setPreferredSize(splashDim);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
@@ -323,8 +330,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.
-        int imageWidth = imgSplash.getWidth(frame);
-        int maximumWidth = (int) (0.9 * currentMonitor.getWidth()) - imageWidth;
+        int maximumWidth = (int) (0.9 * scaledMonitorW) - splashW;
+
         Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
         if (textDim.getWidth() > minButtonDim.getWidth()) {
             minButtonDim = textDim;
@@ -1070,5 +1077,72 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
         // List of splash screens is not complete so default to the first splash screen.
         return splashScreens.get(0);
+    }
+
+    private Image getSplashScreen(final List<String> splashScreens,
+        final int screenWidth, final int screenHeight) {
+        String filename = determineSplashScreen(splashScreens,screenWidth,screenHeight);
+        File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
+        if (!file.exists()) {
+            LogManager.getLogger().error("MainMenu Error: Splash screen doesn't exist: " + file.getAbsolutePath());
+            file = new MegaMekFile(Configuration.widgetsDir(), FILENAME_MEGAMEK_SPLASH).getFile();
+        }
+
+        if (!file.exists()) {
+            LogManager.getLogger().error("MainMenu Error: Backup splash screen doesn't exist: " + file.getAbsolutePath());
+            return null;
+        }
+
+        BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+        // wait for splash image to load completely
+        MediaTracker tracker = new MediaTracker(frame);
+        tracker.addImage(img, 0);
+        try {
+            tracker.waitForID(0);
+        } catch (InterruptedException e) {
+            // really should never come here
+        }
+        return img;
+    }
+
+    /**
+     * Ta MultiResoluitonImage is supposed to allow Swing to choose the right res to display based
+     * on DPI. but does not work as expected for ImageIcon
+     * @param splashScreens
+     * @return
+     */
+    private BaseMultiResolutionImage getMultiResolutionSplashScreen(final List<String> splashScreens) {
+
+        List<String> filenames = new ArrayList<String>();
+        if (splashScreens.size() > 3) {
+            filenames.add(splashScreens.get(0));
+            filenames.add(splashScreens.get(2));
+            filenames.add(splashScreens.get(3));
+        } else {
+            filenames.add(splashScreens.get(0));
+        }
+
+        List<Image> images = new ArrayList<Image>();
+
+        for (String filename : filenames) {
+            File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
+            if (!file.exists()) {
+                LogManager.getLogger().error("MainMenu Error: background icon doesn't exist: " + file.getAbsolutePath());
+            } else {
+                BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+                images.add(img);
+                // wait for splash image to load completely
+                MediaTracker tracker = new MediaTracker(frame);
+                tracker.addImage(img, 0);
+                try {
+                    tracker.waitForID(0);
+                } catch (InterruptedException e) {
+                    // really should never come here
+                }
+            }
+        }
+        BaseMultiResolutionImage multiResolutionImage = new BaseMultiResolutionImage(images.toArray(new Image[0]));
+
+        return  multiResolutionImage;
     }
 }

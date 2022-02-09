@@ -3415,6 +3415,24 @@
 			<availability>LA:4,FS:6,MERC:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Butcherbird (Ion Sparrow)' unitType='Mek' omni='Clan'>
+		<availability>CJF:4</availability>
+		<model name='A'>
+			<availability>CJF:4</availability>
+		</model>
+		<model name='B'>
+			<availability>CJF:4</availability>
+		</model>
+		<model name='C'>
+			<availability>CJF:4</availability>
+		</model>
+		<model name='D'>
+			<availability>CJF:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>CJF:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Cadaver' unitType='Mek'>
 		<availability>RA.OA:7,IS:3,MERC:4,TC:7,RA:6,Periphery:3</availability>
 		<model name='CVR-A1'>

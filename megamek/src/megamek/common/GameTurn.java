@@ -63,7 +63,7 @@ public class GameTurn implements Serializable {
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(Entity entity, Game game) {
+    public boolean isValidEntity(final @Nullable Entity entity, final Game game) {
         return isValidEntity(entity, game, true);
     }
     
@@ -94,17 +94,17 @@ public class GameTurn implements Serializable {
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
                 || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
-    }    
+    }
 
     /**
-     * Returns true if the player and entity are both valid.
+     * @return true if the player and entity are both valid.
      */
-    public boolean isValid(int playerId, Entity entity, Game game) {
+    public boolean isValid(final int playerId, final @Nullable Entity entity, final Game game) {
         return (playerId == this.playerId) && isValidEntity(entity, game);
     }
 
     /**
-     * Returns true if the player is valid.
+     * @return true if the player is valid.
      */
     public boolean isValid(int playerId, Game game) {
         return playerId == this.playerId;

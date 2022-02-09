@@ -3764,7 +3764,7 @@ public class Tank extends Entity {
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
         if (mpBoosters.hasMASCAndOrSupercharger()) {
-            String str =  getRunMPwithoutMASC() + "(" + getRunMP()+")";
+            String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 

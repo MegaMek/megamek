@@ -530,7 +530,7 @@ class StepSprite extends Sprite {
         if (rollsStringBuf.length() != 0) {
             // draw it below the main string.
             String rollsString = rollsStringBuf.toString();
-            Font smallFont = getMovementFont().deriveFont(getMovementFont().getSize()*0.5f);
+            Font smallFont = getMovementFont().deriveFont(getMovementFont().getSize() * 0.5f);
             graph.setFont(smallFont);
             int rollsX = stepPos.x + 42;
             if (shiftFlag) {

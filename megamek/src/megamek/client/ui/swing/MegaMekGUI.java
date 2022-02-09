@@ -302,8 +302,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         int monitorH = currentMonitor.getHeight();
 
         int pixelPerInch= java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
-        int scaledMonitorW = (int)(DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
-        int scaledMonitorH = (int)(DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
+        int scaledMonitorW = (int) (DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
+        int scaledMonitorH = (int) (DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
 
         Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
         // MultiResolutionImage is supposed to o the right thing with display scaling, but does not
@@ -315,10 +315,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         } else {
             panTitle = new JLabel();
         }
-        int splashW = imgSplash == null ? (int)(scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
-        int splashH = imgSplash == null ? (int)(scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
+        int splashW = imgSplash == null ? (int) (scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
+        int splashH = imgSplash == null ? (int) (scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
 
-        Dimension splashDim =  new Dimension((int)splashW, (int)splashH);
+        Dimension splashDim =  new Dimension((int) splashW, (int) splashH);
         panTitle.setMaximumSize(splashDim);
         panTitle.setMinimumSize(splashDim);
         panTitle.setPreferredSize(splashDim);
@@ -1107,7 +1107,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     /**
      * Ta MultiResoluitonImage is supposed to allow Swing to choose the right res to display based
-     * on DPI. but does not work as expected for ImageIcon
+     * on DPI, but does not work as expected for ImageIcon
      * @param splashScreens
      * @return
      */

@@ -324,8 +324,8 @@ public abstract class PathRanker implements IPathRanker {
             msg.append("\n\t\tSupercharger ");
             int target = pathCopy.getEntity().getSuperchargerTarget();
             msg.append(target);
-            // todo Does Natural Aptitude Piloting apply to this?  I assume not.
-            double odds = Compute.oddsAbove(target) / 100;
+            // todo Does Natural Aptitude Piloting apply to this? I assume not.
+            double odds = Compute.oddsAbove(target) / 100d;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
             successProbability *= odds;
         }

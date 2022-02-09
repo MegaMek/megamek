@@ -36,6 +36,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -72,15 +73,15 @@ import java.util.zip.GZIPInputStream;
 import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
-    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";// "../misc/megamek-splash.jpg";
+    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek_splash_spooky_hd.png";
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf";
-    private static final int DEFAULT_DISPLAY_DPI = 96;
 
+    private static final int DEFAULT_DISPLAY_DPI = 96;
 
     private JFrame frame;
     private Client client;
@@ -278,8 +279,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);
 
-
-
         if (skinSpec.hasBackgrounds()) {
             if (skinSpec.backgrounds.size() > 1) {
                 File file = new MegaMekFile(Configuration.widgetsDir(),
@@ -301,13 +300,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         int monitorW = currentMonitor.getWidth();
         int monitorH = currentMonitor.getHeight();
 
-        int pixelPerInch= java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
-        int scaledMonitorW = (int) (DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
-        int scaledMonitorH = (int) (DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
+        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
+        int scaledMonitorW = (DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
+        int scaledMonitorH = (DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
 
         Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
-        // MultiResolutionImage is supposed to o the right thing with display scaling, but does not
-        // Image imgSplash = getMultiResolutionSplashScreen(skinSpec.backgrounds);
         JLabel panTitle;
         if (imgSplash != null) {
             Icon icon = new ImageIcon(imgSplash);
@@ -1057,8 +1054,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * @return
      * 		String that represents the splash screen that should be displayed.
      */
-    private String determineSplashScreen(final List<String> splashScreens, 
-            final int screenWidth, final int screenHeight) {
+    private String determineSplashScreen(final List<String> splashScreens,
+                                         final int screenWidth, final int screenHeight) {
         // Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash
         // screens.
         if (splashScreens.size() > 3) {
@@ -1079,8 +1076,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         return splashScreens.get(0);
     }
 
-    private Image getSplashScreen(final List<String> splashScreens,
-        final int screenWidth, final int screenHeight) {
+    private @Nullable Image getSplashScreen(final List<String> splashScreens,
+                          final int screenWidth, final int screenHeight) {
         String filename = determineSplashScreen(splashScreens,screenWidth,screenHeight);
         File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
         if (!file.exists()) {
@@ -1106,7 +1103,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Ta MultiResoluitonImage is supposed to allow Swing to choose the right res to display based
+     * MultiResolutionImage is supposed to allow Swing to choose the right res to display based
      * on DPI, but does not work as expected for ImageIcon
      * @param splashScreens
      * @return

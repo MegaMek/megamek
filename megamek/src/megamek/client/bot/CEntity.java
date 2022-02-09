@@ -279,7 +279,7 @@ public class CEntity {
                     }
                 }
 
-                if ((masc_threat == false && mpBoosters.hasSupercharger())) {
+                if ((masc_threat == false) && mpBoosters.hasSupercharger()) {
                     //we passed masc, but test for supercharger
                     if (((Mech) entity).getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
                         masc_threat = false;

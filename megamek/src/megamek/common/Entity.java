@@ -155,14 +155,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return (this == MASC_ONLY);
         }
 
-        public boolean hasSuperchargerOnly()
-        {
+        public boolean hasSuperchargerOnly() {
             return (this == SUPERCHARGER_ONLY);
         }
 
-
-        public boolean hasMASCXorSupercharger()
-        {
+        public boolean hasMASCXorSupercharger() {
             return (this == MASC_ONLY || this == SUPERCHARGER_ONLY);
         }
 
@@ -172,18 +169,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return (this != NONE);
         }
 
-        public boolean hasMASCAndSupercharger()
-        {
+        public boolean hasMASCAndSupercharger() {
             return (this == MASC_AND_SUPERCHARGER);
         }
 
-        public boolean hasMASC()
-        {
+        public boolean hasMASC() {
             return (this == MASC_ONLY || this == MASC_AND_SUPERCHARGER);
         }
 
-        public boolean hasSupercharger()
-        {
+        public boolean hasSupercharger() {
             return (this == SUPERCHARGER_ONLY || this == MASC_AND_SUPERCHARGER);
         }
 
@@ -2773,17 +2767,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * gravity.
      *
      * @param gravity    Should the movement be factored for gravity
-     * @param ignoreheat Should heat be ignored?
+     * @param ignoreHeat Should heat be ignored?
      */
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
-        return getWalkMP(gravity, ignoreheat, false);
+    public int getWalkMP(boolean gravity, boolean ignoreHeat) {
+        return getWalkMP(gravity, ignoreHeat, false);
     }
 
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-                         boolean ignoremodulararmor) {
+    public int getWalkMP(boolean gravity, boolean ignoreHeat,
+                         boolean ignoreModularArmor) {
         int mp = getOriginalWalkMP();
 
-        if (!ignoreheat) {
+        if (!ignoreHeat) {
             mp = Math.max(0, mp - getHeatMPReduction());
         }
         mp = Math.max(mp - getCargoMpReduction(this), 0);
@@ -2857,10 +2851,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getRunMP(true, false, false);
     }
 
-    public int getRunMP(boolean gravity, boolean ignoreheat,
-                        boolean ignoremodulararmor) {
-        return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
-                                         ignoremodulararmor) * 1.5);
+    public int getRunMP(boolean gravity, boolean ignoreHeat,
+                        boolean ignoreModularArmor) {
+        return (int) Math.ceil(getWalkMP(gravity, ignoreHeat,
+                                         ignoreModularArmor) * 1.5);
     }
 
     /**
@@ -2875,9 +2869,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * and possibly ignoring heat
      */
     public int getRunMPwithOneMASC(boolean gravity,
-                                            boolean ignoreheat, boolean ignoremodulararmor) {
+                                            boolean ignoreHeat, boolean ignoreModularArmor) {
     // only Mechs need to check if multiple systmes are availaible
-        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        return getRunMP(gravity, ignoreHeat, ignoreModularArmor);
     }
     /**
      * Returns run MP without considering any MASC systems
@@ -2891,7 +2885,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * and possibly ignoring heat
      */
     public abstract int getRunMPwithoutMASC(boolean gravity,
-                                            boolean ignoreheat, boolean ignoremodulararmor);
+                                            boolean ignoreHeat, boolean ignoreModularArmor);
 
     /**
      * Returns this entity's running/flank mp as a string.
@@ -2921,9 +2915,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getRunMP();
     }
 
-    public int getSprintMP(boolean gravity, boolean ignoreheat,
-                           boolean ignoremodulararmor) {
-        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+    public int getSprintMP(boolean gravity, boolean ignoreHeat,
+                           boolean ignoreModularArmor) {
+        return getRunMP(gravity, ignoreHeat, ignoreModularArmor);
     }
 
     /**
@@ -2937,9 +2931,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns sprint MP without considering MASC, optionally figuring in
      * gravity and possibly ignoring heat
      */
-    public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreheat,
-                                      boolean ignoremodulararmor) {
-        return getRunMPwithOneMASC(gravity, ignoreheat, ignoremodulararmor);
+    public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreHeat,
+                                      boolean ignoreModularArmor) {
+        return getRunMPwithOneMASC(gravity, ignoreHeat, ignoreModularArmor);
     }
 
     /**
@@ -2953,9 +2947,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns sprint MP without considering MASC, optionally figuring in
      * gravity and possibly ignoring heat
      */
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
-                                      boolean ignoremodulararmor) {
-        return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreHeat,
+                                      boolean ignoreModularArmor) {
+        return getRunMPwithoutMASC(gravity, ignoreHeat, ignoreModularArmor);
     }
 
     /**
@@ -7199,7 +7193,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             && canFall() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
-                                             "running with damaged hip actuator or gyro"));
+                         "running with damaged hip actuator or gyro"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                              "Check false: Entity is not attempting to run with damage");
@@ -14170,7 +14164,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getMASCTarget() {
-        if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
+        if ( (game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
         } else if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             return ALTERNATE_MASC_FAILURE[nMASCLevel];
@@ -14189,6 +14183,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setSuperchargerUsed(boolean used) {
         usedSupercharger = used;
     }
+
     public int getSuperchargerTarget() {
         // uses same TNs as MASC
         return MASC_FAILURE[nSuperchargerLevel];
@@ -14230,7 +14225,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if there was a Supercharger failure.
      */
     public boolean checkForSuperchargerFailure(MovePath md, Vector<Report> vDesc,
-                                       HashMap<Integer, List<CriticalSlot>> vCriticals) {
+                                               HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if (md.hasActiveSupercharger()) {
             boolean bFailure = false;
 
@@ -14269,8 +14264,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 nRoll -= 1;
             }
 
-            if (isSupercharger) usedSupercharger = true;
-            else usedMASC = true;
+            if (isSupercharger) {
+                usedSupercharger = true;
+            } else {
+                usedMASC = true;
+            }
             Report r = new Report(2365);
             r.subject = getId();
             r.addDesc(this);
@@ -14282,8 +14280,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r.add(getMASCTarget());
             r.add(nRoll);
 
-            if (
-                    (!isSupercharger && nRoll < getMASCTarget())
+            if ( (!isSupercharger && nRoll < getMASCTarget())
                     || (isSupercharger && nRoll < getSuperchargerTarget())) {
                 // uh oh
                 bFailure = true;
@@ -16199,8 +16196,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return
      */
-    public MPBoosters getMPBoosters(boolean onlyArmed)
-    {
+    public MPBoosters getMPBoosters(boolean onlyArmed) {
         boolean hasMASC = false;
         boolean hasSupercharger = false;
         for (Mounted m : getEquipment()) {
@@ -16213,32 +16209,32 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     hasMASC = !onlyArmed || m.curMode().equals("Armed");
                 }
             }
-            if (hasMASC && hasSupercharger) break;
+            if (hasMASC && hasSupercharger) {
+                break;
+            }
         }
 
-        if (hasMASC && hasSupercharger) return  MPBoosters.MASC_AND_SUPERCHARGER;
-        if (hasMASC) return MPBoosters.MASC_ONLY;
-        if (hasSupercharger) return MPBoosters.SUPERCHARGER_ONLY;
+        if (hasMASC && hasSupercharger) {
+            return  MPBoosters.MASC_AND_SUPERCHARGER;
+        } else if (hasMASC) {
+            return MPBoosters.MASC_ONLY;
+        } else if (hasSupercharger) {
+            return MPBoosters.SUPERCHARGER_ONLY;
+        }
         return MPBoosters.NONE;
     }
 
     /**
-     * does this mech have MASC, Supercharger or both?
-     *
-     * @return
+     * @return does this mech have MASC, Supercharger or both?
      */
-    public MPBoosters getMPBoosters()
-    {
+    public MPBoosters getMPBoosters() {
         return getMPBoosters(false);
     }
 
     /**
-     * does this mech have MASC, Supercharger or both?
-     *
-     * @return
+     * @return does this mech have Armed MASC, Supercharger or both?
      */
-    public MPBoosters getArmedMPBoosters()
-    {
+    public MPBoosters getArmedMPBoosters() {
         return getMPBoosters(true);
     }
 }

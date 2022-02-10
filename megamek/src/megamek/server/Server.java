@@ -9641,7 +9641,8 @@ public class Server implements Runnable {
         return false;
     }
 
-    private void ApplyMASCOrSuperchargerCriticals(Entity entity, MovePath md, HashMap<Integer, List<CriticalSlot>> crits ) {
+    private void ApplyMASCOrSuperchargerCriticals(Entity entity, MovePath md,
+                                                  HashMap<Integer, List<CriticalSlot>> crits ) {
         for (Integer loc : crits.keySet()) {
             List<CriticalSlot> lcs = crits.get(loc);
             for (CriticalSlot cs : lcs) {

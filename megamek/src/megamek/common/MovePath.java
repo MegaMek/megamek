@@ -835,7 +835,6 @@ public class MovePath implements Cloneable, Serializable {
         return false;
     }
 
-
     /**
      * @return the final coordinates if a mech were to perform all the steps in this path, or
      * null if there's an issue with determining the coords

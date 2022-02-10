@@ -521,7 +521,9 @@ class StepSprite extends Sprite {
         }
 
         if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
-            if (step.isUsingSupercharger()) rollsStringBuf.append(' ');
+            if (step.isUsingSupercharger()) {
+                rollsStringBuf.append(' ');
+            }
             rollsStringBuf.append('M');
             rollsStringBuf.append(step.getTargetNumberMASC());
             rollsStringBuf.append('+');

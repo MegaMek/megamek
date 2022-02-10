@@ -1608,16 +1608,11 @@ public class MoveStep implements Serializable {
         return false;        
     }
 
-    /**
-     * @return
-     */
+
     public int getMpUsed() {
         return mpUsed;
     }
 
-    /**
-     * @return
-     */
     public boolean isOnlyPavement() {
         return onlyPavement;
     }
@@ -1630,9 +1625,6 @@ public class MoveStep implements Serializable {
         return nWigeDescent;
     }
 
-    /**
-     * @return
-     */
     public boolean isPastDanger() {
         return pastDanger;
     }
@@ -1641,9 +1633,6 @@ public class MoveStep implements Serializable {
         this.pastDanger = pastDanger;
     }
 
-    /**
-     * @return
-     */
     public boolean isDocking() {
         return docking;
     }
@@ -1652,102 +1641,58 @@ public class MoveStep implements Serializable {
         docking = tf;
     }
 
-    /**
-     * @return
-     */
     public Coords getPosition() {
         return position;
     }
 
-    /**
-     * @return
-     */
     public boolean isPrevStepOnPavement() {
         return prevStepOnPavement;
     }
 
-    /**
-     * @return
-     */
     public int getTargetNumberMASC() {
         return targetNumberMASC;
     }
 
-    /**
-     * @return
-     */
     public int getTargetNumberSupercharger() {
         return targetNumberSupercharger;
     }
 
-    /**
-     * @return
-     */
     public boolean isThisStepBackwards() {
         return thisStepBackwards;
     }
 
-    /**
-     * @param b
-     */
     public void setDanger(boolean b) {
         danger = b;
     }
 
-    /**
-     * @param i
-     */
     protected void setDistance(int i) {
         distance = i;
     }
 
-    /**
-     * @param i
-     */
     protected void setLeapDistance(int i) {
         leapDistance = i;
     }
 
-    /**
-     * @param i
-     */
     protected void setFacing(int i) {
         facing = i;
     }
 
-    /**
-     * @param b
-     */
     protected void setFirstStep(boolean b) {
         firstStep = b;
     }
 
-    /**
-     * @param b
-     */
     protected void setHasJustStood(boolean b) {
         hasJustStood = b;
     }
 
-    /**
-     * @param b
-     */
     protected void setPavementStep(boolean b) {
         isPavementStep = b;
     }
 
-    /**
-     * @param b
-     */
     protected void setProne(boolean b) {
         isProne = b;
     }
 
-    /**
-     * Sets whether the entity is flying or not.
-     *
-     * @param b is this entity flying?
-     */
     protected void setFlying(boolean b) {
         isFlying = b;
     }
@@ -1760,16 +1705,10 @@ public class MoveStep implements Serializable {
         climbMode = b;
     }
 
-    /**
-     * @param b
-     */
     protected void setTurning(boolean b) {
         isTurning = b;
     }
 
-    /**
-     * @param b
-     */
     protected void setUnloaded(boolean b) {
         isUnloaded = b;
         if (b) {
@@ -1777,22 +1716,14 @@ public class MoveStep implements Serializable {
         }
     }
 
-    /**
-     * @param b
-     */
     protected void setUsingMASC(boolean b) {
         isUsingMASC = b;
     }
-    /**
-     * @param b
-     */
+
     protected void setUsingSupercharger(boolean b) {
         isUsingSupercharger = b;
     }
 
-    /**
-     * @param i
-     */
     public void setMovementType(EntityMovementType i) {
         movementType = i;
     }
@@ -1812,10 +1743,7 @@ public class MoveStep implements Serializable {
     protected void setSelfDestructing(boolean b) {
         isSelfDestructing = b;
     }
-    
-    /**
-     * @param b
-     */
+
     protected void setOnlyPavement(boolean b) {
         onlyPavement = b;
     }
@@ -2506,7 +2434,7 @@ public class MoveStep implements Serializable {
                 }
             } else if ((getMpUsed() <= sprintMP)
                     && !isRunProhibited() && !isEvading()
-                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {                setUsingMASC(true);
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
                 setUsingSupercharger(true);

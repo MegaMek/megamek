@@ -3768,10 +3768,10 @@ public class Tank extends Entity {
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
-                str += (mpBoosters.hasMASC() ? " MASC:"+getMASCTurns()
-                        + (armed.hasMASC() ? "("+getMASCTarget()+"+)" : "(NA)") : "")
-                        + (mpBoosters.hasSupercharger() ? " Supercharger:"+getSuperchargerTurns()
-                        + (armed.hasSupercharger() ? "("+getSuperchargerTarget()+"+)" : "(NA)") : "");
+                str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
+                        + (armed.hasMASC() ? "(" +getMASCTarget() + "+)" : "(NA)") : "")
+                        + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
+                        + (armed.hasSupercharger() ? "(" + getSuperchargerTarget()+ "+)" : "(NA)") : "");
             }
             return str;
         }

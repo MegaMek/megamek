@@ -300,8 +300,7 @@ public class QuadVee extends QuadMech {
     @Override
     public MPBoosters getArmedMPBoosters() {
         MPBoosters mpBoosters = super.getArmedMPBoosters();
-        if (getConversionMode() != CONV_MODE_VEHICLE)
-        {
+        if (getConversionMode() != CONV_MODE_VEHICLE) {
             return  mpBoosters;
         }
         switch (mpBoosters) {

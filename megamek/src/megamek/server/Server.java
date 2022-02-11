@@ -35186,12 +35186,10 @@ public class Server implements Runnable {
                 keptAttacks.add(ah);
             }
         }
+
         // resolve standard to capital one more time
-        handleAttackReports.addAll(checkFatalThresholds(lastAttackerId,
-                lastAttackerId));
-        if (handleAttackReports.size() > 0) {
-            Report.addNewline(handleAttackReports);
-        }
+        handleAttackReports.addAll(checkFatalThresholds(lastAttackerId, lastAttackerId));
+        Report.addNewline(handleAttackReports);
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

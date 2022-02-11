@@ -281,12 +281,11 @@ public class MegaMek {
                 } catch (Exception ex) {
                     LogManager.getLogger().error("Failed to parse font", ex);
                 }
-                continue;
-            }
-
-            final File file = new File(directory, filename);
-            if (file.isDirectory()) {
-                parseFontDirectory(file);
+            } else {
+                final File file = new File(directory, filename);
+                if (file.isDirectory()) {
+                    parseFontDirectory(file);
+                }
             }
         }
     }

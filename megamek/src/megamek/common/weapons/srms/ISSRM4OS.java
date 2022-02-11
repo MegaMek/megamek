@@ -46,7 +46,7 @@ public class ISSRM4OS extends SRMWeapon {
         cost = 30000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

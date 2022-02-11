@@ -34,7 +34,7 @@ public class CLLRM19 extends LRMWeapon {
         // But LRM Tech Base and Avail Ratings.
         rulesRefs = "231, TM";
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)

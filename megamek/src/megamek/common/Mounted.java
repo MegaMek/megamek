@@ -1670,11 +1670,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
     
     public boolean isOmniPodMounted() {
-    	return omniPodMounted;
+        return omniPodMounted;
     }
     
     public void setOmniPodMounted(boolean omniPodMounted) {
-    	this.omniPodMounted = omniPodMounted;
+        this.omniPodMounted = omniPodMounted;
     }
 
     public boolean isWeaponGroup() {

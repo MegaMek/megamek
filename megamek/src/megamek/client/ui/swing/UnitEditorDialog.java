@@ -857,7 +857,6 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             panSystem.add(stabCrit, gridBagConstraints);
         }
-
     }
 
     private void setupAeroSystemPanel() {
@@ -1157,7 +1156,7 @@ public class UnitEditorDialog extends JDialog {
                     + "</b><br></html>"), gridBagConstraints);
             int kfboomHits = 0;
             if (((Dropship) aero).isKFBoomDamaged()) {
-            	kfboomHits = 1;
+                kfboomHits = 1;
             }
             kfboomCrit = new CheckCritPanel(1, kfboomHits);
             gridBagConstraints.gridx = 1;
@@ -1166,41 +1165,41 @@ public class UnitEditorDialog extends JDialog {
         }
         
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
-        	int b = 0;
-        	JSpinner bayCrit;
-        	Vector<Bay> bays = aero.getTransportBays();
-        	bayDamage = new JSpinner[bays.size()];
-        	bayDoorCrit = new CheckCritPanel [bays.size()];
-        	for (Bay nextbay : bays) {
-        		gridBagConstraints.gridx = 0;
-        		gridBagConstraints.gridy++;
-        		gridBagConstraints.weightx = 0.0;
-        		panSystem.add(new JLabel("<html><b>" + 
-        		        String.format(Messages.getString("UnitEditorDialog.bayCrit"), nextbay.getType(), nextbay.getBayNumber())
-        		        + "</b><br></html>"), gridBagConstraints);
-    		
-        		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
+            int b = 0;
+            JSpinner bayCrit;
+            Vector<Bay> bays = aero.getTransportBays();
+            bayDamage = new JSpinner[bays.size()];
+            bayDoorCrit = new CheckCritPanel [bays.size()];
+            for (Bay nextbay : bays) {
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" +
+                        String.format(Messages.getString("UnitEditorDialog.bayCrit"), nextbay.getType(), nextbay.getBayNumber())
+                        + "</b><br></html>"), gridBagConstraints);
+
+                bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
                         0, nextbay.getCapacity(), nextbay.isCargo() ? 0.5: 1.0));
-        		bayDamage[b] = bayCrit;
-        		gridBagConstraints.gridx = 1;
-        		gridBagConstraints.weightx = 1.0;
-        		panSystem.add(bayCrit, gridBagConstraints);
-    		
+                bayDamage[b] = bayCrit;
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(bayCrit, gridBagConstraints);
+
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 panSystem.add(new JLabel("<html><b>" + 
                         String.format(Messages.getString("UnitEditorDialog.bayDoorCrit"), nextbay.getBayNumber())
                         + "</b><br></html>"), gridBagConstraints);
-    		
-        		CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
-        		bayDoorCrit[b] = doorCrit;
-        		gridBagConstraints.gridx = 1;
-        		gridBagConstraints.weightx = 1.0;
-        		panSystem.add(doorCrit, gridBagConstraints);
-        		b++;
-    		}
-    	}
+
+                CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
+                bayDoorCrit[b] = doorCrit;
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(doorCrit, gridBagConstraints);
+                b++;
+            }
+        }
     }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1423,39 +1422,39 @@ public class UnitEditorDialog extends JDialog {
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
             }
             if ((null != kfboomCrit) && (aero instanceof Dropship)) {
-            	((Dropship) aero)
-            			.setDamageKFBoom(kfboomCrit.getHits() > 0);
+                ((Dropship) aero)
+                        .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
             // cargo bays and bay doors
             if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
-            	int b = 0;
-            	for (Bay bay : aero.getTransportBays()) {
-            		JSpinner bayCrit = bayDamage[b];
-            		if (null == bayCrit) {
-            			continue;
-            		}
-            		bay.setBayDamage(bay.getCapacity() - (Double) bayCrit.getModel().getValue());
-            		CheckCritPanel doorCrit = bayDoorCrit[b];
-            		if (null == doorCrit) {
-            			continue;
-            		}
-            		if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
-            			bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
+                int b = 0;
+                for (Bay bay : aero.getTransportBays()) {
+                    JSpinner bayCrit = bayDamage[b];
+                    if (null == bayCrit) {
+                        continue;
+                    }
+                    bay.setBayDamage(bay.getCapacity() - (Double) bayCrit.getModel().getValue());
+                    CheckCritPanel doorCrit = bayDoorCrit[b];
+                    if (null == doorCrit) {
+                        continue;
+                    }
+                    if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
+                        bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
 
-            		} else if (doorCrit.getHits() == 0) {
-            			bay.setCurrentDoors(bay.getDoors());
-            		}
-        			// for ASF and SC bays, we have to update recovery slots as doors are changed
-        			if (bay instanceof ASFBay) {
-        				ASFBay a = (ASFBay) bay;
-        				a.initializeRecoverySlots();        				
-        			} 
-        			if (bay instanceof SmallCraftBay) {
-    					SmallCraftBay s = (SmallCraftBay) bay;
-    					s.initializeRecoverySlots();    					
-        			}
-            	b++;
-            	}
+                    } else if (doorCrit.getHits() == 0) {
+                        bay.setCurrentDoors(bay.getDoors());
+                    }
+                    // for ASF and SC bays, we have to update recovery slots as doors are changed
+                    if (bay instanceof ASFBay) {
+                        ASFBay a = (ASFBay) bay;
+                        a.initializeRecoverySlots();
+                    }
+                    if (bay instanceof SmallCraftBay) {
+                        SmallCraftBay s = (SmallCraftBay) bay;
+                        s.initializeRecoverySlots();
+                    }
+                b++;
+                }
             }
             // Jumpship Docking Collars, KF Drive, Sail and Grav Decks
             if (aero instanceof Jumpship) {

@@ -265,7 +265,7 @@ public class TechConstants {
             boolean ignoreUnknown, boolean mixed) {
         // If it's allowed to all, ALWAYS return true.
         if (equipmentTechlevel == T_ALLOWED_ALL
-        		|| equipmentTechlevel == T_ALL) {
+                || equipmentTechlevel == T_ALL) {
             return true;
         }
 

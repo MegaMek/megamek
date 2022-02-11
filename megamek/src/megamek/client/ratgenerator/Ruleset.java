@@ -203,7 +203,7 @@ public class Ruleset {
                     rs = null;
                 } else {
                     rs = rulesets.get(rs.getParent());
-                }				
+                }
             } else {
                 applied = fn.apply(fd);
                 LogManager.getLogger().debug("Selecting force node " + fn.show()
@@ -232,14 +232,14 @@ public class Ruleset {
             buildForceTree(sub, l, progress / count);
         }
         /*
-		//Each attached formation is essentially a new top-level node
-		for (ForceDescriptor sub : fd.getAttached()) {
-		    sub.generateUnits(l, progress * 0.7 / count);
-			sub.assignCommanders();
-			sub.assignPositions();
-			sub.loadEntities(l, progress * 0.1 / count);
-//			sub.assignBloodnames();
-		}
+        // Each attached formation is essentially a new top-level node
+        for (ForceDescriptor sub : fd.getAttached()) {
+            sub.generateUnits(l, progress * 0.7 / count);
+            sub.assignCommanders();
+            sub.assignPositions();
+            sub.loadEntities(l, progress * 0.1 / count);
+            sub.assignBloodnames();
+        }
          */
         if (count == 0 && null != l) {
             l.updateProgress(progress, "Building force tree");
@@ -275,7 +275,7 @@ public class Ruleset {
             if (n.getEschelon().equals(fd.getEschelon()) && n.matches(fd)) {
                 return n;
             }
-        }		
+        }
         return null;
     }
 
@@ -284,7 +284,7 @@ public class Ruleset {
             if (n.getEschelon() == eschelon && n.matches(fd, augmented)) {
                 return n;
             }
-        }		
+        }
         return null;
     }
 
@@ -468,7 +468,7 @@ public class Ruleset {
                     break;
             }
         } else {
-            retVal.ratingSystem = RatingSystem.IS;			
+            retVal.ratingSystem = RatingSystem.IS;
         }
         NodeList nl = elem.getChildNodes();
         elem.normalize();
@@ -512,7 +512,7 @@ public class Ruleset {
                     }
                     break;
             }
-        }		
+        }
 
         return retVal;
     }

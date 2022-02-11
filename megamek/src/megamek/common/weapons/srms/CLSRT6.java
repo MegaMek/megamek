@@ -44,7 +44,7 @@ public class CLSRT6 extends SRTWeapon {
         bv = 59;
         flags = flags.or(F_NO_FIRES);
         cost = 80000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

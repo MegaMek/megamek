@@ -536,17 +536,17 @@ public class EquipmentType implements ITechnology {
      * @return True or false.
      */
     public boolean hasModeType(String modeType) {
-    	if (!hasModes()) {
-    		return false;
-    	}
-    	
-    	for (EquipmentMode mode : modes) {
-    		if (mode.getName().equals(modeType)) {
-    			return true;
-    		}
-    	}
-    	
-    	return false;
+        if (!hasModes()) {
+            return false;
+        }
+
+        for (EquipmentMode mode : modes) {
+            if (mode.getName().equals(modeType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

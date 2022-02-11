@@ -127,18 +127,18 @@ public class SpheroidMapSet implements DisplayMapSet{
             vLabels[10].setValue("-");
         }
         if (t instanceof Dropship) {
-        	// add docking collar and kf boom
-        	Dropship ds = (Dropship) t;
-        	int kfboom = 0;
-        	int collar = 0;
-        	if (ds.isKFBoomDamaged()) {
-        		kfboom = 1;
-        	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
-        	if (ds.isDockCollarDamaged()) {
-        		collar = 1;
-        	}
-        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
+            // add docking collar and kf boom
+            Dropship ds = (Dropship) t;
+            int kfboom = 0;
+            int collar = 0;
+            if (ds.isKFBoomDamaged()) {
+                kfboom = 1;
+            }
+            vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
+            if (ds.isDockCollarDamaged()) {
+                collar = 1;
+            }
+            vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }

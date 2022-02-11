@@ -44,7 +44,7 @@ public class ISSRT4OS extends SRTWeapon {
         bv = 8;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 30000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

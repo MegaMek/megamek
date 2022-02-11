@@ -1041,14 +1041,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Method used to determine the appropriate splash screen to use. This method looks 
      * at both the height and the width of the main monitor.
      * 
-     * @param splashScreens
-     * 		List of available splash screens.
-     * @param screenWidth
-     * 		Width of the current monitor.
-     * @param screenHeight
-     * 		Height of the current monitor.
-     * @return
-     * 		String that represents the splash screen that should be displayed.
+     * @param splashScreens List of available splash screens.
+     * @param screenWidth Width of the current monitor.
+     * @param screenHeight Height of the current monitor.
+     * @return String that represents the splash screen that should be displayed.
      */
     private String determineSplashScreen(final List<String> splashScreens, 
             final int screenWidth, final int screenHeight) {

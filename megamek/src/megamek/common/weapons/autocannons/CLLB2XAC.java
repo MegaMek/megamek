@@ -45,7 +45,7 @@ public class CLLB2XAC extends LBXACWeapon {
         maxRange = RANGE_EXT;
         rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
+        .setIntroLevel(false)
         .setTechRating(RATING_F)
         .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
         .setClanAdvancement(2824, 2826, 2828, DATE_NONE, DATE_NONE)

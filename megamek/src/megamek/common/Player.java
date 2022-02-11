@@ -456,13 +456,13 @@ public final class Player extends TurnOrdered {
                     bonusHQ = entity.getHQIniBonus();
                 }
                 
-				/*
-				 * REMOVED IN IO. 
-				 * if (game.getOptions().booleanOption(OptionsConstants.
-				 * RPG_MANEI_DOMINI) && (bonusMD == 0) &&
-				 * (entity.getMDIniBonus() > 0)) { bonusMD =
-				 * entity.getMDIniBonus(); }
-				 */
+                /*
+                 * REMOVED IN IO.
+                 * if (game.getOptions().booleanOption(OptionsConstants.
+                 * RPG_MANEI_DOMINI) && (bonusMD == 0) &&
+                 * (entity.getMDIniBonus() > 0)) { bonusMD =
+                 * entity.getMDIniBonus(); }
+                 */
                 if (entity.getQuirkIniBonus() > bonusQ) {
                     //TODO: I am assuming that the quirk initiative bonuses go to the highest,
                     //rather than being cumulative

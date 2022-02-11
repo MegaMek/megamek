@@ -1566,12 +1566,12 @@ public class FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
-        	// respect restriction on manual AMS firing.
-        	if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
-        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
-        		continue;
-        	}
-        	
+            // respect restriction on manual AMS firing.
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+                    weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+
             final WeaponFireInfo shoot = buildWeaponFireInfo(shooter,
                                                              shooterState,
                                                              target,
@@ -1782,13 +1782,13 @@ public class FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
-        	// respect restriction on manual AMS firing.
-        	if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
-        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
-        		continue;
-        	}
-        	
-        	final double toHitThreshold = ammoConservation.get(weapon);
+            // respect restriction on manual AMS firing.
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+                    weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+
+            final double toHitThreshold = ammoConservation.get(weapon);
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
             
             // if we're below the threshold, try switching missile modes
@@ -2200,22 +2200,22 @@ public class FireControl {
      * Determines if the given entity can use indirect fire as in LRMs.
      */
     public boolean entityCanIndirectFireMissile(FireControlState fireControlState, Entity shooter) {
-    	// cache the results of our computation
-    	if (fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
-    		return fireControlState.getEntityIDFStates().get(shooter.getId());
-    	}
-    	
-    	// airborne aerospace units cannot use indirect fire
-    	if (shooter.isAirborne()) {
-    	    fireControlState.getEntityIDFStates().put(shooter.getId(), false);
-    	    return false;
-    	}
-    	
+        // cache the results of our computation
+        if (fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
+            return fireControlState.getEntityIDFStates().get(shooter.getId());
+        }
+
+        // airborne aerospace units cannot use indirect fire
+        if (shooter.isAirborne()) {
+            fireControlState.getEntityIDFStates().put(shooter.getId(), false);
+            return false;
+        }
+
         for (Mounted weapon : shooter.getWeaponList()) {
-        	if (weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
-        		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
-        		return true;
-        	}
+            if (weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
+                fireControlState.getEntityIDFStates().put(shooter.getId(), true);
+                return true;
+            }
         }
         
         fireControlState.getEntityIDFStates().put(shooter.getId(), false);
@@ -2227,60 +2227,60 @@ public class FireControl {
      * can/should spot. If yes, then return a spot action.
      */
     public SpotAction getSpotAction(FiringPlan plan, Entity spotter, FireControlState fireControlState) {
-    	// logic applies as follows:
-    	// if I am disqualified from spotting, don't spot
-    	// disqualifiers are:
-    	// 		legally can't spot
-    	//		am firing and don't have a command console to mitigate the spotting penalty
-    	// otherwise, attempt to spot the closest enemy
-    	if (spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) || 
-    			(plan != null) && (plan.getExpectedDamage() > 0) && 
-    			!spotter.getCrew().hasActiveCommandConsole()) {
-    		return null;
-    	}
-    	
-    	List<Targetable> enemyTargets = getAllTargetableEnemyEntities(
-    			spotter.getOwner(), spotter.getGame(), fireControlState);
-    	List<Targetable> closestTargets = new ArrayList<>();
-    	int shortestDistance = Integer.MAX_VALUE;
-    	
-    	// loop through all enemy targets, pick a random one out of the closest.
-    	// future revision: pick one that's the least evasive
-    	for (Targetable target : enemyTargets) {
-    	    // don't spot aerospace units
-    	    if (target.isAirborne()) {
-    	        continue;
-    	    }
-    	    
-    	    // don't spot sensor returns
-    	    if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
-	            ((Entity) target).isSensorReturn(spotter.getOwner())) {
-    	        continue;
-    	    }    	        
-    	    
-    	    LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
+        // logic applies as follows:
+        // if I am disqualified from spotting, don't spot
+        // disqualifiers are:
+        //     legally can't spot
+        //     am firing and don't have a command console to mitigate the spotting penalty
+        // otherwise, attempt to spot the closest enemy
+        if (spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) ||
+                (plan != null) && (plan.getExpectedDamage() > 0) &&
+                !spotter.getCrew().hasActiveCommandConsole()) {
+            return null;
+        }
+
+        List<Targetable> enemyTargets = getAllTargetableEnemyEntities(
+                spotter.getOwner(), spotter.getGame(), fireControlState);
+        List<Targetable> closestTargets = new ArrayList<>();
+        int shortestDistance = Integer.MAX_VALUE;
+
+        // loop through all enemy targets, pick a random one out of the closest.
+        // future revision: pick one that's the least evasive
+        for (Targetable target : enemyTargets) {
+            // don't spot aerospace units
+            if (target.isAirborne()) {
+                continue;
+            }
+
+            // don't spot sensor returns
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                ((Entity) target).isSensorReturn(spotter.getOwner())) {
+                continue;
+            }
+
+            LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
             
             // if we're in LOS
-    		if (effects.canSee()) {
-    			int targetDistance = spotter.getPosition().distance(target.getPosition());
-    			if (targetDistance < shortestDistance) {
-    				shortestDistance = targetDistance;
-    				closestTargets.clear();
-    				closestTargets.add(target);
-    			} else if (targetDistance == shortestDistance) {
-    				closestTargets.add(target);
-    			}
-    		}
-    	}
-    	
-    	// if we found one or more targets, pick at random from the closest ones.
-    	// otherwise, we still can't spot
-    	if (closestTargets.size() > 0) {
-	    	Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
-	    	return new SpotAction(spotter.getId(), target.getTargetId());
-    	}
-    	
-    	return null;
+            if (effects.canSee()) {
+                int targetDistance = spotter.getPosition().distance(target.getPosition());
+                if (targetDistance < shortestDistance) {
+                    shortestDistance = targetDistance;
+                    closestTargets.clear();
+                    closestTargets.add(target);
+                } else if (targetDistance == shortestDistance) {
+                    closestTargets.add(target);
+                }
+            }
+        }
+
+        // if we found one or more targets, pick at random from the closest ones.
+        // otherwise, we still can't spot
+        if (closestTargets.size() > 0) {
+            Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
+            return new SpotAction(spotter.getId(), target.getTargetId());
+        }
+
+        return null;
     }
     
     /**
@@ -3086,8 +3086,8 @@ public class FireControl {
     public static List<Integer> getValidFacingChanges(final Entity shooter) {
         // figure out all valid twists or turret turns
         // mechs can turn:
-        //		one left, one right unless he has "no torso twist" quirk or is on the ground
-        //		two left, two right if he has "extended torso twist" quirk
+        //     one left, one right unless he has "no torso twist" quirk or is on the ground
+        //     two left, two right if he has "extended torso twist" quirk
         // vehicles and turrets can turn any direction unless he has no turret
         final List<Integer> validFacingChanges = new ArrayList<>();
         if (((Entity.ETYPE_MECH & shooter.getEntityType()) > 0)

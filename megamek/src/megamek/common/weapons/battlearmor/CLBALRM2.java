@@ -40,15 +40,15 @@ public class CLBALRM2 extends LRMWeapon {
         bv = 24;
         cost = 12000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-		rulesRefs = "261,TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN)
-		.setIntroLevel(false)
-		.setUnofficial(false)
-	    .setTechRating(RATING_F)
-	    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
-	    .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
-	    .setClanApproximate(true, false, false, false, false)
-	    .setPrototypeFactions(F_CGS)
-	    .setProductionFactions(F_CGS);
+        rulesRefs = "261, TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CGS)
+                .setProductionFactions(F_CGS);
     }
 }

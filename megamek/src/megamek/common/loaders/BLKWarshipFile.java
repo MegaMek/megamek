@@ -170,9 +170,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
-		if (dataFile.exists("overview")) {
-			a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
-		}
+        if (dataFile.exists("overview")) {
+            a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
+        }
         // Grav Decks - two approaches
         // First, the old method, where a number of grav decks for each category is specified
         //  This doesn't allow us to specify precise size

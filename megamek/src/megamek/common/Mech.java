@@ -170,7 +170,7 @@ public abstract class Mech extends Entity {
             "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
             "Virtual Reality Piloting Pod", "QuadVee Cockpit",
             "Superheavy Industrial Cockpit", "Superheavy Command Console", 
-	    "Small Command Console"};
+        "Small Command Console"};
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
@@ -3314,8 +3314,8 @@ public abstract class Mech extends Entity {
 
     public static TechAdvancement getFullHeadEjectAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL)
-        		.setISAdvancement(DATE_NONE, 3020, 3023,DATE_NONE, DATE_NONE)
-        		.setISApproximate(false, true, false, false, false)
+                .setISAdvancement(DATE_NONE, 3020, 3023,DATE_NONE, DATE_NONE)
+                .setISApproximate(false, true, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC)
                 .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
@@ -5450,11 +5450,11 @@ public abstract class Mech extends Entity {
         // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
         double quirkMultiplier = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
-        	quirkMultiplier = 1.1f;
-        	cost *= quirkMultiplier;
+            quirkMultiplier = 1.1f;
+            cost *= quirkMultiplier;
         } else if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_2)) {
-        	quirkMultiplier = 1.25f;
-        	cost *= quirkMultiplier;
+            quirkMultiplier = 1.25f;
+            cost *= quirkMultiplier;
         }
         costs[i++] = -quirkMultiplier; // negative just marks it as multiplier
 
@@ -6816,18 +6816,18 @@ public abstract class Mech extends Entity {
         }
 
         for (EntityFluff.System system : EntityFluff.System.values()) {
-        	if (getFluff().getSystemManufacturer(system).length() > 0) {
-        		sb.append(MtfFile.SYSTEM_MANUFACTURER);
-        		sb.append(system.toString()).append(":");
-        		sb.append(getFluff().getSystemManufacturer(system));
-        		sb.append(newLine);
-        	}
-        	if (getFluff().getSystemModel(system).length() > 0) {
-        		sb.append(MtfFile.SYSTEM_MODEL);
-        		sb.append(system.toString()).append(":");
-        		sb.append(getFluff().getSystemModel(system));
-        		sb.append(newLine);
-        	}
+            if (getFluff().getSystemManufacturer(system).length() > 0) {
+                sb.append(MtfFile.SYSTEM_MANUFACTURER);
+                sb.append(system.toString()).append(":");
+                sb.append(getFluff().getSystemManufacturer(system));
+                sb.append(newLine);
+            }
+            if (getFluff().getSystemModel(system).length() > 0) {
+                sb.append(MtfFile.SYSTEM_MODEL);
+                sb.append(system.toString()).append(":");
+                sb.append(getFluff().getSystemModel(system));
+                sb.append(newLine);
+            }
         }
 
         if (getUseManualBV()) {
@@ -7121,7 +7121,7 @@ public abstract class Mech extends Entity {
         setCockpitType(COCKPIT_DUAL);
         return true;
     }
-	
+
     public boolean addSuperheavyIndustrialCockpit() {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
@@ -7139,7 +7139,7 @@ public abstract class Mech extends Entity {
         setCockpitType(COCKPIT_SUPERHEAVY_INDUSTRIAL);
         return true;
     }
-	
+
     public boolean addSuperheavyCommandConsole() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
@@ -7273,7 +7273,7 @@ public abstract class Mech extends Entity {
         //one.
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE
-	            || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
+                || getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_DUAL
                 || getCockpitType() == COCKPIT_QUADVEE) {
             int crewSlot = 0;
@@ -7291,8 +7291,8 @@ public abstract class Mech extends Entity {
     @Override
     public boolean hasCommandConsoleBonus() {
         return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE) 
-		|| (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) 
-		|| (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
+        || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+        || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
                 && getCrew().hasActiveCommandConsole()
                 && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
                 && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
@@ -8146,8 +8146,8 @@ public abstract class Mech extends Entity {
         }
 
         if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_CLUB))
-        		.map(m -> m.getType().getSubType())
-        		.anyMatch(st -> st == MiscType.S_SHIELD_LARGE || st == MiscType.S_SHIELD_MEDIUM)) {
+                .map(m -> m.getType().getSubType())
+                .anyMatch(st -> st == MiscType.S_SHIELD_LARGE || st == MiscType.S_SHIELD_MEDIUM)) {
             move--;
         }
         return move;

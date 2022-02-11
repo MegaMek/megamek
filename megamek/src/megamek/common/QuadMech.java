@@ -213,17 +213,18 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-    	return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
+        return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
     }
     
-	@Override
-	public boolean isValidSecondaryFacing(int dir) {
-		int rotate = dir - getFacing();
-		if (canChangeSecondaryFacing()) {
-			return (rotate <= 1) || (rotate == 5);
-		} else
-			return rotate == 0;
-	}	 
+    @Override
+    public boolean isValidSecondaryFacing(int dir) {
+        int rotate = dir - getFacing();
+        if (canChangeSecondaryFacing()) {
+            return (rotate <= 1) || (rotate == 5);
+        } else {
+            return rotate == 0;
+        }
+    }
 
     /**
      * Returns true is the location is a leg

@@ -3850,8 +3850,8 @@ public class Tank extends Entity {
         double move = getOriginalWalkMP();
 
         if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_MASC))
-        		.map(m -> m.getType().getSubType())
-        		.anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
+                .map(m -> m.getType().getSubType())
+                .anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
             move *= 1.25;
         }
 
@@ -3937,10 +3937,10 @@ public class Tank extends Entity {
      */
     @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
-    	if (index == 0) {
-    		return location > LOC_BODY? 1.0 : 0.0;
-    	}
-    	return getBattleForceLocationMultiplier(index, location, rearMounted);
+        if (index == 0) {
+            return location > LOC_BODY? 1.0 : 0.0;
+        }
+        return getBattleForceLocationMultiplier(index, location, rearMounted);
     }
     
     @Override

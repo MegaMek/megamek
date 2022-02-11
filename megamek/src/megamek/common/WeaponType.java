@@ -448,12 +448,12 @@ public class WeaponType extends EquipmentType {
             }
         }
         if (hasFlag(WeaponType.F_PDBAY)) {
-        	if (hasModes() && weapon.curMode().equals("Point Defense")) {
-        		sRange = 1;
-        	} else {
-        		sRange = 6;
-        	}
-    	}
+            if (hasModes() && weapon.curMode().equals("Point Defense")) {
+                sRange = 1;
+            } else {
+                sRange = 6;
+            }
+        }
         //Allow extremely long-range shots for bearings-only capital missiles
         if (weapon.isInBearingsOnlyMode()) {
             eRange = RangeType.RANGE_BEARINGS_ONLY_OUT;
@@ -889,15 +889,15 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLHeavyMGA());
         // LRMs
 /*        These were BA versions and there are currently BA
-		 versions of these weapons. So they've been commented out.
-		 EquipmentType.addType(new ISLRM1()); 
-		 EquipmentType.addType(new ISLRM1OS()); 
-		 EquipmentType.addType(new ISLRM2());
-		 EquipmentType.addType(new ISLRM2OS());
-		 EquipmentType.addType(new ISLRM3());
-		 EquipmentType.addType(new ISLRM3OS());
-		 EquipmentType.addType(new ISLRM4());
-		 EquipmentType.addType(new ISLRM4OS());*/
+         versions of these weapons. So they've been commented out.
+         EquipmentType.addType(new ISLRM1());
+         EquipmentType.addType(new ISLRM1OS());
+         EquipmentType.addType(new ISLRM2());
+         EquipmentType.addType(new ISLRM2OS());
+         EquipmentType.addType(new ISLRM3());
+         EquipmentType.addType(new ISLRM3OS());
+         EquipmentType.addType(new ISLRM4());
+         EquipmentType.addType(new ISLRM4OS());*/
         EquipmentType.addType(new ISLRM5());
         EquipmentType.addType(new ISLRM10());
         EquipmentType.addType(new ISLRM15());

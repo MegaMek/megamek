@@ -45,7 +45,7 @@ public class CLLRT20OS extends LRTWeapon {
         bv = 44;
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 125000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

@@ -143,17 +143,17 @@ public class UnitOverview implements IDisplayable {
         int y = clipBounds.y + DIST_TOP;
 
         if (scroll) {
-        	if (scrollOffset > 0) {
-        		graph.drawImage(pageUp, x, y, null);
-        		graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
-        	} else {
-        		graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
-        		graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
-        	}
-        	y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-        			+ BUTTON_PADDING;
+            if (scrollOffset > 0) {
+                graph.drawImage(pageUp, x, y, null);
+                graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
+            } else {
+                graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
+                graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
+            }
+            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
+                    + BUTTON_PADDING;
         }
 
         for (int i = scrollOffset; (i < v.size())
@@ -197,16 +197,16 @@ public class UnitOverview implements IDisplayable {
         }
 
         if (scroll) {
-        	y -= PADDING;
-        	y += BUTTON_PADDING;
-        	if (scrollOffset == unitIds.length - actUnitsPerPage) {
-        		graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
-        		graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
-        	} else {
-        		graph.drawImage(scrollDown, x, y, null);
-        		graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
+            y -= PADDING;
+            y += BUTTON_PADDING;
+            if (scrollOffset == unitIds.length - actUnitsPerPage) {
+                graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
+                graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
+            } else {
+                graph.drawImage(scrollDown, x, y, null);
+                graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
             }
            
         }

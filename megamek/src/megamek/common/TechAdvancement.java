@@ -28,11 +28,11 @@ public class TechAdvancement implements ITechnology {
     //Dates that are approximate can be pushed this many years earlier (or later for extinctions).
     public static final int APPROXIMATE_MARGIN = 5;
 
-	public static final int PROTOTYPE    = 0;
-	public static final int PRODUCTION   = 1;
-	public static final int COMMON       = 2;
-	public static final int EXTINCT      = 3;
-	public static final int REINTRODUCED = 4;
+    public static final int PROTOTYPE    = 0;
+    public static final int PRODUCTION   = 1;
+    public static final int COMMON       = 2;
+    public static final int EXTINCT      = 3;
+    public static final int REINTRODUCED = 4;
 
     private int techBase = TECH_BASE_ALL;
     private int[] isAdvancement = new int[5];

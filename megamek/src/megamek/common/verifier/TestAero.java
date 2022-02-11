@@ -782,7 +782,7 @@ public class TestAero extends TestEntity {
                     if (linkedAT.getMunitionType() != AmmoType.M_STANDARD 
                             && !hasArtemisFCS 
                             && wt.getAmmoType() != AmmoType.T_AC_LBX
-                    		&& wt.getAmmoType() != AmmoType.T_SBGAUSS) {
+                            && wt.getAmmoType() != AmmoType.T_SBGAUSS) {
                         correct = false;
                         buff.append("Aeros may not use special munitions! ").append(m.getType().getInternalName())
                                 .append(" is using ").append(linkedAT.getInternalName()).append("\n");

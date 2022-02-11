@@ -1483,7 +1483,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String body = Messages
                     .getString("MovementDisplay.MicroliteMove.message");
             clientgui.doAlertDialog(title, body);
-            return;            	
+            return;
         }
         
         if (cmd.automaticWiGELanding(true)

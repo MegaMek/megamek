@@ -54,8 +54,8 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         explosionDamage = 20;
         rulesRefs = "71,IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
+        .setIntroLevel(false)
+        .setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
         .setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3038)

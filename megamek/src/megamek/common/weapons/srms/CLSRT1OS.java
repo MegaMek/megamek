@@ -43,7 +43,7 @@ public class CLSRT1OS extends SRTWeapon {
         		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_PROTO_WEAPON);    
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But LRM Tech Base and Avail Ratings.
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

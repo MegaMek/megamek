@@ -42,15 +42,15 @@ public class CLAdvancedSRM4 extends AdvancedSRMWeapon {
         tonnage = .15;
         criticals = 3;
         cost = 60000;
-        rulesRefs = "261,TM";
+        rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
-            .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+                .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CHH)
+                .setProductionFactions(F_CHH);
     }
 }

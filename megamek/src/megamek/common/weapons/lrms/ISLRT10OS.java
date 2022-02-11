@@ -47,7 +47,7 @@ public class ISLRT10OS extends LRTWeapon {
         bv = 18;
         flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 50000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

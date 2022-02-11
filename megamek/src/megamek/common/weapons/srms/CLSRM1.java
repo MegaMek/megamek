@@ -40,14 +40,14 @@ public class CLSRM1 extends SRMWeapon {
         extremeRange = 12;
         bv = 15;
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         cost = 80000;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But LRM Tech Base and Avail Ratings.
-        rulesRefs = "231,TM";
+        rulesRefs = "231, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
+        .setIntroLevel(false)
+        .setUnofficial(false)
         .setTechRating(RATING_F)
         .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
         .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)

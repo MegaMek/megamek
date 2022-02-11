@@ -44,7 +44,7 @@ public class ISSRT2 extends SRTWeapon {
         bv = 21;
         flags = flags.or(F_NO_FIRES);
         cost = 10000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

@@ -45,7 +45,7 @@ public class CLStreakSRM2OS extends StreakSRMWeapon {
         cost = 7500;
         shortAV = 4;
         medAV = 4;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

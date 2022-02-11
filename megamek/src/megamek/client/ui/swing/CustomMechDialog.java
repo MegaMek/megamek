@@ -994,10 +994,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                 return;
             } else if ((currentfuel < 0) || (currentfuel > fuel)) {
-            	msg = (Messages.getString("CustomMechDialog.EnterCorrectFuel") + fuel + ".");
-            	title = Messages.getString("CustomMechDialog.NumberFormatError");
-            	JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
-            	return;
+                msg = (Messages.getString("CustomMechDialog.EnterCorrectFuel") + fuel + ".");
+                title = Messages.getString("CustomMechDialog.NumberFormatError");
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                return;
             }
         }
 

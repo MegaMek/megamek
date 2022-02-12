@@ -49,7 +49,7 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "97,IO";
+        rulesRefs = "97, IO";
         flags = flags.or(F_PROTOTYPE).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setIntroLevel(false)

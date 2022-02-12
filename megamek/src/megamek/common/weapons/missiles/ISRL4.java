@@ -45,7 +45,7 @@ public class ISRL4 extends RLWeapon {
         longRange = 12;
         extremeRange = 14;
         bv = 5;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)
         	.setUnofficial(true)

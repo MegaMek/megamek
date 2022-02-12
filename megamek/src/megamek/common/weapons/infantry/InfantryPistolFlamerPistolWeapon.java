@@ -46,7 +46,7 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.0008;
         ammoCost = 1;
         shots = 10;
-        rulesRefs = " 273,TM";
+        rulesRefs = " 273, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)

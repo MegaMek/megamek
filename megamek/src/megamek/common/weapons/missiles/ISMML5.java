@@ -47,7 +47,7 @@ public class ISMML5 extends MMLWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

@@ -46,7 +46,7 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         infantryRange = 1;
         ammoWeight = 0.0003;
         shots = 8;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2100, 2290, 2350);
         techAdvancement.setTechRating(RATING_D);

@@ -46,7 +46,7 @@ public class Sniper extends ArtilleryWeapon {
         svslots = 10;
         bv = 85;
         cost = 300000;
-        rulesRefs = "284,TO";
+        rulesRefs = "284, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
             .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)

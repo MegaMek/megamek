@@ -66,7 +66,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         criticals = 1;
         bv = 48;
         cost = 240000;
-        rulesRefs = "103,IO";
+        rulesRefs = "103, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setIntroLevel(false)
             .setUnofficial(false)

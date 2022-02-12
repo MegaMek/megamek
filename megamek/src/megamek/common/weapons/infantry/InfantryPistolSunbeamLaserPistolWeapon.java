@@ -45,7 +45,7 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
 		infantryRange = 1;
 		ammoWeight = 0.0003;
 		shots = 7;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3015, 3020, 3050, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)
 		        .setProductionFactions(F_FW).setTechRating(RATING_D)

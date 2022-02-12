@@ -42,7 +42,7 @@ public class ISLB5XAC extends LBXACWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        rulesRefs = "207,TM";
+        rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)

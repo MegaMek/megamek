@@ -54,7 +54,7 @@ public class CLStreakLRM10 extends StreakLRMWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_LONG;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         //Tech Advancement moved to StreakLRMWeapon.java
     }
 }

@@ -46,7 +46,7 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
         ammoWeight = 0.00024;
         ammoCost = 3;
         shots = 5;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
         techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3090, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_LC)

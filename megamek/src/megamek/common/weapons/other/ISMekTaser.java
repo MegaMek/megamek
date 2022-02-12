@@ -52,7 +52,7 @@ public class ISMekTaser extends AmmoWeapon {
         explosive = true;
         flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER).or(F_TANK_WEAPON);
-        rulesRefs = "346,TO";
+        rulesRefs = "346, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)

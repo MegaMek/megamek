@@ -59,7 +59,7 @@ public class ISThunderBolt10 extends ThunderBoltWeapon {
         cost = 175000;
         flags = flags.or(F_LARGEMISSILE);
         this.missileArmor = 10;
-        rulesRefs = "347,TO";
+        rulesRefs = "347, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

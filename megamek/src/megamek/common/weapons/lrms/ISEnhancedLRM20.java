@@ -54,7 +54,7 @@ public class ISEnhancedLRM20 extends EnhancedLRMWeapon {
         medAV = 12;
         longAV = 12;
         maxRange = RANGE_LONG;
-        rulesRefs = "326,TO";
+        rulesRefs = "326, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS        
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)

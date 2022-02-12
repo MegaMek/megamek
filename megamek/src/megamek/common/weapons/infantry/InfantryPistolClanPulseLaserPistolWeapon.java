@@ -46,7 +46,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 10;
         bursts = 2;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CFM)
                 .setProductionFactions(F_CFM).setTechRating(RATING_F)

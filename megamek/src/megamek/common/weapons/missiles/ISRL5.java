@@ -47,7 +47,7 @@ public class ISRL5 extends RLWeapon {
         bv = 6;
         tonnage = 7.0;
         criticals = 2;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)
         	.setUnofficial(true)

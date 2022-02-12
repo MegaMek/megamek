@@ -44,7 +44,7 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
 		infantryDamage = 0.49;
 		infantryRange = 3;
 		crew = 1;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		tonnage = .007;
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3058, 3068, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

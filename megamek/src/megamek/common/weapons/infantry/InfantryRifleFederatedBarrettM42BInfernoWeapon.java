@@ -54,7 +54,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
 		ammoCost = 12;
 		shots = 50;
 		bursts = 5;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FS)

@@ -54,7 +54,7 @@ public class CLStreakLRM9 extends StreakLRMWeapon {
         //But LRM Tech Base and Avail Ratings.
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
         		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);        
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         //Tech Advancement moved to StreakLRMWeapon.java
     }
 }

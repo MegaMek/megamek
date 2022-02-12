@@ -50,7 +50,7 @@ public class ISLRM10 extends LRMWeapon {
         medAV = 6;
         longAV = 6;
         maxRange = RANGE_LONG;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)

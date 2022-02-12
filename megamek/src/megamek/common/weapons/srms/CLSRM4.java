@@ -51,7 +51,7 @@ public class CLSRM4 extends SRMWeapon {
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

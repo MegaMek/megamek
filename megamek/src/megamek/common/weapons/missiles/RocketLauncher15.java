@@ -54,7 +54,7 @@ public class RocketLauncher15 extends RLWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)
         	.setUnofficial(false)

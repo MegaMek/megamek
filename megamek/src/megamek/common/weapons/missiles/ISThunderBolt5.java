@@ -53,7 +53,7 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         cost = 50000;
         flags = flags.or(F_LARGEMISSILE);
         this.missileArmor = 5;
-        rulesRefs = "347,TO";
+        rulesRefs = "347, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

@@ -48,8 +48,9 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
     //endregion File Paths
 
-    //region Unsorted Options
+    //region Unsorted Constants
     public static final int DIVE_BOMB_MIN_ALTITUDE = 3;
     public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
-    //endregion Unsorted Options
+    public static final double INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
+    //endregion Unsorted Constants
 }

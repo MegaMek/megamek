@@ -26,6 +26,8 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static megamek.MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP;
+
 /**
  * This class represents the lowest of the low, the ground pounders, the city
  * rats, the PBI (Poor Bloody Infantry). <p/> PLEASE NOTE!!! This class just
@@ -61,8 +63,6 @@ public class Infantry extends Entity {
     public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS | DEMO_ENGINEERS
             | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS
             | TRENCH_ENGINEERS;
-
-    public static final double PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
     
     /**
      * squad size and number
@@ -1518,14 +1518,14 @@ public class Infantry extends Entity {
   */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double pweaponCost = 0;  //Primary Weapon Cost
+        double pweaponCost = 0;  // Primary Weapon Cost
         double sweaponCost = 0; // Secondary Weapon Cost
-        double armorcost = 0; //Armor Cost
-        double cost = 0; //Total Final Cost of Platoon or Squad.
-        double primarySquad = 0; //Number of Troopers with Primary Weapon Only
-        double secondSquad = 0; //Number oif Troopers with Secondary Weapon Only.
+        double armorcost = 0; // Armor Cost
+        double cost = 0; // Total Final Cost of Platoon or Squad.
+        double primarySquad = 0; // Number of Troopers with Primary Weapon Only
+        double secondSquad = 0; // Number oif Troopers with Secondary Weapon Only.
 
-        //Weapon Cost Calculation
+        // Weapon Cost Calculation
         if (null != primaryW) {
             pweaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * 2000;
         }
@@ -1533,16 +1533,14 @@ public class Infantry extends Entity {
             sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;
         }
 
-        //Determining Break down of who would have primary and secondary weapons.
+        // Determining Break down of who would have primary and secondary weapons.
         primarySquad = (squadsize - secondn) * squadn;
         secondSquad = menStarting - primarySquad;
 
-        //Squad Cost with just the weapons.
+        // Squad Cost with just the weapons.
         cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
 
-        /* Check whether the unit has an armor kit. If not, calculate value for custom
-         * armor settings.
-         */
+        // Check whether the unit has an armor kit. If not, calculate value for custom armor settings
         EquipmentType armor = getArmorKit();
         if (armor != null) {
             armorcost = armor.getCost(this, false, LOC_INFANTRY);
@@ -1581,7 +1579,7 @@ public class Infantry extends Entity {
             }
         }
 
-        //Cost of armor on a per man basis added
+        // Cost of armor on a per man basis added
         cost += (armorcost * menStarting);
 
         // Price multiplier includes anti-mech training, motive type, and specializations
@@ -1600,7 +1598,7 @@ public class Infantry extends Entity {
     public double getPriceMultiplier() {
         double priceMultiplier = 1.0;
 
-        //Anti-Mek Trained Multiplier
+        // Anti-Mek Trained Multiplier
         if (isAntiMekTrained()) {
             priceMultiplier *= 5.0;
         }
@@ -1608,7 +1606,7 @@ public class Infantry extends Entity {
         // Motive type costs
         switch (getMovementMode()) {
             case INF_UMU:
-                priceMultiplier *= getAllUMUCount() > 1? 2.5 : 2;
+                priceMultiplier *= getAllUMUCount() > 1 ? 2.5 : 2;
                 break;
             case INF_LEG:
                 priceMultiplier *= 1.0;
@@ -1632,7 +1630,7 @@ public class Infantry extends Entity {
                 priceMultiplier *= hasMicrolite() ? 4 : 4.5;
                 break;
             case SUBMARINE:
-                /* No cost given in TacOps, using basic mechanized cost for now */
+                // No cost given in TacOps, using basic mechanized cost for now
                 priceMultiplier *= 3.2;
                 break;
             default:
@@ -1655,7 +1653,7 @@ public class Infantry extends Entity {
         if (hasSpecialization(XCT)) {
             priceMultiplier *= 5;
         }
-        // TODO: paramedics cost an addition x0.375 per paramedic
+        // TODO : paramedics cost an addition x0.375 per paramedic
         return priceMultiplier;
     }
 
@@ -1680,7 +1678,7 @@ public class Infantry extends Entity {
             cost += armor.getCost(this, false, LOC_INFANTRY);
         }
 
-        //Add in motive type costs
+        // Add in motive type costs
         switch (getMovementMode()) {
             case INF_UMU:
                 cost += 17888;
@@ -1699,7 +1697,7 @@ public class Infantry extends Entity {
             case HOVER:
             case WHEELED:
             case TRACKED:
-            case SUBMARINE: //FIXME: there is no cost shown for mech. scuba in tac ops
+            case SUBMARINE: // FIXME: there is no cost shown for mech. scuba in tac ops
                 cost += 17888 * 2.2;
                 break;
             case VTOL:
@@ -1793,8 +1791,7 @@ public class Infantry extends Entity {
         if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
             if (!(Compute.isInBuilding(game, this))) {
-                turnsLayingExplosives = -1; // give up if no longer in a
-                // building
+                turnsLayingExplosives = -1; // give up if no longer in a building
             }
         }
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
@@ -2265,8 +2262,8 @@ public class Infantry extends Entity {
             return 0;
         }
 
-        // per 09/2021 errata, primary infantry weapon damage caps out at .6
-        double adjustedDamage = Math.min(PRIMARY_WEAPON_DAMAGE_CAP, primaryW.getInfantryDamage());
+        // per 09/2021 errata, primary infantry weapon damage caps out at 0.6
+        double adjustedDamage = Math.min(INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP, primaryW.getInfantryDamage());
         double damage = adjustedDamage * (squadsize - secondn);
         if (null != secondW) {
             damage += secondW.getInfantryDamage() * secondn;
@@ -2275,7 +2272,7 @@ public class Infantry extends Entity {
     }
     
     public boolean primaryWeaponDamageCapped() {
-        return getPrimaryWeaponDamage() > PRIMARY_WEAPON_DAMAGE_CAP;
+        return getPrimaryWeaponDamage() > INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP;
     }
     
     public double getPrimaryWeaponDamage() {

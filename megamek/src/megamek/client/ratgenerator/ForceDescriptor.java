@@ -202,7 +202,7 @@ public class ForceDescriptor {
                     }
                 } else {
                     //If group generation is not set, then either this is a compound formation (e.g. squadron,
-                    //aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
+                    // aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
                     try {
                         Map<String,List<ForceDescriptor>> byGenRule = subforces.stream()
                                 .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));

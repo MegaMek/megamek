@@ -231,7 +231,7 @@ public class BattleForceElement {
             if (weapon.hasFlag(WeaponType.F_TAG)) {
                 if (weapon.hasFlag(WeaponType.F_C3MBS)) {
                     specialAbilities.merge(BattleForceSPA.C3BSM, 1, Integer::sum);
-                    specialAbilities.merge(BattleForceSPA.MHQ, 12, Integer::sum); //count half-tons
+                    specialAbilities.merge(BattleForceSPA.MHQ, 12, Integer::sum); // count half-tons
                 } else if (weapon.hasFlag(WeaponType.F_C3M)) {
                     specialAbilities.merge(BattleForceSPA.C3M, 1, Integer::sum);
                     specialAbilities.merge(BattleForceSPA.MHQ, 10, Integer::sum);

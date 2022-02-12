@@ -37,7 +37,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     public static final int RIGHT = 2;
 
     private int arm;
-    //booleans for retractable blade extension
+    // booleans for retractable blade extension
     private boolean leftBlade = false;
     private boolean rightBlade = false;
     private boolean zweihandering = false;
@@ -150,7 +150,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Arm missing";
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return "No/minimal arms";
         }

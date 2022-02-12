@@ -957,7 +957,7 @@ public class TestAero extends TestEntity {
         }
         if (lateralMatch) {
             //We've already checked counts, so in the reverse direction we only need to see if there's
-            //anything not found on the other side.
+            // anything not found on the other side.
             for (EquipmentType eq : rightWing.keySet()) {
                 if (!leftWing.containsKey(eq)) {
                     lateralMatch = false;

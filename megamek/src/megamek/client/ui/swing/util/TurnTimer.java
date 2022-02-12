@@ -100,7 +100,7 @@ public class TurnTimer {
     }
 
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
-        //check if there should be a turn timer running
+        // check if there should be a turn timer running
         if (timerShouldStart(client)) {
             Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");
             TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);

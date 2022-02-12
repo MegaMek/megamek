@@ -118,7 +118,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         vLabels[7].setValue(getCriticalHitTally(t.getFCSHits(), 3));
         vLabels[8].setValue(getCriticalHitTally(t.getSensorHits(), 3));
         if (t instanceof SmallCraft) {
-            //add in thrusters
+            // add in thrusters
             SmallCraft sc = (SmallCraft) t;
             vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(), 3));
             vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(), 3));

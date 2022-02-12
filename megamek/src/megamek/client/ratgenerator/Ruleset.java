@@ -214,7 +214,7 @@ public class Ruleset {
         int count = fd.getSubforces().size() + fd.getAttached().size();
 
         //Process subforces recursively. It is possible that the subforce has
-        //a different faction, in which case the ruleset appropriate to that faction is used.
+        // a different faction, in which case the ruleset appropriate to that faction is used.
         for (ForceDescriptor sub : fd.getSubforces()) {
             rs = this;
             if (!fd.getFaction().equals(sub.getFaction())) {

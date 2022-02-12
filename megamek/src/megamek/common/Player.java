@@ -520,7 +520,7 @@ public final class Player extends TurnOrdered {
      * @return a vector of relevant entity ids
      */
     public Vector<Integer> getAirborneVTOL() {
-        //a vector of unit ids
+        // a vector of unit ids
         Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {

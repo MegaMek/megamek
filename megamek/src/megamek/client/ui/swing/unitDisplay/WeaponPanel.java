@@ -2050,7 +2050,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
 
                 // set the standard ranges, depending on capital or no
-                //boolean isCap = wtype.isCapital();
+                // boolean isCap = wtype.isCapital();
                 int rangeMultiplier = wtype.isCapital() ? 2 : 1;
                 final Game game = unitDisplay.getClientGUI().getClient().getGame();
                 if (game.getBoard().onGround()) {

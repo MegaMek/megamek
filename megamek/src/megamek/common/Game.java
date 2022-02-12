@@ -912,7 +912,7 @@ public class Game implements Serializable {
     }
 
     public synchronized void setEntitiesVector(List<Entity> entities) {
-        //checkPositionCacheConsistency();
+        // checkPositionCacheConsistency();
         this.entities.clear();
         this.entities.addAll(entities);
         reindexEntities();
@@ -1573,7 +1573,7 @@ public class Game implements Serializable {
      * @return <code>List<Entity></code>
      */
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
-        //checkPositionCacheConsistency();
+        // checkPositionCacheConsistency();
         // Make sure the look-up is initialized
         if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
             resetEntityPositionLookup();

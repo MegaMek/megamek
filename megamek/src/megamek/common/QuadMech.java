@@ -918,7 +918,7 @@ public class QuadMech extends Mech {
         if (!retVal) {
             return false;
         }
-        //check the locations
+        // check the locations
         int[] locations = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
         int badLocs = 0;
         for ( int loc = locations.length -1; loc >= 0; loc--) {
@@ -929,7 +929,7 @@ public class QuadMech extends Mech {
         if (!(badLocs <2)) {
             return false;
         }
-        //check the Gyro
+        // check the Gyro
         return !isGyroDestroyed();
     }
 

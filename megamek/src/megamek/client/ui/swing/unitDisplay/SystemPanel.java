@@ -769,7 +769,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             .getModes(); e.hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
                         //Hack to prevent showing an option that is disabled by the server, but would
-                        //be overwritten by every entity update if made also in the client
+                        // be overwritten by every entity update if made also in the client
                         if (em.equals("HotLoad") && en instanceof Mech
                                 && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                             continue;

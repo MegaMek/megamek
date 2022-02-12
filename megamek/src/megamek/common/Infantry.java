@@ -402,7 +402,7 @@ public class Infantry extends Entity {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp = getOriginalWalkMP();
-        //encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
+        // encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
         if (encumbering) {
             mp = Math.max(mp - 1, 1);
         }
@@ -909,7 +909,7 @@ public class Infantry extends Entity {
         bvText.append("<b>Defensive Battle Rating Calculation:</b>");
         bvText.append(nl);
 
-        double dbr = 0; //defensive battle rating
+        double dbr = 0; // defensive battle rating
 
         dbr = men * 1.5 * calcDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game)
@@ -1122,7 +1122,7 @@ public class Infantry extends Entity {
             bvText.append(endRow);
         }
 
-        //add in field gun BV
+        // add in field gun BV
         for (Mounted mounted : getEquipment()) {
             if (mounted.getLocation() == LOC_FIELD_GUNS) {
                 wbv += mounted.getType().getBV(this);
@@ -1547,7 +1547,7 @@ public class Infantry extends Entity {
         if (armor != null) {
             armorcost = armor.getCost(this, false, LOC_INFANTRY);
         } else {
-            //add in infantry armor cost
+            // add in infantry armor cost
             if (damageDivisor > 1) {
                 if (isArmorEncumbering()) {
                     armorcost += 1600;
@@ -1587,7 +1587,7 @@ public class Infantry extends Entity {
         // Price multiplier includes anti-mech training, motive type, and specializations
         cost = cost * getPriceMultiplier();
 
-        //add in field gun costs
+        // add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if (mounted.getLocation() == LOC_FIELD_GUNS) {
                 cost += Math.floor(mounted.getType().getCost(this, false, mounted.getLocation()));
@@ -1709,7 +1709,7 @@ public class Infantry extends Entity {
                 break;
         }
         cost *= menStarting;
-        //add in field gun costs
+        // add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if (mounted.getLocation() == LOC_FIELD_GUNS) {
                 cost += mounted.getType().getCost(this, false, -1);

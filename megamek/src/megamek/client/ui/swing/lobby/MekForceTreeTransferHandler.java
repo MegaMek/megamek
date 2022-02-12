@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager;
 
 /** 
  * The TransferHandler manages drag-and-drop for the C3 tree. 
- * Partly taken from https://coderanch.com/t/346509/java/JTree-drag-drop-tree-Java
+ * Partly taken from https:// coderanch.com/t/346509/java/JTree-drag-drop-tree-Java
  */
 public class MekForceTreeTransferHandler extends TransferHandler {
 

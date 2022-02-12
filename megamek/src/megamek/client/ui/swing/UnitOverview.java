@@ -419,7 +419,7 @@ public class UnitOverview implements IDisplayable {
 
             //is the unit evading? - can't evade and be out of control so just draw on top
             if (entity.isEvading()) {
-                //draw evasion
+                // draw evasion
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
                 graph.setColor(Color.red);

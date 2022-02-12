@@ -84,7 +84,7 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return false;
         }

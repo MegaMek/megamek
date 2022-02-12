@@ -134,7 +134,7 @@ public class Tank extends Entity {
     private boolean driverHit = false;
     private boolean commanderHit = false;
     //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
-    //but the command console benefits are lost as the backup has to take command.
+    // but the command console benefits are lost as the backup has to take command.
     private boolean usingConsoleCommander = false;
     /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
     private int extraCrewSeats = 0;

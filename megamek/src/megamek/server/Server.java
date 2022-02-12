@@ -2169,7 +2169,7 @@ public class Server implements Runnable {
                 resetActivePlayersDone();
                 rollInitiative();
                 //Cockpit command consoles that switched crew on the previous round are ineligible for force
-                //commander initiative bonus. Now that initiative is rolled, clear the flag.
+                // commander initiative bonus. Now that initiative is rolled, clear the flag.
                 game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
                 if (!game.shouldDeployThisRound()) {
@@ -6783,7 +6783,7 @@ public class Server implements Runnable {
                     }
                 } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0) {
                     //External units on LAMs, including swarmers, fall automatically and take damage,
-                    //and the LAM itself may take one or more criticals.
+                    // and the LAM itself may take one or more criticals.
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true, true));
                     }

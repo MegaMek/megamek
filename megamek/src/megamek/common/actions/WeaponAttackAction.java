@@ -1103,7 +1103,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Invalid Target Reasons
         
-        //a friendly unit can never be the target of a direct attack.
+        // a friendly unit can never be the target of a direct attack.
         // but we do allow vehicle flamers to cool. Also swarm missile secondary targets and strafing are exempt.
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) && !isStrafing && !exchangeSwarmTarget) {
             if (te != null && !te.getOwner().isEnemyOf(ae.getOwner())) {
@@ -1187,7 +1187,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Line of Sight and Range Reasons
 
 
-        //attacker partial cover means no leg weapons
+        // attacker partial cover means no leg weapons
         if (los.isAttackerCover() && weapon != null && ae.locationIsLeg(weapon.getLocation()) && !underWater) {
             return Messages.getString("WeaponAttackAction.LegBlockedByTerrain");
         }

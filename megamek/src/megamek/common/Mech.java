@@ -1512,7 +1512,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isEligibleForPavementBonus() {
-        //eligible if using Mech tracks
+        // eligible if using Mech tracks
         return movementMode == EntityMovementMode.TRACKED;
     }
 

@@ -69,7 +69,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_PPC = BigInteger.valueOf(1).shiftLeft(3);
     // for weapons that target Automatically (AMS)
     public static final BigInteger F_AUTO_TARGET = BigInteger.valueOf(1).shiftLeft(4);
-    //can not start fires
+    // can not start fires
     public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5);
     //must be only weapon attacking
     public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7);
@@ -1546,12 +1546,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBAGrenadeLauncherHeavy());
         EquipmentType.addType(new CLBALaserHeavyMedium());
         EquipmentType.addType(new CLBAMGHeavy());
-        EquipmentType.addType(new CLBAMortarHeavy());  //added per IO Pg 53
+        EquipmentType.addType(new CLBAMortarHeavy());  // added per IO Pg 53
         EquipmentType.addType(new CLBARecoillessRifleHeavy());
         EquipmentType.addType(new CLBALaserHeavySmall());
         EquipmentType.addType(new CLBALBX());
         EquipmentType.addType(new CLBAMGLight());
-        EquipmentType.addType(new CLBAMortarLight()); //added per IO Pg 53
+        EquipmentType.addType(new CLBAMortarLight()); // added per IO Pg 53
         EquipmentType.addType(new CLBARecoillessRifleLight());
         EquipmentType.addType(new CLBALRM1());
         EquipmentType.addType(new CLBALRM1OS());

@@ -23,7 +23,7 @@ import megamek.server.Server;
 
 /**
  * TAG for conventional infantry. Rules not found in TacOps 2nd printing are in
- * this forum post: http://bg.battletech.com/forums/index.php?topic=5902.0
+ * this forum post: http:// bg.battletech.com/forums/index.php?topic=5902.0
  * 
  * @author Neoancient
  *

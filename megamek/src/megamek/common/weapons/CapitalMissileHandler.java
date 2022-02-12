@@ -266,7 +266,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         }
         
         //Capital missiles shouldn't be able to target buildings, being space-only weapons
-        //but if they aren't defined, handleEntityDamage() doesn't work.
+        // but if they aren't defined, handleEntityDamage() doesn't work.
         int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up

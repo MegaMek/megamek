@@ -1973,9 +1973,9 @@ public class FireControl {
         }
         
         // if we are an aero blasting away at ground targets, another good option for a heatless plan is to bomb the crap out of the enemy
-        //bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
-        //currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
-        //dropping everything it has, including specialized munitions such as thunder bombs and infernos
+        // bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
+        // currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
+        // dropping everything it has, including specialized munitions such as thunder bombs and infernos
         if (shooter.isAirborne() && 0 < shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
                                                                  shooter.getGame(), shooter.passedOver(target), false);

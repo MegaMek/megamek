@@ -123,7 +123,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     public void rerollInitiative() {
         rerolled = true;
         rerollInitiativeB.setEnabled(false);
-        //butDone.setEnabled(false);
+        // butDone.setEnabled(false);
         clientgui.getClient().sendRerollInitiativeRequest();
     }
 

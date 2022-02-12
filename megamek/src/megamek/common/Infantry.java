@@ -1,20 +1,25 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
+import megamek.MMConstants;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -25,8 +30,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static megamek.MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP;
 
 /**
  * This class represents the lowest of the low, the ground pounders, the city
@@ -2257,29 +2260,28 @@ public class Infantry extends Entity {
     }
 
     public double getDamagePerTrooper() {
-
         if (null == primaryW) {
             return 0;
         }
 
         // per 09/2021 errata, primary infantry weapon damage caps out at 0.6
-        double adjustedDamage = Math.min(INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP, primaryW.getInfantryDamage());
+        double adjustedDamage = Math.min(MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP, primaryW.getInfantryDamage());
         double damage = adjustedDamage * (squadsize - secondn);
         if (null != secondW) {
             damage += secondW.getInfantryDamage() * secondn;
         }
         return damage/squadsize;
     }
-    
+
     public boolean primaryWeaponDamageCapped() {
-        return getPrimaryWeaponDamage() > INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP;
+        return getPrimaryWeaponDamage() > MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP;
     }
-    
+
     public double getPrimaryWeaponDamage() {
         if (null == primaryW) {
             return 0;
         }
-        
+
         return primaryW.getInfantryDamage();
     }
 
@@ -2328,7 +2330,7 @@ public class Infantry extends Entity {
                     setSpecializations(getSpecializations() | SCUBA);
                     break;
                 case INF_JUMP:
-                    //fall through to get the original Walk MP is deliberate
+                    // fall through to get the original Walk MP is deliberate
                     setOriginalJumpMP(3);
                 case INF_LEG:
                     setOriginalWalkMP(1);

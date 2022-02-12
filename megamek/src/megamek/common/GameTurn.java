@@ -395,15 +395,13 @@ public class GameTurn implements Serializable {
      * given the opportunity to unload entities that are stranded on immobile
      * transports. Each player declares which stranded units they will unload at
      * the beginning of the movement phase, without being told what stranded
-     * units their opponent(s) are unloading. <p/> According to <a
-     * href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">
-     * Randall Bills</a>, the "minimum move" rule allow stranded units to
-     * dismount at the start of the turn.
+     * units their opponent(s) are unloading.
+     * <p/>
+     * According to
+     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall Bills</a>,
+     * the "minimum move" rule allow stranded units to dismount at the start of the turn.
      */
     public static class UnloadStrandedTurn extends GameTurn {
-        /**
-         *
-         */
         private static final long serialVersionUID = 2403095752478007872L;
         private int[] entityIds = null;
 

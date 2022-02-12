@@ -413,9 +413,9 @@ public class MenuScroller {
     }
 
     /**
-    * Removes this MenuScroller from the associated menu and restores the default behavior of the
+     * Removes this MenuScroller from the associated menu and restores the default behavior of the
      * menu.
-    */
+     */
     public void dispose() {
         if (menu != null) {
             menu.removePopupMenuListener(menuListener);

@@ -4986,9 +4986,8 @@ public class Server implements Runnable {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
-                    switch (hitSide) {// quite hackish...I think it ought to
-                        // work, though.
-                        case 0:// can this happen?
+                    switch (hitSide) { // quite hackish... I think it ought to work, though.
+                        case 0: // can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
                         case 1:
@@ -5079,8 +5078,8 @@ public class Server implements Runnable {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
-                    switch (hitSide) {// quite hackish...I think it ought to work, though.
-                        case 0:// can this happen?
+                    switch (hitSide) { // quite hackish... I think it ought to work, though.
+                        case 0: // can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
                         case 1:

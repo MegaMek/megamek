@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -35,10 +36,10 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     // only used server-side for manually guided Telemissile attacks
     private transient ArrayList<Mounted> vCounterEquipment;
     
-    //Large Craft Point Defense/AMS Bay Stuff
+    // Large Craft Point Defense/AMS Bay Stuff
     public int CounterAVInt = 0;
     private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
-    private boolean advancedPD = false; //true if advanced StratOps game rule is on
+    private boolean advancedPD = false; // true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());

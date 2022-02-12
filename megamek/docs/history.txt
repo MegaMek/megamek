@@ -1,3 +1,4 @@
+
 VERSION HISTORY:
 ----------------
 0.49.7-SNAPSHOT
@@ -39,6 +40,7 @@ VERSION HISTORY:
 + Issue #3363: Apply Zweihander damage to both arms when using an improvised club
 + PR #3428: Creating a standard FontComboBox
 + PR #3432: Attack Handler: Fixing return packet NPE and Improving Logging
++ Data: New Sprites and ForcePack Wolf Dragoons.  
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

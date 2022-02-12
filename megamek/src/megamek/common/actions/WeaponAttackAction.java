@@ -13,6 +13,7 @@
  */
 package megamek.common.actions;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -1992,12 +1993,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
                 // Dive Bombing can only be conducted if starting between altitude 5 and altitude 3
                 if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-                    if (ae.getAltitude() > DiveBombAttack.DIVE_BOMB_MAX_ALTITUDE) {
+                    if (ae.getAltitude() > MMConstants.DIVE_BOMB_MAX_ALTITUDE) {
                         return Messages.getString("WeaponAttackAction.TooHighForDiveBomb");
                     }
                     if (ae.isAero()) {
                         int altLoss = ((IAero) ae).getAltLossThisRound();
-                        if ((ae.getAltitude() + altLoss) < DiveBombAttack.DIVE_BOMB_MIN_ALTITUDE) {
+                        if ((ae.getAltitude() + altLoss) < MMConstants.DIVE_BOMB_MIN_ALTITUDE) {
                             return Messages.getString("WeaponAttackAction.TooLowForDiveBomb");
                         }
                     }

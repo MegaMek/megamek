@@ -944,7 +944,7 @@ public class LosEffects {
                     leftLos.setDamagableCoverTypePrimary(rightLos.getDamagableCoverTypePrimary());
                     leftLos.setCoverLocPrimary(rightLos.getCoverLocPrimary());
                 } else if ((leftLos.attackerCover == COVER_FULL)
-                        && (rightLos.attackerCover == COVER_NONE) {
+                        && (rightLos.attackerCover == COVER_NONE)) {
                     //vertical cover, left
                     leftLos.attackerCover  = COVER_LEFT;
                     rightLos.attackerCover = COVER_LEFT;

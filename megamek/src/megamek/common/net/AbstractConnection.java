@@ -1,7 +1,7 @@
 /*
 * MegaMek -
-* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.net;
 
 import java.io.ByteArrayInputStream;
@@ -26,10 +25,12 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.net.marshall.PacketMarshaller;
 import megamek.common.net.marshall.PacketMarshallerFactory;
 import megamek.common.util.CircularIntegerBuffer;
@@ -39,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
  * Generic bidirectional connection between client and server
  */
 public abstract class AbstractConnection {
-
     private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
 
     private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
@@ -92,14 +92,12 @@ public abstract class AbstractConnection {
     /**
      * Buffer of the last commands sent; Used for debugging purposes.
      */
-    private CircularIntegerBuffer debugLastFewCommandsSent = new CircularIntegerBuffer(
-            50);
+    private CircularIntegerBuffer debugLastFewCommandsSent = new CircularIntegerBuffer(50);
 
     /**
      * Buffer of the last commands received; Used for debugging purposes.
      */
-    private CircularIntegerBuffer debugLastFewCommandsReceived = new CircularIntegerBuffer(
-            50);
+    private CircularIntegerBuffer debugLastFewCommandsReceived = new CircularIntegerBuffer(50);
 
     /**
      * Type of marshalling used to represent sent packets
@@ -159,11 +157,11 @@ public abstract class AbstractConnection {
     /**
      * Sets the type of the marshalling used to send packets
      *
-     * @param marshallingType new marhalling type
+     * @param marshallingType new marshalling type
      */
     protected void setMarshallingType(int marshallingType) {
-        PacketMarshaller pm = marshallerFactory.getMarshaller(marshallingType);
-        assert (pm != null) : "Unknown marshalling type";
+        PacketMarshaller pm = Objects.requireNonNull(marshallerFactory.getMarshaller(marshallingType),
+                "Unknown marshalling type");
         this.marshallingType = marshallingType;
         marshaller = pm;
     }
@@ -178,7 +176,7 @@ public abstract class AbstractConnection {
             if (socket == null) {
                 try {
                     socket = new Socket(host, port);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     return false;
                 }
             }
@@ -192,18 +190,19 @@ public abstract class AbstractConnection {
      */
     public void close() {
         synchronized (this) {
-            System.err.print(getConnectionTypeAbbrevation());
+            LogManager.getLogger().info("Starting to shut down " + (isServer() ? "server" : "client"));
             sendQueue.reportContents();
             sendQueue.finish();
             try {
                 if (socket != null) {
                     socket.close();
                 }
-            } catch (Exception e) {
-                LogManager.getLogger().error("Failed closing connection " + getId(), e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Failed closing connection " + getId(), ex);
             }
             socket = null;
         }
+
         processConnectionEvent(new DisconnectedEvent(this));
     }
 
@@ -242,8 +241,6 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Returns <code>true</code> if this connection compress the sent data
-     *
      * @return <code>true</code> if this connection compress the sent data
      */
     public boolean isCompressed() {
@@ -260,7 +257,7 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Adds a packet to the send queue to be send on a seperate thread.
+     * Adds a packet to the send queue to be sent on a separate thread.
      */
     public synchronized void send(Packet packet) {
         sendQueue.addPacket(new SendPacket(packet));
@@ -275,8 +272,8 @@ public abstract class AbstractConnection {
         try {
             sendNetworkPacket(packet.getData(), packet.isCompressed());
             debugLastFewCommandsSent.push(packet.getCommand());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 
@@ -326,7 +323,7 @@ public abstract class AbstractConnection {
      * @param packet <code>Packet</code>
      */
     protected void reportSendException(Exception ex, SendPacket packet) {
-        System.err.print(getConnectionTypeAbbrevation());
+        System.err.print(getConnectionTypeAbbreviation());
         System.err.print(" error sending command #");
         System.err.print(packet.getCommand());
         System.err.print(": ");
@@ -352,7 +349,7 @@ public abstract class AbstractConnection {
      * @param ex <code>Exception</code>
      */
     protected void reportReceiveException(Exception ex, StringBuffer buffer) {
-        System.err.print(getConnectionTypeAbbrevation());
+        System.err.print(getConnectionTypeAbbreviation());
         System.err.print(" error reading command: ");
         System.err.println(ex.getMessage());
         reportLastCommands();
@@ -388,18 +385,14 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Returns the the connection type abbrevation (client/server) that used in
-     * the debug messages and so on.
-     *
-     * @return
+     * @return the connection type abbreviation (client/server) that used in the debug messages and
+     * so on.
      */
-    protected String getConnectionTypeAbbrevation() {
+    protected String getConnectionTypeAbbreviation() {
         return isServer() ? "s:" : "c:";
     }
 
     /**
-     * Returns an input stream
-     *
      * @return an input stream
      * @throws IOException
      */
@@ -408,8 +401,6 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Returns an output stream
-     *
      * @return an output stream
      * @throws IOException
      */
@@ -421,7 +412,6 @@ public abstract class AbstractConnection {
     protected int getSendBufferSize() throws SocketException {
         return socket.getSendBufferSize();
     }
-
 
     protected int getReceiveBufferSize() throws SocketException {
         return socket.getReceiveBufferSize();
@@ -439,19 +429,15 @@ public abstract class AbstractConnection {
             while ((np = readNetworkPacket()) != null) {
                 processPacket(np);
             }
-        } catch (SocketException e) {
+        } catch (SocketException | EOFException ignored) {
             // Do nothing, happens when the socket closes
             close();
-        } catch (EOFException e) {
-            // Do nothing, happens when the socket closes
+        } catch (IOException ex) {
+            LogManager.getLogger().error("", ex);
             close();
-        } catch (IOException e) {
-            System.out
-                    .println("IOException during AbstractConnection#update()");
-            close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            reportReceiveException(e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            reportReceiveException(ex);
             close();
         }
     }
@@ -466,8 +452,12 @@ public abstract class AbstractConnection {
             while ((packet = sendQueue.getPacket()) != null) {
                 processPacket(packet);
             }
-        } catch (Exception e) {
-            reportSendException(e, packet);
+        } catch (Exception ex) {
+            if (packet == null) {
+                LogManager.getLogger().error("Attempted to process null packet", ex);
+            } else {
+                reportSendException(ex, packet);
+            }
             close();
         }
     }
@@ -476,10 +466,8 @@ public abstract class AbstractConnection {
      * process a received packet
      */
     protected void processPacket(INetworkPacket np) throws Exception {
-        PacketMarshaller pm = marshallerFactory.getMarshaller(np
-                .getMarshallingType());
-        assert (pm != null) : "Unknown marshalling type";
-        Packet packet = null;
+        PacketMarshaller pm = Objects.requireNonNull(marshallerFactory.getMarshaller(np.getMarshallingType()),
+                "Unknown marshalling type");
         byte[] data = np.getData();
         bytesReceived += data.length;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
@@ -489,11 +477,10 @@ public abstract class AbstractConnection {
         } else {
             in = bis;
         }
-        packet = pm.unmarshall(in);
+        Packet packet = pm.unmarshall(in);
         if (packet != null) {
             debugLastFewCommandsReceived.push(packet.getCommand());
-            processConnectionEvent(new PacketReceivedEvent(
-                    AbstractConnection.this, packet));
+            processConnectionEvent(new PacketReceivedEvent(this, packet));
         }
     }
 
@@ -505,12 +492,11 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Reads a complete <code>NetworkPacket</code> must not block, must return
-     * null instead
+     * Reads a complete <code>NetworkPacket</code> must not block, must return null instead
      *
      * @return the <code>NetworkPacket</code> that was sent.
      */
-    protected abstract INetworkPacket readNetworkPacket() throws Exception;
+    protected abstract @Nullable INetworkPacket readNetworkPacket() throws Exception;
 
     /**
      * Sends the data. This must not be blocked for too long
@@ -526,7 +512,6 @@ public abstract class AbstractConnection {
      * to send. Note that this implementation is not synchronized.
      */
     static class SendQueue {
-
         private LinkedList<SendPacket> queue = new LinkedList<>();
         private boolean finished = false;
 
@@ -574,8 +559,7 @@ public abstract class AbstractConnection {
      * @param event the game event.
      */
     protected void processConnectionEvent(ConnectionEvent event) {
-        for (Enumeration<ConnectionListener> e = connectionListeners.elements(); e
-                .hasMoreElements();) {
+        for (Enumeration<ConnectionListener> e = connectionListeners.elements(); e.hasMoreElements(); ) {
             ConnectionListener l = e.nextElement();
             switch (event.getType()) {
                 case ConnectionEvent.CONNECTED:
@@ -586,6 +570,9 @@ public abstract class AbstractConnection {
                     break;
                 case ConnectionEvent.PACKET_RECEIVED:
                     l.packetReceived((PacketReceivedEvent) event);
+                    break;
+                default:
+                    LogManager.getLogger().error("Received unknown connection event type of " + event.getType());
                     break;
             }
         }
@@ -601,7 +588,7 @@ public abstract class AbstractConnection {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             OutputStream out;
             try {
-                if (zipData && packet.getData() != null) {
+                if (zipData && (packet.getData() != null)) {
                     out = new GZIPOutputStream(bos);
                     zipped = true;
                 } else {
@@ -611,8 +598,8 @@ public abstract class AbstractConnection {
                 out.close();
                 data = bos.toByteArray();
                 bytesSent += data.length;
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
         }
 
@@ -640,26 +627,19 @@ public abstract class AbstractConnection {
      * Connection layer data packet.
      */
     protected interface INetworkPacket {
-
         /**
-         * Returns data marshalling type
-         *
          * @return data marshalling type
          */
-        public abstract int getMarshallingType();
+        int getMarshallingType();
 
         /**
-         * Returns packet data
-         *
          * @return packet data
          */
-        public abstract byte[] getData();
+        byte[] getData();
 
         /**
-         * Returns <code>true</code> if data is compressed
-         *
          * @return <code>true</code> if data is compressed
          */
-        public abstract boolean isCompressed();
+        boolean isCompressed();
     }
 }

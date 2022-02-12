@@ -1,24 +1,23 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.net;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -28,22 +27,11 @@ import java.net.SocketException;
  * send/receive data.
  */
 class DataStreamConnection extends AbstractConnection {
-
-    /**
-     * Input stream
-     */
     private DataInputStream in;
-
-    /**
-     * Output stream
-     */
     private DataOutputStream out;
 
     /**
      * Creates new server connection
-     * 
-     * @param socket
-     * @param id
      */
     public DataStreamConnection(Socket socket, int id) {
         super(socket, id);
@@ -51,10 +39,6 @@ class DataStreamConnection extends AbstractConnection {
 
     /**
      * Creates new Client connection
-     * 
-     * @param host
-     * @param port
-     * @param id
      */
     public DataStreamConnection(String host, int port, int id) {
         super(host, port, id);
@@ -70,43 +54,37 @@ class DataStreamConnection extends AbstractConnection {
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-        
-            NetworkPacket packet = null;
-            if (in == null) {
-                in = new DataInputStream(new BufferedInputStream(
-                        getInputStream(), getReceiveBufferSize()));
-                state = PacketReadState.Header;
+        if (in == null) {
+            in = new DataInputStream(new BufferedInputStream(getInputStream(), getReceiveBufferSize()));
+            state = PacketReadState.Header;
+        }
+
+        synchronized (in) {
+            switch (state) {
+                case Header:
+                    zipped = in.readBoolean();
+                    encoding = in.readInt();
+                    len = in.readInt();
+                    state = PacketReadState.Data;
+                    // drop through on purpose
+                case Data:
+                    byte[] data = new byte[len];
+                    in.readFully(data);
+                    NetworkPacket packet = new NetworkPacket(zipped, encoding, data);
+                    state = PacketReadState.Header;
+                    return packet;
+                default:
+                    throw new Exception("Attempting to read network packet with unknown state");
             }
-            synchronized (in) {
-                switch (state) {
-                    case Header:
-                        zipped = in.readBoolean();
-                        encoding = in.readInt();
-                        len = in.readInt();
-                        state = PacketReadState.Data;
-                        // drop through on purpose
-                    case Data:
-                        byte[] data = new byte[len];
-                        in.readFully(data);
-                        packet = new NetworkPacket(zipped, encoding, data);
-                        state = PacketReadState.Header;
-                        return packet;
-                    default:
-                        assert (false);
-                }
-            }
-        assert (false);
-        return null;
+        }
     }
 
     @Override
-    protected void sendNetworkPacket(byte[] data, boolean iszipped)
-            throws Exception {
-        
+    protected void sendNetworkPacket(byte[] data, boolean iszipped) throws Exception {
         if (out == null) {
-            out = new DataOutputStream(new BufferedOutputStream(
-                    getOutputStream(), getSendBufferSize()));
+            out = new DataOutputStream(new BufferedOutputStream(getOutputStream(), getSendBufferSize()));
         }
+
         synchronized (out) {
             out.writeBoolean(iszipped);
             out.writeInt(marshallingType);
@@ -124,19 +102,18 @@ class DataStreamConnection extends AbstractConnection {
         super.flush();
         try {
             // Flush the output stream, to ensure all packets are sent
-            if (out != null)
+            if (out != null) {
                 synchronized (out) {
                     out.flush();
                 }
-        } catch (SocketException se) {
+            }
+        } catch (SocketException ignored) {
             // close this connection, because it's broken
-            // This can happen if the connection is closed while being written
-            // to, and it's not a big deal, since the connection is being broken
-            // anyways
+            // This can happen if the connection is closed while being written to, and it's not a
+            // big deal, since the connection is being broken anyways
             close();
-        } catch (IOException ioe) {
-            // Log non-SocketException IOExceptions
-            ioe.printStackTrace();
+        } catch (IOException ex) {
+            LogManager.getLogger().error("", ex);
             // close this connection, because it's broken
             close();
         }
@@ -148,7 +125,6 @@ class DataStreamConnection extends AbstractConnection {
     }
 
     private static class NetworkPacket implements INetworkPacket {
-
         /**
          * Is data compressed
          */
@@ -166,12 +142,8 @@ class DataStreamConnection extends AbstractConnection {
 
         /**
          * Creates new packet
-         * 
-         * @param compressed
-         * @param marshallingType
-         * @param data
          */
-        NetworkPacket(boolean compressed, int marshallingType, byte[] data) {
+        NetworkPacket(boolean compressed, int marshallingType, byte... data) {
             this.compressed = compressed;
             this.marshallingType = marshallingType;
             this.data = data;

@@ -11450,7 +11450,7 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.bv = 0;
         ammo.kgPerShot = 10;
-        ammo.rulesRefs = "263,TM";
+        ammo.rulesRefs = "263, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3060, DATE_NONE, DATE_NONE)
@@ -11502,7 +11502,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
         // But MG Tech Base and Avail Ratings.
-        ammo.rulesRefs = "228,TM";
+        ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
                 .setClanAdvancement(3055, 3060, 3060, DATE_NONE, DATE_NONE)

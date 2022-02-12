@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -17,20 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.enums;
 
-/**
- * Instances of this class are sent when Connection closed
- */
-public class DisconnectedEvent extends ConnectionEvent {
-    private static final long serialVersionUID = -1427252999207396447L;
-
-    /**
-     * Constructs connection event
-     * 
-     * @param source The object on which the Event initially occurred.
-     */
-    public DisconnectedEvent(Object source) {
-        super(source, DISCONNECTED);
-    }
+public enum PacketReadState {
+    HEADER,
+    DATA
 }

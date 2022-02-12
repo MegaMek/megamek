@@ -46,5 +46,6 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
     public static final String SURNAME_FILE = "data/names/surnames.csv";
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
+    public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
     //endregion File Paths
 }

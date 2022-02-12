@@ -1,17 +1,25 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.net;
+
+import java.util.EventObject;
 
 /**
  * Instances of descendant classes are sent as a result of changes of the
@@ -19,7 +27,7 @@ package megamek.common.net;
  * 
  * @see ConnectionListener
  */
-public abstract class ConnectionEvent extends java.util.EventObject {
+public abstract class ConnectionEvent extends EventObject {
     private static final long serialVersionUID = 6124300183866317006L;
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = 1;
@@ -77,5 +85,4 @@ public abstract class ConnectionEvent extends java.util.EventObject {
         sb.append(" connection event ");
         return sb.toString();
     }
-
 }

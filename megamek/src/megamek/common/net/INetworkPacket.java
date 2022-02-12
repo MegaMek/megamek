@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -20,17 +19,21 @@
 package megamek.common.net;
 
 /**
- * Instances of this class are sent when Connection closed
+ * Connection layer data packet.
  */
-public class DisconnectedEvent extends ConnectionEvent {
-    private static final long serialVersionUID = -1427252999207396447L;
+public interface INetworkPacket {
+    /**
+     * @return data marshalling type
+     */
+    int getMarshallingType();
 
     /**
-     * Constructs connection event
-     * 
-     * @param source The object on which the Event initially occurred.
+     * @return packet data
      */
-    public DisconnectedEvent(Object source) {
-        super(source, DISCONNECTED);
-    }
+    byte[] getData();
+
+    /**
+     * @return <code>true</code> if data is compressed
+     */
+    boolean isCompressed();
 }

@@ -145,15 +145,12 @@ public class Packet {
     
     public static final int COMMAND_GAME_VICTORY_EVENT = 800;
 
-    private int command;
+    private final int command;
 
-    private Object[] data;
+    private final Object[] data;
 
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
-     *
-     * @param command
-     * @param data
      */
     public Packet(int command, Object... data) {
         this.command = command;
@@ -161,22 +158,20 @@ public class Packet {
     }
 
     /**
-     * Returns the command associated.
+     * @return the command associated with this packet
      */
     public int getCommand() {
         return command;
     }
 
     /**
-     * Returns the data in the packet
+     * @return the data in the packet
      */
     public Object[] getData() {
         return data;
     }
 
     /**
-     * Returns the object at the specified index
-     *
      * @param index the index of the desired object
      * @return the object at the specified index
      */
@@ -185,8 +180,6 @@ public class Packet {
     }
 
     /**
-     * Returns the <code>int</code> value of the object at the specified index
-     *
      * @param index the index of the desired object
      * @return the <code>int</code> value of the object at the specified index
      */
@@ -195,9 +188,6 @@ public class Packet {
     }
 
     /**
-     * Returns the <code>boolean</code> value of the object at the specified
-     * index
-     *
      * @param index the index of the desired object
      * @return the <code>boolean</code> value of the object at the specified index
      */

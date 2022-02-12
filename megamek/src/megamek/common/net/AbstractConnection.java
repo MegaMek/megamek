@@ -1,18 +1,22 @@
 /*
-* MegaMek -
-* Copyright (c) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.net;
 
 import java.io.ByteArrayInputStream;
@@ -492,9 +496,9 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Reads a complete <code>NetworkPacket</code> must not block, must return null instead
+     * Reads a complete <code>NetworkPacket</code>. Must not block, must return null instead
      *
-     * @return the <code>NetworkPacket</code> that was sent.
+     * @return the <code>NetworkPacket</code> that was sent, or null if it can't be read.
      */
     protected abstract @Nullable INetworkPacket readNetworkPacket() throws Exception;
 
@@ -511,7 +515,7 @@ public abstract class AbstractConnection {
      * Wrapper around a <code>LinkedList</code> for keeping a queue of packets
      * to send. Note that this implementation is not synchronized.
      */
-    static class SendQueue {
+    protected static class SendQueue {
         private LinkedList<SendPacket> queue = new LinkedList<>();
         private boolean finished = false;
 
@@ -621,25 +625,5 @@ public abstract class AbstractConnection {
         public int getCommand() {
             return command;
         }
-    }
-
-    /**
-     * Connection layer data packet.
-     */
-    protected interface INetworkPacket {
-        /**
-         * @return data marshalling type
-         */
-        int getMarshallingType();
-
-        /**
-         * @return packet data
-         */
-        byte[] getData();
-
-        /**
-         * @return <code>true</code> if data is compressed
-         */
-        boolean isCompressed();
     }
 }

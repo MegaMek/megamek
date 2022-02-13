@@ -136,9 +136,11 @@ public class MtfFile implements IMechLoader {
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
             // version 1.2: added full head ejection
+            // Version 1.3: Added MUL ID
             if (!version.trim().equalsIgnoreCase("Version:1.0")
                     && !version.trim().equalsIgnoreCase("Version:1.1")
-                    && !version.trim().equalsIgnoreCase("Version:1.2")) {
+                    && !version.trim().equalsIgnoreCase("Version:1.2")
+                    && !version.trim().equalsIgnoreCase("Version:1.3")) {
                 throw new EntityLoadingException("Wrong MTF file version.");
             }
 

@@ -75,7 +75,7 @@ public class CommonAboutDialog extends JDialog {
         JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
 
         // Version text
-        JTextArea lblVersion = new JTextArea(MegaMek.getUnderlyingInformation(MMConstants.PROJECT_NAME, MegaMek.class.getClassLoader()));
+        JTextArea lblVersion = new JTextArea(MegaMek.getUnderlyingInformation(MMConstants.PROJECT_NAME));
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
         

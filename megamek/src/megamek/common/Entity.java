@@ -14281,7 +14281,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r.add(nRoll);
 
             if ((!isSupercharger && (nRoll < getMASCTarget()))
-                    || (isSupercharger && nRoll < getSuperchargerTarget())) {
+                    || (isSupercharger && (nRoll < getSuperchargerTarget()))) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);

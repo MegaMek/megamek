@@ -250,6 +250,9 @@ public class MegaMek {
     public static @Nullable LocalDateTime getBuildDate() {
         try {
             final URL url = Thread.currentThread().getContextClassLoader().getResource(JarFile.MANIFEST_NAME);
+            if (url == null) {
+                return null;
+            }
             final Attributes attributes = new Manifest(url.openStream()).getMainAttributes();
             return LocalDateTime.parse(attributes.getValue("Build-Date"));
         } catch (Exception ex) {

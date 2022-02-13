@@ -92,6 +92,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     /**
      * used by the toHit of derived classes atype may be null if not using an
      * ammo based weapon
+     *
+     * @param game The current {@link Game}
      */
     public static ToHitData nightModifiers(Game game, Targetable target,
             AmmoType atype, Entity attacker, boolean isWeapon) {

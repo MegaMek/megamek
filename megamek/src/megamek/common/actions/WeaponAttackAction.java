@@ -756,6 +756,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * To-hit number for attacker firing a generic weapon at the target. Does
      * not factor in any special weapon or ammo considerations, including range
      * modifiers. Also does not include gunnery skill.
+     *
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);

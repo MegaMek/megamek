@@ -255,8 +255,7 @@ public class MegaMek {
             }
             final Attributes attributes = new Manifest(url.openStream()).getMainAttributes();
             return LocalDateTime.parse(attributes.getValue("Build-Date"));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+        } catch (Exception ignored) {
             return null;
         }
     }

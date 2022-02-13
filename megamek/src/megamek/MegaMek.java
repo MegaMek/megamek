@@ -25,6 +25,7 @@ import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.server.DedicatedServer;
+import megamek.server.Server;
 import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
@@ -74,13 +75,28 @@ public class MegaMek {
 
         // Third, Command Line Arguments and Startup
         try {
-            CommandLineParser cp = new CommandLineParser(args);
+            MegaMekCommandLineParser cp = new MegaMekCommandLineParser(args);
             cp.parse();
 
             String[] restArgs = cp.getRestArgs();
             if (cp.dedicatedServer()) {
                 startDedicatedServer(restArgs);
                 return;
+            }
+
+            if (cp.host()) {
+                startHost(restArgs);
+                return;
+            }
+
+            if (cp.client()) {
+                startClient(restArgs);
+                return;
+            }
+
+            if (cp.quick())
+            {
+                startQuickLoad(restArgs);
             }
 
             getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
@@ -91,7 +107,7 @@ public class MegaMek {
             } else {
                 startGUI();
             }
-        } catch (CommandLineParser.ParseException e) {
+        } catch (MegaMekCommandLineParser.ParseException e) {
             String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                     + ARGUMENTS_DESCRIPTION_MESSAGE;
             LogManager.getLogger().fatal(message);
@@ -215,11 +231,43 @@ public class MegaMek {
     }
 
     /**
-     * Starts MegaMek's GUI
+     * Skip splash GUI, starts a host
+     */
+    private static void startHost(String... args) {
+        LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
+        MegaMekGUI mmg = new MegaMekGUI();
+        mmg.start(false);
+        //            if (!server.loadGame(new File("./savegames", savegame)))
+        mmg.startHost("",0, false, "", null, "" );
+    }
+
+    /**
+     * Skip splash GUI, starts a host with using quicksave file
+     */
+    private static void startQuickLoad(String... args) {
+        LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
+        MegaMekGUI mmg = new MegaMekGUI();
+        mmg.start(false);
+        //            if (!server.loadGame(new File("./savegames", savegame)))
+        mmg.quickLoadGame();
+    }
+
+    /**
+     * Skip splash GUI, starts a client session
+     */
+    private static void startClient(String... args) {
+        LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
+        MegaMekGUI mmg = new MegaMekGUI();
+        mmg.start(false);
+        mmg.startClient("", Server.LOCALHOST, 0);
+    }
+
+    /**
+     * Starts MegaMek's splash GUI
      */
     private static void startGUI() {
         LogManager.getLogger().info("Starting MegaMekGUI.");
-        new MegaMekGUI().start();
+        new MegaMekGUI().start(true);
     }
 
     /**
@@ -314,8 +362,11 @@ public class MegaMek {
     /**
      * This class parses the options passed into to MegaMek from the command line.
      */
-    private static class CommandLineParser extends AbstractCommandLineParser {
+    private static class MegaMekCommandLineParser extends AbstractCommandLineParser {
         private boolean dedicatedServer = false;
+        private boolean host = false;
+        private boolean client = false;
+        private boolean quick = false;
         private boolean ratGenEditor = false;
         private String[] restArgs = new String[0];
 
@@ -331,7 +382,15 @@ public class MegaMek {
         private static final String OPTION_DATADIR = "data";
         private static final String OPTION_RATGEN_EDIT = "editratgen";
 
-        CommandLineParser(String... args) {
+        private static final String OPTION_ECHO = "echo";
+        private static final String OPTION_HOST = "host";
+        private static final String OPTION_CLIENT = "client";
+        private static final String OPTION_QUICK = "quick";
+
+
+
+
+        MegaMekCommandLineParser(String... args) {
             super(args);
         }
 
@@ -340,6 +399,27 @@ public class MegaMek {
          */
         boolean dedicatedServer() {
             return dedicatedServer;
+        }
+
+        /**
+         * @return true if this is a host.
+         */
+        boolean host() {
+            return host;
+        }
+
+        /**
+         * @return true if this is a client.
+         */
+        boolean client() {
+            return client;
+        }
+
+        /**
+         * @return true if this is a client.
+         */
+        boolean quick() {
+            return quick;
         }
 
         /**
@@ -390,8 +470,23 @@ public class MegaMek {
                     case OPTION_DEDICATED:
                         dedicatedServer = true;
                         break;
+                    case OPTION_HOST:
+                        LogManager.getLogger().error("HOST");
+                        host = true;
+                        break;
+                    case OPTION_CLIENT:
+                        LogManager.getLogger().error("HOST");
+                        client = true;
+                        break;
+                    case OPTION_QUICK:
+                        LogManager.getLogger().error("QUICK");
+                        quick = true;
+                        break;
                     case OPTION_RATGEN_EDIT:
                         ratGenEditor = true;
+                        break;
+                    case OPTION_ECHO:
+                        LogManager.getLogger().error("ECHO: " + getTokenValue());
                         break;
                 }
             }
@@ -690,4 +785,5 @@ public class MegaMek {
             restArgs = v.toArray(new String[0]);
         }
     }
+
 }

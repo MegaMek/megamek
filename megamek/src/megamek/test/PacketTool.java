@@ -15,6 +15,7 @@ package megamek.test;
 
 import megamek.common.Board;
 import megamek.common.net.*;
+import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -126,10 +127,10 @@ public class PacketTool extends Frame implements Runnable {
 
         // Populate the connection panel.
         panConnect.add(new Label(" Connect To:"));
-        hostName = new TextField("localhost", 10);
+        hostName = new TextField(Server.LOCALHOST, 10);
         panConnect.add(hostName);
         panConnect.add(new Label("Port Number:"));
-        hostPort = new TextField("2346", 10);
+        hostPort = new TextField( String.valueOf(Server.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
         button = new Button("Listen");
         button.addActionListener(new ActionListener() {

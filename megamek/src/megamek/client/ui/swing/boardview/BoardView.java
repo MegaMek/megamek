@@ -59,6 +59,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
@@ -1257,7 +1258,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
         if (selectedEntity != null) {
-            Princess princess = new Princess("test", "localhost", 2020);
+            Princess princess = new Princess("test", Server.LOCALHOST, 2020);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
             pathEnum.recalculateMovesFor(this.selectedEntity);

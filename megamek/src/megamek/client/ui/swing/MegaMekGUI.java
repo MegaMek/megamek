@@ -91,14 +91,24 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     BufferedImage backgroundIcon = null;
 
-    public void start() {
-        createGUI();
+    public void start(boolean show) {
+        createGUI(show);
     }
 
     /**
      * Construct a MegaMek, and display the main menu in the specified frame.
      */
-    private void createGUI() {
+    private void createGUI(boolean show ) {
+//        try {
+//            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//            File btFontFile = new MegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
+//            Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
+//            LogManager.getLogger().info("Loaded Font: " + btFont.getName());
+//            ge.registerFont(btFont);
+//        } catch (Exception e) {
+//            LogManager.getLogger().error("Failed to Register BT Classic Font", e);
+//        }
+
         createController();
 
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
@@ -164,6 +174,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
+
         CommonMenuBar menuBar = new CommonMenuBar(this);
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);
@@ -175,10 +186,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         MechSummaryCache.getInstance();
 
         // Show the window.
-        frame.setVisible(true);
+        frame.setVisible(show);
 
         // tell the user about the readme...
-        if (GUIPreferences.getInstance().getNagForReadme()) {
+        if (show && GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
                     Messages.getString("MegaMek.welcome.title") + MMConstants.VERSION,
                     Messages.getString("MegaMek.welcome.message"), true);
@@ -420,22 +431,120 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
+        startHost(hd.getServerPass(), hd.getPort(),  hd.isRegister(),
+                hd.isRegister() ? hd.getMetaserver() : "", null,
+                hd.getPlayerName());
+
+//        // kick off a RNG check
+//        d6();
+//
+//        // start server
+//        try {
+//            server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(),
+//                    hd.isRegister() ? hd.getMetaserver() : "");
+//        } catch (Exception e) {
+//            LogManager.getLogger().error("Could not create server socket on port " + hd.getPort(), e);
+//            JOptionPane.showMessageDialog(frame,
+//                    Messages.getFormattedString("MegaMek.StartServerError", hd.getPort(), e.getMessage()),
+//                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+//            return;
+//        }
+//        // initialize client
+//        client = new Client(hd.getPlayerName(), Server.LOCALHOST, hd.getPort());
+//        ClientGUI gui = new ClientGUI(client, controller);
+//        controller.clientgui = gui;
+//        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+//        gui.initialize();
+//        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//        if (!client.connect()) {
+//            JOptionPane.showMessageDialog(frame,
+//                    Messages.getFormattedString("MegaMek.ServerConnectionError", Server.LOCALHOST, hd.getPort()),
+//                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+//            frame.setVisible(false);
+//            client.die();
+//        }
+//        launch(gui.getFrame());
+    }
+
+//  :megamek:run --args='-host'
+    public void startHost(String serverPassword, int port, boolean isRegister, String metaServer,  File savegame, String playerName) {
+        startServer(serverPassword, port, isRegister, metaServer, savegame);
+        startClient(playerName, Server.LOCALHOST, server.getPort());
+    }
+
+    /**
+     *
+     * @param port, if 0, will return default port
+     * @return valid port, or 0 if not a vali port
+     */
+    private int validatePort(int port)
+    {
+        if (port <= 0) {
+            //use last port or default port
+            port = PreferenceManager.getClientPreferences().getLastServerPort();
+            if (port <= 0) {
+                return Server.DEFAULT_PORT;
+            }
+        }
+
+        if (port < 1029) {
+            // invalid port number
+            LogManager.getLogger().error("Port number must be greater than 1028. " + port);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.StartServerError", port, "Port number must be greater than 1028. " + port),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            return 0;
+        }
+        return port;
+    }
+
+    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer,  File savegame) {
         // kick off a RNG check
         d6();
-
         // start server
-        try {
-            server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(),
-                    hd.isRegister() ? hd.getMetaserver() : "");
-        } catch (Exception e) {
-            LogManager.getLogger().error("Could not create server socket on port " + hd.getPort(), e);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.StartServerError", hd.getPort(), e.getMessage()),
-                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+        port = validatePort(port);
+        if (port == 0)
+        {
+            frame.setVisible(true);
             return;
         }
-        // initialize client
-        client = new Client(hd.getPlayerName(), "localhost", hd.getPort());
+
+        try {
+            server = new Server( serverPassword, port, isRegister, metaServer);
+        } catch (IOException ex) {
+            LogManager.getLogger().error("Could not create server socket on port " + port, ex);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            frame.setVisible(true);
+            return;
+        }
+
+        if ((savegame != null) ) {
+            if (!server.loadGame(savegame)) {
+                JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+                server.die();
+                server = null;
+                frame.setVisible(true);
+                return;
+            }
+        }
+    }
+
+    public void startClient(String playerName, String host, int port) {
+        if ((playerName == null) || (playerName.isBlank())) {
+            playerName = PreferenceManager.getClientPreferences().getLastPlayerName();
+        }
+        //TODO validate playerName - which chars are exceptable?
+
+        port = validatePort(port);
+        if (port == 0)
+        {
+            frame.setVisible(true);
+            return;
+        }
+
+        client = new Client(playerName, Server.LOCALHOST, port);
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -443,11 +552,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.ServerConnectionError", "localhost", hd.getPort()),
-                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(false);
+                    Messages.getFormattedString("MegaMek.ServerConnectionError", Server.LOCALHOST, port),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             client.die();
+            gui.die();
+            frame.setVisible(true);
         }
+        // free some memory that's only needed in lounge
+        // This normally happens in the deployment phase in Client, but
+        // if we are loading a game, this phase may not be reached
+        MechFileParser.dispose();
+        // We must do this last, as the name and unit generators can create
+        // a new instance if they are running
+        MechSummaryCache.dispose();
+
         launch(gui.getFrame());
     }
 
@@ -472,6 +590,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
+        //extract game data before starting to check and get player names
         Game newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
@@ -504,97 +623,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        // kick off a RNG check
-        d6();
-        // start server
-        try {
-            server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "");
-        } catch (IOException ex) {
-            LogManager.getLogger().error("Could not create server socket on port " + hd.getPort(), ex);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.StartServerError", hd.getPort(), ex.getMessage()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (!server.loadGame(fc.getSelectedFile())) {
-            JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            server.die();
-            server = null;
-            return;
-        }
-
-        client = new Client(hd.getPlayerName(), "localhost", hd.getPort());
-        ClientGUI gui = new ClientGUI(client, controller);
-        controller.clientgui = gui;
-        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        gui.initialize();
-        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        if (!client.connect()) {
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.ServerConnectionError", "localhost", hd.getPort()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(false);
-            client.die();
-        }
-        // free some memory that's only needed in lounge
-        // This normally happens in the deployment phase in Client, but
-        // if we are loading a game, this phase may not be reached
-        MechFileParser.dispose();
-        // We must do this last, as the name and unit generators can create
-        // a new instance if they are running
-        MechSummaryCache.dispose();
-
-        launch(gui.getFrame());
+        startHost(hd.getServerPass(), hd.getPort(),
+                hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "",
+                fc.getSelectedFile(), hd.getPlayerName());
     }
     
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
-    void quickLoadGame() {
-        // kick off a RNG check
-        d6();
-        // start server
-        int port = PreferenceManager.getClientPreferences().getLastServerPort();
-        try {
-            server = new Server("", port, false, "");
-        } catch (IOException ex) {
-            LogManager.getLogger().error("Could not create server socket on port " + port, ex);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (!server.loadGame(new File("./savegames", "quicksave.sav.gz"))) {
-            JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            server.die();
-            server = null;
-            return;
-        }
-
-        client = new Client(PreferenceManager.getClientPreferences().getLastPlayerName(), "localhost", port);
-        ClientGUI gui = new ClientGUI(client, controller);
-        controller.clientgui = gui;
-        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        gui.initialize();
-        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        if (!client.connect()) {
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.ServerConnectionError", "localhost", port),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(false);
-            client.die();
-        }
-        // free some memory that's only needed in lounge
-        // This normally happens in the deployment phase in Client, but
-        // if we are loading a game, this phase may not be reached
-        MechFileParser.dispose();
-        // We must do this last, as the name and unit generators can create
-        // a new instance if they are running
-        MechSummaryCache.dispose();
-
-        launch(gui.getFrame());
+    public void quickLoadGame() {
+        startHost("", 0, false, "",
+                new File(ClientGUI.QUICKSAVE_FILE, ClientGUI.QUICKSAVE_PATH),"" );
     }
 
     /**
@@ -714,7 +751,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             hasSlot = true;
             playerName = pa[0].getName();
             localName = playerName;
-            port = 2346;
+            port = Server.DEFAULT_PORT;
             serverPW = "";
             playerTypes[0] = 0;
             for (int i = 1; i < playerTypes.length; i++) {
@@ -726,33 +763,27 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         Compute.d6();
 
         // start server
-        try {
-            server = new Server(serverPW, port);
-        } catch (Exception ex) {
-            LogManager.getLogger().error("Could not create server socket on port " + port, ex);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                    Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        startServer(serverPW, port, false, null, null);
         server.setGame(g);
         
         // apply any scenario damage
         sl.applyDamage(server);
-        ClientGUI gui = null;
+
+//        ClientGUI gui = null;
         if (!localName.isBlank()) {
-            // initialize game
-            client = new Client(playerName, "localhost", port);
-            gui = new ClientGUI(client, controller);
-            controller.clientgui = gui;
-            gui.initialize();
-            if (!client.connect()) {
-                JOptionPane.showMessageDialog(frame,
-                        Messages.getFormattedString("MegaMek.ServerConnectionError", "localhost", port),
-                        Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
-                frame.setVisible(false);
-                client.die();
-            }
+            startClient(playerName, Server.LOCALHOST, port);
+            //            // initialize game
+//            client = new Client(playerName, Server.LOCALHOST, port);
+//            gui = new ClientGUI(client, controller);
+//            controller.clientgui = gui;
+//            gui.initialize();
+//            if (!client.connect()) {
+//                JOptionPane.showMessageDialog(frame,
+//                        Messages.getFormattedString("MegaMek.ServerConnectionError", Server.LOCALHOST, port),
+//                        Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
+//                frame.setVisible(false);
+//                client.die();
+//            }
         }
 
         // calculate initial BV
@@ -762,12 +793,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         for (int x = 0; x < pa.length; x++) {
             if (playerTypes[x] == ScenarioDialog.T_BOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as Princess");
-                BotClient c = new Princess(pa[x].getName(), "localhost", port);
+                BotClient c = new Princess(pa[x].getName(), Server.LOCALHOST, port);
                 c.getGame().addGameListener(new BotGUI(c));
                 c.connect();                
             } else if (playerTypes[x] == ScenarioDialog.T_OBOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as TestBot");
-                BotClient c = new TestBot(pa[x].getName(), "localhost", port);
+                BotClient c = new TestBot(pa[x].getName(), Server.LOCALHOST, port);
                 c.getGame().addGameListener(new BotGUI(c));
                 c.connect();
             }
@@ -784,9 +815,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         }
-        if (gui != null) {
-            launch(gui.getFrame());
-        }
+
     }
 
     /**
@@ -800,21 +829,23 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        // initialize game
-        client = new Client(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
-        ClientGUI gui = new ClientGUI(client, controller);
-        controller.clientgui = gui;
-        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        gui.initialize();
-        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        if (!client.connect()) {
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.ServerConnectionError", cd.getServerAddress(), cd.getPort()),
-                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
-            frame.setVisible(false);
-            client.die();
-        }
-        launch(gui.getFrame());
+        startClient(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
+
+        //        // initialize game
+//        client = new Client(cd.getPlayerName(), cd.getServerAddress(), cd.getPort());
+//        ClientGUI gui = new ClientGUI(client, controller);
+//        controller.clientgui = gui;
+//        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+//        gui.initialize();
+//        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//        if (!client.connect()) {
+//            JOptionPane.showMessageDialog(frame,
+//                    Messages.getFormattedString("MegaMek.ServerConnectionError", cd.getServerAddress(), cd.getPort()),
+//                    Messages.getString("MegaMek.ConnectDialog.title"), JOptionPane.ERROR_MESSAGE);
+//            frame.setVisible(false);
+//            client.die();
+//        }
+//        launch(gui.getFrame());
     }
 
     void connectBot() {

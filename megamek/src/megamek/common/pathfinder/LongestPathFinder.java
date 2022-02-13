@@ -56,7 +56,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @param stepType - if equal to MoveStepType.BACKWARDS, then searcher also
      *            includes backward steps. Otherwise only forward movement is
      *            allowed
-     * @param game
+     * @param game The current {@link Game}
      * @return a longest path finder
      */
     public static LongestPathFinder newInstanceOfLongestPath(int maxMP, MoveStepType stepType, Game game) {
@@ -75,7 +75,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * heavy.
      *
      * @param maxMP - the maximal thrust points available for an aero
-     * @param game
+     * @param game The current {@link Game}
      * @return a longest path finder for aeros
      */
     public static LongestPathFinder newInstanceOfAeroPath(int maxMP, Game game) {
@@ -216,17 +216,15 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
     /**
      * Comparator that sorts MovePaths based on lexicographical order of
-     * triples:<br/>
-     * {@code (hexes traveled; thrust used; 0-(hexes flown in a straight line) )}
-     * <br/>
+     * triples:<br>
+     * {@code (hexes traveled; thrust used; 0 - (hexes flown in a straight line))}
+     * <br>
      * Works only with aeros.
-     *
      */
     public static class AeroMultiPathComparator implements Comparator<MovePath> {
         /**
-         * compares MovePaths based on lexicographical order of triples ( hexes
-         * traveled; thrust used; 0-( hexes flown in a straight line ) )
-         *
+         * compares MovePaths based on lexicographical order of triples
+         * (hexes traveled; thrust used; 0 - (hexes flown in a straight line))
          */
         @Override
         public int compare(MovePath mp1, MovePath mp2) {
@@ -257,10 +255,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Relaxer for aero movement. Current implementation needs Comparator that
      * preserves AeroMultiPathComparator contract.
      *
-     * It adds a path to 'interesting' paths in a hex when: candidate 1)traveled
-     * more hexes or either 2a)thrust_used is less or 2b)straight_hexes_flown is
+     * It adds a path to 'interesting' paths in a hex when: candidate 1) traveled
+     * more hexes or either 2a) thrust_used is less or 2b) straight_hexes_flown is
      * greater than current top of the stack.
-     *
      */
     public static class AeroMultiPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         boolean inAthmosphere;

@@ -226,7 +226,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
     /**
      * Have the client register itself as a listener wherever it's needed.
-     * <p/>
+     * <p>
      * According to
      * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
      * major bad no-no to perform these registrations before the constructor
@@ -682,7 +682,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * <p/>
+     * <p>
      * The player will be given a chance to not show the dialog again.
      *
      * @param title

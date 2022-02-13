@@ -320,9 +320,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     /**
      * Sets the equipment mode to the mode denoted by the given mode name
      *
-     * @param newMode
-     *            the name of the desired new mode
-     * @return new mode number on success, <code>-1<code> otherwise.
+     * @param newMode the name of the desired new mode
+     * @return new mode number on success, <code>-1</code> otherwise.
      */
     public int setMode(String newMode) {
         for (int x = 0, e = type.getModesCount(); x < e; x++) {

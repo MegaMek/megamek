@@ -999,7 +999,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * checks that the game is in a consistent state. This function takes care
      * of the units transported by this entity.
      *
-     * @param game the game.
+     * @param game The current {@link Game}
      */
     @Override
     public void setGame(Game game) {
@@ -2492,7 +2492,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Generates the display name for this entity.
-     * <p/>
+     * <p>
      * Sub-classes are allowed to override this method. The display name is in
      * the format [Chassis] [Model] ([Player Name]).
      */
@@ -2530,7 +2530,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Generate the short name for a unit
-     * <p/>
+     * <p>
      * Sub-classes are allowed to override this method. The display name is in
      * the format [Chassis] [Model].
      */
@@ -5846,7 +5846,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determine the remaining number of other C3 Master computers that can
      * connect to this <code>Entity</code>.
-     * <p/>
+     * <p>
      * Please note, if this <code>Entity</code> does not have two C3 Master
      * computers, then it must first be identified as a company commander;
      * otherwise the number of free nodes will be zero.
@@ -5892,7 +5892,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determine the remaining number of other C3 computers that can connect to
      * this <code>Entity</code>.
-     * <p/>
+     * <p>
      * Please note, if this <code>Entity</code> has two C3 Master computers,
      * then this function only returns the remaining number of <b>C3 Slave</b>
      * computers that can connect.
@@ -6065,10 +6065,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determines if the passed <code>Entity</code> is the C3 Master of this
      * unit.
-     * <p/>
+     * <p>
      * Please note, that when an <code>Entity</code> is it's own C3 Master, then
      * it is a company commander.
-     * <p/>
+     * <p>
      * Also note that when <code>null</code> is the master for this
      * <code>Entity</code>, then it is an independent master.
      *
@@ -8947,7 +8947,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active and working stealth system.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -8960,7 +8960,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active and working stealth system.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -8973,7 +8973,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active null-signature system.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a null signature system that
@@ -8986,7 +8986,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active null-signature system.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a null signature system that
@@ -9000,7 +9000,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determine if this unit has an active void signature system that is
      * providing its benefits.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
@@ -9013,7 +9013,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active void signature system.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
@@ -9026,7 +9026,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active chameleon light polarization field.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
@@ -9039,7 +9039,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this unit has an active chameleon light polarization field.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a void signature system that
@@ -9055,7 +9055,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range - an <code>int</code> value that must match one of the
@@ -9790,8 +9790,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determines if an entity is eligible for a phase. Called only if at least
      * one entity returned true to isEligibleFor() This is for using
-     * searchlights in physical&offboard phase, without forcing the phase to be
-     * played when not needed. However it could be used for other things in the
+     * searchlights in physical and offboard phase, without forcing the phase to be
+     * played when not needed. However, it could be used for other things in the
      * future
      */
     public boolean canAssist(GamePhase phase) {
@@ -10198,7 +10198,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * the board has been selected and all the players are ready to start. The
      * side effects of this methods set the unit's position and facing as
      * appropriate (as well as deploying the unit).
-     * <p/>
+     * <p>
      * Onboard units (units with an offboard distance of zero and a direction of
      * <code>Entity.NONE</code>) will be unaffected by this method.
      * @param round The current round number.
@@ -12854,9 +12854,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Possibly do a ICE-Engine stall PSR (only intended for Mechs, both
      * Industrial and Battle).
      *
-     * @param vPhaseReport the <code>Vector<Report></code> containing the phase reports
-     * @return a Vector<Report> containing the passed in reports, and any
-     * additional ones
+     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase reports
+     * @return a {@link Report} <code>Vector</code> containing the passed in reports, and any additional ones
      */
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
         return vPhaseReport;
@@ -12865,7 +12864,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Check for unstalling of this Entity's engine (only used for ICE-powered 'Mechs).
      *
-     * @param vPhaseReport the <code>Vector<Report></code> containing the phase reports
+     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phase reports
      */
     public void checkUnstall(Vector<Report> vPhaseReport) {
 
@@ -13267,8 +13266,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Handles base, jump, and underwater movement.
-     *
-     * @return
      */
     public void setBattleForceMovement(Map<String,Integer> movement) {
         int baseMove = (int) Math.round(getBaseBattleForceMovement());
@@ -13965,7 +13962,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get the number of turns MASC has been used continuously.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during serialization.
      *
      * @return the <code>int</code> number of turns MASC has been used.
@@ -13976,7 +13973,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set the number of turns MASC has been used continuously.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during deserialization.
      *
      * @param turns The <code>int</code> number of turns MASC has been used.
@@ -13996,7 +13993,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set whether MASC has been used.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during deserialization.
      *
      * @param used The <code>boolean</code> whether MASC has been used.
@@ -15289,8 +15286,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * </pre>
      * To iterate over entities (if present), use:
      * <pre>
-     * entity.getSubEntities().ifPresent(entities -> entities.forEach(
-     *     subEntity -> {
+     * entity.getSubEntities().ifPresent(entities -&gt; entities.forEach(
+     *     subEntity -&gt; {
      *         ...
      *     });
      * </pre>

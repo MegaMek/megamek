@@ -2,7 +2,6 @@ package megamek.client.bot.princess;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
  * @since 10/24/2014 9:57 AM
  */
 public enum ChatCommands {

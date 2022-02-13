@@ -45,7 +45,6 @@ public class MMComboBox<E> extends JComboBox<E> {
 
     /**
      * Creates a JComboBox with the provided name and values
-     * @see JComboBox#JComboBox(E[])
      */
     public MMComboBox(final String name, final E[] items) {
         super(items);

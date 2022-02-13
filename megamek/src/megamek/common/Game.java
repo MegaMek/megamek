@@ -1555,22 +1555,22 @@ public class Game implements Serializable {
     }
 
     /**
-     * Return a List of Entities at Coords <code>c</code>
+     * Return an {@link Entity} <code>List</code> at {@link Coords} <code>c</code>, checking if
+     * they can be targetted.
      *
      * @param c The coordinates to check
-     * @return <code>List<Entity></code>
+     * @return the {@link Entity} <code>List</code>
      */
     public List<Entity> getEntitiesVector(Coords c) {
         return getEntitiesVector(c, false);
     }
 
     /**
-     * Return a List of Entities at Coords <code>c</code>
+     * Return an {@link Entity} <code>List</code> at {@link Coords} <code>c</code>
      *
      * @param c The coordinates to check
-     * @param ignore
-     *            Flag that determines whether the ability to target is ignored
-     * @return <code>List<Entity></code>
+     * @param ignore Flag that determines whether the ability to target is ignored
+     * @return the {@link Entity} <code>List</code>
      */
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         //checkPositionCacheConsistency();
@@ -1625,7 +1625,7 @@ public class Game implements Serializable {
      * Return a Vector of gun emplacements at Coords <code>c</code>
      *
      * @param c The coordinates to check
-     * @return <code>Vector<Entity></code>
+     * @return the {@link GunEmplacement} <code>Vector</code>
      */
     public Vector<GunEmplacement> getGunEmplacements(Coords c) {
         Vector<GunEmplacement> vector = new Vector<>();
@@ -1958,15 +1958,14 @@ public class Game implements Serializable {
     /**
      * Determines if the indicated entity is stranded on a transport that can't
      * move.
-     * <p/>
-     * According to <a href=
-     * "http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart="
-     * > Randall Bills</a>, the "minimum move" rule allow stranded units to
+     * <p>
+     * According to
+     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart="> Randall Bills</a>,
+     * the "minimum move" rule allow stranded units to
      * dismount at the start of the turn.
      *
      * @param entity the <code>Entity</code> that may be stranded
-     * @return <code>true</code> if the entity is stranded <code>false</code>
-     * otherwise.
+     * @return <code>true</code> if the entity is stranded <code>false</code> otherwise.
      */
     public boolean isEntityStranded(Entity entity) {
 
@@ -2290,7 +2289,7 @@ public class Game implements Serializable {
 
     /**
      * Returns the actions vector. Do not use to modify the actions; I will be
-     * angry. >:[ Used for sending all actions to the client.
+     * angry. &gt;:[ Used for sending all actions to the client.
      */
     public List<EntityAction> getActionsVector() {
         return Collections.unmodifiableList(actions);
@@ -2352,7 +2351,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the charges vector. Do not modify. >:[ Used for sending all
+     * Returns the charges vector. Do not modify. &gt;:[ Used for sending all
      * charges to the client.
      */
     public List<AttackAction> getChargesVector() {
@@ -2383,7 +2382,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the rams vector. Do not modify. >:[ Used for sending all charges
+     * Returns the rams vector. Do not modify. &gt;:[ Used for sending all charges
      * to the client.
      */
     public List<AttackAction> getRamsVector() {

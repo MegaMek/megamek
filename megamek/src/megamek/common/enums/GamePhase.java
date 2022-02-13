@@ -287,7 +287,7 @@ public enum GamePhase {
     }
 
     /**
-     * @param game the current game
+     * @param game The current {@link Game}
      * @return true if this phase is simultaneous
      */
     public boolean isSimultaneous(final Game game) {

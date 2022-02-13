@@ -997,20 +997,18 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
-     * @param game the game to use to determine the modifier
+     * @param game The {@link Game} to use to determine the modifier
+     * @return the BV multiplier for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier(Game game) {
         return getBVSkillMultiplier(true, game);
     }
 
     /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
      * @param usePiloting whether or not to use the default value non-anti-mech
      *                    infantry/BA should not use the anti-mech skill
-     * @param game the game to use to determine the modifier
+     * @param game The {@link Game} to use to determine the modifier
+     * @return the BV multiplier for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier(boolean usePiloting, Game game) {
         int pilotVal = getPiloting();
@@ -1022,7 +1020,7 @@ public class Crew implements Serializable {
 
     public double getBVImplantMultiplier() {
 
-        // get highest level
+        // get the highest level
         int level = 1;
         if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             level = 2;

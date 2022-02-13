@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class represents the lowest of the low, the ground pounders, the city
- * rats, the PBI (Poor Bloody Infantry). <p/> PLEASE NOTE!!! This class just
+ * rats, the PBI (Poor Bloody Infantry). <p> PLEASE NOTE!!! This class just
  * represents unarmored infantry platoons as described by CitiTech (c) 1986.
  * I've never seen the rules for powered armor, "anti-mech" troops, or
  * Immortals.
@@ -2122,7 +2122,7 @@ public class Infantry extends Entity {
      * Determine the stealth modifier for firing at this unit from the given
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
-     * <code>IllegalArgumentException</code> will be thrown. <p/> Sub-classes
+     * <code>IllegalArgumentException</code> will be thrown. <p> Sub-classes
      * are encouraged to override this method.
      *
      * @param range - an <code>int</code> value that must match one of the
@@ -2682,7 +2682,7 @@ public class Infantry extends Entity {
     /**
      * Determines if there is valid cover for an infantry unit to utilize the
      * Using Non-Infantry as Cover rules (TO pg 108).
-     * @param game
+     * @param game The current {@link Game}
      * @param pos
      * @param elevation
      * @return

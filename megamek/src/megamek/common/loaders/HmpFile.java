@@ -28,8 +28,7 @@ import java.util.Vector;
  * (when the "main" method is used).
  *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
- * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
- *          help from Ian Hamilton.
+ * @author Ryan McConnell (oscarmm) with lots of help from Ian Hamilton.
  */
 public class HmpFile implements IMechLoader {
     private String name;

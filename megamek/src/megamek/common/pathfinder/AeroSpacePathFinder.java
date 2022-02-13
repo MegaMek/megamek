@@ -37,7 +37,8 @@ public class AeroSpacePathFinder extends NewtonianAerospacePathFinder {
     
     /** 
      * Generates a list of possible step combinations that should be done at the beginning of a path
-     * This implementation generates exactly one path, which is either no moves or one hex forward when velocity > 0
+     * This implementation generates exactly one path, which is either no moves or one hex forward
+     * when velocity &gt; 0
      * @return "List" of all possible "starting" paths
      */
     @Override

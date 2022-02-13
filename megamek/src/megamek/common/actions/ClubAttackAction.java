@@ -242,7 +242,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified club to hit
-     * @param game
+     * @param game The current {@link Game}
      * @param attackerId - attacker id
      * @param target <code>Targetable</code> of the target
      * @param club - <code>Mounted</code> of the weapon

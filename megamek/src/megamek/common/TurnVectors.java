@@ -263,7 +263,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * all normal turns.
      * 
      * @param marker the <code>TurnOrdered</code> marker for a even turn.
-     * @exception IllegalStateException if as many markers have been added for
+     * @throws IllegalStateException if as many markers have been added for
      *                even turns as indicated at construction.
      */
     public void addEven(ITurnOrdered marker) {
@@ -278,7 +278,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Add a <code>TurnOrdered</code> marker for a "normal" turn.
      * 
      * @param marker the <code>TurnOrdered</code> marker for a "normal" turn.
-     * @exception IllegalStateException if as many markers have been added for
+     * @throws IllegalStateException if as many markers have been added for
      *                normal turns as indicated at construction.
      */
     public void addNormal(ITurnOrdered marker) {

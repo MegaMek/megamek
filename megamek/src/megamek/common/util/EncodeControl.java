@@ -28,16 +28,13 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
- * Created with IntelliJ IDEA.
+ * Borrowed code from http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
+ * The issue was the Resource Bundle was reading properties files as ISO-8859-1 encodings. Thus
+ * special characters, like those used in Russian, were being read wrong. The class below allows for
+ * a controller to read in any encoding specified.
+ * The actual overridden class has been copied here with the encoding change from the borrowed coded added.
  *
  * @author Xenon
- * @version 1
- *
- * Borrowed code from http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
- * The issue was the Resource Bundle was reading properties files as ISO-8859-1 encodings. Thus special characters, like
- * those used in Russian, were being read wrong. The class below allows for a controller to read in any encoding
- * specified.
- * The actual overridden class has been copied here with the encoding change from the borrowed coded added.
  */
 public class EncodeControl extends ResourceBundle.Control {
     @Override

@@ -429,9 +429,9 @@ public class MenuScroller {
 
   /**
    * Ensures that the <code>dispose</code> method of this MenuScroller is
-   * called when there are no more refrences to it.
+   * called when there are no more references to it.
    * 
-   * @exception  Throwable if an error occurs.
+   * @throws Throwable if an error occurs.
    * @see MenuScroller#dispose()
    */
   @Override

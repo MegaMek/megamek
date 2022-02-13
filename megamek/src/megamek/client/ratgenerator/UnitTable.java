@@ -66,7 +66,7 @@ public class UnitTable {
      * @param movementModes - the movement modes allowed to appear in the table; if null or empty, no filtering
      * 						is applied.
      * @param roles - the roles for which to adjust the availability
-     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is <= 4
+     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is &lt;= 4
      * @param deployingFaction - when using the salvage/isorla mechanism, any omni unit will select
      * 							the configuration based on the faction actually deploying
      * @return - a table containing the available units and their relative weights

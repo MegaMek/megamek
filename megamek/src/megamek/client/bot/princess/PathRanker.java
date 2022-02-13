@@ -336,7 +336,7 @@ public abstract class PathRanker implements IPathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game     The {@link Game} currently in play.
+     * @param game The current {@link Game}
      * @return The distance to the unit's home edge.
      */
     @Override
@@ -401,7 +401,7 @@ public abstract class PathRanker implements IPathRanker {
      * TODO : incorporate test for building damage just from moving through building
      *
      * @param path The {@link MovePath} being traversed.
-     * @param game The {@link Game} being played.
+     * @param game The current {@link Game}
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, Game game) {

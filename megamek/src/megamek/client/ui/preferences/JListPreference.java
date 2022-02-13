@@ -26,10 +26,10 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 
 /**
- * JListPreference monitors the selected indices of a JList<?>. It sets the saved indices when a
+ * JListPreference monitors the selected indices of a {@link JList}. It sets the saved indices when a
  * dialog is loaded and changes them when they change.
  *
- * Call preferences.manage(new JListPreference(JList<?>)) to use this preference, on a JList<?> that
+ * Call preferences.manage(new JListPreference(JList)) to use this preference, on a JList that
  * has called setName
  */
 public class JListPreference extends PreferenceElement implements PropertyChangeListener {

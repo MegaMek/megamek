@@ -86,7 +86,7 @@ public final class FiringPlanCalculationParameters {
 
         /**
          * How much heat we're willing to tolerate.
-         * Defaults to {@link FireControl#DOES_NOT_TRACK_HEAT}
+         * Defaults to {@link Entity#DOES_NOT_TRACK_HEAT}
          */
         public Builder setMaxHeat(final int value) {
             if (value < 0) {

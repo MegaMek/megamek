@@ -36,7 +36,7 @@ import javax.swing.JComponent;
  * 2) Hot areas<br>
  * 3) Labels<br> * Hot areas and labels can be grouped handled together by
  * AreasGroup class. Content of PicMap - Areas group that includes all areas on
- * the stage. <p/> Added Elements are placed into several layers within PicMap
+ * the stage. <p> Added Elements are placed into several layers within PicMap
  * engine.
  * <ul>
  * <li>Bottom layer is BackgroundDrawers.

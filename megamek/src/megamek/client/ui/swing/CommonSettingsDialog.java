@@ -490,7 +490,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     }
 
     /**
-     * Display the current settings in this dialog. <p/> Overrides
+     * Display the current settings in this dialog. <p> Overrides
      * <code>Dialog#setVisible(boolean)</code>.
      */
     @Override

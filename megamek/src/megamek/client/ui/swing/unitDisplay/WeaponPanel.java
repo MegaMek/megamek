@@ -905,7 +905,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     /**
      * updates fields for the specified mech
-     * <p/>
+     * <p>
      * fix the ammo when it's added
      */
     public void displayMech(Entity en) {

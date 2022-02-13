@@ -464,7 +464,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
      * Update the given SkinSpecification based on the state of the UI elements.
      *
      * @param skinSpec
-     * @return
      */
     public void updateSkinSpec(SkinSpecification skinSpec, boolean enableBorders) {
 

@@ -610,10 +610,11 @@ public class BoardEdgePathFinder {
      * Helper function that calculates the effective elevation for a unit standing there.
      * @param hex The hex to check
      * @param entity The entity to check
-     * @param bridgeTop Whether we're going on top of a bridge or under it
+     * @param useBridgeTop Whether we're going on top of a bridge or under it
      * @return The effective elevation
      */
-    public static int calculateUnitElevationInHex(Hex hex, Entity entity, boolean isHovercraft, boolean isAmphibious, boolean useBridgeTop) {
+    public static int calculateUnitElevationInHex(Hex hex, Entity entity, boolean isHovercraft,
+                                                  boolean isAmphibious, boolean useBridgeTop) {
         // we calculate the height of a hex as "on the ground" by default
         // Special exceptions:
         // We are a mech, which can hop on top of some buildings

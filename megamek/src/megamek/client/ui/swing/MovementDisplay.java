@@ -5285,10 +5285,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      * Give the player the opportunity to unload all entities that are stranded
      * on immobile transports.
-     * <p/>
-     * According to <a href= "http://www.classicbattletech.com/w3t/showflat
-     * .php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart="
-     * > Randall Bills</a>, the "minimum move" rule allow stranded units to
+     * <p>
+     * According to
+     * <a href= "http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall Bills</a>,
+     * the "minimum move" rule allow stranded units to
      * dismount at the start of the turn.
      */
     private void unloadStranded() {

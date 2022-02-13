@@ -250,7 +250,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the prototype date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the prototype factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the prototype factions are ignored.
      */
     @Override
     public int getPrototypeDate(boolean clan, int faction) {
@@ -293,7 +293,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the production date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the production factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the production factions are ignored.
      */
     @Override
     public int getProductionDate(boolean clan, int faction) {
@@ -343,7 +343,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the extinction date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the extinction factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the extinction factions are ignored.
      */
     @Override
     public int getExtinctionDate(boolean clan, int faction) {
@@ -377,7 +377,7 @@ public class TechAdvancement implements ITechnology {
      * is not among them, the reintroduction date is DATE_NONE.
      *
      * @param clan Whether to use Clan or IS progression dates
-     * @faction    The index of the faction (F_* constant). If < 0, the reintroduction factions are ignored.
+     * @param faction The index of the faction (F_* constant). If &lt; 0, the reintroduction factions are ignored.
      */
     @Override
     public int getReintroductionDate(boolean clan, int faction) {

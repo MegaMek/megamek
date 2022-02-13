@@ -35,10 +35,10 @@ import java.util.ResourceBundle;
  * Inheriting classes must call initialize() in their constructors and override createCenterPane()
  *
  * The resources associated with this dialog need to contain at least the following keys:
- * - "Ok.text" -> text for the ok button
- * - "Ok.toolTipText" -> toolTipText for the ok button
- * - "Cancel.text" -> text for the cancel button
- * - "Cancel.toolTipText" -> toolTipText for the cancel button
+ * - "Ok.text" - text for the ok button
+ * - "Ok.toolTipText" - toolTipText for the ok button
+ * - "Cancel.text" - text for the cancel button
+ * - "Cancel.toolTipText" - toolTipText for the cancel button
  *
  * This is directly tied to MekHQ's AbstractMHQButtonDialog, and any changes here MUST be verified
  * there.

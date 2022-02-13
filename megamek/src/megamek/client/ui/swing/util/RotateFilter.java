@@ -17,9 +17,9 @@ import java.awt.image.ColorModel;
 import java.awt.image.RGBImageFilter;
 
 /**
- * Filters an image by rotating it. The image is rotated around its center. <p/>
- * TODO: This could be optimized... oh, um... everywhere. It was pretty late at
- * night when I programmed most of this.
+ * Filters an image by rotating it. The image is rotated around its center. <p>
+ * TODO : This could be optimized... oh, um... everywhere. It was pretty late at night when I
+ * TODO : programmed most of this.
  * 
  * @author Ben
  * @since April 17, 2002, 5:13 PM

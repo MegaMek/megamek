@@ -35,7 +35,7 @@ import static megamek.common.force.Force.NO_FORCE;
 
 /**
  * Manages a collection of Forces for a game. The game only needs to hold one Forces object.
- * Like in Campaign.java in MHQ this is mainly a map of id -> Force along with many utility functions.
+ * Like in Campaign.java in MHQ this is mainly a map of id to Force along with many utility functions.
  * Force management and changes are directed through this object. 
  * 
  * @author Simon
@@ -510,10 +510,11 @@ public final class Forces implements Serializable {
     /** 
      * Corrects this Forces object as much as possible. Also corrects entities
      * when necessary (wrong forceId).
-     * <LI>Incorrect links (false IDs, nonexistent or dual entities or forces)
-     * <LI>Enemy force/entity connections
-     * <LI>Incorrect links
-     * 
+     * <ul>
+     * <li>Incorrect links (false IDs, nonexistent or dual entities or forces)</li>
+     * <li>Enemy force/entity connections</li>
+     * <li>Incorrect links</li>
+     * </ul>
      * @see #isValid()
      */
     public void correct() {

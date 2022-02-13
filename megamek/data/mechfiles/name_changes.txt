@@ -222,6 +222,8 @@ Procyon (Quad)|Procyon ProtoMech (Quad)
 Sprite (Standard)|Sprite Ultraheavy ProtoMech (Standard)
 Sprite 2|Sprite Ultraheavy ProtoMech 2
 Sprite 3|Sprite Ultraheavy ProtoMech 3
+Svartalfa Ultra ProtoMech (Standard)|Svartalfa (Standard)
+Svartalfa Ultra ProtoMech (LRM Variant)|/Svartalfa (LRM Variant)
 
 #Space Stations
 Bastion System Defense Station (Standard)|Bastion System Defense Station (2584)

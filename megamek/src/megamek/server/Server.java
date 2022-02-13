@@ -26,6 +26,7 @@ import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
@@ -108,6 +109,8 @@ public class Server implements Runnable {
     private static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     // server setup
+    public static final int DEFAULT_PORT = 2346;
+    public static final String LOCALHOST = "localhost";
     private String password;
 
     private final String metaServerUrl;
@@ -170,6 +173,8 @@ public class Server implements Runnable {
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
+
+    private final  boolean dedicated;
 
     /**
      * Special packet queue for client feedback requests.
@@ -309,14 +314,17 @@ public class Server implements Runnable {
     private final Object serverLock = new Object();
 
     public Server(String password, int port) throws IOException {
-        this(password, port, false, "", null);
+        this(password, port, false, "", null, false);
     }
 
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl) throws IOException {
-        this(password, port, registerWithServerBrowser, metaServerUrl, null);
+        this(password, port, registerWithServerBrowser, metaServerUrl, null, false);
     }
-
+    public Server(String password, int port, boolean registerWithServerBrowser,
+                  String metaServerUrl, EmailService mailer) throws IOException {
+        this(password, port, registerWithServerBrowser, metaServerUrl, mailer, false);
+    }
     /**
      * Construct a new GameHost and begin listening for incoming clients.
      *
@@ -326,12 +334,15 @@ public class Server implements Runnable {
      * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register
      *                                  with the master server browser on megamek.info
      * @param mailer an email service instance to use for sending round reports.
+     * @param dedicated set to true if this server is started from a GUI-less context
      */
     public Server(String password, int port, boolean registerWithServerBrowser,
-                  String metaServerUrl, EmailService mailer) throws IOException {
-        this.metaServerUrl = metaServerUrl;
-        this.password = password.isBlank() ? password : null;
+        String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+        this.metaServerUrl = (metaServerUrl != null) && (!metaServerUrl.isBlank()) ? metaServerUrl : null;
+        this.password = (password != null) && (!password.isBlank()) ? password : null;
+
         this.mailer = mailer;
+        this.dedicated = dedicated;
 
         // initialize server socket
         serverSocket = new ServerSocket(port);
@@ -414,16 +425,18 @@ public class Server implements Runnable {
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
-
-            final TimerTask register = new TimerTask() {
-                @Override
-                public void run() {
-                    registerWithServerBrowser(true, Server.getServerInstance().metaServerUrl);
-                }
-            };
-            serverBrowserUpdateTimer = new Timer(
-                    "Server Browser Register Timer", true);
-            serverBrowserUpdateTimer.schedule(register, 1, 40000);
+            if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
+                final TimerTask register = new TimerTask() {
+                    @Override
+                    public void run() {
+                        registerWithServerBrowser(true, Server.getServerInstance().metaServerUrl);
+                    }
+                };
+                serverBrowserUpdateTimer = new Timer("Server Browser Register Timer", true);
+                serverBrowserUpdateTimer.schedule(register, 1, 40000);
+            } else {
+                LogManager.getLogger().error("Invalid URL for server browser " + this.metaServerUrl);
+            }
         }
 
         // Fully initialised, now accept connections
@@ -534,6 +547,13 @@ public class Server implements Runnable {
     }
 
     /**
+     * @return true run from a GUI-less context
+     */
+    public boolean getDedicated() {
+        return dedicated;
+    }
+
+    /**
      * Shuts down the server.
      */
     public void die() {
@@ -581,7 +601,7 @@ public class Server implements Runnable {
             serverBrowserUpdateTimer.cancel();
         }
 
-        if (!metaServerUrl.isBlank()) {
+        if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
             registerWithServerBrowser(false, metaServerUrl);
         }
 

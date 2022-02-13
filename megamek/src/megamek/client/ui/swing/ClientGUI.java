@@ -175,6 +175,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     //endregion help menu
     //endregion action commands
 
+    public static final String QUICKSAVE_FILE = "quicksave";
+    public static final String QUICKSAVE_PATH = "./savegames";
+
     // a frame, to show stuff in
     public JFrame frame;
 
@@ -1523,9 +1526,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     
     /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
     private boolean quickSaveGame() {
-        String file = "quicksave";
-        String path = "./savegames";
-        client.sendChat("/localsave " + file + " " + path);
+//        String file = "quicksave";
+//        String path = "./savegames";
+        client.sendChat("/localsave " + QUICKSAVE_FILE + " " + QUICKSAVE_PATH);
         return true;
     }
 

@@ -27,6 +27,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -91,7 +92,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.playerNames = playerNames;
 
         setPlayerName(""); // initialize player name
-        setPort(2346);
+        setPort(Server.DEFAULT_PORT);
         setConfirmed(false);
 
         initComponents();

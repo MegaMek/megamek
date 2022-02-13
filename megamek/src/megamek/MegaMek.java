@@ -30,14 +30,19 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.io.*;
+import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /**
  * This is the primary MegaMek class.
@@ -64,7 +69,7 @@ public class MegaMek {
         });
 
         // Second, let's handle logging
-        initializeLogging(MMConstants.PROJECT_NAME);
+        initializeLogging(MMConstants.PROJECT_NAME, MegaMek.class.getClassLoader());
 
         // Third, Command Line Arguments and Startup
         try {
@@ -94,8 +99,9 @@ public class MegaMek {
         }
     }
 
-    public static void initializeLogging(final String originProject) {
-        final String initialMessage = getUnderlyingInformation(originProject);
+    public static void initializeLogging(final String originProject,
+                                         final ClassLoader originClassLoader) {
+        final String initialMessage = getUnderlyingInformation(originProject, originClassLoader);
         LogManager.getLogger().info(initialMessage);
         handleLegacyLogging();
         System.out.println(initialMessage);
@@ -219,24 +225,51 @@ public class MegaMek {
 
     /**
      * @param originProject the project that launched MegaMek
+     * @param originClassLoader the class loader of the project that launched MegaMek
      * @return the underlying information for this launch of MegaMek
      */
-    public static String getUnderlyingInformation(final String originProject) {
-        return MegaMek.getUnderlyingInformation(originProject, MMConstants.PROJECT_NAME);
+    public static String getUnderlyingInformation(final String originProject,
+                                                  final ClassLoader originClassLoader) {
+        return getUnderlyingInformation(originProject, originClassLoader, MMConstants.PROJECT_NAME,
+                MegaMek.class.getClassLoader());
     }
 
     /**
      * @param originProject the launching project
+     * @param originClassLoader the class loader of the launching project
      * @param currentProject the currently described project
+     * @param currentClassLoader the class loader of the current project
      * @return the underlying information for this launch
      */
-    public static String getUnderlyingInformation(final String originProject, final String currentProject) {
-        return String.format("Starting %s v%s\n\tRelease Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
-                currentProject, MMConstants.VERSION, MMConstants.RELEASE_DATE, LocalDate.now(),
-                originProject, System.getProperty("java.vendor"), System.getProperty("java.version"),
+    public static String getUnderlyingInformation(final String originProject,
+                                                  final ClassLoader originClassLoader,
+                                                  final String currentProject,
+                                                  final ClassLoader currentClassLoader) {
+        final LocalDateTime originBuildDate = getBuildDate(originClassLoader);
+        final LocalDateTime currentBuildDate = getBuildDate(currentClassLoader);
+        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tRelease Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tOrigin Build Date: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
+                currentProject, MMConstants.VERSION,
+                ((currentBuildDate == null) ? "N/A" : currentBuildDate), MMConstants.RELEASE_DATE,
+                LocalDate.now(), originProject, ((originBuildDate == null) ? "N/A" : originBuildDate),
+                System.getProperty("java.vendor"), System.getProperty("java.version"),
                 System.getProperty("os.name"), System.getProperty("os.version"),
                 System.getProperty("os.arch"), Locale.getDefault(), currentProject,
                 Runtime.getRuntime().maxMemory() / Math.pow(2, 30));
+    }
+
+    public static @Nullable LocalDateTime getBuildDate(final ClassLoader classLoader) {
+        try {
+            final Enumeration<URL> urls = classLoader.getResources("META-INF/MANIFEST.MF");
+            URL url = null;
+            while (urls.hasMoreElements()) {
+                url = urls.nextElement();
+            }
+            final Attributes attributes = new Manifest(url.openStream()).getMainAttributes();
+            return LocalDateTime.parse(attributes.getValue("BuildDate"));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            return null;
+        }
     }
 
     /**

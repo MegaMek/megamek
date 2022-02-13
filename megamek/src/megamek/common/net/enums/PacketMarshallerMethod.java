@@ -16,26 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.enums;
 
-import megamek.common.net.enums.PacketMarshallerMethod;
-
-/**
- * Connection layer data packet.
- */
-public interface INetworkPacket {
-    /**
-     * @return the data marshalling method
-     */
-    PacketMarshallerMethod getMarshallingMethod();
-
-    /**
-     * @return <code>true</code> if data is compressed
-     */
-    boolean isCompressed();
-
-    /**
-     * @return the packet's data
-     */
-    byte[] getData();
+public enum PacketMarshallerMethod {
+    NATIVE_SERIALIZATION_MARSHALLING
 }

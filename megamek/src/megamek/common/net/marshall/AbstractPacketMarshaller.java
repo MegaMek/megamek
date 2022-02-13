@@ -26,17 +26,28 @@ import java.io.OutputStream;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketMarshallerMethod;
 import org.apache.logging.log4j.LogManager;
 
 /**
- * Generic marshaller that [un]marshalls the <code>Packet</code>
+ * Abstract marshaller that [un]marshalls the <code>Packet</code>
  */
-public abstract class PacketMarshaller {
+public abstract class AbstractPacketMarshaller {
+    //region Variable Declarations
+    private final PacketMarshallerMethod method;
+    //endregion Variable Declarations
 
-    /**
-     * Java native serialization marshalling
-     */
-    public static final int NATIVE_SERIALIZATION_MARSHALING = 0;
+    //region Constructors
+    protected AbstractPacketMarshaller(final PacketMarshallerMethod method) {
+        this.method = method;
+    }
+    //endregion Constructors
+
+    //region Getters
+    public PacketMarshallerMethod getMethod() {
+        return method;
+    }
+    //endregion Getters
 
     /**
      * Marshalls the packet data into the <code>byte[]</code>
@@ -44,12 +55,11 @@ public abstract class PacketMarshaller {
      * @param packet packet to marshall
      * @return marshalled representation of the given <code>Packet</code>
      */
-    public @Nullable byte[] marshall(Packet packet) {
-        ByteArrayOutputStream bo = new ByteArrayOutputStream();
-        try {
-            marshall(packet, bo);
-            bo.flush();
-            return bo.toByteArray();
+    public @Nullable byte[] marshall(final Packet packet) {
+        try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            marshall(packet, bos);
+            bos.flush();
+            return bos.toByteArray();
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
             return null;
@@ -61,9 +71,9 @@ public abstract class PacketMarshaller {
      *
      * @param packet packet to marshall
      * @param stream <code>OutputStream</code> to marshall the <code>Packet</code> to
-     * @throws Exception
+     * @throws Exception if there's an issue while marshalling
      */
-    public abstract void marshall(Packet packet, OutputStream stream) throws Exception;
+    public abstract void marshall(final Packet packet, final OutputStream stream) throws Exception;
 
     /**
      * Unmarshalls the packet data from the given <code>byte[]</code> array
@@ -72,9 +82,9 @@ public abstract class PacketMarshaller {
      * @return the new <code>Packet</code>unmarshalled from the given <code>byte[]</code> array,
      * or null if there's an exception
      */
-    public @Nullable Packet unmarshall(byte... data) {
-        try {
-            return unmarshall(new ByteArrayInputStream(data));
+    public @Nullable Packet unmarshall(final byte... data) {
+        try (final ByteArrayInputStream bis = new ByteArrayInputStream(data)) {
+            return unmarshall(bis);
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
             return null;
@@ -86,7 +96,7 @@ public abstract class PacketMarshaller {
      *
      * @param stream <code>InputStream</code> to unmarshall the packet from
      * @return the new <code>Packet</code>unmarshalled from the given <code>InputStream</code>
-     * @throws Exception
+     * @throws Exception if there's an issue while unmarshalling
      */
-    public abstract Packet unmarshall(InputStream stream) throws Exception;
+    public abstract Packet unmarshall(final InputStream stream) throws Exception;
 }

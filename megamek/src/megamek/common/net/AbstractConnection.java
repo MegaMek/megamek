@@ -35,7 +35,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import megamek.common.annotations.Nullable;
-import megamek.common.net.marshall.PacketMarshaller;
+import megamek.common.net.enums.PacketMarshallerMethod;
+import megamek.common.net.marshall.AbstractPacketMarshaller;
 import megamek.common.net.marshall.PacketMarshallerFactory;
 import megamek.common.util.CircularIntegerBuffer;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +47,7 @@ import org.apache.logging.log4j.LogManager;
 public abstract class AbstractConnection {
     private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
 
-    private static final int DEFAULT_MARSHALLING = PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING;
+    protected static final PacketMarshallerMethod[] PACKET_MARSHALLER_METHODS = PacketMarshallerMethod.values();
 
     /**
      * Peer Host Non null in case if it's a client connection
@@ -106,12 +107,12 @@ public abstract class AbstractConnection {
     /**
      * Type of marshalling used to represent sent packets
      */
-    protected int marshallingType;
+    protected PacketMarshallerMethod marshallingMethod;
 
     /**
      * Marshaller used to send packets
      */
-    protected PacketMarshaller marshaller;
+    protected AbstractPacketMarshaller marshaller;
 
     /**
      * Indicates the need to compress sent data
@@ -129,7 +130,7 @@ public abstract class AbstractConnection {
         this.host = host;
         this.port = port;
         this.id = id;
-        setMarshallingType(DEFAULT_MARSHALLING);
+        setMarshallingMethod(PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING);
     }
 
     /**
@@ -141,7 +142,7 @@ public abstract class AbstractConnection {
     public AbstractConnection(Socket socket, int id) {
         this.socket = socket;
         this.id = id;
-        setMarshallingType(DEFAULT_MARSHALLING);
+        setMarshallingMethod(PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING);
     }
 
     /**
@@ -152,22 +153,21 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * @return the type of the marshalling used to send packets
+     * @return the method of the marshalling used to send packets
      */
-    protected int getMarshallingType() {
-        return marshallingType;
+    protected PacketMarshallerMethod getMarshallingMethod() {
+        return marshallingMethod;
     }
 
     /**
      * Sets the type of the marshalling used to send packets
      *
-     * @param marshallingType new marshalling type
+     * @param marshallingMethod new marshalling method
      */
-    protected void setMarshallingType(int marshallingType) {
-        PacketMarshaller pm = Objects.requireNonNull(marshallerFactory.getMarshaller(marshallingType),
-                "Unknown marshalling type");
-        this.marshallingType = marshallingType;
-        marshaller = pm;
+    protected void setMarshallingMethod(final PacketMarshallerMethod marshallingMethod) {
+        this.marshallingMethod = marshallingMethod;
+        marshaller = Objects.requireNonNull(marshallerFactory.getMarshaller(marshallingMethod),
+                "Unimplemented marshalling type");
     }
 
     /**
@@ -470,7 +470,7 @@ public abstract class AbstractConnection {
      * process a received packet
      */
     protected void processPacket(INetworkPacket np) throws Exception {
-        PacketMarshaller pm = Objects.requireNonNull(marshallerFactory.getMarshaller(np.getMarshallingType()),
+        AbstractPacketMarshaller pm = Objects.requireNonNull(marshallerFactory.getMarshaller(np.getMarshallingMethod()),
                 "Unknown marshalling type");
         byte[] data = np.getData();
         bytesReceived += data.length;
@@ -534,14 +534,11 @@ public abstract class AbstractConnection {
          * @return the first available packet in the queue or null if none
          */
         public SendPacket getPacket() {
-            if (!finished) {
-                return queue.poll();
-            }
-            return null;
+            return finished ? null : queue.poll();
         }
 
         /**
-         * Returns true if this connection has pending data
+         * @return true if this connection has pending data
          */
         public boolean hasPending() {
             return !queue.isEmpty();
@@ -583,9 +580,9 @@ public abstract class AbstractConnection {
     }
 
     private class SendPacket implements INetworkPacket {
-        byte[] data;
-        boolean zipped = false;
-        int command;
+        private final int command;
+        private boolean zipped = false;
+        private byte[] data;
 
         public SendPacket(Packet packet) {
             command = packet.getCommand();
@@ -608,8 +605,8 @@ public abstract class AbstractConnection {
         }
 
         @Override
-        public int getMarshallingType() {
-            return marshallingType;
+        public PacketMarshallerMethod getMarshallingMethod() {
+            return marshallingMethod;
         }
 
         @Override

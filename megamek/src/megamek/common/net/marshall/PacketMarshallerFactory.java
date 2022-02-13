@@ -20,23 +20,26 @@
 package megamek.common.net.marshall;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.net.enums.PacketMarshallerMethod;
 
 public class PacketMarshallerFactory {
     private static PacketMarshallerFactory instance = new PacketMarshallerFactory();
 
     private NativeSerializationMarshaller nativeSerializationMarshaller;
 
+    //region Constructors
     private PacketMarshallerFactory() {
 
     }
+    //endregion Constructors
 
     public static PacketMarshallerFactory getInstance() {
         return instance;
     }
 
-    public @Nullable PacketMarshaller getMarshaller(int marshallingType) {
-        switch (marshallingType) {
-            case PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING:
+    public @Nullable AbstractPacketMarshaller getMarshaller(final PacketMarshallerMethod marshallingMethod) {
+        switch (marshallingMethod) {
+            case NATIVE_SERIALIZATION_MARSHALLING:
                 if (nativeSerializationMarshaller == null) {
                     nativeSerializationMarshaller = new NativeSerializationMarshaller();
                 }

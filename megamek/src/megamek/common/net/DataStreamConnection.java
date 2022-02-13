@@ -19,6 +19,7 @@
  */
 package megamek.common.net;
 
+import megamek.common.net.enums.PacketMarshallerMethod;
 import megamek.common.net.enums.PacketReadState;
 import org.apache.logging.log4j.LogManager;
 
@@ -53,7 +54,7 @@ class DataStreamConnection extends AbstractConnection {
      * store data for packet reception statemachine
      */
     protected boolean zipped = false;
-    protected int encoding = -1;
+    protected PacketMarshallerMethod marshallerMethod = PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING;
     protected int len = 0;
     protected PacketReadState state = PacketReadState.HEADER;
 
@@ -67,15 +68,15 @@ class DataStreamConnection extends AbstractConnection {
         synchronized (in) {
             switch (state) {
                 case HEADER:
+                    marshallerMethod = PACKET_MARSHALLER_METHODS[in.readInt()];
                     zipped = in.readBoolean();
-                    encoding = in.readInt();
                     len = in.readInt();
                     state = PacketReadState.DATA;
                     // drop through on purpose
                 case DATA:
                     byte[] data = new byte[len];
                     in.readFully(data);
-                    NetworkPacket packet = new NetworkPacket(zipped, encoding, data);
+                    NetworkPacket packet = new NetworkPacket(marshallerMethod, zipped, data);
                     state = PacketReadState.HEADER;
                     return packet;
                 default:
@@ -93,7 +94,7 @@ class DataStreamConnection extends AbstractConnection {
 
         synchronized (out) {
             out.writeBoolean(iszipped);
-            out.writeInt(marshallingType);
+            out.writeInt(marshallingMethod.ordinal());
             out.writeInt(data.length);
             out.write(data);
         }
@@ -134,43 +135,41 @@ class DataStreamConnection extends AbstractConnection {
     }
 
     private static class NetworkPacket implements INetworkPacket {
-        /**
-         * Is data compressed
-         */
-        private boolean compressed;
+        //region Variable Declarations
+        /** Data marshalling method */
+        private final PacketMarshallerMethod marshallingMethod;
 
-        /**
-         * Data marshalling type
-         */
-        private int marshallingType;
+        /** Is the data compressed */
+        private final boolean compressed;
 
-        /**
-         * Packet data
-         */
-        private byte[] data;
+        /** Packet data*/
+        private final byte[] data;
+        //endregion Variable Declarations
 
-        /**
-         * Creates new packet
-         */
-        NetworkPacket(boolean compressed, int marshallingType, byte... data) {
+        //region Constructors
+        public NetworkPacket(final PacketMarshallerMethod marshallingMethod,
+                             final boolean compressed, final byte... data) {
+            this.marshallingMethod = marshallingMethod;
             this.compressed = compressed;
-            this.marshallingType = marshallingType;
             this.data = data;
         }
+        //endregion Constructors
 
+        //region Getters
         @Override
-        public int getMarshallingType() {
-            return marshallingType;
-        }
-
-        @Override
-        public byte[] getData() {
-            return data;
+        public PacketMarshallerMethod getMarshallingMethod() {
+            return marshallingMethod;
         }
 
         @Override
         public boolean isCompressed() {
             return compressed;
         }
+
+        @Override
+        public byte[] getData() {
+            return data;
+        }
+        //endregion Getters
     }
 }

@@ -1261,7 +1261,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
                     GUIPreferences.getInstance().setNagForMASC(false);
-            }
+                }
             }
         }
 

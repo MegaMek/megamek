@@ -1854,7 +1854,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;
             switch (evt.getCFRType()) {
-                case Packet.COMMAND_CFR_DOMINO_EFFECT:                    
+                case CFR_DOMINO_EFFECT:
                     // If the client connects to a game as a bot, it's possible
                     // to have the bot respond AND have the client ask the
                     // player. This is bad, ignore this if the client is a bot
@@ -1911,7 +1911,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
                     client.sendDominoCFRResponse(paths[choice]);
                     break;
-                case Packet.COMMAND_CFR_AMS_ASSIGN:
+                case CFR_AMS_ASSIGN:
                     ArrayList<String> amsOptions = new ArrayList<>();
                     amsOptions.add("None");
                     for (WeaponAttackAction waa : evt.getWAAs()) {
@@ -1943,7 +1943,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                                 amsOptions.indexOf(result) - 1);                 
                     }
                     break;
-                case Packet.COMMAND_CFR_APDS_ASSIGN:
+                case CFR_APDS_ASSIGN:
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add("None");
                     Iterator<Integer> distIt = evt.getApdsDists().iterator();
@@ -1978,7 +1978,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                                 apdsOptions.indexOf(result) - 1);
                     }
                     break;
-                case Packet.COMMAND_CFR_HIDDEN_PBS:
+                case CFR_HIDDEN_PBS:
                     Entity attacker = client.getGame().getEntity(
                             evt.getEntityId());
                     Entity target = client.getGame().getEntity(
@@ -2024,7 +2024,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         client.sendHiddenPBSCFRResponse(null);
                     }
                     break;
-                case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                case CFR_TELEGUIDED_TARGET:
                     List<Integer> targetIds = evt.getTelemissileTargetIds();
                     List<Integer> toHitValues = evt.getTmToHitValues();
                     List<String> targetDescriptions = new ArrayList<>();
@@ -2036,7 +2036,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
                         }
                     }
-                    //Set up the selection pane
+                    // Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TeleMissileTargetDialog.title";
@@ -2052,11 +2052,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             }
                         }
                     } else {
-                        //If input IS null, as in the case of pressing the close or cancel buttons...
-                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        // If input IS null, as in the case of pressing the close or cancel buttons...
+                        // Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
                     }
-                case Packet.COMMAND_CFR_TAG_TARGET:
+                    break;
+                case CFR_TAG_TARGET:
                     List<Integer> TAGTargets = evt.getTAGTargets();
                     List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
                     List<String> TAGTargetDescriptions = new ArrayList<>();
@@ -2084,10 +2085,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             }
                         }
                     } else {
-                        //If input IS null, as in the case of pressing the close or cancel buttons...
-                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        // If input IS null, as in the case of pressing the close or cancel buttons...
+                        // Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTAGTargetCFRResponse(0);
                     }
+                    break;
             }
         }
     };

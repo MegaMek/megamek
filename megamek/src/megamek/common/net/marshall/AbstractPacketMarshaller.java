@@ -26,6 +26,7 @@ import java.io.OutputStream;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.enums.PacketMarshallerMethod;
 import org.apache.logging.log4j.LogManager;
 
@@ -34,6 +35,8 @@ import org.apache.logging.log4j.LogManager;
  */
 public abstract class AbstractPacketMarshaller {
     //region Variable Declarations
+    protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
+
     private final PacketMarshallerMethod method;
     //endregion Variable Declarations
 

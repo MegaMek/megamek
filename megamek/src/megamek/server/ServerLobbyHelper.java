@@ -25,6 +25,7 @@ import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -189,7 +190,7 @@ class ServerLobbyHelper {
      * Only valid in the lobby.
      */
     static Packet createMultiEntityPacket(Collection<Entity> entities) {
-        return new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, entities);
+        return new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities);
     }
     
     /**
@@ -197,7 +198,7 @@ class ServerLobbyHelper {
      * Only valid in the lobby.
      */
     static Packet createForcesDeletePacket(Collection<Integer> forces) {
-        return new Packet(Packet.COMMAND_FORCE_DELETE, forces);
+        return new Packet(PacketCommand.FORCE_DELETE, forces);
     }
 
     /** 
@@ -452,10 +453,7 @@ class ServerLobbyHelper {
      * forceId changed.
      */
     static Packet createForceUpdatePacket(Collection<Force> changedForces, Collection<Entity> entities) {
-        final Object[] data = new Object[2];
-        data[0] = changedForces;
-        data[1] = entities;
-        return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
+        return new Packet(PacketCommand.FORCE_UPDATE, changedForces, entities);
     }
     
     /**
@@ -463,10 +461,7 @@ class ServerLobbyHelper {
      * affected forces and all affected entities.
      */
     static Packet createForceUpdatePacket(Collection<Force> changedForces) {
-        final Object[] data = new Object[2];
-        data[0] = changedForces;
-        data[1] = new ArrayList<Entity>();
-        return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
+        return new Packet(PacketCommand.FORCE_UPDATE, changedForces, new ArrayList<Entity>());
     }
     
     /**

@@ -35,6 +35,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.enums.PacketMarshallerMethod;
 import megamek.common.net.marshall.AbstractPacketMarshaller;
 import megamek.common.net.marshall.PacketMarshallerFactory;
@@ -275,7 +276,7 @@ public abstract class AbstractConnection {
     public void sendNow(SendPacket packet) {
         try {
             sendNetworkPacket(packet.getData(), packet.isCompressed());
-            debugLastFewCommandsSent.push(packet.getCommand());
+            debugLastFewCommandsSent.push(packet.getCommand().ordinal());
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
@@ -483,7 +484,7 @@ public abstract class AbstractConnection {
         }
         Packet packet = pm.unmarshall(in);
         if (packet != null) {
-            debugLastFewCommandsReceived.push(packet.getCommand());
+            debugLastFewCommandsReceived.push(packet.getCommand().ordinal());
             processConnectionEvent(new PacketReceivedEvent(this, packet));
         }
     }
@@ -580,7 +581,7 @@ public abstract class AbstractConnection {
     }
 
     private class SendPacket implements INetworkPacket {
-        private final int command;
+        private final PacketCommand command;
         private boolean zipped = false;
         private byte[] data;
 
@@ -604,14 +605,13 @@ public abstract class AbstractConnection {
             }
         }
 
-        @Override
-        public PacketMarshallerMethod getMarshallingMethod() {
-            return marshallingMethod;
+        public PacketCommand getCommand() {
+            return command;
         }
 
         @Override
-        public byte[] getData() {
-            return data;
+        public PacketMarshallerMethod getMarshallingMethod() {
+            return marshallingMethod;
         }
 
         @Override
@@ -619,8 +619,9 @@ public abstract class AbstractConnection {
             return zipped;
         }
 
-        public int getCommand() {
-            return command;
+        @Override
+        public byte[] getData() {
+            return data;
         }
     }
 }

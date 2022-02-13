@@ -19,15 +19,15 @@
  */
 package megamek.common.net.marshall;
 
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-
 import megamek.MMConstants;
 import megamek.common.net.Packet;
 import megamek.common.net.enums.PacketMarshallerMethod;
 import org.nibblesec.tools.SerialKiller;
+
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 /**
  * Marshaller that Java native serialization for <code>Packet</code> representation.
@@ -42,16 +42,14 @@ public class NativeSerializationMarshaller extends AbstractPacketMarshaller {
     @Override
     public void marshall(final Packet packet, final OutputStream stream) throws Exception {
         ObjectOutputStream out = new ObjectOutputStream(stream);
-        out.writeInt(packet.getCommand());
+        out.writeInt(packet.getCommand().ordinal());
         out.writeObject(packet.getData());
         out.flush();
     }
 
     @Override
     public Packet unmarshall(final InputStream stream) throws Exception {
-        ObjectInputStream in = new SerialKiller(stream, MMConstants.SERIALKILLER_CONFIG_FILE);
-        int command = in.readInt();
-        Object[] data = (Object[]) in.readObject();
-        return new Packet(command, data);
+        final ObjectInputStream in = new SerialKiller(stream, MMConstants.SERIALKILLER_CONFIG_FILE);
+        return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
     }
 }

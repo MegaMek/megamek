@@ -119,7 +119,9 @@ public class MechSummary implements Serializable {
         return (m_sModel);
     }
 
-    public int getMulId() { return mulId; }
+    public int getMulId() {
+        return mulId;
+    }
 
     public String getUnitType() {
         return (m_sUnitType);

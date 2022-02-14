@@ -28,13 +28,16 @@ import java.util.EventObject;
  * @see ConnectionListener
  */
 public abstract class ConnectionEvent extends EventObject {
+    //region Variable Declarations
     private static final long serialVersionUID = 6124300183866317006L;
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = 1;
     public static final int PACKET_RECEIVED = 2;
 
-    private int type;
+    private final int type;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
      * Constructs connection event
      * 
@@ -45,7 +48,9 @@ public abstract class ConnectionEvent extends EventObject {
         super(source);
         this.type = type;
     }
+    //endregion Constructors
 
+    //region Getters
     /**
      * @return the type of the event
      */
@@ -54,13 +59,12 @@ public abstract class ConnectionEvent extends EventObject {
     }
 
     /**
-     * Returns
-     * 
      * @return the connection on which the Event occurred; Equivalent to the {@link #getSource())
      */
     public AbstractConnection getConnection() {
         return (AbstractConnection) getSource();
     }
+    //endregion Getters
 
     @Override
     public String toString() {

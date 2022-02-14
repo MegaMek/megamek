@@ -23,14 +23,18 @@ package megamek.common.net;
  * Instances of this class are sent when Connection established
  */
 public class ConnectedEvent extends ConnectionEvent {
+    //region Variable Declarations
     private static final long serialVersionUID = -5880245401940306338L;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
      * Constructs connection event
      * 
      * @param source The object on which the Event initially occurred.
      */
-    public ConnectedEvent(Object source) {
+    public ConnectedEvent(final Object source) {
         super(source, CONNECTED);
     }
+    //endregion Constructors
 }

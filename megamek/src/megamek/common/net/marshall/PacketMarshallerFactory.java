@@ -23,9 +23,10 @@ import megamek.common.annotations.Nullable;
 import megamek.common.net.enums.PacketMarshallerMethod;
 
 public class PacketMarshallerFactory {
+    //region Variable Declarations
     private static PacketMarshallerFactory instance = new PacketMarshallerFactory();
-
     private NativeSerializationMarshaller nativeSerializationMarshaller;
+    //endregion Variable Declarations
 
     //region Constructors
     private PacketMarshallerFactory() {

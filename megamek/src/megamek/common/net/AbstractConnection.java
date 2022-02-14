@@ -27,10 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -46,111 +43,114 @@ import org.apache.logging.log4j.LogManager;
  * Generic bidirectional connection between client and server
  */
 public abstract class AbstractConnection {
-    private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory.getInstance();
-
+    //region Variable Declarations
     protected static final PacketMarshallerMethod[] PACKET_MARSHALLER_METHODS = PacketMarshallerMethod.values();
 
-    /**
-     * Peer Host Non null in case if it's a client connection
-     */
-    private String host;
-
-    /**
-     * Peer port != 0 in case if it's a client connection
-     */
-    private int port;
-
-    /**
-     * Connection state
-     */
-    private boolean open;
-
-    /**
-     * The socket for this connection.
-     */
-    private Socket socket;
-
-    /**
-     * The connection ID
-     */
+    /** The connection id */
     private int id;
 
-    /**
-     * Bytes send during the connection lifecycle
-     */
+    /** Peer Host. This is null if this is a server connection, and non-null otherwise */
+    private String host;
+
+    /** Peer port != 0 in case if it's a client connection */
+    private int port;
+
+    /** The socket for this connection. */
+    private Socket socket;
+
+    /** Connection state */
+    private boolean open;
+
+    /** Bytes send during the connection lifecycle */
     private long bytesSent;
 
-    /**
-     * Bytes received during the connection lifecycle
-     */
+    /** Bytes received during the connection lifecycle */
     private long bytesReceived;
 
-    /**
-     * Queue of <code>Packets</code> to send
-     */
+    /** Queue of {@link Packet}s to send */
     private SendQueue sendQueue = new SendQueue();
 
-    /**
-     * Connection listeners list
-     */
-    private Vector<ConnectionListener> connectionListeners = new Vector<>();
+    /** Connection listeners list */
+    private List<ConnectionListener> connectionListeners = new Vector<>();
 
-    /**
-     * Buffer of the last commands sent; Used for debugging purposes.
-     */
+    /** Buffer of the last commands sent; Used for debugging purposes. */
     private CircularIntegerBuffer debugLastFewCommandsSent = new CircularIntegerBuffer(50);
 
-    /**
-     * Buffer of the last commands received; Used for debugging purposes.
-     */
+    /** Buffer of the last commands received; Used for debugging purposes. */
     private CircularIntegerBuffer debugLastFewCommandsReceived = new CircularIntegerBuffer(50);
 
-    /**
-     * Type of marshalling used to represent sent packets
-     */
+    /** Type of marshalling used to represent sent packets */
     protected PacketMarshallerMethod marshallingMethod;
 
-    /**
-     * Marshaller used to send packets
-     */
+    /** Marshaller used to send packets */
     protected AbstractPacketMarshaller marshaller;
 
-    /**
-     * Indicates the need to compress sent data
-     */
-    private boolean zipData = true;
+    /** Indicates the need to compress sent data */
+    private boolean compressed = true;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
      * Creates new client (connection from client to server) connection
      *
+     * @param id connection id
      * @param host target host
      * @param port target port
-     * @param id connection ID
      */
-    public AbstractConnection(String host, int port, int id) {
-        this.host = host;
-        this.port = port;
-        this.id = id;
-        setMarshallingMethod(PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING);
+    public AbstractConnection(final int id, final String host, final int port) {
+        this(id, host, port, null);
     }
 
     /**
      * Creates new Server connection
      *
+     * @param id connection id
      * @param socket accepted socket
-     * @param id connection ID
      */
-    public AbstractConnection(Socket socket, int id) {
-        this.socket = socket;
+    public AbstractConnection(final int id, final Socket socket) {
+        this(id, null, 0, socket);
+    }
+
+    public AbstractConnection(final int id, final @Nullable String host, final int port,
+                              final @Nullable Socket socket) {
         this.id = id;
+        this.host = host;
+        this.port = port;
+        this.socket = socket;
         setMarshallingMethod(PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING);
+    }
+    //endregion Constructors
+
+    //region Getters/Setters
+    /**
+     * @return the connection id
+     */
+    public int getId() {
+        return id;
     }
 
     /**
-     * @return <code>true</code> if it's the Server connection
+     * Sets the connection id
+     * Note: Be careful with using this method.
+     *
+     * @param id new connection id
      */
-    public boolean isServer() {
-        return host == null;
+    public void setId(final int id) {
+        this.id = id;
+    }
+
+    /**
+     * @return a very approximate count of how many bytes were sent
+     */
+    public synchronized long bytesSent() {
+        return bytesSent;
+    }
+
+    /**
+     * @return a very approximate count of how many bytes were received
+     */
+    public synchronized long bytesReceived() {
+        return bytesReceived;
     }
 
     /**
@@ -167,8 +167,30 @@ public abstract class AbstractConnection {
      */
     protected void setMarshallingMethod(final PacketMarshallerMethod marshallingMethod) {
         this.marshallingMethod = marshallingMethod;
-        marshaller = Objects.requireNonNull(marshallerFactory.getMarshaller(marshallingMethod),
-                "Unimplemented marshalling type");
+        marshaller = Objects.requireNonNull(PacketMarshallerFactory.getInstance()
+                .getMarshaller(marshallingMethod), "Unimplemented marshalling type");
+    }
+
+    /**
+     * @return <code>true</code> if this connection compresses the sent data
+     */
+    public boolean isCompressed() {
+        return compressed;
+    }
+
+    /**
+     * @param compressed if this connection is to be compressed
+     */
+    public void setCompressed(final boolean compressed) {
+        this.compressed = compressed;
+    }
+    //endregion Getters/Setters
+
+    /**
+     * @return <code>true</code> if it's the Server connection
+     */
+    public boolean isServer() {
+        return host == null;
     }
 
     /**
@@ -219,23 +241,6 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * @return the connection ID
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Sets the connection ID
-     *
-     * @param id new connection ID
-     * @note Be careful with using this method
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * @return the address this socket is or was connected to
      */
     public String getInetAddress() {
@@ -243,22 +248,6 @@ public abstract class AbstractConnection {
             return socket.getInetAddress().toString();
         }
         return "Unknown";
-    }
-
-    /**
-     * @return <code>true</code> if this connection compress the sent data
-     */
-    public boolean isCompressed() {
-        return zipData;
-    }
-
-    /**
-     * Sets the compression
-     *
-     * @param compress
-     */
-    public void setCompression(boolean compress) {
-        zipData = compress;
     }
 
     /**
@@ -290,26 +279,12 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * @return a very approximate count of how many bytes were sent
-     */
-    public synchronized long bytesSent() {
-        return bytesSent;
-    }
-
-    /**
-     * @return a very approximate count of how many bytes were received
-     */
-    public synchronized long bytesReceived() {
-        return bytesReceived;
-    }
-
-    /**
      * Adds the specified connection listener to receive connection events from connection.
      *
      * @param listener the connection listener.
      */
     public void addConnectionListener(ConnectionListener listener) {
-        connectionListeners.addElement(listener);
+        connectionListeners.add(listener);
     }
 
     /**
@@ -318,7 +293,7 @@ public abstract class AbstractConnection {
      * @param listener the connection listener.
      */
     public void removeConnectionListener(ConnectionListener listener) {
-        connectionListeners.removeElement(listener);
+        connectionListeners.add(listener);
     }
 
     /**
@@ -374,7 +349,7 @@ public abstract class AbstractConnection {
 
     /**
      * Appends the last commands sent or received to the given
-     * <code>StringBuffer</code> dependig on the <code>sent</code> parameter
+     * <code>StringBuffer</code> depending on the <code>sent</code> parameter
      *
      * @param sent indicates which commands (sent/received) should be reported
      */
@@ -412,7 +387,6 @@ public abstract class AbstractConnection {
     protected OutputStream getOutputStream() throws IOException {
         return socket.getOutputStream();
     }
-
 
     protected int getSendBufferSize() throws SocketException {
         return socket.getSendBufferSize();
@@ -471,8 +445,8 @@ public abstract class AbstractConnection {
      * process a received packet
      */
     protected void processPacket(INetworkPacket np) throws Exception {
-        AbstractPacketMarshaller pm = Objects.requireNonNull(marshallerFactory.getMarshaller(np.getMarshallingMethod()),
-                "Unknown marshalling type");
+        AbstractPacketMarshaller pm = Objects.requireNonNull(PacketMarshallerFactory.getInstance()
+                        .getMarshaller(np.getMarshallingMethod()), "Unknown marshalling type");
         byte[] data = np.getData();
         bytesReceived += data.length;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
@@ -492,7 +466,7 @@ public abstract class AbstractConnection {
     /**
      * process a packet to be sent
      */
-    protected void processPacket(SendPacket packet) throws Exception {
+    protected void processPacket(SendPacket packet) {
         sendNow(packet);
     }
 
@@ -561,17 +535,16 @@ public abstract class AbstractConnection {
      * @param event the game event.
      */
     protected void processConnectionEvent(ConnectionEvent event) {
-        for (Enumeration<ConnectionListener> e = connectionListeners.elements(); e.hasMoreElements(); ) {
-            ConnectionListener l = e.nextElement();
+        for (final ConnectionListener listener : connectionListeners) {
             switch (event.getType()) {
                 case ConnectionEvent.CONNECTED:
-                    l.connected((ConnectedEvent) event);
+                    listener.connected((ConnectedEvent) event);
                     break;
                 case ConnectionEvent.DISCONNECTED:
-                    l.disconnected((DisconnectedEvent) event);
+                    listener.disconnected((DisconnectedEvent) event);
                     break;
                 case ConnectionEvent.PACKET_RECEIVED:
-                    l.packetReceived((PacketReceivedEvent) event);
+                    listener.packetReceived((PacketReceivedEvent) event);
                     break;
                 default:
                     LogManager.getLogger().error("Received unknown connection event type of " + event.getType());
@@ -590,7 +563,7 @@ public abstract class AbstractConnection {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             OutputStream out;
             try {
-                if (zipData && (packet.getData() != null)) {
+                if (compressed && (packet.getData() != null)) {
                     out = new GZIPOutputStream(bos);
                     zipped = true;
                 } else {

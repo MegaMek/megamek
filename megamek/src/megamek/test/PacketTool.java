@@ -1,5 +1,7 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,15 +15,13 @@
  */
 package megamek.test;
 
+import megamek.MegaMek;
 import megamek.common.Board;
 import megamek.common.net.*;
 import megamek.common.net.enums.PacketCommand;
-import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -36,55 +36,37 @@ import java.util.TimerTask;
  *
  * @author James Damour <suvarov454@users.sourceforge.net>
  */
-public class PacketTool extends Frame implements Runnable {
-
-    private static final long serialVersionUID = 3249150110009720658L;
-
-    /**
-     * The currently-loaded <code>Board</code>. May be <code>null</code>.
-     */
+public class PacketTool extends JFrame implements Runnable {
+    /** The currently-loaded <code>Board</code>. May be <code>null</code>. */
     private Board board = null;
 
-    /**
-     * The panel containing the connection controls.
-     */
-    private Panel panConnect = null;
+    /** The panel containing the connection controls. */
+    private Panel panConnect;
 
-    /**
-     * The panel containing the transmission controls.
-     */
-    private Panel panXmit = null;
+    /** The panel containing the transmission controls. */
+    private Panel panXmit;
 
-    /**
-     * The text control where the host name is entered.
-     */
-    private TextField hostName = null;
+    /** The text control where the host name is entered. */
+    private TextField hostName;
 
-    /**
-     * The text control where the host port is entered.
-     */
-    private TextField hostPort = null;
+    /** The text control where the host port is entered. */
+    private TextField hostPort;
 
-    /**
-     * The label where the board name is displayed.
-     */
-    private Label boardName = null;
+    /** The label where the board name is displayed. */
+    private Label boardName;
 
-    /**
-     * The button that sends the loaded board.
-     */
-    private Button butSend = null;
+    /** The button that sends the loaded board. */
+    private Button butSend;
 
-    /**
-     * The connection to the other peer.
-     */
-    AbstractConnection conn = null;
+    /** The connection to the other peer. */
+    private AbstractConnection conn = null;
 
     /**
      * Display a window for testing the transmission of boards.
      */
-    public static void main(String[] args) {
-        Frame frame = new PacketTool();
+    public static void main(String... args) {
+        MegaMek.initializeLogging("Packet Tool");
+        JFrame frame = new PacketTool();
 
         // set visible on middle of screen
         frame.pack();
@@ -92,7 +74,6 @@ public class PacketTool extends Frame implements Runnable {
 
         // Show the window.
         frame.setVisible(true);
-
     }
 
     /**
@@ -101,20 +82,18 @@ public class PacketTool extends Frame implements Runnable {
      * call <code>setVisible(true)</code>.
      */
     public PacketTool() {
-        super("Board Transmition");
-        Button button = null;
-        Panel main = null;
+        super("Board Transmission");
 
         // Handle the frame stuff.
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent evt) {
                 quit();
             }
         });
 
         // Create the panels.
-        main = new Panel();
+        Panel main = new Panel();
         main.setLayout(new GridLayout(0, 1));
         panConnect = new Panel();
         panConnect.setLayout(new GridLayout(0, 2));
@@ -132,45 +111,24 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.add(new Label("Port Number:"));
         hostPort = new TextField("2346", 10);
         panConnect.add(hostPort);
-        button = new Button("Listen");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                (new Thread(PacketTool.this, "Packet Reader")).start();
-            }
-        });
+        Button button = new Button("Listen");
+        button.addActionListener(e -> (new Thread(this, "Packet Reader")).start());
         panConnect.add(button);
         button = new Button("Connect");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                connect();
-            }
-        });
+        button.addActionListener(e -> connect());
         panConnect.add(button);
 
         // Populate the transmission panel.
         button = new Button("Load Board");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boardLoad();
-            }
-        });
+        button.addActionListener(e -> boardLoad());
         panXmit.add(button);
         boardName = new Label();
         boardName.setAlignment(Label.CENTER);
         panXmit.add(boardName);
         butSend = new Button("Send");
-        butSend.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                send();
-            }
-        });
+        butSend.addActionListener(e -> send());
         butSend.setEnabled(false);
         panXmit.add(butSend);
-
     }
 
     /**
@@ -188,11 +146,10 @@ public class PacketTool extends Frame implements Runnable {
      */
     public void connect() {
         String host = hostName.getText();
-        int port = 0;
+        int port;
         try {
             port = Integer.parseInt(hostPort.getText());
-            conn = ConnectionFactory.getInstance().createServerConnection(
-                    new Socket(host, port), 1);
+            conn = ConnectionFactory.getInstance().createServerConnection(new Socket(host, port), 1);
             Timer t = new Timer(true);
             final Runnable packetUpdate = () -> {
                 AbstractConnection connection = conn;
@@ -206,22 +163,22 @@ public class PacketTool extends Frame implements Runnable {
                 public void run() {
                     try {
                         SwingUtilities.invokeAndWait(packetUpdate);
-                    } catch (Exception ie) {
-                        //this should never fail
+                    } catch (Exception ex) {
+                        System.err.println("Failed to invoke the packet update, which shouldn't be possible");
+                        ex.printStackTrace();
                     }
                 }
             };
             t.schedule(packetUpdate2, 500, 150);
 
-            // conn = new XmlConnection( this, new Socket(host, port), 1 );
             System.out.println("Connected to peer.");
             conn.addConnectionListener(connectionListener);
 
             board = new Board();
             panConnect.setEnabled(false);
             panXmit.setEnabled(true);
-        } catch (Throwable err) {
-            err.printStackTrace();
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -231,34 +188,29 @@ public class PacketTool extends Frame implements Runnable {
     public void boardLoad() {
         FileDialog fd = new FileDialog(this, "Load Board...", FileDialog.LOAD);
         fd.setDirectory("data" + File.separator + "boards");
-        if (boardName.getText().length() > 0) {
+        if (!boardName.getText().isBlank()) {
             fd.setFile(boardName.getText());
         }
         fd.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
         fd.setVisible(true);
 
         if (fd.getFile() == null) {
-            // I want a file, y'know!
             return;
         }
-        String curpath = fd.getDirectory();
-        String curfile = fd.getFile();
-        // load!
-        try {
-            InputStream is = new FileInputStream(new File(curpath, curfile));
+
+        final String currentFile = fd.getFile();
+
+        try (InputStream is = new FileInputStream(new File(fd.getDirectory(), currentFile))) {
             board.load(is);
-            // okay, done!
-            is.close();
-
-            // Record the file's name.
-            boardName.setText(curfile);
-
-            // Enable the send button.
-            butSend.setEnabled(true);
-        } catch (IOException ex) {
-            System.err.println("error opening file to save!");
-            System.err.println(ex);
+        } catch (Exception ex) {
+            System.err.println("Error opening file to save!");
+            ex.printStackTrace();
+            return;
         }
+
+        // Record the file's name and enable the send button
+        boardName.setText(currentFile);
+        butSend.setEnabled(true);
     }
 
     /**
@@ -283,25 +235,22 @@ public class PacketTool extends Frame implements Runnable {
      */
     @Override
     public void run() {
-        int port = 0;
         try {
-            port = Integer.parseInt(hostPort.getText());
-            ServerSocket serverSocket = new ServerSocket(port);
+            ServerSocket serverSocket = new ServerSocket(Integer.parseInt(hostPort.getText()));
             Socket s = serverSocket.accept();
             serverSocket.close();
 
             System.out.println("Accepted peer connection.");
 
             conn = ConnectionFactory.getInstance().createServerConnection(s, 0);
-            // conn = new XmlConnection(this, s, 0);
             conn.addConnectionListener(connectionListener);
 
             board = new Board();
             panConnect.setEnabled(false);
             panXmit.setEnabled(true);
 
-        } catch (Throwable err) {
-            err.printStackTrace();
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -315,11 +264,11 @@ public class PacketTool extends Frame implements Runnable {
      */
     public synchronized void handle(int id, Packet packet) {
         if (packet == null) {
-            LogManager.getLogger().error(String.format("Connection #%s received a null packet.", id));
+            System.err.printf("Connection #%s received a null packet from id %n", id);
             return;
         }
 
-        LogManager.getLogger().error(String.format("Connection #%s received a %s packet.", id, packet.getCommand().name()));
+        System.out.printf("Connection #%s received a %s packet from id %n", id, packet.getCommand().name());
 
         if (packet.getCommand().isSendingBoard()) {
             // Save the board here
@@ -327,7 +276,7 @@ public class PacketTool extends Frame implements Runnable {
             try (OutputStream os = new FileOutputStream("xmit.board")) {
                 recvBoard.save(os);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                ex.printStackTrace();
             }
         }
     }
@@ -347,12 +296,10 @@ public class PacketTool extends Frame implements Runnable {
         butSend.setEnabled(false);
         boardName.setText("");
         board = null;
-        deadConn = null;
         panConnect.setEnabled(true);
     }
 
     private ConnectionListener connectionListener = new ConnectionListener() {
-
         /**
          * Called when it is sensed that a connection has terminated.
          */
@@ -365,6 +312,5 @@ public class PacketTool extends Frame implements Runnable {
         public void packetReceived(PacketReceivedEvent e) {
             PacketTool.this.handle(e.getConnection().getId(), e.getPacket());
         }
-
     };
 }

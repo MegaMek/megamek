@@ -1471,19 +1471,16 @@ public class TestMech extends TestEntity {
             for (Mounted m : mech.getMisc()) {
                 if (m.getLocation() == loc) {
                     if (m.getType().hasFlag(MiscType.F_CLUB)
-                            && (m.getType().hasSubType(MiscType.S_SWORD)
-                                    || m.getType().hasSubType(
-                                            MiscType.S_VIBRO_LARGE)
-                                    || m.getType().hasSubType(
-                                            MiscType.S_VIBRO_MEDIUM) || m
-                                    .getType().hasSubType(
-                                            MiscType.S_VIBRO_SMALL))) {
+                            && (m.getType().hasSubType(MiscType.S_SWORD | MiscType.S_VIBRO_LARGE
+                            | MiscType.S_VIBRO_MEDIUM | MiscType.S_VIBRO_SMALL | MiscType.S_HATCHET
+                            | MiscType.S_CHAIN_WHIP | MiscType.S_CLAW | MiscType.S_FLAIL | MiscType.S_LANCE
+                            | MiscType.S_MACE))) {
                         count++;
                     }
                 }
             }
             if (count > 1) {
-                buff.append("only one sword/vibroblade per arm\n");
+                buff.append("only one physical attack weapon per arm\n");
                 illegal = true;
             }
         }
@@ -1510,12 +1507,13 @@ public class TestMech extends TestEntity {
     }
 
     /**
-     * @param misc A type of equipment that can be mounted in a mech arm
+     * @param equipment A type of equipment that can be mounted in a mech arm
      * @return     Whether the equipment requires the hand acutator
      */
-    public static boolean requiresHandActuator(MiscType misc) {
-        return misc.hasFlag(MiscType.F_CLUB)
-                && misc.hasSubType(MiscType.S_CHAIN_WHIP
+    public static boolean requiresHandActuator(EquipmentType equipment) {
+        return (equipment instanceof MiscType)
+                && equipment.hasFlag(MiscType.F_CLUB)
+                && equipment.hasSubType(MiscType.S_CHAIN_WHIP
                 | MiscType.S_HATCHET
                 | MiscType.S_MACE
                 | MiscType.S_SWORD
@@ -1551,12 +1549,10 @@ public class TestMech extends TestEntity {
      */
     public static boolean isValidMechLocation(Mech mech, EquipmentType eq, int location, @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_CLUB) && ((eq.getSubType() &
-                            (MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
-                                    | MiscType.S_WRECKING_BALL | MiscType.S_BACKHOE
+            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
+                                     | MiscType.S_BACKHOE | MiscType.S_MINING_DRILL
                                     | MiscType.S_COMBINE | MiscType.S_CHAINSAW
-                                    | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW
-                                    | MiscType.S_SPOT_WELDER | MiscType.S_PILE_DRIVER)) != 0)) {
+                                    | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW | MiscType.S_SPOT_WELDER))) {
                 if (mech.entityIsQuad() && (location != Mech.LOC_LT) && (location != Mech.LOC_RT)) {
                     if (buffer != null) {
                         buffer.append(eq.getName()).append(" must be mounted in a side torso.\n");
@@ -1568,6 +1564,22 @@ public class TestMech extends TestEntity {
                     }
                     return false;
                 }
+            }
+            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
+                    | MiscType.S_CHAIN_WHIP | MiscType.S_CLAW | MiscType.S_FLAIL | MiscType.S_LANCE
+                    | MiscType.S_MACE | MiscType.S_VIBRO_LARGE | MiscType.S_VIBRO_MEDIUM | MiscType.S_VIBRO_SMALL
+                    | MiscType.S_WRECKING_BALL)) && (mech.entityIsQuad()
+                    || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
+            }
+            if (requiresHandActuator(eq) && !mech.hasSystem(Mech.ACTUATOR_HAND, location)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" requires a hand actuator.\n");
+                }
+                return false;
             }
             if (eq.hasFlag(MiscType.F_SALVAGE_ARM) && (mech.entityIsQuad()
                     || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
@@ -1618,13 +1630,26 @@ public class TestMech extends TestEntity {
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_LADDER))
-                    && !mech.locationIsTorso(location)) {
+                    || eq.hasFlag(MiscType.F_LADDER)) && !mech.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }
                 return false;
+            }
+            if (eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+                if (!mech.entityIsQuad()) {
+                    if (buffer != null) {
+                        buffer.append(eq.getName()).append(" can only be used by quadruped Meks.\n");
+                    }
+                    return false;
+                }
+                if (!mech.locationIsTorso(location)) {
+                    if (buffer != null) {
+                        buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
+                    }
+                    return false;
+                }
             }
             if (eq.hasFlag(MiscType.F_LIFTHOIST) && ((location == Mech.LOC_HEAD) || mech.locationIsLeg(location))) {
                 if (buffer != null) {

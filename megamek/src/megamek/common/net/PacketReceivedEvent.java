@@ -19,28 +19,36 @@
  */
 package megamek.common.net;
 
+import megamek.common.net.enums.ConnectionEventType;
+
 /**
  * Instances of this class are sent when packet received
  */
 public class PacketReceivedEvent extends ConnectionEvent {
+    //region Variable Declarations
     private static final long serialVersionUID = -3542045596045067466L;
-    private Packet packet;
+    private final Packet packet;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
      * Constructs connection event
      * 
      * @param source The object on which the Event initially occurred.
      * @param packet The received packet
      */
-    public PacketReceivedEvent(Object source, Packet packet) {
-        super(source, PACKET_RECEIVED);
+    public PacketReceivedEvent(final Object source, final Packet packet) {
+        super(ConnectionEventType.PACKET_RECEIVED, source);
         this.packet = packet;
     }
+    //endregion Constructors
 
+    //region Getters
     /**
      * @return the received packet
      */
     public Packet getPacket() {
         return packet;
     }
+    //endregion Getters
 }

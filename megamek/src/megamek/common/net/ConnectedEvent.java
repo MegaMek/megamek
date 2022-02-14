@@ -19,6 +19,8 @@
  */
 package megamek.common.net;
 
+import megamek.common.net.enums.ConnectionEventType;
+
 /**
  * Instances of this class are sent when Connection established
  */
@@ -34,7 +36,7 @@ public class ConnectedEvent extends ConnectionEvent {
      * @param source The object on which the Event initially occurred.
      */
     public ConnectedEvent(final Object source) {
-        super(source, CONNECTED);
+        super(ConnectionEventType.CONNECTED, source);
     }
     //endregion Constructors
 }

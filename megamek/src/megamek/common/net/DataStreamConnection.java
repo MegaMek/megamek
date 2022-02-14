@@ -40,14 +40,14 @@ class DataStreamConnection extends AbstractConnection {
      * Creates new server connection
      */
     public DataStreamConnection(Socket socket, int id) {
-        super(socket, id);
+        super(id, socket);
     }
 
     /**
      * Creates new Client connection
      */
     public DataStreamConnection(String host, int port, int id) {
-        super(host, port, id);
+        super(id, host, port);
     }
 
     /**

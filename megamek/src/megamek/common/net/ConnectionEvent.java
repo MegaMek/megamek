@@ -19,6 +19,8 @@
  */
 package megamek.common.net;
 
+import megamek.common.net.enums.ConnectionEventType;
+
 import java.util.EventObject;
 
 /**
@@ -30,21 +32,18 @@ import java.util.EventObject;
 public abstract class ConnectionEvent extends EventObject {
     //region Variable Declarations
     private static final long serialVersionUID = 6124300183866317006L;
-    public static final int CONNECTED = 0;
-    public static final int DISCONNECTED = 1;
-    public static final int PACKET_RECEIVED = 2;
 
-    private final int type;
+    private final ConnectionEventType type;
     //endregion Variable Declarations
 
     //region Constructors
     /**
      * Constructs connection event
-     * 
+     *
+     * @param type the connection event type
      * @param source The object on which the Event initially occurred.
-     * @param type event type
      */
-    protected ConnectionEvent(Object source, int type) {
+    protected ConnectionEvent(final ConnectionEventType type, final Object source) {
         super(source);
         this.type = type;
     }
@@ -54,7 +53,7 @@ public abstract class ConnectionEvent extends EventObject {
     /**
      * @return the type of the event
      */
-    public int getType() {
+    public ConnectionEventType getType() {
         return type;
     }
 
@@ -68,22 +67,6 @@ public abstract class ConnectionEvent extends EventObject {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        switch (this.type) {
-            case CONNECTED:
-                sb.append("Connected");
-                break;
-            case DISCONNECTED:
-                sb.append("Disconnected");
-                break;
-            case PACKET_RECEIVED:
-                sb.append("Packet Received");
-                break;
-            default:
-                sb.append("Unknown");
-                break;
-        }
-        sb.append(" connection event ");
-        return sb.toString();
+        return getType().name();
     }
 }

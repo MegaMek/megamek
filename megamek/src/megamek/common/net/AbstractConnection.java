@@ -534,23 +534,8 @@ public abstract class AbstractConnection {
      *
      * @param event the game event.
      */
-    protected void processConnectionEvent(ConnectionEvent event) {
-        for (final ConnectionListener listener : connectionListeners) {
-            switch (event.getType()) {
-                case ConnectionEvent.CONNECTED:
-                    listener.connected((ConnectedEvent) event);
-                    break;
-                case ConnectionEvent.DISCONNECTED:
-                    listener.disconnected((DisconnectedEvent) event);
-                    break;
-                case ConnectionEvent.PACKET_RECEIVED:
-                    listener.packetReceived((PacketReceivedEvent) event);
-                    break;
-                default:
-                    LogManager.getLogger().error("Received unknown connection event type of " + event.getType());
-                    break;
-            }
-        }
+    protected void processConnectionEvent(final ConnectionEvent event) {
+        connectionListeners.forEach(listener -> event.getType().processListener(event, listener));
     }
 
     private class SendPacket implements INetworkPacket {

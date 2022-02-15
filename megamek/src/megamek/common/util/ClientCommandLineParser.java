@@ -8,14 +8,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public  class ServerCommandLineParser extends AbstractCommandLineParser {
+public  class ClientCommandLineParser extends AbstractCommandLineParser {
 
     public enum ServerCommandLineFlag {
         //region Enum Declarations
         PORT("port","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
         PASSWORD("password","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
-        ANNOUNCE("announce","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
-        MAIL("mail","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT);
+        HOST("announce","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
+        PLAYERNAME("mail","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT);
         //endregion Enum Declarations
 
         private final String name;
@@ -23,8 +23,8 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
 
         //region Constructors
         ServerCommandLineFlag(final String name, final String toolTipText) {
-//            final ResourceBundle resources = ResourceBundle.getBundle("mekhq.resources.Finances",
-//                    MegaMek.getMekHQOptions().getLocale(), new EncodeControl());
+            //            final ResourceBundle resources = ResourceBundle.getBundle("mekhq.resources.Finances",
+            //                    MegaMek.getMekHQOptions().getLocale(), new EncodeControl());
             this.name = name;
             this.toolTipText = toolTipText; //resources.getString(toolTipText);
         }
@@ -49,20 +49,12 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
         }
     }
 
-    private String gameFilename;
+    private String host;
     private int port;
     private String password;
-    private String announceUrl = "";
-    private String mailProperties;
+    private String playerName = "";
 
-
-    // Options
-//    private static final String OPTION_PORT = "port";
-//    private static final String OPTION_PASSWORD = "password";
-//    private static final String OPTION_ANNOUNCE = "announce";
-//    private static final String OPTION_MAIL = "mail";
-
-    public ServerCommandLineParser(String[] args) {
+    public ClientCommandLineParser(String[] args) {
         super(args);
     }
 
@@ -80,23 +72,12 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
         return password;
     }
 
-    public String getAnnounceUrl() {
-        return announceUrl;
+    public String getPlayerName() {
+        return playerName;
     }
 
-    public boolean getRegister() {
-        return (announceUrl != null) && (!announceUrl.isBlank());
-    }
-
-    public String getMailProperties() {
-        return mailProperties;
-    }
-
-    /**
-     * @return the game file name option value or <code>null</code> if it wasn't set
-     */
-    public String getGameFilename() {
-        return gameFilename;
+    public String getHost() {
+        return host;
     }
 
     @Override
@@ -111,26 +92,22 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
                                 nextToken();
                                 parsePort();
                                 break;
-                            case ANNOUNCE:
+                            case HOST:
                                 nextToken();
-                                parseAnnounce();
+                                parseHost();
                                 break;
                             case PASSWORD:
                                 nextToken();
                                 parsePassword();
                                 break;
-                            case MAIL:
+                            case PLAYERNAME:
                                 nextToken();
-                                parseMail();
+                                parsePlayerName();
                                 break;
                         }
                     } catch (Exception ex) {
                         //ignore or fail?
                     }
-                    break;
-                case TOK_LITERAL:
-                    gameFilename = getTokenValue();
-                    nextToken();
                     break;
                 case TOK_EOF:
                     // Do nothing, although this shouldn't happen
@@ -140,41 +117,6 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
             }
             nextToken();
         }
-//        while (hasNext()) {
-//            int tokType = getToken();
-//            switch (tokType) {
-//                case TOK_OPTION:
-//                    switch (getTokenValue()) {
-//                        case OPTION_PORT:
-//                            nextToken();
-//                            parsePort();
-//                            break;
-//                        case OPTION_ANNOUNCE:
-//                            nextToken();
-//                            parseAnnounce();
-//                            break;
-//                        case OPTION_PASSWORD:
-//                            nextToken();
-//                            parsePassword();
-//                            break;
-//                        case OPTION_MAIL:
-//                            nextToken();
-//                            parseMail();
-//                            break;
-//                    }
-//                    break;
-//                case TOK_LITERAL:
-//                    gameFilename = getTokenValue();
-//                    nextToken();
-//                    break;
-//                case TOK_EOF:
-//                    // Do nothing, although this shouldn't happen
-//                    break;
-//                default:
-//                    throw new ParseException("unexpected input");
-//            }
-//            nextToken();
-//        }
     }
 
     private void parsePort() throws ParseException {
@@ -194,11 +136,11 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
         }
     }
 
-    private void parseAnnounce() throws ParseException {
+    private void parsePlayerName() throws ParseException {
         if (getToken() == TOK_LITERAL) {
-            announceUrl = getTokenValue();
+            playerName = getTokenValue();
         } else {
-            throw new ParseException("meta server announce URL expected");
+            throw new ParseException("playerName expected");
         }
     }
 
@@ -210,9 +152,9 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
         }
     }
 
-    private void parseMail() throws ParseException {
+    private void parseHost() throws ParseException {
         if (getToken() == TOK_LITERAL) {
-            mailProperties = getTokenValue();
+            host = getTokenValue();
         } else {
             throw new ParseException("mail properties expected");
         }

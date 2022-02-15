@@ -1,6 +1,7 @@
 Version:1.0
 Powerman SC XI-M-B LoaderMech
 MOD
+mul id:2566
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.0
 Pacifier SecurityMech
 CCU-36 
+mul id:4780
 
 Config:Biped
 techbase:Inner Sphere

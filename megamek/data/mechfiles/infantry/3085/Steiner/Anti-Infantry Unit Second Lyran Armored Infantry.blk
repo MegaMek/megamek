@@ -15,6 +15,10 @@ Anti-Infantry Unit
 <Model>
 Second Lyran Armored Infantry
 </Model>
+
+<mul id:>
+3701
+</mul id:>
 <squad_size>
 7
 </squad_size>

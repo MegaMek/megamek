@@ -19,6 +19,10 @@ Grenadier Battle Armor
 [LRR]
 </Model>
 
+<mul id:>
+4242
+</mul id:>
+
 <chassis>
 biped
 </chassis>

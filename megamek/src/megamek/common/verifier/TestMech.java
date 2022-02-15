@@ -1464,27 +1464,7 @@ public class TestMech extends TestEntity {
                 illegal = true;
             }
         }
-        
-        // only one sword/vibroblade per arm
-        for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LARM; loc++) {
-            int count = 0;
-            for (Mounted m : mech.getMisc()) {
-                if (m.getLocation() == loc) {
-                    if (m.getType().hasFlag(MiscType.F_CLUB)
-                            && (m.getType().hasSubType(MiscType.S_SWORD | MiscType.S_VIBRO_LARGE
-                            | MiscType.S_VIBRO_MEDIUM | MiscType.S_VIBRO_SMALL | MiscType.S_HATCHET
-                            | MiscType.S_CHAIN_WHIP | MiscType.S_CLAW | MiscType.S_FLAIL | MiscType.S_LANCE
-                            | MiscType.S_MACE))) {
-                        count++;
-                    }
-                }
-            }
-            if (count > 1) {
-                buff.append("only one physical attack weapon per arm\n");
-                illegal = true;
-            }
-        }
-        
+
         return illegal;
     }
 
@@ -1566,10 +1546,16 @@ public class TestMech extends TestEntity {
                 }
             }
             if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
-                    | MiscType.S_CHAIN_WHIP | MiscType.S_CLAW | MiscType.S_FLAIL | MiscType.S_LANCE
-                    | MiscType.S_MACE | MiscType.S_VIBRO_LARGE | MiscType.S_VIBRO_MEDIUM | MiscType.S_VIBRO_SMALL
-                    | MiscType.S_WRECKING_BALL)) && (mech.entityIsQuad()
-                    || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
+                    | MiscType.S_CHAIN_WHIP | MiscType.S_FLAIL | MiscType.S_LANCE | MiscType.S_WRECKING_BALL
+                    | MiscType.S_MACE) || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
+                    && (mech.entityIsQuad() || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_HAND_WEAPON) && eq.hasSubType(MiscType.S_CLAW)
+                    && (mech.entityIsQuad() || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }

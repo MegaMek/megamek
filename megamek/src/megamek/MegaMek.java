@@ -22,6 +22,8 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
+import megamek.common.util.ClientCommandLineParser;
+import megamek.common.util.ServerCommandLineParser;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.server.DedicatedServer;
@@ -234,11 +236,22 @@ public class MegaMek {
      * Skip splash GUI, starts a host
      */
     private static void startHost(String... args) {
+        ServerCommandLineParser sclp = new ServerCommandLineParser(args);
+        ClientCommandLineParser cclp = new ClientCommandLineParser(args);
+        try {
+            sclp.parse();
+            cclp.parse();
+        } catch (AbstractCommandLineParser.ParseException e) {
+            LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                    + ARGUMENTS_DESCRIPTION_MESSAGE);
+        }
+
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
         //            if (!server.loadGame(new File("./savegames", savegame)))
-        mmg.startHost("",0, false, "", null, "" );
+        mmg.startHost(sclp.getPassword(), sclp.getPort(), sclp.getRegister(), sclp.getAnnounceUrl(),
+                null, cclp.getPlayerName() );
     }
 
     /**

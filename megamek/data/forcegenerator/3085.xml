@@ -13680,13 +13680,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Saroyan Jump Bomber' unitType='Conventional Fighter'>
-		<availability>CC:2-</availability>
-		<model name='(Standard)'>
-			<roles>spotter</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Sassanid' unitType='Dropship'>
 		<availability>CHH:6,CW:4,CLAN:5,CJF:4,CWIE:4,CGB:6</availability>
 		<model name='(2875)'>

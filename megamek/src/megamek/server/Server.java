@@ -13244,15 +13244,12 @@ public class Server implements Runnable {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            String msg = "error: server got invalid attack packet from connection " + connId;
-            if (entity != null) {
-                msg += ", Entity: " + entity.getShortName();
-            } else {
-                msg += ", Entity was null!";
-            }
-            LogManager.getLogger().error(msg);
+            LogManager.getLogger().error(String.format(
+                    "Server got invalid attack packet from Connection %s, Entity %s, %s Turn",
+                    connId, ((entity == null) ? "null" : entity.getShortName()),
+                    ((turn == null) ? "null" : "invalid")));
             send(connId, createTurnVectorPacket());
-            send(connId, createTurnIndexPacket(turn.getPlayerNum()));
+            send(connId, createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerNum()));
             return;
         }
 

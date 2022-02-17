@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -17,26 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.packets;
 
-import megamek.common.net.enums.ConnectionEventType;
+import megamek.common.net.enums.PacketMarshallerMethod;
 
 /**
- * Instances of this class are sent when Connection closed
+ * Connection layer data packet.
  */
-public class DisconnectedEvent extends ConnectionEvent {
-    //region Variable Declarations
-    private static final long serialVersionUID = -1427252999207396447L;
-    //endregion Variable Declarations
-
-    //region Constructors
+public interface INetworkPacket {
     /**
-     * Constructs connection event
-     * 
-     * @param source The object on which the Event initially occurred.
+     * @return the data marshalling method
      */
-    public DisconnectedEvent(final Object source) {
-        super(ConnectionEventType.DISCONNECTED, source);
-    }
-    //endregion Constructors
+    PacketMarshallerMethod getMarshallingMethod();
+
+    /**
+     * @return <code>true</code> if data is compressed
+     */
+    boolean isCompressed();
+
+    /**
+     * @return the packet's data
+     */
+    byte[] getData();
 }

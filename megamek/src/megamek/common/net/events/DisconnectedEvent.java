@@ -17,16 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.events;
 
 import megamek.common.net.enums.ConnectionEventType;
 
 /**
- * Instances of this class are sent when Connection established
+ * Instances of this class are sent when Connection closed
  */
-public class ConnectedEvent extends ConnectionEvent {
+public class DisconnectedEvent extends AbstractConnectionEvent {
     //region Variable Declarations
-    private static final long serialVersionUID = -5880245401940306338L;
+    private static final long serialVersionUID = -1427252999207396447L;
     //endregion Variable Declarations
 
     //region Constructors
@@ -35,8 +35,8 @@ public class ConnectedEvent extends ConnectionEvent {
      * 
      * @param source The object on which the Event initially occurred.
      */
-    public ConnectedEvent(final Object source) {
-        super(ConnectionEventType.CONNECTED, source);
+    public DisconnectedEvent(final Object source) {
+        super(ConnectionEventType.DISCONNECTED, source);
     }
     //endregion Constructors
 }

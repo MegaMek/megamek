@@ -17,10 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.connections;
 
 import megamek.common.net.enums.PacketMarshallerMethod;
 import megamek.common.net.enums.PacketReadState;
+import megamek.common.net.packets.INetworkPacket;
+import megamek.common.net.packets.NetworkPacket;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -32,7 +34,7 @@ import java.net.SocketException;
  * <code>DataInputStream</code> and <code>DataOutputStream</code> to
  * send/receive data.
  */
-class DataStreamConnection extends AbstractConnection {
+public class DataStreamConnection extends AbstractConnection {
     private DataInputStream in;
     private DataOutputStream out;
 
@@ -132,44 +134,5 @@ class DataStreamConnection extends AbstractConnection {
     @Override
     public String toString() {
         return "DataStreamConnection Id " + getId();
-    }
-
-    private static class NetworkPacket implements INetworkPacket {
-        //region Variable Declarations
-        /** Data marshalling method */
-        private final PacketMarshallerMethod marshallingMethod;
-
-        /** Is the data compressed */
-        private final boolean compressed;
-
-        /** Packet data*/
-        private final byte[] data;
-        //endregion Variable Declarations
-
-        //region Constructors
-        public NetworkPacket(final PacketMarshallerMethod marshallingMethod,
-                             final boolean compressed, final byte... data) {
-            this.marshallingMethod = marshallingMethod;
-            this.compressed = compressed;
-            this.data = data;
-        }
-        //endregion Constructors
-
-        //region Getters
-        @Override
-        public PacketMarshallerMethod getMarshallingMethod() {
-            return marshallingMethod;
-        }
-
-        @Override
-        public boolean isCompressed() {
-            return compressed;
-        }
-
-        @Override
-        public byte[] getData() {
-            return data;
-        }
-        //endregion Getters
     }
 }

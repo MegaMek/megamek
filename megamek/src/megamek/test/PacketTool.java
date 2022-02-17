@@ -17,8 +17,13 @@ package megamek.test;
 
 import megamek.MegaMek;
 import megamek.common.Board;
-import megamek.common.net.*;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.factories.ConnectionFactory;
+import megamek.common.net.listeners.ConnectionListener;
+import megamek.common.net.packets.Packet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -217,7 +222,7 @@ public class PacketTool extends JFrame implements Runnable {
      * Send the loaded board to the peer.
      */
     public void send() {
-        long start = conn.bytesSent();
+        long start = conn.getBytesSent();
         Packet packet = new Packet(PacketCommand.SENDING_BOARD, board);
         /*
          * 2003-12-21 : prove connectivity first, then add refinements * like
@@ -225,9 +230,9 @@ public class PacketTool extends JFrame implements Runnable {
          */
         conn.send(packet);
         System.out.print("Bytes sent: ");
-        System.out.print(conn.bytesSent() - start);
+        System.out.print(conn.getBytesSent() - start);
         System.out.print(", total sent: ");
-        System.out.println(conn.bytesSent());
+        System.out.println(conn.getBytesSent());
     }
 
     /**

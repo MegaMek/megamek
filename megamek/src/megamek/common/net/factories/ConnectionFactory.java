@@ -17,7 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.factories;
+
+import megamek.common.net.connections.DataStreamConnection;
+import megamek.common.net.connections.AbstractConnection;
 
 import java.net.Socket;
 
@@ -25,18 +28,24 @@ import java.net.Socket;
  * Connections factory. Creates the Client/Server connections
  */
 public class ConnectionFactory {
+    //region Variable Declarations
     private static ConnectionFactory instance = new ConnectionFactory();
+    //endregion Variable Declarations
 
+    //region Constructors
     private ConnectionFactory() {
 
     }
+    //endregion Constructors
 
+    //region Getters
     /**
      * @return the factory instance
      */
     public static ConnectionFactory getInstance() {
         return instance;
     }
+    //endregion Getters
 
     /**
      * Creates new Client (Client-Server) connection
@@ -46,7 +55,7 @@ public class ConnectionFactory {
      * @param id connection ID
      * @return new client (client-server) connection
      */
-    public AbstractConnection createClientConnection(String host, int port, int id) {
+    public AbstractConnection createClientConnection(final String host, final int port, final int id) {
         return new DataStreamConnection(host, port, id);
     }
 
@@ -57,7 +66,7 @@ public class ConnectionFactory {
      * @param id connection ID
      * @return new Server connection
      */
-    public AbstractConnection createServerConnection(Socket socket, int id) {
+    public AbstractConnection createServerConnection(final Socket socket, final int id) {
         return new DataStreamConnection(socket, id);
     }
 }

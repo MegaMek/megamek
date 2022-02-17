@@ -18,15 +18,21 @@
  */
 package megamek.common.net.enums;
 
-import megamek.common.net.*;
+import megamek.common.net.events.ConnectedEvent;
+import megamek.common.net.events.AbstractConnectionEvent;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.listeners.ConnectionListener;
 import org.apache.logging.log4j.LogManager;
 
 public enum ConnectionEventType {
+    //region Enum Declarations
     CONNECTED,
     PACKET_RECEIVED,
     DISCONNECTED;
+    //endregion Enum Declarations
 
-    public void processListener(final ConnectionEvent event, final ConnectionListener listener) {
+    public void processListener(final AbstractConnectionEvent event, final ConnectionListener listener) {
         switch (this) {
             case CONNECTED:
                 listener.connected((ConnectedEvent) event);

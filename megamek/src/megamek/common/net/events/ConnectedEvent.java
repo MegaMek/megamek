@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -16,26 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.events;
 
-import megamek.common.net.enums.PacketMarshallerMethod;
+import megamek.common.net.enums.ConnectionEventType;
 
 /**
- * Connection layer data packet.
+ * Instances of this class are sent when Connection established
  */
-public interface INetworkPacket {
-    /**
-     * @return the data marshalling method
-     */
-    PacketMarshallerMethod getMarshallingMethod();
+public class ConnectedEvent extends AbstractConnectionEvent {
+    //region Variable Declarations
+    private static final long serialVersionUID = -5880245401940306338L;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
-     * @return <code>true</code> if data is compressed
+     * Constructs connection event
+     * 
+     * @param source The object on which the Event initially occurred.
      */
-    boolean isCompressed();
-
-    /**
-     * @return the packet's data
-     */
-    byte[] getData();
+    public ConnectedEvent(final Object source) {
+        super(ConnectionEventType.CONNECTED, source);
+    }
+    //endregion Constructors
 }

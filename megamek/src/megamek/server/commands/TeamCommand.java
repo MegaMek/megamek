@@ -13,7 +13,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.net.AbstractConnection;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.server.Server;
 
 import java.util.Enumeration;

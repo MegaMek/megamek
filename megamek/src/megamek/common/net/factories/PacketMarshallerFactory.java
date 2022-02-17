@@ -17,10 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net.marshall;
+package megamek.common.net.factories;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.net.enums.PacketMarshallerMethod;
+import megamek.common.net.marshalling.AbstractPacketMarshaller;
+import megamek.common.net.marshalling.NativeSerializationMarshaller;
 
 public class PacketMarshallerFactory {
     //region Variable Declarations
@@ -38,7 +40,8 @@ public class PacketMarshallerFactory {
         return instance;
     }
 
-    public @Nullable AbstractPacketMarshaller getMarshaller(final PacketMarshallerMethod marshallingMethod) {
+    public @Nullable
+    AbstractPacketMarshaller getMarshaller(final PacketMarshallerMethod marshallingMethod) {
         switch (marshallingMethod) {
             case NATIVE_SERIALIZATION_MARSHALLING:
                 if (nativeSerializationMarshaller == null) {

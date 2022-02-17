@@ -17,11 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net.marshall;
+package megamek.common.net.marshalling;
 
 import megamek.MMConstants;
-import megamek.common.net.Packet;
 import megamek.common.net.enums.PacketMarshallerMethod;
+import megamek.common.net.packets.Packet;
 import org.nibblesec.tools.SerialKiller;
 
 import java.io.InputStream;

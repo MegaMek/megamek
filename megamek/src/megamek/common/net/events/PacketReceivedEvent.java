@@ -17,56 +17,39 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.events;
 
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.ConnectionEventType;
 
-import java.util.EventObject;
-
 /**
- * Instances of descendant classes are sent as a result of changes of the Connection state or packet
- * arrival.
- * 
- * @see ConnectionListener
+ * Instances of this class are sent when packet received
  */
-public abstract class ConnectionEvent extends EventObject {
+public class PacketReceivedEvent extends AbstractConnectionEvent {
     //region Variable Declarations
-    private static final long serialVersionUID = 6124300183866317006L;
-
-    private final ConnectionEventType type;
+    private static final long serialVersionUID = -3542045596045067466L;
+    private final Packet packet;
     //endregion Variable Declarations
 
     //region Constructors
     /**
      * Constructs connection event
-     *
-     * @param type the connection event type
+     * 
      * @param source The object on which the Event initially occurred.
+     * @param packet The received packet
      */
-    protected ConnectionEvent(final ConnectionEventType type, final Object source) {
-        super(source);
-        this.type = type;
+    public PacketReceivedEvent(final Object source, final Packet packet) {
+        super(ConnectionEventType.PACKET_RECEIVED, source);
+        this.packet = packet;
     }
     //endregion Constructors
 
     //region Getters
     /**
-     * @return the type of the event
+     * @return the received packet
      */
-    public ConnectionEventType getType() {
-        return type;
-    }
-
-    /**
-     * @return the connection on which the Event occurred; Equivalent to the {@link #getSource())
-     */
-    public AbstractConnection getConnection() {
-        return (AbstractConnection) getSource();
+    public Packet getPacket() {
+        return packet;
     }
     //endregion Getters
-
-    @Override
-    public String toString() {
-        return getType().name();
-    }
 }

@@ -17,18 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net.marshall;
+package megamek.common.net.marshalling;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.enums.PacketMarshallerMethod;
+import megamek.common.net.packets.Packet;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import megamek.common.annotations.Nullable;
-import megamek.common.net.Packet;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.enums.PacketMarshallerMethod;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Abstract marshaller that [un]marshalls the <code>Packet</code>
@@ -36,7 +36,6 @@ import org.apache.logging.log4j.LogManager;
 public abstract class AbstractPacketMarshaller {
     //region Variable Declarations
     protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
-
     private final PacketMarshallerMethod method;
     //endregion Variable Declarations
 

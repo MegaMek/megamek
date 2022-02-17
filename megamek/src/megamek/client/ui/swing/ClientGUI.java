@@ -42,7 +42,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
-import megamek.common.net.Packet;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;

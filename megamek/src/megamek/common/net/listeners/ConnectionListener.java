@@ -17,7 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net;
+package megamek.common.net.listeners;
+
+import megamek.common.net.events.AbstractConnectionEvent;
+import megamek.common.net.events.ConnectedEvent;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
 
 import java.util.EventListener;
 
@@ -34,12 +39,11 @@ import java.util.EventListener;
  * method will be invoked.
  *
  * @see EventListener
- * @see ConnectionEvent
+ * @see AbstractConnectionEvent
  */
 public class ConnectionListener implements EventListener {
     /**
      * Called when connection is established. The default behavior is to do nothing.
-     * 
      * @param evt connection event
      */
     public void connected(ConnectedEvent evt) {
@@ -48,7 +52,6 @@ public class ConnectionListener implements EventListener {
 
     /**
      * Called when connection is closed. The default behavior is to do nothing.
-     * 
      * @param evt connection event
      */
     public void disconnected(DisconnectedEvent evt) {
@@ -57,7 +60,6 @@ public class ConnectionListener implements EventListener {
 
     /**
      * Called when packed is received. The default behavior is to do nothing.
-     * 
      * @param evt connection event
      */
     public void packetReceived(PacketReceivedEvent evt) {

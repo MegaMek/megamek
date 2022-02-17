@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.net.Packet;
 import megamek.common.net.enums.PacketCommand;
 
 /**

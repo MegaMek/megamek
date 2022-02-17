@@ -20,6 +20,7 @@
 package megamek.common.net.connections;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.net.SendQueue;
 import megamek.common.net.enums.PacketMarshallerMethod;
 import megamek.common.net.events.AbstractConnectionEvent;
 import megamek.common.net.events.DisconnectedEvent;
@@ -510,10 +511,5 @@ public abstract class AbstractConnection {
      */
     protected void processConnectionEvent(final AbstractConnectionEvent event) {
         connectionListeners.forEach(listener -> event.getType().processListener(event, listener));
-    }
-
-
-    protected static class SendQueue {
-
     }
 }

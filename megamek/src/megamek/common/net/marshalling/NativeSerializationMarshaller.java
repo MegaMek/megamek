@@ -34,7 +34,7 @@ import java.io.OutputStream;
  */
 public class NativeSerializationMarshaller extends AbstractPacketMarshaller {
     //region Constructors
-    protected NativeSerializationMarshaller() {
+    public NativeSerializationMarshaller() {
         super(PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING);
     }
     //endregion Constructors

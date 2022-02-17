@@ -33,9 +33,8 @@ public class SendPacket implements INetworkPacket {
 
     public SendPacket(Packet packet) {
         command = packet.getCommand();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         OutputStream out;
-        try {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             if (compressed && (packet.getData() != null)) {
                 out = new GZIPOutputStream(bos);
                 zipped = true;

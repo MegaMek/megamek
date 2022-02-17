@@ -513,7 +513,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Send command to unload stranded entities to the server
      */
-    public void sendUnloadStranded(int[] entityIds) {
+    public void sendUnloadStranded(int... entityIds) {
         send(new Packet(PacketCommand.UNLOAD_STRANDED, entityIds));
     }
 
@@ -1306,9 +1306,6 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Send a Nova CEWS update packet
-     *
-     * @param id
-     * @param net
      */
     public void sendNovaChange(int id, String net) {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));

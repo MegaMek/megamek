@@ -27,11 +27,14 @@ import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class SendPacket implements INetworkPacket {
+    //region Variable Declarations
     private final PacketCommand command;
     private boolean zipped = false;
     private byte[] data;
+    //endregion Variable Declarations
 
-    public SendPacket(Packet packet) {
+    //region Constructors
+    public SendPacket(final Packet packet) {
         command = packet.getCommand();
         OutputStream out;
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -49,7 +52,9 @@ public class SendPacket implements INetworkPacket {
             LogManager.getLogger().error("", ex);
         }
     }
+    //endregion Constructors
 
+    //region Getters
     public PacketCommand getCommand() {
         return command;
     }
@@ -68,4 +73,5 @@ public class SendPacket implements INetworkPacket {
     public byte[] getData() {
         return data;
     }
+    //endregion Getters
 }

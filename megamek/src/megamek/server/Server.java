@@ -41,6 +41,7 @@ import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.net.factories.ConnectionFactory;
 import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
+import megamek.common.net.packets.ReceivedPacket;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -65,6 +66,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
@@ -115,26 +117,10 @@ public class Server implements Runnable {
 
     // server setup
     private String password;
-
     private final String metaServerUrl;
-
     private ServerSocket serverSocket;
-
     private String motd;
-
     private EmailService mailer;
-
-
-    private static class ReceivedPacket {
-        public int connId;
-        public Packet packet;
-
-        ReceivedPacket(int cid, Packet p) {
-            packet = p;
-            connId = cid;
-        }
-
-    }
 
     private class PacketPump implements Runnable {
 
@@ -154,7 +140,7 @@ public class Server implements Runnable {
                 while (!packetQueue.isEmpty()) {
                     ReceivedPacket rp = packetQueue.poll();
                     synchronized (serverLock) {
-                        handle(rp.connId, rp.packet);
+                        handle(rp.getConnectionId(), rp.getPacket());
                     }
                 }
                 try {
@@ -167,14 +153,11 @@ public class Server implements Runnable {
                 }
             }
         }
-
     }
 
     // game info
     private Vector<AbstractConnection> connections = new Vector<>(4);
-
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
-
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
 
     /**
@@ -252,7 +235,6 @@ public class Server implements Runnable {
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
     private ConnectionListener connectionListener = new ConnectionListener() {
-
         /**
          * Called when it is sensed that a connection has terminated.
          */
@@ -297,7 +279,7 @@ public class Server implements Runnable {
                 case CLIENT_VERSIONS:
                 case CHAT:
                     // Some packets should be handled immediately
-                    handle(rp.connId, rp.packet);
+                    handle(rp.getConnectionId(), rp.getPacket());
                     break;
                 default:
                     synchronized (packetQueue) {
@@ -898,9 +880,7 @@ public class Server implements Runnable {
             send(connId, createFlarePacket());
             send(connId, createSpecialHexDisplayPacket(connId));
             send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, game.getBotSettings()));
-
-        } // Found the player.
-
+        }
     }
 
     /**
@@ -1004,13 +984,12 @@ public class Server implements Runnable {
         // Ghost players (Bots mostly) are now removed during the
         // resetGame(), so we don't need to do it here.
         // This fixes Bug 3399000 without reintroducing 1225949
-        if ((phase == GamePhase.VICTORY)
-            || (phase == GamePhase.LOUNGE) || player.isObserver()) {
+        if (phase.isVictory() || phase.isLounge() || player.isObserver()) {
             game.removePlayer(player.getId());
             send(new Packet(PacketCommand.PLAYER_REMOVE, player.getId()));
             // Prevent situation where all players but the disconnected one
             // are done, and the disconnecting player causes the game to start
-            if (phase == GamePhase.LOUNGE) {
+            if (phase.isLounge()) {
                 resetActivePlayersDone();
             }
         } else {
@@ -1085,8 +1064,7 @@ public class Server implements Runnable {
         transmitAllPlayerDones();
 
         // Write end of game to stdout so controlling scripts can rotate logs.
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-        LogManager.getLogger().info(format.format(new Date()) + " END OF GAME");
+        LogManager.getLogger().info(LocalDateTime.now() + " END OF GAME");
 
         if (mailer != null) {
             mailer.reset();
@@ -9710,7 +9688,7 @@ public class Server implements Runnable {
                 ReceivedPacket rp;
                 if (!cfrPacketQueue.isEmpty()) {
                     rp = cfrPacketQueue.poll();
-                    final PacketCommand cfrType = (PacketCommand) rp.packet.getObject(0);
+                    final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
                     if (!cfrType.isCFRHiddenPBS()) {
                         LogManager.getLogger().error("Expected a " + "CFR_HIDDEN_PBS CFR packet, "
@@ -9718,10 +9696,10 @@ public class Server implements Runnable {
                         continue;
                     }
                     // Check packet came from right ID
-                    if (rp.connId != hidden.getOwnerId()) {
+                    if (rp.getConnectionId() != hidden.getOwnerId()) {
                         LogManager.getLogger().error("Expected a " + "CFR_HIDDEN_PBS CFR packet "
                                 + "from player  " + hidden.getOwnerId()
-                                + " but instead it came from player " + rp.connId);
+                                + " but instead it came from player " + rp.getConnectionId());
                         continue;
                     }
                 } else { // If no packets, wait again
@@ -9730,7 +9708,7 @@ public class Server implements Runnable {
                 // First packet indicates whether the PBS is taken or declined
                 if (firstPacket) {
                     // Check to see if the client declined the PBS
-                    if (rp.packet.getObject(1) == null) {
+                    if (rp.getPacket().getObject(1) == null) {
                         return false;
                     } else {
                         firstPacket = false;
@@ -9752,7 +9730,7 @@ public class Server implements Runnable {
                 }
                 // The second packet contains the attacks to process
                 @SuppressWarnings("unchecked")
-                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.packet.getObject(1);
+                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket().getObject(1);
                 // Mark the hidden unit as having taken a PBS
                 hidden.setMadePointblankShot(true);
                 // Process the Actions
@@ -9819,7 +9797,7 @@ public class Server implements Runnable {
 
                 // Get the packet, if there's something to get
                 ReceivedPacket rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = (PacketCommand) rp.packet.getObject(0);
+                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
                 if (!cfrType.isCFRTeleguidedTarget()) {
                     LogManager.getLogger().error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: "
@@ -9827,12 +9805,12 @@ public class Server implements Runnable {
                     continue;
                 }
                 // Check packet came from right ID
-                if (rp.connId != playerId) {
+                if (rp.getConnectionId() != playerId) {
                     LogManager.getLogger().error("Expected a CFR_TELEGUIDED_TARGET CFR packet from player "
-                            + playerId + " but instead it came from player " + rp.connId);
+                            + playerId + " but instead it came from player " + rp.getConnectionId());
                     continue;
                 }
-                return (int) rp.packet.getData()[1];
+                return (int) rp.getPacket().getData()[1];
             }
         }
     }
@@ -9850,20 +9828,20 @@ public class Server implements Runnable {
                 }
                 // Get the packet, if there's something to get
                 ReceivedPacket rp = cfrPacketQueue.poll();
-                final PacketCommand cfrType = (PacketCommand) rp.packet.getObject(0);
+                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
                 if (!cfrType.isCFRTagTarget()) {
                     LogManager.getLogger().error("Expected a COMMAND_CFR_TAG_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID
-                if (rp.connId != playerId) {
+                if (rp.getConnectionId() != playerId) {
                     LogManager.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet "
                                     + "from player  " + playerId
-                                    + " but instead it came from player " + rp.connId);
+                                    + " but instead it came from player " + rp.getConnectionId());
                     continue;
                 }
-                return (int) rp.packet.getData()[1];
+                return (int) rp.getPacket().getData()[1];
             }
         }
     }
@@ -12698,14 +12676,14 @@ public class Server implements Runnable {
 
                         if (!cfrPacketQueue.isEmpty()) {
                             ReceivedPacket rp = cfrPacketQueue.poll();
-                            final PacketCommand cfrType = (PacketCommand) rp.packet.getObject(0);
+                            final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                             // Make sure we got the right type of response
                             if (!cfrType.isCFRDominoEffect()) {
                                 LogManager.getLogger().error("Excepted a COMMAND_CFR_DOMINO_EFFECT CFR packet, "
                                                 + "received: " + cfrType);
                                 throw new IllegalStateException();
                             }
-                            MovePath mp = (MovePath) rp.packet.getData()[1];
+                            MovePath mp = (MovePath) rp.getPacket().getData()[1];
                             // Move based on the feedback
                             if (mp != null) {
                                 mp.setGame(getGame());
@@ -12769,44 +12747,42 @@ public class Server implements Runnable {
 
     private void sendAMSAssignCFR(Entity e, Mounted ams, List<WeaponAttackAction> waas) {
         send(e.getOwnerId(),
-                new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                        new Object[] { PacketCommand.CFR_AMS_ASSIGN,
-                                e.getId(), e.getEquipmentNum(ams), waas }));
+                new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_AMS_ASSIGN,
+                        e.getId(), e.getEquipmentNum(ams), waas));
     }
 
     private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists,
-            List<WeaponAttackAction> waas) {
+                                   List<WeaponAttackAction> waas) {
         send(e.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                new Object[] { PacketCommand.CFR_APDS_ASSIGN, e.getId(),
-                apdsDists, waas }));
+                PacketCommand.CFR_APDS_ASSIGN, e.getId(), apdsDists, waas));
     }
 
     private void sendPointBlankShotCFR(Entity hidden, Entity target) {
         // Send attacker/target IDs to PBS Client
-        send(hidden.getOwnerId(),
-                new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                        new Object[] { PacketCommand.CFR_HIDDEN_PBS,
-                                hidden.getId(), target.getId() }));
+        send(hidden.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_HIDDEN_PBS, hidden.getId(), target.getId()));
     }
 
     private void sendTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) {
         // Send target id numbers and to-hit values to Client
         send(playerId, new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                new Object[] { PacketCommand.CFR_TELEGUIDED_TARGET, targetIds, toHitValues}));
+                PacketCommand.CFR_TELEGUIDED_TARGET, targetIds, toHitValues));
     }
     
     private void sendTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
         // Send target id numbers and type identifiers to Client
         send(playerId, new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                new Object[] { PacketCommand.CFR_TAG_TARGET, targetIds, targetTypes}));
+                PacketCommand.CFR_TAG_TARGET, targetIds, targetTypes));
     }
 
-    private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
+    private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src,
+                                                              Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<>();
         boolean boom = checkVibrabombs(entity, dest, true, vPhaseReport);
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport) || boom;
         }
+
         if (boom) {
             resetMines();
         }
@@ -12821,8 +12797,7 @@ public class Server implements Runnable {
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(),
                 entity instanceof LargeSupportTank);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS)
-                && (entity.getMovementMode() != EntityMovementMode.HOVER)
-                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !entity.getMovementMode().isHoverOrWiGE()
                 && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));
@@ -12838,7 +12813,6 @@ public class Server implements Runnable {
                 // check for quicksand
                 vReport.addAll(checkQuickSand(c));
             }
-
         }
         return vReport;
     }
@@ -13685,13 +13659,13 @@ public class Server implements Runnable {
 
                 if (!cfrPacketQueue.isEmpty()) {
                     ReceivedPacket rp = cfrPacketQueue.poll();
-                    final PacketCommand cfrType = (PacketCommand) rp.packet.getObject(0);
+                    final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
                     if (!cfrType.isCFRAPDSAssign()) {
                         LogManager.getLogger().error("Expected a COMMAND_CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
                         throw new IllegalStateException();
                     }
-                    Integer waaIndex = (Integer) rp.packet.getData()[1];
+                    Integer waaIndex = (Integer) rp.getPacket().getData()[1];
                     if (waaIndex != null) {
                         targetedWAA = vAttacksInArc.get(waaIndex);
                     }
@@ -13762,13 +13736,13 @@ public class Server implements Runnable {
 
                     if (!cfrPacketQueue.isEmpty()) {
                         ReceivedPacket rp = cfrPacketQueue.poll();
-                        final PacketCommand cfrType = (PacketCommand) rp.packet.getObject(0);
+                        final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                         // Make sure we got the right type of response
                         if (!cfrType.isCFRAMSAssign()) {
                             LogManager.getLogger().error("Expected a COMMAND_CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
                             throw new IllegalStateException();
                         }
-                        Integer waaIndex = (Integer) rp.packet.getData()[1];
+                        Integer waaIndex = (Integer) rp.getPacket().getData()[1];
                         if (waaIndex != null) {
                             targetedWAA = vAttacksInArc.get(waaIndex);
                         }
@@ -30456,10 +30430,9 @@ public class Server implements Runnable {
     private Packet createReportPacket(Player p) {
         // When the final report is created, MM sends a null player to create the report. This will
         // handle that issue.
-        if ((p == null) || !doBlind()) {
-            return new Packet(PacketCommand.SENDING_REPORTS, vPhaseReport);
-        }
-        return new Packet(PacketCommand.SENDING_REPORTS, filterReportVector(vPhaseReport, p));
+        return new Packet(PacketCommand.SENDING_REPORTS, (p == null) || !doBlind() ? vPhaseReport
+                : filterReportVector(vPhaseReport, p));
+
     }
 
     /**

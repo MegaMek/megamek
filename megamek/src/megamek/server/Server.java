@@ -330,7 +330,7 @@ public class Server implements Runnable {
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl, EmailService mailer) throws IOException {
         this.metaServerUrl = metaServerUrl;
-        this.password = password.length() > 0 ? password : null;
+        this.password = password.isBlank() ? password : null;
         this.mailer = mailer;
 
         // initialize server socket

@@ -1547,7 +1547,8 @@ public class TestMech extends TestEntity {
             }
             if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
                     | MiscType.S_CHAIN_WHIP | MiscType.S_FLAIL | MiscType.S_LANCE | MiscType.S_WRECKING_BALL
-                    | MiscType.S_MACE) || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
+                    | MiscType.S_MACE | MiscType.S_RETRACTABLE_BLADE)
+                    || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
                     && (mech.entityIsQuad() || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");

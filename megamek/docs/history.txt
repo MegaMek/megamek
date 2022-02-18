@@ -1,7 +1,7 @@
 
 VERSION HISTORY:
 ----------------
-0.49.7-SNAPSHOT
+0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit
 + PR #3347: TacOps: AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
 + PR #3346: Logging: Default Global Exception Handler and Standardized Legacy Logging

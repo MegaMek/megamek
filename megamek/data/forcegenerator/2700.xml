@@ -120,7 +120,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:10,SL:10,FWL:4,FS:7,TC:1</salvage>
 	</faction>
 	<faction key='FS.CrMM'>
 		<salvage pct='5'></salvage>
@@ -216,7 +216,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>

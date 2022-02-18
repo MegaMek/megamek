@@ -625,7 +625,7 @@
 		<pctSL unitType='Vehicle'>50</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>OP:0,ROS:0,CLAN:3,FWL:3,DO:1,FS:6,DA:1</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<pctOmni>32</pctOmni>
@@ -9636,6 +9636,9 @@
 	</chassis>
 	<chassis name='Locust' unitType='Mek'>
 		<availability>HL:5,CLAN:2-,IS:7,NIOPS:2-,Periphery.Deep:5,Periphery:4</availability>
+		<model name='C'>
+			<availability>CEI:4</availability>
+		</model>
 		<model name='LCT-1E'>
 			<roles>recon</roles>
 			<availability>IS:1-,Periphery.Deep:4,Periphery:1-</availability>
@@ -9681,6 +9684,9 @@
 		</model>
 		<model name='LCT-5M3'>
 			<availability>ROS:4,MSC:4</availability>
+		</model>
+		<model name='LCT-5S'>
+			<availability>FVC:4,MH:2,FS:6,MERC:6</availability>
 		</model>
 		<model name='LCT-5T'>
 			<roles>recon,anti_infantry</roles>
@@ -11410,6 +11416,9 @@
 			<roles>recon</roles>
 			<availability>CCC:1,General:4</availability>
 		</model>
+		<model name='I'>
+			<availability>ROS:2,CNC:4</availability>
+		</model>
 		<model name='N'>
 			<availability>CDS:4,ROS:4,CNC:4</availability>
 		</model>
@@ -12369,6 +12378,9 @@
 		</model>
 		<model name='8'>
 			<availability>CDS:4</availability>
+		</model>
+		<model name='9'>
+			<availability>CHH:3,CLAN:2,CJF:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
@@ -14163,6 +14175,13 @@
 		<model name='SHD-5M'>
 			<availability>CC:6,CGB.FRR:6,Periphery.MW:4,Periphery.ME:4,FWL:5,MERC:6,Periphery:3,DC:6</availability>
 		</model>
+		<model name='SHD-5R'>
+			<availability>IS:2,MERC:2,Periphery:2</availability>
+		</model>
+		<model name='SHD-5S'>
+			<roles>spotter</roles>
+			<availability>MERC:4</availability>
+		</model>
 		<model name='SHD-7M'>
 			<availability>CC:4,MOC:3,OP:6,DoO:6,DO:6,MERC:4,CDP:3,TC:3,DTA:6,FVC:3,ROS:4,MSC:6,TP:6,RCM:6</availability>
 		</model>
@@ -15141,9 +15160,6 @@
 	</chassis>
 	<chassis name='Svartalfa Ultra ProtoMech' unitType='ProtoMek'>
 		<availability>CHH:4+</availability>
-		<model name='(LRM Variant)'>
-			<availability>General:5</availability>
-		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
@@ -15675,6 +15691,9 @@
 		<model name='C'>
 			<availability>CSA:6,CCC:6</availability>
 		</model>
+		<model name='C 2'>
+			<availability>CJF:2</availability>
+		</model>
 		<model name='TDR-10M'>
 			<availability>CC:4,ROS:6,FWL:4,MERC:4</availability>
 		</model>
@@ -15684,6 +15703,9 @@
 		<model name='TDR-10SE'>
 			<availability>CC:2,ROS:4,MH:2,MERC:6,FS:2</availability>
 		</model>
+		<model name='TDR-11S'>
+			<availability>MERC.KH:4,LA:6,IS:2,MERC:4,Periphery:2</availability>
+		</model>
 		<model name='TDR-11SE'>
 			<availability>LA:2,ROS:3,FWL:2,MH:2,MERC:4,FS:2</availability>
 		</model>
@@ -15692,6 +15714,9 @@
 		</model>
 		<model name='TDR-1C'>
 			<availability>CC:2-,MOC:2-,LA:2-,MERC:2-,TC:2-</availability>
+		</model>
+		<model name='TDR-5D'>
+			<availability>FVC:2,FR:1,FS:1,MERC:1,TC:1</availability>
 		</model>
 		<model name='TDR-5S'>
 			<availability>CC:2-,LA:1-,General:2-,Periphery.Deep:8,Periphery:3-</availability>
@@ -15708,8 +15733,14 @@
 		<model name='TDR-7M'>
 			<availability>CC:5,MOC:3,Periphery.MW:3,Periphery.ME:3,FWL:6,MH:3,MERC:5</availability>
 		</model>
+		<model name='TDR-7S'>
+			<availability>IS:1,MERC:1</availability>
+		</model>
 		<model name='TDR-7SE'>
 			<availability>CC:3,ROS:3,PIR:2,MH:2,MERC:3,FS:3</availability>
+		</model>
+		<model name='TDR-8M'>
+			<availability>CC:6,MOC:4,DTA:3,FWL.pm:3,OP:3,PIR:2,MH:2,MSC:3,DA:3,MERC:4</availability>
 		</model>
 		<model name='TDR-9M'>
 			<availability>MOC:3,CC:3,OP:5,DoO:5,DO:5,MERC:3,DTA:5,PIR:3,FWL:3,MH:3,MSC:5,TP:5,DA:5</availability>
@@ -15728,6 +15759,9 @@
 		</model>
 		<model name='TDR-9T'>
 			<availability>TC:4</availability>
+		</model>
+		<model name='TDR-9W'>
+			<availability>MERC.WD:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Ti Ts&apos;ang' unitType='Mek'>
@@ -16180,6 +16214,10 @@
 		</model>
 		<model name='H'>
 			<availability>CHH:5,CW:6,CNC:5,CJF:5</availability>
+		</model>
+		<model name='M'>
+			<roles>fire_support</roles>
+			<availability>CHH:4,CW:2,CEI:2,CNC:6,CJF:7</availability>
 		</model>
 		<model name='Prime'>
 			<availability>CHH:8,CW:8,CNC:8,CJF:8,CCO:8</availability>
@@ -16733,6 +16771,9 @@
 		</model>
 		<model name='4'>
 			<availability>RA:6</availability>
+		</model>
+		<model name='5'>
+			<availability>CLAN.IS:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Visigoth' unitType='Aero' omni='Clan'>

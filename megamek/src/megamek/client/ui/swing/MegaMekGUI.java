@@ -79,8 +79,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
-    private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf";
-
     private static final int DEFAULT_DISPLAY_DPI = 96;
 
     private JFrame frame;
@@ -101,34 +99,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Construct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
-        try {
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            File btFontFile = new MegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
-            Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
-            LogManager.getLogger().info("Loaded Font: " + btFont.getName());
-            ge.registerFont(btFont);
-        } catch (Exception e) {
-            LogManager.getLogger().error("Failed to Register BT Classic Font", e);
-        }
-
         createController();
 
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
-        // Set a couple of things to make the Swing GUI look more "Mac-like" on
-        // Macs
-        // Taken from:
-        // http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MegaMek");
-
-        // Add additional themes
-        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
-        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
-        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
-        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
-
-        // this should also help to make MegaMek look more system-specific
+        // TODO : Move Theme setup to MegaMek::initializeSuiteSetups as part of implementing it in
+        // TODO : SuiteOptions
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
         } catch (Exception e) {
@@ -136,12 +112,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             e.printStackTrace();
         }
 
+        // TODO : Move ToolTip setup to MegaMek::initializeSuiteSetups as part of implementing them
+        // TODO : in SuiteOptions
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
         if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
             ToolTipManager.sharedInstance().setDismissDelay(
                     GUIPreferences.getInstance().getTooltipDismissDelay());
         }
+
         frame = new JFrame("MegaMek");
         frame.addWindowListener(new WindowAdapter() {
             @Override

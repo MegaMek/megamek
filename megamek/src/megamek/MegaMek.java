@@ -29,6 +29,7 @@ import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.security.DigestInputStream;
@@ -83,12 +84,11 @@ public class MegaMek {
             }
 
             getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
+            initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
 
             if (cp.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);
             } else {
-                // Load button ordering
-                ButtonOrderPreferences.getInstance().setButtonPriorities();
                 startGUI();
             }
         } catch (CommandLineParser.ParseException e) {
@@ -257,6 +257,57 @@ public class MegaMek {
             return LocalDateTime.parse(attributes.getValue("Build-Date"));
         } catch (Exception ignored) {
             return null;
+        }
+    }
+
+    /**
+     * This is used to initialize suite-wide graphical setups.
+     * @param currentProject the currently described project
+     */
+    public static void initializeSuiteGraphicalSetups(final String currentProject) {
+        // Setup Fonts
+        parseFontDirectory(new File(MMConstants.FONT_DIRECTORY));
+
+        // Setup Themes
+        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
+        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
+        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
+
+        // Set a couple of things to make the Swing GUI look more "Mac-like" on Macs
+        // Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", currentProject);
+
+        // Setup Button Order Preferences
+        ButtonOrderPreferences.getInstance().setButtonPriorities();
+    }
+
+    /**
+     * Recursively search the provided directory, attempting to create and then register truetype
+     * fonts from .ttf files
+     * @param directory the directory to parse
+     */
+    private static void parseFontDirectory(final File directory) {
+        final String[] filenames = directory.list();
+        if (filenames == null) {
+            return;
+        }
+
+        for (final String filename : filenames) {
+            if (filename.toLowerCase().endsWith(MMConstants.TRUETYPE_FONT)) {
+                try (InputStream fis = new FileInputStream(directory.getPath() + '/' + filename)) {
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
+                            Font.createFont(Font.TRUETYPE_FONT, fis));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to parse font", ex);
+                }
+            } else {
+                final File file = new File(directory, filename);
+                if (file.isDirectory()) {
+                    parseFontDirectory(file);
+                }
+            }
         }
     }
 

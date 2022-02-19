@@ -73,7 +73,7 @@ public class KickCommand extends ServerCommand {
 
                 server.send(kickedId, new Packet(PacketCommand.CLOSE_CONNECTION));
                 server.getConnection(kickedId).close();
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
                 server.sendServerChat("/kick : kick failed. Type /who for a list of players with id #s.");
             }
         }

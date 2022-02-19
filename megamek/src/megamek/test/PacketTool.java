@@ -223,12 +223,11 @@ public class PacketTool extends JFrame implements Runnable {
      */
     public void send() {
         long start = conn.getBytesSent();
-        Packet packet = new Packet(PacketCommand.SENDING_BOARD, board);
         /*
          * 2003-12-21 : prove connectivity first, then add refinements * like
          * data compression. packet.zipData();
          */
-        conn.send(packet);
+        conn.send(new Packet(PacketCommand.SENDING_BOARD, board));
         System.out.print("Bytes sent: ");
         System.out.print(conn.getBytesSent() - start);
         System.out.print(", total sent: ");

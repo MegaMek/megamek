@@ -1664,7 +1664,6 @@ public class Client implements IClientCommandHandler {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     public void sendDominoCFRResponse(MovePath mp) {

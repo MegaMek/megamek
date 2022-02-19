@@ -833,7 +833,7 @@ public class Server implements Runnable {
         if (null != player) {
             send(connId, new Packet(PacketCommand.SENDING_MINEFIELDS, player.getMinefields()));
 
-            if (game.getPhase() == GamePhase.LOUNGE) {
+            if (game.getPhase().isLounge()) {
                 send(connId, createMapSettingsPacket());
                 send(createMapSizesPacket());
                 // Send Entities *after* the Lounge Phase Change
@@ -1182,6 +1182,7 @@ public class Server implements Runnable {
         if (!sFinalFile.endsWith(".sav") && !sFinalFile.endsWith(".sav.gz")) {
             sFinalFile = sFile + ".sav";
         }
+
         if (!sFinalFile.endsWith(".gz")) {
             sFinalFile = sFinalFile + ".gz";
         }
@@ -9717,11 +9718,8 @@ public class Server implements Runnable {
                             if (p.getId() == hidden.getOwnerId()) {
                                 continue;
                             }
-                            send(p.getId(), new Packet(
-                                    PacketCommand.CLIENT_FEEDBACK_REQUEST,
-                                    new Object[] {
-                                            PacketCommand.CFR_HIDDEN_PBS,
-                                            Entity.NONE, Entity.NONE }));
+                            send(p.getId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                                    PacketCommand.CFR_HIDDEN_PBS, Entity.NONE, Entity.NONE));
                         }
                         // Update all clients with the position of the PBS
                         entityUpdate(target.getId());
@@ -12746,9 +12744,8 @@ public class Server implements Runnable {
     }
 
     private void sendAMSAssignCFR(Entity e, Mounted ams, List<WeaponAttackAction> waas) {
-        send(e.getOwnerId(),
-                new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_AMS_ASSIGN,
-                        e.getId(), e.getEquipmentNum(ams), waas));
+        send(e.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_AMS_ASSIGN, e.getId(), e.getEquipmentNum(ams), waas));
     }
 
     private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists,
@@ -30430,8 +30427,8 @@ public class Server implements Runnable {
     private Packet createReportPacket(Player p) {
         // When the final report is created, MM sends a null player to create the report. This will
         // handle that issue.
-        return new Packet(PacketCommand.SENDING_REPORTS, (p == null) || !doBlind() ? vPhaseReport
-                : filterReportVector(vPhaseReport, p));
+        return new Packet(PacketCommand.SENDING_REPORTS,
+                (p == null) || !doBlind() ? vPhaseReport : filterReportVector(vPhaseReport, p));
 
     }
 

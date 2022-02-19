@@ -1,6 +1,7 @@
 Version:1.0
 Stinger
 STG-3P
+mul id:3060
 
 Config:Biped
 TechBase:Inner Sphere

@@ -15,6 +15,10 @@ Yellow Jacket Gunship
 <Model>
 (PPC)
 </Model>
+
+<mul id:>
+3615
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

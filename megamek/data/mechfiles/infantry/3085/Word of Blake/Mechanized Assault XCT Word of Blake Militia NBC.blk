@@ -15,6 +15,10 @@ Mechanized Assault XCT
 <Model>
 Word of Blake Militia NBC
 </Model>
+
+<mul id:>
+2130
+</mul id:>
 <squad_size>
 6
 </squad_size>

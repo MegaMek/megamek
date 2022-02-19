@@ -1,6 +1,7 @@
 Version:1.1
 Lumberjack
 LM4/C
+mul id:1960
 
 Config:Biped
 TechBase:Inner Sphere

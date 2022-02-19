@@ -15,6 +15,10 @@ Musketeer Hover Tank
 <Model>
 (Armor)
 </Model>
+
+<mul id:>
+4687
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

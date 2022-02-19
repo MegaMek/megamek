@@ -20,6 +20,10 @@ Ferret Light Scout VTOL
 (Standard)
 </Model>
 
+<mul id:>
+1060
+</mul id:>
+
 <year>
 2904
 </year>

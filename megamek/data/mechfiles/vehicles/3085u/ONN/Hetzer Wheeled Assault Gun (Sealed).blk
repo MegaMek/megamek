@@ -20,6 +20,10 @@ Hetzer Wheeled Assault Gun
 (Sealed)
 </Model>
 
+<mul id:>
+1511
+</mul id:>
+
 <Tonnage>
 40
 </Tonnage>

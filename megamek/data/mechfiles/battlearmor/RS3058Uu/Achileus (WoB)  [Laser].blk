@@ -19,6 +19,10 @@ Achileus Light Battle Armor
 (WoB) [Laser]
 </Model>
 
+<mul id:>
+9
+</mul id:>
+
 <Trooper Count>
 6
 </Trooper Count>

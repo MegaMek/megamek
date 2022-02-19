@@ -1,6 +1,7 @@
 Version:1.0
 Locust IIC
 7
+mul id:1920
 
 Config:Biped
 TechBase:Clan

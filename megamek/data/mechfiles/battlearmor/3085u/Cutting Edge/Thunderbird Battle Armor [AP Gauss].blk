@@ -19,6 +19,10 @@ Thunderbird Battle Armor
 [AP Gauss]
 </Model>
 
+<mul id:>
+3228
+</mul id:>
+
 <chassis>
 biped
 </chassis>

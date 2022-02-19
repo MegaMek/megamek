@@ -19,6 +19,10 @@ Warg Assault Battle Armor
 (Standard)
 </Model>
 
+<mul id:>
+3478
+</mul id:>
+
 <chassis>
 biped
 </chassis>

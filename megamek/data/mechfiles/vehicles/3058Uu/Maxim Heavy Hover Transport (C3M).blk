@@ -15,6 +15,10 @@ Maxim Heavy Hover Transport
 <Model>
 (C3M)
 </Model>
+
+<mul id:>
+2121
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

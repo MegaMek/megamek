@@ -302,7 +302,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FWL:10,FS:8,TC:1,DC:2</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<salvage pct='6'></salvage>
@@ -477,7 +477,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:10,LA:8</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='6'></salvage>
@@ -2851,6 +2851,9 @@
 	</chassis>
 	<chassis name='Locust' unitType='Mek'>
 		<availability>CS:6-,CLAN:3-,IS:9,NIOPS:6-,Periphery.Deep:6,Periphery:6</availability>
+		<model name='C'>
+			<availability>CCC:2,CFM:2</availability>
+		</model>
 		<model name='LCT-1E'>
 			<roles>recon</roles>
 			<availability>IS:4,Periphery.Deep:4,Periphery:4</availability>
@@ -3607,6 +3610,9 @@
 		<model name='2'>
 			<roles>fire_support</roles>
 			<availability>CCC:6,CSR:6,CDS:6,CSV:6,CNC:6,CFM:6,CCO:6</availability>
+		</model>
+		<model name='9'>
+			<availability>CLAN:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
@@ -4438,6 +4444,12 @@
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
 		<availability>CC:9,CS:5-,LA:8,CLAN:4,IS:7,Periphery.Deep:6,NIOPS:5-,FS:7,MERC:7,Periphery:6,TC:6,DC:8</availability>
+		<model name='TDR-5D'>
+			<availability>FS:4,MERC:2</availability>
+		</model>
+		<model name='TDR-5LS'>
+			<availability>CC:2</availability>
+		</model>
 		<model name='TDR-5S'>
 			<availability>CC:8,LA:8,General:8,CLAN:1-,Periphery.Deep:8,BAN:5,Periphery:8</availability>
 		</model>

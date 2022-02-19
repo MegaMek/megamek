@@ -13,12 +13,16 @@ ProtoMech
 </UnitType>
 
 <Name>
-Svartalfa Ultra ProtoMech
+Svartalfa
 </Name>
 
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+5168
+</mul id:>
 
 <year>
 3083

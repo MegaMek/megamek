@@ -20,6 +20,10 @@ Elemental Battle Armor
 (Fire) [MicroPL]
 </Model>
 
+<mul id:>
+951
+</mul id:>
+
 <chassis>
 biped
 </chassis>

@@ -1,6 +1,7 @@
 Version:1.1
 Annihilator
 C 'Gausszilla'
+mul id:44
 
 Config:Biped
 TechBase:Clan

@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 BLR-M3
+mul id:302
 
 Config:Biped
 TechBase:Inner Sphere

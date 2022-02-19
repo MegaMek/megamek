@@ -15,6 +15,10 @@ Heavy Tracked APC
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+1453
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

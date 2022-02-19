@@ -1,6 +1,7 @@
 Version:1.0
 Archer
 ARC-7S
+mul id:85
 
 Config:Biped
 TechBase:Inner Sphere

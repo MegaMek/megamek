@@ -15,6 +15,10 @@ Clan Space Marine
 <Model>
 Clan Snow Raven Space Marines
 </Model>
+
+<mul id:>
+3662
+</mul id:>
 <squad_size>
 5
 </squad_size>

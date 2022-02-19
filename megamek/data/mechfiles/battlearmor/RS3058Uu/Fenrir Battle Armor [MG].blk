@@ -19,6 +19,10 @@ Fenrir Battle Armor
 [MG]
 </Model>
 
+<mul id:>
+1039
+</mul id:>
+
 <chassis>
 quad
 </chassis>

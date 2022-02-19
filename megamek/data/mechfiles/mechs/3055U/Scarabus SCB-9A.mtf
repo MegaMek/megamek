@@ -1,6 +1,7 @@
 Version:1.0
 Scarabus
 SCB-9A
+mul id:2813
 
 Config:Biped
 TechBase:Inner Sphere

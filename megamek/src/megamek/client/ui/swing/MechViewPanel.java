@@ -19,19 +19,19 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.*;
+import java.net.URI;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.*;
 import megamek.common.templates.TROView;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Jay Lawson
@@ -57,6 +57,18 @@ public class MechViewPanel extends JPanel {
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
         txtMek.setPreferredSize(new Dimension(width, height));
+        txtMek.addHyperlinkListener(e -> {
+            try {
+                if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    }
+                }
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         scrMek = new JScrollPane(txtMek);
         if (noBorder) {
             scrMek.setBorder(null);

@@ -1,6 +1,7 @@
 Version:1.1
 Spider
 SDR-8K
+mul id:3016
 
 Config:Biped
 TechBase:Inner Sphere

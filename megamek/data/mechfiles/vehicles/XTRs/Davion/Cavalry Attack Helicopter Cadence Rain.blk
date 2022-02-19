@@ -15,6 +15,10 @@ Cavalry Attack Helicopter
 <Model>
 Cadence Rain
 </Model>
+
+<mul id:>
+508
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

@@ -218,6 +218,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean omni = false;
     protected String chassis;
     protected String model;
+
+    /**
+     * If this is a unit from an official source, the MUL ID links it to its corresponding
+     * entry in the online Master Unit List.
+     */
+    protected int mulId = -1;
+
     protected int year = 3071;
     protected int techLevel;
     private CompositeTechLevel compositeTechLevel;
@@ -16192,9 +16199,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * does this mech have MASC, Supercharger or both?
-     *
-     * @return
+     * @return if this mech has MASC, Supercharger or both?
      */
     public MPBoosters getMPBoosters(boolean onlyArmed) {
         boolean hasMASC = false;
@@ -16236,5 +16241,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public MPBoosters getArmedMPBoosters() {
         return getMPBoosters(true);
+    }
+
+    /**
+     * Returns this entity's MUL ID linking it to a unit on the
+     * online Master Unit List. Use hasMulID() to check if the entity has a valid MUL ID.
+     */
+    public int getMulId() {
+        return mulId;
+    }
+
+    public void setMulId(int newId) {
+        mulId = newId;
+    }
+
+    /**
+     * Returns true when this entity has a useful MUL ID, meaning it
+     * is a unit from an official source and can be linked to a unit on the
+     * online Master Unit List.
+     */
+    public boolean hasMulId() {
+        return mulId > 0;
     }
 }

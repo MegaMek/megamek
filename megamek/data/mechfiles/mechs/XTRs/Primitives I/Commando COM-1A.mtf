@@ -1,6 +1,7 @@
 Version:1.1
 Commando
 COM-1A
+mul id:666
 
 Config:Biped
 TechBase:Inner Sphere

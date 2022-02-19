@@ -19,6 +19,10 @@ Infiltrator Mk. II Battle Armor
 (Sensor)
 </Model>
 
+<mul id:>
+1619
+</mul id:>
+
 <chassis>
 biped
 </chassis>

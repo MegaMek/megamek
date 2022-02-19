@@ -15,6 +15,10 @@ Clan Mechanized Infantry
 <Model>
 Mimir/Watch Counter Insurgency Point
 </Model>
+
+<mul id:>
+622
+</mul id:>
 <squad_size>
 5
 </squad_size>

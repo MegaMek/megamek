@@ -15,6 +15,10 @@ Galleon Light Tank
 <Model>
 GAL-103
 </Model>
+
+<mul id:>
+1177
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

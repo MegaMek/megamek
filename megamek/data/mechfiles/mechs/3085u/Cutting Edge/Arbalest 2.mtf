@@ -1,6 +1,7 @@
 Version:1.0
 Arbalest
 2
+mul id:60
 
 Config:Biped
 TechBase:Clan

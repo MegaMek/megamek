@@ -1,6 +1,7 @@
 Version:1.0
 Thunderbolt
 TDR-5SE
+mul id:3240
 
 Config:Biped
 TechBase:Inner Sphere

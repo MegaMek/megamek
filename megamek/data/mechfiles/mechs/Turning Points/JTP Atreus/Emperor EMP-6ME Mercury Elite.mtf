@@ -1,6 +1,7 @@
 Version:1.1
 Emperor
 EMP-6ME 'Mercury Elite'
+mul id:969
 
 Config:Biped
 TechBase:Inner Sphere

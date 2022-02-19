@@ -15,6 +15,10 @@ Mechanized Field Artillery
 <Model>
 71st Mechanized
 </Model>
+
+<mul id:>
+2131
+</mul id:>
 <squad_size>
 6
 </squad_size>

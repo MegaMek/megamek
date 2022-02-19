@@ -1611,14 +1611,9 @@ public class TestMech extends TestEntity {
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_LADDER)) && !mech.locationIsTorso(location)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
-                }
-                return false;
-            }
-            if (eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) && !mech.locationIsTorso(location)) {
+                    || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                    || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+                    && !mech.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }

@@ -159,6 +159,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     /**
      * The infernos have burned for a round.
      */
+    @Override
     public void newRound(int roundNumber) {
 
         // BMRr, pg. 77 makes me think that Inferno IVs

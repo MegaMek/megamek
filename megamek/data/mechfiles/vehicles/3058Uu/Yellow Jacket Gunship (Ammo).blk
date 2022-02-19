@@ -15,6 +15,10 @@ Yellow Jacket Gunship
 <Model>
 (Ammo)
 </Model>
+
+<mul id:>
+3613
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

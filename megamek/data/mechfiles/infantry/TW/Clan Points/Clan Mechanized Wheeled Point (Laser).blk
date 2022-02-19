@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,9 +20,17 @@ Clan Mechanized Wheeled Point
 (Laser)
 </Model>
 
+<mul id:>
+630
+</mul id:>
+
 <year>
 2815
 </year>
+
+<originalBuildYear>
+2815
+</originalBuildYear>
 
 <type>
 Clan Level 2
@@ -31,6 +39,9 @@ Clan Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <Field Guns Equipment>
 </Field Guns Equipment>
@@ -44,7 +55,7 @@ Total Warfare - Succession Wars
 </squad_size>
 
 <squadn>
-5
+4
 </squadn>
 
 <Primary>
@@ -52,5 +63,10 @@ Laser Rifle
 </Primary>
 
 <armorKit>
-ClanKit
+Clan Armor Kit (All)
 </armorKit>
+
+<armordivisor>
+2.0
+</armordivisor>
+

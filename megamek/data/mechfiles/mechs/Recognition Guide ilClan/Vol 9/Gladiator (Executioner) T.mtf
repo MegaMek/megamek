@@ -1,11 +1,12 @@
 Version:1.0
 Gladiator (Executioner)
 T
+mul id:7714
 
 Config:Biped Omnimech
 techbase:Clan
 era:3142
-source:Dark Age
+source:Rec Guide:ilClan #9 - Dark Age
 rules level:2
 
 mass:95

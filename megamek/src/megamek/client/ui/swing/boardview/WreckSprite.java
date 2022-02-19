@@ -24,14 +24,14 @@ import megamek.common.Entity;
  * and an identification label.
  */
 class WreckSprite extends AbstractWreckSprite {   
-    public WreckSprite(BoardView1 boardView1, final Entity entity, int secondaryPos) {
+    public WreckSprite(BoardView boardView1, final Entity entity, int secondaryPos) {
         super(boardView1);
         this.entity = entity;
         this.secondaryPos = secondaryPos;
 
         String shortName = entity.getShortName();
 
-        Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+        Font font = new Font("SansSerif", Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
         Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);

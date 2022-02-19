@@ -1,11 +1,12 @@
 Version:1.0
 Stinger
 C 2
+mul id:8128
 
 Config:Biped
 techbase:Clan
 era:2838
-source:RecGuide 13 - Succession Wars
+source:Rec Guide:ilClan #13 - Succession Wars
 rules level:2
 
 mass:20

@@ -15,6 +15,10 @@ XCT Marine
 <Model>
 Special Asteroid Support Forces
 </Model>
+
+<mul id:>
+3607
+</mul id:>
 <squad_size>
 10
 </squad_size>

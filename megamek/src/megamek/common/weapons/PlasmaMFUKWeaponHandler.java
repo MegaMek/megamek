@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -38,7 +38,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -74,7 +74,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                     ((entityTarget.getArmorType(hit.getLocation()) == 
                         EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
                      (entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_REFLECTIVE))){
+                        EquipmentType.T_ARMOR_REFLECTIVE))) {
                 entityTarget.heatFromExternal += 2;
                 r.add(2);
                 r.choose(true);

@@ -14,6 +14,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.BattleForceElement;
 import megamek.common.Mounted;
 
@@ -63,9 +64,10 @@ public class ISThunderBolt20 extends ThunderBoltWeapon {
             .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS,F_LC);
+            .setProductionFactions(F_FS,F_LC)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (range == BattleForceElement.SHORT_RANGE) {

@@ -1,11 +1,12 @@
 Version:1.0
 BattleMaster
 BLR-M3
+mul id:302
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+Source:RS3085 - Jihad
 Rules Level:2
 
 Mass:85
@@ -151,4 +152,18 @@ Heavy Ferro-Fibrous
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\battlemaster BLR-K3.jpg
+overview:Versatile and powerful, the BattleMaster was one of the best known BattleMechs in existence. Hollis Industries began production in 2633, originally designing it to be the largest and most powerful 'Mech for the Star League armies at that time.
+
+capabilities:Indeed the sheer size of the BattleMaster, combined with the costs and resources needed to build one, meant the 'Mech could only be manufactured on a few planets. Still, those lucky enough to pilot a BattleMaster can attest to some of the stories surrounding the 'Mech. With good reliability, firepower and armoring, the BattleMaster is equally adept anchoring an assault lance or serving as a command vehicle.
+
+deployment:A C3 command version of the BattleMaster introduced in 3070, the M3 utilizes a Light Gauss Rifle as well as two Light PPCs to keep its enemies at long range. The 'Mech has an MML-5 launcher that is capable of firing both LRM and SRM ammunition, allowing it to be used in any range bracket. It is powered by a Light Fusion Engine that gives it a top speed of 64.8 km/h and is protected by thirteen and a half tons of Heavy Ferro-Fibrous armor with CASE to guard against ammunition explosions. The M3 also has two medium pulse lasers for close range defense and a C3 Master Computer to link together a lance of C3 equipped units.
+
+history:Although only produced in modest numbers, examples of the BattleMaster could be found in the arsenals of all the Great Houses and technicians have gone to great lengths in order to repair one. During the First Succession War Hollis' BattleMaster factories on Corey were attacked, their production lines destroyed and any finished BattleMasters purloined by the various House forces. While production of new BattleMasters was taken up by Earthwerks Incorporated on Keystone, Trellshire Heavy Industries on Twycross, and Red Devil Industries on Pandora, they could build only a handful of new 'Mechs every year. This was enough though to make House Steiner and House Marik the largest users of BattleMasters during the Succession Wars. House Liao also fielded a large number of BattleMasters, at least until the devastation of the Fourth Succession War when many fell into the hands of the Federated Suns, themselves lacking any BattleMaster factories. By fortuitous accident the Draconis Combine also came into possession of a large number of BattleMasters when a hapless ComStar Precentor, intending to ship unmodified versions of advanced BattleMasters to Com Guard units, sent them to the Combine instead. These BattleMasters served as excellent command vehicles during the War of 3039. New models of the BattleMaster would be introduced in time to take part in the Clan Invasion. Although the manufacture of new BattleMasters was disrupted when Twycross fell to Clan Jade Falcon, the recapture of that world allowed for a brief resumption of production. While Pandora did not fall during the Invasion an effort was made to relocate its BattleMaster factory, but the haphazard nature of the factory and feet-dragging by the planet's corrupt nobility delayed this effort. It wasn't until 3061 that the Red Devil factory was finally ready to be closed when the nobility's lobbying paid off and instead funds were allocated by Archon Katherine Steiner-Davion to refurbish the factory. As part of the arrangement a deal was struck with J.B. BattleMechs Incorporated to produce a new variant, the BLR-4S. Initial units were built starting in 3062 but the FedCom Civil War would delay full-scale production until 3064, by which time the second Jade Falcon Incursion captured the planet and put these new BattleMasters to work in their second-line units. This left the hard-pressed J.B. BattleMechs' factory on Storfors to build the BLR-4S for the Lyran Alliance, while the Free Worlds League and Combine would come out with their own variants.
+
+manufacturer:Venkateswara BattleMech Refit Facility
+primaryfactory:Tamarind
+systemmanufacturer:CHASSIS:Hollis Mark X
+systemmanufacturer:ENGINE:GM 340 Light
+systemmanufacturer:ARMOR:StarSlab-7 Heavy Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:HarfordCo COM 4000
+systemmanufacturer:TARGETING:HarfordCo XKZ 1

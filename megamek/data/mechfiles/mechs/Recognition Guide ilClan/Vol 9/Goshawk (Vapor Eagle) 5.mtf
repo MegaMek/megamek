@@ -1,11 +1,12 @@
 Version:1.0
 Goshawk (Vapor Eagle)
 5
+mul id:7710
 
 Config:Biped
 techbase:Clan
 era:2922
-source:Succession Wars
+source:Rec Guide:ilClan #9 - Late Succession Wars
 rules level:2
 
 mass:55

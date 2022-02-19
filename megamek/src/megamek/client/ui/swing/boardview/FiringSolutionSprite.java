@@ -29,12 +29,12 @@ class FiringSolutionSprite extends HexSprite {
     private static final int fontSizeLarge = 40;
     private static final Color xColor = Color.RED;
 
-    private static final Color hexIconColor = new Color(80,80,80,140);
+    private static final Color hexIconColor = new Color(80, 80, 80, 140);
     private static final Stroke hexIconStroke = new BasicStroke(1.5f);
 
     private static final Color indirectDashColor1 = new Color(255,  0, 0, 140);
-    private static final Color indirectDashColor2 = new Color(255,255, 0, 140);
-    private static final float dashPeriod[] = { 10.0f };
+    private static final Color indirectDashColor2 = new Color(255, 255, 0, 140);
+    private static final float[] dashPeriod = { 10.0f };
     private static final BasicStroke indirectStroke1 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 0.0f);
     private static final BasicStroke indirectStroke2 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
@@ -42,12 +42,12 @@ class FiringSolutionSprite extends HexSprite {
     
     // calculated statics
     // text positions
-    private static Point centerHex = new Point(BoardView1.HEX_W / 2,
-            BoardView1.HEX_H / 2);
-    private static Point firstLine = new Point(BoardView1.HEX_W / 2 - 2,
-            BoardView1.HEX_H / 4 + 2);
-    private static Point secondLine = new Point(BoardView1.HEX_W / 2 + 9,
-            BoardView1.HEX_H * 3 / 4 - 2);
+    private static Point centerHex = new Point(BoardView.HEX_W / 2,
+            BoardView.HEX_H / 2);
+    private static Point firstLine = new Point(BoardView.HEX_W / 2 - 2,
+            BoardView.HEX_H / 4 + 2);
+    private static Point secondLine = new Point(BoardView.HEX_W / 2 + 9,
+            BoardView.HEX_H * 3 / 4 - 2);
 
     // sprite object data
     private FiringSolution fsoln;
@@ -56,7 +56,7 @@ class FiringSolutionSprite extends HexSprite {
     private boolean noHitPossible = false;
     private Shape finalHex;
 
-    public FiringSolutionSprite(BoardView1 boardView1, final FiringSolution fsoln) {
+    public FiringSolutionSprite(BoardView boardView1, final FiringSolution fsoln) {
         super(boardView1, fsoln.getToHitData().getLocation());
         updateBounds();
         
@@ -76,8 +76,8 @@ class FiringSolutionSprite extends HexSprite {
         // create the small hex shape
         AffineTransform at = AffineTransform.getTranslateInstance((r > 9) ? 25 : 30, secondLine.y + 2);
         at.scale(0.17, 0.17);
-        at.translate(-BoardView1.HEX_W/2, -BoardView1.HEX_H/2);
-        finalHex = at.createTransformedShape(BoardView1.hexPoly);
+        at.translate(-BoardView.HEX_W/2, -BoardView.HEX_H/2);
+        finalHex = at.createTransformedShape(BoardView.hexPoly);
     }
 
     @Override
@@ -87,7 +87,7 @@ class FiringSolutionSprite extends HexSprite {
         
         // create image for buffer
         image = createNewHexImage();
-        Graphics2D graph = (Graphics2D)image.getGraphics();
+        Graphics2D graph = (Graphics2D) image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
         
         // scale the following draws according to board zoom
@@ -101,7 +101,7 @@ class FiringSolutionSprite extends HexSprite {
         
         if (noHitPossible) {  
             // write big red X
-            graph.setFont(new Font(fontName, fontStyle, (int)(fontSizeLarge)));
+            graph.setFont(new Font(fontName, fontStyle, fontSizeLarge));
             if (bv.scale > 0.7) {
                 // better translucent, the X is so big
                 bv.drawOutlineText(graph, "X", centerHex, 
@@ -136,11 +136,11 @@ class FiringSolutionSprite extends HexSprite {
         if (fsoln.isTargetSpotted()) {
             graph.setColor(indirectDashColor1);
             graph.setStroke(indirectStroke1);
-            graph.draw(BoardView1.hexPoly);
+            graph.draw(BoardView.hexPoly);
 
             graph.setColor(indirectDashColor2);
             graph.setStroke(indirectStroke2);
-            graph.draw(BoardView1.hexPoly);
+            graph.draw(BoardView.hexPoly);
         }
 
         graph.dispose();

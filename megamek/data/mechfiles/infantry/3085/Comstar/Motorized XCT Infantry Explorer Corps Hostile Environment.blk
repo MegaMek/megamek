@@ -15,6 +15,10 @@ Motorized XCT Infantry
 <Model>
 Explorer Corps Hostile Environment
 </Model>
+
+<mul id:>
+2241
+</mul id:>
 <squad_size>
 6
 </squad_size>

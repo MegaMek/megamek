@@ -19,34 +19,37 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.event.*;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-
 import megamek.client.Client;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.dialogs.helpDialogs.PrincessHelpDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static megamek.common.Terrains.*;
-import megamek.common.logging.LogLevel;
 
 /** A dialog box to configure (Princess) bot properties. */
 public class BotConfigDialog extends AbstractButtonDialog implements ActionListener, 
@@ -54,15 +57,12 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private static final String SAVEGAME_CONFIG = Messages.getString("BotConfigDialog.previousConfig");
     private static final String OK_ACTION = "Ok_Action";
-    private static final int TOOLTIP_WIDTH = 300;
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
     private JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private TipTextField nameField = new TipTextField("", 16);
-    private JComboBox<String> verbosityCombo;
-    private JLabel verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"), SwingConstants.RIGHT);
     
     private JButton addTargetButton = new TipButton(Messages.getString("BotConfigDialog.addHexTarget"));
     private JButton addUnitButton = new TipButton(Messages.getString("BotConfigDialog.addUnitTarget"));
@@ -72,10 +72,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
-    private JComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>(CardinalEdge.values());
+    private MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
     private MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
     private JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
-    private JComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>(CardinalEdge.values()); 
+    private MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
     
     private TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
@@ -189,7 +189,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         result.add(panContent);
         
         var namePanel = new JPanel();
-        nameField.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.namefield.tooltip")));
+        nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
         // When the dialog configures an existing player, the name must not be changed
         nameField.setText((fixedBotPlayerName == null) ? getFreePrincessName() : fixedBotPlayerName);
         nameField.setEnabled(fixedBotPlayerName == null);
@@ -198,17 +198,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         namePanel.add(nameLabel);
         namePanel.add(nameField);
         
-        var verbosityPanel = new JPanel();
-        verbosityCombo = new TipCombo<String>(LogLevel.getLogLevelNames());
-        verbosityCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.verbosityToolTip")));
-        verbosityCombo.setSelectedIndex(0);
-        verbosityLabel.setLabelFor(verbosityCombo);
-        verbosityLabel.setDisplayedMnemonic(KeyEvent.VK_V);
-        verbosityPanel.add(verbosityLabel);
-        verbosityPanel.add(verbosityCombo);
-        
         panContent.add(namePanel);
-        panContent.add(verbosityPanel);
         return result;
     }
     
@@ -221,7 +211,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         String name = baseName;
         if (client != null) {
             int counter = 0;
-            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(p -> p.getName()).collect(Collectors.toSet());
+            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(Player::getName).collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
                 name = baseName + counter;
@@ -295,11 +285,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         
         savePreset.addActionListener(this);
         savePreset.setMnemonic(KeyEvent.VK_S);
-        savePreset.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.saveTip")));
+        savePreset.setToolTipText(Messages.getString("BotConfigDialog.saveTip"));
         buttonPanel.add(savePreset);
         saveNewPreset.addActionListener(this);
         saveNewPreset.setMnemonic(KeyEvent.VK_A);
-        saveNewPreset.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.saveNewTip")));
+        saveNewPreset.setToolTipText(Messages.getString("BotConfigDialog.saveNewTip"));
         buttonPanel.add(saveNewPreset);
 
         return result;
@@ -335,7 +325,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(removeButtonPanel);
 
-        targetsList.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.targetsListTip")));
+        targetsList.setToolTipText(Messages.getString("BotConfigDialog.targetsListTip"));
         targetsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         targetsList.getSelectionModel().addListSelectionListener(this);
         targetsList.setLayoutOrientation(JList.VERTICAL);
@@ -357,21 +347,21 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
 
-        autoFleeCheck.setToolTipText(formatTooltip(formatTooltip(Messages.getString("BotConfigDialog.autoFleeTooltip"))));
+        autoFleeCheck.setToolTipText(Messages.getString("BotConfigDialog.autoFleeTooltip"));
         autoFleeCheck.addActionListener(this);
         autoFleeCheck.setMnemonic(KeyEvent.VK_F);
         
         fleeEdgeCombo.removeItem(CardinalEdge.NONE);
-        fleeEdgeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.homeEdgeTooltip")));
+        fleeEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
         fleeEdgeCombo.setSelectedIndex(0);
         fleeEdgeCombo.addActionListener(this);
         
-        forcedWithdrawalCheck.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip")));
+        forcedWithdrawalCheck.setToolTipText(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip"));
         forcedWithdrawalCheck.addActionListener(this);
         forcedWithdrawalCheck.setMnemonic(KeyEvent.VK_W);
 
         withdrawEdgeCombo.removeItem(CardinalEdge.NONE);
-        withdrawEdgeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.retreatEdgeTooltip")));
+        withdrawEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.retreatEdgeTooltip"));
         withdrawEdgeCombo.setSelectedIndex(0);
 
         var firstLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -407,9 +397,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     private void updateDialogFields() {
         updatePresetFields();
-        
-        verbosityCombo.setSelectedItem(princessBehavior.getVerbosity().toString());
-        
+
         forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
         withdrawEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
         
@@ -455,8 +443,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             String maxMsgProperty, String toolTip, String title) {
         var result = new TipPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
-        result.setToolTipText(formatTooltip(toolTip));
-        thisSlider.setToolTipText(formatTooltip(toolTip));
+        result.setToolTipText(toolTip);
+        thisSlider.setToolTipText(toolTip);
         thisSlider.setPaintLabels(false);
         thisSlider.setSnapToTicks(true);
         thisSlider.addChangeListener(this);
@@ -516,6 +504,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         savePrincessProperties();
     }
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addTargetButton) {
             var dlg = new BotConfigTargetHexDialog(getFrame(), clientGui);
@@ -613,31 +602,30 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         var bc = client.bots.get(botName);
         if (bc instanceof Princess) {
             try {
-                princessBehavior = ((Princess)bc).getBehaviorSettings().getCopy();
+                princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
                 updateDialogFields();
-            } catch (PrincessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
         }
     }
     
     private void savePrincessProperties() {
         BehaviorSettings tempBehavior = new BehaviorSettings();
-        tempBehavior.setVerbosity(LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
-        tempBehavior.setDestinationEdge((CardinalEdge) fleeEdgeCombo.getSelectedItem());
-        tempBehavior.setRetreatEdge((CardinalEdge) withdrawEdgeCombo.getSelectedItem());
+        tempBehavior.setDestinationEdge(fleeEdgeCombo.getSelectedItem());
+        tempBehavior.setRetreatEdge(withdrawEdgeCombo.getSelectedItem());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
-                tempBehavior.addStrategicTarget(((Coords)targetsListModel.get(i)).toString());
+                tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());
             } else {
-                tempBehavior.addPriorityUnit(Integer.toString((int)targetsListModel.get(i)));
+                tempBehavior.addPriorityUnit(Integer.toString((int) targetsListModel.get(i)));
             }
         }
         princessBehavior = tempBehavior;
@@ -649,12 +637,6 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     public void setBotName(String value) {
         nameField.setText(value);
-    }
-    
-    /** Completes the tooltip for this dialog, setting its width and adding HTML tags. */
-    private String formatTooltip(String text) {
-        String result = "<P WIDTH=" + UIUtil.scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
-        return UIUtil.scaleStringForGUI(result);
     }
     
     @Override
@@ -685,7 +667,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 popup.add(deleteItem);
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
-        };
+        }
         
         @Override
         public void mouseClicked(MouseEvent evt) {
@@ -730,7 +712,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     /** Sets up/Updates the displayed preset list (e.g. after adding or deleting a preset) */
     private void updatePresets() {
-        presets = new ArrayList<String>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
+        presets = new ArrayList<>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
         
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
@@ -749,7 +731,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 presets.add(UIUtil.BOT_MARKER + otherName);
             }
         }
-        ((PresetsModel)presetsList.getModel()).fireUpdate();
+        ((PresetsModel) presetsList.getModel()).fireUpdate();
     }
     
     private class PresetsModel extends DefaultListModel<String> {
@@ -805,8 +787,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 Coords coords = (Coords) value;
                 content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
                 if (client != null) {
-                    IBoard board = client.getBoard();
-                    if (client.getGame().getPhase() == Phase.PHASE_LOUNGE) {
+                    Board board = client.getBoard();
+                    if (client.getGame().getPhase() == GamePhase.LOUNGE) {
                         board = clientGui.chatlounge.getPossibleGameBoard(true);
                     }
                     if (board == null) {
@@ -816,7 +798,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                     } else if (!board.getHex(coords).containsAnyTerrainOf(BUILDING, FUEL_TANK, BRIDGE)) {
                         content += Messages.getString("BotConfigDialog.hexListNoBg");
                     } else {
-                        final IHex hex = board.getHex(coords); 
+                        final Hex hex = board.getHex(coords); 
                         final Building bldg = board.getBuildingAt(coords);
                         if (hex.containsTerrain(BUILDING)) {
                             content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),

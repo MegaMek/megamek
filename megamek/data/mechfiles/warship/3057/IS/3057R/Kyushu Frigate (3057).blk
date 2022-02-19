@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Kyushu Frigate
 <Model>
 (3057)
 </Model>
+
+<mul id:>
+4468
+</mul id:>
 
 <year>
 3057
@@ -38,15 +42,15 @@ Aerodyne
 
 <transporters>
 asfbay:18.0:6:1
-smallcraftbay:12.0:0:2
 mechbay:108.0:2
+smallcraftbay:12.0:6:3
+cargobay:64066.0:1:4
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
 1stclassquarters:460.0:0
 crewquarters:1603.0:0
-cargobay:64066.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -279,6 +283,42 @@ ISSmallPulseLaser
 70
 </structural_integrity>
 
+<capabilities>
+Like many post-Helm Memory Core Inner Sphere designs, the Kyushu features primarily anti-fighter weaponry supported by a still sizable array of capital class weapons. The nose bays feature two NAC/40, two NAC/20s, two NL35s and a single Heavy NPPC supported by twin ER Large Lasers, two Medium Lasers, two Artemis enhanced LRM-20s, and five point defense Small Pulse Lasers. The fore angles each feature a NL35, two NAC/35s, two ER Large and two standard Medium lasers, two LRM-20s and five point defense pulse small lasers, with each broadside bay featuring the same layout while adding a NAC/20 and Medium NPPC. The vessel's aft weaponry mirrors the fore ones, apart from upgrading the NAC/35s on the aft angles for NAC/40s. The vessel’s 64,066 ton cargo capacity is divided between a small cargo area, combined berthing for eighteen AeroSpace Fighters and twelve Small Craft, and its huge BattleMech bay. The Kyushu’s most notable feature, the bay features 108 'Mech cubicles, a complete 'Mech Regiment, which can be transported to a planet’s surface either by transferring to one of the four attached DropShips, two at a time via one of the Kyushu’s twelve specially modified cargo shuttles or if the WarShip is in low orbit, directly from the cargo bay via Drop Pods.
+</capabilities>
+
+<overview>
+The initial design of the Draconis Combine’s first generation of post-Clan Invasion WarShips, the Kyushu-class frigate is intended primarily for transport/defense of invasion task forces and forms a large portion of the Combine's resurgent WarShip fleet.
+</overview>
+
+<history>
+With initial construction beginning in 3053 and finishing in late 3057, the class was among the first modern Successor States warships completed. While not intended for anti-ship operations, the frigate’s weapons array, Lithium-Fusion Battery, Ferro-Aluminum armor, and Double Heat Sinks allow the Kyushu to defend itself and the units in its care admirably. The Class is based on the Federated Suns’ Robinson Class Transport, a pair of which were captured during the early Succession Wars.
+</history>
+
+<manufacturer>
+Stellar Trek Enterprises - Terada Shipyards, Midway Warship Yard
+</manufacturer>
+
+<primaryFactory>
+Dieron, Midway
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+640 meters
+</length>
+
 <source>
 TRO 3057R - Clan Invasion
 </source>
@@ -335,3 +375,4 @@ TRO 3057R - Clan Invasion
 <escape_pod>
 45
 </escape_pod>
+

@@ -19,6 +19,10 @@ Grenadier Battle Armor
 [MagShot]
 </Model>
 
+<mul id:>
+4243
+</mul id:>
+
 <chassis>
 biped
 </chassis>

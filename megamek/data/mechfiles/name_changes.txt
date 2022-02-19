@@ -79,6 +79,7 @@ Tramp JumpShip (Standard)|Tramp JumpShip (2754)
 Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 
 #Mechs
+Atlas AS7-D(C)|Atlas C
 Jagermech JM6-DG|JagerMech JM6-DG
 Mad Cat III (Eve)|Mad Cat III 3 (Eve)
 Puma (Adder) A|Adder (Puma) A
@@ -112,6 +113,13 @@ Dasher (Fire Moth) B|Fire Moth (Dasher) B
 Dasher (Fire Moth) C|Fire Moth (Dasher) C
 Dasher (Fire Moth) D|Fire Moth (Dasher) D
 Dasher (Fire Moth) Prime|Fire Moth (Dasher) Prime
+Iron Cheetah Prime-NA|Iron Cheetah Prime.png
+Iron Cheetah A-NA|Iron Cheetah A
+Iron Cheetah B-NA|Iron Cheetah B
+Iron Cheetah C-NA|Iron Cheetah C
+Iron Cheetah D-NA|Iron Cheetah D
+Iron Cheetah E-NA|Iron Cheetah E
+Iron Cheetah F-NA|Iron Cheetah L
 Loki (Hellbringer) A|Hellbringer (Loki) A
 Loki (Hellbringer) B|Hellbringer (Loki) B
 Loki (Hellbringer) Prime|Hellbringer (Loki) Prime
@@ -203,6 +211,9 @@ Man O' War (Gargoyle) A|Gargoyle (Man O' War) A
 Man O' War (Gargoyle) B|Gargoyle (Man O' War) B
 Man O' War (Gargoyle) C|Gargoyle (Man O' War) C
 Man O' War (Gargoyle) D|Gargoyle (Man O' War) D
+Raijin RJN101-A:Raijin RJN-101-A
+Raijin RJN101-C:Raijin RJN-101-C
+'OMEGA' SHP-4X:OMEGA SHP-4X
 
 #Protomechs
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
@@ -211,6 +222,8 @@ Procyon (Quad)|Procyon ProtoMech (Quad)
 Sprite (Standard)|Sprite Ultraheavy ProtoMech (Standard)
 Sprite 2|Sprite Ultraheavy ProtoMech 2
 Sprite 3|Sprite Ultraheavy ProtoMech 3
+Svartalfa Ultra ProtoMech (Standard)|Svartalfa (Standard)
+Svartalfa Ultra ProtoMech (LRM Variant)|/Svartalfa (LRM Variant)
 
 #Space Stations
 Bastion System Defense Station (Standard)|Bastion System Defense Station (2584)
@@ -228,7 +241,6 @@ Small Pressurized Yard (Standard)|Pressurized Yard - Small (2200)
 Small Unpressurized Yard (Standard)|Unpressurized Yard - Small (2100)
 Snowden Mining Station Mk I|Snowden Mining Station (MK I)
 
-
 #Tanks
 Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
 SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
@@ -238,6 +250,8 @@ Vargr APC|Vargr APC Tank
 Vargr APC (LRM)| Vargr APC Tank (LRM)
 Sleipnir APC|Sleipnir AP Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
+Sturmfeur Heavy Tank (SRM):SturmFeur Heavy Tank (SRM)
+Sturmfeur Heavy Tank (Standard):SturmFeur Heavy Tank (Standard)
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -40,7 +40,7 @@ import megamek.common.annotations.Nullable;
      * The troopers being carried.
      */
     protected int troopers = Entity.NONE;
-    transient IGame game;
+    transient Game game;
 
     /**
      * The set of front locations that load troopers externally.
@@ -178,7 +178,7 @@ import megamek.common.annotations.Nullable;
     @Override
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
-        Vector<Entity> units = new Vector<Entity>(1);
+        Vector<Entity> units = new Vector<>(1);
         if (troopers != Entity.NONE) {
             Entity entity = game.getEntity(troopers);
             
@@ -225,8 +225,8 @@ import megamek.common.annotations.Nullable;
     }
 
     @Override
-    public double getUnused(){
-        if (troopers == Entity.NONE){
+    public double getUnused() {
+        if (troopers == Entity.NONE) {
             return 1;
         } else {
             return 0;
@@ -304,8 +304,7 @@ import megamek.common.annotations.Nullable;
      */
     @Override
     public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
-        return isWeaponBlockedAt(loc, isRear)?
-                game.getEntity(troopers) : null;
+        return isWeaponBlockedAt(loc, isRear) ? game.getEntity(troopers) : null;
     }
 
     @Override
@@ -329,7 +328,7 @@ import megamek.common.annotations.Nullable;
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
-} // End package class BattleArmorHandles implements Transporter
+}

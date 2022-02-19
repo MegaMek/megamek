@@ -1,5 +1,5 @@
 3145 LCAF Assault Vehicles A
-Sturmfeur Heavy Tank (Heavy Gauss), 1
+SturmFeur Heavy Tank (Heavy Gauss), 1
 DI Morgan Assault Tank (Standard), 2
 Demolisher II Heavy Tank (Thunderbolt), 3
 DI Morgan Assault Tank (Gauss), 4

@@ -1,12 +1,13 @@
 Version:1.1
 Man O' War (Gargoyle)
 K
+mul id:7759
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3140
 rules level:2
-source:ilClan Vol 11 - Dark Age
+source:Rec Guide:ilClan #11 - Dark Age
 
 mass:80
 engine:400 XL (Clan) Engine

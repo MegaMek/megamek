@@ -1,11 +1,12 @@
 Version:1.0
 Koshi (Mist Lynx)
 I
+mul id:7557
 
 Config:Biped Omnimech
 techbase:Clan
 era:3086
-source:Dark Age
+source:Rec Guide:ilClan #7 - 
 rules level:2
 
 mass:25
@@ -59,8 +60,8 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 CLNarcBeacon (OMNIPOD)
-ISNarc Pods (OMNIPOD)
-ISNarc Pods (OMNIPOD)
+CLNarc Pods (OMNIPOD)
+CLNarc Pods (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-

@@ -1,6 +1,7 @@
 Version:1.0
 Longbow
 LGB-12C
+mul id:1931
 
 Config:Biped
 TechBase:Inner Sphere
@@ -151,4 +152,16 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
 
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+
+deployment:A recent upgrade of the Longbow, the 12C variant is designed to maximize the 'Mech's fire support capabilities. The 'Mech has two LRM-20 launchers and two LRM-15 launchers, giving it an incredible bombardment capability and is capable of firing 40% more missiles down range than the base model. The 'Mech has three ER Small Lasers for close combat. The 12C variant is capable of doing this through the use of an XL engine that saves a great deal of weight.
+
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Fletcher (TH),Loburg
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 255 XL
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C

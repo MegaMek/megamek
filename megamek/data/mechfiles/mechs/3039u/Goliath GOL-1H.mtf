@@ -1,34 +1,35 @@
 Version:1.0
 Goliath
 GOL-1H
+mul id:1229
 
 Config:Quad
-TechBase:Inner Sphere
-Era:2652
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2652
+source:TRO 3039 - Star League
+rules level:1
 
-Mass:80
-Engine:320 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Single
-Walk MP:4
-Jump MP:0
+heat sinks:17 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-FLL Armor:24
-FRL Armor:24
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-RLL Armor:30
-RRL Armor:30
-RTL Armor:13
-RTR Armor:13
-RTC Armor:19
+armor:Standard(Inner Sphere)
+FLL armor:24
+FRL armor:24
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+RLL armor:30
+RRL armor:30
+RTL armor:13
+RTR armor:13
+RTC armor:19
 
 Weapons:5
 LRM 10, Left Torso
@@ -149,20 +150,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Goliath is based on lessons that were learned from the Scorpion. 
 
-Overview: The development of Quad BattleMechs was not an easy. With major flaws reducing the popularity of the Scorpion and Xanthos, many expected Brigadier Corporation's new quad to be just as problematic. Brigadier, however, had learnt from their mistakes, and the Goliath had none of the problems that had plagued its ancestors. Unfortunately for Brigadier, this did not translate into lucrative contracts with the SLDF; instead, the company had to make do with middling sales to the Great Houses and periphery states. As a result, few Goliaths were produced before the Succession Wars, and the rapid destruction of their main factory made the BattleMech a rare sight.
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.				
 
-Capabilities: The Goliath attempts to bypass the main quad limitation through a focus on ranged fire support. This is accomplished admirably, though it has few weapons to defend itself with if an enemy charges into short range. The 'Mech is nimble for its size, though, and well protected through a tough shell of armor. Generous cooling capabilities also allow most Goliath's to offer steady and constant firepower throughout entire battles.
+deployment:The primary weapon is a Rand PPC. This is backed up by two Holly LRM-10 launchers. The Goliath has respectable firepower at long ranges, but when an enemy closes though the 'Mech only has two Ramsey-65 Machine Guns to rely on for defense.
 
-Deployment: The destruction of Brigadier's facilities on Oliver in 2837 put an already rare machine on the extinction list. Against all odds, though, Corean Enterprises would begin producing a few Goliath's every year, putting a steady stream of the design into Free Worlds hands. Remaining Goliaths would mostly be concentrated in Lyran hands, though their historical deployement in the periphery has kept their numbers in that region of space high.
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. he first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
 
-systemmanufacturer:CHASSIS:Corean
-systemmode:CHASSIS:VIII
-systemmanufacturer:ENGINE:Hermes
-systemmode:ENGINE:320
-systemmanufacturer:ARMOR:StarSlab
-systemmode:ARMOR:/3
-systemmanufacturer:COMMUNICATIONS:Corean
-systemmode:COMMUNICATIONS:TransBand-J9
-systemmanufacturer:TARGETING:Corean
-systemmode:TARGETING:B-Tech
+manufacturer:Brigadier Corporation, Corean Enterprises - MacAdams-Suharno
+primaryfactory:Oliver, Stewart
+systemmanufacturer:CHASSIS:Corean VIII
+systemmanufacturer:ENGINE:Hermes 320
+systemmanufacturer:ARMOR:StarSlab /3
+systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
+systemmanufacturer:TARGETING:Corean B-Tech
+

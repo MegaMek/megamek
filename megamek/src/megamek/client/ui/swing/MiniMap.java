@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2002-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
@@ -20,35 +20,43 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.minimap.MiniMapUnitSymbols.*;
-import static megamek.common.Terrains.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import megamek.client.Client;
-import megamek.client.event.*;
-import megamek.client.ui.*;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.minimap.MiniMapUnitSymbols;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
-import megamek.common.actions.*;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.common.Terrains.*;
 
 /**
  * Obviously, displays the map in scaled-down size. 
@@ -92,9 +100,9 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
     private BufferedImage mapImage;
-    private final IBoardView bv;
-    private final IGame game;
-    private IBoard board;
+    private final BoardView bv;
+    private final Game game;
+    private Board board;
     private final JDialog dialog;
     private Client client;
     private final ClientGUI clientGui;
@@ -137,7 +145,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * @param game A game containing at least the board, but not necessarily anything else
      * @param cg Optional: A ClientGUI object housing this minimap
      */
-    public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, IGame game, @Nullable ClientGUI cg) {
+    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
         result.setAutoRequestFocus(false);
         result.setFocusable(false);
@@ -158,13 +166,13 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     
 
     /** Returns a minimap image of the given board at the maximum zoom index. */
-    public static BufferedImage getMinimapImageMaxZoom(IBoard board) {
+    public static BufferedImage getMinimapImageMaxZoom(Board board) {
         return getMinimapImage(board, MAX_ZOOM);
     }
     
     /** Returns a minimap image of the given board at the given zoom index. */
-    public static BufferedImage getMinimapImage(IBoard board, int zoom) {
-        IGame game = new Game();
+    public static BufferedImage getMinimapImage(Board board, int zoom) {
+        Game game = new Game();
         game.setBoard(board);
         return getMinimapImage(game, null, zoom);
     }
@@ -173,7 +181,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * Returns a minimap image of the given board at the given zoom index. The 
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(IGame game, IBoardView bv, int zoom) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < 0) || (zoom > MAX_ZOOM)) {
@@ -185,7 +193,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             return ImageUtil.failStandardImage();
         }
     }
@@ -197,7 +205,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
      * used to create a snapshot image. When a boardview is given, the visible area is shown.
      */
-    private MiniMap(@Nullable JDialog dlg, IGame g, @Nullable IBoardView bview, @Nullable ClientGUI cg) {
+    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;
@@ -373,7 +381,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             }
         } catch (Exception e) {
             // Fall back to the default colors
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -428,6 +436,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private final Runnable drawMapable = new Runnable() {
         private final int redrawDelay = 0;
 
+        @Override
         public void run() {
             try {
                 if ((System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {
@@ -485,7 +494,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             GUIPreferences.AntiAliasifSet(gg);
             for (int j = 0; j < board.getWidth(); j++) {
                 for (int k = 0; k < board.getHeight(); k++) {
-                    IHex h = board.getHex(j, k);
+                    Hex h = board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h));
                         if (h.containsTerrain(SPACE)) {
@@ -496,7 +505,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
-                    if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) && !h.isValid(null)) {
+                    if ((game != null) && (game.getPhase() == GamePhase.UNKNOWN) && !h.isValid(null)) {
                         gg.setColor(GUIPreferences.getInstance().getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
@@ -517,7 +526,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             if (SHOW_NO_HEIGHT != heightDisplayMode) {
                 for (int j = 0; j < board.getWidth(); j++) {
                     for (int k = 0; k < board.getHeight(); k++) {
-                        IHex h = board.getHex(j, k);
+                        Hex h = board.getHex(j, k);
                         paintHeight(g, h, j, k);
                     }
                 }
@@ -558,7 +567,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) 
-                && (IGame.Phase.PHASE_DEPLOYMENT == game.getPhase()) && (dialog != null)) {
+                && (GamePhase.DEPLOYMENT == game.getPhase()) && (dialog != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
@@ -594,10 +603,10 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             relSize[i] = Math.min(1, Math.max(0, relSize[i]));
         }
         
-        int x1 = (int)(relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
-        int y1 = (int)(relSize[1] * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()) + topMargin;
-        int x2 = (int)((relSize[2]-relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
-        int y2 = (int)((relSize[3]-relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
+        int x1 = (int) (relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
+        int y1 = (int) (relSize[1] * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()) + topMargin;
+        int x2 = (int) ((relSize[2]-relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
+        int y2 = (int) ((relSize[3]-relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
         
         // thicker but translucent rectangle
         g.setColor(new Color(100, 100, 160, 80));
@@ -709,7 +718,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** Writes the height value (hex/building/none) in the minimap hexes. */
-    private void paintHeight(Graphics g, IHex h, int x, int y) {
+    private void paintHeight(Graphics g, Hex h, int x, int y) {
         if ((heightDisplayMode == SHOW_NO_HEIGHT) || (zoom < 4)) {
             return;
         }
@@ -775,18 +784,18 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        g.setColor(new Color(20,20,60));
+        g.setColor(new Color(20, 20, 60));
         g.drawPolygon(xPoints, yPoints, 6);
         // Drop in a star
-        int dx = (int)(Math.random() * HEX_SIDE[zoom]);
-        int dy = (int)((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
-        int c = (int)(Math.random() * 180);
+        int dx = (int) (Math.random() * HEX_SIDE[zoom]);
+        int dy = (int) ((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
+        int c = (int) (Math.random() * 180);
         g.setColor(new Color(c, c, c));
         if (Math.random() < 0.1) {
             g.setColor(new Color(c, c / 10, c / 10)); // red star
         } else if (Math.random() < 0.1) {
-            int factor = (int)(Math.random()*10) + 1;
-            g.setColor(new Color(c / factor, c / factor,c)); // blue star
+            int factor = (int) (Math.random()*10) + 1;
+            g.setColor(new Color(c / factor, c / factor, c)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
     }
@@ -900,7 +909,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             return;
         }  
 
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
         boolean stratOpsSymbols = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
@@ -962,12 +971,12 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 String s = "";
                 if (entity instanceof Protomech) {
                     s = "P";
-                } else if ((entity instanceof Mech) && ((Mech)entity).isIndustrial()) {
+                } else if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()) {
                     s = "I";
                 } else if (entity.getWeightClass() < 6) {
                     s = STRAT_WEIGHTS[entity.getWeightClass()];
                 }
-                if (!s.equals("")) {
+                if (!s.isBlank()) {
                     var fontContext = new FontRenderContext(null, true, true);
                     var font = new Font("SansSerif", Font.BOLD, 100);
                     FontMetrics currentMetrics = getFontMetrics(font);
@@ -1115,14 +1124,14 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** If the given hex contains ROAD or BRIDGE, adds an entry to roadHexes. */
-    private void addRoadElements(IHex hex, int boardX, int boardY) {
+    private void addRoadElements(Hex hex, int boardX, int boardY) {
         if (hex.containsAnyTerrainOf(ROAD, BRIDGE)) {
             var terrain = hex.getAnyTerrainOf(ROAD, BRIDGE);
             roadHexes.add(new int[] { boardX, boardY, terrain.getExits() } );
         }
     }
 
-    private Color terrainColor(IHex hex) {
+    private Color terrainColor(Hex hex) {
         Color terrColor = terrainColors[0];
         if (hex.getLevel() < 0) {
             terrColor = SINKHOLE;
@@ -1325,15 +1334,15 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
-                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
-                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
+                    || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
+                    || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {
                 File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
 				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+						+ e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (IOException e1) {
@@ -1351,7 +1360,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void gameBoardNew(GameBoardNewEvent e) {
-            IBoard b = e.getOldBoard();
+            Board b = e.getOldBoard();
             if (b != null) {
                 b.removeBoardListener(boardListener);
             }

@@ -1,11 +1,12 @@
 Version:1.0
 Turkina
 E
+mul id:3330
 
 Config:Biped Omnimech
 techbase:Clan
 era:3070
-source:Recognition Guide:ilClan #16 - Jihad
+source:Rec Guide:ilClan #16 - Jihad
 rules level:2
 
 mass:95

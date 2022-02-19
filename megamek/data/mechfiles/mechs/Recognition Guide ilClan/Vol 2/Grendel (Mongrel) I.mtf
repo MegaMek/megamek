@@ -1,11 +1,12 @@
 Version:1.1
 Grendel (Mongrel)
 I
+mul id:7458
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3140
-source:ilClan Vol 2 - Dark Age
+source:Rec Guide:ilClan #2- Dark Age
 rules level:2
 
 mass:45

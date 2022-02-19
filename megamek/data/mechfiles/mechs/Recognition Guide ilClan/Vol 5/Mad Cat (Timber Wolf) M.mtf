@@ -1,11 +1,13 @@
 Version:1.0
 Mad Cat (Timber Wolf)
 M
+mul id:7515
 
 Config:Biped Omnimech
 techbase:Clan
 era:3068
 rules level:2
+source:Rec Guide:ilClan #5 - Jihad
 
 mass:75
 engine:375 XL (Clan) Engine(IS)

@@ -1,6 +1,7 @@
 Version:1.0
 Grand Dragon
 DRG-9KC
+mul id:1263
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,3 +149,19 @@ Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Grand Dragon is the successful follow-up to the Dragon BattleMech.
+ 
+capabilities:Protected by ten tons of armor, the Grand Dragon uses thirteen double heat sinks for excellent heat management and uses a 16.5 ton Hermes 360 XL engine to achieve a moderate cruising speed of 64 km/h. Originally the Grand Dragon used the same Alshain Type 56-60H chassis as was found in the Dragon 'Mech it replaced. However, when the new Nykvarn plant was being set up an innovative engineering team came up with a way to increase the Grand Dragon's rotation from 250° to 300° by using an alternative assembly method for the hip and torso structure. This improvement was responsible for Nykvarn being awarded the honor of restarting Grand Dragon production, with all new Grand Dragons using this Nykvarn Type 58-66SH chassis
+
+deployment:Produced at the Luthien Armor Works plant on Nykvarn shortly after its opening in 3071, the 9KC was created for DCMS commanders who wanted to use a C3 network composed entirely of Grand Dragons. Though the 9KC is designed as a stand-off 'Mech, it is incredibly effective at close range. The 5K is used as a base, though the 9KC does not incorporate CASE. One rear-facing laser is removed and the missile launcher is replaced with an MML 5. The PPC is swapped out for a Snub-Nose PPC and the armor is now a more efficient Light Ferro-Fibrous weave with an additional one and a half tons added. All of these weight-savings enable the inclusion of a C3 Master Computer.
+
+history:The 'Mech was originally a simple variant of the Dragon with some modifications, chiefly replacing the autocannon with a particle projection cannon, introduced around the end of the Fourth Succession War. In 3040 this DRG-1G variant was turned into a production model, with several of the Dragon's production lines turned over to building Grand Dragons. As it reached Draconis Combine Mustered Soldiery units the Grand Dragon became well-liked for its all-around effectiveness in terms of speed, heat management and weaponry. Luthien Armor Works went ahead with phasing in the Grand Dragon, retooling their Dragon factories on Luthien, Saffel, Yorii and Dieron to build the new 'Mechs exclusively, by 3055 all Dragon production had ceased in favor of the Grand Dragon. Just like the Dragon, the Grand Dragon quickly became a favorite in the DCMS, with nearly every line unit fielding a company of either design. Production of the Grand Dragon continued unabated until the Jihad, when the Word of Blake devastated LAW's factories in 3068. It took two years for LAW to get new Grand Dragon factories up and running, the first on Nykvarn followed by Abiy Adi and Savinsville, and ensure the continued use of the 'Mech in years to come.
+
+manufacturer:Luthien Armor Works
+primaryfactory:Nykvarn
+systemmanufacturer:CHASSIS:Nykvarn Type 58-66SH
+systemmanufacturer:ENGINE:Hermes 360 XL
+systemmanufacturer:ARMOR:Starshield Light
+systemmanufacturer:COMMUNICATIONS:Sipher CommSys 3
+systemmanufacturer:TARGETING:Eagle Eye SY10-10

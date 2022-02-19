@@ -1,11 +1,12 @@
 Version:1.0
 Locust IIC
 (Standard)
+mul id:1914
 
 Config:Biped
 techbase:Clan
 era:2832
-source:Recognition Guide:ilClan #16 - Succession Wars
+source:Rec Guide:ilClan #16 - Succession Wars
 rules level:2
 
 mass:25

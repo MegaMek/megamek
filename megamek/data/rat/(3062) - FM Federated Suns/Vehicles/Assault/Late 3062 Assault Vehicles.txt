@@ -6,7 +6,7 @@ Alacorn Heavy Tank Mk VI,4
 Partisan Air Defense Tank (Standard),5
 Ontos Heavy Tank (Standard),6
 Demolisher Heavy Tank (Standard Mk. I),5
-Sturmfeur Heavy Tank (Standard),4
+SturmFeur Heavy Tank (Standard),4
 Challenger MBT X,3
 Partisan Air Defense Tank (XL),2
 Schiltron Mobile Fire-Support Platform Prime,1

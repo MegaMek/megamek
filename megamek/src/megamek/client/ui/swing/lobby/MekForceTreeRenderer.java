@@ -18,27 +18,23 @@
  */ 
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
-import javax.swing.UIManager;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.force.*;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /** A specialized renderer for the Mek Force tree. */
 public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
@@ -48,22 +44,19 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             "unknown_unit.gif").toString();
 
     private ChatLounge lobby;
-    //    private final Color TRANSPARENT = new Color(250,250,250,0);
     private boolean isSelected;
     private Color selectionColor = Color.BLUE;
     private Entity entity;
-    private IPlayer localPlayer;
+    private Player localPlayer;
     private JTree tree;
     private int row;
-
-    static int counter = 0;
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
             boolean leaf, int row, boolean hasFocus) {
 
         isSelected = sel;
-        IGame game = lobby.getClientgui().getClient().getGame();
+        Game game = lobby.getClientgui().getClient().getGame();
         localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
         selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
@@ -80,7 +73,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             setFont(scaledFont);
             entity = (Entity) value;
             this.row = row; 
-            IPlayer owner = entity.getOwner();
+            Player owner = entity.getOwner();
             if (lobby.isCompact()) {
                 setText(LobbyMekCellFormatter.formatUnitCompact(entity, lobby, true));
             } else {
@@ -96,7 +89,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
                 Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
-                Image image = lobby.getClientgui().bv.getTilesetManager().loadPreviewImage(entity, camo, this);
+                Image image = lobby.getClientgui().getBoardView().getTilesetManager().loadPreviewImage(entity, camo, this);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
@@ -122,7 +115,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
         }
         Rectangle r = tree.getRowBounds(row);
         if (r != null && event.getPoint().x > r.getWidth() - UIUtil.scaleForGUI(50)) {
-            return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, lobby.mapSettings).toString();
+            return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, lobby.mapSettings);
         }
         return null;
     }
@@ -132,7 +125,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             int width = height * image.getWidth(null) / image.getHeight(null);
             setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
         } else {
-            MegaMek.getLogger().error("Trying to resize a unit icon of height or width 0!");
+            LogManager.getLogger().error("Trying to resize a unit icon of height or width 0!");
             setIcon(null);
         }
     }

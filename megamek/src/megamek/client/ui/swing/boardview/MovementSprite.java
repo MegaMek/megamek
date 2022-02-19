@@ -23,7 +23,6 @@ import megamek.common.Entity;
  * 
  * TODO: Different color depending upon whether
  * entity has already moved this turn
- *
  */
 class MovementSprite extends Sprite {
 
@@ -48,7 +47,7 @@ class MovementSprite extends Sprite {
 
     private int vel;
 
-    public MovementSprite(BoardView1 boardView1, Entity e, int[] v, Color col, boolean isCurrent) {
+    public MovementSprite(BoardView boardView1, Entity e, int[] v, Color col, boolean isCurrent) {
         // this.mv = en.getMV();
 
         super(boardView1);
@@ -70,7 +69,7 @@ class MovementSprite extends Sprite {
         // TODO: Its not going transparent. Oh well, it is a minor issue at
         // the moment
         /*
-         * if(isCurrent) { int colour = col.getRGB(); int transparency =
+         * if (isCurrent) { int colour = col.getRGB(); int transparency =
          * GUIPreferences.getInstance().getInt(GUIPreferences.
          * ADVANCED_ATTACK_ARROW_TRANSPARENCY); moveColor = new Color(colour
          * | (transparency << 24), true); }
@@ -119,13 +118,13 @@ class MovementSprite extends Sprite {
         // directly
         // in the centes of hex and hiding mek under.
 
-        a.x = a.x + (int) ((BoardView1.HEX_W / 2) * bv.scale)
+        a.x = a.x + (int) ((BoardView.HEX_W / 2) * bv.scale)
                 + (int) Math.round(Math.cos(an) * (int) (18 * bv.scale));
-        t.x = (t.x + (int) ((BoardView1.HEX_W / 2) * bv.scale))
+        t.x = (t.x + (int) ((BoardView.HEX_W / 2) * bv.scale))
                 - (int) Math.round(Math.cos(an) * (int) (18 * bv.scale));
-        a.y = a.y + (int) ((BoardView1.HEX_H / 2) * bv.scale)
+        a.y = a.y + (int) ((BoardView.HEX_H / 2) * bv.scale)
                 + (int) Math.round(Math.sin(an) * (int) (18 * bv.scale));
-        t.y = (t.y + (int) ((BoardView1.HEX_H / 2) * this.bv.scale))
+        t.y = (t.y + (int) ((BoardView.HEX_H / 2) * this.bv.scale))
                 - (int) Math.round(Math.sin(an) * (int) (18 * bv.scale));
         movePoly = new StraightArrowPolygon(a, t, (int) (4 * bv.scale),
                 (int) (8 * bv.scale), false);
@@ -180,13 +179,4 @@ class MovementSprite extends Sprite {
     public boolean isInside(Point point) {
         return movePoly.contains(point.x - bounds.x, point.y - bounds.y);
     }
-
-    /*
-     * public String[] getTooltip() { String[] tipStrings = new String[1 +
-     * weaponDescs.size()]; int tip = 1; tipStrings[0] = attackerDesc +
-     * " "+Messages.getString("BoardView1.on")+" " + targetDesc;
-     * //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ for (Iterator<String> i =
-     * weaponDescs.iterator(); i.hasNext();) { tipStrings[tip++] = i.next();
-     * } return tipStrings; }
-     */
 }

@@ -1,6 +1,7 @@
 Version:1.1
 Dig Lord
 RCL-4 MiningMech
+mul id:4079
 
 Config:Biped
 techbase:Inner Sphere

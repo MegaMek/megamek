@@ -1,11 +1,12 @@
 Version:1.0
 Vixen (Incubus)
 3
+mul id:3443
 
 Config:Biped
 TechBase:Clan
 Era:3025
-Source:TRO 3055 - Succession Wars
+source:Rec Guide:ilClan #7 - Late Succession Wars
 Rules Level:2
 
 Mass:30

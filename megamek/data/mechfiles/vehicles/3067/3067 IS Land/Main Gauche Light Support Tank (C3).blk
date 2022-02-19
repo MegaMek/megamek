@@ -15,6 +15,10 @@ Main Gauche Light Support Tank
 <Model>
 (C3)
 </Model>
+
+<mul id:>
+4568
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

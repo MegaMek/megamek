@@ -13,27 +13,13 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.IAimingModes;
-import megamek.common.IGame;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+
+import java.util.Vector;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2304364403526293671L;
@@ -44,7 +30,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param g
      */
     public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -128,8 +114,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            int savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            AimingMode savedAimingMode = waa.getAimingMode();
+            waa.setAimingMode(AimingMode.NONE);
 
             int savedAimedLocation = waa.getAimedLocation();
             waa.setAimedLocation(Entity.LOC_NONE);
@@ -234,24 +220,23 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             int extraHeat = Compute.d6(2);
             if (entityTarget.getArmor(hit) > 0 &&                        
                     (entityTarget.getArmorType(hit.getLocation()) == 
-                       EquipmentType.T_ARMOR_REFLECTIVE)){
-               entityTarget.heatFromExternal += Math.max(1, extraHeat/2);
-               r.add(Math.max(1, extraHeat/2));
+                       EquipmentType.T_ARMOR_REFLECTIVE)) {
+               entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
+               r.add(Math.max(1, extraHeat / 2));
                r.choose(true);
-               r.messageId=3406;
+               r.messageId = 3406;
                r.add(extraHeat);
                r.add(EquipmentType.armorNames
                        [entityTarget.getArmorType(hit.getLocation())]);
             } else if (entityTarget.getArmor(hit) > 0 &&  
                    (entityTarget.getArmorType(hit.getLocation()) == 
-                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
-               entityTarget.heatFromExternal += extraHeat/2;
-               r.add(extraHeat/2);
+                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+               entityTarget.heatFromExternal += extraHeat / 2;
+               r.add(extraHeat / 2);
                r.choose(true);
-               r.messageId=3406;
+               r.messageId = 3406;
                r.add(extraHeat);
-               r.add(EquipmentType.armorNames
-                       [entityTarget.getArmorType(hit.getLocation())]);
+               r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
             } else {
                entityTarget.heatFromExternal += extraHeat;
                r.add(extraHeat);
@@ -259,8 +244,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addElement(r);            
         } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
     }
 

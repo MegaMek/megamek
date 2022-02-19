@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,8 +20,8 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -30,7 +30,7 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
- * Created on Sep 25, 2004
+ * @since Sep 25, 2004
  */
 public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
@@ -40,11 +40,10 @@ public class ACAPHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public ACAPHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
-
 
     /*
      * (non-Javadoc)
@@ -99,7 +98,7 @@ public class ACAPHandler extends ACWeaponHandler {
 
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
@@ -128,7 +127,7 @@ public class ACAPHandler extends ACWeaponHandler {
                 critModifier -= 2;
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
                 critModifier -= 2;
             }

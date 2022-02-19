@@ -1,11 +1,12 @@
 Version:1.0
 Shadow Cat
 E
+mul id:6913
 
 Config:Biped Omnimech
 techbase:Clan
 era:3098
-source:RS 3145 NTNU - Early Republic
+source:Rec Guide:ilClan #9 - Early Republic
 rules level:2
 
 mass:45

@@ -1,6 +1,7 @@
 Version:1.0
 Rifleman IIC
 8
+mul id:2717
 
 Config:Biped
 TechBase:Clan
@@ -152,4 +153,21 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Rifleman IIC is an upgrade of the venerable Rifleman BattleMech. Five tons heavier than the design it is based on, the Rifleman IIC is also slower. 
 
+capabilities:Five tons heavier than the design it is based on, the Rifleman IIC is also slower. This creates a great deal more room with which to mount other equipment. Further weight savings are found in the use of an Endo Steel frame. One of the first upgrades to the design was maxing out its protection, with eleven tons of Ferro-Fibrous armor. 
+
+deployment:This version carries an ER Large Laser and pair of AP Gauss Rifles in each arm. These are supported by a Streak SRM-6 mounted in the left and right torsos. A head mounted ECM Suite can disrupt targeting networks, and five jump jets allow the IIC 8 to cover 150 meters at a time. The Endo Steel chassis allowed the engineers to install a Consolidated 325 XL engine, increasing ground speed to a maximum of 86 km/h.
+
+history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a
+notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants
+continue to debut.
+
+manufacturer:Trellshire Heavy Industries (Refits)
+primaryfactory:Twycross
+systemmanufacturer:CHASSIS:CCo-B Endo
+systemmanufacturer:ENGINE:Consolidated 325 XL
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:JUMPJET:"Highlifter" 44
+systemmanufacturer:COMMUNICATIONS:Garret T11-A
+systemmanufacturer:TARGETING:GH D5j TTS with Active Probe

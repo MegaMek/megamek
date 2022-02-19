@@ -30,7 +30,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -107,7 +107,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public String toString() {
-            return String.format("%s f:%d", coords, facing);  //$NON-NLS-1$
+            return String.format("%s f:%d", coords, facing);
         }
     }
 
@@ -151,8 +151,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
             return cfw;
         }
-
-        ;
     }
 
     /**
@@ -162,9 +160,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * legality.
      */
     public static class MovePathLegalityFilter extends AbstractPathFinder.Filter<MovePath> {
-        IGame game;
+        Game game;
 
-        public MovePathLegalityFilter(IGame game) {
+        public MovePathLegalityFilter(Game game) {
             this.game = game;
         }
 
@@ -172,7 +170,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public boolean shouldStay(MovePath edge) {
             if (edge.getEntity().isAero()) {
                 /*
-                 * isMovemementPossible is currently not working for aero units,
+                 * isMovementPossible is currently not working for aero units,
                  * so we have to use a substitute.
                  */
                 if (edge.length() == 0) {
@@ -280,7 +278,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final MoveStepType lType = (last == null) ? null : last.getType();
             final Entity entity = mp.getEntity();
 
-            final ArrayList<MovePath> result = new ArrayList<MovePath>();
+            final ArrayList<MovePath> result = new ArrayList<>();
 
             if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
@@ -319,7 +317,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.BACKWARDS));
-            } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
+            } else if (mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.FORWARDS));
@@ -338,7 +336,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer,
                           AdjacencyMap<MovePath> edgeAdjacencyMap,
                           Comparator<MovePath> comparator,
-                          IGame game) {
+                          Game game) {
         super(new MovePathDestinationMap(),
               edgeRelaxer,
               edgeAdjacencyMap,

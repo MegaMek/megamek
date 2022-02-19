@@ -17,7 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
@@ -37,7 +37,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

@@ -49,7 +49,9 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -261,7 +263,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : SmallCraft.LOC_HULL;
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
@@ -281,7 +283,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }

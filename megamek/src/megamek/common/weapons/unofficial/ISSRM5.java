@@ -42,10 +42,14 @@ public class ISSRM5 extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         bv = 47;
-        flags = flags.or(F_NO_FIRES);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
+        rulesRefs = "Unofficial";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(true)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false);
     }
 }

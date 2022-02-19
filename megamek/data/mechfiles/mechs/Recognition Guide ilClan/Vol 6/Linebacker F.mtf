@@ -1,11 +1,12 @@
 Version:1.0
 Linebacker
 F
+mul id:4523
 
 Config:Biped Omnimech
 techbase:Clan
 era:3068
-source:ilClan Rec Guide 6 - Jihad
+source:Rec Guide:ilClan #6 - Jihad
 rules level:3
 
 mass:65

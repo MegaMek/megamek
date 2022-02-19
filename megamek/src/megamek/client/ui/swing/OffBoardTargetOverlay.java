@@ -10,45 +10,28 @@
 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
 * details.  
-*/  
-
+*/
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
+import megamek.client.ui.IDisplayable;
+import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
+import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
-import megamek.client.ui.IDisplayable;
-import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HexTarget;
-import megamek.common.IGame;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.IPlayer;
-import megamek.common.Mounted;
-import megamek.common.OffBoardDirection;
-import megamek.common.Targetable;
-
 /**
  * This class handles the display and logic for the off board targeting overlay.
- *
  */
 public class OffBoardTargetOverlay implements IDisplayable {
     private static final int EDGE_OFFSET = 5;
@@ -62,11 +45,11 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private TargetingPhaseDisplay targetingPhaseDisplay;
     private Image offBoardTargetImage;
     
-    private IGame getCurrentGame() {
+    private Game getCurrentGame() {
         return clientgui.getClient().getGame();
     }
     
-    private IPlayer getCurrentPlayer() {
+    private Player getCurrentPlayer() {
         return clientgui.getClient().getLocalPlayer();
     }
     
@@ -81,8 +64,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         this.clientgui = clientgui;
         
         offBoardTargetImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE)
-                        .toString());
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE).toString());
         
         //Maybe TODO: display dimmed version of off-board icon during movement phase OR targeting phase when weapon is ineligible to fire 
         //Maybe TODO: maybe tooltips?
@@ -94,28 +76,28 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private boolean shouldBeVisible() {
         // only relevant if it's our turn in the targeting phase
         boolean visible = clientgui.getClient().isMyTurn() &&
-                (getCurrentGame().getPhase() == IGame.Phase.PHASE_TARGETING);
+                (getCurrentGame().getPhase() == GamePhase.TARGETING);
         
-        if(!visible) {
+        if (!visible) {
             return false;
         }
         
         Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
         
         // only relevant if we've got an artillery weapon selected for one of our own units
-        if(selectedArtilleryWeapon == null) {
+        if (selectedArtilleryWeapon == null) {
             return false;
         }
         
         // the artillery weapon needs to be using non-homing ammo
         Mounted ammo = selectedArtilleryWeapon.getLinked();
-        if(ammo.isHomingAmmoInHomingMode()) {
+        if (ammo.isHomingAmmoInHomingMode()) {
             return false;
         }
         
         // only show these if there are any actual enemy units eligible for off board targeting
-        for(OffBoardDirection direction : OffBoardDirection.values()) {
-            if(showDirectionalElement(direction, selectedArtilleryWeapon)) {
+        for (OffBoardDirection direction : OffBoardDirection.values()) {
+            if (showDirectionalElement(direction, selectedArtilleryWeapon)) {
                 return true; 
             }
         }
@@ -127,8 +109,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
      * Logic that determines whether to show a specific directional indicator
      */
     private boolean showDirectionalElement(OffBoardDirection direction, Mounted selectedArtilleryWeapon) {
-        for(Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
-            if(entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
+        for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
+            if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
                     (entity.getOffBoardDirection() == direction) &&
                         (targetingPhaseDisplay.ce().isOffBoard() ||
                         weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
@@ -148,23 +130,23 @@ public class OffBoardTargetOverlay implements IDisplayable {
         
         // little hack: we project a point 10 hexes off board to the north/south/east/west and declare a hex target with it
         // then use Compute.isInArc, as that takes into account all the logic including torso/turret twists.
-        switch(direction) {
-        case NORTH:
-            checkCoords = checkCoords.translated(0, checkCoords.getY() + 10);
-            break;
-        case SOUTH:
-            checkCoords = checkCoords.translated(3, getCurrentGame().getBoard().getHeight() - checkCoords.getY() + 10);
-            break;
-        case EAST:
-            translationDistance = ((getCurrentGame().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
-            checkCoords = checkCoords.translated(1, translationDistance).translated(2, translationDistance);
-            break;
-        case WEST:
-            translationDistance = checkCoords.getX() + 5;
-            checkCoords = checkCoords.translated(4, translationDistance).translated(5, translationDistance);
-            break;
-        default:
-            return false;
+        switch (direction) {
+            case NORTH:
+                checkCoords = checkCoords.translated(0, checkCoords.getY() + 10);
+                break;
+            case SOUTH:
+                checkCoords = checkCoords.translated(3, getCurrentGame().getBoard().getHeight() - checkCoords.getY() + 10);
+                break;
+            case EAST:
+                translationDistance = ((getCurrentGame().getBoard().getWidth() - checkCoords.getX()) / 2) + 5;
+                checkCoords = checkCoords.translated(1, translationDistance).translated(2, translationDistance);
+                break;
+            case WEST:
+                translationDistance = checkCoords.getX() + 5;
+                checkCoords = checkCoords.translated(4, translationDistance).translated(5, translationDistance);
+                break;
+            default:
+                return false;
         }
         
         Targetable checkTarget = new HexTarget(checkCoords, Targetable.TYPE_HEX_ARTILLERY);
@@ -175,13 +157,12 @@ public class OffBoardTargetOverlay implements IDisplayable {
     
     @Override
     public boolean isHit(Point point, Dimension size) {
-        Point actualPoint = point;
-        actualPoint.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
-        actualPoint.y = (int) (point.getY() + clientgui.getBoardView().getDisplayablesRect().getY());
+        point.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
+        point.y = (int) (point.getY() + clientgui.getBoardView().getDisplayablesRect().getY());
         
-        for(OffBoardDirection direction : OffBoardDirection.values()) {
-            if(direction != OffBoardDirection.NONE) {
-                if(buttons.containsKey(direction) &&
+        for (OffBoardDirection direction : OffBoardDirection.values()) {
+            if (direction != OffBoardDirection.NONE) {
+                if (buttons.containsKey(direction) &&
                         buttons.get(direction).contains(point)) {
                     isHit = true;
                     handleButtonClick(direction);
@@ -208,7 +189,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
     @Override
     public void draw(Graphics graph, Rectangle rect) {
-        if(!shouldBeVisible()) {
+        if (!shouldBeVisible()) {
             return;
         }
         
@@ -223,31 +204,31 @@ public class OffBoardTargetOverlay implements IDisplayable {
         Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
         
         // draw top icon, if necessary
-        if(showDirectionalElement(OffBoardDirection.NORTH, selectedArtilleryWeapon)) {
+        if (showDirectionalElement(OffBoardDirection.NORTH, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.NORTH, rect);
             buttons.put(OffBoardDirection.NORTH, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
         
         // draw left icon, if necessary
-        if(showDirectionalElement(OffBoardDirection.WEST, selectedArtilleryWeapon)) {
+        if (showDirectionalElement(OffBoardDirection.WEST, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.WEST, rect);
             buttons.put(OffBoardDirection.WEST, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
         
         // draw bottom icon, if necessary
-        if(showDirectionalElement(OffBoardDirection.SOUTH, selectedArtilleryWeapon)) {
+        if (showDirectionalElement(OffBoardDirection.SOUTH, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.SOUTH, rect);
             buttons.put(OffBoardDirection.SOUTH, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
         
         // draw right icon, if necessary. This one is hairy because of the unit overview pane
-        if(showDirectionalElement(OffBoardDirection.EAST, selectedArtilleryWeapon)) {
+        if (showDirectionalElement(OffBoardDirection.EAST, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.EAST, rect);
             buttons.put(OffBoardDirection.EAST, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
         
         // be nice, leave the color as we found it
@@ -262,31 +243,30 @@ public class OffBoardTargetOverlay implements IDisplayable {
         int xPosition;
         int yPosition;        
         
-        switch(direction) {
-        // north rectangle is wider than narrower, and at the top of the board view
-        case NORTH:
-            xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
-            yPosition = boundingRectangle.y + EDGE_OFFSET;
-            return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
-        // west rectangle is narrower than wider, and at the left of the board view
-        case WEST:
-            xPosition = boundingRectangle.x + EDGE_OFFSET;
-            yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (WIDE_EDGE_SIZE / 2);
-            return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);
-        // south rectangle is wider than narrower, and at the bottom of the board view
-        case SOUTH:
-            xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
-            yPosition = boundingRectangle.y + boundingRectangle.height - EDGE_OFFSET - NARROW_EDGE_SIZE;
-            return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
-        // east rectangle is narrower than wider, and at the right of the board view, but to the left of the unit overview panel
-        case EAST:
-            int extraXOffset = GUIPreferences.getInstance().getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
-            xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
-            yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
-            return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);
-        default:
-            return null;
-                
+        switch (direction) {
+            // north rectangle is wider than narrower, and at the top of the board view
+            case NORTH:
+                xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
+                yPosition = boundingRectangle.y + EDGE_OFFSET;
+                return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
+            // west rectangle is narrower than wider, and at the left of the board view
+            case WEST:
+                xPosition = boundingRectangle.x + EDGE_OFFSET;
+                yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (WIDE_EDGE_SIZE / 2);
+                return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);
+            // south rectangle is wider than narrower, and at the bottom of the board view
+            case SOUTH:
+                xPosition = boundingRectangle.x + (int) (boundingRectangle.width / 2) - (int) (WIDE_EDGE_SIZE / 2);
+                yPosition = boundingRectangle.y + boundingRectangle.height - EDGE_OFFSET - NARROW_EDGE_SIZE;
+                return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
+            // east rectangle is narrower than wider, and at the right of the board view, but to the left of the unit overview panel
+            case EAST:
+                int extraXOffset = GUIPreferences.getInstance().getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
+                xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
+                yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
+                return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);
+            default:
+                return null;
         }
     }
 
@@ -299,7 +279,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         List<Targetable> eligibleTargets = new ArrayList<>();
         
         for (Entity ent : this.getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
-            if(ent.getOffBoardDirection() == direction &&
+            if (ent.getOffBoardDirection() == direction &&
                     ent.isOffBoardObserved(getCurrentPlayer().getTeam())) {
                 eligibleTargets.add(ent);
             }

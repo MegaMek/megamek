@@ -52,7 +52,9 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         } else {
             t.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -117,7 +119,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         t.setHasMainGun(hasMainGun);
 
-        if (dataFile.exists("armor_type")){
+        if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         } else {
             t.setArmorType(EquipmentType.T_ARMOR_STANDARD);

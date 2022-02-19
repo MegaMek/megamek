@@ -23,7 +23,6 @@ import java.util.EnumMap;
 
 /**
  * @author Neoancient
- *
  */
 public enum BattleForceSPA {
     //From StratOps
@@ -47,7 +46,7 @@ public enum BattleForceSPA {
     AC3, CAP, COM, SCAP, FUEL, MSL, SDCS
     ;
     
-    static EnumMap<BattleForceSPA,BattleForceSPA> transportBayDoors;
+    static EnumMap<BattleForceSPA, BattleForceSPA> transportBayDoors;
     static {
         transportBayDoors = new EnumMap<>(BattleForceSPA.class);
         transportBayDoors.put(AT, ATxD);
@@ -75,11 +74,11 @@ public enum BattleForceSPA {
     public BattleForceSPA getDoor() {
         return transportBayDoors.get(this);
     }
-    
+
     public boolean isArtillery() {
         return ordinal() <= ARTLTC.ordinal() && ordinal() >= ARTAIS.ordinal();
     }
-    
+
     @Override
     public String toString() {
         String spaName = super.toString();
@@ -91,7 +90,7 @@ public enum BattleForceSPA {
         }
         return spaName;
     }
-    
+
     public static BattleForceSPA getSPAForDmgClass(int dmgClass) {
         switch (dmgClass) {
             case WeaponType.BFCLASS_LRM:

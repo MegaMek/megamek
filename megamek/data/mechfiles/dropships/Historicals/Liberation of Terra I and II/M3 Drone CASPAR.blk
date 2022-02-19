@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ M3 Drone
 <Model>
 CASPAR
 </Model>
+
+<mul id:>
+7147
+</mul id:>
 
 <year>
 2698
@@ -37,10 +41,8 @@ Spheroid
 </motion_type>
 
 <transporters>
-1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
-crewquarters:196.0:0
-cargobay:154.5:1:4
+cargobay:28.0:1:4
 </transporters>
 
 <SafeThrust>
@@ -169,6 +171,58 @@ SDSSelfDestructSystem
 21
 </structural_integrity>
 
+<capabilities>
+A credible threat to corvette and destroyer-class WarShips and capable of destroying the most thickly armored DropShip in a single salvo.
+</capabilities>
+
+<overview>
+Based on the 2650 model of the Pentagon Assault DropShip, the M-3 was the first full production SDS Drone to see widespread use.
+</overview>
+
+<deployment>
+The M-3 Drone required no crew as it was completely autonomous. The SDS Drone Control System had a gunnery rating of 3 and a piloting rating of 4. The station's internal automated defenses provided 14 Marine Points to fend off boarding actions.
+</deployment>
+
+<history>
+First deployed in 2698, they replaced the sullied M-2 as the primary drone system of the early SDS network. The M-3 was also the first of the drones to be built new and not as retrofits of existing, crewed ship hulls. Starting in 2704, the M-3 was produced at O’Neil Shipyards and would eventually be built at a half dozen locations across the Hegemony. Being easier to produce than the massive M-5, the majority of Hegemony systems were protected by these diminutive but deadly assault ships.
+</history>
+
+<manufacturer>
+Nicholas Spacecraft/Ulsop Robotics,Ulsop Robotics/O'Neil Shipyards
+</manufacturer>
+
+<primaryFactory>
+New Earth, Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Will show Invalid as it has to validate with crew.
+</notes>
+
+<use>
+SDS Drone
+</use>
+
+<length>
+89 meters
+</length>
+
+<width>
+75 meters
+</width>
+
+<height>
+75 meters
+</height>
+
 <source>
 H:Liberation of Terra I - Star League
 </source>
@@ -198,7 +252,7 @@ H:Liberation of Terra I - Star League
 </passengers>
 
 <marines>
-14
+0
 </marines>
 
 <battlearmor>
@@ -216,3 +270,4 @@ H:Liberation of Terra I - Star League
 <escape_pod>
 0
 </escape_pod>
+

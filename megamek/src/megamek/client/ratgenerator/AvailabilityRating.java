@@ -13,10 +13,9 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ratgenerator;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Handles availability rating values and calculations for RAT generator.
@@ -31,9 +30,7 @@ import megamek.MegaMek;
  * set of values to indicate the likelihood that a give Phoenix Hawk is a 1D or 1K, etc.
  *
  * @author Neoancient
- *
  */
-
 public class AvailabilityRating {
 	//Used to calculate av rating from weight.
 	public static final double LOG_BASE = Math.log(2);
@@ -77,7 +74,7 @@ public class AvailabilityRating {
 		faction = fields[0];
 
 		if (fields.length < 2) {
-		    MegaMek.getLogger().warning("No availability code given for " + unit +
+		    LogManager.getLogger().warn("No availability code given for " + unit +
 					" (" + era + "): " + faction);
 			return;
 		}
@@ -94,7 +91,7 @@ public class AvailabilityRating {
 			try {
 				startYear = Integer.parseInt(fields[2]);
 			} catch (NumberFormatException ex) {
-			    MegaMek.getLogger().warning("Could not parse start year " + fields[2] + " for "
+			    LogManager.getLogger().warn("Could not parse start year " + fields[2] + " for "
 						+ unit + " in " + era);
 			}
 		}

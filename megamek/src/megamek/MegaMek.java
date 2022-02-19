@@ -1,199 +1,158 @@
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek;
 
+import megamek.client.ui.preferences.SuitePreferences;
+import megamek.client.ui.swing.ButtonOrderPreferences;
+import megamek.client.ui.swing.MegaMekGUI;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.AbstractCommandLineParser;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.*;
+import megamek.server.DedicatedServer;
+import megamek.utils.RATGeneratorEditor;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
+import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.Vector;
-
-import megamek.client.ui.IMegaMekGUI;
-import megamek.client.ui.preferences.MMPreferences;
-import megamek.client.ui.swing.ButtonOrderPreferences;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogConfig;
-import megamek.common.logging.MMLogger;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.AbstractCommandLineParser;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestSupportVehicle;
-import megamek.common.verifier.TestTank;
-import megamek.server.DedicatedServer;
-import megamek.utils.RATGeneratorEditor;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
- * @author mev This is the class where the execution of the megamek game starts.
+ * This is the primary MegaMek class.
+ * @author mev
  */
 public class MegaMek {
-    private static MMLogger logger = null;
-    private static MMPreferences preferences = null;
-
-    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
-            + File.separator + "timestamp").lastModified();
+    private static final SuitePreferences mmPreferences = new SuitePreferences();
+    private static final MMOptions mmOptions = new MMOptions();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
             + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
             + "(-eqedb) (-oul)] [<args>]";
-    private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:";
-    private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:";
-    public static final String PREFERENCES_FILE = "mmconf/megamek.preferences";
-    public static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt";
 
-    public static void main(String[] args) {
-        String logFileName = DEFAULT_LOG_FILE_NAME;
-        CommandLineParser cp = new CommandLineParser(args);
+    public static void main(String... args) {
+        // First, create a global default exception handler
+        Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
+            LogManager.getLogger().error("Uncaught Exception Detected", t);
+            final String name = t.getClass().getName();
+            JOptionPane.showMessageDialog(null,
+                    String.format("Uncaught %s detected. Please open up an issue containing all logs, the game save file, and customs at https://github.com/MegaMek/megamek/issues", name),
+                    "Uncaught " + name, JOptionPane.ERROR_MESSAGE);
+        });
 
+        // Second, let's handle logging
+        initializeLogging(MMConstants.PROJECT_NAME);
+
+        // Third, Command Line Arguments and Startup
         try {
+            CommandLineParser cp = new CommandLineParser(args);
             cp.parse();
-            String lf = cp.getLogFilename();
-            if (lf != null) {
-                if (lf.equals("none") || lf.equals("off")) {
-                    logFileName = null;
-                } else {
-                    logFileName = lf;
-                }
-            }
-
-            configureLogging(logFileName);
-
-            MegaMek.showInfo();
 
             String[] restArgs = cp.getRestArgs();
             if (cp.dedicatedServer()) {
-                MegaMek.startDedicatedServer(restArgs);
+                startDedicatedServer(restArgs);
+                return;
+            }
+
+            getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
+            initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
+
+            if (cp.ratGenEditor()) {
+                RATGeneratorEditor.main(restArgs);
             } else {
-                getPreferences().loadFromFile(PREFERENCES_FILE);
-
-                if (cp.ratGenEditor()) {
-                    RATGeneratorEditor.main(restArgs);
-                } else {
-                    // Load button ordering
-                    ButtonOrderPreferences.getInstance().setButtonPriorities();
-
-                    String interfaceName = cp.getGuiName();
-                    if (interfaceName == null) {
-                        interfaceName = PreferenceManager.getClientPreferences().getGUIName();
-                    }
-                    MegaMek.startGUI(interfaceName, restArgs);
-                }
+                startGUI();
             }
         } catch (CommandLineParser.ParseException e) {
             String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                     + ARGUMENTS_DESCRIPTION_MESSAGE;
-            getLogger().fatal(message);
+            LogManager.getLogger().fatal(message);
             System.exit(1);
         }
     }
 
-    private static void configureLegacyLogging(@Nullable final String logFileName) {
-        // Redirect output to log files, unless turned off.
-        if (logFileName == null) {
-            return;
-        }
-        MegaMek.redirectOutput(logFileName);
-    }
-
-    private static void configureLog4j(@Nullable final String logFileName) {
-        if (null == logFileName) {
-            LogConfig.getInstance().disableAll();
-            return;
-        }
-        LogConfig.getInstance().enableSimplifiedLogging();
+    public static void initializeLogging(final String originProject) {
+        final String initialMessage = getUnderlyingInformation(originProject);
+        LogManager.getLogger().info(initialMessage);
+        handleLegacyLogging();
+        System.out.println(initialMessage);
     }
 
     /**
-     * This needs to be done as we are currently using two different loggers.
-     * Both loggers must be set to append in order to prevent them from over-
-     * writing each other.  So, in order to get a clean log file each run,
-     * the existing log file must be cleared.
-     * <p>Alternatively, consider rolling the log file over instead.</p>
-     * If we ever manage to completely get rid of the legacy logger, we can
-     * get rid of this method.
-     *
-     * @param logFileName The name of the log file to reset.
+     * This function redirects the standard error and output streams... It's a legacy method that
+     * is currently being used as a fallback while migrating the last of our legacy logging and
+     * testing out the new global exception handling
      */
-    public static void resetLogFile(@Nullable final String logFileName) {
-        if (null == logFileName) {
-            return;
-        }
-        File file = new File(logFileName);
-        if (file.exists()) {
-            try (PrintWriter writer = new PrintWriter(file)) {
-                writer.print("");
-            } catch (FileNotFoundException e) {
-                getLogger().error(e);
+    @Deprecated
+    public static void handleLegacyLogging() {
+        try {
+            LogManager.getLogger().info("Redirecting System.out, System.err, and Throwable::printStackTrace output to legacy.log");
+            File logDir = new File("logs");
+            if (!logDir.exists()) {
+                logDir.mkdir();
             }
+
+            File file = new File(PreferenceManager.getClientPreferences().getLogDirectory()
+                    + File.separator + "legacy.log");
+            if (file.exists()) {
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    writer.print("");
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to write to legacy.log", ex);
+                }
+            }
+
+            // Note: these are not closed on purpose
+            PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(file, true), 64));
+            System.setOut(ps);
+            System.setErr(ps);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
         }
     }
 
-    private static void configureLogging(@Nullable final String logFileName) {
-        final String qualifiedLogFilename = PreferenceManager.getClientPreferences().getLogDirectory()
-                + File.separator + logFileName;
-        resetLogFile(qualifiedLogFilename);
-        configureLegacyLogging(logFileName);
-        configureLog4j(logFileName);
+    public static SuitePreferences getMMPreferences() {
+        return mmPreferences;
     }
 
-    /**
-     * @param logger The logger to be used.
-     */
-    public static void setLogger(final MMLogger logger) {
-        MegaMek.logger = logger;
-    }
-
-    /**
-     * @return The logger that will handle log file output. Will return the
-     * {@link DefaultMmLogger} if a different logger has not been set.
-     */
-    public static MMLogger getLogger() {
-        if (null == logger) {
-            logger = DefaultMmLogger.getInstance();
-        }
-        return logger;
-    }
-
-    public static MMPreferences getPreferences() {
-        if (preferences == null) {
-            preferences = new MMPreferences();
-        }
-
-        return preferences;
+    public static MMOptions getMMOptions() {
+        return mmOptions;
     }
 
     /**
      * Calculates the SHA-256 hash of the MegaMek.jar file
-     * Used primarily for purposes of checksum comparison when
-     * connecting a new client.
+     * Used primarily for purposes of checksum comparison when connecting a new client.
      * @return String representing the SHA-256 hash
      */
-    public static String getMegaMekSHA256() {
+    public static @Nullable String getMegaMekSHA256() {
         StringBuilder sb = new StringBuilder();
         byte[] buffer = new byte[8192];
 
@@ -212,28 +171,29 @@ public class MegaMek {
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
         try (InputStream is = new FileInputStream(filename);
              InputStream dis = new DigestInputStream(is, md)) {
-            while (0 < dis.read(buffer)) { }
+            while (0 < dis.read(buffer)) {
+
+            }
             // gets digest
             byte[] digest = md.digest();
             // convert the byte to hex format
             for (byte d : digest) {
                 sb.append(String.format("%02x", d));
             }
-        } catch (IOException e) {
-            getLogger().error(e);
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
             return null;
         }
         return sb.toString();
     }
 
     /**
-     * This function returns the memory used in the heap (heap memory - free
-     * memory).
+     * This function returns the memory used in the heap (heap memory - free memory).
      *
      * @return memory used in kB
      */
@@ -244,172 +204,123 @@ public class MegaMek {
     }
 
     /**
-     * This function redirects the standard error and output streams to the
-     * given File name.
-     *
-     * @param logFileName The file name to redirect to.
-     */
-    private static void redirectOutput(String logFileName) {
-        getLogger().info("Redirecting output to " + logFileName);
-        String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
-        File logDir = new File(sLogDir);
-        if (!logDir.exists()) {
-            if (!logDir.mkdir()) {
-                getLogger().error("Error in creating directory ./logs. We know this is annoying, and apologise. "
-                                + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                + " and we will try to resolve your issue.");
-            }
-        }
-        try {
-            PrintStream ps = new PrintStream(
-                    new BufferedOutputStream(new FileOutputStream(sLogDir
-                            + File.separator + logFileName, true) {
-                        @Override
-                        public void flush() throws IOException {
-                            super.flush();
-                            getFD().sync();
-                        }
-                    }, 64));
-            System.setOut(ps);
-            System.setErr(ps);
-        } catch (Exception e) {
-            getLogger().error("Unable to redirect output to " + logFileName, e);
-        }
-    }
-
-    /**
      * Starts a dedicated server with the arguments in args. See
-     * {@link megamek.server.DedicatedServer#start(String[])} for more
-     * information.
+     * {@link DedicatedServer#start(String[])} for more information.
      *
      * @param args the arguments to the dedicated server.
      */
-    private static void startDedicatedServer(String[] args) {
-        StringBuffer message = new StringBuffer("Starting Dedicated Server. ");
-        MegaMek.dumpArgs(message, args);
-        getLogger().info(message.toString());
+    private static void startDedicatedServer(String... args) {
+        LogManager.getLogger().info("Starting Dedicated Server. " + Arrays.toString(args));
         DedicatedServer.start(args);
     }
 
     /**
-     * Attempts to start the GUI with the given name. If the GUI is unknown the
-     * program will exit.
-     *
-     * @param guiName The name of the GUI, usually AWT or swing
-     * @param args    The arguments to be passed onto the GUI.
+     * Starts MegaMek's GUI
      */
-    private static void startGUI(String guiName, String[] args) {
-        if (null == guiName) {
-            getLogger().error("guiName must be non-null");
-            return;
-        }
-        if (null == args) {
-            getLogger().error("args must be non-null");
-            return;
-        }
-        IMegaMekGUI mainGui = MegaMek.getGui(guiName);
-        if (mainGui == null) {
-            getLogger().fatal(UNKNOWN_GUI_MESSAGE + guiName);
-            System.exit(1);
-        } else {
-            StringBuffer message = new StringBuffer("Starting GUI ");
-            message.append(guiName).append(". ");
-            MegaMek.dumpArgs(message, args);
-            getLogger().info(message.toString());
-            mainGui.start(args);
+    private static void startGUI() {
+        LogManager.getLogger().info("Starting MegaMekGUI.");
+        new MegaMekGUI().start();
+    }
+
+    /**
+     * @param originProject the project that launched MegaMek
+     * @return the underlying information for this launch of MegaMek
+     */
+    public static String getUnderlyingInformation(final String originProject) {
+        return getUnderlyingInformation(originProject, MMConstants.PROJECT_NAME);
+    }
+
+    /**
+     * @param originProject the launching project
+     * @param currentProject the currently described project
+     * @return the underlying information for this launch
+     */
+    public static String getUnderlyingInformation(final String originProject,
+                                                  final String currentProject) {
+        final LocalDateTime buildDate = getBuildDate();
+        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tRelease Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
+                currentProject, MMConstants.VERSION, ((buildDate == null) ? "N/A" : buildDate),
+                MMConstants.RELEASE_DATE, LocalDate.now(), originProject,
+                System.getProperty("java.vendor"), System.getProperty("java.version"),
+                System.getProperty("os.name"), System.getProperty("os.version"),
+                System.getProperty("os.arch"), Locale.getDefault(), currentProject,
+                Runtime.getRuntime().maxMemory() / Math.pow(2, 30));
+    }
+
+    public static @Nullable LocalDateTime getBuildDate() {
+        try {
+            final URL url = Thread.currentThread().getContextClassLoader().getResource(JarFile.MANIFEST_NAME);
+            if (url == null) {
+                return null;
+            }
+            final Attributes attributes = new Manifest(url.openStream()).getMainAttributes();
+            return LocalDateTime.parse(attributes.getValue("Build-Date"));
+        } catch (Exception ignored) {
+            return null;
         }
     }
 
     /**
-     * Return the Interface to the GUI specified by the name in guiName.
-     *
-     * @param guiName the name of the GUI, will be passed on to
-     *                {@link #getGUIClassName(String)}.
-     * @return An that can start a GUI such as {@link IMegaMekGUI}.
+     * This is used to initialize suite-wide graphical setups.
+     * @param currentProject the currently described project
      */
-    @SuppressWarnings({ "rawtypes" })
-    private static IMegaMekGUI getGui(String guiName) {
-        assert (guiName != null) : "guiName must be non-null";
-        String guiClassName = MegaMek.getGUIClassName(guiName);
-        if (guiClassName != null) {
-            try {
-                Class guiClass = Class.forName(guiClassName);
-                if (IMegaMekGUI.class.isAssignableFrom(guiClass)) {
-                    return (IMegaMekGUI) guiClass.newInstance();
+    public static void initializeSuiteGraphicalSetups(final String currentProject) {
+        // Setup Fonts
+        parseFontDirectory(new File(MMConstants.FONT_DIRECTORY));
+
+        // Setup Themes
+        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
+        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
+        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
+
+        // Set a couple of things to make the Swing GUI look more "Mac-like" on Macs
+        // Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", currentProject);
+
+        // Setup Button Order Preferences
+        ButtonOrderPreferences.getInstance().setButtonPriorities();
+    }
+
+    /**
+     * Recursively search the provided directory, attempting to create and then register truetype
+     * fonts from .ttf files
+     * @param directory the directory to parse
+     */
+    private static void parseFontDirectory(final File directory) {
+        final String[] filenames = directory.list();
+        if (filenames == null) {
+            return;
+        }
+
+        for (final String filename : filenames) {
+            if (filename.toLowerCase().endsWith(MMConstants.TRUETYPE_FONT)) {
+                try (InputStream fis = new FileInputStream(directory.getPath() + '/' + filename)) {
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
+                            Font.createFont(Font.TRUETYPE_FONT, fis));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to parse font", ex);
                 }
-            } catch (Exception e) {
-                getLogger().info(GUI_CLASS_NOT_FOUND_MESSAGE + guiClassName);
+            } else {
+                final File file = new File(directory, filename);
+                if (file.isDirectory()) {
+                    parseFontDirectory(file);
+                }
             }
         }
-        return null;
-    }
-
-    private static String getGUIClassName(String guiName) {
-        assert (guiName != null) : "guiName must be non-null";
-        Properties p = new Properties();
-        String key = "gui." + guiName;
-        final String PROPERTIES_FILE = "megamek/MegaMek.properties";
-        try (InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
-            if (is != null) {
-                p.load(is);
-                return p.getProperty(key);
-            }
-        } catch (IOException e) {
-            getLogger().info("Property file load failed.");
-        }
-        return null;
-    }
-
-    /**
-     * This function appends 'args: []', to the buffer, with a space separated
-     * list of args[] elements between the brackets.
-     *
-     * @param buffer the buffer to append the list to.
-     * @param args   the array of strings to copy into a space separated list.
-     */
-    private static void dumpArgs(StringBuffer buffer, String[] args) {
-        assert (buffer != null) : "buffer must be non-null";
-        assert (args != null) : "args must be non-null";
-        buffer.append("args: [");
-        for (int i = 0, e = args.length; i < e; i++) {
-            if (i != 0) {
-                buffer.append(' ');
-            }
-            buffer.append(args[i]);
-        }
-        buffer.append("]");
-    }
-
-    /**
-     * Prints some information about MegaMek. Used in log files to figure out the JVM and
-     * version of MegaMek.
-     */
-    private static void showInfo() {
-        // echo some useful stuff
-        String msg = "Starting MegaMek v" + MegaMekConstants.VERSION + " ..." + "\n\tCompiled on " +
-                new Date(TIMESTAMP) + "\n\tToday is " + LocalDate.now() +
-                "\n\tJava vendor " + System.getProperty("java.vendor") + "\n\tJava version "
-                + System.getProperty("java.version") + "\n\tPlatform " + System.getProperty("os.name")
-                + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")"
-                + "\n\tTotal memory available to MegaMek: "
-                + MegaMek.commafy.format(Runtime.getRuntime().maxMemory() / 1024) + " kB";
-        getLogger().info(msg);
     }
 
     /**
      * This class parses the options passed into to MegaMek from the command line.
      */
     private static class CommandLineParser extends AbstractCommandLineParser {
-        private String logFilename;
-        private String guiName;
         private boolean dedicatedServer = false;
         private boolean ratGenEditor = false;
         private String[] restArgs = new String[0];
 
         // Options
         private static final String OPTION_DEDICATED = "dedicated";
-        private static final String OPTION_GUI = "gui";
-        private static final String OPTION_LOG = "log";
         private static final String OPTION_EQUIPMENT_DB = "eqdb";
         private static final String OPTION_EQUIPMENT_EXTENDED_DB = "eqedb";
         private static final String OPTION_UNIT_VALIDATOR = "validate";
@@ -419,14 +330,12 @@ public class MegaMek {
         private static final String OPTION_DATADIR = "data";
         private static final String OPTION_RATGEN_EDIT = "editratgen";
 
-        CommandLineParser(String[] args) {
+        CommandLineParser(String... args) {
             super(args);
         }
 
         /**
-         * Returns <code>true</code> if the dedicated server option was found
-         *
-         * @return true iff this is a dedicated server.
+         * @return true if this is a dedicated server.
          */
         boolean dedicatedServer() {
             return dedicatedServer;
@@ -441,26 +350,6 @@ public class MegaMek {
         }
 
         /**
-         * Returns the GUI Name option value or <code>null</code> if it wasn't set
-         *
-         * @return GUI Name option value or <code>null</code> if it wasn't set
-         */
-        String getGuiName() {
-            return guiName;
-        }
-
-        /**
-         * Returns the log file name option value or <code>null</code> if it wasn't set
-         *
-         * @return the log file name option value or <code>null</code> if it wasn't set
-         */
-        String getLogFilename() {
-            return logFilename;
-        }
-
-        /**
-         * Returns the the <code>array</code> of the unprocessed arguments
-         *
          * @return the the <code>array</code> of the unprocessed arguments
          */
         String[] getRestArgs() {
@@ -473,9 +362,6 @@ public class MegaMek {
                 final String tokenVal = getTokenValue();
                 nextToken();
                 switch (tokenVal) {
-                    case OPTION_LOG:
-                        parseLog();
-                        break;
                     case OPTION_EQUIPMENT_DB:
                         processEquipmentDb();
                         break;
@@ -500,9 +386,6 @@ public class MegaMek {
                     case OPTION_DEDICATED:
                         dedicatedServer = true;
                         break;
-                    case OPTION_GUI:
-                        parseGUI();
-                        break;
                     case OPTION_RATGEN_EDIT:
                         ratGenEditor = true;
                         break;
@@ -511,24 +394,6 @@ public class MegaMek {
             processRestOfInput();
             if (getToken() != TOK_EOF) {
                 throw new ParseException("unexpected input");
-            }
-        }
-
-        private void parseLog() throws ParseException {
-            if (getToken() == TOK_LITERAL) {
-                logFilename = getTokenValue();
-                nextToken();
-            } else {
-                throw new ParseException("log file name expected");
-            }
-        }
-
-        private void parseGUI() throws ParseException {
-            if (getToken() == TOK_LITERAL) {
-                guiName = getTokenValue();
-                nextToken();
-            } else {
-                throw new ParseException("GUI name expected");
             }
         }
 
@@ -584,12 +449,12 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    getLogger().error(new IOException(filename + " not found.  Try using \"chassis model\" for input."));
+                    LogManager.getLogger().error(new IOException(filename + " not found.  Try using \"chassis model\" for input."));
                 } else {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(),
                                 ms.getEntryName()).getEntity();
-                        getLogger().info("Validating Entity: " + entity.getShortNameRaw());
+                        LogManager.getLogger().info("Validating Entity: " + entity.getShortNameRaw());
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new MegaMekFile(Configuration.unitsDir(),
                                         EntityVerifier.CONFIG_FILENAME).getFile());
@@ -617,7 +482,7 @@ public class MegaMek {
                                     && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
                                 testEntity = new TestAero((Aero) entity,
                                         entityVerifier.aeroOption, null);
-                            } else if (entity instanceof BattleArmor){
+                            } else if (entity instanceof BattleArmor) {
                                 testEntity = new TestBattleArmor((BattleArmor) entity,
                                         entityVerifier.baOption, null);
                             }
@@ -626,7 +491,7 @@ public class MegaMek {
                                 testEntity.correctEntity(sb);
                             }
                         }
-                        getLogger().info(sb.toString());
+                        LogManager.getLogger().info(sb.toString());
                     } catch (Exception ex) {
                         throw new ParseException("\"chassis model\" expected as input");
                     }
@@ -654,7 +519,7 @@ public class MegaMek {
 
                 if (!new File("./docs").exists()) {
                     if (!new File("./docs").mkdir()) {
-                        getLogger().error(
+                        LogManager.getLogger().error(
                                 "Error in creating directory ./docs. We know this is annoying, and apologise. "
                                         + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                         + " and we will try to resolve your issue.");
@@ -685,7 +550,7 @@ public class MegaMek {
                         }
                     }
                 } catch (Exception ex) {
-                    getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             }
             System.exit(0);
@@ -707,7 +572,7 @@ public class MegaMek {
 
                 if (!new File("./docs").exists()) {
                     if (!new File("./docs").mkdir()) {
-                        getLogger().error(
+                        LogManager.getLogger().error(
                                 "Error in creating directory ./docs. We know this is annoying, and apologise. "
                                         + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
                                         + " and we will try to resolve your issue.");
@@ -716,13 +581,13 @@ public class MegaMek {
                 File file = new File("./docs/" + filename);
                 try (Writer w = new FileWriter(file); BufferedWriter bw = new BufferedWriter(w)) {
                     if (officialUnitList) {
-                        bw.write("Megamek Official Unit List");
+                        bw.write("MegaMek Official Unit List");
                         bw.newLine();
                         bw.write("This file can be regenerated with java -jar MegaMek.jar -oul");
                         bw.newLine();
                         bw.write("Format is: Chassis Model|");
                     } else {
-                        bw.write("Megamek Unit Database");
+                        bw.write("MegaMek Unit Database");
                         bw.newLine();
                         bw.write("This file can be regenerated with java -jar MegaMek.jar -export filename");
                         bw.newLine();
@@ -775,13 +640,12 @@ public class MegaMek {
                             bw.write(Integer.toString(unit.getJumpMp()));
                         } else {
                             bw.write(unit.getChassis()
-                                    + (unit.getModel().equals("") ? "|" : " "
-                                    + unit.getModel() + "|"));
+                                    + (unit.getModel().isBlank() ? "|" : " " + unit.getModel() + "|"));
                         }
                         bw.newLine();
                     }
                 } catch (Exception ex) {
-                    getLogger().error(ex);
+                    LogManager.getLogger().error("", ex);
                 }
             }
             System.exit(0);

@@ -12,8 +12,20 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.templates;
+
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateMethodModelEx;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.Quirks;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.BayData;
+import megamek.common.verifier.EntityVerifier;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,38 +36,6 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateMethodModelEx;
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Bay;
-import megamek.common.Configuration;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
-import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.Transporter;
-import megamek.common.TroopSpace;
-import megamek.common.WeaponType;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.Quirks;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.BayData;
-import megamek.common.verifier.EntityVerifier;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -103,7 +83,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
             } catch (final IOException e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             view.initModel(view.verifier);
         }
@@ -141,7 +121,7 @@ public class TROView {
                 template.process(model, out);
                 return os.toString();
             } catch (TemplateException | IOException e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error("", e);
                 e.printStackTrace();
             }
         }
@@ -604,7 +584,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                MegaMek.getLogger().warning("Could not determine bay type for " + bay);
+                LogManager.getLogger().warn("Could not determine bay type for " + bay);
             }
         }
         setModelData("bays", bays);

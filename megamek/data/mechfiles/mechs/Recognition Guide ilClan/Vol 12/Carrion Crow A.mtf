@@ -1,12 +1,13 @@
 Version:1.0
 Carrion Crow
 A
+mul id:7776
 
 Config:Biped Omnimech
 techbase:Clan
 era:3145
-source:ilClan Vol 12 - Dark Age
-rules level:3
+source:Rec Guide:ilClan #12 - Dark Age
+rules level:2
 
 mass:40
 engine:280 XL (Clan) Engine(IS)
@@ -147,6 +148,14 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Carrion Crow is a Raven Alliance OmniMech designed alongside the heavier and more expensive War Crow.
+
+capabilities:An extralight engine drives the 'Mech at a top speed of 111km/h. Protection for the engine and Endo-Steel chassis is provided by nine and a half tons of Ferro-Lamellor armor. Fourteen and a half tons of pod space allows the Carrion Crow to carry weapons that let it effectively fight heavier units.
+
+deployment:This configuration carries a HAG 20 and three tons of armor in the left arm. The center torso carries an Improved Heavy Medium Laser, and the head has an ER Small Laser.
+
+history:Deployment of the Carrion Crow is limited to the Raven touman with the Alliance Military Corps not receiving any of these 'Mechs. A fast 'Mech, the Carrion Crow is intended to be a standard medium 'Mech for the Alliance.
 
 manufacturer:Snow Raven Industrial Complex Beta
 primaryfactory:Mitchella

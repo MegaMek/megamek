@@ -1,11 +1,12 @@
 Version:1.0
 Galahad (Glass Spider)
 2
+mul id:1171
 
 Config:Biped
 techbase:Clan
 era:2952
-source:RecGuide 13 - Succession Wars
+source:Rec Guide:ilClan #13 - Succession Wars
 rules level:2
 
 mass:60

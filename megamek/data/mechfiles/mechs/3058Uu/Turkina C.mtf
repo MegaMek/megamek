@@ -1,39 +1,38 @@
-Version:1.1
+Version:1.0
 Turkina
 C
+mul id:3328
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3052
+techbase:Clan
+era:3052
 source:TRO Clan Invasion - Clan Invasion
-Rules Level:2
+rules level:2
 
-Mass:95
-Engine:285 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:95
+engine:285 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Double
-Base Chassis Heat Sinks:11
-Walk MP:3
-Jump MP:3
+heat sinks:17 Clan Double
+base chassis heat sinks:11
+walk mp:3
+jump mp:3
 
-Armor:Standard(Clan)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:45
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:10
-Flamer, Left Leg
-Flamer, Right Leg
 LB 20-X AC, Left Arm
 Large Pulse Laser, Right Arm
 Large Pulse Laser, Right Arm
@@ -42,32 +41,34 @@ Medium Pulse Laser, Left Torso
 Streak SRM 6, Right Torso
 Machine Gun, Right Torso
 Machine Gun, Right Torso
+Flamer, Left Leg
+Flamer, Right Leg
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-Clan LB 20-X AC Ammo (omnipod)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -79,11 +80,11 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-CLMediumPulseLaser (omnipod)
-CLMediumPulseLaser (omnipod)
-Clan LB 20-X AC Ammo (omnipod)
-Clan LB 20-X Cluster Ammo (omnipod)
-Clan LB 20-X Cluster Ammo (omnipod)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
+Clan LB 20-X Cluster Ammo (OMNIPOD)
+Clan LB 20-X Cluster Ammo (OMNIPOD)
 
 Right Torso:
 Fusion Engine
@@ -93,11 +94,11 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-Clan Machine Gun Ammo - Half (omnipod)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Machine Gun Ammo - Half (OMNIPOD)
 
 Center Torso:
 Fusion Engine
@@ -111,13 +112,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLActiveProbe (omnipod)
+CLActiveProbe (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -132,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLBAFlamer (omnipod)
-CLAntiPersonnelPod (omnipod)
+CLFlamer (OMNIPOD)
+ISAntiPersonnelPod (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -146,8 +147,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLBAFlamer (omnipod)
-CLAntiPersonnelPod (omnipod)
+CLFlamer (OMNIPOD)
+ISAntiPersonnelPod (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -156,9 +157,7 @@ CLAntiPersonnelPod (omnipod)
 -Empty-
 
 overview:The Turkina is a powerful OmniMech that was first seen in the Turkina Keshik at the Battle of Tukayyid, and entered general service with Clan Jade Falcon following the end of the Refusal War. In a design oddity, the Turkina mounts enough jump jets to vault 90 meters hardwired onto the frame, rather than using them in modular pods. While this simplified repair, it also uses tonnage that could be devoted to other systems when a mission does not call for jumping. Designers also included fifteen double heat sinks, four more than could be fit into the engine, so they are fixed in the torso. The Turkina has 42 tons available for modular pods.
-
 capabilities:Another variant that seems to be based on combating the Inner Sphere, the Turkina C is designed for urban combat. An LB-X Autocannon/20 and twin Large Pulse Lasers can open up holes in enemy 'Mechs, while the Streak SRM-6 and paired Medium Pulse Lasers exploit them. Paired Anti-Personnel Pods, Machine Guns, and Flamers discourage conventional forces from closing. An Active Probe finds most hidden units, ensuring the MechWarrior is rarely surprised.
-
 history:The Turkina is named after Turkina, the first Jade Falcon to be tamed, who inspired the leaders of Clan Jade Falcon in its early days. The name of the Turkina Keshik is also derived from this bird.
 manufacturer:Complex Beta, Olivetti Weapons
 primaryfactory:Ironhold, Sudeten
@@ -167,3 +166,4 @@ systemmanufacturer:ENGINE:285 JF Extralight
 systemmanufacturer:ARMOR:JF Standard
 systemmanufacturer:COMMUNICATIONS:JF Integrated
 systemmanufacturer:TARGETING:Series JFIX/Olivetti Pinpoint Advanced
+

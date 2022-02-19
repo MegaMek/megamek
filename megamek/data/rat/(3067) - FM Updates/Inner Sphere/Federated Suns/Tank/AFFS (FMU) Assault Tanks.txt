@@ -8,5 +8,5 @@ Ontos Heavy Tank (3053 Upgrade),6
 Demolisher Heavy Tank (Standard Mk. I),5
 Challenger MBT X,4
 Glory Heavy Fire Support Vehicle (Standard),3
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Schiltron Mobile Fire-Support Platform Prime,1

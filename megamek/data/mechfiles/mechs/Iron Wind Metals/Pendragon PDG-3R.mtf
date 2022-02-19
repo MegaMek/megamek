@@ -1,6 +1,7 @@
 Version:1.0
 Pendragon
 PDG-3R
+mul id:8000
 
 Config:Biped
 techbase:Inner Sphere
@@ -34,7 +35,7 @@ Weapons:7
 Rotary AC/2, Left Arm
 Rotary AC/2, Right Arm
 ER PPC, Left Torso
-C3 Computer [Master], Left Torso
+C3 Computer (Master), Left Torso
 ER Medium Laser, Right Torso
 ER Medium Laser, Right Torso
 ER Medium Laser, Right Torso

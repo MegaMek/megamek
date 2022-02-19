@@ -1,11 +1,12 @@
 Version:1.0
 Phoenix Hawk
 PXH-3S
+mul id:2502
 
 Config:Biped
 techbase:Inner Sphere
 era:3042
-source:ilClan Vol 11 - Succession Wars
+source:Rec Guide:ilClan #11 - Late Succession Wars
 rules level:2
 
 mass:45

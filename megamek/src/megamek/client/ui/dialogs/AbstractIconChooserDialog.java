@@ -18,27 +18,27 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.MegaMek;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.AbstractIconChooser;
-import megamek.client.ui.preferences.JSplitPanePreference;
-import megamek.client.ui.preferences.PreferencesNode;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ResourceBundle;
 
 /**
  * Creates a dialog that allows players to select a directory from a directory tree and choose an
- * image from the images in that directory. Subclasses must provide the getItems() method that
- * translates a given category (directory) selected in the tree to a list of items (images) to show
- * in the list.
+ * AbstractIcon from the AbstractIcons in that directory. Subclasses must provide the getItems()
+ * method that translates a given category (directory) selected in the tree to a list of items
+ * (AbstractIcons) to show in the list.
  * Subclasses can provide getSearchedItems() that translates a given search String to the list of
  * "found" items. If this is provided, showSearch(true) should be called in the constructor to show
  * the search panel.
@@ -49,18 +49,30 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     //endregion Variable Declarations
 
     //region Constructors
+    public AbstractIconChooserDialog(final JFrame frame, final String name, final String title,
+                                     final AbstractIconChooser chooser, final boolean doubleClick) {
+        this(frame, true, ResourceBundle.getBundle("megamek.client.messages",
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name,
+                title, chooser, doubleClick);
+    }
+
     /**
-     * Creates a dialog that allows players to choose a directory from a directory tree and an image
-     * from the images in that directory.
+     * Creates a dialog that allows players to choose a directory from a directory tree and an
+     * AbstractIcon from the AbstractIcons in that directory.
      *
      * @param frame The frame hosting this dialog
+     * @param modal the modality of this dialog
+     * @param resources the resource bundle to use
      * @param name the dialog's name
      * @param title the dialog title resource string
      * @param chooser the icon chooser display panel
+     * @param doubleClick whether double clicking closes the dialog or not
      */
-    public AbstractIconChooserDialog(final JFrame frame, final String name, final String title,
-                                     final AbstractIconChooser chooser, final boolean doubleClick) {
-        super(frame, name, title);
+    public AbstractIconChooserDialog(final JFrame frame, final boolean modal,
+                                     final ResourceBundle resources, final String name,
+                                     final String title, final AbstractIconChooser chooser,
+                                     final boolean doubleClick) {
+        super(frame, modal, resources, name, title);
         setChooser(chooser);
         if (doubleClick) {
             getChooser().getImageList().addMouseListener(new MouseAdapter() {
@@ -91,10 +103,6 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     public @Nullable AbstractIcon getSelectedItem() {
         return getChooser().getSelectedItem();
     }
-
-    public int getSelectedIndex() {
-        return getChooser().getSelectedIndex();
-    }
     //endregion Getters/Setters
 
     //region Initialization
@@ -105,20 +113,17 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
 
     @Override
     protected JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        final JPanel panel = new JPanel(new GridLayout(1, 3));
+        panel.setName("buttonPanel");
 
-        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText", this::okButtonActionPerformed));
-        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText", this::cancelActionPerformed));
-        panel.add(new MMButton("btnRefresh", resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
-                evt -> getChooser().refreshDirectory()));
+        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText",
+                this::okButtonActionPerformed));
+        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText",
+                this::cancelActionPerformed));
+        panel.add(new MMButton("btnRefresh", resources, "RefreshDirectory.text",
+                "RefreshDirectory.toolTipText", evt -> getChooser().refreshDirectory()));
 
         return panel;
-    }
-
-    @Override
-    protected void setCustomPreferences(final PreferencesNode preferences) {
-        preferences.manage(new JSplitPanePreference(getChooser().getSplitPane()));
     }
     //endregion Initialization
 

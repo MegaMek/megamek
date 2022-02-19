@@ -1,12 +1,13 @@
 Version:1.0
 Thunderbolt
 C
+mul id:3231
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2832
-source:ilClan RecGuide 15 - Succession Wars
-rules level:4
+source:Rec Guide:ilClan #15 - Succession Wars
+rules level:3
 
 mass:65
 engine:260 Fusion Engine(IS)

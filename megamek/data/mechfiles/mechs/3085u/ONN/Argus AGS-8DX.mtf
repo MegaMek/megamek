@@ -1,6 +1,7 @@
 Version:1.0
 Argus
 AGS-8DX
+mul id:110
 
 Config:Biped
 TechBase:Inner Sphere

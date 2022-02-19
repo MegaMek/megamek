@@ -48,7 +48,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         setTechLevel(a);
         setFluff(a);
         checkManualBV(a);
@@ -366,7 +368,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                         // ammo should also get loaded into the bay
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
                 }
             }

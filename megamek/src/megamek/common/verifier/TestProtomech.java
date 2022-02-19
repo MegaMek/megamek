@@ -1,99 +1,61 @@
 /*
  * Copyright (C) 2018 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.verifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Neoancient
- *
  */
 public class TestProtomech extends TestEntity {
 
     /**
-     * Minimum tonnage for a protomech
+     * Minimum tonnage for a ProtoMek
      */
     public static final double MIN_TONNAGE = 2.0;
 
     /**
-     * Any protomech with a larger mass than this is ultra-heavy
+     * Any ProtoMek with a larger mass than this is ultra-heavy
      */
     public static final double MAX_STD_TONNAGE = 9.0;
     
     /**
-     * Maximum weight for a protomech
+     * Maximum weight for a ProtoMek
      */
     public static final double MAX_TONNAGE = 15.0;
     
     /**
-     * Minimum walk MP for glider protomech
+     * Minimum walk MP for glider ProtoMek
      */
     public static final int GLIDER_MIN_MP = 4;
     /**
-     * Minimum walk MP for quad protomech
+     * Minimum walk MP for a quad ProtoMek
      */
     public static final int QUAD_MIN_MP = 3;
-    
-    public enum ProtomechJumpJets {
-        JJ_STANDARD ("ProtomechJumpJet", false),
-        JJ_EXTENDED ("ExtendedJumpJetSystem", true),
-        JJ_UMU ("ProtomechUMU", false);
-        
-        private final String internalName;
-        private final boolean improved;
-        
-        private ProtomechJumpJets(String internalName, boolean improved) {
-            this.internalName = internalName;
-            this.improved = improved;
-        }
-        
-        public String getName() {
-            return internalName;
-        }
-        
-        public boolean isImproved() {
-            return improved;
-        }
-        
-        public static List<EquipmentType> allJJs() {
-            return Arrays.stream(values())
-                    .map(jj -> EquipmentType.get(jj.internalName))
-                    .collect(Collectors.toList());
-        }
-    }
-    
+
+    private final Protomech proto;
+    private final String fileString;
+
     /**
-     * All the protomech armor options. Both of the them.
-     *
+     * All the ProtoMek armor options
      */
-    public static enum ProtomechArmor {
+    public enum ProtomechArmor {
         STANDARD (EquipmentType.T_ARMOR_STANDARD, 0),
         EDP (EquipmentType.T_ARMOR_EDP, 1);
 
@@ -110,10 +72,10 @@ public class TestProtomech extends TestEntity {
         }
 
         /**
-         * Given a protomech, return the {@link ProtomechArmor} instance that
+         * Given a ProtoMek, return the {@link ProtomechArmor} instance that
          * represents the type installed
          *
-         * @param proto The protomech
+         * @param proto The ProtoMek
          * @return      The {@link ProtomechArmor} that corresponds to the given type
          *              or null if no match was found.
          */
@@ -188,28 +150,6 @@ public class TestProtomech extends TestEntity {
         return proto.getOriginalWalkMP();
     }
 
-
-
-    /**
-     * Filters all protomech armor according to given tech constraints
-     * 
-     * @param techManager
-     * @return A list of all armors that meet the tech constraints
-     */
-    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
-        for (ProtomechArmor armor : ProtomechArmor.values()) {
-            final EquipmentType eq = armor.getArmorEqType();
-            if ((null != eq) && techManager.isLegal(eq)) {
-                retVal.add(eq);
-            }
-        }
-        return retVal;
-    }
-        
-    private final Protomech proto;
-    private final String fileString;
-
     public TestProtomech(Protomech proto, TestEntityOption option, String fileString) {
         super(option, proto.getEngine(), getArmor(proto), null);
         this.proto = proto;
@@ -276,7 +216,7 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        return (proto.getWeight() > MAX_STD_TONNAGE)? 0.75 : 0.5;
+        return (proto.getWeight() > MAX_STD_TONNAGE) ? 0.75 : 0.5;
     }
 
     @Override
@@ -317,9 +257,8 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public String printWeightStructure() {
-        return StringUtil.makeLength(
-                "Structure: "
-                        + Integer.toString(getEntity().getTotalOInternal()), getPrintSize() - 5)
+        return StringUtil.makeLength("Structure: " + getEntity().getTotalOInternal(),
+                getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightStructure(), true) + "\n";
     }
 
@@ -330,16 +269,12 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public String printWeightControls() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-                "Controls:", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightControls(), true));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength("Controls:", getPrintSize() - 5)
+                + makeWeightString(getWeightControls(), true) + "\n";
     }
 
     @Override
-    public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
-            int posWeight) {
+    public StringBuffer printMiscEquip(StringBuffer buff, int posLoc, int posWeight) {
         for (Mounted m : getEntity().getMisc()) {
             buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
@@ -450,19 +385,21 @@ public class TestProtomech extends TestEntity {
             }
             if ((mount.getType() instanceof WeaponType)
                     && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
-                buff.append(mount.toString()).append(" is not a legal protomech weapon.\n");
+                buff.append(mount).append(" is not a legal ProtoMek weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
                     && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
-                buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
+                buff.append(mount).append(" is not legal ProtoMek equipment.\n");
                 illegal = true;
             }
+
             if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                 if (proto.isGlider() || proto.isQuad()) {
-                    buff.append("Quad and glider protomechs cannot use a magnetic clamp system.\n");
+                    buff.append("Quad and glider ProtoMeks cannot use a magnetic clamp system.\n");
                     illegal = true;
                 }
             }
+
             if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMECH_MELEE)) {
                 meleeWeapons++;
                 if (meleeWeapons == 2) {
@@ -470,11 +407,11 @@ public class TestProtomech extends TestEntity {
                     illegal = true;
                 }
                 if (mount.getType().hasSubType(MiscType.S_PROTO_QMS) && !proto.isQuad()) {
-                    buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
+                    buff.append(mount.getType().getName() + "can only be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
                 if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON) && proto.isQuad()) {
-                    buff.append(mount.getType().getName() + "cannot be used by quad protomechs.\n");
+                    buff.append(mount.getType().getName() + "cannot be used by quad ProtoMeks.\n");
                     illegal = true;
                 }
             }
@@ -486,12 +423,14 @@ public class TestProtomech extends TestEntity {
         } else {
             slotsByLoc.merge(Protomech.LOC_TORSO, armor.getTorsoSlots(), Integer::sum);
         }
+
         for (int loc = 0; loc < proto.locations(); loc++) {
             if (slotsByLoc.getOrDefault(loc, 0) > maxSlotsByLocation(loc, proto)) {
                 buff.append("Exceeds ").append(maxSlotsByLocation(loc, proto))
                     .append(" slot limit in ").append(proto.getLocationName(loc)).append("\n");
                 illegal = true;
             }
+
             if (weightByLoc.getOrDefault(loc, 0.0) > maxWeightByLocation(loc, proto)) {
                 buff.append("Exceeds ").append(maxWeightByLocation(loc, proto) * 1000)
                     .append(" kg limit in ").append(proto.getLocationName(loc)).append("\n");
@@ -499,7 +438,7 @@ public class TestProtomech extends TestEntity {
             }
         }
         if (proto.isGlider() && proto.isQuad()) {
-            buff.append("Glider protomechs cannot be quads.\n");
+            buff.append("Glider ProtoMeks cannot be quads.\n");
             illegal = true;
         }
         
@@ -507,11 +446,11 @@ public class TestProtomech extends TestEntity {
     }
 
     /**
-     * @param protomech  The Protomech
+     * @param protomech  The ProtoMek
      * @param eq         The equipment
      * @param location   A location index on the Entity
      * @param buffer    If non-null and the location is invalid, will be appended with an explanation
-     * @return           Whether the equipment can be mounted in the location on the Protomech
+     * @return           Whether the equipment can be mounted in the location on the ProtoMek
      */
     public static boolean isValidProtomechLocation(Protomech protomech, EquipmentType eq, int location,
                                                    @Nullable StringBuffer buffer) {
@@ -574,13 +513,11 @@ public class TestProtomech extends TestEntity {
      */
     public boolean correctMovement(StringBuffer buffer) {
         boolean correct = true;
-        if (proto.isGlider()
-                && proto.getOriginalWalkMP() < GLIDER_MIN_MP) {
-            buffer.append("Glider protomechs have a minimum cruising MP of " + GLIDER_MIN_MP + ".\n");
+        if (proto.isGlider() && (proto.getOriginalWalkMP() < GLIDER_MIN_MP)) {
+            buffer.append("Glider ProtoMeks have a minimum cruising MP of " + GLIDER_MIN_MP + ".\n");
             correct = false;
-        } else if (proto.isQuad()
-                && proto.getOriginalWalkMP() < QUAD_MIN_MP) {
-            buffer.append("Quad protomechs have a minimum walk MP of " + QUAD_MIN_MP + ".\n");
+        } else if (proto.isQuad() && (proto.getOriginalWalkMP() < QUAD_MIN_MP)) {
+            buffer.append("Quad ProtoMeks have a minimum walk MP of " + QUAD_MIN_MP + ".\n");
             correct = false;
         }
         int maxJump = maxJumpMP(proto);
@@ -619,7 +556,7 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public String getName() {
-        return "Protomech: " + proto.getDisplayName();
+        return "ProtoMek: " + proto.getDisplayName();
     }
 
     @Override
@@ -640,9 +577,9 @@ public class TestProtomech extends TestEntity {
     }
     
     /**
-     * Determine the minimum walk MP for the protomech based on configuration
+     * Determine the minimum walk MP for the ProtoMek based on configuration
      * 
-     * @param proto The protomech
+     * @param proto The ProtoMek
      * @return      The minimum walk MP
      */
     public int getMinimumWalkMP(Protomech proto) {
@@ -658,7 +595,7 @@ public class TestProtomech extends TestEntity {
     /**
      * Computes the required engine rating
      * 
-     * @param proto The protomech
+     * @param proto The ProtoMek
      * @return      The engine rating required for the weight, speed, and configuration
      */
     public static int calcEngineRating(Protomech proto) {
@@ -670,9 +607,9 @@ public class TestProtomech extends TestEntity {
      * Computes the required engine rating
      * 
      * @param walkMP The base walking MP
-     * @param tonnage The weight of the protomech in tons
-     * @param quadOrGlider Whether the protomech is a quad or glider configuration
-     * @return      The engine rating required for the weight, speed, and configuration
+     * @param tonnage The weight of the ProtoMek in tons
+     * @param quadOrGlider Whether the ProtoMek is a quad or glider configuration
+     * @return The engine rating required for the weight, speed, and configuration
      */
     public static int calcEngineRating(int walkMP, double tonnage, boolean quadOrGlider) {
         int moveFactor = (int) Math.ceil(walkMP * 1.5);
@@ -680,7 +617,7 @@ public class TestProtomech extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        return Math.max(1, (int)(moveFactor * tonnage));
+        return Math.max(1, (int) (moveFactor * tonnage));
     }
     
     /**
@@ -704,9 +641,9 @@ public class TestProtomech extends TestEntity {
     /**
      * Equipment slot limit by location
      * 
-     * @param loc   The Protomech location
-     * @param proto The Protomech
-     * @return      The number of equipment slots in the location
+     * @param loc The ProtoMek location
+     * @param proto The ProtoMek
+     * @return The number of equipment slots in the location
      */
     public static int maxSlotsByLocation(int loc, Protomech proto) {
         return maxSlotsByLocation(loc, proto.isQuad(), proto.getWeight() > MAX_STD_TONNAGE);
@@ -715,13 +652,13 @@ public class TestProtomech extends TestEntity {
     /**
      * Equipment slot limit by location
      * 
-     * @param loc   The Protomech location
-     * @param quad  Whether the protomech is a quad
-     * @param ultra Whether the protomech is ultraheavy
-     * @return      The number of equipment slots in the location
+     * @param loc The ProtoMek location
+     * @param quad Whether the ProtoMek is a quad
+     * @param ultra Whether the ProtoMek is ultraheavy
+     * @return The number of equipment slots in the location
      */
     public static int maxSlotsByLocation(int loc, boolean quad, boolean ultra) {
-        switch(loc) {
+        switch (loc) {
             case Protomech.LOC_TORSO: {
                 int slots = 2;
                 if (ultra) {
@@ -734,9 +671,9 @@ public class TestProtomech extends TestEntity {
             }
             case Protomech.LOC_LARM:
             case Protomech.LOC_RARM:
-                return quad? 0 : 1;
+                return quad ? 0 : 1;
             case Protomech.LOC_MAINGUN:
-                return (quad && ultra)? 2 : 1;
+                return (quad && ultra) ? 2 : 1;
             case Protomech.LOC_HEAD:
             case Protomech.LOC_LEG:
             default:
@@ -764,7 +701,7 @@ public class TestProtomech extends TestEntity {
      * @return      The weight limit for that location, in tons.
      */
     public static double maxWeightByLocation(int loc, boolean quad, boolean ultra) {
-        switch(loc) {
+        switch (loc) {
             case Protomech.LOC_TORSO:
                 if (quad) {
                     return ultra? 8.0 : 5.0;
@@ -786,7 +723,7 @@ public class TestProtomech extends TestEntity {
         }
     }
     
-    private static final int MAX_ARMOR_FACTOR[] = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
+    private static final int[] MAX_ARMOR_FACTOR = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
     
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
@@ -809,7 +746,7 @@ public class TestProtomech extends TestEntity {
         final int weightIndex = Math.max(0, (int) weight - 2);
         int base = MAX_ARMOR_FACTOR[Math.min(weightIndex, MAX_ARMOR_FACTOR.length - 1)];
         if (mainGun) {
-            return base + ((weight > MAX_STD_TONNAGE)? 6 : 3);
+            return base + ((weight > MAX_STD_TONNAGE) ? 6 : 3);
         }
         return base;
     }

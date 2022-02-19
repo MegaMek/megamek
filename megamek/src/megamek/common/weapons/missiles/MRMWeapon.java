@@ -15,7 +15,7 @@ package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -31,9 +31,6 @@ public abstract class MRMWeapon extends MissileWeapon {
 
     private static final long serialVersionUID = 274817921444431878L;
 
-    /**
-     *
-     */
     public MRMWeapon() {
         super();
         ammoType = AmmoType.T_MRM;
@@ -41,17 +38,9 @@ public abstract class MRMWeapon extends MissileWeapon {
         atClass = CLASS_MRM;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new MRMHandler(toHit, waa, game, server);
     }
     
@@ -62,7 +51,7 @@ public abstract class MRMWeapon extends MissileWeapon {
             return damage;
         }
         if (fcs != null && fcs.getType() instanceof MiscType
-                && ((MiscType)fcs.getType()).hasFlag(MiscType.F_APOLLO)) {
+                && fcs.getType().hasFlag(MiscType.F_APOLLO)) {
             damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
         } else {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize());
@@ -72,5 +61,14 @@ public abstract class MRMWeapon extends MissileWeapon {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS ";
+        }
+        return "MRM " + oneShotTag + rackSize;
     }
 }

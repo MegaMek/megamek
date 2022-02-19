@@ -7,14 +7,12 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,10 +20,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:02 PM
  */
 @RunWith(JUnit4.class)
@@ -47,7 +42,7 @@ public class WeaponFireInfoTest {
     private EntityState mockShooterState;
     private BipedMech mockTarget;
     private EntityState mockTargetState;
-    private IGame mockGame;
+    private Game mockGame;
     private Mounted mockWeapon;
     private WeaponType mockWeaponType;
     private WeaponAttackAction mockWeaponAttackAction;
@@ -57,7 +52,7 @@ public class WeaponFireInfoTest {
 
     @Before
     public void setUp() {
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
 
         mockToHitSix = Mockito.mock(ToHitData.class);
         Mockito.when(mockToHitSix.getValue()).thenReturn(6);
@@ -73,13 +68,11 @@ public class WeaponFireInfoTest {
                                                                                                                 .class),
                                                                  Mockito.any(Targetable.class),
                                                                  Mockito.any(EntityState.class),
-                                                                 Mockito.any(Mounted.class), Mockito.any(IGame.class)))
+                                                                 Mockito.any(Mounted.class), Mockito.any(Game.class)))
                .thenReturn(mockToHitEight);
 
-        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class))).thenReturn(21);
 
         mockShooter = Mockito.mock(BipedMech.class);
@@ -111,7 +104,7 @@ public class WeaponFireInfoTest {
         Mockito.when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
 
         mockWeaponAttackAction = Mockito.mock(WeaponAttackAction.class);
-        Mockito.when(mockWeaponAttackAction.getEntity(Mockito.any(IGame.class))).thenReturn(mockShooter);
+        Mockito.when(mockWeaponAttackAction.getEntity(Mockito.any(Game.class))).thenReturn(mockShooter);
     }
 
     private void setupLightTarget() {

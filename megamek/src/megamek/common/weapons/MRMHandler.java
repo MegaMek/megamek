@@ -19,7 +19,7 @@ import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Minefield;
 import megamek.common.Report;
 import megamek.common.Targetable;
@@ -43,7 +43,7 @@ public class MRMHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public MRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -67,7 +67,7 @@ public class MRMHandler extends MissileWeaponHandler {
 
             Enumeration<Minefield> minefields = game.getMinefields(coords)
                     .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,

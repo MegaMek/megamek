@@ -1,44 +1,35 @@
+/*
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ */
 package megamek.common.weapons.autocannons;
 
 import megamek.common.SimpleTechLevel;
 
 /**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 25, 2004
- *
- */
-
-/**
  * @author Jason Tighe
+ * @since Sep 25, 2004
  */
 public class ISRifleMedium extends RifleWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 3540374668501692337L;
 
-    /**
-     *
-     */
     public ISRifleMedium() {
         super();
         name = "Rifle (Cannon, Medium)";
         setInternalName(name);
+        shortName = "Medium Rifle";
         addLookupName("IS Medium Rifle");
         addLookupName("ISMediumRifle");
+        sortingName = "Rifle Cannon C";
         heat = 2;
         damage = 6;
         rackSize = 6;
@@ -52,17 +43,18 @@ public class ISRifleMedium extends RifleWeapon {
         bv = 51;
         cost = 75750;
         explosive = false; // when firing incendiary ammo
-        shortAV = 4;
-        medAV = 8;
-        longAV = 8;
-        extAV = 8;
+        shortAV = 6;
+        medAV = 6;
+        longAV = 6;
+        extAV = 6;
         maxRange = RANGE_MED;
         explosionDamage = 0;
-        rulesRefs = "338,TO";
+        rulesRefs = "338, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_B)
-            .setAvailability(RATING_C, RATING_F, RATING_X, RATING_D)
-            .setISAdvancement(DATE_PS, DATE_PS, 3085, 2825, 3084)
-            .setISApproximate(false, false, false, true, true)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setAvailability(RATING_C, RATING_F, RATING_X, RATING_D)
+                .setISAdvancement(DATE_PS, DATE_NONE, 3084, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

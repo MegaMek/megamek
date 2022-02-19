@@ -21,6 +21,7 @@ package megamek.client.ui.baseComponents;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -55,9 +56,22 @@ public class MMComboBox<E> extends JComboBox<E> {
      * Creates a JComboBox with the provided name and values
      * @see JComboBox#JComboBox(Vector)
      */
-    public MMComboBox(final String name, Vector<E> items) {
+    public MMComboBox(final String name, final Vector<E> items) {
         super(items);
         setName(name);
+    }
+
+    /**
+     * Creates a JComboBox with the provided name and values
+     *
+     * @param name the JComboBox's name
+     * @param items the list of items to include in the model
+     */
+    public MMComboBox(final String name, final List<E> items) {
+        this(name);
+        final DefaultComboBoxModel<E> model = new DefaultComboBoxModel<>();
+        model.addAll(items);
+        setModel(model);
     }
 
     /**

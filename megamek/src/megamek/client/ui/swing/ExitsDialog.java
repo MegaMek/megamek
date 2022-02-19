@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -40,9 +39,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * A dialog of which exits are connected for terrain.
  */
 public class ExitsDialog extends JDialog implements ActionListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3126840102187553386L;
     JToggleButton cheExit0;
     JToggleButton cheExit1;
@@ -50,17 +46,16 @@ public class ExitsDialog extends JDialog implements ActionListener {
     JToggleButton cheExit3;
     JToggleButton cheExit4;
     JToggleButton cheExit5;
-    private JLabel labBlank = new JLabel("                            "); //$NON-NLS-1$
+    private JLabel labBlank = new JLabel("                            ");
     private JPanel panNorth = new JPanel(new GridBagLayout());
     private JPanel panSouth = new JPanel(new GridBagLayout());
     private JPanel panWest = new JPanel(new BorderLayout());
     private JPanel panEast = new JPanel(new BorderLayout());
     private JPanel panExits = new JPanel(new BorderLayout());
-    private JButton butDone = new JButton(Messages
-            .getString("BoardEditor.Done")); //$NON-NLS-1$
+    private JButton butDone = new JButton(Messages.getString("BoardEditor.Done"));
 
     ExitsDialog(JFrame frame) {
-        super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("BoardEditor.SetExits"), true);
         setResizable(false);
         butDone.addActionListener(this);
         cheExit0 = setupTButton("ToggleEx", "0");
@@ -109,6 +104,7 @@ public class ExitsDialog extends JDialog implements ActionListener {
         return exits;
     }
 
+    @Override
     public void actionPerformed(ActionEvent actionEvent) {
         setVisible(false);
     }
@@ -120,7 +116,7 @@ public class ExitsDialog extends JDialog implements ActionListener {
         JToggleButton button = new JToggleButton(buttonName);
 
         // Get the normal icon
-        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton != null) {
             button.setIcon(new ImageIcon(imageButton));
@@ -129,18 +125,20 @@ public class ExitsDialog extends JDialog implements ActionListener {
         }
 
         // Get the hover icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + "_H.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null)
+        if (imageButton != null) {
             button.setRolloverIcon(new ImageIcon(imageButton));
+        }
 
         // Get the selected icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/" + iconName + "_S.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null)
+        if (imageButton != null) {
             button.setSelectedIcon(new ImageIcon(imageButton));
+        }
 
-        button.setMargin(new Insets(0,0,0,0));
+        button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(BorderFactory.createEmptyBorder());
         
         return button;

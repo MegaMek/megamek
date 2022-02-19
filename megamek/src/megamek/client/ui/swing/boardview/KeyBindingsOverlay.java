@@ -32,9 +32,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.KeyBindParser;
-import megamek.common.IGame.Phase;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -42,6 +42,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
+import org.apache.logging.log4j.LogManager;
 
 /** 
  * An overlay for the Boardview that displays a selection of keybinds
@@ -113,7 +114,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** The cached image for this Display. */
     Image displayImage;
     /** The current game phase. */
-    Phase currentPhase;
+    GamePhase currentPhase;
     /** True while fading in this overlay. */
     private boolean fadingIn = false;
     /** True while fading out this overlay. */
@@ -125,7 +126,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * An overlay for the Boardview that displays a selection of keybinds
      * for the current game situation. 
      */
-    public KeyBindingsOverlay(IGame game, ClientGUI cg) {
+    public KeyBindingsOverlay(Game game, ClientGUI cg) {
         visible = GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
@@ -212,15 +213,16 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
                 List<KeyCommandBind> listForPhase = new ArrayList<>();
                 switch (currentPhase) {
-                case PHASE_MOVEMENT:
-                    listForPhase = BINDS_MOVE;
-                    break;
-                case PHASE_FIRING:
-                case PHASE_OFFBOARD:
-                case PHASE_PHYSICAL:
-                    listForPhase = BINDS_FIRE;
-                    break;
-                default:
+                    case MOVEMENT:
+                        listForPhase = BINDS_MOVE;
+                        break;
+                    case FIRING:
+                    case OFFBOARD:
+                    case PHYSICAL:
+                        listForPhase = BINDS_FIRE;
+                        break;
+                    default:
+                        break;
                 }
 
                 result.addAll(convertToStrings(listForPhase));
@@ -250,7 +252,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     }
     
     /** 
-     * Draws the String s to the Graphics graph at position x,y 
+     * Draws the String s to the Graphics graph at position x, y 
      * with a shadow. If the string starts with #789ABC then 789ABC 
      * is converted to a color to write the rest of the text,
      * otherwise TEXT_COLOR is used.
@@ -261,12 +263,12 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {
             try {
-                int red = Integer.parseInt(s.substring(1,3), 16);
-                int grn = Integer.parseInt(s.substring(3,5), 16);
-                int blu = Integer.parseInt(s.substring(5,7), 16);
+                int red = Integer.parseInt(s.substring(1, 3), 16);
+                int grn = Integer.parseInt(s.substring(3, 5), 16);
+                int blu = Integer.parseInt(s.substring(5, 7), 16);
                 textColor = new Color(red, grn, blu);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
             s = s.substring(7);
         }

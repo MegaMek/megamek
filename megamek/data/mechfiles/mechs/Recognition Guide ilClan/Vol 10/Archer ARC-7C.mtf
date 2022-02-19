@@ -1,11 +1,13 @@
 Version:1.0
 Archer
 ARC-7C
+mul id:7731
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3119
-rules level:4
+rules level:2
+source:Rec Guide:ilClan #10 - Late Republic
 
 mass:70
 engine:350 XL Engine(IS)

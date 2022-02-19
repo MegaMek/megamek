@@ -1,6 +1,7 @@
 Version:1.0
 Shadow Hawk LAM
 SHD-X2
+mul id:5040
 
 Config:LAM
 TechBase:Inner Sphere

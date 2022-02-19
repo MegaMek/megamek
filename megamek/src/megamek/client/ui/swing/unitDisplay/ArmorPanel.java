@@ -30,7 +30,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
@@ -43,14 +43,12 @@ import megamek.common.Tank;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This panel contains the armor readout display.
  */
 class ArmorPanel extends PicMap {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3612396252172441104L;
     private TankMapSet tank;
     private MechMapSet mech;
@@ -90,9 +88,9 @@ class ArmorPanel extends PicMap {
     private static final int minAeroTopMargin = 8;
     private static final int minAeroLeftMargin = 8;
 
-    private IGame game;
+    private Game game;
 
-    ArmorPanel(IGame g, UnitDisplay unitDisplay) {
+    ArmorPanel(Game g, UnitDisplay unitDisplay) {
         game = g;
         this.unitDisplay = unitDisplay;
     }
@@ -249,14 +247,14 @@ class ArmorPanel extends PicMap {
             minBottomMargin = minAeroTopMargin;
             minRightMargin = minAeroLeftMargin;
         }
+
         if (ams == null) {
-            System.err.println("The armor panel is null."); //$NON-NLS-1$
+            LogManager.getLogger().error("The armor panel is null");
             return;
         }
         ams.setEntity(en);
         addElement(ams.getContentGroup());
-        Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers()
-                                                .elements();
+        Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers().elements();
         while (iter.hasMoreElements()) {
             addBgDrawer(iter.nextElement());
         }

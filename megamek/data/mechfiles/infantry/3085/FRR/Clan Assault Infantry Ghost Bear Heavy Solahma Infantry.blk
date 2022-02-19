@@ -15,6 +15,10 @@ Clan Assault Infantry
 <Model>
 Ghost Bear Heavy Solahma Infantry
 </Model>
+
+<mul id:>
+600
+</mul id:>
 <squad_size>
 5
 </squad_size>

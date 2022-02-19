@@ -1,6 +1,7 @@
 Version:1.2
 Gladiator (Executioner)
 C
+mul id:1205
 
 Config:Biped Omnimech
 TechBase:Clan

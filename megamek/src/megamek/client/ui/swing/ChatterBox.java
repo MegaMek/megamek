@@ -1,17 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -113,22 +112,20 @@ public class ChatterBox implements KeyListener {
                 }
             }
         });
-        history = new LinkedList<String>();
+        history = new LinkedList<>();
 
-        chatArea = new JTextArea(
-                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
+        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-        playerList = new JList<String>(new DefaultListModel<String>());
-        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
-                "AdvancedChatboxSize"));
+        playerList = new JList<>(new DefaultListModel<>());
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
-        scrPlayers.setPreferredSize(new Dimension(100,chatArea.getHeight()));
+        scrPlayers.setPreferredSize(new Dimension(100, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$
+        butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
@@ -139,10 +136,8 @@ public class ChatterBox implements KeyListener {
         playerChatSplit.setResizeWeight(0.01);
         
         JPanel subPanel = new JPanel(new BorderLayout());
-        subPanel.setPreferredSize(new Dimension(284,100));
-        subPanel.setMinimumSize(new Dimension(284,100));
-        //subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
-        //subPanel.add(scrPlayers, BorderLayout.WEST);
+        subPanel.setPreferredSize(new Dimension(284, 100));
+        subPanel.setMinimumSize(new Dimension(284, 100));
         subPanel.add(playerChatSplit, BorderLayout.CENTER);
         subPanel.add(inputField, BorderLayout.SOUTH);
 
@@ -159,7 +154,7 @@ public class ChatterBox implements KeyListener {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = .13; gbc.weighty = .05;
         chatPanel.add(butDone, gbc);
-        butDone.setSize(AbstractPhaseDisplay.DONE_BUTTON_WIDTH,butDone.getHeight());
+        butDone.setSize(AbstractPhaseDisplay.DONE_BUTTON_WIDTH, butDone.getHeight());
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());
@@ -189,7 +184,7 @@ public class ChatterBox implements KeyListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\nMegaMek: " + message); //$NON-NLS-1$
+        chatArea.append("\nMegaMek: " + message);
         moveToEnd();
     }
 
@@ -214,6 +209,7 @@ public class ChatterBox implements KeyListener {
     //
     // KeyListener
     //
+    @Override
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
             history.addFirst(inputField.getText());
@@ -224,7 +220,7 @@ public class ChatterBox implements KeyListener {
             } else {
                 systemMessage(client.runCommand(inputField.getText()));
             }
-            inputField.setText(""); //$NON-NLS-1$
+            inputField.setText("");
 
             if (history.size() > MAX_HISTORY) {
                 history.removeLast();
@@ -248,16 +244,18 @@ public class ChatterBox implements KeyListener {
             inputField.setText(history.get(historyBookmark));
             cb2.setMessage(inputField.getText());
         } catch (IndexOutOfBoundsException ioobe) {
-            inputField.setText(""); //$NON-NLS-1$
-            cb2.setMessage(""); //$NON-NLS-1$
+            inputField.setText("");
+            cb2.setMessage("");
             historyBookmark = -1;
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent ev) {
         //ignored
     }
 
+    @Override
     public void keyTyped(KeyEvent ev) {
         //ignored
     }

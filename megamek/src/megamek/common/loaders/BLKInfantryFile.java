@@ -11,19 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- * 
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- * This class loads Infantry BLK files.
- * 
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $revision:$
- */
 package megamek.common.loaders;
 
 import megamek.common.Entity;
@@ -36,12 +23,19 @@ import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+/**
+ * This class loads Infantry BLK files.
+ *
+ * @author Suvarov454@sourceforge.net (James A. Damour)
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Infantry t = new Infantry();
@@ -55,6 +49,9 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find model block.");
         }
         t.setModel(dataFile.getDataAsString("Model")[0]);
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
 
         setTechLevel(t);
         setFluff(t);
@@ -85,7 +82,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
         EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
-        if (nMotion == EntityMovementMode.NONE) {
+        if (nMotion.isNone()) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         if (nMotion == EntityMovementMode.INF_UMU
@@ -114,7 +111,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("Secondary")) {
             String secondName = dataFile.getDataAsString("Secondary")[0];
             stype = EquipmentType.get(secondName);
-            if ((null == stype) || !(stype instanceof InfantryWeapon)) {
+            if (!(stype instanceof InfantryWeapon)) {
                 throw new EntityLoadingException("secondary weapon " + secondName + " is not an infantry weapon");
             }
             t.setSecondaryWeapon((InfantryWeapon) stype);
@@ -158,28 +155,33 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("dest")) {
             t.setDEST(true);
         }
+
         if (dataFile.exists("specialization")) {
-            t.setSpecializations(Integer.valueOf(dataFile
-                    .getDataAsString("specialization")[0]));
+            t.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
         }
         
         if (dataFile.exists("encumberingarmor")) {
             t.setArmorEncumbering(true);
         }
+
         if (dataFile.exists("spacesuit")) {
             t.setSpaceSuit(true);
         }
+
         if (dataFile.exists("sneakcamo")) {
             t.setSneakCamo(true);
         }
+
         if (dataFile.exists("sneakir")) {
             t.setSneakIR(true);
         }
+
         if (dataFile.exists("sneakecm")) {
             t.setSneakECM(true);
         }
+
         if (dataFile.exists("armordivisor")) {
-            t.setArmorDamageDivisor(Double.valueOf(dataFile.getDataAsString("armordivisor")[0]));
+            t.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
         }
         // get field guns
         loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);

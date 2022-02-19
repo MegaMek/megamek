@@ -1,0 +1,237 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Czar Dropship
+</Name>
+
+<Model>
+(Mech Carrier)
+</Model>
+
+<mul id:>
+5626
+</mul id:>
+
+<year>
+2505
+</year>
+
+<originalBuildYear>
+2650
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:1.0:1:1
+mechbay:16.0:4
+steeragequarters:260.0:0
+2ndclassquarters:7.0:0
+lightvehiclebay:12.0:2:3
+cargobay:1128.5:1:4
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+112
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+4091
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+98
+74
+74
+50
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<capabilities>
+The design is armed with only energy weapons, each of its weapons bays being fitted with two Large Lasers and four Medium Lasers. Twenty-Five tons primitive grade of military armor is used to protect the DropShip's hull from enemy fire. As one of its features, the ship has the ability to be reconfigured to carry various military formations. Initially, it was configured for Infantry battalions, but decades later it could be configured to carry a battalion of Armor and Mechanized Infantry.
+</capabilities>
+
+<overview>
+The Czar Class was an early multi-role military DropShip which first entered service with the Terran Hegemony in 2468.
+</overview>
+
+<deployment>
+Version based off Fluff text. Should be considered Unofficial
+</deployment>
+
+<history>
+It was one of the very first proper DropShips in a technical sense. Like the Clippership V, it was developed within a decade of the invention of a functional Hardpoint and Docking Collar coupling, based on the proven Clippership IV hull that had been used for the prototype for these new technologies (Nimbus III). (In the case of the Czar this was in response to a HAF Request for Proposals.) The military career of the Czar would begin as standard Combat Transport for Hegemony's regiments used for invasions, carried on the new Liberty class of JumpShips. It would soldier on through the centuries, which would include serving in the SLDF. After being decommissioned from military service, the ship would linger on well after the fall of the Star League in civilian service with a few ancient survivors still active as of 3079. It should be noted that the Czar, despite being a military design, is constructed to Civilian Spheroid DropShip standards, as opposed to the more rugged Military DropShip standards.
+</history>
+
+<manufacturer>
+Deimos Clipperships
+</manufacturer>
+
+<primaryFactory>
+Mars
+</primaryFactory>
+
+<use>
+Combat Transport
+</use>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<length>
+82m
+</length>
+
+<width>
+82m
+</width>
+
+<height>
+99m
+</height>
+
+<source>
+XTRO Primitives III - Age of War
+</source>
+
+<tonnage>
+6400.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
+
+<crew>
+112
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+10
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

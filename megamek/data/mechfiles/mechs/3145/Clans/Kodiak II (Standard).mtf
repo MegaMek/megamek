@@ -1,34 +1,35 @@
 Version:1.0
 Kodiak II
 (Standard)
+mul id:6295
 
 Config:Biped
-TechBase:Clan
-Era:3095
-Source:TRO 3145 The Clans - Early Republic
-Rules Level:2
+techbase:Clan
+era:3095
+source:TRO 3145 The Clans - Early Republic
+rules level:2
 
-Mass:100
-Engine:400 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:100
+engine:400 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:20 Double
-Walk MP:4
-Jump MP:0
+heat sinks:20 Clan Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:33
-RA Armor:33
-LT Armor:32
-RT Armor:32
-CT Armor:46
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Clan)
+LA armor:33
+RA armor:33
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:12
 LRM 20, Left Arm
@@ -156,4 +157,19 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:Designed for Clan Ghost Bear, the Kodiak II is an Assault Class BattleMech which was first produced during the last decade of the thirty-first century. 
+
+capabilities:The 'Mech was engineered so it could serve as both a Command 'Mech and as a powerful assault 'Mech via a fitting of a heavy arsenal of missiles and a large array of energy weaponry. The design is based on the fourth variant of the original Kodiak. The Kodiak II is known for its Command facilities and its endurance. The powerful 'Mech carries 19 tons of Alshain Weapon's Forging AD56 Standard armor, giving it heavy resistance against weapons fire directed at it. At the heart of the machine is a 400-rated Extra-Light Fusion Engine, which while not as quick as other designs its weight saving qualities allows the 'Mech to carry is substantial weapons load out.
+
+deployment:The Kodiak II's long-range weaponry revolves around pair of arm mounted Type XX "Great Bow" 20-tubed Long-Range Missile Launchers, backed up by a single 10-tubed Type X "Short Bow" model found in the left torso. These missile launchers are guided by Artemis IV Fire Control Systems, allowing the 'Mech weapons to deliver its multiple tons of ammunition on target. Backing up the missile launchers is an Clan Mk. XVII Extended Range Particle Projection Cannon, found in the right torso. While it does need to close into brawling range to use them, the Kodiak II has 8 Series 1 Extended Ranged Small Lasers split between the 'Mech's two arm actuators. All the 'Mech's energy weapons are tied into a Targeting Computer found in the center torso.
+
+history:The Kodiak II would become a favorite design within the Clan Ghost Bear touman, being produced on Alshain at the Alshain Weapons factory. One of the Kodiak II's noted actions was during a border skirmish on the world of Jabuka, wherein elements of Clan Jade Falcon's 53rd Battle Cluster tangled with the 2nd Bear Regulars commanded by Star Colonel Anton Hall from the cockpit of a Kodiak II. The 'Mech would show its perseverance in the face of the 53rd's artillery bombardment of the Star Colonel's surviving units and ended up being the deciding factor which won the battle for the Ghost Bears.
+
+manufacturer:Alshain Weapons
+primaryfactory:Alshain
+systemmanufacturer:CHASSIS:Alshain LXL Endo Steel
+systemmanufacturer:ENGINE:400 Fusion XL
+systemmanufacturer:ARMOR:Forging AD56 Standard
+systemmanufacturer:COMMUNICATIONS:Garret L20
+systemmanufacturer:TARGETING:RCA Instatrac Mark IX with Artemis IV
 

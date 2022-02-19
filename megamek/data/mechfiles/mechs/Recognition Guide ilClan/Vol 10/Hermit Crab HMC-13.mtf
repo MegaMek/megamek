@@ -1,11 +1,12 @@
 Version:1.0
 Hermit Crab
 HMC-13
+mul id:7721
 
 Config:Biped
 techbase:Inner Sphere
 era:3104
-source:Dark Age
+source:Rec Guide:ilClan #10 - Late Repubic
 rules level:2
 
 mass:25

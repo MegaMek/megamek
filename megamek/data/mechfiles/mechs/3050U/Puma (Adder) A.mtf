@@ -1,6 +1,7 @@
 Version:1.1
 Puma (Adder)
 A
+mul id:2591
 
 Config:Biped Omnimech
 techbase:Clan
@@ -150,17 +151,13 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-overview:the Adder is a light Clan OmniMech that serves as a direct or an indirect fire-support unit in most of its configurations. The Adder is capable of carrying a relatively heavy weapons payload that can surprise an unsuspecting enemy, even at extreme ranges.
+overview:Codenamed Puma by Inner Sphere forces who first engaged it, the Adder is a light Clan OmniMech that serves as a direct or an indirect fire-support unit in most of its configurations. The Adder is capable of carrying a relatively heavy weapons payload that can surprise an unsuspecting enemy, even at extreme ranges.
 
-capabilities:The Adder frees up as much weight as possible by using a weight-saving Endo Steel chassis and carrying a lightweight 210 XL Engine, which gives the 'Mech a top speed of 97.2 km/h. It Carries six tons of Ferro-Fibrous armor for protection from enemy fire. The effort to save weight has resulted in a 'Mech that dedicates almost half of its weight (some sixteen tons) to pod space.
+capabilities:The Adder frees up as much weight as possible by using a weight-saving Endo Steel chassis and carrying a lightweight 210 XL Engine, which gives the 'Mech a top speed of 97.2 km/h. The Adder carries six tons of Ferro-Fibrous armor for protection from enemy fire. The effort to save weight has resulted in a 'Mech that dedicates almost half of its weight (some sixteen tons) to pod space. The Adder has a Flamer in a fixed mount which cannot be removed from the 'Mech. 	
 
-deployment:The development of the Adder was tied into the restructuring of the Star Adder's Kappa Galaxy to emulate an Inner Sphere force, to provide a training opponent for other Star Adder units. A number of the main configurations of the Adder were designed specifically for Kappa Galaxy, or were based on intelligence provided by Wolf's Dragoons.
+deployment:A long range missile support configuration, the Adder A has a pair of LRM-20 launchers, allowing it to bombard an enemy from long range. For close combat, the 'Mech has two Small Pulse Lasers.
 
-history:The Adder was designed by Clan Star Adder in preparation for the invasion of the Inner Sphere. First produced in 3010, the formidable Adder was actually designed as an OmniMech capable of emulating the weapons configurations the Wolf's Dragoons reported as most common for medium Inner Sphere BattleMechs.
-
-The Star Adders failed to maintain exclusive possession of the Adder; by 3045, the Adder had become common throughout the Clans.
-
-notes:Codenamed Puma by Inner Sphere forces who first engaged it.
+history:The Adder was designed by Clan Star Adder in preparation for the invasion of the Inner Sphere. First produced in 3010, the formidable Adder was actually designed as an OmniMech capable of emulating the weapons configurations the Wolf's Dragoons reported as most common for medium Inner Sphere BattleMechs, the 'Mechs most frequently fielded by Successor State armies. Some of these configurations, including B, C, and D, are still used as of 3050. Despite producing such a formidable design, the Star Adders failed to maintain exclusive possession of the Adder; by 3045, the Adder had become common throughout the Clans. The development of the Adder was tied into the restructuring of the Star Adder's Kappa Galaxy to emulate an Inner Sphere force, to provide a training opponent for other Star Adder units. A number of the main configurations of the Adder were designed specifically for Kappa Galaxy, or were based on intelligence provided by Wolf's Dragoons.
 
 manufacturer:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries
 primaryfactory:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries

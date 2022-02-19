@@ -11,30 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- * This class loads BattleArmor BLK files.
- *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $revision:$
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * This class loads BattleArmor BLK files.
+ *
+ * @author Suvarov454@sourceforge.net (James A. Damour)
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
     public BLKBattleArmorFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         BattleArmor t = new BattleArmor();
@@ -49,6 +43,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             t.setModel("");
+        }
+
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
         }
 
         setTechLevel(t);
@@ -80,7 +78,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         String chassis = dataFile.getDataAsString("chassis")[0];
         if (chassis.toLowerCase().equals("biped")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
-        } else if (chassis.toLowerCase().equals("quad")) {
+        } else if (chassis.equalsIgnoreCase("quad")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
         } else {
             throw new EntityLoadingException("Unsupported chassis type: " + chassis);
@@ -140,7 +138,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
         
-        if (dataFile.exists("armor_type")){
+        if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         }
         
@@ -192,16 +190,16 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
                 int mountLoc = BattleArmor.MOUNT_LOC_NONE;
-                if  (saEquip[x].contains(":Body")){
+                if (saEquip[x].contains(":Body")) {
                     mountLoc = BattleArmor.MOUNT_LOC_BODY;
                     saEquip[x] = saEquip[x].replace(":Body", "");
-                } else if  (saEquip[x].contains(":LA")){
+                } else if (saEquip[x].contains(":LA")) {
                     mountLoc = BattleArmor.MOUNT_LOC_LARM;
                     saEquip[x] = saEquip[x].replace(":LA", "");
-                } else if  (saEquip[x].contains(":RA")){
+                } else if (saEquip[x].contains(":RA")) {
                     mountLoc = BattleArmor.MOUNT_LOC_RARM;
                     saEquip[x] = saEquip[x].replace(":RA", "");
-                } else if  (saEquip[x].contains(":TU")){
+                } else if (saEquip[x].contains(":TU")) {
                     mountLoc = BattleArmor.MOUNT_LOC_TURRET;
                     saEquip[x] = saEquip[x].replace(":TU", "");
                 }
@@ -216,7 +214,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                 saEquip[x] = saEquip[x].replace(":APM", "");
                 
                 int numShots = 0;
-                if (saEquip[x].contains(":Shots")){
+                if (saEquip[x].contains(":Shots")) {
                     String shotString = saEquip[x].substring(
                             saEquip[x].indexOf(":Shots"),
                             saEquip[x].indexOf("#")+1);
@@ -244,7 +242,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     try {
                         Mounted m = t.addEquipment(etype, nLoc, false, 
                                 mountLoc, dwpMounted);
-                        if (numShots != 0 && (m.getType() instanceof AmmoType)){
+                        if (numShots != 0 && (m.getType() instanceof AmmoType)) {
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
@@ -272,7 +270,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }

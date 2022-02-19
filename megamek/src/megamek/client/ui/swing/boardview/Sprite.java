@@ -16,13 +16,13 @@ import java.awt.image.ImageObserver;
  */
 abstract class Sprite implements ImageObserver, Comparable<Sprite> {
 
-    protected final BoardView1 bv;
+    protected final BoardView bv;
     protected Rectangle bounds;
     protected Image image;
     // Set this to true if you don't want the sprite to be drawn.
     protected boolean hidden = false;
 
-    Sprite(BoardView1 boardView1) {
+    Sprite(BoardView boardView1) {
         bv = boardView1;
     }
 
@@ -36,8 +36,9 @@ abstract class Sprite implements ImageObserver, Comparable<Sprite> {
      * When we draw our buffered images, it's necessary to implement the
      * ImageObserver interface. This provides the necessary functionality.
      */
+    @Override
     public boolean imageUpdate(Image image, int infoflags, int x, int y,
-            int width, int height) {
+                               int width, int height) {
         if (infoflags == ImageObserver.ALLBITS) {
             prepare();
             bv.repaint();
@@ -126,6 +127,7 @@ abstract class Sprite implements ImageObserver, Comparable<Sprite> {
     /**
      * Compares two sprites for purposes of draw ordering.
      */
+    @Override
     public int compareTo(Sprite o) {
         return this.getSpritePriority() - o.getSpritePriority();
     }

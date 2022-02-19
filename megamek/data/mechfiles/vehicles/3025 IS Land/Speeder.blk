@@ -15,6 +15,10 @@ Speeder
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+5105
+</mul id:>
 <Tonnage>
 5
 </Tonnage>

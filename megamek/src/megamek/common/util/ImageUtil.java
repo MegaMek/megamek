@@ -39,6 +39,8 @@ import java.util.List;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
+import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Generic utility methods for image data
@@ -181,7 +183,6 @@ public final class ImageUtil {
 
     /**
      * Interface that defines methods for an ImageLoader.
-     *
      */
     public interface ImageLoader {
 
@@ -194,16 +195,15 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader implementation that expects a path to an image file, and that file is loaded directly and the loaded
-     * image is returned.
-     *
+     * ImageLoader implementation that expects a path to an image file, and that file is loaded
+     * directly and the loaded image is returned.
      */
     public static class AWTImageLoader implements ImageLoader {
         @Override
-        public Image loadImage(String fileName) {
+        public @Nullable Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                System.out.println(String.format("Trying to load image for a non-existent file! Path: %s", fileName));
+                LogManager.getLogger().error("Trying to load image for a non-existent file " + fileName);
                 return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
@@ -232,18 +232,18 @@ public final class ImageUtil {
          * @return
          */
         protected Coords parseCoords(String c) {
-            if(null == c || c.isEmpty()) {
+            if (null == c || c.isEmpty()) {
                 return null;
             }
-            String[] elements = c.split(",", -1); //$NON-NLS-1$
-            if(elements.length != 2) {
+            String[] elements = c.split(",", -1);
+            if (elements.length != 2) {
                 return null;
             }
             try {
                 int x = Integer.parseInt(elements[0]);
                 int y = Integer.parseInt(elements[1]);
                 return new Coords(x, y);
-            } catch(NumberFormatException nfe) {
+            } catch (NumberFormatException nfe) {
                 return null;
             }
         }
@@ -251,23 +251,22 @@ public final class ImageUtil {
         /**
          * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
          * sub-image within the original image and return that sub-image.
-         *
          */
         @Override
         public Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
-            if((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
+            if ((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
                 return null;
             }
             String coords = fileName.substring(tileStart + 1, tileEnd);
             int coordsSplitter = coords.indexOf('-');
-            if(coordsSplitter == -1) {
+            if (coordsSplitter == -1) {
                 return null;
             }
             Coords start = parseCoords(coords.substring(0, coordsSplitter));
             Coords size = parseCoords(coords.substring(coordsSplitter + 1));
-            if((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
+            if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
@@ -277,7 +276,7 @@ public final class ImageUtil {
             }
             System.out.println("Loading atlas: " + baseFile);
             Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
-            if(null == base) {
+            if (null == base) {
                 return null;
             }
             waitUntilLoaded(base);
@@ -321,7 +320,7 @@ public final class ImageUtil {
                 String coords = fileName.substring(tileStart + 1, tileEnd);
                 int coordsSplitter = coords.indexOf('-');
                 // It's possible we have a unit with a paren in the name, we still want to try to load that
-                if(coordsSplitter == -1) {
+                if (coordsSplitter == -1) {
                     baseName = fileName;
                     tileAdjusting = false;
                 } else {

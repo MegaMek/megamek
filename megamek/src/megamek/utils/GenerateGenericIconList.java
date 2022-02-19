@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.utils;
 
@@ -37,13 +37,14 @@ import megamek.common.SpaceStation;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * This program will generate a list of all of the units that use the default
+ * This program will generate a list of all the units that use the default
  * (generic) icons.
  * 
  * @author arlith
- * @date January 2016
+ * @since January 2016
  */
 public class GenerateGenericIconList implements MechSummaryCache.Listener {
 
@@ -52,13 +53,10 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
     public static void main(String[] args) {
         boolean ignoreUnofficial = true;
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-unofficial")){
+            if (args[i].equals("-unofficial")) {
                 ignoreUnofficial = false;
             } else {
-                System.err.println("Error: Invalid argument.\n"); //$NON-NLS-1$
-                System.err.println("Usage:\n\tGenerateGenericIconList [flags] \n\n" + //$NON-NLS-1$
-                "Valid Flags: \n" + //$NON-NLS-1$
-                "-unofficial      \t Consider unofficial units in data dir\n"); //$NON-NLS-1$
+                LogManager.getLogger().error("Invalid argument of " + args[i]);
                 return;
             }
         }
@@ -107,11 +105,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                 } else if (entity instanceof Protomech) {
                     type = "Protomechs:";
                 }
-                List<String> names = typeNameMap.get(type);
-                if (names == null) {
-                    names = new ArrayList<>();
-                    typeNameMap.put(type, names);
-                }
+                List<String> names = typeNameMap.computeIfAbsent(type, k -> new ArrayList<>());
                 names.add(name);
                 genericCount++;        
             }
@@ -139,7 +133,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         try {
             entity = new MechFileParser(f, entityName).getEntity();
         } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString()); //$NON-NLS-1$
+            LogManager.getLogger().error("", e);
         }
         return entity;
     }

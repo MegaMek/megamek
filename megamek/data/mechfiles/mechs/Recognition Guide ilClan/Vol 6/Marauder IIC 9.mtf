@@ -1,11 +1,13 @@
 Version:1.0
 Marauder IIC
 9
+mul id:7537
 
 Config:Biped
 techbase:Clan
 era:2831
 rules level:2
+source:Rec Guide:ilClan #6 - Succession Wars
 
 mass:85
 engine:340 Fusion (Clan) Engine(IS)

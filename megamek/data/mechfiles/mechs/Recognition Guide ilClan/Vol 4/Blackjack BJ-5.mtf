@@ -1,11 +1,13 @@
 Version:1.0
 Blackjack
 BJ-5
+mul id:7499
 
 Config:Biped
 techbase:Inner Sphere
 era:3107
 rules level:4
+source:Rec Guide:ilClan #4 - Late Republic
 
 mass:45
 engine:180 Light Engine(IS)

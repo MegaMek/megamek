@@ -1,6 +1,7 @@
 Version:1.0
 UrbanMech
 UM-R68
+mul id:3357
 
 Config:Biped
 TechBase:Inner Sphere
@@ -146,3 +147,20 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
+overview:The UrbanMech was designed for just what its name suggests: urban combat and defense.
+
+capabilities:This was achieved by starting with a cheap, easily-produced chassis, giving it six tons of Durallex armor to rival the protection found on many medium-weight BattleMechs, and mounting a pair of Pitban 6000 jump jets for a jumping distance of 60 meters. The trade-off was that it could only mount the miserable Leenex 60 engine, making the UrbanMech the slowest light 'Mech in existence with a cruising speed of 21.6 km/h and top speed of only 32.4 km/h. This was a severe disadvantage if the 'Mech attempted to fight in open country - something for only the foolish or desperate - but off-set by the fact that fighting in the close confines of a Star League city left little room to maneuver anyways and the UrbanMech's low profile made it difficult to target. Thus the 'Mech was primarily used for fighting guerrillas and other light 'Mechs in an urban environment, an arena where it also achieved some success fighting medium and even heavy-weight 'Mechs. Standard tactics for an UrbanMech lance was to split up into its constituent parts and occupy various buildings in order to snipe the enemy before falling back to the next defensive line.
+
+deployment:Eschewing the autocannon, this Draconis Combine variant carries an MRM-30 with two tons of ammo. The added damage potential proved a nasty surprise to Clan Ghost Bear during the Combine-Ghost Bear War.
+
+history:Large numbers of UrbanMechs were produced by Orguss Industries from 2675 until the destruction of their assembly lines. The UrbanMech reentered production at the Betelgeuse facility of Hellespont Industrials during the Jihad, and continued to be manufactured up through 3149.  As such, UrbanMechs could be found in all of the armies of the Successor States. However most military leaders saw the slow little 'Mech as a liability, confining their stockpiles to garrison duty or stripping them of parts. This dismissive attitude towards the UrbanMech saved it from the ravages of the Succession Wars and ensured its continued use into the thirty-first century. The Capellan Confederation remained the largest and only user of UrbanMechs to actually deploy them for front-line duty, a result of the devastation of the Fourth Succession War and their desperation for any 'Mech to replenish their losses. The Confederation Reserve Cavalry and Capellan Defense Force had the lion's share of UrbanMechs, followed by the Tikonov Republican Guard and St. Ives Armored Cavalry; outside the Confederation the Federated Suns' Capellan March Militia fielded the largest number of UrbanMechs due to the fact it was composed of large amounts of captured Capellan equipment. Its prominence within the Confederation meant the UrbanMech was among those 'Mechs within the CCAF to receive upgrades following the recovery of lostech; the other States followed suit with much less priority over improving other 'Mechs. Despite this the sheer costs necessary to replace the UrbanMech's engine and increase its top speed meant even the Confederation limited their refit packages to improving the weapons and armor only. A testament to the desperation of the Word of Blake Jihad, Hellespont Industrials would reactivate a shuttered production facility on Betelgeuse to produce the UrbanMech alongside primitive "retrotech" designs for material starved Capellan garrison forces. This plant would maintain production of the UrbanMech in a steadily increasing volume of configurations throughout the Dark Age Era as the CCAF secretly expanded before it waged war against the Republic of the Sphere. Rather than dramatic and expensive enhancements, Hellespont's new variants retain the venerable design's low ground speed urban combat focus and can be applied as refits as readily as new production.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Republic-R
+systemmanufacturer:ENGINE:Leenex 60
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:JUMPJET:Pitban 6000
+systemmanufacturer:COMMUNICATIONS:Dalban Interact
+systemmanufacturer:TARGETING:Dalban Urban

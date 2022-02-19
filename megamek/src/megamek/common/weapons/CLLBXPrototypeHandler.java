@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -37,7 +37,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
      * @param g
      * @param s
      */
-    public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g,
                                  Server s) {
         super(t, w, g, s);
     }

@@ -1,6 +1,7 @@
 Version:1.0
 Grasshopper
 GHR-5J
+mul id:1268
 
 Config:Biped
 TechBase:Inner Sphere
@@ -149,3 +150,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Originally intended as a stealthy hunter-killer of light and medium 'Mechs for the SLDF, the Grasshopper entered service in 2780 after hostilities had already ceased in the Amaris Civil War.
+
+capabilities:With great mobility and a predominately shorter-ranged, energy-based weaponry, the Grasshopper proved itself during the First Succession War. The 'Mech's ground speed of 64.8 km/h was augmented by four Leviathan Lifter jump jets, one pair in each leg, giving it a jumping capability of one hundred and twenty meters. Revolutionary for its time, the appearance of a heavy 'Mech with the mobility of a lighter design caused a change in tactics; the Grasshopper became known for using surprise and speed to appear suddenly in the midst of a tightly-packed Lance, a devastating situation should the enemy lack short-ranged weapons themselves. The use of twenty-two heat sinks also gave it superior heat dissipation rates compared to other heavy 'Mechs, while its low dependence on ammunition allowed the Grasshopper to operate away from established supply lines for extended periods of time. Though it could be outgunned by other 'Mechs of similar tonnage, the combination of its mobility and thirteen tons of standard armor allowed the Grasshopper to at least inflict significant damage before being forced to withdraw. Finally, mounting its primary weapon in its center torso meant the Grasshopper remained combat-capable despite suffering crippling damage, including losing both arms, leading many to classify it as a "zombie" 'Mech.
+
+deployment:An upgrade of the Grasshopper using Star League technology, the 5J replaces the Diplan large laser with a Diverse Optics Sunbeam ER Large Laser, replaces the Conan/S launcher with a Hovertec Streak SRM-2 model, and removes the two torso-mounted medium lasers for a SureFire 444 Anti-Missile System. 
+
+history:Problems integrating the original stealth systems with the chassis meant the Grasshopper missed the climactic end to the conflict. The stealth systems were ultimately removed from the final design. The untested and unorthodox 'Mech was distributed primarily to the regular army rather than the more prestigious Royal units, and within four years it could be found in most Star League regiments. Thus as the League dissolved, with the chaos of Operation EXODUS and the defection of many SLDF units to the Successor States, Grasshoppers found their way into the various House armies one way or another.  Besides hunting down lighter machines to clear the way for heavier, less-mobile 'Mechs, the Grasshopper's mobility and endurance meant it often spearheaded assaults to storm fortifications, led flanking attacks to hit the enemy from the rear, and served as back-up brawler for companies of light and medium 'Mechs. Its ability to operate independently made it an excellent choice as a raider and guerrilla fighter, an attribute also prized by mercenary units in need of self-reliant 'Mechs. While popular the Grasshopper was also an uncommon sight during the Succession Wars, causing many commanders to mistakenly treat it as just another heavy 'Mech. By the time they realized their mistake it was too late, though following ComStar's publication of Technical Readout: 3025 military leaders became more familiar with the 'Mech. In the midst of the Second Succession War the Lantren Corporation's factory on Bryant was destroyed in 2843, a result of worsening global storms and damage inflicted during the conflict, causing production of the 'Mech to cease. However, the Grasshopper was usually prioritized over other 'Mechs, even a unit commander's own, when it came time to repair and rebuild after a battle. Thus most of the original production run was still in active duty even after centuries of use. Lantren Corporation would eventually introduce a new variant in 3049, the GHR-5J, which upgraded many of its original systems with superior lostech components. Yet the original model was so popular that it would still outnumber the -5J for decades to come by a ratio of three to one. Only when the Draconis Combine introduced their own C3 variant that trend began to reverse. Further variants were introduced in the years following, and the Grasshopper participated in many conflicts, including both sides of the Jihad.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Mingh z33/7
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Maximillian 100
+systemmanufacturer:JUMPJET:Lexington Lifters
+systemmanufacturer:COMMUNICATIONS:Allet-C308
+systemmanufacturer:TARGETING:Allet T-11

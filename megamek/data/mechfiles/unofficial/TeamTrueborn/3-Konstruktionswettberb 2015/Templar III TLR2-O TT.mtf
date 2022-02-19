@@ -1,0 +1,156 @@
+Version:1.1
+Templar III
+TLR2-O TT
+
+Config:Biped Omnimech
+techbase:Inner Sphere
+era:3100
+source:TeamTrueborn
+rules level:5
+
+mass:85
+engine:340 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Heavy Duty Gyro
+
+heat sinks:17 IS Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:6
+Small VSP Laser, Left Arm
+Small Laser, Right Arm
+Medium X-Pulse Laser, Left Torso
+Snub-Nose PPC, Right Torso
+Medium X-Pulse Laser, Right Torso
+Snub-Nose PPC, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISSmallShield (OMNIPOD)
+ISSmallShield (OMNIPOD)
+ISSmallShield (OMNIPOD)
+ISSmallVSPLaser (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Small Laser (OMNIPOD)
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISMediumXPulseLaser (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISSNPPC (OMNIPOD)
+ISSNPPC (OMNIPOD)
+ISMediumXPulseLaser (OMNIPOD)
+ISCASE
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSNPPC (OMNIPOD)
+ISSNPPC (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

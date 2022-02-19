@@ -1,16 +1,16 @@
 /*  
- * MegaMek - Copyright (C) 2021 - The MegaMek Team  
- *  
- * This program is free software; you can redistribute it and/or modify it under  
- * the terms of the GNU General Public License as published by the Free Software  
- * Foundation; either version 2 of the License, or (at your option) any later  
- * version.  
- *  
- * This program is distributed in the hope that it will be useful, but WITHOUT  
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
- * details.  
- */ 
+ * MegaMek - Copyright (C) 2021 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing.lobby;
 
 import java.awt.event.ActionEvent;
@@ -43,7 +43,6 @@ public class LobbyMekPopupActions implements ActionListener {
         Set<Entity> entities = LobbyUtility.getEntities(lobby.game(), st.nextToken());
 
         switch (command) {
-
             // Single entity commands
             case LMP_CONFIGURE:
                 if (!entities.isEmpty()) {
@@ -79,7 +78,7 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_SQUADRON:
             case LMP_SAVE_QUIRKS_ALL:
             case LMP_SAVE_QUIRKS_MODEL:
-            case LMP_LOAD: 
+            case LMP_LOAD:
             case LMP_UNLOAD:
             case LMP_UNLOADALL:
             case LMP_DEPLOY:
@@ -119,7 +118,7 @@ public class LobbyMekPopupActions implements ActionListener {
         switch (command) {
             case LMP_FCREATESUB:
                 int parentId = Integer.parseInt(info);
-                lobby.lobbyActions.forceCreateSub(parentId);  
+                lobby.lobbyActions.forceCreateSub(parentId);
                 break;
 
             case LMP_FADDTO:
@@ -129,7 +128,7 @@ public class LobbyMekPopupActions implements ActionListener {
 
             case LMP_FRENAME:
                 forceId = Integer.parseInt(info);
-                lobby.lobbyActions.forceRename(forceId);  
+                lobby.lobbyActions.forceRename(forceId);
                 break;
 
             case LMP_FCREATETOP:
@@ -343,8 +342,6 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
 
-
         }
     }
-
 }

@@ -18,16 +18,16 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
 import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
 import megamek.client.ui.swing.dialog.DialogButton;
-import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,7 +79,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private Vector<String> playerNames = null;
 
-    private IClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
+    private ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
         this(owner, title, modal, playerName, null);
@@ -141,7 +141,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             }
         } else {
             if (playerNameCombo == null) {
-                playerNameCombo = new JComboBox<String>(playerNames);
+                playerNameCombo = new JComboBox<>(playerNames);
                 Dimension preferredSize = playerNameCombo.getPreferredSize();
                 preferredSize.setSize(180, preferredSize.getHeight());
                 playerNameCombo.setPreferredSize(preferredSize);
@@ -216,7 +216,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.portField = portField;
     }
 
-    protected IClientPreferences getClientPreferences() {
+    protected ClientPreferences getClientPreferences() {
         return clientPreferences;
     }
     //endregion Getters and Setters
@@ -236,7 +236,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private boolean validatePlayerName() {
         // Players should have to enter a non-blank, non-whitespace name.
-        return !getPlayerName().trim().equals("");
+        return !getPlayerName().trim().isBlank();
     }
     //endregion Validation
 
@@ -247,7 +247,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {
-            MegaMek.getLogger().error(ex.getMessage());
+            LogManager.getLogger().error("", ex);
         }
 
         setConfirmed(true);

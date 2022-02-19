@@ -1,0 +1,169 @@
+Version:1.0
+Fujin
+RJN-301-F
+mul id:8414
+
+Config:Biped
+techbase:Inner Sphere
+era:3139
+source:Rec Guide:ilClan #23 - Dark Age
+rules level:3
+
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
+
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:15
+RT armor:15
+CT armor:20
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Streak SRM 6, Left Torso
+SRM 2 (I-OS), Right Torso
+ER PPC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ballistic-Reinforced
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+ISSRM2IOS
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+IS Ballistic-Reinforced
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ballistic-Reinforced
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Raijin is designed to be highly mobile and capable of engaging an enemy at a variety of ranges. 
+
+capabilities: The 'Mech's relatively light armor can be a liability if it is engaged in close combat or finds itself in a protracted engagement. 
+
+deployment:Unknown
+
+history:The Raijin was designed after the Battle of Tukayyid to rearm ComGuard units that had suffered losses in the campaign. Despite having stockpiled Star League-era BattleMechs at his disposal, Precentor Martial Focht wanted something unfamiliar to both the Inner Sphere and the Clans. The Raijin was redesigned after Word of Blake forces lost considerable amounts of the design during its taking of Terra from ComStar in 3058. Newly redesigned Raijin II units began to be deployed in 3066, with older versions of the 'Mech being refitted to RJN-200-A variant standards. While off-shoots of the 200-A were deployed to elite Divisions.
+
+manufacturer:Independence Weaponry
+primaryfactory:Quentin
+systemmanufacturer:CHASSIS:TSN Light Endo-Steel
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Durallex Ballistic-Reinforced with CASE II
+systemmanufacturer:COMMUNICATIONS:Garret T-22
+systemmanufacturer:TARGETING:Garret D2j (I)
+

@@ -1,12 +1,13 @@
 Version:1.1
 Inferno
 INF-NOR
+mul id:7719
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)
 era:3146
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #9 - Dark Age
+rules level:2
 
 mass:75
 engine:300 Fusion Engine(IS)

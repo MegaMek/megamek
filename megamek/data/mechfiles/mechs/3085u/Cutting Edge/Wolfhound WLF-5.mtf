@@ -1,35 +1,36 @@
 Version:1.2
 Wolfhound
 WLF-5
+mul id:3569
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3079
-Source:Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3079
+source:TRO:3085 - Jihad
+rules level:2
 
-Mass:35
-Engine:245 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:35
+engine:245 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:7
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:11
-RA Armor:11
-LT Armor:10
-RT Armor:10
-CT Armor:15
-HD Armor:9
-LL Armor:15
-RL Armor:15
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:10
+RT armor:10
+CT armor:15
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:3
 Snub-Nose PPC, Right Arm
@@ -41,8 +42,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,8 +57,8 @@ Upper Arm Actuator
 Lower Arm Actuator
 ISSNPPC
 ISSNPPC
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -68,11 +69,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -87,10 +88,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 Light PPC
 Light PPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light PPC
+Light PPC
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -149,9 +150,7 @@ Endo Steel
 -Empty-
 
 overview:A light, rugged, and dependable design, the Wolfhound made its first appearance in 3028. The final design was a light 'Mech with an all-energy weapons payload effective at a variety of combat ranges, the maximum amount of armor for a 'Mech of its weight class, and the use of mostly standard components to keep costs down.
-
 capabilities:This is a production model of the WLF-2X, introduced in 3082. To ease production, the Actuator Enhancement System has been removed and replaced by an extra heat sink. The Reflective Armor has been replaced by the standard armor available anywhere in the Inner Sphere. The Heavy PPC retains the PPC Capacitor, and the XL Engine retains the Supercharger that allows for impressive speed boosts. A pair of ER Medium Lasers and an ER Small Laser round out the weapons.
-
 history:Due to their fierce loyalty to House Steiner, the Kell Hounds were the first unit chosen to field test the Wolfhound in combat, followed shortly thereafter by Wolf's Dragoons. The design received its baptism of fire during the Fourth Succession War where it exceeded all expectations and performed brilliantly. This was especially true when the Wolfhound faced its intended targets, hitting the Jenner beyond its ability to return fire while closing the distance on the Panther to get within the minimum range of its primary weapon. With the successful end of the war the Federated Commonwealth ordered larger numbers of Wolfhounds to outfit its military and the design was used again during the War of 3039. Wolfhounds suffered far fewer casualties than other 'Mechs during that conflict and a mere handful fell into the hands of the Combine. While impressed with the 'Mech the Kuritans were too prideful to copy it themselves, instead using captured examples to help develop the Wolf Trap to specifically counter the 'Mech. Eventually Arc-Royal MechWorks was brought in to produce Wolfhounds under license from TharHes, and the recovery of Lostech thanks to the Helm Memory Core allowed for a more advanced variant to be produced to combat the Clan Invasion. Unfortunately the necessary retooling of TharHes' factories to produce the WLF-2 model, introduced in 3052, took too long before ComStar brought an end to the invasion with the Battle of Tukayyid. These newer Wolfhounds continued to be produced for both FedCom member states, although following the formal creation of the Lyran Alliance the TharHes factories began producing the newer WLF-3S model. This new variant was shipped only to units loyal to the Lyran state, and thus fought on the side of Katherine Steiner-Davion during the FedCom Civil War. During the Jihad the Word of Blake launched a devastating assault on Tharkad, effectively shutting down TharHes' Wolfhound factory line; in response Arc-Royal increased production and introduced the WLF-4 model to replace the losses suffered by allied forces fighting the Blakists.
 manufacturer:TharHes Industries
 primaryfactory:Tharkad
@@ -160,3 +159,4 @@ systemmanufacturer:ENGINE:GM 210
 systemmanufacturer:ARMOR:Durallex Medium
 systemmanufacturer:COMMUNICATIONS:O/P Com-22/H47
 systemmanufacturer:TARGETING:Digital Scanlok 347
+

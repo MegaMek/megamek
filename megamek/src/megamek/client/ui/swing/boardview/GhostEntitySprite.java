@@ -14,12 +14,12 @@ class GhostEntitySprite extends Sprite {
 
     private Rectangle modelRect;
 
-    public GhostEntitySprite(BoardView1 boardView1, final Entity entity) {
+    public GhostEntitySprite(BoardView boardView1, final Entity entity) {
         super(boardView1);
         this.entity = entity;
 
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+        Font font = new Font("SansSerif", Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
         Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);

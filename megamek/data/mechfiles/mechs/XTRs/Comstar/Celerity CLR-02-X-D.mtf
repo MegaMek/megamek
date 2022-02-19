@@ -1,36 +1,37 @@
 Version:1.1
 Celerity
 CLR-02-X-D
+mul id:5553
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3052
-Source:XTRO ComStar - Clan Invasion
-Rules Level:4
+techbase:Inner Sphere
+era:3052
+source:XTRO ComStar - Clan Invasion
+rules level:4
 
-Mass:15
-Engine:240 XXL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:XL Gyro
+mass:15
+engine:240 XXL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Heat Sinks:10 Single
-Walk MP:16
-Jump MP:0
+heat sinks:10 Single
+walk mp:16
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-FLL Armor:1
-FRL Armor:1
-LT Armor:2
-RT Armor:2
-CT Armor:2
-HD Armor:3
-RLL Armor:1
-RRL Armor:1
-RTL Armor:1
-RTR Armor:1
-RTC Armor:1
+armor:Standard(Inner Sphere)
+FLL armor:1
+FRL armor:1
+LT armor:2
+RT armor:2
+CT armor:2
+HD armor:3
+RLL armor:1
+RRL armor:1
+RTL armor:1
+RTR armor:1
+RTC armor:1
 
 Weapons:0
 
@@ -39,8 +40,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -53,8 +54,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -71,10 +72,10 @@ Fusion Engine
 Fusion Engine
 Heat Sink
 ISMASC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -84,11 +85,11 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISDroneOperatingSystem
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -137,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

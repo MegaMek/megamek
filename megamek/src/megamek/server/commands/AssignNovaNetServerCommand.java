@@ -306,7 +306,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     private String strListNetworks(int connID, boolean planned) {
         String rval = "";
 
-        List<Integer> allreadyReported = new LinkedList<Integer>();
+        List<Integer> allreadyReported = new LinkedList<>();
         List<Entity> novaUnits = getMyNovaUnits(connID);
         List<Entity> network;
 
@@ -381,7 +381,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      * @return
      */
     private List<Entity> listNetwork(int connID, Entity e, boolean planned) {
-        List<Entity> novaNetworkMembers = new LinkedList<Entity>();
+        List<Entity> novaNetworkMembers = new LinkedList<>();
         List<Entity> novaUnits = getMyNovaUnits(connID);
 
         for (Entity ent : novaUnits) {
@@ -405,7 +405,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      * @return
      */
     private List<Entity> getMyNovaUnits(int connID) {
-        List<Entity> novaUnits = new LinkedList<Entity>();
+        List<Entity> novaUnits = new LinkedList<>();
         for (Entity ent : server.getGame().getEntitiesVector()) {
             if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
                 novaUnits.add(ent);

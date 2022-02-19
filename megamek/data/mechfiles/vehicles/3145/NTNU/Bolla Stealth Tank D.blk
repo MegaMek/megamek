@@ -20,6 +20,10 @@ Bolla Stealth Tank (RotS)
 D
 </Model>
 
+<mul id:>
+6791
+</mul id:>
+
 <year>
 3091
 </year>
@@ -73,8 +77,8 @@ IS Vehicular Stealth
 IS Vehicular Stealth
 ISC3SlaveUnit
 ISGuardianECMSuite
-CLSniperCannonAmmo:OMNI
-CLSniperCannonAmmo:OMNI
+ISSniperCannonAmmo:OMNI
+ISSniperCannonAmmo:OMNI
 CLMediumChemLaserAmmo:OMNI
 IS Machine Gun Ammo - Half
 </Body Equipment>

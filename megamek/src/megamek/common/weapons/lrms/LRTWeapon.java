@@ -20,7 +20,7 @@ import static megamek.common.MountedHelper.isArtemisV;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -36,15 +36,12 @@ import megamek.server.Server;
  */
 public abstract class LRTWeapon extends MissileWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -7350712286691532142L;
 
     public LRTWeapon() {
         super();
         ammoType = AmmoType.T_LRM_TORPEDO;
-        flags = flags.or(F_PROTO_WEAPON).andNot(F_AERO_WEAPON).or(F_ARTEMIS_COMPATIBLE);
+        flags = flags.or(F_ARTEMIS_COMPATIBLE);
 
     }
     
@@ -56,17 +53,10 @@ public abstract class LRTWeapon extends MissileWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
     
@@ -79,7 +69,7 @@ public abstract class LRTWeapon extends MissileWeapon {
     public boolean hasAlphaStrikeIndirectFire() {
         return false;
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (isClan()) {
@@ -106,7 +96,7 @@ public abstract class LRTWeapon extends MissileWeapon {
             }
         }
     }
-    
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);
@@ -119,5 +109,14 @@ public abstract class LRTWeapon extends MissileWeapon {
             removeMode("");
             removeMode("Indirect");
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS ";
+        }
+        return "LRT " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

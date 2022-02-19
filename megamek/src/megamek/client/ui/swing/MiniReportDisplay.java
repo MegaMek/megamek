@@ -1,17 +1,16 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -38,16 +37,13 @@ import megamek.client.ui.swing.util.BASE64ToolKit;
  * Shows reports, with an Okay JButton
  */
 public class MiniReportDisplay extends JDialog implements ActionListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -703103629596703945L;
     private JButton butOkay;
 
     public MiniReportDisplay(JFrame parent, Client client) {
-        super(parent, Messages.getString("MiniReportDisplay.title"), true); //$NON-NLS-1$
+        super(parent, Messages.getString("MiniReportDisplay.title"), true);
 
-        butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+        butOkay = new JButton(Messages.getString("Okay"));
         butOkay.addActionListener(this);
         
         getContentPane().setLayout(new BorderLayout());
@@ -74,6 +70,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         butOkay.requestFocus();
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butOkay)) {
             GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);

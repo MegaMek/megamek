@@ -20,14 +20,8 @@ import megamek.common.SimpleTechLevel;
  */
 public class CLStreakLRM10IOS extends StreakLRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 2692279526867532848L;
 
-    /**
-     *
-     */
     public CLStreakLRM10IOS() {
         super();
         name = "Streak LRM 10 (I-OS)";

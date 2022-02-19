@@ -1,11 +1,12 @@
 Version:1.0
 Thunderbolt
 TDR-9S
+mul id:3249
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3050
-source:ilClan RecGuide 15 - Clan Invasion
+source:Rec Guide:ilClan #15 - Clan Invasion
 Rules Level:2
 
 Mass:65

@@ -14,7 +14,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.BattleForceElement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -47,11 +47,11 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new ThunderBoltWeaponHandler(toHit, waa, game, server);
     }
 

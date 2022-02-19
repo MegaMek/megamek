@@ -1,6 +1,7 @@
 Version:1.0
 Shadow Hawk IIC
 8
+mul id:2918
 
 Config:Biped
 TechBase:Clan
@@ -150,4 +151,17 @@ Clan Improved Jump Jet
 -Empty-
 -Empty-
 
+overview:The Shadow Hawk IIC is a second-line Clan BattleMech based upon the Shadow Hawk that was first fielded by the Star League.
 
+capabilities:The inexpensive unit is protected by seven and a half tons of Ferro-Fibrous armor, mounted on a weight-saving Endo Steel chassis. This medium 'Mech can reach a respectable top speed of 97 km/h, though it also carries enough jump jets to vault up to 180 meters at a time.
+
+deployment:This variant increases the maximum speed of the 'Mech to 96 km/h. Nine Improved Jump Jets allow it to cover 270 meters in a single bound. A head mounted ECM Suite disrupts enemy electronic systems. An ER Large Laser and LRM-10 provide long range firepower, and close combat is possible via the Heavy Medium Laser and Micro Pulse Laser mounted in each arm. This variant carries slightly less armor on the limbs and center torso.
+
+manufacturer:Trellshire Heavy Industries 
+primaryfactory:Twycross
+systemmanufacturer:CHASSIS:Lang T3
+systemmanufacturer:ENGINE:Consolidated Fusion 270 Standard
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Northrup Starlifters M45
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:TRTTS Mark II

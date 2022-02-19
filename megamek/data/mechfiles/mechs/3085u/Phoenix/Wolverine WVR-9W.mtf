@@ -1,10 +1,11 @@
 Version:1.0
 Wolverine
 WVR-9W
+mul id:3583
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3077
+Era:3073
 Source:Jihad
 Rules Level:4
 

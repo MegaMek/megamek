@@ -1,11 +1,12 @@
 Version:1.0
 Marauder
 C
+mul id:2032
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3050
-source:Clan Invasion
+source:Rec Guide:ilClan #6 - Clan Invasion
 rules level:4
 
 mass:75

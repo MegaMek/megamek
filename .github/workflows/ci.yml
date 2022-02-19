@@ -1,85 +1,67 @@
-#
 # Builds MegaMek for CI (and CD via artifacts)
 #
 # Jobs:
-#
-#    - ci_cd: Build MegaMek for CI/CD on Ubuntu with Java 11
-#
-
+#    - ci_cd: Build MegaMek for CI/CD on the specified Operating Systems for the specified Java versions
 name: MegaMek CI with Gradle
 
-#
 # This Action Definition should be triggered only on
 # Pull Requests being added/updated against master.
-#
 on:
   pull_request:
     branches: [ master ]
 
-#
 # Setup the Build Scan "VCS" link for all gradle invocations
-#
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
 
 jobs:
-
-  #
-  # Perform CI (and CD as an artifact) of MegaMek
-  # any time a pull request is added or updated.
-  #
+  # Perform CI (and CD as an artifact) of MegaMek any time a pull request is added or updated.
   ci_cd:
+    runs-on: ${{ matrix.os }}
 
-    # For CI/CD running on *nix is sufficient
-    runs-on: ubuntu-latest
+    # Run this job once for each combination in the matrix below.
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ] # For CI/CD running on *nix is sufficient
+        java-distribution: [ temurin ]
+        java-version: [ 11 ]
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v2
 
-    #
-    # Use Java 11
-    #
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
+    # Setup the requested Java Distribution and Version from the matrix
+    - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v2
       with:
-        java-version: 11
+        distribution: ${{ matrix.java-distribution }}
+        java-version: ${{ matrix.java-version }}
 
-    #
-    # Make sure we can execute the Gradle wrapper        
-    #
+    # Make sure we can execute the Gradle wrapper
     - name: Grant execute permission for gradlew (*nix or MacOS)
       run: chmod +x gradlew
+      if: runner.os != 'Windows'
 
-    #
     # Build the MegaMek project
     #
     # Output Variables:
     #    - buildScanUri
-    #
     - name: Build with Gradle
       id: gradle_build
       run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
 
-    #
-    # If the build step fails, try to upload any
-    # test logs in case it was a unit test failure.
-    #
-    # The logs will be relative to the ./mekhq directory.
-    #
+    # If the build step fails, try to upload any test logs in case it was a unit test failure.
+    # The logs will be relative to the megamek directory.
     - name: Upload Test Logs on Failure
-      uses: actions/upload-artifact@v2-preview
+      uses: actions/upload-artifact@v2.2.4
       if: failure()
       with:
         name: cd-failure-logs
         path: megamek/build/reports/
 
-    #
     # If we have a buildScanUri comment on the PR
     #
-    # NB: This only works if you're on the main MegaMek\megamek repo
-    #     for now due to a GitHub Actions limitation.
-    #
-
+    # NB: This only works if you're on the main MegaMek\megamek repo for now due to a GitHub Actions limitation.
 # CAW: temporarily disabled due to https://github.com/thollander/actions-comment-pull-request/issues/17
 #    - name: Comment on PR with Build Scan URI
 #      uses: thollander/actions-comment-pull-request@master
@@ -88,16 +70,17 @@ jobs:
 #        message: Build scan available at ${{ steps.gradle_build.outputs.buildScanUri }}
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    #
-    # Put the releases up in a single zip file called:
-    #
-    #     releases.zip
-    #
-    # NB: Due to a GitHub Actions limitation we won't know
-    #     what the filename is in order to display it somewhere.
-    #
-    - name: Upload Releases
-      uses: actions/upload-artifact@v2-preview
+    # Put the Windows Release up in an artifact
+    # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
+    - name: Upload Windows Release
+      uses: actions/upload-artifact@v2.2.4
       with:
-        name: releases
-        path: megamek/build/distributions/
+        name: release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        path: megamek/build/distributions/*.zip
+
+    # Put the non-Windows release in an artifact
+    - name: Upload Nix/Mac Release
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        path: megamek/build/distributions/*.tar

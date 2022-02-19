@@ -1,12 +1,13 @@
 Version:1.0
 Locust
 C
+mul id:7601
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:2836
-source:Recognition Guide:ilClan #16 - Clan Invasion
-rules level:4
+source:Rec Guide:ilClan #16 - Clan Invasion
+rules level:3
 
 mass:20
 engine:160 Fusion Engine(IS)

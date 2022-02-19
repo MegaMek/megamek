@@ -1,6 +1,7 @@
 Version:1.0
 Hunchback
 HBK-5S
+mul id:1564
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,3 +149,18 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Hunchback is a respected and feared Reunification War-era street fighter that has been in production since its introduction in 2572. 
+
+capabilities:Built for urban combat and close range brawling, this BattleMech has the heavy armor and weaponry to stand up against any foe in the dense cover of a city environment. Its heavy armament does come at a cost: in terms of maneuverability and heat dissipation the Hunchback is merely average, while the lack of long-range weapons means the Hunchback is little more than a slow moving target in the open. In an attack the slow speed of the Hunchback forces it to participate as part of the second wave, exploiting any weaknesses in the enemy's armor after they've been softened up.
+
+deployment:Originally a refit line converted to full production, the -5S is a complete overhaul of the Hunchback design developed by Norse-Storm BattleMechs in 3058. The structure has been modified to use Endo Steel construction techniques, the engine has been upgraded to a Light Fusion Engine, and four Jump Jets were added for increased mobility. The 'Mech carries, as its primary weapon, an LB-X Autocannon/20 with CASE-protected ammunition supported by two medium pulse lasers and a single small laser.
+
+history:The Hunchback was originally designed and produced by Komiyaba/Nissan General Industries and sold throughout the Inner Sphere and Periphery, often fielded as part of medium and assault lances. The company was destroyed in the Succession Wars, but the Hunchback continued to remain popular, especially in the arsenals of House Kurita and House Liao where it fit the dueling nature and all-or-nothing combat styles of the two Successor States. Eventually Kali Yama Weapons Industries bought the rights to the Hunchback and restarted production at their factory on Kalidasa to supply House Marik with large numbers of the 'Mech. Dwindling stockpiles of spare parts and personal preference led many owners to remove the Hunchbacks large signature autocannon and typically install smaller weapons in larger numbers in its stead, resulting in a variety of variants collectively known as "Swayback'" because of the significant change to the 'Mech's configuration and torso structure. The rediscovery of lost technology in the years prior to the Clan Invasion inspired a number of old designs to be upgraded, the Hunchback included. Under contract from the Free Worlds League Military, Kali Yama engineers designed a variant, the HBK-5M, which sought to improve upon the original while still maintaining the "soul" of the machine. While the new variant included several improvements, mostly involving extra protection against ammunition explosions and overheating, to the chagrin of many MechWarriors this came at the cost of reduced ammunition for the autocannon. Their objections ignored, production began in 3046. The new variant came into widespread use throughout the FWLM until Operation Guerrero, when this drawback was responsible for the failure of several advances. After this, Kali Yama finally produced a new variant–the HBK-6M–which addressed this concern. In the years since, Norse-Storm BattleMechs opened a refit line to produce new Hunchback variants and the 'Mech saw use on both sides in the Jihad.
+
+manufacturer:Coventry Metal Works,Norse-Storm Technologies, Inc
+primaryfactory:Coventry,Loxley
+systemmanufacturer:CHASSIS:Crucis Type V Endo-Steel
+systemmanufacturer:ENGINE:Nissan 200 Light
+systemmanufacturer:ARMOR:Durallex Tensile-4 with CASE
+systemmanufacturer:COMMUNICATIONS:Omicron 4002 Networking Channel
+systemmanufacturer:TARGETING:TRSS Eagle Eye

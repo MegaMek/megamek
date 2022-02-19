@@ -42,9 +42,13 @@ public class ISMRM4 extends MRMWeapon {
         this.longRange = 15;
         this.extremeRange = 16;
         this.bv = 23;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3057);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "Unofficial";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(true)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false);
     }
 }

@@ -15,6 +15,10 @@ Gladius Medium Hover Tank
 <Model>
 Mk II
 </Model>
+
+<mul id:>
+1213
+</mul id:>
 <Tonnage>
 40
 </Tonnage>

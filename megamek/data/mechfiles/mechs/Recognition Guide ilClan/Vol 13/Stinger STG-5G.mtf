@@ -1,12 +1,13 @@
 Version:1.2
 Stinger
 STG-5G
+mul id:3062
 
 Config:Biped
 techbase:Inner Sphere
 era:3076
-source:RecGuide 13 - Jihad
-rules level:4
+source:Rec Guide:ilClan #13 - Jihad
+rules level:3
 
 mass:20
 engine:140 XL Engine(IS)

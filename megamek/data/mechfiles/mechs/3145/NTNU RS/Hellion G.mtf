@@ -1,6 +1,7 @@
 Version:1.0
 Hellion
 G
+mul id:6939
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
@@ -150,4 +151,16 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Hellion is a product of Clan Ice Hellion and their philosophy that espouses speed above all else. Based on the Mist Lynx, the Hellion is a fast OmniMech that has respectable firepower.
+ 
+capabilities:This light 'Mech is rather difficult to kill, incorporating five and a half tons of Ferro-Fibrous armor. To save weight, the Hellion also uses an Endo Steel chassis. While it is not especially fast for its size, the Hellion does use MASC to allow for bursts of additional speed.
 
+deployment:This version carries an LRM-10 and three Improved Heavy Medium Lasers. It also packs an Inner Sphere-built TSEMP One Shot cannon in the left torso.
+
+manufacturer:Hector MechWorks Facility Alpha,Prosoma War Works,Svarstaad Industriplex Alpha
+primaryfactory:Hector,Valencia,Svarstaad
+systemmanufacturer:CHASSIS:Hellion Light Endo Steel V5
+systemmanufacturer:ENGINE:210 XL
+systemmanufacturer:ARMOR:Compound Gamma Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:HCFA 3035 3.0
+systemmanufacturer:TARGETING:HCFA 3047 1.5

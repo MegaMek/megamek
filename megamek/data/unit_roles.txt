@@ -229,6 +229,7 @@ Atlas AS8-D:JUGGERNAUT
 Atlas C:JUGGERNAUT
 Atlas II AS7-D-H:JUGGERNAUT
 Atlas II AS7-D-H (Kerensky):JUGGERNAUT
+Atlas II AS7-D-H (Devlin):JUGGERNAUT
 Atlas II AS7-D-H2:JUGGERNAUT
 Atlas III AS7-D2:JUGGERNAUT
 Atlas III AS7-D3:JUGGERNAUT
@@ -1168,7 +1169,7 @@ DI Morgan Assault Tank (Standard):SNIPER
 DI Multipurpose VTOL (Gunship):STRIKER
 DI Multipurpose VTOL (Standard):SCOUT
 DI Schmitt Tank (Standard):JUGGERNAUT
-DI Schmitt Tank (Targetting Computer):JUGGERNAUT
+DI Schmitt Tank (Targeting Computer):JUGGERNAUT
 Daboku DCMS-MX90-D:SNIPER
 Daedalus DAD-3C:STRIKER
 Daedalus DAD-3D:STRIKER
@@ -2142,8 +2143,6 @@ Hellhound (Conjurer) 5:SKIRMISHER
 Hellion A:MISSILE_BOAT
 Hellion B:STRIKER
 Hellion C:STRIKER
-Hellion D:STRIKER
-Hellion E:STRIKER
 Hellion F:STRIKER
 Hellion G:STRIKER
 Hellion Prime:STRIKER
@@ -3680,7 +3679,7 @@ Powerman SC XI-M LoaderMech MOD:BRAWLER
 Powerman SC XI-M-B LoaderMech MOD:BRAWLER
 Powerman SC XV HaulerMech (Standard):AMBUSHER
 Powerman SC XVI HaulerMech (Standard):AMBUSHER
-Powerman XI LoaderMech:AMBUSHER
+Powerman SC XI LoaderMech:AMBUSHER
 Praetorian Mobile Strategic Command HQ (Standard):SCOUT
 Prairie Schooner Land Train (Standard):SCOUT
 Prairie Schooner Module (Standard):SCOUT
@@ -3784,8 +3783,8 @@ Raider Mk II JL-2:BRAWLER
 Raijin II RJN-200-A:SKIRMISHER
 Raijin II RJN-200-B:SKIRMISHER
 Raijin II RJN-200-C:SKIRMISHER
-Raijin RJN101-A:STRIKER
-Raijin RJN101-C:STRIKER
+Raijin RJN-101-A:STRIKER
+Raijin RJN-101-C:STRIKER
 Rakshasa MDG-1A:SKIRMISHER
 Rakshasa MDG-1Ar:SKIRMISHER
 Rakshasa MDG-1B:SKIRMISHER
@@ -3827,7 +3826,7 @@ Ravager Assault Battle Armor (Standard):JUGGERNAUT
 Raven II RVN-5X:SCOUT
 Raven RVN-1X:SCOUT
 Raven RVN-2X:STRIKER
-Raven RVN-3L:STRIKER
+Raven RVN-3L:SCOUT
 Raven RVN-3M:MISSILE_BOAT
 Raven RVN-3X:SCOUT
 Raven RVN-4L:SCOUT
@@ -4216,8 +4215,6 @@ Shadow Cat II 4:SNIPER
 Shadow Cat J:STRIKER
 Shadow Cat Prime:STRIKER
 Shadow Hawk C:SKIRMISHER
-Shadow Hawk IIC (Standard):STRIKER
-Shadow Hawk IIC 2:STRIKER
 Shadow Hawk IIC 3:STRIKER
 Shadow Hawk IIC 4:STRIKER
 Shadow Hawk IIC 5:SCOUT
@@ -4543,10 +4540,10 @@ Stuka STU-K5:ATTACK_FIGHTER
 Stuka STU-K5b:ATTACK_FIGHTER
 SturmFeur “Kalki” Cruise Missile Launcher (Standard):MISSILE_BOAT
 Sturmblitz Assault Gun (Standard):JUGGERNAUT
-Sturmfeur Heavy Tank (Heavy Gauss):JUGGERNAUT
-Sturmfeur Heavy Tank (SRM):JUGGERNAUT
-Sturmfeur Heavy Tank (Standard):MISSILE_BOAT
-Sturmfeur Heavy Tank (WoB):JUGGERNAUT
+SturmFeur Heavy Tank (Heavy Gauss):JUGGERNAUT
+SturmFeur Heavy Tank (SRM):JUGGERNAUT
+SturmFeur Heavy Tank (Standard):MISSILE_BOAT
+SturmFeur Heavy Tank (WoB):JUGGERNAUT
 Stygian Strike Tank (Armor):MISSILE_BOAT
 Stygian Strike Tank (Standard):MISSILE_BOAT
 Stygian Strike Tank (WOB):STRIKER
@@ -5874,11 +5871,258 @@ Kingfisher G:JUGGERNAUT
 Kingfisher I:BRAWLER
 Kingfisher X:BRAWLER
 #ilClan Rec Guide 19
+Mercury MCY-105:SCOUT
+Spider SDR-9M:SCOUT
+Cougar T:BRAWLER
+Cougar E:BRAWLER
+Cougar F:BRAWLER
+Cougar G:SNIPER
+Cougar H:BRAWLER
+Cougar I:STRIKER
+Rime Otter Prime:BRAWLER
+Rime Otter A:SKIRMISHER
+Rime Otter B:SKIRMISHER
+Rime Otter C:SKIRMISHER
+Rime Otter D:SCOUT
+Scorpion SCP-1BR:SKIRMISHER
+Scorpion SCP-1O:SKIRMISHER
+Scorpion SCP-1TB:MISSILE_BOAT
+Scorpion SCP-2N:SKIRMISHER
+Scorpion C:SKIRMISHER
+Orion C 2:BRAWLER
+Iron Cheetah Prime:SNIPER
+Iron Cheetah A:JUGGERNAUT
+Iron Cheetah B:JUGGERNAUT
+Iron Cheetah C:BRAWLER
+Iron Cheetah D:BRAWLER
+Iron Cheetah L:BRAWLER
 #ilClan Rec Guide 20
+Hellion T:STRIKER
+Hellion D:STRIKER
+Hellion E:STRIKER
+Hellion F:STRIKER
+Hellion P:STRIKER
+Shadow Hawk IIC (Standard):STRIKER
+Shadow Hawk IIC 2:STRIKER
+Shadow Hawk IIC 10:STRIKER
+Shadow Hawk IIC 11:STRIKER
+Longbow LGB-0H:SNIPER
+Longbow LGB-0W2:MISSILE_BOAT
+Longbow LGB-8C:MISSILE_BOAT
+Longbow LGB-10C:MISSILE_BOAT
+Longbow LGB-10K:JUGGERNAUT
+Longbow LGB-14Q:MISSILE_BOAT
+Longbow LGB-14V:BRAWLER
+Masakari (Warhawk) T:BRAWLER
+Masakari (Warhawk) F:SNIPER
+Masakari (Warhawk) G:JUGGERNAUT
+Masakari (Warhawk) I:SNIPER
+Masakari (Warhawk) L:BRAWLER
+Mastodon Prime:SNIPER
+Mastodon A:SNIPER
+Mastodon B:JUGGERNAUT
+Mastodon C:JUGGERNAUT
+Mastodon D:MISSILE_BOAT
 #ilClan Rec Guide 21
+Hankyu (Arctic Cheetah) T:SCOUT
+Hankyu (Arctic Cheetah) E:STRIKER
+Hankyu (Arctic Cheetah) F:STRIKER
+Hankyu (Arctic Cheetah) I:STRIKER
+Hankyu (Arctic Cheetah) J:SNIPER
+Kontio (Standard):STRIKER
+Hunchback C:SKIRMISHER
+Ostroc OSR-2D:SKIRMISHER
+Ostroc OSR-3M:SKIRMISHER
+Ostroc OSR-6R:SKIRMISHER
+Ostroc OSR-9C:JUGGERNAUT
+Cyclops C:BRAWLER
+Regent Prime:JUGGERNAUT
+Regent A:SNIPER
+Regent B:JUGGERNAUT
+Regent C:SNIPER
+Regent D:SNIPER
 #ilClan Rec Guide 22
+Battle Cobra T:SNIPER
+Battle Cobra F:STRIKER
+Battle Cobra G:STRIKER
+Battle Cobra I:MISSILE BOAT
+Battle Cobra J:STRIKER
+Battle Cobra X:STRIKER
+Doom Courser Prime:SNIPER
+Doom Courser A:BRAWLER
+Doom Courser B:JUGGERNAUT
+Doom Courser C:MISSILE_BOAT
+Doom Courser D:SNIPER
+Night Gyr T:JUGGERNAUT
+Night Gyr F:SKIRMISHER
+Night Gyr G:SNIPER
+Night Gyr X:SNIPER
+Goliath GOL-3M:SNIPER
+Goliath GOL-3M2:SNIPER
+Goliath GOL-7C:JUGGERNAUT
+Goliath GOL-7K:JUGGERNAUT
+Goliath GOL-7R:SNIPER
+Jade Phoenix Prime:SNIPER
+Jade Phoenix A:SKIRMISHER
+Jade Phoenix B:SKIRMISHER
+Jade Phoenix C:SKIRMISHER
+Jade Phoenix D:SNIPER
+Jade Phoenix E:SKIRMISHER
 #ilClan Rec Guide 23
+Nexus NXS1-A:STRIKER
+Nexus NXS1-B:SCOUT
+Nexus NXS1-C:STRIKER
+Star Python :SCOUT
+Fujin RJN-301-F:STRIKER
+Raijin RJN-101-A:STRIKER
+Raijin RJN-101-B:SCOUT
+Raijin RJN-101-C:STRIKER
+Raijin RJN-101-X:STRIKER
+Raijin RJN-301-B:STRIKER
+Lancelot LNC25-09:SKIRMISHER
+Rifleman IIC :SNIPER
+Rifleman IIC 2:SNIPER
+Rifleman IIC 9:SNIPER
+Rifleman IIC 10:SKIRMISHER
+Guillotine GLT-7M:BRAWLER
+Nova Cat T:SNIPER
+Nova Cat E:BRAWLER
+Nova Cat F:SKIRMISHER
+Nova Cat G:MISSILE_BOAT
+Nova Cat H:SKIRMISHER
+Nova Cat M:JUGGERNAUT
+Grand Crusader GRN-D-01:MISSILE_BOAT
+Grand Crusader GRN-D-01-X:MISSILE_BOAT
+Grand Crusader GRN-D-02:MISSILE_BOAT
+Grand Crusader GRN-D-02-B:SNIPER
+Star Crusader Prime:SNIPER
+Star Crusader A:BRAWLER
+Star Crusader B:SNIPER
+Katana CRK-5006-1:SKIRMISHER
 #ilClan Rec Guide 24
+Skinwalker (Ryoken III) Prime:STRIKER
+Skinwalker (Ryoken III) A:STRIKER
+Skinwalker (Ryoken III) B:STRIKER
+Skinwalker (Ryoken III) C:STRIKER
+Skinwalker (Ryoken III) D:SCOUT
+Skinwalker (Ryoken III) E:SNIPER
+Skinwalker (Ryoken III) F:STRIKER
+Grand Dragon DRG-12K:SKIRMISHER
+Flashman FLS-10E:SKIRMISHER
+Stalker STK-9F:JUGGERNAUT
+Alpha Wolf Prime:SNIPER
+Alpha Wolf A:BRAWLER
+Alpha Wolf B:BRAWLER
+Alpha Wolf C:SNIPER
+Annihilator ANH-5W:SNIPER
+Atlas AS7-K-DC:SNIPER
+Atlas AS7-S3:SNIPER
+Atlas AS7-S3-DC:SNIPER
+Atlas AS7-S4:SNIPER
+Atlas AS8-K:JUGGERNAUT
+Atlas AS8-KE:JUGGERNAUT
+Atlas AS8-S:SNIPER
+Atlas C:JUGGERNAUT
+Atlas C 2:JUGGERNAUT
+Atlas C 3:SNIPER
+Atlas II AS7-DK-H:BRAWLER
+#Too Be Sorted
+Cheetah IIC:INTERCEPTOR
+Lucifer III C:FIRE_SUPPORT
+Medium Strike Fighter Defender II C:DOGFIGHTER
+Seydlitz C:INTERCEPTOR
+Shikra SKR-4N:FIRE_SUPPORT
+Thrush TR-9:INTERCEPTOR
+#Cavalier II [Flamer]:UNKNOWN
+#Cavalier II [MRR]:UNKNOWN
+#Cavalier II [PPC]:UNKNOWN
+#Cavalier II [SRM]:UNKNOWN
+#IS Standard (Baka) [LRR]:UNKNOWN
+#IS Standard (Baka) [SL]:UNKNOWN
+#IS Standard (Fa Sure) [David]:UNKNOWN
+#IS Standard (Fa Sure) [MG]:UNKNOWN
+#Kanazuchi (Support):UNKNOWN
+#Longinus C [MRR]:UNKNOWN
+#Longinus C [PPC]:UNKNOWN
+#Vampire III:UNKNOWN
+Awesome AWS-11V:SNIPER
+BattleMaster BLR-6M:SNIPER
+BattleMaster C 2:BRAWLER
+Bombard BMB-016:SNIPER
+Brahma BRM-6T:BRAWLER
+Caesar CES-5D:BRAWLER
+Cerberus MR-7K:SNIPER
+Devastator DVS-10:JUGGERNAUT
+Enforcer III ENF-6R:SKIRMISHER
+Goshawk II 4:STRIKER
+Gotterdammerung GTD-20C:BRAWLER
+Gotterdammerung GTD-30S:BRAWLER
+Hatamoto-Kaze HTM-27V2:SNIPER
+Hatchetman HCT-7D:SKIRMISHER
+Helios HEL-7L:SNIPER
+Hercules HRC-LS-9003:SKIRMISHER
+Hercules HRC-LS-9004:SKIRMISHER
+Hollander BZK-G2:SNIPER
+Hunchback HBK-6P:JUGGERNAUT
+Huron Warrior HUR-WO-R5L:SKIRMISHER
+Icarus II ICR-2R:STRIKER
+Inquisitor II ITW-205:BRAWLER
+Juliano JLN-5B:BRAWLER
+Juliano JLN-5C:BRAWLER
+King Crab KGC-009C:JUGGERNAUT
+Kodiak II 3:JUGGERNAUT
+Lineholder KW2-LH10:BRAWLER
+Omega SHP-5R:SNIPER
+Orion C:BRAWLER
+Orochi OR-3K:SNIPER
+Pendragon PDG-3R:BRAWLER
+Penetrator PTR-7D:SKIRMISHER
+Perseus P1S:BRAWLER
+Prey Seeker PY-SR20:STRIKER
+Prey Seeker PY-SR30:SCOUT
+Raider JL-3A:JUGGERNAUT
+Raider JL-3B:BRAWLER
+Raider Mk II JL-3C:BRAWLER
+Shogun C 2:SNIPER
+Shogun SHG-3E:JUGGERNAUT
+Shrike "Black Rose":SNIPER
+Striker STC-2L:JUGGERNAUT
+Tempest C:SNIPER
+Tempest TMP-4M:SKIRMISHER
+Venom SDR-9KE:SCOUT
+Vixen (Incubus) 6:BRAWLER
+Watchman WTC-4DM2:STRIKER
+Yu Huang Y-H12GC:SNIPER
+Cecerops 5:AMBUSHER
+Gorgon 5:SNIPER
+Gorgon 6:STRIKER
+Roc 5:STRIKER
+Svartalfa 3:STRIKER
+Bardiche Heavy Strike Tank C:MISSILE_BOAT
+Bellona Hover Tank (XL):SNIPER
+Devastator II Superheavy Tank:JUGGERNAUT
+Fensalir Combat WiGE (3132 Upgrade):SKIRMISHER
+Fensalir Combat WiGE (3137 Upgrade):SNIPER
+Fensalir Combat WiGE (Stealth):SNIPER
+Galleon Light Tank GAL-105:STRIKER
+Hadur Fast Support Vehicle (LRM):MISSILE_BOAT
+Hadur Fast Support Vehicle (Reactive):MISSILE_BOAT
+Huitzilopochtli Assault Tank (LRM):MISSILE_BOAT
+Huitzilopochtli Assault Tank (Streak):SNIPER
+Kite Reconnaissance Vehicle (Fusion):SCOUT
+Mobile Long Tom Artillery LT-MOB-95:MISSILE_BOAT
+Padilla Tube Artillery Tank (AMS):MISSILE_BOAT
+Pandion Combat WiGE (3135 Upgrade):STRIKER
+Pandion Combat WiGE (3140 Upgrade):STRIKER
+Pilum Heavy Tank (ELRM):MISSILE_BOAT
+Predator Tank Destroyer (Elite):STRIKER
+Schildkrote Line Tank (HPPC):SNIPER
+Schildkrote Line Tank (Light Gauss):SNIPER
+Schildkrote Line Tank (Plasma):SNIPER
+Sekhmet Assault Vehicle (Streak):SNIPER
+Shun Transport VTOL (Support):SNIPER
+Skanda Light Tank (TSEMP):STRIKER
+Swallow Attack WiGE (Spotter):SCOUT
 #GoldenCentury
 Mongoose C:SCOUT
 Mongoose C 2:SCOUT
@@ -6062,7 +6306,4 @@ Archer ARC-5CS:MISSILE_BOAT
 Warhammer WHM-7CS:BRAWLER
 Black Knight BLK-9-KNT:BRAWLER
 Marauder MAD-5CS:SNIPER
-#ilClan
-Jade Phoenix Prime:SNIPER
-Jade Phoenix A:SKIRMISHER
-Jade Phoenix B:SKIRMISHER
+

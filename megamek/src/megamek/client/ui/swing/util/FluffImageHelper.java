@@ -154,6 +154,7 @@ public class FluffImageHelper {
         //   Chassis + model + [ <author> ] + extension
         if (fluff_file == null) {
             File[] files = directory.listFiles(new FilenameFilter() {
+                @Override
                 public boolean accept(File direc, String name) {
                     boolean extMatch = false;
                     for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
@@ -170,6 +171,7 @@ public class FluffImageHelper {
         // If we still haven't found a file, see if ignoring the model helps
         if (fluff_file == null) {
             File[] files = directory.listFiles(new FilenameFilter() {
+                @Override
                 public boolean accept(File direc, String name) {
                     boolean extMatch = false;
                     for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {

@@ -1,18 +1,17 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.test;
 
 import java.io.BufferedReader;
@@ -33,12 +32,10 @@ import megamek.common.Configuration;
  * sure all images are accessible
  * 
  * @author arlith
- *
  */
 public class MechSetTest {
 
-    private static class StringCompCaseInsensitive implements
-            Comparator<String> {
+    private static class StringCompCaseInsensitive implements Comparator<String> {
         @Override
         public int compare(String arg0, String arg1) {
             return arg0.compareToIgnoreCase(arg1);
@@ -69,12 +66,12 @@ public class MechSetTest {
             String imageName = null;
             String entryName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("include")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("include")) {
                 st.nextToken();
                 name = st.sval;
                 testFile(dir, name);
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("chassis")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("chassis")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -86,7 +83,7 @@ public class MechSetTest {
                     testImageName(dir, imageName, entryName);
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
+                    && st.sval.equalsIgnoreCase("exact")) {
                 st.nextToken();
                 name = st.sval;
                 st.nextToken();
@@ -106,7 +103,7 @@ public class MechSetTest {
                 && imgFile.getCanonicalPath().endsWith(imgFile.getName());
         if (!exactmatch) {
             System.out.print("Error with " + entryName + ": ");
-            String dirFiles[] = imgFile.getParentFile().list();
+            String[] dirFiles = imgFile.getParentFile().list();
             if (dirFiles == null) {
                 System.out.println("File is not a directory! Entry Path: " + imageName);
                 return;
@@ -134,7 +131,7 @@ public class MechSetTest {
             testFile(mechDir, mechset);
             testFile(wreckDir, wreckset);
             
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("IOException!");
             e.printStackTrace();
         }

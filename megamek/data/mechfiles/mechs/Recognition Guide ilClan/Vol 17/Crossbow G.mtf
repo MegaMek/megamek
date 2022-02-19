@@ -1,11 +1,12 @@
 Version:1.0
 Crossbow
 G
+mul id:8237
 
 Config:Biped Omnimech
 techbase:Clan
 era:3136
-source:Recognition Guide:ilClan #17 - Dark Age
+source:Rec Guide:ilClan #17 - Dark Age
 rules level:2
 
 mass:65
@@ -43,11 +44,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakLRM5
-CLStreakLRM5
-CLStreakLRM5
-Clan Streak LRM 5 Ammo
-Clan Streak LRM 5 Ammo
+CLStreakLRM5 (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+Clan Streak LRM 5 Ammo (OMNIPOD)
+Clan Streak LRM 5 Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -57,11 +58,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakLRM5
-CLStreakLRM5
-CLStreakLRM5
-Clan Streak LRM 5 Ammo
-Clan Streak LRM 5 Ammo
+CLStreakLRM5 (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+CLStreakLRM5 (OMNIPOD)
+Clan Streak LRM 5 Ammo (OMNIPOD)
+Clan Streak LRM 5 Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

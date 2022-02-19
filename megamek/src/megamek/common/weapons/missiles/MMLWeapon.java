@@ -1,22 +1,22 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -49,12 +49,8 @@ import static megamek.common.MountedHelper.*;
  * @author Sebastian Brocks
  */
 public abstract class MMLWeapon extends MissileWeapon {
-
     private static final long serialVersionUID = 110779423352325731L;
 
-    /**
-     * 
-     */
     public MMLWeapon() {
         super();
         this.ammoType = AmmoType.T_MML;
@@ -72,7 +68,7 @@ public abstract class MMLWeapon extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.hasFlag(AmmoType.F_MML_LRM)) {
@@ -132,7 +128,7 @@ public abstract class MMLWeapon extends MissileWeapon {
 
         return new SRMHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_MML;

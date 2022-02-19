@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -22,8 +22,8 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -69,7 +69,7 @@ public final class PhysicalCalculator {
         return null;
     }
 
-    public static PhysicalOption getBestPhysical(Entity entity, IGame game) {
+    public static PhysicalOption getBestPhysical(Entity entity, Game game) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -184,8 +184,7 @@ public final class PhysicalCalculator {
                 pod_ranking = 0.0;
                 Iterator<INarcPod> pod_list = entity.getINarcPodsAttached();
                 best_pod = pod_list.next();
-                for (pod_list = entity.getINarcPodsAttached(); pod_list
-                        .hasNext(); ) {
+                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasNext(); ) {
                     test_ranking = 1.0;
                     test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
@@ -321,11 +320,11 @@ public final class PhysicalCalculator {
     }
 
     static PhysicalOption getBestPhysicalAttack(Entity from, Entity to,
-                                                IGame game) {        
+                                                Game game) {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         
@@ -572,7 +571,7 @@ public final class PhysicalCalculator {
 
         // Conventional infantry in the open suffer double damage.
         if (to.isConventionalInfantry()) {
-            IHex e_hex = game.getBoard().getHex(to.getPosition());
+            Hex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 bestDmg *= 2.0;
@@ -602,7 +601,7 @@ public final class PhysicalCalculator {
     }
 
     private static double getExpectedKickDamage(Entity from, Entity to,
-                                                IGame game, int locTable, int arc, int action) {
+                                                Game game, int locTable, int arc, int action) {
         double self_damage;
         double dmg;
         double coll_damage = 0.0;
@@ -612,7 +611,7 @@ public final class PhysicalCalculator {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
-        if(Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
+        if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
         

@@ -38,7 +38,7 @@ public class CloseAction extends AbstractAction {
      */
     public CloseAction(Window myOwner) {
         owner = myOwner;
-        putValue(NAME, Messages.getString("Close")); //$NON-NLS-N$ 
+        putValue(NAME, Messages.getString("Close"));
     }
     
     @Override

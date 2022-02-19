@@ -1,12 +1,13 @@
 Version:1.0
 Kingfisher
 X
+mul id:1787
 
 Config:Biped Omnimech
 techbase:Clan
 era:3076
-source:ilClan Rec Guide 18 - Jihad
-rules level:4
+source:Rec Guide:ilClan #18 - Jihad
+rules level:3
 
 mass:90
 engine:360 Fusion (Clan) Engine(IS)

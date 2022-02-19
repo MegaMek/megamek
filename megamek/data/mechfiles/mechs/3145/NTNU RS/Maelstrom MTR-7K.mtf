@@ -1,6 +1,7 @@
 Version:1.0
 Maelstrom
 MTR-7K
+mul id:6867
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

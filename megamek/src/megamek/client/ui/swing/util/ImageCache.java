@@ -39,12 +39,12 @@ public class ImageCache<K, V> {
      * Create a cache with the default maximum size.
      */
     public ImageCache() {
-        cache = new Hashtable<K, V>(MAX_SIZE * 5 / 4, .75f);
+        cache = new Hashtable<>(MAX_SIZE * 5 / 4, .75f);
     }
 
     
     public ImageCache(int max) {
-        cache = new Hashtable<K, V>(max * 5 / 4, .75f);
+        cache = new Hashtable<>(max * 5 / 4, .75f);
     }
 
     /**
@@ -73,7 +73,7 @@ public class ImageCache<K, V> {
         cache.remove(key);
     }
     
-    public int size(){
+    public int size() {
         return cache.size();
     }
     

@@ -1,18 +1,19 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.options;
+
+import megamek.common.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -24,11 +25,7 @@ import java.util.Vector;
 /**
  * Parent class for options settings
  */
-public abstract class AbstractOptions implements IOptions, Serializable {
-
-    /**
-     *
-     */
+public abstract class AbstractOptions implements Serializable {
     private static final long serialVersionUID = 6406883135074654379L;
     private Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
@@ -55,14 +52,12 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     public int count(String groupKey) {
         int count = 0;
         
-        for (Enumeration<IOptionGroup> i = getGroups(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
                 continue;
             }
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements(); ) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
                 if (null != option && option.booleanValue()) {
@@ -121,50 +116,88 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         }
         return listBuilder.toString();
     }
-    
+
+    /**
+     * Returns the <code>Enumeration</code> of the option groups in thioptions container.
+     *
+     * @return <code>Enumeration</code> of the <code>IOptionGroup</code>
+     */
     public Enumeration<IOptionGroup> getGroups() {
         return new GroupsEnumeration();
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Returns the <code>Enumeration</code> of the options in this options container. The order of
+     * options is not specified.
      *
-     * @see megamek.common.IOptions#getOptions()
+     * @return <code>Enumeration</code> of the <code>IOption</code>
      */
     public Enumeration<IOption> getOptions() {
         return optionsHash.elements();
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Returns the UI specific data to allow the user to set the option
      *
-     * @see megamek.common.IOptions#getOptionInfo(java.lang.String)
+     * @param name option name
+     * @return UI specific data
+     * @see IOptionInfo
      */
     public IOptionInfo getOptionInfo(String name) {
         return getOptionsInfo().getOptionInfo(name);
     }
 
-    public IOption getOption(String name) {
+    /**
+     * Returns the option by name or <code>null</code> if there is no such option
+     *
+     * @param name option name
+     * @return the option or <code>null</code> if there is no such option
+     */
+    public @Nullable IOption getOption(String name) {
         return optionsHash.get(name);
     }
 
+    /**
+     * Returns the value of the desired option as the <code>boolean</code>
+     *
+     * @param name option name
+     * @return the value of the desired option as the <code>boolean</code>
+     */
     public boolean booleanOption(String name) {
         IOption opt = getOption(name);
-        if (opt == null){
+        if (opt == null) {
             return false;
         } else {
             return opt.booleanValue();
         }
     }
 
+    /**
+     * Returns the value of the desired option as the <code>int</code>
+     *
+     * @param name option name
+     * @return the value of the desired option as the <code>int</code>
+     */
     public int intOption(String name) {
         return getOption(name).intValue();
     }
 
+    /**
+     * Returns the value of the desired option as the <code>float</code>
+     *
+     * @param name option name
+     * @return the value of the desired option as the <code>float</code>
+     */
     public float floatOption(String name) {
         return getOption(name).floatValue();
     }
 
+    /**
+     * Returns the value of the desired option as the <code>String</code>
+     *
+     * @param name option name
+     * @return the value of the desired option as the <code>String</code>
+     */
     public String stringOption(String name) {
         return getOption(name).stringValue();
     }
@@ -204,11 +237,10 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     }
 
     protected void addOption(IBasicOptionGroup group, String name, Vector<String> defaultValue) {
-        addOption(group, name, IOption.CHOICE, ""); //$NON-NLS-1$
+        addOption(group, name, IOption.CHOICE, "");
     }
 
-    protected void addOption(IBasicOptionGroup group, String name, int type,
-            Object defaultValue) {
+    protected void addOption(IBasicOptionGroup group, String name, int type, Object defaultValue) {
         optionsHash.put(name, new Option(this, name, type, defaultValue));
         getOptionsInfoImp().addOptionInfo(group, name);
     }
@@ -226,6 +258,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
          *
          * @see java.util.Enumeration#hasMoreElements()
          */
+        @Override
         public boolean hasMoreElements() {
             return groups.hasMoreElements();
         }
@@ -235,6 +268,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
          *
          * @see java.util.Enumeration#nextElement()
          */
+        @Override
         public IOptionGroup nextElement() {
             return new GroupProxy(groups.nextElement());
         }
@@ -247,27 +281,33 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                 this.group = group;
             }
 
+            @Override
             public String getKey() {
                 return group.getKey();
             }
 
+            @Override
             public String getName() {
                 return group.getName();
             }
 
+            @Override
             public String getDisplayableName() {
                 return getOptionsInfoImp().getGroupDisplayableName(
                         group.getName());
             }
 
+            @Override
             public Enumeration<String> getOptionNames() {
                 return group.getOptionNames();
             }
 
+            @Override
             public Enumeration<IOption> getOptions() {
                 return new OptionsEnumeration();
             }
 
+            @Override
             public Enumeration<IOption> getSortedOptions() {
                 OptionsEnumeration oe = new OptionsEnumeration();
                 oe.sortOptions();
@@ -287,6 +327,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                  *
                  * @see java.util.Enumeration#hasMoreElements()
                  */
+                @Override
                 public boolean hasMoreElements() {
                     return optionNames.hasMoreElements();
                 }
@@ -296,6 +337,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                  *
                  * @see java.util.Enumeration#nextElement()
                  */
+                @Override
                 public IOption nextElement() {
                     return getOption(optionNames.nextElement());
                 }

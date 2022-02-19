@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Saturn Patrol Ship
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+7416
+</mul id:>
 
 <year>
 2243
@@ -37,10 +41,9 @@ Spheroid
 </motion_type>
 
 <transporters>
-2ndclassquarters:0.0:0
-1stclassquarters:20.0:0
 steeragequarters:140.0:0
-cargobay:29.0:2:5
+2ndclassquarters:14.0:0
+cargobay:33.0:2:5
 </transporters>
 
 <SafeThrust>
@@ -144,7 +147,7 @@ IS Ammo MG - Full:200
 </structural_integrity>
 
 <source>
-XTRO Primitives IV - Age of War
+XTRO Primitives V - Age of War
 </source>
 
 <tonnage>
@@ -190,3 +193,4 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 2
 </escape_pod>
+

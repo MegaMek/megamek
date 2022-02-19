@@ -1,11 +1,12 @@
 Version:1.1
 Crusader
 CRD-9R
+mul id:8233
 
 Config:Biped
 techbase:Inner Sphere
 era:3129
-source:Recognition Guide:ilClan #17 - Dark Age
+source:Rec Guide:ilClan #17 - Late Republic
 rules level:3
 
 mass:65

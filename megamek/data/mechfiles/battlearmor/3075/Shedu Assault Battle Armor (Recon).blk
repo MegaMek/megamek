@@ -19,6 +19,10 @@ Shedu Assault Battle Armor
 (Recon)
 </Model>
 
+<mul id:>
+5043
+</mul id:>
+
 <chassis>
 quad
 </chassis>

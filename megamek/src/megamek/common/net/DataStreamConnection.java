@@ -77,7 +77,7 @@ class DataStreamConnection extends AbstractConnection {
                         getInputStream(), getReceiveBufferSize()));
                 state = PacketReadState.Header;
             }
-            synchronized (in){
+            synchronized (in) {
                 switch (state) {
                     case Header:
                         zipped = in.readBoolean();
@@ -105,9 +105,9 @@ class DataStreamConnection extends AbstractConnection {
         
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
-                    getOutputStream(),getSendBufferSize()));
+                    getOutputStream(), getSendBufferSize()));
         }
-        synchronized (out){
+        synchronized (out) {
             out.writeBoolean(iszipped);
             out.writeInt(marshallingType);
             out.writeInt(data.length);
@@ -119,7 +119,7 @@ class DataStreamConnection extends AbstractConnection {
      * override flush to flush the datastream after flushing packetqueue
      */
     @Override
-    public void flush() {
+    public synchronized void flush() {
         // Sends all queued packets
         super.flush();
         try {
@@ -177,14 +177,17 @@ class DataStreamConnection extends AbstractConnection {
             this.data = data;
         }
 
+        @Override
         public int getMarshallingType() {
             return marshallingType;
         }
 
+        @Override
         public byte[] getData() {
             return data;
         }
 
+        @Override
         public boolean isCompressed() {
             return compressed;
         }
@@ -193,5 +196,5 @@ class DataStreamConnection extends AbstractConnection {
 
 enum PacketReadState {
     Header, // next will be header data
-    Data;
+    Data
 }

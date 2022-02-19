@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -31,7 +31,7 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

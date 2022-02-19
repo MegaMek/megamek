@@ -1,11 +1,12 @@
 Version:1.0
 Thunderbolt
 TDR-9SE
+mul id:3250
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3049
-source:ilClan RecGuide 15 - Clan Invasion
+source:Rec Guide:ilClan #15 - Late Succession War
 Rules Level:2
 
 Mass:65

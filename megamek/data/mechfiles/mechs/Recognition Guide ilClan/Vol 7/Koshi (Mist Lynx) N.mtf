@@ -1,11 +1,12 @@
 Version:1.0
 Koshi (Mist Lynx)
 N
+mul id:7562
 
 Config:Biped Omnimech
 techbase:Clan
 era:3139
-source:Dark Age
+source:Rec Guide:ilClan #7 - Dark Age
 rules level:2
 
 mass:25

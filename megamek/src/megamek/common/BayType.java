@@ -54,7 +54,7 @@ public enum BayType implements ITechnologyDelegator {
         e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR), BattleArmorBay.techAdvancement()),
     MECH (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000,
             e -> e.hasETypeFlag(Entity.ETYPE_MECH), MechBay.techAdvancement()),
-    FIGHTER (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000, e -> e.isFighter(), ASFBay.techAdvancement()),
+    FIGHTER (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000, Entity::isFighter, ASFBay.techAdvancement()),
     PROTOMECH (BayType.CATEGORY_NON_INFANTRY, 50.0, 5.0, 6, 10000, e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH), ProtomechBay.techAdvancement()),
     SMALL_CRAFT (BayType.CATEGORY_NON_INFANTRY, 200.0, 1.0, 5, 20000, e -> e.hasETypeFlag(Entity.ETYPE_AERO)
             && (e.getWeight() <= 200.0), SmallCraftBay.techAdvancement()),
@@ -151,13 +151,13 @@ public enum BayType implements ITechnologyDelegator {
      * @return The name of the type of bay.
      */
     public String getDisplayName() {
-        return EquipmentMessages.getString("BayType." + name()); //$NON-NLS-1$
+        return EquipmentMessages.getString("BayType." + name());
     }
     
     public static @Nullable BayType parse(String name) {
         if (null != name) {
             for (BayType bt : values()) {
-                if (bt.toString().toLowerCase().equals(name.toLowerCase())) {
+                if (bt.toString().equalsIgnoreCase(name)) {
                     return bt;
                 }
             }

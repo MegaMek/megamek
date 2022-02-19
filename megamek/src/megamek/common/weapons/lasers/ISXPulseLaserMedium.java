@@ -1,7 +1,3 @@
-package megamek.common.weapons.lasers;
-
-import megamek.common.SimpleTechLevel;
-
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
@@ -15,29 +11,24 @@ import megamek.common.SimpleTechLevel;
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-/*
- * Created on Sep 8, 2005
- *
- */
+package megamek.common.weapons.lasers;
+
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 8, 2005
  */
 public class ISXPulseLaserMedium extends PulseLaserWeapon {
-    /**
-     *
-     */
     private static final long serialVersionUID = -6576828912486084151L;
 
-    /**
-     *
-     */
     public ISXPulseLaserMedium() {
         super();
         name = "Medium X-Pulse Laser";
         setInternalName("ISMediumXPulseLaser");
         addLookupName("IS X-Pulse Med Laser");
         addLookupName("IS Medium X-Pulse Laser");
+        sortingName = "Laser XPULSE C";
         heat = 6;
         damage = 6;
         toHitModifier = -2;
@@ -56,9 +47,11 @@ public class ISXPulseLaserMedium extends PulseLaserWeapon {
         bv = 71;
         cost = 110000;
         rulesRefs = "321,TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3057, 3078, 3082).setPrototypeFactions(F_LC,F_FS)
-            .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setISAdvancement(DATE_NONE, 3047, 3078, DATE_NONE, DATE_NONE).setPrototypeFactions(F_LC,F_FS)
+            .setProductionFactions(F_LC)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Model 96C 'Howdah'
 <Model>
 
 </Model>
+
+<mul id:>
+7149
+</mul id:>
 
 <year>
 2695
@@ -37,12 +41,11 @@ Spheroid
 </motion_type>
 
 <transporters>
-cargobay:1462.0:2:1
 smallcraftbay:2.0:2:2
-asfbay:6.0:4:3
-2ndclassquarters:0.0:0
-crewquarters:329.0:0
-1stclassquarters:90.0:0
+artsasfbay:6.0:4:5
+steeragequarters:235.0:0
+2ndclassquarters:63.0:0
+cargobay:1283.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -156,17 +159,63 @@ ISArtemisIV
 
 <Hull Equipment>
 ISNavalTugAdaptor
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
 </Hull Equipment>
 
 <structural_integrity>
 25
 </structural_integrity>
+
+<capabilities>
+The Howdah shares much of the 2650 update of the Model 96 Elephant's armor, engine, tug adapter, and weapons. Unlike later versions of the Elephant it does not feature Extended Range PPCs. For protection, the ship is armored with 77 tons of Ferro-Aluminum armor, with slightly more of this thick armor protection found on the nose.
+</capabilities>
+
+<overview>
+The Model 96C SDS Command Ship, also known as the "Howdah", was a drone command ship employed by Star League Defense Forces to control drone fighter spacecraft.
+</overview>
+
+<deployment>
+For its primary mission as a drone command ship and aerospace fighter carrier, the Howdah features an Autonomous Tactical Analysis Computer (ATAC), which can handle up to 20 drones at a time.
+</deployment>
+
+<history>
+Commissioned in 2695, the Howdah was originally was based on a early variant of the Model 96 "Elephant" space tug. Aside from its role of providing a mobile drone controlling platform, the ship would also act as aerospace drone fighter carrier, controlling and maintaining six drones. When it was first commissioned, the drone fighter complement consisted of six MK20 SwiftStar Robotic Drones, which were replaced over the decades with Mk30 Blackwasp and later Mk39 Voidseeker robotic fighters. The Howdah saw service during the Star League Civil War, and ultimately all were scuttled by order General Aleksandr Kerensky as part his efforts to destroy all SDS related technology.
+</history>
+
+<manufacturer>
+Nicholas Spacecraft/Ulsop Robotics
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Unit overweight per TRO entry. Dropped Cargo to make it legal.
+</notes>
+
+<use>
+Tug/ SDS Controller
+</use>
+
+<length>
+150 meters
+</length>
+
+<width>
+68 meters
+</width>
+
+<height>
+68 meters
+</height>
 
 <source>
 H:Liberation of Terra I - Star League
@@ -181,7 +230,7 @@ H:Liberation of Terra I - Star League
 </designtype>
 
 <crew>
-69
+57
 </crew>
 
 <officers>
@@ -215,3 +264,4 @@ H:Liberation of Terra I - Star League
 <escape_pod>
 10
 </escape_pod>
+

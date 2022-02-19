@@ -1,19 +1,15 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 23, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -25,7 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TagInfo;
@@ -33,17 +29,15 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
+ * @since Sep 23, 2004
  */
 public class BombAttackHandler extends WeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2997052348538688888L;
 
     /**
@@ -51,7 +45,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
@@ -94,7 +88,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         int[] payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;
@@ -219,7 +213,7 @@ public class BombAttackHandler extends WeaponHandler {
                         for (; idx < ae.getPassedThrough().size(); idx++) {
                             if (ae.getPassedThrough().get(idx).equals(coords)) {
                                 break;
-                                }
+                            }
                         }
                         // Retrieve facing at current step in flight path
                         int facing = ae.getPassedThroughFacing().get(idx);
@@ -252,18 +246,15 @@ public class BombAttackHandler extends WeaponHandler {
                 if (type == BombType.B_INFERNO) {
                     server.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
-                    server.deliverThunderMinefield(drop, ae.getOwner().getId(),
-                            20, ae.getId());
+                    server.deliverThunderMinefield(drop, ae.getOwner().getId(), 20, ae.getId());
                     List<Coords> hexes = drop.allAdjacent();
                     for (Coords c : hexes) {
-                        server.deliverThunderMinefield(c,
-                                ae.getOwner().getId(), 20, ae.getId());
+                        server.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
                     }
                 } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
                     AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, server);
                 } else {
-                    server.deliverBombDamage(drop, type, subjectId, ae,
-                            vPhaseReport);
+                    server.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
                 // Finally, we need a new attack roll for the next bomb, if any.
                 roll = Compute.d6(2);

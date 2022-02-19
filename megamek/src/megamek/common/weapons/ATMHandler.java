@@ -23,7 +23,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -51,7 +51,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public ATMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -350,9 +350,8 @@ public class ATMHandler extends MissileWeaponHandler {
             vPhaseReport.addElement(r);
             Coords coords = target.getPosition();
 
-            Enumeration<Minefield> minefields = game.getMinefields(coords)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,

@@ -1,11 +1,13 @@
 Version:1.0
 Catapult
 CPLT-K6
+mul id:7509
 
 Config:Biped
 techbase:Inner Sphere
 era:3086
 rules level:4
+source:Rec Guide:ilClan #5 - Early Republic
 
 mass:65
 engine:195 XL Engine(IS)

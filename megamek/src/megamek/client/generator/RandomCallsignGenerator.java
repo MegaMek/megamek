@@ -18,9 +18,9 @@
  */
 package megamek.client.generator;
 
-import megamek.MegaMek;
-import megamek.MegaMekConstants;
+import megamek.MMConstants;
 import megamek.common.util.weightedMaps.WeightedIntMap;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,7 +87,7 @@ public class RandomCallsignGenerator implements Serializable {
         if (initialized) {
             callsign = getWeightedCallsigns().randomItem();
         } else {
-            MegaMek.getLogger().warning("Attempted to generate a callsign before the list was initialized.");
+            LogManager.getLogger().warn("Attempted to generate a callsign before the list was initialized.");
         }
 
         return callsign;
@@ -104,8 +104,8 @@ public class RandomCallsignGenerator implements Serializable {
     private void populateCallsigns() {
         setWeightedCallsigns(new WeightedIntMap<>());
         final Map<String, Integer> callsigns = new HashMap<>();
-        loadCallsignsFromFile(new File(MegaMekConstants.CALLSIGN_FILE_PATH), callsigns);
-        loadCallsignsFromFile(new File(MegaMekConstants.USER_CALLSIGN_FILE_PATH), callsigns);
+        loadCallsignsFromFile(new File(MMConstants.CALLSIGN_FILE_PATH), callsigns);
+        loadCallsignsFromFile(new File(MMConstants.USER_CALLSIGN_FILE_PATH), callsigns);
 
         for (final Map.Entry<String, Integer> entry : callsigns.entrySet()) {
             getWeightedCallsigns().add(entry.getValue(), entry.getKey());
@@ -133,14 +133,14 @@ public class RandomCallsignGenerator implements Serializable {
                 String[] values = input.nextLine().split(",");
                 if (values.length == 2) {
                     callsigns.put(values[0], Integer.parseInt(values[1]));
-                } else if (values.length < 2){
-                    MegaMek.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
+                } else if (values.length < 2) {
+                    LogManager.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
                 } else {
-                    MegaMek.getLogger().error("Too many fields in " + file + " on " + lineNumber);
+                    LogManager.getLogger().error("Too many fields in " + file + " on " + lineNumber);
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to populate callsigns from " + file, e);
+            LogManager.getLogger().error("Failed to populate callsigns from " + file, e);
         }
     }
     //endregion Initialization

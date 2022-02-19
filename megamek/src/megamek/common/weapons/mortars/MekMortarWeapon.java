@@ -16,7 +16,7 @@ package megamek.common.weapons.mortars;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -37,9 +37,6 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
 
     private static final long serialVersionUID = -4887277242270179970L;
 
-    /**
-     *
-     */
     public MekMortarWeapon() {
         super();
         ammoType = AmmoType.T_MEK_MORTAR;
@@ -50,17 +47,9 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
@@ -109,5 +98,10 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
             removeMode("");
             removeMode("Indirect");
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        return "Mek Mortar " + rackSize;
     }
 }

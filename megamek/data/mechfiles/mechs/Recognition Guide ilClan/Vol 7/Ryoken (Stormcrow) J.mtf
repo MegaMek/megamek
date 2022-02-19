@@ -1,11 +1,12 @@
 Version:1.0
 Ryoken (Stormcrow)
 J
+mul id:7553
 
 Config:Biped Omnimech
 techbase:Clan
 era:3150
-source:Dark Age
+source:Rec Guide:ilClan #7 - Dark Age
 rules level:2
 
 mass:55

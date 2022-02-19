@@ -329,7 +329,7 @@ public class LAMPilot extends Crew {
      * @param game
      */
     @Override
-    public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
+    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
         int pilotVal = (getPilotingMech() + getPilotingAero()) / 2;
         if (!usePiloting) {
             pilotVal = 5;

@@ -1,11 +1,12 @@
 Version:1.0
 Uller (Kit Fox)
 G
+mul id:5486
 
 Config:Biped Omnimech
 techbase:Clan
 era:3054
-source:ilClan Vol 11 - Clan Invasion
+source:Rec Guide:ilClan #11 - Clan Invasion
 rules level:2
 
 mass:30
@@ -150,9 +151,13 @@ CLDoubleHeatSink (omnipod)
 -Empty-
 
 overview:The Kit Fox is a light Clan OmniMech with long-range combat as a primary focus, earning it the Inner Sphere codename of Uller, after the Norse god of archery.
-capabilities:The G configuration is armed with a pair of LRM-10 missile launchers. An ER Large Laser and ER Medium Laser mounted in the right arm provide additional firepower. The left arm carries an ECM Suite to disrupt enemy electronics.
-deployment:The Kit Fox was another light OmniMech designed by Clan Cloud Cobra, and was first produced in 2890 with the aid of new resources coming from the Tanite Worlds. Rather than emphasize speed, the Kit Fox emphasizes armor and firepower, complementary to the role of the Fire Moth. Clan Jade Falcon Khan Bret Malthus took note of the new design after a string of Cloud Cobra victories, and issued a batchall to the Cobras, a challenge the Jade Falcons only very narrowly won. Clan Snow Raven also produces the Kit Fox, which they acquired by trade. All other Clans field the Kit Fox as isorla, except Clan Blood Spirit, who was gifted the Kit Fox by the generous (or Machiavellian?) Ravens
-history:Often fielded by Clan Jade Falcon, the Kit Fox has a surprising amount of firepower, with the ten built-in double heat sinks sometimes barely able to fully cool the 'Mech down. However, the Kit Fox is somewhat slow for its weight class, only capable of a top speed of 97.2 km/h, provided by a lightweight 180 XL Fusion Engine. Available tonnage is further increased by the use of a lightweight Endo Steel chassis. Four tons of Ferro-Fibrous armor provide the Kit Fox with ample protection.
+
+capabilities:Often fielded by Clan Jade Falcon, the Kit Fox has a surprising amount of firepower, with the ten built-in double heat sinks sometimes barely able to fully cool the 'Mech down. However, the Kit Fox is somewhat slow for its weight class, only capable of a top speed of 97.2 km/h, provided by a lightweight 180 XL Fusion Engine. Available tonnage is further increased by the use of a lightweight Endo Steel chassis. Four tons of Ferro-Fibrous armor provide the Kit Fox with ample protection.
+
+deployment:The G configuration is armed with a pair of LRM-10 missile launchers. An ER Large Laser and ER Medium Laser mounted in the right arm provide additional firepower. The left arm carries an ECM Suite to disrupt enemy electronics.
+
+history:The Kit Fox was another light OmniMech designed by Clan Cloud Cobra, and was first produced in 2890 with the aid of new resources coming from the Tanite Worlds. Rather than emphasize speed, the Kit Fox emphasizes armor and firepower, complementary to the role of the Fire Moth. Clan Jade Falcon Khan Bret Malthus took note of the new design after a string of Cloud Cobra victories, and issued a batchall to the Cobras, a challenge the Jade Falcons only very narrowly won. Clan Snow Raven also produces the Kit Fox, which they acquired by trade. All other Clans field the Kit Fox as isorla, except Clan Blood Spirit, who was gifted the Kit Fox by the generous (or Machiavellian?) Ravens.
+
 manufacturer:Babylon MechWorks V (Cloud Cobra),Production Line Gamma 2 (Snow Raven),Ironhold Plant 9 (Jade Falcon),Snow Raven Industrial Complex Beta
 primaryfactory:Babylon, Lum, Ironhold, Mitchella
 systemmanufacturer:CHASSIS:Process 12 Endo-steel

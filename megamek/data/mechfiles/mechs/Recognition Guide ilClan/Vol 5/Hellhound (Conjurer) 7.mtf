@@ -1,11 +1,12 @@
 Version:1.0
 Hellhound (Conjurer)
 7
+mul id:7512
 
 Config:Biped
 techbase:Clan
 era:2836
-source:TRO 3055 - Succession Wars
+source:Rec Guide:ilClan #5 - Succession Wars
 rules level:2
 
 mass:50

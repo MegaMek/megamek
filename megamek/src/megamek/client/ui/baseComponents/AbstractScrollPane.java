@@ -19,9 +19,8 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.PreferencesNode;
+import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
 import java.util.ResourceBundle;
@@ -56,8 +55,8 @@ public abstract class AbstractScrollPane extends JScrollPane {
     protected AbstractScrollPane(final JFrame frame, final String name,
                                  final int verticalScrollBarPolicy, final int horizontalScrollBarPolicy) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", 
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()),
-                name, verticalScrollBarPolicy, horizontalScrollBarPolicy);
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name,
+                verticalScrollBarPolicy, horizontalScrollBarPolicy);
     }
 
     /**
@@ -95,7 +94,7 @@ public abstract class AbstractScrollPane extends JScrollPane {
      * for MekHQ usage
      */
     protected void setPreferences() {
-        setPreferences(MegaMek.getPreferences().forClass(getClass()));
+        setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**

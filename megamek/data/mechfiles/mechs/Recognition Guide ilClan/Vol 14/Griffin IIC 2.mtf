@@ -1,11 +1,12 @@
 Version:1.0
 Griffin IIC
 2
+mul id:1311
 
 Config:Biped
 techbase:Clan
 era:2973
-source:ilClan Rec Guide 13 - Succession Wars
+source:Rec Guide:ilClan #14 - Succession Wars
 rules level:2
 
 mass:40

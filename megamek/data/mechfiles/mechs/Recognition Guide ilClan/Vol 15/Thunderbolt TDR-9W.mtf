@@ -1,12 +1,13 @@
 Version:1.0
 Thunderbolt
 TDR-9W
+mul id:8192
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3053
-source:ilClan RecGuide 15 - Clan Invasion
-rules level:4
+source:Rec Guide:ilClan #15 - Clan Invasion
+rules level:3
 
 mass:65
 engine:260 Fusion Engine(IS)

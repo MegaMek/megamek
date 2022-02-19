@@ -1,11 +1,13 @@
 Version:1.0
 Marauder
-Bounty Hunter 3138
+(Bounty Hunter-3138)
+mul id:7535
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3138
 rules level:2
+source:Rec Guide:ilClan #6 - Dark Age
 
 mass:75
 engine:300 XL Engine(IS)

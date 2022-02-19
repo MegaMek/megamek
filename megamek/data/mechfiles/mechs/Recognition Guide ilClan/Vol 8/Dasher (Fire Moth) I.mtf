@@ -1,11 +1,12 @@
 Version:1.0
 Dasher (Fire Moth)
 I
+mul id:7578
 
 Config:Biped Omnimech
 techbase:Clan
 era:3139
-source:Dark Age
+source:Rec Guide:ilClan #8 - Dark Age
 rules level:4
 
 mass:20

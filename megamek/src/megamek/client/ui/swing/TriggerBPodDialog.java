@@ -41,7 +41,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -55,18 +55,14 @@ import megamek.common.actions.TriggerBPodAction;
  * Anti-BA Pod on one of their units.
  */
 public class TriggerBPodDialog extends JDialog implements ActionListener {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -5882060083607984056L;
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    private JButton butOkay = new JButton(Messages.getString("Okay"));
     private JTextArea labMessage;
 
     /**
      * The <code>FirePodTracker</code>s for the entity's active Anti-BA Pods.
      */
-    private ArrayList<TriggerPodTracker> trackers = new ArrayList<TriggerPodTracker>();
+    private ArrayList<TriggerPodTracker> trackers = new ArrayList<>();
 
     /**
      * The <code>int</code> ID of the entity that can fire Anti-BA Pods.
@@ -128,16 +124,13 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      *            the <code>Entity</code> that can fire AP Pods.
      * @param attackType
      */
-    public TriggerBPodDialog(ClientGUI clientgui, Entity entity,
-            String attackType) {
-        super(clientgui.frame,
-                Messages.getString("TriggerBPodDialog.title"), true); //$NON-NLS-1$
+    public TriggerBPodDialog(ClientGUI clientgui, Entity entity, String attackType) {
+        super(clientgui.frame, Messages.getString("TriggerBPodDialog.title"), true);
         entityId = entity.getId();
         this.clientgui = clientgui;
 
-        labMessage = new JTextArea(Messages.getString(
-                "TriggerBPodDialog.selectPodsToTrigger", new Object[] { entity
-                        .getDisplayName() }));
+        labMessage = new JTextArea(Messages.getString("TriggerBPodDialog.selectPodsToTrigger",
+                entity.getDisplayName()));
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -145,13 +138,11 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         JPanel panPods = new JPanel();
         panPods.setLayout(new GridLayout(0, 1));
 
-        // Walk through the entity's weapons equipment, looking for Anti-BA
-        // Pods.
+        // Walk through the entity's weapons equipment, looking for Anti-BA Pods.
         for (Mounted mount : entity.getWeaponList()) {
 
             // Is this an Anti-BA Pod?
             if (mount.getType().hasFlag(WeaponType.F_B_POD)) {
-
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
@@ -254,6 +245,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                         / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         setVisible(false);
     }
@@ -265,7 +257,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      *         objects that match the user's selections.
      */
     public Enumeration<TriggerBPodAction> getActions() {
-        Vector<TriggerBPodAction> temp = new Vector<TriggerBPodAction>();
+        Vector<TriggerBPodAction> temp = new Vector<>();
 
         // Walk through the list of AP Pod trackers.
         for (TriggerPodTracker pod : trackers) {
@@ -290,14 +282,14 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
      *            - the <code>Coords</code> containing targets.
      */
     private Entity chooseTarget(Coords pos) {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         // Assume that we have *no* choice.
         Entity choice = null;
 
         // Get the available choices.
 
         // Convert the choices into a List of targets.
-        List<Targetable> targets = new ArrayList<Targetable>();
+        List<Targetable> targets = new ArrayList<>();
         for (Entity ent : game.getEntitiesVector(pos)) {
             if (!game.getEntity(entityId).equals(choice)
                     && (choice instanceof Infantry)) {
@@ -315,16 +307,10 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
         // If we have multiple choices, display a selection dialog.
         else if (targets.size() > 1) {
-            String input = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui,
-                            Messages
-                                    .getString(
-                                            "TriggerBPodDialog.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
-                            Messages
-                                    .getString("TriggerBPodDialog.ChooseTargetDialog.title"), //$NON-NLS-1$
-                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
-                                    .getDisplayArray(targets), null);
+            String input = (String) JOptionPane.showInputDialog(clientgui,
+                    Messages.getString("TriggerBPodDialog.ChooseTargetDialog.message", pos.getBoardNum()),
+                    Messages.getString("TriggerBPodDialog.ChooseTargetDialog.title"),
+                    JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets), null);
             choice = (Infantry) SharedUtility.getTargetPicked(targets, input);
         } // End have-choices
 

@@ -1,6 +1,7 @@
 Version:1.0
 Spider
 SDR-8R
+mul id:3018
 
 Config:Biped
 TechBase:Inner Sphere
@@ -146,4 +147,20 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Spider .jpg
+overview:The Spider was the first BattleMech produced by Newhart Industries, designed in 2650 as a light reconnaissance and attack 'Mech to be used by Star League Defense Force Special Operations forces such as the Blackhearts.
+
+capabilities:In terms of maneuverability the Spider has a ground speed comparable to a Locust and can out-jump either the vaunted Wasp or Stinger light 'Mechs. Built with top-of-the-line reliable parts, sophisticated reconnaissance equipment and an energy weapon payload which allowed for extended operations without resupply, the Spider was a great success. While not produced in large numbers it could be rapidly manufactured and so served up through to the end of the Star League.
+
+deployment:A post-Jihad variant produced by Krupp Armament Works for the Republic of the Sphere in 3084, the production model 8R was based on the prototype SDR-8X that used during the liberation of Terra. Built on an Endo Steel chassis and powered by a smaller 210 Light Fusion Engine - while its ground speed was reduced, the SDR-8R's ten Pitban LFT-20X Improved Jump Jets gave it amazing maneuverability. Carrying ten double heat sinks allowed the 8R to fire its twin Diverse Optics ER Medium Lasers and jump without fear of overheating. Boasting a very different look, the redesigned 8R was also notable for being one of the first Spiders to include an ejection system. 
+
+history:Beyond exceeding all of the SLDF's minimum requirements Newhart had actually designed the Spider before receiving the Star League's request for proposals and were ready to begin production immediately, factors which helped the company win the contract very quickly. Newhart's Spider factory on New Earth was destroyed in 2776 as part of the Amaris Civil War and very few Spiders ended up in the hands of the Successor States when the Star League dissolved. As their numbers began to dwindle during the Succession Wars, entire offensive operations were conducted simply to secure spare parts for these 'Mechs. So rare was the Spider that Wolf's Dragoons were notable for having an entire lance of Spiders (albeit split among the various regiments). This trend towards extinction was finally reversed when the Free Worlds League was able to secure the schematics for the Spider. In a deal with Nimakachi Fusion Products Limited, the company was given exclusive control of the 'Mech's technical specifications in exchange for building them for the Free Worlds League. Nimakachi began building new Spiders from their factory on Tematagi and later expanded their facilities on Lapida II to produce them as well, resulting in the Free Worlds League and Draconis Combine having the largest number of Spiders in active service. The recovery of lost Star League technology inspired Nimakachi to update the Spider with new upgrades, resulting in the improved SDR-7M and the derivative Venom. While the Free Worlds League did not express much interest in these 'Mechs, Nimakachi found ready buyers among the other Great Houses. In particular the Draconis Combine had lost a large number of light 'Mechs during the Clan Invasion and bought up local- and foreign-made Spiders to replenish their ranks. The Word of Blake also expressed an interest in these Spiders and bought a number to outfit their military. These Spiders were used as part of the Blakist conquest of Terra and were later gifted to the Protectorate Militia, where they fought in the Jihad. Starting in 3067, the Spider was restyled by Nimakachi which allowed the addition of an ejection system to the cockpit of the new SDR-7K, 7K2, and 7KC.
+
+manufacturer:Krupp Armament Works
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:Crucis-II Deluxe Endo Steel
+systemmanufacturer:ENGINE:Pitban 210 Light Fusion Engine
+systemmanufacturer:ARMOR:Kallon FWL Special Ferro-Fibrous
+systemmanufacturer:JUMPJET:Pitban LFT-20X Improved Jump Jets
+systemmanufacturer:COMMUNICATIONS:Omicron 4002 Networking Channel
+systemmanufacturer:TARGETING:TRSS Eagle Eye
+

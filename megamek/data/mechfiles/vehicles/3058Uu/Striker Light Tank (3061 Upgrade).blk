@@ -15,6 +15,10 @@ Striker Light Tank
 <Model>
 (3061 Upgrade)
 </Model>
+
+<mul id:>
+3099
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

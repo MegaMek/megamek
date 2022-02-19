@@ -48,7 +48,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -415,7 +417,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                         }
                         newmount.setSize(size);
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
                 }
             }

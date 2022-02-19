@@ -1,6 +1,7 @@
 Version:1.0
 Thorn
 THE-T
+mul id:3196
 
 Config:Biped
 TechBase:Inner Sphere
@@ -147,18 +148,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Overview: One of the older Terran Hegemony and Star League light 'Mechs, the Thorn was originally debuted in the late twenty-fourth century.  According to survivng records from the period, the Thorn was the first BattleMech to mount an Endo-Steel II internal structure.  This allowed the design to save significant weight on its chasis at the expense of increased bulk taking up what would otherwise be valuable space for additional equipment. The Second Succession War was unkind to the Thorn, as it was to many other designs of the era, by destroying the primary supplier of the materials needed to manufacture its Endo-Steel skeleton.  The ravages of the war continued to take their toll by ensuring other manufacturers could not take up the slack, resulting in a gradual extinction of the Thorn within the armies of the Successor States.
+overview:The Thorn is a light BattleMech which was originally intended to operate as a scout.
 
-Capabilities: Reviews of the Thorn have always been mixed.  Hefty firepower for a design of its mass won it many supporters, but many commanders and MechWarriors find the lack of jump jets a significant drawback limiting the Thorn's usefulness. Pilots also complained that repeated firing of the Medium Laser directly under their feet made the cockpit uncomfortable despite the 'Mech's extensive cooling system. On the upside they did report that the Zeus LRM-5 proved extremely accurate, but this came at the cost of a poorly designed ammunition feed system that could lead to misfeeds in the system. Technicians, however, universaly enjoy working on the Thorn as it has large accessways in the limbs that allow for easy access to the interior of the 'Mech.
+capabilities:Four and a half tons of armor provides the Thorn with good protection, especially when mated with CASE to contain any ammunition explosions. The use of an Endo Steel chassis is what allows the Thorn to carry all of this equipment, an alloy twice as strong as standard materials if somewhat bulky. The GM 120 fusion engine gives the Thorn a respectable cruising speed of 65 km/h but the lack of jump jets further compounds its issues with catching other light 'Mechs. Built with the standard number of ten engine-mounted heat sinks the Thorn is regarded as a "cool running" design, although the placement of the head laser right below the cockpit (despite additional cooling systems) makes repeated firings uncomfortable
 
-Deployment: The Thorn was a generally popular and widespread design during the height of the Star League. The onset of the Succession Wars saw it used by many interstellar powers, but the rapid decline of technology (along with the seizure of its main manufacturing plant by Terra on ComStar) lead to gradually dwindling numbers. Beyond ComStar's hidden armies, no Thorns remained in service within the Inner Sphere by the end of the Third Succession War. The T variant was an uncommon and unpopular modification performed on THE-S's received by the Combine. Swapping out the LRM for an SRM rack, the T fell directly into a niche where it competed with the already common Jenner. It should come to no surprise that it was considered underperforming, and none remained after the end of the Jihad.
+deployment:Developed in 3038 by the Draconis Combine in an attempt to upgrade the 'Mech's short range firepower prior to the War of 3039, the THE-T is a field refit of the downgraded THE-S that swaps out the LRM launcher for an SRM-4.
 
-systemmanufacturer:CHASSIS:Chariot
-systemmode:CHASSIS:Type II
-systemmanufacturer:ENGINE:GM
-systemmode:ENGINE:120
-systemmanufacturer:ARMOR:Durallex
-systemmanufacturer:COMMUNICATIONS:Olmstead
-systemmode:COMMUNICATIONS:30
-systemmanufacturer:TARGETING:Omicron
-systemmode:TARGETING:VII
+history:When the 'Mech first debuted for the Hegemony Armed Forces in the twenty-fifth century, it was with a great deal of hype that unfortunately the Thorn could never truly match. Critics who look at the 'Mech generally see it in one of two ways: as a light 'Mech that is not fast enough for its own good or a light 'Mech that tries to do a job only a heavier 'Mech should. Looking at the Thorn with neither bias, it is easy to see where these two viewpoints come from. The Thorn is too slow to function in the traditional light 'Mech role of scouting and it does not have the armor or staying power of heavier machines. Facing competition from the Locust it was only when Ford Military Limited decided in 2549 to rebuild the Thorn with the very latest in technology, including the first-ever use of an Endo Steel chassis and Cellular Ammunition Storage Equipment, that the HAF renewed their interest. Once in service the Thorn found its niche as a light 'Mech hunter and infantry support platform. As supporters quickly pointed out the Thorn was ton-for-ton superior to most other light 'Mechs in terms of combat power and could reduce an opponent of similar weight to scrap in minutes. This aspect made it very popular for light 'Mech companies expecting heavy fighting and infantry in need of fire support. The Thorn continued to serve following the creation of the Star League Defense Force and often fought alongside the likes of similar designs such as Hoplites and Hussars. Unfortunately the reliance on advanced technology doomed the Thorn when the Star League dissolved and the Succession Wars began. With the orbital manufacturing centers necessary for Endo Steel production destroyed by the time of the Second Succession War, it became impossible to maintain what Thorns the Great Houses inherited in their original condition. Ford Military was forced to produce the original downgraded version in an attempt to keep the line going, but sporadic production barely kept it alive and by the time the Succession Wars were over the original Thorn could only be found in service to the Com Guards. When ComStar decided to supply the Draconis Combine as part of Operation ROSEBUD the Thorn was among those Star League-era 'Mechs gifted to the DCMS, albeit with all of its advanced technology stripped out. That this necessitate the quite radical approach of rebuilding the 'Mech from the ground-up with a standard chassis only highlighted the lengths ComStar would go to in order to maintain its monopoly on lostech. When the Clans invaded it was discovered they had also maintained the Thorn in large numbers, although most were still stored in Brian Caches and reserved for use by solahma troops. The invasion also forced ComStar to begin a hasty rearmament program that included the development of a new variant, the THE-N1. Following the ComStar Schism the Word of Blake was able to seize Terra for themselves and direct the Thorn production line to equip their own military forces for the coming Jihad.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Chariot Type II
+systemmanufacturer:ENGINE:GM 120
+systemmanufacturer:ARMOR:Armorscale
+systemmanufacturer:COMMUNICATIONS:Opus I Ultrabeam
+systemmanufacturer:TARGETING:Orion 80

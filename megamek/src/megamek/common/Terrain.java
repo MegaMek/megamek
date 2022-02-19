@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -26,12 +25,13 @@ import megamek.common.options.OptionsConstants;
  *
  * @author Ben
  */
-public class Terrain implements ITerrain, Serializable {
-
-    /**
-     *
-     */
+public class Terrain implements Serializable {
+    //region Variable Declarations
     private static final long serialVersionUID = -7624691566755134033L;
+    public static final int LEVEL_NONE = Integer.MIN_VALUE;
+    public static final int WILDCARD = Integer.MAX_VALUE;
+    public static final int ATLEAST = Integer.MAX_VALUE - 1000;
+
     private final int type;
     /**
      * Terrain level, which is used to indicate varying severity of terrain
@@ -39,13 +39,12 @@ public class Terrain implements ITerrain, Serializable {
      * levels.
      */
     private int level;
-    private boolean exitsSpecified = false;
+    private boolean exitsSpecified;
     private int exits;
     private int terrainFactor;
+    //endregion Variable Declarations
 
-    /**
-     * Terrain constructor
-     */
+    //region Constructors
     public Terrain(int type, int level) {
         this(type, level, false, 0);
     }
@@ -58,7 +57,7 @@ public class Terrain implements ITerrain, Serializable {
         terrainFactor = Terrains.getTerrainFactor(type, level);
     }
 
-    public Terrain(ITerrain other) {
+    public Terrain(Terrain other) {
         type = other.getType();
         level = other.getLevel();
         exitsSpecified = other.hasExitsSpecified();
@@ -78,12 +77,9 @@ public class Terrain implements ITerrain, Serializable {
         type = Terrains.getType(name);
         if (firstColon == lastColon) {
             level = levelFor(terrain.substring(firstColon + 1));
-            exitsSpecified = false;
 
             // Buildings *never* use implicit exits.
-            if ((type == Terrains.BUILDING) || (type == Terrains.FUEL_TANK)) {
-                exitsSpecified = true;
-            }
+            exitsSpecified = (type == Terrains.BUILDING) || (type == Terrains.FUEL_TANK);
         } else {
             level = levelFor(terrain.substring(firstColon + 1, lastColon));
             exitsSpecified = true;
@@ -91,6 +87,7 @@ public class Terrain implements ITerrain, Serializable {
         }
         terrainFactor = Terrains.getTerrainFactor(type, level);
     }
+    //endregion Constructors
 
     public static int levelFor(String string) {
         if (string.equals("*")) {
@@ -131,6 +128,12 @@ public class Terrain implements ITerrain, Serializable {
         this.exits = exits;
     }
 
+    /**
+     * Sets the exit in specified direction
+     *
+     * @param direction the direction to add/remove the exit
+     * @param connection true to add, false to remove
+     */
     public void setExit(int direction, boolean connection) {
         int mask = (int) Math.pow(2, direction);
         if (connection) {
@@ -141,15 +144,12 @@ public class Terrain implements ITerrain, Serializable {
     }
 
     /**
-     * Flips the exits around the vertical axis (North-for-South) and/or the
-     * horizontal axis (East-for-West).
+     * Flips the exits around the vertical axis (North-for-South) and/or the horizontal axis (East-for-West).
      *
-     * @param horiz
-     *            - a <code>boolean</code> value that, if <code>true</code>,
-     *            indicates that the exits are being flipped North-for-South.
-     * @param vert
-     *            - a <code>boolean</code> value that, if <code>true</code>,
-     *            indicates that the exits are being flipped East-for-West.
+     * @param horiz a <code>boolean</code> value that, if <code>true</code>, indicates that the
+     *              exits are being flipped North-for-South.
+     * @param vert a <code>boolean</code> value that, if <code>true</code>, indicates that the exits
+     *             are being flipped East-for-West.
      */
     public void flipExits(boolean horiz, boolean vert) {
         // Do nothing if no flips are defined.
@@ -233,10 +233,9 @@ public class Terrain implements ITerrain, Serializable {
     }
 
     /**
-     * Returns true if the terrain in this hex exits to the terrain in the other
-     * hex.
+     * @return true if the terrain in this hex exits to the terrain in the other hex.
      */
-    public boolean exitsTo(ITerrain other) {
+    public boolean exitsTo(Terrain other) {
         if (other == null) {
             return false;
         }
@@ -275,95 +274,104 @@ public class Terrain implements ITerrain, Serializable {
         return Terrains.getName(type) + ":" + level + (exitsSpecified ? ":" + exits : "");
     }
 
+    /**
+     * FIXME : Windchild : This is unused, which feels like a bug
+     * @param moveMode the movement mode of the pilot
+     * @param roll the piloting roll
+     * @param enteringRubble if the entered terrain contains rubble
+     */
     public void pilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         switch (type) {
-        case Terrains.JUNGLE:
-            if (level == 3) {
-                roll.addModifier(level, "Ultra Jungle");
-            }
-            if (level == 2) {
-                roll.addModifier(level, "Heavy Jungle");
-            }
-            if (level == 1) {
-                roll.addModifier(level, "Jungle");
-            }
-            break;
-        case Terrains.MAGMA:
-            if (level == 2) {
-                roll.addModifier(4, "Liquid Magma");
-            }
-            if (level == 1) {
-                roll.addModifier(1, "Magma Crust");
-            }
-            break;
-        case Terrains.TUNDRA:
-            roll.addModifier(1, "Tundra");
-            break;
-        case Terrains.SAND:
-            roll.addModifier(1, "Sand");
-            break;
-        case Terrains.SNOW:
-            if (level == 2) {
-                roll.addModifier(1, "Deep Snow");
-            }
-            break;
-        case Terrains.SWAMP:
-            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
-                roll.addModifier(1, "Swamp");
-            } else {
-                roll.addModifier(2, "Swamp");
-            }
-            break;
-        case Terrains.MUD:
-            if ((moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
-                roll.addModifier(1, "Mud");
-            }
-            break;
-        case Terrains.GEYSER:
-            if (level == 2) {
-                roll.addModifier(1, "Active Geyser");
+            case Terrains.JUNGLE:
+                if (level == 3) {
+                    roll.addModifier(level, "Ultra Jungle");
+                }
+                if (level == 2) {
+                    roll.addModifier(level, "Heavy Jungle");
+                }
+                if (level == 1) {
+                    roll.addModifier(level, "Jungle");
+                }
                 break;
-            }
-        case Terrains.RUBBLE:
-            if (level == 6) {
-                if (enteringRubble) {
-                    roll.addModifier(1, "entering Ultra Rubble");
+            case Terrains.MAGMA:
+                if (level == 2) {
+                    roll.addModifier(4, "Liquid Magma");
+                }
+                if (level == 1) {
+                    roll.addModifier(1, "Magma Crust");
+                }
+                break;
+            case Terrains.TUNDRA:
+                roll.addModifier(1, "Tundra");
+                break;
+            case Terrains.SAND:
+                roll.addModifier(1, "Sand");
+                break;
+            case Terrains.SNOW:
+                if (level == 2) {
+                    roll.addModifier(1, "Deep Snow");
+                }
+                break;
+            case Terrains.SWAMP:
+                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+                    roll.addModifier(1, "Swamp");
                 } else {
-                    roll.addModifier(1, "Ultra Rubble");
+                    roll.addModifier(2, "Swamp");
+                }
+                break;
+            case Terrains.MUD:
+                if ((moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
+                    roll.addModifier(1, "Mud");
+                }
+                break;
+            case Terrains.GEYSER:
+                if (level == 2) {
+                    roll.addModifier(1, "Active Geyser");
+                    break;
+                }
+            case Terrains.RUBBLE:
+                if (level == 6) {
+                    if (enteringRubble) {
+                        roll.addModifier(1, "entering Ultra Rubble");
+                    } else {
+                        roll.addModifier(1, "Ultra Rubble");
 
+                    }
                 }
-            }
-            if (level < 6) {
-                if (enteringRubble) {
-                    roll.addModifier(0, "entering Rubble");
+                if (level < 6) {
+                    if (enteringRubble) {
+                        roll.addModifier(0, "entering Rubble");
+                    } else {
+                        roll.addModifier(0, "Rubble");
+                    }
+                }
+                break;
+            case Terrains.RAPIDS:
+                if (level == 2) {
+                    roll.addModifier(3, "Torrent");
                 } else {
-                    roll.addModifier(0, "Rubble");
+                    roll.addModifier(2, "Rapids");
                 }
-            }
-            break;
-        case Terrains.RAPIDS:
-            if (level == 2) {
-                roll.addModifier(3, "Torrent");
-            } else {
-                roll.addModifier(2, "Rapids");
-            }
-            break;
-        case Terrains.ICE:
-            if ((moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
-                roll.addModifier(4, "Ice");
-            }
-            break;
-        case Terrains.INDUSTRIAL:
-            roll.addModifier(1, "Industrial Zone");
-            break;
-        default:
-            break;
+                break;
+            case Terrains.ICE:
+                if ((moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
+                    roll.addModifier(4, "Ice");
+                }
+                break;
+            case Terrains.INDUSTRIAL:
+                roll.addModifier(1, "Industrial Zone");
+                break;
+            default:
+                break;
         }
     }
 
+    /**
+     * @return the additional movement cost for this terrain
+     */
     public int movementCost(Entity e) {
         EntityMovementMode moveMode = e.getMovementMode();
-        int mp = 0;
+        int mp;
         switch (type) {
             case Terrains.MAGMA:
                 return level - 1;
@@ -378,7 +386,7 @@ public class Terrain implements ITerrain, Serializable {
                 } else {
                     mp = 1;
                 }
-                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
@@ -391,7 +399,7 @@ public class Terrain implements ITerrain, Serializable {
                 return Math.max(0, mp);
             case Terrains.WOODS:
                 mp = level;
-                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
@@ -409,7 +417,7 @@ public class Terrain implements ITerrain, Serializable {
                 return Math.max(0, mp);
             case Terrains.JUNGLE:
                 mp = level +1;
-                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
@@ -472,7 +480,7 @@ public class Terrain implements ITerrain, Serializable {
                 } else {
                     mp = 1;
                 }
-                if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
+                if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
                 return Math.max(0, mp);
@@ -482,7 +490,7 @@ public class Terrain implements ITerrain, Serializable {
                 } else {
                     mp = 1;
                 }
-                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
@@ -498,31 +506,36 @@ public class Terrain implements ITerrain, Serializable {
                         || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)
                         || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
                     return 1;
+                } else {
+                    return 0;
                 }
-                return 0;
             case Terrains.INDUSTRIAL:
                 if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
                     return 1;
+                } else {
+                    return 0;
                 }
-                return 0;
             default:
                 return 0;
         }
     }
 
+    /**
+     * The fire ignition modifier for this terrain
+     */
     public int ignitionModifier() {
         switch (type) {
-        case Terrains.JUNGLE:
-            return 1;
-        case Terrains.SNOW:
-            if (level == 2) {
-                return 2;
-            }
-            return 0;
-        case Terrains.FIELDS:
-            return -1;
-        default:
-            return 0;
+            case Terrains.JUNGLE:
+                return 1;
+            case Terrains.SNOW:
+                if (level == 2) {
+                    return 2;
+                }
+                return 0;
+            case Terrains.FIELDS:
+                return -1;
+            default:
+                return 0;
         }
     }
 
@@ -532,71 +545,71 @@ public class Terrain implements ITerrain, Serializable {
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
         switch (type) {
-        case (Terrains.SWAMP):
-            // if this is quicksand, then you automatically fail
-            if (level > 1) {
-                return TargetRoll.AUTOMATIC_FAIL;
-            }
-            if (moveMode == EntityMovementMode.VTOL) {
-                return TargetRoll.AUTOMATIC_FAIL;
-            }
-            return 0;
-        case (Terrains.MAGMA):
-            if (level == 2) {
+            case (Terrains.SWAMP):
+                // if this is quicksand, then you automatically fail
+                if (level > 1) {
+                    return TargetRoll.AUTOMATIC_FAIL;
+                }
+                if (moveMode == EntityMovementMode.VTOL) {
+                    return TargetRoll.AUTOMATIC_FAIL;
+                }
                 return 0;
-            }
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        case (Terrains.MUD):
-            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+            case (Terrains.MAGMA):
+                if (level == 2) {
+                    return 0;
+                }
                 return TargetRoll.AUTOMATIC_SUCCESS;
-                // any kind of infantry just gets a flat roll
-            } else if(moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
-                    moveMode == EntityMovementMode.INF_JUMP || moveMode == EntityMovementMode.INF_UMU) {
-                return 0;
-            }
-            return -1;
-        case (Terrains.TUNDRA):
-            return -1;
-        case (Terrains.SNOW):
-            if (level == 2) {
+            case (Terrains.MUD):
+                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+                    return TargetRoll.AUTOMATIC_SUCCESS;
+                    // any kind of infantry just gets a flat roll
+                } else if (moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
+                        moveMode == EntityMovementMode.INF_JUMP || moveMode == EntityMovementMode.INF_UMU) {
+                    return 0;
+                }
                 return -1;
-            }
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        case (Terrains.SAND):
-            if (largeVee) {
-                return 0;
-            }
-            return TargetRoll.AUTOMATIC_SUCCESS;
-        default:
-            return TargetRoll.AUTOMATIC_SUCCESS;
+            case (Terrains.TUNDRA):
+                return -1;
+            case (Terrains.SNOW):
+                if (level == 2) {
+                    return -1;
+                }
+                return TargetRoll.AUTOMATIC_SUCCESS;
+            case (Terrains.SAND):
+                if (largeVee) {
+                    return 0;
+                }
+                return TargetRoll.AUTOMATIC_SUCCESS;
+            default:
+                return TargetRoll.AUTOMATIC_SUCCESS;
         }
     }
 
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         switch (type) {
-        case (Terrains.SWAMP):
-            if (level > 1) {
-                rollTarget.addModifier((3 + ((-3) * elev)), "Quicksand");
+            case (Terrains.SWAMP):
+                if (level > 1) {
+                    rollTarget.addModifier((3 + ((-3) * elev)), "Quicksand");
+                    break;
+                }
+                rollTarget.addModifier(0, "Swamp");
                 break;
-            }
-            rollTarget.addModifier(0, "Swamp");
-            break;
-        case (Terrains.MAGMA):
-            if (level == 2) {
-                rollTarget.addModifier(0, "Liquid Magma");
-            }
-            break;
-        case (Terrains.MUD):
-            rollTarget.addModifier(-1, "Mud");
-            break;
-        case (Terrains.TUNDRA):
-            rollTarget.addModifier(-1, "Tundra");
-            break;
-        case (Terrains.SNOW):
-            rollTarget.addModifier(-1, "Deep Snow");
-            break;
-        default:
-            break;
+            case (Terrains.MAGMA):
+                if (level == 2) {
+                    rollTarget.addModifier(0, "Liquid Magma");
+                }
+                break;
+            case (Terrains.MUD):
+                rollTarget.addModifier(-1, "Mud");
+                break;
+            case (Terrains.TUNDRA):
+                rollTarget.addModifier(-1, "Tundra");
+                break;
+            case (Terrains.SNOW):
+                rollTarget.addModifier(-1, "Deep Snow");
+                break;
+            default:
+                break;
         }
     }
 
@@ -653,7 +666,7 @@ public class Terrain implements ITerrain, Serializable {
         }
 
         if (!rv && (errBuff != null)) {
-            errBuff.append("Illegal level! For " + toString() + "\n");
+            errBuff.append("Illegal level! For ").append(this).append("\n");
         }
 
         return rv;

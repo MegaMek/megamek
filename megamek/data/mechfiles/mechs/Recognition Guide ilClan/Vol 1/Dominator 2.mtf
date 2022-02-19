@@ -1,11 +1,12 @@
 Version:1.2
 Dominator
 2
+mul id:7435
 
 Config:Biped
 techbase:Clan
 era:3149
-source:ilClan Vol 1 - Dark Age
+source:Rec Guide:ilClan #1 - Dark Age
 rules level:2
 
 mass:65
@@ -14,7 +15,7 @@ structure:Clan Endo Steel
 myomer:Standard
 ejection:Full Head Ejection System
 
-heat sinks:17 Double
+heat sinks:17 Clan Double
 walk mp:5
 jump mp:5
 
@@ -77,8 +78,8 @@ CLLRM20
 CLLRM20
 CLArtemisV
 CLArtemisV
-Clan Ammo LRM-20
-Clan Ammo LRM-20
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
 
 Right Torso:
 Fusion Engine
@@ -149,6 +150,14 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Khan of Clan Wolf Alaric Ward wanted a 'Mech to "Make the Republic tremble behind their Wall, chase the Jade Falcons from the skies, and dominate the pilots of the Inner Sphere under the will of Clan Wolf." 
+
+capabilities:This new 'Mech was to be highly mobile, heavily armored, and be able to outrun anything the 'Mech could not outgun. Additionally the 'Mech had to be a capable brawler since Inner Sphere pilots were often engaging Clan 'Mechs in close quarters hand-to-hand combat.
+
+deployment: The Dominator is equipped with somewhat less weaponry than is normally found on a standard Clan heavy 'Mech. The 'Mech's arsenal begins with a shoulder mounted Extended Range Large Laser in the its right torso, coupled with an Extended Range PPC mounted in the lower right arm. A recessed six tubed streak SRM is mounted in the 'Mech's left shoulder with one ton of ammunition. Oddly, an Extended Range Small Laser is mounted almost directly behind the Dominator's pilot in the 'Mech's head, facing the rear.
+
+history:Despite being a second line 'Mech, the Dominator's pilot benefits from all of the progress of Clan technology. The Dominator is built with both ten and a half tons of Ferro Fibrous Armor and Endo Steel Internal Structure. To mitigate heat build up, the Dominator is equipped with eighteen double heat sinks, allowing the Mech's pilot to continuously fire all of its weapons systems and continue to move at full speed. The Dominator's pilots also enjoy having the advantage of a hundred and fifty meter jump range. The design team then added a supercharger to the 'Mech's already agile frame. The supercharger benefits the Dominator by not directly damaging the 'Mech's leg actuators, unlike MASC. This new piece of equipment increases the Dominator's durability while providing the pilot with an extra burst of needed speed. When the Dominator's pilot enters physical combat, the pilot has the ability to engage in a "death from above attack." To assist the Dominator's pilot in the DFA attack, the legs have been reinforced to reduce the amount of damage inflicted to the them. Finally, the design team fulfilled Khan Alaric Ward's directions by equipping the Dominator with battle fists, making the 'Mech a deadly brawler in close combat. The Dominator is also equipped with a robust targeting computer, which complements the already deadly gunnery skills of the typical Clan pilot.
 
 manufacturer:W-12 Facilities
 primaryfactory:Zosma

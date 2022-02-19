@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,44 +14,20 @@
  */
 package megamek.client.bot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import megamek.client.Client;
 import megamek.client.ui.SharedUtility;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
 
+import java.util.*;
+
 public class CEntity {
-
     static class Table extends HashMap<Integer, CEntity> {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = 6437109733397107056L;
         private TestBot tb;
 
@@ -64,8 +40,8 @@ public class CEntity {
         }
 
         public CEntity get(Entity es) {
-            CEntity result = null;
-            if ((result = super.get(Integer.valueOf(es.getId()))) == null) {
+            CEntity result;
+            if ((result = super.get(es.getId())) == null) {
                 result = new CEntity(es, tb);
                 this.put(result);
             }
@@ -83,36 +59,36 @@ public class CEntity {
     // table
 
     // Tank armor is either the side hit or the turret
-    static final double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
+    static final double[][] TANK_ARMOR = { { 0, 1.0, 0, 0, 0 },
             { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
-    static final double TANK_WT_ARMOR[][] = {
+    static final double[][] TANK_WT_ARMOR = {
             { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
             { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
             { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
             { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
 
     // Infantry don't have a facing. In fact, they don't have armor...
-    static final double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
+    static final double[][] INFANTRY_ARMOR = { { 1.0 }, { 1.0 }, { 1.0 },
             { 1.0 } };
 
     // Battle armor units have multiple suits
-    static final double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
+    static final double[][] ISBA_ARMOR = { { 0.25, 0.25, 0.25, 0.25 },
             { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
             { 0.25, 0.25, 0.25, 0.25 } };
-    static final double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
+    static final double[][] CLBA_ARMOR = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
             { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
             { 0.2, 0.2, 0.2, 0.2, 0.2 } };
-    static final double PROTOMECH_ARMOR[][] = {
+    static final double[][] PROTOMECH_ARMOR = {
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
-    static final double PROTOMECH_MG_ARMOR[][] = {
+    static final double[][] PROTOMECH_MG_ARMOR = {
             { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
-    static final double MECH_ARMOR[][] = {
+    static final double[][] MECH_ARMOR = {
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
                     4.0 / 36, 4.0 / 36 },
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
@@ -121,9 +97,9 @@ public class CEntity {
                     2.0 / 36, 8.0 / 36 },
             { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
                     8.0 / 36, 2.0 / 36 } };
-    static final double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
+    static final double[][] GUN_EMPLACEMENT_ARMOR = { { 1.0 / 4, 0, 0, 0 },
             { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
-    static final double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
+    static final double[][] GUN_EMPLACEMENT_TURRET_ARMOR = {
             { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
             { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
 
@@ -174,13 +150,13 @@ public class CEntity {
     // Weapons heat for ideal range bracket
     int heat_at_range = 0;
     // Heat for each range bracket
-    int heat_estimates[] = new int[4];
+    int[] heat_estimates = new int[4];
 
     // Index of the ideal engagement range from range_damages
     int range = RANGE_ALL;
     int long_range = 0;
     // Damage at short/medium/long/all(?) ranges
-    double range_damages[] = new double[4];
+    double[] range_damages = new double[4];
     int rd_bracket = 0;
 
     double base_psr_odds = 1.0;
@@ -290,12 +266,27 @@ public class CEntity {
         // TODO: Link this to a Bot configuration file
         runMP = entity.getRunMP();
         if (entity instanceof Mech) {
-            if (((Mech) entity).hasMASC()) {
-                if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
-                    masc_threat = false;
-                } else {
-                    masc_threat = true;
-                    runMP = entity.getRunMPwithoutMASC();
+            Entity.MPBoosters mpBoosters = ((Mech) entity).getMPBoosters();
+            if (mpBoosters.hasMASCAndOrSupercharger()) {
+                // do a check for each system
+                masc_threat = false;
+                if (mpBoosters.hasMASC()) {
+                    if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
+                        masc_threat = false;
+                    } else {
+                        masc_threat = true;
+                        runMP = entity.getRunMPwithoutMASC();
+                    }
+                }
+
+                if ((masc_threat == false) && mpBoosters.hasSupercharger()) {
+                    //we passed masc, but test for supercharger
+                    if (((Mech) entity).getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
+                        masc_threat = false;
+                    } else {
+                        masc_threat = true;
+                        runMP = entity.getRunMPwithoutMASC();
+                    }
                 }
             } else {
 
@@ -354,18 +345,18 @@ public class CEntity {
 
         ArrayList<Mounted> ammo_list = entity.getAmmo();
 
-        double overall_damage[][] = new double[6][MAX_RANGE];
-        double cur_weapon_damage[] = new double[MAX_RANGE];
+        double[][] overall_damage = new double[6][MAX_RANGE];
+        double[] cur_weapon_damage = new double[MAX_RANGE];
 
-        ArrayList<Integer> cur_weapon_arcs = new ArrayList<Integer>();
-        int overall_heat[][] = new int[6][MAX_RANGE];
+        ArrayList<Integer> cur_weapon_arcs = new ArrayList<>();
+        int[][] overall_heat = new int[6][MAX_RANGE];
         int cur_weapon_heat, weapons_count = 0;
         int cur_weapon_arc;
 
         // Mainly for BA and conventional infantry support
         int number_of_shooters = 1;
 
-        boolean ammo_ranges[] = { false, false, false };
+        boolean[] ammo_ranges = { false, false, false };
 
         int gunnery = entity.getCrew().getGunnery();
         if (entity.getTaserFeedBackRounds() > 0) {
@@ -657,7 +648,7 @@ public class CEntity {
         double max = 1.0;
 
         // Initialize armor values
-        double armor[][] = MECH_ARMOR;
+        double[][] armor = MECH_ARMOR;
 
         if (entity instanceof Tank) {
             if (((Tank) entity).hasNoTurret()) {
@@ -755,7 +746,7 @@ public class CEntity {
     private ArrayList<Integer> getWeaponArcs(int mounted_arc,
             boolean is_secondary) {
 
-        ArrayList<Integer> arc_list = new ArrayList<Integer>(1);
+        ArrayList<Integer> arc_list = new ArrayList<>(1);
 
         // Weapons which can fire in any direction
         if ((mounted_arc == Compute.ARC_360)
@@ -816,8 +807,8 @@ public class CEntity {
      */
     private void computeRange(int arc, int[][] est_heat) {
 
-        double damage_by_bracket[] = { 0.0, 0.0, 0.0, 0.0 };
-        double heat_by_bracket[] = { 0, 0, 0, 0 };
+        double[] damage_by_bracket = { 0.0, 0.0, 0.0, 0.0 };
+        double[] heat_by_bracket = { 0, 0, 0, 0 };
 
         long_range = MAX_RANGE - 1;
         int bracket_start, bracket_end;
@@ -913,7 +904,7 @@ public class CEntity {
      */
     public void computeRange(int arc, boolean aptGunnery) {
 
-        double optimizer[] = { 0, 0, 0, 0 };
+        double[] optimizer = { 0, 0, 0, 0 };
 
         Arrays.fill(range_damages, 0);
 
@@ -1056,7 +1047,7 @@ public class CEntity {
     }
 
     public Integer getKey() {
-        return Integer.valueOf(entity.getId());
+        return entity.getId();
     }
 
     public MoveOption.Table getAllMoves(Client client) {
@@ -1070,10 +1061,9 @@ public class CEntity {
      * From the current state, explore based upon an implementation of
      * Dijkstra's algorithm.
      */
-    protected MoveOption.Table calculateMoveOptions(MoveOption base,
-            Client client) {
+    protected MoveOption.Table calculateMoveOptions(MoveOption base, Client client) {
         // New array of movement options
-        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> possible = new ArrayList<>();
         MoveOption.Table discovered = new MoveOption.Table();
 
         // Add the seed for jumping if allowed
@@ -1092,13 +1082,11 @@ public class CEntity {
             // Get the first movement option, while stripping it from the
             // arraylist
             MoveOption min = possible.remove(0);
-            Iterator<MovePath> adjacent = min.getNextMoves(true, true)
-                    .iterator();
+            Iterator<MovePath> adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();
                 if ((entity instanceof Mech) && (((Mech) entity).countBadLegs() >= 1)
-                        && (((Mech) entity).isLocationBad(Mech.LOC_LARM) && ((Mech) entity)
-                                .isLocationBad(Mech.LOC_RARM))) {
+                        && (entity.isLocationBad(Mech.LOC_LARM) && entity.isLocationBad(Mech.LOC_RARM))) {
                     MoveOption eject = next.clone();
                     eject.addStep(MoveStepType.EJECT);
                     discovered.put(eject.clone());
@@ -1108,8 +1096,7 @@ public class CEntity {
                 } else if (next.isMoveLegal()) {
                     // relax edges;
                     if ((discovered.get(next) == null)
-                            || (next.getDistUtility() < discovered.get(next)
-                                    .getDistUtility())) {
+                            || (next.getDistUtility() < discovered.get(next).getDistUtility())) {
                         discovered.put(next);
                         if (next.isJumping()) {
                             MoveOption left = next.clone();
@@ -1126,8 +1113,7 @@ public class CEntity {
                             right.addStep(MoveStepType.TURN_RIGHT);
                             discovered.put(right);
                         }
-                        int index = Collections.<MoveOption> binarySearch(
-                                possible, next, MoveOption.DISTANCE_COMPARATOR);
+                        int index = Collections.binarySearch(possible, next, MoveOption.DISTANCE_COMPARATOR);
                         if (index < 0) {
                             index = -index - 1;
                         }
@@ -1178,7 +1164,7 @@ public class CEntity {
      * find all moves that get into dest
      */
     public ArrayList<MoveOption> findMoves(Coords dest, Client client) {
-        ArrayList<MoveOption> result = new ArrayList<MoveOption>();
+        ArrayList<MoveOption> result = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             for (int j = 1; j < 2; j++) {
                 MoveOption.Key key = new MoveOption.Key(dest, i, j);
@@ -1306,13 +1292,12 @@ public class CEntity {
             rack_size = 2;
         }
 
-        if ((wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
+        if (wt.getAmmoType() == AmmoType.T_AC_ROTARY) {
             use_table = true;
             rack_size = 4;
         }
 
-        if (use_table == true) {
-
+        if (use_table) {
             int linked_ammo = wt.getAmmoType();
 
             // MMLs and ATMS change damage and range by ammo type,
@@ -1324,9 +1309,7 @@ public class CEntity {
                 damage_value = hits_by_racksize[rack_size] * 1.2;
 
                 // Use ER ammo damage as a default
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
                 // All three types: use ER ranges, with HE for "short" range,
                 // std for "medium" range, and ER for "long" range damages
@@ -1408,9 +1391,7 @@ public class CEntity {
                 }
 
                 // Use LRM damage as a default
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
                 // If SRM ammo is available, use it for short and medium range
                 if (applicable_ranges[0]) {
@@ -1456,9 +1437,7 @@ public class CEntity {
                     damage_value *= 2.0;
                 }
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
             }
 
@@ -1474,9 +1453,7 @@ public class CEntity {
                     damage_value *= 0.9;
                 }
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
             }
 
@@ -1485,17 +1462,13 @@ public class CEntity {
 
                 damage_value = rack_size * 2.0;
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
 
             }
             if (linked_ammo == AmmoType.T_LRM_STREAK) {
                 damage_value = rack_size;
 
-                for (int i = 0; i < raw_damage_array.length; i++) {
-                    raw_damage_array[i] = damage_value;
-                }
+                Arrays.fill(raw_damage_array, damage_value);
             }
 
             // HAGs get a bonus at short range and a penalty at long range
@@ -1938,31 +1911,13 @@ public class CEntity {
         return ToHitData.SIDE_REAR;
     }
 
-    public static int firingArcToHitArc(int arc) {
-        switch (arc) {
-            case Compute.ARC_FORWARD:
-                return ToHitData.SIDE_FRONT;
-            case Compute.ARC_LEFTARM:
-                return ToHitData.SIDE_LEFT;
-            case Compute.ARC_RIGHTARM:
-                return ToHitData.SIDE_RIGHT;
-            case Compute.ARC_REAR:
-                return ToHitData.SIDE_REAR;
-            case Compute.ARC_LEFTSIDE:
-                return ToHitData.SIDE_LEFT;
-            case Compute.ARC_RIGHTSIDE:
-                return ToHitData.SIDE_RIGHT;
-        }
-        return 0;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Entity) {
-            return ((Entity)obj).getId() == entity.getId();
+            return ((Entity) obj).getId() == entity.getId();
         }
         if (obj instanceof CEntity) {
-            return ((CEntity)obj).entity.getId() == entity.getId();
+            return ((CEntity) obj).entity.getId() == entity.getId();
         }
         return false;
     }

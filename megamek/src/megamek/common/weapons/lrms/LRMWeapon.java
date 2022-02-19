@@ -15,7 +15,7 @@ package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -39,9 +39,6 @@ import megamek.server.Server;
  */
 public abstract class LRMWeapon extends MissileWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 8755275511561446251L;
 
     public LRMWeapon() {
@@ -64,17 +61,10 @@ public abstract class LRMWeapon extends MissileWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
@@ -132,6 +122,19 @@ public abstract class LRMWeapon extends MissileWeapon {
         } else {
             removeMode("");
             removeMode("Indirect");
+        }
+    }
+
+    @Override
+    public String getSortingName() {
+        if (sortingName != null) {
+            return sortingName;
+        } else {
+            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            if (name.contains("I-OS")) {
+                oneShotTag = "XIOS ";
+            }
+            return "LRM " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
         }
     }
 }

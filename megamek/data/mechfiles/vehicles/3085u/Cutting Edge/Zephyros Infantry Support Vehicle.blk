@@ -20,6 +20,10 @@ Zephyros Infantry Support Vehicle
 (Standard)
 </Model>
 
+<mul id:>
+3634
+</mul id:>
+
 <year>
 3084
 </year>
@@ -57,7 +61,7 @@ Wheeled
 </armor>
 
 <Body Equipment>
-Clan Light Machine Gun Ammo - Proto
+Clan Light Machine Gun Ammo - Full
 CLECMSuite
 CLCASE
 </Body Equipment>

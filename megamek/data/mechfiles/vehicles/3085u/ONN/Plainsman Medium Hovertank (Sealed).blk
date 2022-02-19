@@ -20,6 +20,10 @@ Plainsman Medium Hovertank
 (Sealed)
 </Model>
 
+<mul id:>
+2540
+</mul id:>
+
 <Tonnage>
 35
 </Tonnage>

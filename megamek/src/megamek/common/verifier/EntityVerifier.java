@@ -1,19 +1,29 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.verifier;
+
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import megamek.common.*;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,42 +33,17 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.Protomech;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.UnitType;
-import megamek.utils.MegaMekXmlUtil;
-
 /**
  * Performs verification of the validity of different types of 
- * <code>Entity</code> subclasses.  Most of the actual validation is performed
+ * <code>Entity</code> subclasses. Most of the actual validation is performed
  * by <code>TestEntity</code> and its subclasses. 
  * 
  * @author Reinhard Vicinus
  */
 @XmlRootElement(name = "entityverifier")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(value = XmlAccessType.NONE)
 public class EntityVerifier implements MechSummaryCache.Listener {
-    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
+    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml";
 
     private static MechSummaryCache mechSummaryCache = null;
 
@@ -100,7 +85,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             InputStream is = new FileInputStream(config);
             ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
+            LogManager.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
 
             ev = new EntityVerifier();
         }
@@ -185,8 +170,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         Entity entity = null;
         try {
             entity = new MechFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
         return entity;
     }
@@ -215,17 +200,16 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(infOption.printOptions());
 
         int failures = 0;
-        Map<Integer,Integer> failedByType = new HashMap<>();
+        Map<Integer, Integer> failedByType = new HashMap<>();
         for (int i = 0; i < ms.length; i++) {
             int unitType = UnitType.determineUnitTypeCode(ms[i].getUnitType());
             if (unitType != UnitType.GUN_EMPLACEMENT) {
-                Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
-                        .getEntryName());
+                Entity entity = loadEntity(ms[i].getSourceFile(), ms[i].getEntryName());
                 if (entity == null) {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
-                        loadingVerbosity,entity.getTechLevel(),failsOnly)) {
+                        loadingVerbosity, entity.getTechLevel(), failsOnly)) {
                     failures++;
                     failedByType.merge(unitType, 1, Integer::sum);
                 }
@@ -233,16 +217,16 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         }
         System.out.println("Total Failures: " + failures);
         System.out.println("\t Failed Meks: " + failedByType.getOrDefault(UnitType.MEK, 0));
-        System.out.println("\t Failed Protomeks: " + failedByType.getOrDefault(UnitType.PROTOMEK, 0));
+        System.out.println("\t Failed ProtoMeks: " + failedByType.getOrDefault(UnitType.PROTOMEK, 0));
         System.out.println("\t Failed Tanks: " + failedByType.getOrDefault(UnitType.TANK, 0));
         System.out.println("\t Failed VTOLs: " + failedByType.getOrDefault(UnitType.VTOL, 0));
         System.out.println("\t Failed Naval: " + failedByType.getOrDefault(UnitType.NAVAL, 0));
         System.out.println("\t Failed ASFs: " + failedByType.getOrDefault(UnitType.AERO, 0));
         System.out.println("\t Failed CFs: " + failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0));
         System.out.println("\t Failed Small Craft: " + failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0));
-        System.out.println("\t Failed Dropships: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
-        System.out.println("\t Failed Jumpships: " + failedByType.getOrDefault(UnitType.JUMPSHIP, 0));
-        System.out.println("\t Failed Warships: " + failedByType.getOrDefault(UnitType.WARSHIP, 0));
+        System.out.println("\t Failed DropShips: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
+        System.out.println("\t Failed JumpShips: " + failedByType.getOrDefault(UnitType.JUMPSHIP, 0));
+        System.out.println("\t Failed WarShips: " + failedByType.getOrDefault(UnitType.WARSHIP, 0));
         System.out.println("\t Failed Space Stations: " + failedByType.getOrDefault(UnitType.SPACE_STATION, 0));
         System.out.println("\t Failed BA: " + failedByType.getOrDefault(UnitType.BATTLE_ARMOR, 0));
         System.out.println("\t Failed Infantry: " + failedByType.getOrDefault(UnitType.INFANTRY, 0));
@@ -298,9 +282,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             Entity entity;
             try {
                 entity = new MechFileParser(f, entityName).getEntity();
-            } catch (megamek.common.loaders.EntityLoadingException e) {
-                System.err.println("Exception: " + e.toString());
-                System.err.println("Exception: " + e.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
                 return;
             }
             EntityVerifier.getInstance(config).checkEntity(entity, f.toString(), true);

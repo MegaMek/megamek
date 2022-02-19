@@ -1,30 +1,25 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * GameTurn.java
- *
- * Created on September 6, 2002, 11:52 AM
- */
-
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -33,12 +28,9 @@ import megamek.common.options.OptionsConstants;
  * any entity.
  *
  * @author Ben
+ * @since September 6, 2002, 11:52 AM
  */
 public class GameTurn implements Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8340385894504735190L;
 
     private int playerId;
@@ -67,12 +59,12 @@ public class GameTurn implements Serializable {
      * Determine if the specified entity is a valid one to use for this turn.
      *
      * @param entity the <code>Entity</code> that may take this turn.
-     * @param game the <code>IGame</code> this turn belongs to.
+     * @param game the <code>Game</code> this turn belongs to.
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(Entity entity, IGame game) {
-        return isValidEntity(entity,game,true);
+    public boolean isValidEntity(final @Nullable Entity entity, final Game game) {
+        return isValidEntity(entity, game, true);
     }
     
     /**
@@ -88,33 +80,33 @@ public class GameTurn implements Serializable {
      * parameter.
      *
      * @param entity the <code>Entity</code> that may take this turn.
-     * @param game the <code>IGame</code> this turn belongs to.
+     * @param game the <code>Game</code> this turn belongs to.
      * @param useValidNonInfantryCheck Boolean that determines if we should 
      *        check to see if infantry can be moved yet
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(final @Nullable Entity entity, final IGame game,
+    public boolean isValidEntity(final @Nullable Entity entity, final Game game,
                                  final boolean useValidNonInfantryCheck) {
         return (entity != null) && (entity.getOwnerId() == playerId) && entity.isSelectableThisTurn()
                 // This next bit enforces the "A players Infantry/ProtoMechs move after that player's other units" options.
-                && !(useValidNonInfantryCheck && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                && !(useValidNonInfantryCheck && (game.getPhase() == GamePhase.MOVEMENT)
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
                 || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
-    }    
+    }
 
     /**
-     * Returns true if the player and entity are both valid.
+     * @return true if the player and entity are both valid.
      */
-    public boolean isValid(int playerId, Entity entity, IGame game) {
+    public boolean isValid(final int playerId, final @Nullable Entity entity, final Game game) {
         return (playerId == this.playerId) && isValidEntity(entity, game);
     }
 
     /**
-     * Returns true if the player is valid.
+     * @return true if the player is valid.
      */
-    public boolean isValid(int playerId, IGame game) {
+    public boolean isValid(int playerId, Game game) {
         return playerId == this.playerId;
     }
 
@@ -157,12 +149,13 @@ public class GameTurn implements Serializable {
          * entity that can move this turn.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             return super.isValidEntity(entity, game, useValidNonInfantryCheck)
                     && (entity.getId() == entityId);
         }
 
+        @Override
         public String toString() {
             return super.toString() + " eid: " + entityId;
         }
@@ -188,7 +181,7 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
             entity.done = false;
@@ -217,7 +210,7 @@ public class GameTurn implements Serializable {
             this.attackType = attackType;
         }
 
-        public String getAttackType(){
+        public String getAttackType() {
             return attackType;
         }
         /**
@@ -225,7 +218,7 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
 
@@ -257,7 +250,7 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
             entity.done = false;
@@ -362,11 +355,11 @@ public class GameTurn implements Serializable {
          * Determine if the given entity is a valid one to use for this turn.
          *
          * @param entity the <code>Entity</code> being tested for the move.
-         * @param game the <code>IGame</code> the entity belongs to
+         * @param game the <code>Game</code> the entity belongs to
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(final @Nullable Entity entity, final IGame game,
+        public boolean isValidEntity(final @Nullable Entity entity, final Game game,
                                      final boolean useValidNonInfantryCheck) {
             // The entity must pass the requirements of the parent class and be in the mask.
             return super.isValidEntity(entity, game, useValidNonInfantryCheck)
@@ -387,7 +380,7 @@ public class GameTurn implements Serializable {
          * Get the class code of this turn
          * @return the classcode of this turn
          */
-        public int getTurnCode(){
+        public int getTurnCode() {
             return mask;
         }
         
@@ -424,16 +417,15 @@ public class GameTurn implements Serializable {
          *                <code>null</code> or empty value is passed for ids.
          */
         public UnloadStrandedTurn(int[] ids) {
-            super(IPlayer.PLAYER_NONE);
+            super(Player.PLAYER_NONE);
 
             // Validate input.
             if (null == ids) {
-                throw new IllegalArgumentException(
-                        "the passed array of ids is null");
+                throw new IllegalArgumentException("the passed array of ids is null");
             }
+
             if (0 == ids.length) {
-                throw new IllegalArgumentException(
-                        "the passed array of ids is empty");
+                throw new IllegalArgumentException("the passed array of ids is empty");
             }
 
             // Create a copy of the array to prevent any post-call shenanigans.
@@ -452,16 +444,14 @@ public class GameTurn implements Serializable {
          *                entities.
          */
         public UnloadStrandedTurn(Iterator<Entity> entities) {
-            super(IPlayer.PLAYER_NONE);
+            super(Player.PLAYER_NONE);
 
             // Validate input.
             if (null == entities) {
-                throw new IllegalArgumentException(
-                        "the passed enumeration of entities is null");
+                throw new IllegalArgumentException("the passed enumeration of entities is null");
             }
             if (!entities.hasNext()) {
-                throw new IllegalArgumentException(
-                        "the passed enumeration of entities is empty");
+                throw new IllegalArgumentException("the passed enumeration of entities is empty");
             }
 
             // Get the first entity.
@@ -469,7 +459,6 @@ public class GameTurn implements Serializable {
 
             // Do we need to get more entities?
             if (entities.hasNext()) {
-
                 // It's a bit of a hack, but get the Game from the first
                 // entity, and create a temporary array that can hold the
                 // IDs of every entity in the game.
@@ -500,11 +489,11 @@ public class GameTurn implements Serializable {
          * Determine if the given entity is a valid one to use for this turn.
          *
          * @param entity the <code>Entity</code> being tested for the move.
-         * @param game the <code>IGame</code> the entity belongs to
+         * @param game the <code>Game</code> the entity belongs to
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
+        public boolean isValidEntity(Entity entity, Game game) {
             boolean retVal = false;
             // Null entities don't need to be checked.
             if (null != entity) {
@@ -515,6 +504,7 @@ public class GameTurn implements Serializable {
                 for (int index = 0; (index < entityIds.length) && !retVal; index++) {
                     if (entityId == entityIds[index]) {
                         retVal = true;
+                        break;
                     }
                 }
 
@@ -527,7 +517,7 @@ public class GameTurn implements Serializable {
          * Returns true if the player and entity are both valid.
          */
         @Override
-        public boolean isValid(final int playerId, final @Nullable Entity entity, final IGame game) {
+        public boolean isValid(final int playerId, final @Nullable Entity entity, final Game game) {
             return isValidEntity(entity, game) && (entity.getOwnerId() == playerId);
         }
 
@@ -535,7 +525,7 @@ public class GameTurn implements Serializable {
          * Returns true if the player is valid.
          */
         @Override
-        public boolean isValid(int playerId, IGame game) {
+        public boolean isValid(int playerId, Game game) {
             boolean retVal = false;
             for (int index = 0; (index < entityIds.length) && !retVal; index++) {
                 if ((game.getEntity(entityIds[index]) != null)
@@ -549,7 +539,7 @@ public class GameTurn implements Serializable {
 
         @Override
         public String toString() {
-            return super.toString() + ", entity IDs: [" + entityIds + "]";
+            return super.toString() + ", entity IDs: [" + Arrays.toString(entityIds) + "]";
         }
 
         public int[] getEntityIds() {
@@ -562,9 +552,6 @@ public class GameTurn implements Serializable {
      * to move.
      */
     public static class UnitNumberTurn extends GameTurn {
-        /**
-         *
-         */
         private static final long serialVersionUID = -681892308327846884L;
         private final short unitNumber;
 
@@ -586,7 +573,7 @@ public class GameTurn implements Serializable {
          * turn.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game,
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             return (super.isValidEntity(entity, game, useValidNonInfantryCheck) 
                     && (unitNumber == entity.getUnitNumber()));

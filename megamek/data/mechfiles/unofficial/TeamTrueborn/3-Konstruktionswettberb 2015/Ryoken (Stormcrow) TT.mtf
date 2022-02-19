@@ -1,0 +1,150 @@
+Version:1.0
+Ryoken (Stormcrow)
+TT
+
+Config:Biped Omnimech
+techbase:Clan
+era:3145
+rules level:5
+
+mass:55
+engine:330 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:6
+jump mp:5
+
+armor:Ferro-Fibrous(Clan)
+LA armor:18
+RA armor:18
+LT armor:17
+RT armor:17
+CT armor:25
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:9
+RTR armor:9
+RTC armor:10
+
+Weapons:3
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
+Rotary AC/5, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+Jump Jet
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+CLRotaryAC5 Ammo
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLLightActiveProbe
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

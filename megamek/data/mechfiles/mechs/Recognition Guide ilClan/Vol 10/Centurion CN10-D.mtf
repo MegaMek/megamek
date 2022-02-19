@@ -1,11 +1,13 @@
 Version:1.2
 Centurion
 CN10-D
+mul id:7725
 
 Config:Biped
 techbase:Inner Sphere
 era:3121
 rules level:2
+source:Rec Guide:ilClan #10 - Late Republic
 
 mass:55
 engine:220 Light Engine(IS)

@@ -1,6 +1,7 @@
 Version:1.0
 Panther
 PNT-12KC
+mul id:6923
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

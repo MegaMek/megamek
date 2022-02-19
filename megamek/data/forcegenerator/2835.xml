@@ -309,7 +309,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FWL:10,FS:7,TC:1,DC:4</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<salvage pct='6'></salvage>
@@ -484,7 +484,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>MOC:1,CC:10,LA:8</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='6'></salvage>
@@ -2909,6 +2909,9 @@
 	</chassis>
 	<chassis name='Locust' unitType='Mek'>
 		<availability>CS:6-,CLAN:3-,IS:9,NIOPS:6-,Periphery.Deep:6,Periphery:6</availability>
+		<model name='C'>
+			<availability>CCC:2,CFM:2</availability>
+		</model>
 		<model name='LCT-1E'>
 			<roles>recon</roles>
 			<availability>IS:4,Periphery.Deep:4,Periphery:4</availability>
@@ -3635,6 +3638,9 @@
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
@@ -4527,6 +4533,15 @@
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
 		<availability>CC:9,CS:5-,LA:8,CLAN:4,IS:7,Periphery.Deep:6,NIOPS:5-,FS:7,MERC:7,Periphery:6,TC:6,DC:8</availability>
+		<model name='TDR-5D'>
+			<availability>FS:4,MERC:2</availability>
+		</model>
+		<model name='TDR-5L'>
+			<availability>CC:2</availability>
+		</model>
+		<model name='TDR-5LS'>
+			<availability>CC:1</availability>
+		</model>
 		<model name='TDR-5S'>
 			<availability>CC:8,LA:8,General:8,CLAN:2-,Periphery.Deep:8,BAN:6,Periphery:8</availability>
 		</model>
@@ -4879,18 +4894,18 @@
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
-		<availability>IS:2</availability>
+		<availability>IS:1</availability>
 		<model name='WSP-100A'>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-100b'>
 			<availability>IS:1+</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
-		<availability>IS:2</availability>
+		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

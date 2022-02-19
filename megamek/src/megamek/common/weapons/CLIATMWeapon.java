@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -55,7 +55,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         
         // MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
         return new CLIATMHandler(toHit, waa, game, server);
@@ -81,7 +81,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     public boolean hasAlphaStrikeIndirectFire() {
         return false;
     }
-    
+
     @Override
     public boolean hasIndirectFire() {
         return true;
@@ -99,5 +99,10 @@ public abstract class CLIATMWeapon extends MissileWeapon {
             removeMode("");
             removeMode("Indirect");
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        return "ATM IMP " + ((rackSize < 10) ? "0" + rackSize : rackSize);
     }
 }

@@ -1,15 +1,15 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.util;
 
@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -39,6 +40,7 @@ import java.util.ResourceBundle;
  * The actual overridden class has been copied here with the encoding change from the borrowed coded added.
  */
 public class EncodeControl extends ResourceBundle.Control {
+    @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {
         String bundleName = this.toBundleName(baseName, locale);
@@ -70,6 +72,7 @@ public class EncodeControl extends ResourceBundle.Control {
 
             try {
                 stream = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+                    @Override
                     public InputStream run() throws IOException {
                         InputStream is = null;
                         if (reloadFlag) {
@@ -93,7 +96,7 @@ public class EncodeControl extends ResourceBundle.Control {
             }
 
             if (stream != null) {
-                try(Reader reader = new InputStreamReader(stream, "UTF-8")) { //$NON-NLS-1$
+                try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                     // Only this line is changed to make it to read properties files as UTF-8 or other encodings.
                     bundle = new PropertyResourceBundle(reader);
                 } finally {
@@ -107,6 +110,6 @@ public class EncodeControl extends ResourceBundle.Control {
 
     // Also borrowed from overridden class.
     private String toResourceName0(String bundleName, String suffix) {
-        return bundleName.contains("://")?null:this.toResourceName(bundleName, suffix);
+        return bundleName.contains("://") ? null : this.toResourceName(bundleName, suffix);
     }
 }

@@ -1,12 +1,13 @@
 Version:1.1
 Valkyrie
 VLK-QD6
+mul id:7703
 
 Config:Biped
 techbase:Inner Sphere
 era:3102
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #9 - Early Republic
+rules level:2
 
 mass:30
 engine:150 XL Engine(IS)

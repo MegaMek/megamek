@@ -1,11 +1,12 @@
 Version:1.0
 Jenner IIC
 3
+mul id:1700
 
 Config:Biped
 techbase:Clan
 era:3048
-source:ilClan Rec Guide 18 - Succession Wars
+source:Rec Guide:ilClan #18 - Succession Wars
 rules level:2
 
 mass:35
@@ -83,8 +84,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-ISNarc Pods
-ISNarc Pods
+CLNarc Pods
+CLNarc Pods
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel

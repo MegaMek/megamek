@@ -1,12 +1,13 @@
 Version:1.0
 Peregrine (Horned Owl)
 6
+mul id:7748
 
 Config:Biped
 techbase:Clan
 era:3132
 rules level:2
-source:ilClan Vol 11 - Dark Age
+source:Rec Guide:ilClan #11 - Dark Age
 
 mass:35
 engine:210 Fusion (Clan) Engine(IS)

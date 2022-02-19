@@ -94,14 +94,13 @@ public class MMConfirmDialog {
             butYes.addKeyListener(k);
             butNo.addKeyListener(k);
         }
-        
+
         @Override
         public Dimension getPreferredSize() {
             Dimension sSize = super.getPreferredSize();
             return new Dimension(UIUtil.scaleForGUI(BASE_WIDTH), sSize.height);
         }
-        
-        
+
         private void respondNo() {
             setVisible(false);
         }
@@ -112,12 +111,12 @@ public class MMConfirmDialog {
         }
 
         KeyListener k = new KeyAdapter() { 
+            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     respondNo();
                 }
-            };
+            }
         };
-        
     }
 }

@@ -33,6 +33,7 @@ import javax.swing.tree.TreePath;
 
 import megamek.common.Entity;
 import megamek.common.force.Force;
+import org.apache.logging.log4j.LogManager;
 
 /** 
  * The TransferHandler manages drag-and-drop for the C3 tree. 
@@ -102,7 +103,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         }
         
         try {
-            String source = (String)support.getTransferable().getTransferData(FLAVOR);
+            String source = (String) support.getTransferable().getTransferData(FLAVOR);
             List<Integer> entityIdList = getselectedEntityIds(source);
             List<Integer> forceIdList = getselectedForceIds(source);
             // Only drag either entities or forces
@@ -111,7 +112,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             return false;
         }
         return true;
@@ -125,7 +126,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         
         try {
             // Source info, dragged forces and entities
-            String source = (String)support.getTransferable().getTransferData(FLAVOR);
+            String source = (String) support.getTransferable().getTransferData(FLAVOR);
             List<Integer> entityIdList = getselectedEntityIds(source);
             List<Integer> forceIdList = getselectedForceIds(source);
             StringTokenizer outer = new StringTokenizer(source, ":");
@@ -155,13 +156,13 @@ public class MekForceTreeTransferHandler extends TransferHandler {
 
             // Add entities to a force (Drop onto force)
             if (dest != null && dest.getLastPathComponent() instanceof Force && !entityIdList.isEmpty()) {
-                int forceId = ((Force)dest.getLastPathComponent()).getId();
+                int forceId = ((Force) dest.getLastPathComponent()).getId();
                 lobby.lobbyActions.forceAddEntity(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
             }
             
             // Add entities to a force (Drop onto entities in a force)
             if (dest != null && dest.getLastPathComponent() instanceof Entity && !entityIdList.isEmpty()) {
-                int forceId = ((Entity)dest.getLastPathComponent()).getForceId();
+                int forceId = ((Entity) dest.getLastPathComponent()).getForceId();
                 if (forceId != Force.NO_FORCE) {
                     lobby.lobbyActions.forceAddEntity(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
                 } else {
@@ -171,13 +172,13 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             
             // Attach a force to a new parent
             if (dest != null && dest.getLastPathComponent() instanceof Force && forceIdList.size() == 1) {
-                int newParentId = ((Force)dest.getLastPathComponent()).getId();
+                int newParentId = ((Force) dest.getLastPathComponent()).getId();
                 lobby.lobbyActions.forceAttach(forceIdList.get(0), newParentId);
             }
             
             
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             return false;
         }
         return false;
@@ -194,7 +195,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         }
         
         // Remove token that signals no force selected
-        forceIdList.remove((Integer)(-1));
+        forceIdList.remove((Integer) (-1));
         return forceIdList;
     }
     
@@ -207,7 +208,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             entityIdList.add(Integer.parseInt(entitySt.nextToken()));
         }
         // Remove tokens that signal no force/entity selected
-        entityIdList.remove((Integer)(-1));
+        entityIdList.remove((Integer) (-1));
         return entityIdList;
     }
     

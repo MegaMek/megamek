@@ -1,6 +1,7 @@
 Version:1.1
 Longbow
 LGB-0C
+mul id:5619
 
 Config:Biped
 TechBase:Inner Sphere
@@ -151,4 +152,16 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
 
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+
+deployment:The original Longbow built in 2480, this Free Worlds League design carried twin LRM-20s each with three tons of ammunition, supported by two Medium Lasers and a Small Laser. The Primitive Technology used limited the design's top speed to 54km/h, but this was deemed acceptable for a fire support unit. The location of the LRM launchers in the arms allowed it to fire in a wider arc, a feature prized by pilots. The Primitive Armor provided some protection, but many felt it was too thin. This design would go on to become one of the most popular and widely distributed as the manufacturer, Lockenburg-Holly Industries, merged with several other manufacturers to form StarCorps Industries.[2]
+
+manufacturer:Lockenburg-Holly Industries
+primaryfactory:Emris IV
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk I
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C

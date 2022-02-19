@@ -17,7 +17,8 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.IGame;
+import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -69,7 +70,8 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
             .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
             .setISApproximate(false, false, false, true, false)
             .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
+            .setProductionFactions(F_TH)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*
@@ -82,7 +84,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new PrototypeLaserHandler(toHit, waa, game, server);
     }
 }

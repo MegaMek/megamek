@@ -16,7 +16,7 @@ package megamek.common.weapons.battlearmor;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -51,7 +51,7 @@ public class CLBALBX extends Weapon {
         ammoType = AmmoType.T_NA;
         bv = 20;
         cost = 70000;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
@@ -62,7 +62,7 @@ public class CLBALBX extends Weapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new BALBXHandler(toHit, waa, game, server);
     }
 

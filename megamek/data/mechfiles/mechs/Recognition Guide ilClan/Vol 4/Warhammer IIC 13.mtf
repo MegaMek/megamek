@@ -1,11 +1,13 @@
 Version:1.0
 Warhammer IIC
 13
+mul id:7498
 
 Config:Biped
 techbase:Clan
 era:3150
 rules level:2
+source:Rec Guide:ilClan #4 - Dark Age
 
 mass:80
 engine:320 XL (Clan) Engine(IS)

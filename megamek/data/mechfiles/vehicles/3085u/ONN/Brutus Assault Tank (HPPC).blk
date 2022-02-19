@@ -15,6 +15,10 @@ Brutus Assault Tank
 <Model>
 (HPPC)
 </Model>
+
+<mul id:>
+431
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

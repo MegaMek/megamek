@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Luxor Heavy Cruiser
 <Model>
 (2727)
 </Model>
+
+<mul id:>
+4550
+</mul id:>
 
 <year>
 2727
@@ -38,8 +42,8 @@ Aerodyne
 
 <transporters>
 asfbay:12.0:6:1
-smallcraftbay:4.0:0:2
-cargobay:53966.5:1:3
+cargobay:53966.5:1:2
+smallcraftbay:4.0:4:3
 dockingcollar
 dockingcollar
 dockingcollar
@@ -199,6 +203,42 @@ Ammo NAC/30:50
 80
 </structural_integrity>
 
+<capabilities>
+The Luxor-class is well armored and maneuverable for a ship of its size. The armament of the Luxor-class is designed to engage capital vessels, and packs a lot of firepower. The firepower is composed of naval autocannons, naval lasers and naval PPCs. However, the Luxor-class is relatively defenseless against attack by smaller AeroSpace assets, and requires its fighter cover for defense. Though not able to ferry as much cargo as some other cruisers, the Luxor-class does boast 4 DropShip collars. In addition, the class has two separate bays. Bay 1 is meant for ferrying AeroSpace Fighters and small craft, of which it can contain 2 squadrons and 4 vessels, respectively. Bay 2 is the cargo bay, which is capable of holding 53,966.5 tons of cargo.
+</capabilities>
+
+<overview>
+The Luxor-class heavy cruiser was designed in response to the Star League Naval Command’s request for a replacement for the Avatar-class cruiser.
+</overview>
+
+<history>
+Mitchell Vehicles had actually designed the Luxor well before the request, and modified the design to meet the project requirements; during the competition itself, political pressure from the Chief Executive Officer of Blue Nose Clipperships and long-time ally of Mitchell Vehicles, Craig Kovac, ensured that the other competing design, the Soyal-class heavy cruiser designed by Nicholas Shipyards, wasn't selected. The first mission of the nascent Luxor-class was convoy protection for troop ferries, an SLDF redeployment required to pacify the Periphery in response to First Lord Richard Cameron’s steep tax hikes. However, the shortlived Luxor-class became a casualty of the Amaris Civil War, mostly as a result of engagements with Caspar Space Defense Drones. The Drones prioritized Luxor-class vessels as major threats, leading the SLDF to deploy Luxors as decoys – a suicide mission for their crews. The last Luxor was destroyed over Terra in 2777.
+</history>
+
+<manufacturer>
+Mitchell Vehicles
+</manufacturer>
+
+<primaryFactory>
+Graham IV
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Heavy Cruiser
+</use>
+
+<length>
+975 meters
+</length>
+
 <source>
 TRO 3057R - Star League
 </source>
@@ -255,3 +295,4 @@ TRO 3057R - Star League
 <escape_pod>
 30
 </escape_pod>
+

@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * Created on Sep 24, 2004
+ * @since Sep 24, 2004
  */
 public class HAGWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -8193801876308832102L;
@@ -35,7 +35,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         sSalvoType = " projectiles ";
     }

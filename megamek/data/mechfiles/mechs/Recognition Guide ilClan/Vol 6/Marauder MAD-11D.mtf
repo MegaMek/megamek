@@ -1,11 +1,12 @@
 Version:1.1
 Marauder
 MAD-11D
+mul id:7534
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3140
-source:Dark Age
+source:Rec Guide:ilClan #6 - Dark Age
 rules level:4
 
 mass:75

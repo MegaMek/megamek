@@ -30,29 +30,29 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private static final int borderW = 10;
     private static final int borderOpac = 120;
     // colors for Min,S,M,L,E ranges
-    public static final Color[] fieldofFireColors = { new Color(255,100,100),
-        new Color(100,255,100), new Color(80,200,80), 
-        new Color(60,150,60), new Color(40,100,40)
+    public static final Color[] fieldofFireColors = { new Color(255, 100, 100),
+        new Color(100, 255, 100), new Color(80, 200, 80), 
+        new Color(60, 150, 60), new Color(40, 100, 40)
     };
     
     // thin line
     private static final float lineThickness = 1.4f;
     private static final Color lineColor = Color.WHITE;
     private static final Stroke lineStroke = new BasicStroke(lineThickness, BasicStroke.CAP_BUTT,
-            BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 2f } , 0f); 
+            BasicStroke.JOIN_MITER, 10f, new float[] { 2f, 2f }, 0f);
     // ### -------------
     
     // the fields control when and how borders are drawn 
     // across a hex instead of along its borders
     private static final int[] bDir = {
-        0,0,0,0,0,0,1,0,0,0,0,0,2,2,1,0,0,0,0,0,
-        0,0,1,0,3,3,3,0,2,2,1,0,2,5,4,5,6,5,1,5,
-        0,5,2,5,2,2,1,5,4,4,4,4,4,4,1,4,3,3,3,3,2,2,1,0
+        0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0,
+        0, 0, 1, 0, 3, 3, 3, 0, 2, 2, 1, 0, 2, 5, 4, 5, 6, 5, 1, 5,
+        0, 5, 2, 5, 2, 2, 1, 5, 4, 4, 4, 4, 4, 4, 1, 4, 3, 3, 3, 3, 2, 2, 1, 0
     };
     private static final int[] bTypes = {
-        0,0,0,1,0,0,1,2,0,0,0,6,1,7,2,3,0,0,0,7,
-        0,1,6,5,1,6,7,4,2,5,3,8,0,1,4,2,6,6,7,3,
-        0,7,2,5,6,4,5,8,1,2,6,3,7,5,4,8,2,3,5,8,3,8,8,0
+        0, 0, 0, 1, 0, 0, 1, 2, 0, 0, 0, 6, 1, 7, 2, 3, 0, 0, 0, 7,
+        0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
+        0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
     };
     
     // in this sprite type, the images are very repetitive
@@ -67,8 +67,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     private final Color fillColor;
     private final int rangeBracket;
     
-    public FieldofFireSprite(BoardView1 boardView1, int rangeBracket, Coords l,
-            int borders) {
+    public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
+                             int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
         fillColor = new Color(fieldofFireColors[rangeBracket].getRed(), 
@@ -95,7 +95,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
 
         // create image for buffer
         images[borders][rangeBracket] = createNewHexImage();
-        Graphics2D graph = (Graphics2D)images[borders][rangeBracket].getGraphics();
+        Graphics2D graph = (Graphics2D) images[borders][rangeBracket].getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
 
         // scale the following draws according to board zoom
@@ -106,46 +106,46 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         // this will take the right way to paint the borders
         // from the static arrays; depends on the exact
         // borders that are present
-        switch (bTypes[borders]){
-        case 1: // 2 adjacent borders
-            drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW), 
-                    getHexCrossLine01(bDir[borders], borderW));
-            break;
-        case 2: // 3 adjacent borders
-            drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW), 
-                    getHexCrossLine012(bDir[borders], borderW));
-            break;
-        case 3: // 4 adjacent borders
-            drawBorderXC(graph, getHexCrossArea0123(bDir[borders], borderW), 
-                    getHexCrossLine0123(bDir[borders], borderW));
-            break;
-        case 4: // twice two adjacent borders
-            drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW), 
-                    getHexCrossLine01(bDir[borders], borderW));
-            drawBorderXC(graph, getHexCrossArea01(bDir[borders]+3, borderW), 
-                    getHexCrossLine01(bDir[borders]+3, borderW));
-            break;
-        case 5: // three adjacent borders and one lone
-            drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW), 
-                    getHexCrossLine012(bDir[borders], borderW));
-            drawLoneBorder(graph, bDir[borders] + 4);
-            break;
-        case 6: // two adjacent borders and one lone
-            drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW), 
-                    getHexCrossLine01(bDir[borders], borderW));
-            drawLoneBorder(graph, bDir[borders] + 3);
-            break;
-        case 7: // two adjacent borders and one lone (other hexface)
-            drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW), 
-                    getHexCrossLine01(bDir[borders], borderW));
-            drawLoneBorder(graph, bDir[borders] + 4);
-            break;
-        case 8: 
-            drawBorderXC(graph, getHexCrossArea01234(bDir[borders], borderW), 
-                    getHexCrossLine01234(bDir[borders], borderW));
-            break;
-        default:
-            drawNormalBorders(graph);    
+        switch (bTypes[borders]) {
+            case 1: // 2 adjacent borders
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
+                        getHexCrossLine01(bDir[borders], borderW));
+                break;
+            case 2: // 3 adjacent borders
+                drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
+                        getHexCrossLine012(bDir[borders], borderW));
+                break;
+            case 3: // 4 adjacent borders
+                drawBorderXC(graph, getHexCrossArea0123(bDir[borders], borderW),
+                        getHexCrossLine0123(bDir[borders], borderW));
+                break;
+            case 4: // twice two adjacent borders
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
+                        getHexCrossLine01(bDir[borders], borderW));
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders]+3, borderW),
+                        getHexCrossLine01(bDir[borders]+3, borderW));
+                break;
+            case 5: // three adjacent borders and one lone
+                drawBorderXC(graph, getHexCrossArea012(bDir[borders], borderW),
+                        getHexCrossLine012(bDir[borders], borderW));
+                drawLoneBorder(graph, bDir[borders] + 4);
+                break;
+            case 6: // two adjacent borders and one lone
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
+                        getHexCrossLine01(bDir[borders], borderW));
+                drawLoneBorder(graph, bDir[borders] + 3);
+                break;
+            case 7: // two adjacent borders and one lone (other hexface)
+                drawBorderXC(graph, getHexCrossArea01(bDir[borders], borderW),
+                        getHexCrossLine01(bDir[borders], borderW));
+                drawLoneBorder(graph, bDir[borders] + 4);
+                break;
+            case 8:
+                drawBorderXC(graph, getHexCrossArea01234(bDir[borders], borderW),
+                        getHexCrossLine01234(bDir[borders], borderW));
+                break;
+            default:
+                drawNormalBorders(graph);
         }
 
         graph.dispose();
@@ -176,10 +176,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         for (int i = 0; i < 6; i++) {
             if ((borders & (1 << i)) != 0) {
                 // 1) thick transparent border
-                int cut = ((borders & (1 << ((i + 1) % 6))) == 0)? 
-                    CUT_RBORDER : CUT_RINSIDE;
-                cut |= ((borders & (1 << ((i + 5) % 6))) == 0)? 
-                    CUT_LBORDER : CUT_LINSIDE;
+                int cut = ((borders & (1 << ((i + 1) % 6))) == 0) ? CUT_RBORDER : CUT_RINSIDE;
+                cut |= ((borders & (1 << ((i + 5) % 6))) == 0) ? CUT_LBORDER : CUT_LINSIDE;
 
                 graph.setColor(fillColor);
                 graph.fill(getHexBorderArea(i, cut, borderW));

@@ -13,7 +13,7 @@ public class PlanetaryConditionsTest {
         Entity mockEntity;
         PlanetaryConditions planetaryConditions;
         Board mockBoard = mock(Board.class);
-        IHex mockHex = mock(Hex.class);
+        Hex mockHex = mock(Hex.class);
         Coords mockCoords = mock(Coords.class);
 
         // Trace atmosphere - Entity doomed in vacuum/trace atmosphere

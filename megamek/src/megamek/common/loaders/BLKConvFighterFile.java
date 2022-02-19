@@ -38,6 +38,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         ConvFighter a = new ConvFighter();
@@ -50,6 +51,10 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
             a.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             a.setModel("");
+        }
+
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
         }
 
         setTechLevel(a);
@@ -230,7 +235,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : Aero.LOC_FUSELAGE;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
@@ -251,7 +256,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }

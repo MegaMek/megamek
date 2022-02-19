@@ -1,11 +1,12 @@
 Version:1.0
 Stinger
 STG-4G
+mul id:8123
 
 Config:Biped
 techbase:Inner Sphere
 era:3074
-source:RecGuide 13 - Jihad
+source:Rec Guide:ilClan #13 - Jihad
 rules level:2
 
 mass:20

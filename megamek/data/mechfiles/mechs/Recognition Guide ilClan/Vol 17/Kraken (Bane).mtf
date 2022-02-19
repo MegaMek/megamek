@@ -1,11 +1,12 @@
 Version:1.0
 Kraken (Bane)
 (Standard)
+mul id:1841
 
 Config:Biped
 techbase:Clan
 era:2827
-source:Recognition Guide:ilClan #17 - Succession Wars
+source:Rec Guide:ilClan #17 - Succession Wars
 rules level:2
 
 mass:100

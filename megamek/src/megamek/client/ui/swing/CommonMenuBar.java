@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -24,19 +24,17 @@ import java.util.*;
 
 import javax.swing.*;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 
 import static megamek.client.ui.Messages.*;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.enums.GamePhase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import static megamek.client.ui.swing.ClientGUI.*;
 import static java.awt.event.KeyEvent.*;
-
 
 /**
  * The menu bar that is used across MM, i.e. in the main menu, the board editor and
@@ -53,7 +51,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** True when this menu is attached to a client (lobby or ingame). */
     private boolean isGame = false;
     /** The current phase of the game, if any. */
-    private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
+    private GamePhase phase = GamePhase.UNKNOWN;
 
     // The Game menu
     private JMenuItem gameLoad = new JMenuItem(getString("CommonMenuBar.fileGameLoad"));
@@ -73,6 +71,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem fileRefreshCache = new JMenuItem(getString("CommonMenuBar.fileUnitsRefreshUnitCache"));
     private JMenuItem fileUnitsPaste = new JMenuItem(getString("CommonMenuBar.fileUnitsPaste"));
     private JMenuItem fileUnitsCopy = new JMenuItem(getString("CommonMenuBar.fileUnitsCopy"));
+    private JMenuItem fileUnitsSave = new JMenuItem(getString("CommonMenuBar.fileUnitsSave"));
 
     // The Board menu
     private JMenuItem boardNew = new JMenuItem(getString("CommonMenuBar.fileBoardNew"));
@@ -188,6 +187,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));
         initMenuItem(fileUnitsReinforce, menu, FILE_UNITS_REINFORCE);
         initMenuItem(fileUnitsReinforceRAT, menu, FILE_UNITS_REINFORCE_RAT);
+        initMenuItem(fileUnitsSave, menu, FILE_UNITS_SAVE);
         menu.addSeparator();
         
         initMenuItem(fileRefreshCache, menu, FILE_REFRESH_CACHE);
@@ -387,13 +387,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     /** Manages the enabled states of the menu items depending on where the menu is empoyed. */
     private synchronized void updateEnabledStates() {
-        boolean isLobby = isGame && (phase == Phase.PHASE_LOUNGE);
-        boolean isInGame = isGame && phase.isDuringOrAfter(Phase.PHASE_DEPLOYMENT);
+        boolean isLobby = isGame && (phase == GamePhase.LOUNGE);
+        boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
         boolean isInGameBoardView = isInGame && phase.isOnMap();
         boolean isBoardView = isInGameBoardView || isBoardEditor;
-        boolean canSave = (phase != Phase.PHASE_UNKNOWN) && (phase != Phase.PHASE_SELECTION)
-                && (phase != Phase.PHASE_EXCHANGE) && (phase != Phase.PHASE_VICTORY)
-                && (phase != Phase.PHASE_STARTING_SCENARIO);
+        boolean canSave = (phase != GamePhase.UNKNOWN) && (phase != GamePhase.SELECTION)
+                && (phase != GamePhase.EXCHANGE) && (phase != GamePhase.VICTORY)
+                && (phase != GamePhase.STARTING_SCENARIO);
         
         viewAccessibilityWindow.setEnabled(false);
         
@@ -428,6 +428,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsCopy.setEnabled(isLobby);
         fileUnitsReinforce.setEnabled(isLobby || isInGame);
         fileUnitsReinforceRAT.setEnabled(isLobby || isInGame);
+        fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         boardSaveAsImageUnits.setEnabled(isInGame);
         gamePlayerList.setEnabled(isInGame);
         viewLabels.setEnabled(isInGameBoardView);
@@ -462,7 +463,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
      *            valid values for this argument are defined as constants in the
      *            <code>Game</code> class).
      */
-    public synchronized void setPhase(IGame.Phase current) {
+    public synchronized void setPhase(GamePhase current) {
         phase = current;
         updateEnabledStates();
     }
@@ -477,13 +478,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public void preferenceChange(PreferenceChangeEvent e) {
         // Adapt the menu checkboxes to a new state where necessary
         if (e.getName().equals(GUIPreferences.USE_ISOMETRIC)) {
-            toggleIsometric.setSelected((Boolean)e.getNewValue());
+            toggleIsometric.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_FIELD_OF_FIRE)) {
-            toggleFieldOfFire.setSelected((Boolean)e.getNewValue());
+            toggleFieldOfFire.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
-            viewKeybindsOverlay.setSelected((Boolean)e.getNewValue());
+            viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
-            viewUnitOverview.setSelected((Boolean)e.getNewValue());
+            viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {

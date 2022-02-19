@@ -13,19 +13,28 @@
 */  
 package megamek.client.ui.swing.tooltip;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.options.*;
+import megamek.common.Configuration;
+import megamek.common.Crew;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
-import static megamek.client.ui.swing.util.UIUtil.*;
+import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_BEGIN;
+import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_END;
+import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
+import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 public final class PilotToolTip {
     
@@ -52,7 +61,7 @@ public final class PilotToolTip {
         
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)) {
             // Add a spacer cell
-            int dist = (int)(GUIPreferences.getInstance().getGUIScale() * 10);
+            int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
             result.append("<TD WIDTH=" + dist + "></TD>");
             result.append(crewPortraits(entity));
         }
@@ -67,7 +76,7 @@ public final class PilotToolTip {
     /** Returns a tooltip part with names and skills of the crew. */
     private static StringBuilder crewInfo(final Entity entity) {
         Crew crew = entity.getCrew();
-        IGame game = entity.getGame();
+        Game game = entity.getGame();
         StringBuilder result = new StringBuilder();
         result.append(guiScaledFontHTML());
         
@@ -77,10 +86,10 @@ public final class PilotToolTip {
                 continue;
             }
 
-            if ((crew.getNickname(i) != null) && !crew.getNickname(i).equals("")) {
+            if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 result.append(guiScaledFontHTML(UIUtil.uiNickColor()) + "<B>'" 
                         + crew.getNickname(i).toUpperCase() + "'</B></FONT>");
-            } else if ((crew.getName(i) != null) && !crew.getName(i).equals("")) {
+            } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 result.append(crew.getName(i));
             } else {
                 result.append("Pilot");
@@ -131,7 +140,7 @@ public final class PilotToolTip {
                 }
                 result.append("<TD VALIGN=TOP><IMG SRC=file:").append(tempPath).append("></TD>");
             } catch (Exception e) {
-                MegaMek.getLogger().error(e);
+                LogManager.getLogger().error("", e);
             }
             result.append("<TD WIDTH=3></TD>");
         }
@@ -147,7 +156,7 @@ public final class PilotToolTip {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
         result.append(guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA));
-        result.append(getOptionList(crew.getOptions().getGroups(), grp -> crew.countOptions(grp), detailed));
+        result.append(getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed));
         result.append("</FONT>");
         return result; 
     }

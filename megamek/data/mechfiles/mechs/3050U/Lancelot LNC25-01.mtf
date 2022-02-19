@@ -1,46 +1,47 @@
 Version:1.0
 Lancelot
 LNC25-01
+mul id:1853
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2581
-Source:TRO 3050 - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2581
+source:TRO 3050 - Star League
+rules level:2
 
-Mass:60
-Engine:360 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:60
+engine:360 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:6
-Jump MP:0
+heat sinks:13 IS Double
+walk mp:6
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:7
-LL Armor:14
-RL Armor:14
-RTL Armor:10
-RTR Armor:10
-RTC Armor:16
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:7
+LL armor:14
+RL armor:14
+RTL armor:10
+RTR armor:10
+RTC armor:16
 
 Weapons:4
-1 ISPPC, Right Torso
-1 ISLargeLaser, Right Arm
-1 ISLargeLaser, Left Arm
-1 ISMediumLaser, Center Torso
+Large Laser, Left Arm
+Large Laser, Right Arm
+PPC, Right Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLargeLaser
-ISLargeLaser
+Large Laser
+Large Laser
 -Empty-
 -Empty-
 -Empty-
@@ -53,8 +54,8 @@ ISLargeLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLargeLaser
-ISLargeLaser
+Large Laser
+Large Laser
 -Empty-
 -Empty-
 -Empty-
@@ -82,9 +83,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISPPC
-ISPPC
-ISPPC
+PPC
+PPC
+PPC
 -Empty-
 -Empty-
 -Empty-
@@ -103,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser
+Medium Laser
 -Empty-
 
 Head:
@@ -147,4 +148,20 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Lancelot was originally conceived in response to a Star League Defense Force contract for a medium BattleMech that could operate with minimal logistical support, was fast enough to take part in mobile operations and packed sufficient firepower to be a viable threat on the battlefield. 
+
+capabilities: Krupp Technologies attempted to combine the speed of a medium 'Mech with the survivability of a heavy 'Mech in the Lancelot. Despite the use of a lightweight Extralight engine, the production Lancelot ended up in the heavyweight class, but the SLDF was impressed enough with the unit's speed and firepower during its trial runs to make an initial order of 250 in 2581.
+
+deployment:The weapons carried by the Lancelot cover almost the entire range of energy weapons available and gave it firepower equivalent to that found in many assault 'Mechs. Its primary armament is a Kinslaughter PPC mounted in the right side of its torso. The Kinslaughter has a tendency to generate more heat than other particle cannons if not properly maintained. This is backed up by two arm-mounted Krupp Model 32 Large Lasers, known among MechWarriors as "Fur Burners" for their excellent performance, and a single Krupp Model 2 Medium Laser in the center torso.
+
+history:An entirely energy-based armament allowed the Lancelot to operate away from friendly supply lines for extended periods, while the use of a Hermes 360XL engine not only made it faster than any other heavy 'Mech at the time but also allowed for thirteen double heat sinks to be installed. The use of only nine and a half tons of armor was considered light for its tonnage, however this was partially offset by the design's mobility and its subtle curves, presenting a narrower silhouette for the enemy to target. Its advanced Krupp KBC battle computer, long a standard in the industry, offered superior internal system monitoring, such as current armor status and skin temperature, without distracting the pilot during combat. The most exceptional part of the Lancelot was its KBC Starsight Model 3 T&T System, which could track and prioritize hundreds of targets and projectiles at once. This also made the Lancelot superior at shooting down enemy fighters, and by all indications it was replacing the Rifleman as the SLDF's standard anti-aircraft 'Mech before the Amaris Civil War put an end to that plan. Many Lancelots, along with Krupp's factory on Mars, were destroyed during the Civil War, and as the advanced systems which had gone into their construction became lostech these 'Mechs came to the brink of extinction. Luthien Armor Works obtained copies of the design and began production after the Second Succession War, but their LNC25-02 model was greatly reduced in capability, most significantly the loss of its mobility. With only average speed now and enough armor plating to withstand only a few solid hits, pilots derisively began referring to the 'Mech as "the Coffin." Whereas before the fall of the Star League the Lancelot could be found in almost all militaries, by the end of the Succession Wars less than a dozen still-functional original models were in service, many heavily modified due to battle damage, alongside a few hundred 02 models, most of which were in the hands of the Draconis Combine. In the wake of the Clan Invasion and the Battle of Tukayyid, Precentor Martial Anastasius Focht would rebuild the Krupp Stellar factory on Mars to restart production of original model Lancelots for the Com Guards along with other advanced variants. Examples of these 'Mechs would also be used by the Word of Blake in the prosecution of their Jihad.
+
+manufacturer:Krupp Stellar Technologies Inc.
+primaryfactory:Mars
+systemmanufacturer:CHASSIS:MangoTech 500SJ
+systemmanufacturer:ENGINE:Hermes 360 XL
+systemmanufacturer:ARMOR:PanzerSlab Type 5
+systemmanufacturer:COMMUNICATIONS:Krupp-COMM 500
+systemmanufacturer:TARGETING:KBC Starsight Model 3
 

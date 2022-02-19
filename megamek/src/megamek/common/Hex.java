@@ -1,68 +1,67 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.BasementType;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
-
-import megamek.common.Building.BasementType;
-import megamek.common.annotations.Nullable;
 
 /**
  * Hex represents a single hex on the board.
- *
  * @author Ben
  */
-public class Hex implements IHex, Serializable {
-    /**
-     *
-     */
+public class Hex implements Serializable {
+    //region Variable Declarations
     private static final long serialVersionUID = 82483704768044698L;
+    private Coords coords;
     private int level;
-    /**
-     * A HashMap to <code>terrains</code>. It contains the exact same terrain
-     * types that the old <code>terrains</code> did, however it allows an
-     * efficient way to access all present terrains.
-     *
-     */
-    private HashMap<Integer, ITerrain> terrains = new HashMap<Integer, ITerrain>(1);
+    private Map<Integer, Terrain> terrains = new HashMap<>(1);
     private String theme;
     private String originalTheme;
     private int fireTurn;
-    private Coords coords;
+    //endregion Variable Declarations
 
-    /** Constructs clear, plain hex at level 0. */
+    //region Constructors
+    /**
+     * Constructs a clear, plain hex at level 0.
+     */
     public Hex() {
         this(0);
     }
 
-    /** Constructs clean, plain hex at specified level. */
+    /**
+     * Constructs a clean, plain hex at specified level.
+     */
     public Hex(int level) {
-        this(level, new ITerrain[Terrains.SIZE], null, new Coords(0, 0));
+        this(level, new Terrain[Terrains.SIZE], null, new Coords(0, 0));
     }
 
-    public Hex(int level, ITerrain[] terrains, String theme) {
+    public Hex(int level, Terrain[] terrains, String theme) {
         this(level, terrains, theme, new Coords(0, 0));
     }
 
-    /** Constructs hex with all parameters. */
-    public Hex(int level, ITerrain[] terrains, String theme, Coords c) {
+    /**
+     * Constructs a Hex with all parameters.
+     */
+    public Hex(int level, Terrain[] terrains, String theme, Coords c) {
         this.level = level;
         coords = c;
-        for (ITerrain t : terrains) {
+        for (final Terrain t : terrains) {
             if (t != null)
                 this.terrains.put(t.getType(), t);
         }
@@ -79,96 +78,96 @@ public class Hex implements IHex, Serializable {
         this(level, terrain, theme, new Coords(0, 0));
     }
 
-    /** Contructs hex with string terrain info */
+    /**
+     * Constructs a Hex from a combined string terrains format
+     */
     public Hex(int level, String terrain, String theme, Coords c) {
-        this(level, new ITerrain[Terrains.SIZE], theme, c);
+        this(level, new Terrain[Terrains.SIZE], theme, c);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
-            addTerrain(Terrains.getTerrainFactory().createTerrain(st.nextToken()));
+            addTerrain(new Terrain(st.nextToken()));
         }
     }
+    //endregion Constructors
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#getTerrainTypes()
-     */
-    public int[] getTerrainTypes() {
-        return terrains.keySet().stream().mapToInt(Integer::intValue).toArray();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#getLevel()
+    //region Getters/Setters
+    /**
+     * @return The level of a hex, as defined in TW. This refers to the height of the ground terrain.
      */
     public int getLevel() {
         return level;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#setLevel(int)
-     */
     public void setLevel(int level) {
         this.level = level;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#getTheme()
+    /**
+     * The theme is intended as a tag for the tileset file to indicate a special graphic for the hex
+     * @return the theme name
      */
     public String getTheme() {
         return theme;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#setTheme(java.lang.String)
-     */
     public void setTheme(String theme) {
         this.theme = theme;
     }
+    //endregion Getters/Setters
 
-    /** Resets the theme to what was specified in the board file. */
+    /**
+     * @return An array that contains an id for each terrain present in this hex.
+     */
+    public int[] getTerrainTypes() {
+        return terrains.keySet().stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    /**
+     * Resets the theme to what was specified in the board file.
+     */
     public void resetTheme() {
         setTheme(originalTheme);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#clearExits()
+    /**
+     * Clears the "exits" flag for all terrains in the hex where it is not manually specified.
      */
     public void clearExits() {
         for (Integer i : terrains.keySet()) {
-            ITerrain t = terrains.get(i);
+            Terrain t = terrains.get(i);
             if ((t != null) && !t.hasExitsSpecified()) {
                 t.setExits(0);
             }
         }
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Sets the "exits" flag appropriately for the neighbouring hex in the provided direction. Does
+     * not reset connects in other directions. All <code>Terrain.ROAD</code>s will automatically
+     * connect to <code>Terrain.PAVEMENT</code> hexes.
      *
-     * @see megamek.common.IHex#setExits(megamek.common.IHex, int)
+     * @param other the neighbouring hex in the specified direction
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0
+     *                  and 5 (inclusive).
+     * @see Hex#setExits(Hex, int, boolean)
      */
-    public void setExits(IHex other, int direction) {
+    public void setExits(Hex other, int direction) {
         this.setExits(other, direction, true);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Sets the "exits" flag appropriately for the neighbouring hex in the provided direction. Does
+     * not reset connects in other directions.
      *
-     * @see megamek.common.IHex#setExits(megamek.common.IHex, int, boolean)
+     * @param other the neighbouring hex in the specified direction
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0
+     *                  and 5 (inclusive).
+     * @param roadsAutoExit if to automatically exit onto Pavement hexes
+     * @see Hex#setExits(Hex, int)
      */
-    public void setExits(IHex other, int direction, boolean roadsAutoExit) {
+    public void setExits(Hex other, int direction, boolean roadsAutoExit) {
         for (Integer i : terrains.keySet()) {
-            ITerrain cTerr = getTerrain(i);
-            ITerrain oTerr;
+            Terrain cTerr = getTerrain(i);
+            Terrain oTerr;
 
             if ((cTerr == null) || cTerr.hasExitsSpecified()) {
                 continue;
@@ -186,7 +185,7 @@ public class Hex implements IHex, Serializable {
             // (hex == null) should usually look like ocean and 
             // therefore always gets connection to outside the board 
             if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
-            	cTerr.setExit(direction, true);
+                cTerr.setExit(direction, true);
             }
 
             // Roads exit into pavement, too.
@@ -210,14 +209,21 @@ public class Hex implements IHex, Serializable {
         }
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Determine if this <code>Hex</code> contains the indicated terrain that exits in the specified
+     * direction.
      *
-     * @see megamek.common.IHex#containsTerrainExit(int, int)
+     * @param terrType the <code>int</code> type of the terrain.
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0
+     *                  and 5 (inclusive).
+     * @return <code>true</code> if this Hex contains the indicated terrain that exits in the
+     * specified direction, or <code>false</code> if bad input is supplied, if no such terrain
+     * exists, or if it doesn't exit in that direction.
+     * @see Hex#setExits(Hex, int, boolean)
      */
     public boolean containsTerrainExit(int terrType, int direction) {
         boolean result = false;
-        final ITerrain terr = getTerrain(terrType);
+        final Terrain terr = getTerrain(terrType);
 
         // Do we have the given terrain that has exits?
         if ((direction >= 0) && (direction <= 5) && (terr != null)) {
@@ -232,10 +238,15 @@ public class Hex implements IHex, Serializable {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Determines if this Hex contains any exists in the specified direction.
      *
-     * @see megamek.common.IHex#containsExit(int)
+     * @param direction the <code>int</code> direction of the exit. This value should be between 0
+     *                  and 5 (inclusive).
+     * @return <code>true</code> if this <code>Hex</code> contains any terrain that exits in the
+     * specified direction. <code>false</code> if bad input is supplied or if no terrain exits in
+     * that direction.
+     * @see Hex#setExits(Hex, int, boolean)
      */
     public boolean containsExit(int direction) {
         boolean rv = false;
@@ -245,10 +256,8 @@ public class Hex implements IHex, Serializable {
         return rv;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#hasExitableTerrain()
+    /**
+     * @return if this hex contains a terrain type that can have exits
      */
     public boolean hasExitableTerrain() {
         boolean rv = false;
@@ -258,24 +267,36 @@ public class Hex implements IHex, Serializable {
         return rv;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#ceiling()
+    /**
+     * @return the highest level that features in this hex extend to. Above this level is assumed
+     * to be air. This assumes a ground map.
      */
     public int ceiling() {
         return ceiling(false);
     }
 
+    /**
+     * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map
+     *                     (eg, altitudes) or ground map (eg, levels)
+     * @return the highest level or altitude (depending on flag) that features in this hex extend
+     * to. Above this level is assumed to be air.
+     */
     public int ceiling(boolean inAtmosphere) {
         return level + maxTerrainFeatureElevation(inAtmosphere);
     }
 
-    public int maxTerrainFeatureElevation(boolean inAtmo) {
+    /**
+     * @param inAtmosphere Determines if the ceiling should be determined for an atmospheric map
+     *                     (eg, altitudes) or ground map (eg, levels)
+     * @return the elevation or altitude of the terrain feature that rises the highest above the
+     * surface of the hex. For example, if the hex is on the ground map and contains woods, this
+     * would return 2.
+     */
+    public int maxTerrainFeatureElevation(boolean inAtmosphere) {
         int maxFeature = 0;
         int featureElev;
         for (Integer terrainType : terrains.keySet()) {
-            featureElev = terrains.get(terrainType).getTerrainElevation(inAtmo);
+            featureElev = terrains.get(terrainType).getTerrainElevation(inAtmosphere);
             if (featureElev > maxFeature) {
                 maxFeature = featureElev;
             }
@@ -283,46 +304,35 @@ public class Hex implements IHex, Serializable {
         return maxFeature;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Returns the lowest reachable point of this hex, used for terrain types
+     * that can extend below the surface of the hex, such as water and
+     * basements. Unrevealed basements will not affect this value.
      *
-     * @see megamek.common.IHex#surface()
-     */
-    public int surface() {
-        return level;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#floor()
+     * @return the lowest level that revealed features in this hex extend to.
+     *         Below this level is assumed to be bedrock and/or basement.
+     *         Unrevealed basements will not affect this value.
      */
     public int floor() {
         return level - depth();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#depth()
+    /**
+     * @return a level indicating how far features in this hex extends below the surface level.
      */
     public int depth() {
         return depth(false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#depth( boolean hidden)
-     */
     public int depth(boolean hidden) {
         int depth = 0;
-        ITerrain water = getTerrain(Terrains.WATER);
-        ITerrain basement = getTerrain(Terrains.BLDG_BASEMENT_TYPE);
+        Terrain water = getTerrain(Terrains.WATER);
+        Terrain basement = getTerrain(Terrains.BLDG_BASEMENT_TYPE);
 
         if (water != null) {
             depth += water.getLevel();
         }
+
         if (basement != null) {
             if (hidden) {
                 depth += BasementType.getType(basement.getLevel()).getDepth();
@@ -333,11 +343,9 @@ public class Hex implements IHex, Serializable {
     }
 
     /**
-     * Returns true if this hex has a terrain with a non-zero terrain factor
-     * 
-     * @return
+     * @return true if this hex has a terrain with a non-zero terrain factor
      */
-    public boolean hasTerrainfactor() {
+    public boolean hasTerrainFactor() {
         for (int type : terrains.keySet()) {
             if (terrains.get(type).getTerrainFactor() > 0) {
                 return true;
@@ -346,19 +354,39 @@ public class Hex implements IHex, Serializable {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#contains(int)
+    /**
+     * @param type the terrain type to check
+     * @return <code>true</code> if the specified terrain is represented in the hex at any level.
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainOf(int...)
      */
     public boolean containsTerrain(int type) {
         return getTerrain(type) != null;
     }
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#containsAnyTerrainOf(int...)
+
+    /**
+     * @param type the terrain type to check
+     * @param level level to check the presence of the given terrain at
+     * @return if the specified terrain is represented in the hex at given level.
+     * @see Hex#containsTerrain(int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainOf(int...)
+     */
+    public boolean containsTerrain(int type, int level) {
+        Terrain terrain = getTerrain(type);
+        if (terrain != null) {
+            return terrain.getLevel() == level;
+        }
+        return false;
+    }
+
+    /**
+     * @param types the terrains to check
+     * @return if at least one of the specified terrains are represented in the hex at any level.
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsTerrain(int)
+     * @see Hex#containsAllTerrainsOf(int...)
      */
     public boolean containsAnyTerrainOf(int... types) {
         for (int type: types) {
@@ -368,11 +396,13 @@ public class Hex implements IHex, Serializable {
         }
         return false;
     }
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#containsAllTerrainsOf(int...)
+
+    /**
+     * @param types the terrains to check
+     * @return <code>true</code> if all the specified terrains are represented in the hex at any level.
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     * @see Hex#containsAnyTerrainOf(int...)
      */
     public boolean containsAllTerrainsOf(int... types) {
         for (int type: types) {
@@ -383,94 +413,77 @@ public class Hex implements IHex, Serializable {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#contains(int, int)
-     */
-    public boolean containsTerrain(int type, int level) {
-        ITerrain terrain = getTerrain(type);
-        if (terrain != null) {
-            return terrain.getLevel() == level;
-        }
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#hasPavement()
+    /**
+     * @return if there is pavement, a road or a bridge in the hex.
      */
     public boolean hasPavement() {
         return containsTerrain(Terrains.PAVEMENT) || containsTerrain(Terrains.ROAD) || containsTerrain(Terrains.BRIDGE);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#levelOf(int)
+    /**
+     * @return the level of the terrain specified, or Terrain.LEVEL_NONE if the
+     *         terrain is not present in the hex
      */
     public int terrainLevel(int type) {
-        ITerrain terrain = getTerrain(type);
+        Terrain terrain = getTerrain(type);
         if (terrain != null) {
             return terrain.getLevel();
         }
-        return ITerrain.LEVEL_NONE;
+        return Terrain.LEVEL_NONE;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#getTerrain(int)
+    /**
+     * @param type the specified type
+     * @return the terrain of the specified type, or <code>null</code> if the terrain is not present
+     * in the hex
      */
-    public ITerrain getTerrain(int type) {
+    public @Nullable Terrain getTerrain(int type) {
         return terrains.get(type);
     }
-    
-    @Override
-    public ITerrain getAnyTerrainOf(int type, int... types) {
+
+    /**
+     * @param type the preferred type to get
+     * @param types the terrain types to check
+     * @return Returns the Terrain for the preferred type, then an unspecified one of the given
+     * types of Terrain, or null if none are preset.
+     */
+    public @Nullable Terrain getAnyTerrainOf(int type, int... types) {
         if (containsTerrain(type)) {
             return terrains.get(type);
         }
+
         for (int moreTypes : types) {
             if (containsTerrain(moreTypes)) {
                 return terrains.get(moreTypes);
             }
         }
+
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#addTerrain(megamek.common.Terrain)
+    /**
+     * @param terrain the terrain to add to this hex
      */
-    public void addTerrain(ITerrain terrain) {
+    public void addTerrain(Terrain terrain) {
         terrains.put(terrain.getType(), terrain);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#removeTerrain(int)
+    /**
+     * @param type the terrain type to remove
      */
     public void removeTerrain(int type) {
         terrains.remove(type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#removeAllTerrains()
+    /**
+     * Removes all Terrains from the hex.
      */
     public void removeAllTerrains() {
         terrains.clear();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#terrainsPresent()
+    /**
+     * @return the number of terrain attributes present that are displayable in tooltips
      */
     public int displayableTerrainsPresent() {
         int present = 0;
@@ -482,95 +495,52 @@ public class Hex implements IHex, Serializable {
         return present;
     }
 
-    /*
-     * report the number of terrains present for the tooltips.
+    /**
+     * @return the number of terrain attributes present
      */
     public int terrainsPresent() {
         return terrains.size();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.IHex#duplicate
+    /**
+     * FIXME : I should be a clone implementation, not this
+     * @return new hex which is equal to this
      */
-    public IHex duplicate() {
-        ITerrain[] tcopy = new ITerrain[Terrains.SIZE];
-        ITerrainFactory f = Terrains.getTerrainFactory();
+    public Hex duplicate() {
+        Terrain[] tcopy = new Terrain[Terrains.SIZE];
         for (Integer i : terrains.keySet()) {
-            tcopy[i] = f.createTerrain(terrains.get(i));
+            tcopy[i] = new Terrain(terrains.get(i));
         }
         return new Hex(level, tcopy, theme, coords);
     }
 
-    public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
+    /**
+     * Adds terrain modifiers to PSRs made in this hex
+     */
+    public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll,
+                                        boolean enteringRubble) {
         for (Integer i : terrains.keySet()) {
             terrains.get(i).pilotingModifier(moveMode, roll, enteringRubble);
         }
     }
 
+    /**
+     * @return extra movement cost for entering the hex
+     */
     public int movementCost(Entity entity) {
         int rv = 0;
-        for (ITerrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             rv += terrain.movementCost(entity);
         }
         return rv;
     }
 
-    @Override
-    public String toString() {
-        String temp;
-        temp = "Level: " + getLevel();
-        temp = temp + "  Features: ";
-        for (ITerrain terrain : terrains.values()) {
-            if (terrain != null) {
-                switch (terrain.getType()) {
-                case Terrains.WOODS:
-                    if (terrain.getLevel() == 2) {
-                        temp = temp + "Heavy Woods";
-                    } else if (terrain.getLevel() == 1) {
-                        temp = temp + "Light Woods";
-                    } else {
-                        temp = temp + "??? Woods";
-                    }
-                    break;
-                case Terrains.WATER:
-                    temp = temp + "Water, depth: " + terrain.getLevel();
-                    break;
-                case Terrains.ROAD:
-                    temp = temp + "Road";
-                    break;
-                case Terrains.ROUGH:
-                    temp = temp + "Rough";
-                    break;
-                case Terrains.RUBBLE:
-                    temp = temp + "Rubble";
-                    break;
-                case Terrains.SWAMP:
-                    temp = temp + "Swamp";
-                    break;
-                case Terrains.ARMS:
-                    temp = temp + "Arm";
-                    break;
-                case Terrains.LEGS:
-                    temp = temp + "Leg";
-                    break;
-                default:
-                    temp = temp + Terrains.getName(terrain.getType()) + "(" + terrain.getLevel() + ", "
-                            + terrain.getTerrainFactor() + ")";
-                }
-                temp = temp + "; ";
-            }
-        }
-        return temp;
-    }
-
-    /*
-     * Get the fire ignition modifier for this hex, based on its terrain
+    /**
+     * @return the modifier to the roll to ignite this hex
      */
     public int getIgnitionModifier() {
         int mod = 0;
-        for (ITerrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if (terrain != null) {
                 mod += terrain.ignitionModifier();
             }
@@ -579,17 +549,16 @@ public class Hex implements IHex, Serializable {
     }
 
     /**
-     * Is this hex ignitable?
+     * @return if this hex is ignitable
      */
     public boolean isIgnitable() {
         return (containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE)
                 || containsTerrain(Terrains.BUILDING) || containsTerrain(Terrains.FUEL_TANK)
                 || containsTerrain(Terrains.FIELDS) || containsTerrain(Terrains.INDUSTRIAL));
-
     }
 
     public boolean isClearForTakeoff() {
-        for (Integer i : terrains.keySet()) {
+        for (final Integer i : terrains.keySet()) {
             if (containsTerrain(i) && (i != Terrains.PAVEMENT) && (i != Terrains.ROAD) && (i != Terrains.FLUFF)
                     && (i != Terrains.ARMS) && (i != Terrains.LEGS) && (i != Terrains.SNOW) && (i != Terrains.MUD)
                     && (i != Terrains.SMOKE) && (i != Terrains.METAL_CONTENT)) {
@@ -622,7 +591,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
-        for (ITerrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if ((terrain != null) && (mod < terrain.getBogDownModifier(moveMode, largeVee))) {
                 mod = terrain.getBogDownModifier(moveMode, largeVee);
             }
@@ -631,10 +600,10 @@ public class Hex implements IHex, Serializable {
     }
 
     /**
-     * get any modifiers to a an unstuck roll in this hex.
+     * get any modifiers to an unstuck roll in this hex.
      */
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
-        for (ITerrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
@@ -645,10 +614,10 @@ public class Hex implements IHex, Serializable {
      * specified (exits set to active) for the CLIFF_TOP terrain,
      * and must have an exit in the direction of otherHex.  
      */
-    public boolean hasCliffTopTowards(IHex otherHex) {
-    	return containsTerrain(Terrains.CLIFF_TOP) 
-		&& getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
-		&& ((getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << coords.direction(otherHex.getCoords()))) != 0);
+    public boolean hasCliffTopTowards(Hex otherHex) {
+        return containsTerrain(Terrains.CLIFF_TOP)
+            && getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()
+            && ((getTerrain(Terrains.CLIFF_TOP).getExits() & (1 << coords.direction(otherHex.getCoords()))) != 0);
     }
 
     /** Returns the position of this hex on the board. */
@@ -665,13 +634,16 @@ public class Hex implements IHex, Serializable {
         coords = c;
     }
 
-    @Override
+    /**
+     * @return if this hex is "clear", based on the absence of most terrain types.
+     */
     public boolean isClearHex() {
         for (int t = 1; t <= Terrains.BLDG_BASE_COLLAPSED; t++) {
             // Ignore some terrain types
             if ((t == Terrains.FLUFF) || (t == Terrains.ARMS) || (t == Terrains.LEGS)) {
                 continue;
             }
+
             if (containsTerrain(t)) {
                 return false;
             }
@@ -679,7 +651,14 @@ public class Hex implements IHex, Serializable {
         return true;
     }
 
-    @Override 
+    /**
+     * Windchild Rework Me
+     * Determines if the Hex is valid or not. <code>errBuff</code> can be used to return a report
+     * of why the hex is valid.
+     *
+     * @param errBuff Buffer to contain error messages. If null, method returns on first failure.
+     * @return if the hex is valid
+     */
     public boolean isValid(@Nullable StringBuffer errBuff) {
         boolean valid = true;
         
@@ -690,12 +669,13 @@ public class Hex implements IHex, Serializable {
         }
         
         // Check individual terrains for validity
-        for (ITerrain terrain : terrains.values()) {
+        for (final Terrain terrain : terrains.values()) {
             if (terrain == null) {
                 valid = false;
                 errBuff.append("Hex contains a null terrain!\n");
                 continue;
             }
+
             StringBuffer terrainErr = new StringBuffer();
             if (!terrain.isValid(terrainErr)) {
                 valid = false;
@@ -712,9 +692,10 @@ public class Hex implements IHex, Serializable {
                 valid = false;
                 errBuff.append("Rapids must occur within water!\n");
             }
-            if (this.depth() <1) {
+
+            if (depth() < 1) {
                 valid = false;
-                errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+                errBuff.append("Rapids must occur in depth 1 or greater!\n");
             }
         }
 
@@ -723,6 +704,7 @@ public class Hex implements IHex, Serializable {
             valid = false;
             errBuff.append("Woods and Jungle cannot appear in the same hex!\n");
         }
+
         if ((containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
                 && containsTerrain(Terrains.FOLIAGE_ELEV)) {
             int wl = terrainLevel(Terrains.WOODS);
@@ -778,4 +760,51 @@ public class Hex implements IHex, Serializable {
         return valid;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Level: ").append(getLevel()).append("  Features: ");
+        for (final Terrain terrain : terrains.values()) {
+            if (terrain != null) {
+                switch (terrain.getType()) {
+                    case Terrains.WOODS:
+                        if (terrain.getLevel() == 2) {
+                            sb.append("Heavy Woods");
+                        } else if (terrain.getLevel() == 1) {
+                            sb.append("Light Woods");
+                        } else {
+                            sb.append("??? Woods");
+                        }
+                        break;
+                    case Terrains.WATER:
+                        sb.append("Water, depth: ").append(terrain.getLevel());
+                        break;
+                    case Terrains.ROAD:
+                        sb.append("Road");
+                        break;
+                    case Terrains.ROUGH:
+                        sb.append("Rough");
+                        break;
+                    case Terrains.RUBBLE:
+                        sb.append("Rubble");
+                        break;
+                    case Terrains.SWAMP:
+                        sb.append("Swamp");
+                        break;
+                    case Terrains.ARMS:
+                        sb.append("Arm");
+                        break;
+                    case Terrains.LEGS:
+                        sb.append("Leg");
+                        break;
+                    default:
+                        sb.append(Terrains.getName(terrain.getType())).append("(")
+                                .append(terrain.getLevel()).append(", ")
+                                .append(terrain.getTerrainFactor()).append(")");
+                }
+                sb.append("; ");
+            }
+        }
+
+        return sb.toString();
+    }
 }

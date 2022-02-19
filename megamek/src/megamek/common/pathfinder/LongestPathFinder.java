@@ -25,7 +25,7 @@ import java.util.List;
 
 import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -37,15 +37,13 @@ import megamek.common.Tank;
  * multiple times. For example longest path searches.
  *
  * @author Saginatio
- *
- *
  */
 public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     private boolean aero = false;
 
     protected LongestPathFinder(EdgeRelaxer<Deque<MovePath>, MovePath> edgeRelaxer,
             AdjacencyMap<MovePath> edgeAdjacencyMap, Comparator<MovePath> comparator,
-            IGame game) {
+            Game game) {
         super(edgeRelaxer, edgeAdjacencyMap, comparator, game);
     }
 
@@ -61,7 +59,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @param game
      * @return a longest path finder
      */
-    public static LongestPathFinder newInstanceOfLongestPath(int maxMP, MoveStepType stepType, IGame game) {
+    public static LongestPathFinder newInstanceOfLongestPath(int maxMP, MoveStepType stepType, Game game) {
         LongestPathFinder lpf = new LongestPathFinder(new LongestPathRelaxer(),
                 new NextStepsAdjacencyMap(stepType),
                 new MovePathMinMPMaxDistanceComparator(),
@@ -80,7 +78,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @param game
      * @return a longest path finder for aeros
      */
-    public static LongestPathFinder newInstanceOfAeroPath(int maxMP, IGame game) {
+    public static LongestPathFinder newInstanceOfAeroPath(int maxMP, Game game) {
         LongestPathFinder lpf = new LongestPathFinder(new AeroMultiPathRelaxer(!game.getBoard().inSpace()),
                 new NextStepsAdjacencyMap(MoveStepType.FORWARDS),
                 new AeroMultiPathComparator(),
@@ -119,18 +117,13 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     public static class MovePathMinefieldAvoidanceMinMPMaxDistanceComparator extends MovePathMinMPMaxDistanceComparator {
         @Override
         public int compare(MovePath first, MovePath second) {
-            Double firstMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(first.getLastStep(), 
+            double firstMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(first.getLastStep(),
                     first.getEntity(), first.isJumping(), false);
-            Double secondMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(second.getLastStep(), 
+            double secondMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(second.getLastStep(),
                     second.getEntity(), second.isJumping(), false);
                
-            int s = secondMinefieldScore.compareTo(firstMinefieldScore);
-            
-            if (s == 0) {
-                return super.compare(first, second);
-            } else {
-                return s;
-            }
+            return (Double.compare(secondMinefieldScore, firstMinefieldScore) == 0)
+                    ? super.compare(first, second) : 0;
         }
     }
 
@@ -138,9 +131,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * Relaxer for longest path movement. Current implementation needs
      * Comparator that preserves MovePathMinMPMaxDistanceComparator contract.
      *
-     * It adds a path to 'interesting' paths in a hex when candidate travelled
-     * more hexes.
-     *
+     * It adds a path to 'interesting' paths in a hex when candidate travelled more hexes.
      */
     static public class LongestPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
         @Override
@@ -353,7 +344,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @return the shortest move path to hex at given coordinates
      */
     public MovePath getComputedPath(Coords coords) {
-        Deque<MovePath> q = getCost(coords, new Comparator<Deque<MovePath>>() {
+        Deque<MovePath> q = getCost(coords, new Comparator<>() {
             @Override
             public int compare(Deque<MovePath> q1, Deque<MovePath> q2) {
                 MovePath mp1 = q1.getLast(), mp2 = q2.getLast();
@@ -402,7 +393,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
     /**
      * Returns a map of all computed longest paths. This only includes one
-     * longest path to one Coords,Facing pair.
+     * longest path to one Coords, Facing pair.
      *
      * @return a map of all computed shortest paths.
      */

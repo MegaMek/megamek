@@ -1,11 +1,12 @@
 Version:1.0
 Jenner IIC
 (Standard)
+mul id:1698
 
 Config:Biped
 techbase:Clan
 era:3042
-source:RecGuide 18 - Succession Wars
+source:Rec Guide:ilClan #18 - Succession Wars
 rules level:2
 
 mass:35

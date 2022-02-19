@@ -1,23 +1,19 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 12, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -30,12 +26,9 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
+ * @since Sep 12, 2004
  */
 public class ISERLaserLargePrototype extends LaserWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4745756742469577788L;
 
     public ISERLaserLargePrototype() {
@@ -60,16 +53,17 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         criticals = 2;
         bv = 163;
         cost = 600000;
-        rulesRefs = "103,IO";
+        rulesRefs = "103, IO";
+        flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
-            .setISAdvancement(3030, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
-            .setISApproximate(false, false, false,true, false)
-            .setPrototypeFactions(F_FS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+                .setISAdvancement(3030, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
+                .setISApproximate(false, false, false, true, false)
+                .setPrototypeFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
      }
 
     /*
@@ -81,8 +75,8 @@ public class ISERLaserLargePrototype extends LaserWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new PrototypeLaserHandler(toHit, waa, game, server);
     }
 

@@ -311,7 +311,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>FWL:6,FS:10,TC:1,DC:1</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<salvage pct='5'></salvage>
@@ -471,7 +471,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:10,LA:10</salvage>
 	</faction>
 	<faction key='FS.RC'/>
 	<faction key='FS.RR'>
@@ -3224,6 +3224,9 @@
 	</chassis>
 	<chassis name='Locust' unitType='Mek'>
 		<availability>CS:6-,HL:4,CLAN:2-,IS:9,NIOPS:6-,Periphery.Deep:5,Periphery:6</availability>
+		<model name='C'>
+			<availability>CCC:2,CFM:2</availability>
+		</model>
 		<model name='LCT-1E'>
 			<roles>recon</roles>
 			<availability>HL:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
@@ -4030,6 +4033,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
 		<availability>CC:9,MOC:8,HL:6,IS:8,Periphery.Deep:7,FS:8,CIR:8,Periphery:8,TC:8,OA:8,LA:9,FWL:10,DC:8</availability>
@@ -4068,6 +4074,9 @@
 		<model name='2'>
 			<roles>fire_support</roles>
 			<availability>CCC:6,CSR:6,CDS:6,CSV:6,CNC:6,CFM:6,CCO:6</availability>
+		</model>
+		<model name='9'>
+			<availability>CLAN:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
@@ -4997,6 +5006,12 @@
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
 		<availability>CC:9,HL:4,CLAN:4,IS:8,Periphery.Deep:5,FS:7,MERC:8,Periphery:6,TC:6,CS:5-,LA:8,NIOPS:5-,MH:6,DC:8</availability>
+		<model name='TDR-5D'>
+			<availability>FS:4,MERC:2</availability>
+		</model>
+		<model name='TDR-5LS'>
+			<availability>CC:1</availability>
+		</model>
 		<model name='TDR-5S'>
 			<availability>CC:8,HL:6,LA:8,General:8,Periphery.Deep:7,BAN:3,Periphery:8</availability>
 		</model>

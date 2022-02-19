@@ -1,6 +1,7 @@
 Version:1.0
 Griffin
 GRF-1E 'Sparky'
+mul id:1295
 
 Config:Biped
 TechBase:Inner Sphere
@@ -151,19 +152,19 @@ Foot Actuator
 -Empty-
 
 
-Overview: The Griffin has flitted through multiple roles throughout its long and illustious existence. Originally developed to fill a middle ground between lumbing assaults and fragile light 'Mechs, the Griffin at its inception was popular, effective, and dangerous. The steady march of time and technology would eventually make the Griffin's performance less exceptional, generally pushing it into mobile fire-support roles. In this, though, it still offers sterling service, and it remains one of the most-produced medium BattleMechs in the Inner Sphere.
+overview:Built in 2492 the Griffin was originally classified as a heavy BattleMech, filling in the weight gap between mammoth machines like the Mackie and smaller recon 'Mechs like the Wasp, and intended for close assaults
 
-Capabilities: The powerful PPC of most Griffins give it a reliable punch. Secondary missile launchers, often generously fed with ammunition, give it steady follow up damage. When combined with its mobile nature and average armor, the Griffin is hard to pin down and dangerous to take likely. If the Griffin has a flaw, it is that its cooling system is inadequate for its firepower, forcing many pilots to choose between staying mobile and badly overheating.
+capabilities:The massive and efficient fusion engine of the Griffin, giving it a cruising speed of 57.1 km/h, combined with five jump jets occupying the rear torso areas for a total jumping distance of 150 meters, is what distinguishes it from other medium 'Mechs and has kept the Griffin in the game over the centuries. Unfortunately, like most other early 'Mechs, the Griffin suffers from insufficient heat capacity with only twelve heat sinks installed. The result is that Griffin pilots, lacking the ability to do both, must choose at the outset of a fight whether to engage or withdraw. Nine and a half tons of armor plating compares quite favorably to many other medium 'Mechs, although as is often the case the Griffin will find itself in combat with larger 'Mechs. For this reason, two pairs of false armor baffles were added to the 'Mech, one on its shoulders providing limited protection to the LRM launcher and cockpit, and a smaller pair on the legs protecting the knees joints.
 
-Deployment: The Griffin, with its many manufacturing plants, can be found in all corners of human space. As its standard role keeps it out of most of the worst fighting, attrition is lower than with some designs. Even the many recent conflicts-be it the Clan Invasion, FedCom Civil War, or Jihad-have done little to reduce Griffin numbers. MechWarrior Elle Bennet's "Sparky" variant is much more of an infighter. Increasing short-ranged firepower and armor, this "laserboat" would often outmatch common Kuritan designs in close quarters. Effective and powerful, Sparky would eventually be updated to become "Sparky 2.0"
+deployment:The personal ‘Mech of Elle Bennett of the Fifth Donegal Guards, prior to the War of 3039 she had replaced the LRM launcher of her Griffin with five medium lasers, one mounted in each torso, one beside the PPC and two in Sparky's left arm. The additional weight saved goes towards an extra heat sink and an additional ton of armor.
 
-systemmanufacturer:CHASSIS:Earthwerks
-systemmode:CHASSIS:GRF
-systemmanufacturer:ENGINE:CoreTek
-systemmode:ENGINE:275
-systemmanufacturer:ARMOR:Starshield
-systemmode:ARMOR:A
-systemmanufacturer:COMMUNICATIONS:Neil
-systemmode:COMMUNICATIONS:6000
-systemmanufacturer:TARGETING:Octagon Tartrac
-systemmode:TARGETING:System C
+history:Combining tremendous speed and firepower in one frame the Griffin briefly dominated in this role before being superseded by larger and better-equipped 'Mechs. However the Griffin was very popular among commanders and pilots alike and so Earthwerks Incorporated kept it in production, this time reclassified as a medium 'Mech and tasked with long-range fire support for medium lances. In this capacity the Griffin has excelled, combining good striking power, endurance and speed, with its only major weakness being a lack of close-range defensive weapons. During the Succession Wars the Griffin could be found in almost every unit of all the Great Houses, thanks in part to its diverse number of manufacturers. Besides being constructed from Earthwerks' factory on Keystone the Griffin was later acquired and built by Defiance Industries (Hesperus II), Kallon Industries (Talon), Brigadier Corporation (Oliver), and Norse BattleMech Works (later Victory Industries, Marduk). It was even manufactured in the Periphery by Vandenberg Mechanized Industries on Illiushin.Only the Capellan Confederation lacked a means of building the 'Mech, although they made up for it by purchasing a limited number from the Taurian Concordat. During the Fourth Succession War some of these manufacturers exchanged hands, with the Draconis Combine capturing Marduk from the Federated Suns and the Lyran Commonwealth taking Oliver from the Free Worlds League. This exchange also happened to coincide with several new variants being designed to exploit recently-recovered lostech. As such variants meant specifically for either Houses Kurita, Marik or the Federated Commonwealth found their way into the arsenals of all of them. During the Clan Invasion these manufacturers produced the new variants to meet the Clan threat while Vandenberg Industries continued to build original GRF-1N Griffins. When Vicore Industries began shopping around its "Project Phoenix" initiative, Defiance and Kallon Industries signed on to begin producing the completely redesigned GRF-6S Griffin. Victory Industries later signed up as well after the legal battle between Wolf's Dragoons and the Lyran Alliance saw the famous mercenary group selling its Light Fusion technology to both the Draconis Combine and Free Worlds League. The League designed a native update to the Griffin while ComStar had their own built as well which, ominously, soon began appearing in the ranks of the Word of Blake Militia. The Griffin would continue to remain a staple of the battlefields of the Inner Sphere during the maelstrom of the Jihad, the era of the Republic of the Sphere and the rise of the ilClan, with models still in production within the Free Worlds League and the Wolf Empire.
+
+manufacturer:Field Refit
+primaryfactory:Field Refit
+systemmanufacturer:CHASSIS:Earthwerks GRF
+systemmanufacturer:ENGINE:CoreTek 275
+systemmanufacturer:ARMOR:Starshield A
+systemmanufacturer:JUMPJET:Rawlings 55
+systemmanufacturer:COMMUNICATIONS:Neil 6000
+systemmanufacturer:TARGETING:Octagon Tartrac System C

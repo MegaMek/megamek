@@ -1,18 +1,14 @@
 /*
-* MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * MegaAero - Copyright (C) 2007 Jay Lawson
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Jun 12, 2008
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
@@ -23,12 +19,9 @@ import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
+ * @since Jun 12, 2008
  */
 public class ConvFighter extends Aero {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6297668284292929409L;
 
     @Override
@@ -63,7 +56,7 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getFuelUsed(int thrust) {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         int overThrust =  Math.max(thrust - getWalkMP(), 0);
@@ -71,8 +64,7 @@ public class ConvFighter extends Aero {
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {
             used = (int) Math.floor(safeThrust * 0.5) + overThrust;
-        } else if (game.getOptions().booleanOption(
-                OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
+        } else if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
             used = (int) Math.floor(safeThrust * 0.5) + (2 * overThrust);
         }
         return used;
@@ -95,7 +87,6 @@ public class ConvFighter extends Aero {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-
         double cost = 0;
 
         // add in cockpit
@@ -115,7 +106,7 @@ public class ConvFighter extends Aero {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        if(hasEngine()) {
+        if (hasEngine()) {
             cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
         }
         
@@ -159,7 +150,7 @@ public class ConvFighter extends Aero {
 
     @Override
     protected int calculateWalk() {
-        if(!hasEngine()) {
+        if (!hasEngine()) {
             return 0;
         }
         if (isPrimitive()) {
@@ -179,7 +170,8 @@ public class ConvFighter extends Aero {
         specialAbilities.put(BattleForceSPA.ATMO, null);
     }
     
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }
 }

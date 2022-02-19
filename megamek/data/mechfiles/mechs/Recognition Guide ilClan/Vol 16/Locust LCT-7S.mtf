@@ -1,12 +1,13 @@
 Version:1.0
 Locust
 LCT-7S
+mul id:8200
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3128
-source:Recognition Guide:ilClan #16 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #16 - Dark Age
+rules level:2
 
 mass:20
 engine:240 XL (Clan) Engine

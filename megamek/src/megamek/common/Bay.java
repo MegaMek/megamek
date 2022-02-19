@@ -16,6 +16,8 @@
 
 package megamek.common;
 
+import megamek.common.enums.GamePhase;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -39,15 +41,15 @@ public class Bay implements Transporter, ITechnology {
     int currentdoors = doors;
     protected int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
-    Vector<Integer> recoverySlots = new Vector<Integer>();
+    Vector<Integer> recoverySlots = new Vector<>();
     int bayNumber = 0;
-    transient IGame game = null;
+    transient Game game = null;
     private double damage;
 
     /**
      * The troops being carried.
      */
-    /* package */Vector<Integer> troops = new Vector<Integer>();
+    /* package */Vector<Integer> troops = new Vector<>();
 
     /**
      * The total amount of space available for troops.
@@ -172,7 +174,7 @@ public class Bay implements Transporter, ITechnology {
 
     @Override
     public void resetTransporter() {
-        troops = new Vector<Integer>();
+        troops = new Vector<>();
         currentSpace = totalSpace;
         resetCounts();
     }
@@ -234,7 +236,7 @@ public class Bay implements Transporter, ITechnology {
         }
 
         currentSpace -= spaceForUnit(unit);
-        if((unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE)) {
+        if ((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
                 loadedThisTurn += 1;
         }
 
@@ -253,7 +255,7 @@ public class Bay implements Transporter, ITechnology {
     @Override
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
-        Vector<Entity> loaded = new Vector<Entity>();
+        Vector<Entity> loaded = new Vector<>();
         for (int unit : troops) {
             Entity entity = game.getEntity(unit);
             
@@ -285,7 +287,7 @@ public class Bay implements Transporter, ITechnology {
      */
     public Vector<Entity> getLaunchableUnits() {
 
-        Vector<Entity> launchable = new Vector<Entity>();
+        Vector<Entity> launchable = new Vector<>();
 
         for (int i = 0; i < troops.size(); i++) {
             Entity nextUnit = game.getEntity(troops.elementAt(i));
@@ -302,7 +304,7 @@ public class Bay implements Transporter, ITechnology {
      */
     public Vector<Entity> getDroppableUnits() {
 
-        Vector<Entity> droppable = new Vector<Entity>();
+        Vector<Entity> droppable = new Vector<>();
 
         for (int i = 0; i < troops.size(); i++) {
             Entity nextUnit = game.getEntity(troops.elementAt(i));
@@ -319,7 +321,7 @@ public class Bay implements Transporter, ITechnology {
      */
     public Vector<Entity> getUnloadableUnits() {
 
-        Vector<Entity> unloadable = new Vector<Entity>();
+        Vector<Entity> unloadable = new Vector<>();
 
         // TODO: we need to handle aeros and VTOLs differently
         for (int i = 0; i < troops.size(); i++) {
@@ -366,7 +368,7 @@ public class Bay implements Transporter, ITechnology {
 
     protected String numDoorsString() {
         return "(" + getCurrentDoors()
-            + ((getCurrentDoors() == 1)?" door":" doors") + ")";
+            + ((getCurrentDoors() == 1) ? " door" : " doors") + ")";
     }
 
     @Override
@@ -441,7 +443,7 @@ public class Bay implements Transporter, ITechnology {
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>(1);
+        ArrayList<Entity> rv = new ArrayList<>(1);
         return rv;
     }
 
@@ -543,7 +545,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 

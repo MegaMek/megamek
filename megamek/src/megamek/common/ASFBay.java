@@ -96,8 +96,6 @@ public final class ASFBay extends Bay {
             result = true;
         }
 
-        // System.err.print("Current space to load " + unit.getShortName() +
-        // " is " + this.currentSpace + "\n");
         if (getUnused() < 1) {
             result = false;
         }
@@ -287,6 +285,7 @@ public final class ASFBay extends Bay {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
+    @Override
     public TechAdvancement getTechAdvancement() {
         if (arts) {
             return Bay.artsTechAdvancement();

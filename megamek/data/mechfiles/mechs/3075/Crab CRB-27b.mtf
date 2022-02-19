@@ -1,6 +1,7 @@
 Version:1.0
 Crab
 CRB-27b
+mul id:717
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,4 +149,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Designed in 2719 during the last days of the Star League, the Crab was built as a medium-weight raider and guerrilla fighter for the Star League Defense Force.
 
+capabilities:Although lacking hand actuators or jump jets, it possessed good overland speed and its all-energy weapons payload was suitable for long-range missions without the prospect for resupply. The Crab also boasted a highly advanced communications system, the Dalban Series K, and was built mostly with proven parts easy to maintain.  The term "Crab walk" soon became synonymous with easy duty, since technicians spent less than half the time maintaining the Crab than with other 'Mechs of the same weight class
+
+deployment:Another Crab variant used by the Star League, the 27sl uses an XL Engine with fourteen double heat sinks, the large and medium lasers traded out for two Large Pulse Lasers and a Medium Pulse Laser, and the small laser replaced by a medium laser. To improve mobility, five Jump Jets were added for a 150 meter jumping range.
+
+history:Less than a thousand Crabs had been produced when the Succession Wars began. So popular was the Crab that many believed it was likely to become the standard medium 'Mech of the SLDF. Unfortunately the Amaris Civil War and the dissolution of the Star League put an end to any future plans for the Crab. Cosara Weaponries' Crab factory on Northwind was practically destroyed in 2786, one of many strategic targets attacked in the opening salvos of the First Succession War. Although dedicated technicians were able to keep portions of the assembly line open, producing what spare parts they still could to rebuild damaged Crabs, the technology used for both the original's advanced armor plating and communications system became lost. Designated as CRB-20 models, these Crabs were only slightly inferior to the original: with the destruction of the military infrastructure necessary for the Dalban Series K's more advanced functions to work, its replacement by lesser systems ironically became less of an issue. By the end of the Fourth Succession War a hundred or so Crabs were still active in the Inner Sphere and all were CRB-20s. Unbeknownst to many, ComStar had secreted away massive stockpiles of Star League technology and 'Mechs, including the Crab. When it came time to form their own military original CRB-27 Crabs were used to outfit the Com Guards, while at the same time gifting downgraded CRB-20s to the Draconis Combine during the War of 3039 as part of Operation Rosebud. Concurrently the discovery of the Helm Memory Core allowed the refit line on Northwind to start upgrading the remaining downgraded Crabs to their original specification. Unknown to anyone in the Inner Sphere was the continued existence of the Crab in the arsenal of the Clans, although by the time of the Clan Invasion these had been relegated to second-line and garrison units. Eventually Cosara Weaponries was able to restart production of the original Crab in the 3050s and brand-new variants began turning up. Among these were new CRB-30s built by ComStar (later acquired by the Word of Blake) which made use of new C3 technology; it was also rumored ComStar sold these models to the rump Free Rasalhague Republic. During the Jihad the Word of Blake managed to capture the Northwind factory and begin producing their own radical variant known as the CRB-45.
+
+manufacturer:Cosara Weaponries
+primaryfactory:Northwind
+systemmanufacturer:CHASSIS:Hollis Mark 1A
+systemmanufacturer:ENGINE:Magna 250
+systemmanufacturer:ARMOR:Paulina Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Dalban Series K
+systemmanufacturer:TARGETING:650 RND

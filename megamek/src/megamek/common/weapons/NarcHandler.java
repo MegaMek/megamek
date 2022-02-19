@@ -20,7 +20,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.INarcPod;
 import megamek.common.Mech;
 import megamek.common.NarcPod;
@@ -48,7 +48,7 @@ public class NarcHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public NarcHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public NarcHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -117,6 +117,7 @@ public class NarcHandler extends MissileWeaponHandler {
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setAMSBayReportingFlag() {
         amsBayEngagedMissile = true;
     }
@@ -124,6 +125,7 @@ public class NarcHandler extends MissileWeaponHandler {
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setPDBayReportingFlag() {
         pdBayEngagedMissile = true;
     }
@@ -188,7 +190,7 @@ public class NarcHandler extends MissileWeaponHandler {
         // So what do we do for a near miss on a glider? Assume attach to wings.
         if (entityTarget instanceof Protomech
                 && hit.getLocation() == Protomech.LOC_NMISS
-                && !((Protomech)entityTarget).isGlider()) {
+                && !((Protomech) entityTarget).isGlider()) {
             Report r = new Report(6035);
             r.subject = entityTarget.getId();
             vPhaseReport.add(r);

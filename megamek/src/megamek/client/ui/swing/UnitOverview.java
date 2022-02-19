@@ -1,18 +1,17 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.Color;
@@ -39,7 +38,7 @@ import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
@@ -56,7 +55,7 @@ public class UnitOverview implements IDisplayable {
      */
     public static final int ICON_NAME_MAX_LENGTH = 52;
 
-    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 10);
     private static final int DIST_TOP = 5;
     private static final int DIST_SIDE = 5;
     private static final int ICON_WIDTH = 56;
@@ -96,26 +95,27 @@ public class UnitOverview implements IDisplayable {
         fm = clientgui.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getToolkit();
-        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString()); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2.png").toString());
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString()); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2.png").toString());
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString()); //$NON-NLS-1$
+        pageUp = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2.png").toString());
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString()); //$NON-NLS-1$
+        pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString());
         PMUtil.setImage(pageDown, clientgui);
-        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString()); //$NON-NLS-1$
+        scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString());
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString()); //$NON-NLS-1$
+        scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString());
         PMUtil.setImage(scrollDown, clientgui);
-        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString()); //$NON-NLS-1$
+        pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString());
         PMUtil.setImage(pageUp, clientgui);
-        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString()); //$NON-NLS-1$
+        pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString());
         PMUtil.setImage(pageDown, clientgui);
         
         visible = GUIPreferences.getInstance().getShowUnitOverview();
     }
 
+    @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
         if (!visible) {
             return;
@@ -161,7 +161,7 @@ public class UnitOverview implements IDisplayable {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
-            Image i1 = clientgui.bv.getTilesetManager().iconFor(e);
+            Image i1 = clientgui.getBoardView().getTilesetManager().iconFor(e);
 
             graph.drawImage(i1, x, y, null);
             printLine(graph, x + 3, y + 46, name);
@@ -171,15 +171,12 @@ public class UnitOverview implements IDisplayable {
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
-            IGame game = clientgui.getClient().getGame();
-            GameTurn turn;
-            if (game.isPhaseSimultaneous()) {
-                turn = game.getTurnForPlayer(clientgui.getClient()
-                        .getLocalPlayer().getId());
-            } else {
-                turn = game.getTurn();
-            }
-            if ((turn != null) && turn.isValidEntity(e,game)) {
+            Game game = clientgui.getClient().getGame();
+            GameTurn turn = game.getPhase().isSimultaneous(game)
+                    ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
+                    : game.getTurn();
+
+            if ((turn != null) && turn.isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
@@ -187,10 +184,8 @@ public class UnitOverview implements IDisplayable {
                 graph.setColor(oldColor);
             }
             
-            Entity se = clientgui == null ? null : clientgui.getClient()
-                    .getEntity(clientgui.getSelectedEntityNum());
-            if ((e == se) && (game.getTurn() != null) &&
-                    game.getTurn().isValidEntity(e,game)) {
+            Entity se = clientgui == null ? null : clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
+            if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
@@ -218,6 +213,7 @@ public class UnitOverview implements IDisplayable {
 
     }
 
+    @Override
     public boolean isHit(Point p, Dimension size) {
         if (!visible) {
             return false;
@@ -251,8 +247,8 @@ public class UnitOverview implements IDisplayable {
         for (int i = scrollOffset; (i < unitIds.length)
                 && (i < actUnits + scrollOffset); i++) {
             if ((y > yOffset) && (y < yOffset + ICON_HEIGHT)) {
-                clientgui.bv.processBoardViewEvent(new BoardViewEvent(
-                        clientgui.bv, BoardViewEvent.SELECT_UNIT, unitIds[i]));
+                clientgui.getBoardView().processBoardViewEvent(new BoardViewEvent(
+                        clientgui.getBoardView(), BoardViewEvent.SELECT_UNIT, unitIds[i]));
                 isHit = true;
                 return true;
             }
@@ -276,6 +272,7 @@ public class UnitOverview implements IDisplayable {
         return false;
     }
 
+    @Override
     public boolean isDragged(Point p, Dimension size) {
         int x = p.x;
         int y = p.y;
@@ -290,6 +287,7 @@ public class UnitOverview implements IDisplayable {
         }
     }
 
+    @Override
     public boolean isReleased() {
         if (!visible) {
             return false;
@@ -393,41 +391,39 @@ public class UnitOverview implements IDisplayable {
         g.drawString(s, x, y);
     }
 
-    private void drawConditionStrings(Graphics graph, Entity entity, int x,
-            int y) {
+    private void drawConditionStrings(Graphics graph, Entity entity, int x, int y) {
+        // out of control conditions for ASF
+        if (entity.isAero()) {
+            IAero a = (IAero) entity;
 
-//      out of control conditions for ASF
-        if(entity.isAero()) {
-            IAero a = (IAero)entity;
-
-            if(a.isRolled()) {
+            if (a.isRolled()) {
                 // draw "rolled"
                 graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29);
                 graph.setColor(Color.red);
-                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28);
             }
 
-            if(a.isOutControlTotal() && a.isRandomMove()) {
+            if (a.isOutControlTotal() && a.isRandomMove()) {
                 graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24); //$NON-NLS-1$
+                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24);
                 graph.setColor(Color.red);
-                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23); //$NON-NLS-1$
-            } else if(a.isOutControlTotal()) {
+                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23);
+            } else if (a.isOutControlTotal()) {
                 // draw "CONTROL"
                 graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24); //$NON-NLS-1$
+                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24);
                 graph.setColor(Color.red);
-                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 10, y + 23); //$NON-NLS-1$
+                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 10, y + 23);
             }
 
             //is the unit evading? - can't evade and be out of control so just draw on top
-            if(entity.isEvading()) {
+            if (entity.isEvading()) {
                 //draw evasion
                 graph.setColor(Color.darkGray);
-                graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24); //$NON-NLS-1$
+                graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
                 graph.setColor(Color.red);
-                graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23); //$NON-NLS-1$
+                graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23);
             }
 
         }
@@ -437,52 +433,52 @@ public class UnitOverview implements IDisplayable {
             // draw "IMMOB"
             graph.setColor(Color.darkGray);
             graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29);
             graph.setColor(Color.red);
             graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28);
         } else if (!entity.isImmobile() && entity.isProne()) {
             // draw "PRONE"
             graph.setColor(Color.darkGray);
             graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 29); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 29);
             graph.setColor(Color.yellow);
             graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 28); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 28);
         } else if (entity.isImmobile() && entity.isProne()) {
             // draw "IMMOB" and "PRONE"
             graph.setColor(Color.darkGray);
             graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
             graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 34); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 34);
             graph.setColor(Color.red);
             graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
             graph.setColor(Color.yellow);
             graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 33); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 33);
         } else if (!entity.isImmobile() && entity.isHullDown()) {
             // draw "PRONE"
             graph.setColor(Color.darkGray);
             graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 29); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 29);
             graph.setColor(Color.yellow);
             graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 28); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 28);
         } else if (entity.isImmobile() && entity.isHullDown()) {
             // draw "IMMOB" and "PRONE"
             graph.setColor(Color.darkGray);
             graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
             graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 34); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 34);
             graph.setColor(Color.red);
             graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
             graph.setColor(Color.yellow);
             graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33); //$NON-NLS-1$
+                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33);
         } else if (!entity.isDeployed()) {
             int roundsLeft = entity.getDeployRound()
                     - clientgui.getClient().getGame().getRoundCount();
@@ -502,7 +498,7 @@ public class UnitOverview implements IDisplayable {
             if (scrollOffset < 0) {
                 scrollOffset = 0;
             }
-            clientgui.bv.refreshDisplayables();
+            clientgui.getBoardView().refreshDisplayables();
         }
     }
 
@@ -512,30 +508,29 @@ public class UnitOverview implements IDisplayable {
             if (scrollOffset > unitIds.length - actUnitsPerPage) {
                 scrollOffset = unitIds.length - actUnitsPerPage;
             }
-            clientgui.bv.refreshDisplayables();
+            clientgui.getBoardView().refreshDisplayables();
         }
     }
 
     private void scrollUp() {
         if (scrollOffset > 0) {
             scrollOffset--;
-            clientgui.bv.refreshDisplayables();
+            clientgui.getBoardView().refreshDisplayables();
         }
     }
 
     private void scrollDown() {
         if (scrollOffset < unitIds.length - actUnitsPerPage) {
             scrollOffset++;
-            clientgui.bv.refreshDisplayables();
+            clientgui.getBoardView().refreshDisplayables();
         }
     }
 
     protected String getIconName(Entity e, FontMetrics metrics) {
-
         if (e instanceof BattleArmor) {
             String iconName = e.getShortName();
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
-                Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
+                Vector<String> v = StringUtil.splitString(iconName, " ");
                 iconName = v.elementAt(0);
                 if (iconName.equals("Clan")) {
                     iconName = v.elementAt(1);
@@ -543,13 +538,16 @@ public class UnitOverview implements IDisplayable {
             }
             return adjustString(iconName, metrics);
         } else if (e instanceof Protomech) {
-            String iconName = e.getChassis() + " " + e.getModel(); //$NON-NLS-1$
+            String iconName = e.getChassis() + " " + e.getModel();
             return adjustString(iconName, metrics);
+        } else if ((e instanceof Infantry) || (e instanceof Mech) || (e instanceof GunEmplacement)
+                || (e instanceof Aero)) {
+            return adjustString(e.getModel(), metrics);
         } else if (e instanceof Tank) {
             String iconName = e.getShortName();
 
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
-                Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
+                Vector<String> v = StringUtil.splitString(iconName, " ");
                 iconName = "";
                 for (String tok : v) {                  
                     String newName = iconName + " " + tok;
@@ -561,13 +559,9 @@ public class UnitOverview implements IDisplayable {
                 }
             }
             return adjustString(iconName, metrics);
-        } else if ((e instanceof Infantry) || (e instanceof Mech)
-                || (e instanceof GunEmplacement) ||
-                (e instanceof Aero)) {
-            String iconName = e.getModel();
-            return adjustString(iconName, metrics);
+        } else {
+            return "!!Unknown!!";
         }
-        return "!!Unknown!!";
     }
 
     protected String adjustString(String s, FontMetrics metrics) {

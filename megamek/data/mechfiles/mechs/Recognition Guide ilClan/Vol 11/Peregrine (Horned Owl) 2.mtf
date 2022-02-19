@@ -1,11 +1,12 @@
 Version:1.0
 Peregrine (Horned Owl)
 2
+mul id:2473
 
 Config:Biped
 techbase:Clan
 era:2856
-source:TRO 3055 - Succession Wars
+source:Rec Guide:ilClan #11 - Succession Wars
 rules level:2
 
 mass:35

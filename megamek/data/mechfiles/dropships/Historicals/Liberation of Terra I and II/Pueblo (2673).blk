@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Pueblo
 <Model>
 (2673)
 </Model>
+
+<mul id:>
+6784
+</mul id:>
 
 <year>
 2673
@@ -38,12 +42,11 @@ Aerodyne
 
 <transporters>
 smallcraftbay:4.0:2:1
-cargobay:300.0:2:2
-2ndclassquarters:91.0:0
-1stclassquarters:100.0:0
-crewquarters:210.0:0
 steeragequarters:0.0:0
-cargobay:1288.0:2:7
+2ndclassquarters:343.0:0
+crewquarters:70.0:0
+cargobay:300.0:2:2
+cargobay:1276.0:2:7
 </transporters>
 
 <SafeThrust>
@@ -154,6 +157,58 @@ ISSmallNavalCommScannerSuite
 30
 </structural_integrity>
 
+<capabilities>
+What was created, was designated the Pueblo, which shared the same internal characteristics as other DropShips designed for surveillance and had different exteriors to look like a common civilian craft. To ensure that any information was able to be transmitted quickly and without the need of a JumpShip, each Pueblo had a portable Hyperpulse Generator installed.
+</capabilities>
+
+<overview>
+The Pueblo was born when modified civilian ships were able to obtain intelligence, but unable to defend themselves when the need arose.
+</overview>
+
+<deployment>
+The crew of such a ship, along with the marine detachment, were all trained to either make a boarding assault or to repulse an attack. The crew, being members of the Star League Defense Force, rarely wore their uniforms and they participated in taking up interstellar trade in order to keep up their appearance of being a civilian craft while they were traveling through and spying upon Star League member states.
+</deployment>
+
+<history>
+House Cameron knew full well that the Star League was the central power in the Inner Sphere and that each of the member states had their own personal agendas. So in order to ensure that the peace lasted, surveillance craft were needed. It would be nearly impossible to have a WarShip stationed within the territorial borders of a state without sparking an interstellar scandal; The Star League would need a specialty craft that could hide in plain sight, while supplying needed information.he SLDF could deploy the Bug-Eye to meet the role, but its astronomical price tag, still being undergunned, and containing highly classified technology made it not the best choice either. After the Amaris Coup, not all of the Pueblo Class DropShips went with Kerensky on his Exodus. Those that stayed behind would eventually be destroyed during the Succession Wars.
+</history>
+
+<manufacturer>
+Nicholas Spacecraft
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Overweight per the TRO, dropped cargo to make it legal.
+</notes>
+
+<use>
+Surveillance
+</use>
+
+<length>
+134 meters
+</length>
+
+<width>
+128.5 meters
+</width>
+
+<height>
+32 meters
+</height>
+
 <source>
 H:Liberation of Terra II - Star League
 </source>
@@ -167,11 +222,11 @@ H:Liberation of Terra II - Star League
 </designtype>
 
 <crew>
-44
+55
 </crew>
 
 <officers>
-5
+6
 </officers>
 
 <gunners>
@@ -201,3 +256,4 @@ H:Liberation of Terra II - Star League
 <escape_pod>
 4
 </escape_pod>
+

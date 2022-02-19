@@ -1,11 +1,12 @@
 Version:1.0
 Warhammer IIC
 (Standard)
+mul id:3500
 
 Config:Biped
 techbase:Clan
 era:2829
-source:Succession Wars
+source:Rec Guide:ilClan #4 - Early Succession War
 rules level:2
 
 mass:80

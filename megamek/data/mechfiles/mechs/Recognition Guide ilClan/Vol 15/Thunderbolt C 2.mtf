@@ -1,11 +1,12 @@
 Version:1.0
 Thunderbolt
 C 2
+mul id:8195
 
 Config:Biped
 techbase:Clan
 era:3054
-source:ilClan RecGuide 15 - Clan Invasion
+source:Rec Guide:ilClan #15 - Clan Invasion
 rules level:2
 
 mass:65

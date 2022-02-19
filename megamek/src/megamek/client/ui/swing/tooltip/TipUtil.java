@@ -43,7 +43,7 @@ public final class TipUtil {
     public static List<String> getOptionListArray(Enumeration<IOptionGroup> optGroups, 
             Function<String, Integer> counter, Function<IOptionGroup, String> namer) {
         
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         while (optGroups.hasMoreElements()) {
             IOptionGroup advGroup = optGroups.nextElement();
             int numOpts = counter.apply(advGroup.getKey());
@@ -79,17 +79,17 @@ public final class TipUtil {
      * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
      * The list is 40 characters wide with \u2B1D as option separator.
      */
-    public static String getOptionList(Enumeration<IOptionGroup> optGroups, 
-            Function<String, Integer> counter, boolean detailed) {
+    public static String getOptionList(Enumeration<IOptionGroup> optGroups,
+                                       Function<String, Integer> counter, boolean detailed) {
         if (detailed) {
-            return optionListFull(optGroups, counter, e -> e.getDisplayableName());
+            return optionListFull(optGroups, counter, IOptionGroup::getDisplayableName);
         } else {
-            return optionListShort(optGroups, counter, e -> e.getDisplayableName());
+            return optionListShort(optGroups, counter, IOptionGroup::getDisplayableName);
         }
     }
 
     static String scaledHTMLSpacer(final int unscaledSize) {
-        int scaledSize = (int)(GUIPreferences.getInstance().getGUIScale() * unscaledSize);  
+        int scaledSize = (int) (GUIPreferences.getInstance().getGUIScale() * unscaledSize);  
         return "<P><IMG SRC=FILE:" + Configuration.widgetsDir() + "/Tooltip/TT_Spacer.png "
                 + "WIDTH=" + scaledSize + " HEIGHT=" + scaledSize + "></P>";
     }
@@ -107,7 +107,7 @@ public final class TipUtil {
                 result.append("<I>" + namer.apply(advGroup) + ":</I><BR>");
                 
                 // Gather the group options
-                List<String> origList = new ArrayList<String>();
+                List<String> origList = new ArrayList<>();
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();
                     if (adv.booleanValue()) {
@@ -130,7 +130,7 @@ public final class TipUtil {
         StringBuilder result = new StringBuilder();
         
         // Gather the option groups and option count per group
-        List<String> origList = new ArrayList<String>();
+        List<String> origList = new ArrayList<>();
         while (advGroups.hasMoreElements()) {
             IOptionGroup advGroup = advGroups.nextElement();
             int numOpts = counter.apply(advGroup.getKey());

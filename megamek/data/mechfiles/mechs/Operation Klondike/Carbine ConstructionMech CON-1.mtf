@@ -1,6 +1,7 @@
 Version:1.1
 Carbine CON-1 ConstructionMech
 (Standard)
+mul id:461
 
 Config:Biped
 TechBase:Inner Sphere

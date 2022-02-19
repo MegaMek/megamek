@@ -15,6 +15,10 @@ Peregrine Attack VTOL
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+2479
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

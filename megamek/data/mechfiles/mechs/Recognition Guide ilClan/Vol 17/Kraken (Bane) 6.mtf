@@ -1,11 +1,12 @@
 Version:1.0
 Kraken (Bane)
 6
+mul id:8243
 
 Config:Biped
 techbase:Clan
 era:3110
-source:Recognition Guide:ilClan #17 - Dark Age
+source:Rec Guide:ilClan #17 - Late Republic
 rules level:2
 
 mass:100

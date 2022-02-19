@@ -1,6 +1,6 @@
 3145 TDF Assault Vehicles C
 Demolisher Heavy Tank (Standard Mk. II), 1
-Sturmfeur Heavy Tank (Standard), 2
+SturmFeur Heavy Tank (Standard), 2
 Heavy NLRM Carrier (Standard), 3
 Heavy LRM Carrier (Standard), 4
 Ontos Heavy Tank (Light Gauss), 5

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur
  * (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 10/30/13 9:25 AM
  */
 @RunWith(JUnit4.class)
@@ -35,13 +34,13 @@ public class CrewTest {
         int piloting = 5;
 
         // Test the default case.
-        IGame mockGame = null;
+        Game mockGame = null;
         double expected = 1.0;
         double actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
         TestCase.assertEquals(expected, actual, 0.001);
 
         // Test a case with the 'alternate_pilot_bv_mod' option turned off.
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
         GameOptions mockOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);

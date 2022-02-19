@@ -34,8 +34,8 @@ import megamek.client.ui.swing.util.UIUtil.TipList;
 import megamek.client.ui.swing.util.UIUtil.TipTextField;
 import megamek.client.ui.Messages;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 
 public class BotConfigTargetHexDialog extends AbstractButtonDialog {
 
@@ -47,13 +47,13 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
     private final DefaultListModel<Coords> coordsListModel = new DefaultListModel<>();
     private final TipList<Coords> coordsList = new TipList<>(coordsListModel);
     private final ClientGUI clientGui;
-    private final IBoard board;
+    private final Board board;
 
     protected BotConfigTargetHexDialog(JFrame frame, @Nullable ClientGUI cg) {
         super(frame, "BotConfigTargetUnitDialog", "BotConfigDialog.bcthdTitle");
         clientGui = cg;
         if (clientGui != null) {
-            if (clientGui.getClient().getGame().getPhase() == Phase.PHASE_LOUNGE) {
+            if (clientGui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
                 board = clientGui.chatlounge.getPossibleGameBoard(true);
             } else {
                 board = clientGui.getClient().getBoard();
@@ -67,12 +67,15 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter, OK_ACTION);
         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(enter, OK_ACTION);
         getRootPane().getActionMap().put(OK_ACTION, new AbstractAction() {
+            private static final long serialVersionUID = -1060468627937876090L;
+
             @Override
             public void actionPerformed(ActionEvent evt) {
                 okButtonActionPerformed(evt);
             }
         });
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowOpened(WindowEvent e) {
                 coordsField.requestFocus();
             }
@@ -88,7 +91,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         
         var coordsFieldPanel = new UIUtil.FixedYPanel();
         coordsFieldPanel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        coordsField.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("BotConfigDialog.hexCoordsTip")));
+        coordsField.setToolTipText(Messages.getString("BotConfigDialog.hexCoordsTip"));
         coordsLabel.setLabelFor(coordsField);
         coordsLabel.setDisplayedMnemonic(KeyEvent.VK_X);
         coordsFieldPanel.add(coordsLabel);
@@ -110,7 +113,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             listLabel.setEnabled(false);
             coordsList.setEnabled(false);   
         } else {
-            board.getBuildingsVector().stream().map(b -> b.getCoordsList()).forEach(coordsListModel::addAll);
+            board.getBuildingsVector().stream().map(Building::getCoordsList).forEach(coordsListModel::addAll);
         }
 
         result.add(Box.createVerticalStrut(15));
@@ -133,7 +136,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
                 int y = Integer.parseInt(tokens[1]) - 1;
                 result.add(new Coords(x, y));
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception ignored) {
             // No coords if it cannot be parsed
         }
         // Add the marked list entries 
@@ -150,7 +153,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             Coords coords = (Coords) value;
             String content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
             if (board != null && board.getHex(coords) != null) {
-                final IHex hex = board.getHex(coords); 
+                final Hex hex = board.getHex(coords); 
                 final Building bldg = board.getBuildingAt(coords);
                 if (hex.containsTerrain(BUILDING)) {
                     content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),

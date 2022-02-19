@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -61,7 +61,7 @@ public class TSEMPWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new TSEMPHandler(toHit, waa, game, server);
     }    
 

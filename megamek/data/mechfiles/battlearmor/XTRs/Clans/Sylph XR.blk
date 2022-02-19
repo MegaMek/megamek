@@ -15,6 +15,10 @@ Sylph Battle Armor
 <Model>
 XR
 </Model>
+
+<mul id:>
+5170
+</mul id:>
 <chassis>
 biped
 </chassis>

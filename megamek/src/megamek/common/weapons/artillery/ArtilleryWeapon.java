@@ -1,26 +1,23 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 25, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryWeaponDirectFireHandler;
 import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
@@ -31,12 +28,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 25, 2004
  */
 public abstract class ArtilleryWeapon extends AmmoWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -732023379991213890L;
 
     public ArtilleryWeapon() {
@@ -51,28 +45,24 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         Mounted ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {
-            if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
-                        server);
+            if (game.getPhase() == GamePhase.FIRING) {
+                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, server);
             }
-            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game,
-                    server);
-        } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game,
-                    server);
+            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, server);
+        } else if (game.getPhase() == GamePhase.FIRING) {
+            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, server);
         } else {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game,
-                    server);
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
         }
     }
 }

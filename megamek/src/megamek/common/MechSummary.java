@@ -1,17 +1,16 @@
 /*
- * MechSummary.java - Copyright (C) 2002,2003,2004 Josh Yockey
+ * MechSummary.java - Copyright (C) 2002-2004 Josh Yockey
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.File;
@@ -21,19 +20,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
-
 /**
  * Contains minimal information about a single entity
  */
-
 public class MechSummary implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -6635709122122038237L;
     private String m_sName;
     private String m_sChassis;
     private String m_sModel;
+    private int mulId;
     private String m_sUnitType;
     private String m_sUnitSubType;
     private File m_sSourceFile;
@@ -97,7 +92,7 @@ public class MechSummary implements Serializable {
     private int[] armorLocTech;
     
     
-    public MechSummary(){
+    public MechSummary() {
         armorTypeSet = new HashSet<>();
     }
     
@@ -122,6 +117,10 @@ public class MechSummary implements Serializable {
 
     public String getModel() {
         return (m_sModel);
+    }
+
+    public int getMulId() {
+        return mulId;
     }
 
     public String getUnitType() {
@@ -281,6 +280,10 @@ public class MechSummary implements Serializable {
         this.m_sModel = m_sModel;
     }
 
+    public void setMulId(int mulId) {
+        this.mulId = mulId;
+    }
+
     public void setUnitType(String m_sUnitType) {
         this.m_sUnitType = m_sUnitType;
     }
@@ -367,7 +370,7 @@ public class MechSummary implements Serializable {
 
     public int getWeightClass() {
         double tons;
-        if (getUnitType().equals("BattleArmor")){
+        if (getUnitType().equals("BattleArmor")) {
             tons = getSuitWeight();
         } else {
             tons = getTons();
@@ -481,19 +484,19 @@ public class MechSummary implements Serializable {
         return armorTypeSet;
     }
     
-    public int [] getArmorTypes(){
+    public int[] getArmorTypes() {
         return armorLoc;
     }
     
-    public void setArmorTypes(int [] al){
+    public void setArmorTypes(int[] al) {
         armorLoc = al;
     }
     
-    public int [] getArmorTechTypes(){
+    public int[] getArmorTechTypes() {
         return armorLocTech;
     }
     
-    public void setArmorTechTypes(int [] att){
+    public void setArmorTechTypes(int[] att) {
         armorLocTech = att;
     }
 
@@ -564,10 +567,10 @@ public class MechSummary implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final MechSummary other = (MechSummary) obj;

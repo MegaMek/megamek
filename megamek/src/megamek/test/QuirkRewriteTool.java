@@ -1,27 +1,27 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.test;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.QuirksHandler;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This program is a tool to help rewrite a quirks file that does not have
@@ -31,7 +31,7 @@ import megamek.common.QuirksHandler;
  * with the same quirks for that unit type.
  * 
  * @author arlith
- * @date April 2016
+ * @since April 2016
  */
 public class QuirkRewriteTool implements MechSummaryCache.Listener {
 
@@ -54,9 +54,8 @@ public class QuirkRewriteTool implements MechSummaryCache.Listener {
 
         try {
             QuirksHandler.initQuirksList();
-        } catch (IOException e) {
-            System.err.println("Error initializing quirks!");
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Error initializing quirks", e);
             return;
         }
 
@@ -93,11 +92,7 @@ public class QuirkRewriteTool implements MechSummaryCache.Listener {
 
         System.out.println("Writing new custom quirks!");
         // Save the munged quirks in the custom quirks list
-        try {
-            QuirksHandler.saveCustomQuirksList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        QuirksHandler.saveCustomQuirksList();
         System.out.println("\n");
 
         System.out.println("Comparing Quirks!");

@@ -1,33 +1,4 @@
-/**
- * 
- */
 package megamek.client.ui.swing;
-
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextPane;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableRowSorter;
 
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.ModelRecord;
@@ -39,6 +10,14 @@ import megamek.common.MechSummary;
 import megamek.common.UnitRole;
 import megamek.common.UnitRoleHandler;
 
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+
 /**
  * Shows a table of all units matching the chosen faction/unit type/era parameters and
  * general criteria for a formation along with data relevant to the formation constraints.
@@ -46,7 +25,6 @@ import megamek.common.UnitRoleHandler;
  * as well.  
  * 
  * @author Neoancient
- *
  */
 public class AnalyzeFormationDialog extends JDialog {
 
@@ -61,7 +39,7 @@ public class AnalyzeFormationDialog extends JDialog {
     private List<FormationType.Constraint> allConstraints = new ArrayList<>();
     
     public AnalyzeFormationDialog(JFrame frame, List<MechSummary> generatedUnits,
-    		FormationType ft, List<UnitTable.Parameters> params,
+            FormationType ft, List<UnitTable.Parameters> params,
             int numUnits, int networkMask) {
         super(frame, Messages.getString("AnalyzeFormationDialog.title"), true);
         formationType = ft;
@@ -147,8 +125,7 @@ public class AnalyzeFormationDialog extends JDialog {
             panAvailable.add(chk, gbc);
             gbc.gridx = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            panAvailable.add(new JLabel(String.valueOf(units.stream()
-                    .filter(ms -> c.matches(ms)).count())), gbc);
+            panAvailable.add(new JLabel(String.valueOf(units.stream().filter(c::matches).count())), gbc);
         });
         
         if (ft.getGroupingCriteria() != null
@@ -187,8 +164,7 @@ public class AnalyzeFormationDialog extends JDialog {
         tblUnits = new JTable(model);
         tableSorter = new TableRowSorter<>(model);
         tableSorter.setComparator(UnitTableModel.COL_MOVEMENT,
-                (m1, m2) ->  Integer.valueOf(m1.toString().replaceAll("\\D.*", "")).compareTo(
-                        Integer.valueOf(m2.toString().replaceAll("\\D.*", ""))));
+                Comparator.comparing(m -> Integer.valueOf(m.toString().replaceAll("\\D.*", ""))));
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(UnitTableModel.COL_NAME, SortOrder.ASCENDING));
         tableSorter.setSortKeys(sortKeys);
@@ -204,24 +180,20 @@ public class AnalyzeFormationDialog extends JDialog {
         panAvailable.add(new JScrollPane(tblUnits), gbc);
         
         if (generatedUnits == null || generatedUnits.isEmpty()) {
-        	getContentPane().add(panAvailable, BorderLayout.CENTER);
+            getContentPane().add(panAvailable, BorderLayout.CENTER);
         } else {
-        	JTabbedPane panTabs = new JTabbedPane();
-        	JTextPane txtReport = new JTextPane();
-        	txtReport.setContentType("text/html");
-        	txtReport.setText(ft.qualificationReport(generatedUnits));
-        	JScrollPane scroll = new JScrollPane(txtReport);
-        	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
-        			scroll);
-        	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
-        	getContentPane().add(panTabs, BorderLayout.CENTER);
+            JTabbedPane panTabs = new JTabbedPane();
+            JTextPane txtReport = new JTextPane();
+            txtReport.setContentType("text/html");
+            txtReport.setText(ft.qualificationReport(generatedUnits));
+            JScrollPane scroll = new JScrollPane(txtReport);
+            panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
+                    scroll);
+            panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
+            getContentPane().add(panTabs, BorderLayout.CENTER);
             
             getContentPane().setPreferredSize(panAvailable.getPreferredSize());
-            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-               public void run() { 
-                   scroll.getVerticalScrollBar().setValue(0);
-               }
-            });
+            SwingUtilities.invokeLater(() -> scroll.getVerticalScrollBar().setValue(0));
         }
         
         JButton btnOk = new JButton(Messages.getString("Okay"));
@@ -329,29 +301,28 @@ public class AnalyzeFormationDialog extends JDialog {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             MechSummary ms = units.get(rowIndex);
-            switch(columnIndex) {
-            case COL_NAME:
-                return ms.getName();
-            case COL_WEIGHT_CLASS:
-                return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
-            case COL_MOVEMENT:
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.valueOf(ms.getWalkMp())).append("/")
-                        .append(String.valueOf(ms.getRunMp()));
-                if (formationType.isGround()) {
-                    sb.append("/").append(String.valueOf(ms.getJumpMp()));
-                }
-                return sb.toString();
-            case COL_ROLE:
-                ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
-                if (null == mr) {
-                    return UnitRole.UNDETERMINED.toString();
-                } else {
-                    return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
-                }
-            default:
-                Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
-                return metric == null? "?" : metric.apply(ms);
+            switch (columnIndex) {
+                case COL_NAME:
+                    return ms.getName();
+                case COL_WEIGHT_CLASS:
+                    return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
+                case COL_MOVEMENT:
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(ms.getWalkMp()).append("/").append(ms.getRunMp());
+                    if (formationType.isGround()) {
+                        sb.append("/").append(ms.getJumpMp());
+                    }
+                    return sb.toString();
+                case COL_ROLE:
+                    ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
+                    if (null == mr) {
+                        return UnitRole.UNDETERMINED.toString();
+                    } else {
+                        return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
+                    }
+                default:
+                    Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
+                    return metric == null? "?" : metric.apply(ms);
             }
         }
     }

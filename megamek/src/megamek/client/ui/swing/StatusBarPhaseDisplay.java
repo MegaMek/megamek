@@ -61,6 +61,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      */
     public static class CommandComparator implements Comparator<PhaseCommand>
     {
+        @Override
         public int compare(PhaseCommand c1, PhaseCommand c2) {
             return c1.getPriority() - c2.getPriority();            
         }
@@ -84,12 +85,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         super(cg);
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "clearButton");
         getActionMap().put("clearButton", new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.bv.getChatterBoxActive()) {
-                    clientgui.bv.setChatterBoxActive(false);
+                if (clientgui.getBoardView().getChatterBoxActive()) {
+                    clientgui.getBoardView().setChatterBoxActive(false);
                     clientgui.cb2.clearMessage();
                 } else if (clientgui.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
                     // Users can draw movement envelope during the movement phase 
@@ -187,6 +189,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         labStatus.setText(text);
     }
     
+    @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
             buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);

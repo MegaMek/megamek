@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Simurgh
 <Model>
 SMG-OA
 </Model>
+
+<mul id:>
+6694
+</mul id:>
 
 <year>
 3109
@@ -72,7 +76,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+5
 </armor_tech>
 
 <omni>
@@ -90,6 +94,7 @@ Aerodyne
 ISRotaryAC5:OMNI
 MRM 40:OMNI
 MRM 40:OMNI
+ISApollo:OMNI
 ISApollo:OMNI
 </Nose Equipment>
 
@@ -122,3 +127,4 @@ TRO 3145 Republic of the Sphere - Late Republic
 <tonnage>
 85.0
 </tonnage>
+

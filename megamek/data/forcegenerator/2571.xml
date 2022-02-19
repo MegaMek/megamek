@@ -189,7 +189,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:1,TH:10,LA:4,SL:5</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>
@@ -1903,17 +1903,14 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Patron I LoaderMech' unitType='Mek'>
-		<availability>FWL:6</availability>
-		<model name=''>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Patron LoaderMech' unitType='Mek'>
 		<availability>FWL:8</availability>
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='PTN-1'>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Pentagon' unitType='Dropship'>

@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2018 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -1001,7 +1001,7 @@ public class Crew implements Serializable {
      *
      * @param game the game to use to determine the modifier
      */
-    public double getBVSkillMultiplier(IGame game) {
+    public double getBVSkillMultiplier(Game game) {
         return getBVSkillMultiplier(true, game);
     }
 
@@ -1012,7 +1012,7 @@ public class Crew implements Serializable {
      *                    infantry/BA should not use the anti-mech skill
      * @param game the game to use to determine the modifier
      */
-    public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
+    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
         int pilotVal = getPiloting();
         if (!usePiloting) {
             pilotVal = 5;
@@ -1051,7 +1051,7 @@ public class Crew implements Serializable {
         return getBVSkillMultiplier(gunnery, piloting, null);
     }
 
-    public static double getBVSkillMultiplier(int gunnery, int piloting, IGame game) {
+    public static double getBVSkillMultiplier(int gunnery, int piloting, Game game) {
         if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD)) {
             return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
         }

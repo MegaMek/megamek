@@ -365,7 +365,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>MOC:3,FWL:5,SIC:4,DA:8,FS:10,TC:1</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<salvage pct='6'></salvage>
@@ -583,7 +583,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:10,FC:1,DA:3,FS:5</salvage>
 	</faction>
 	<faction key='FS.RG'>
 		<salvage pct='6'></salvage>
@@ -3930,6 +3930,9 @@
 	</chassis>
 	<chassis name='Locust' unitType='Mek'>
 		<availability>CS:6-,HL:4,CLAN:1-,IS:9,NIOPS:6-,Periphery.Deep:5,Periphery:6</availability>
+		<model name='C'>
+			<availability>CCC:2,CFM:2</availability>
+		</model>
 		<model name='LCT-1E'>
 			<roles>recon</roles>
 			<availability>HL:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
@@ -4842,6 +4845,9 @@
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='PTN-1'>
+			<availability>General:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Patton Tank' unitType='Tank'>
 		<availability>LA:8,FRR:5,FS:7,MERC:5</availability>
@@ -4902,20 +4908,23 @@
 			<roles>fire_support</roles>
 			<availability>CCC:6,CSR:6,CDS:6,CSV:6,CNC:6,CFM:6,CCO:6</availability>
 		</model>
+		<model name='9'>
+			<availability>CLAN:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
 		<availability>IS:2+</availability>
 		<model name='PHX-HK1'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-		<availability>IS:3</availability>
+		<availability>IS:2</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='PHX-HK2M'>
-			<availability>IS:2,FWL:4</availability>
+			<availability>IS:1,FWL:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -5868,7 +5877,7 @@
 			<availability>CLAN:8,BAN:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Sturmfeur Heavy Tank' unitType='Tank'>
+	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
 		<availability>Periphery.R:4,HL:2,LA:8,FRR:2,SIC:3,FS:5</availability>
 		<model name='(SRM)'>
 			<availability>LA:3,FS:3</availability>
@@ -6084,6 +6093,9 @@
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
 		<availability>CC:8,HL:2,CLAN:3,IS:8,Periphery.Deep:6,FS:7,MERC:8,Periphery:4,TC:4,CS:5-,LA:8,NIOPS:5-,MH:4,DC:8</availability>
+		<model name='TDR-5D'>
+			<availability>FS:3,MERC:4</availability>
+		</model>
 		<model name='TDR-5S'>
 			<availability>CC:8,HL:6,LA:5,General:8,Periphery.Deep:7,Periphery:8</availability>
 		</model>
@@ -6608,10 +6620,10 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-100'>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-100A'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 		<model name='WSP-100b'>
 			<availability>IS:1+</availability>
@@ -6620,10 +6632,10 @@
 	<chassis name='Wasp LAM' unitType='Mek'>
 		<availability>IS:1</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>IS:2</availability>
 		</model>
 		<model name='WSP-105M'>
-			<availability>IS:2</availability>
+			<availability>IS:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

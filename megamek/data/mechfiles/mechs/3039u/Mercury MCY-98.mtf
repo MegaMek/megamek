@@ -1,6 +1,7 @@
 Version:1.0
 Mercury
 MCY-98
+mul id:4624
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,24 +149,18 @@ Heat Sink
 -Empty-
 -Empty-
 
-Overview: The Mercury was intended to be a replacement for the Stinger and Wasp by delivering the same mobility, same or better firepower, and no reduction of armor.
+overview:The Mercury debuted for the first time in 2742, intended as a replacement for the aging Wasps and Stingers in use by the Star League Defense Force. Hailed as the beginning of a new age in 'Mech design, the Mercury was faster and better-armed than its competition without sacrificing armor protection.
 
-Initial versions with improved electronics and a host of technologies of the Star League was well recieved by pilots acustomed to the aforementioned Stingers and Wasps.
+capabilities:It also featured an advancement in weapons installation, making use of a modular replacement system to allow for easier repairs. The ideal scout and raider, sales of the Mercury were limited exclusively to the SLDF. 
 
-The Mercury was considered so advanced that it was initially restricted to duty on Terra and the factory on Graham IV.  With the Exodus most Mercury mechs left the Inner Sphere with most remaining with what would become the Eridani Light Horse.
+deployment:This variant of the Mercury is the downgraded version introduced during the Succession Wars in 2810. While it retains the same armament and engine of the original, the primary changes in the 'Mech is its armor, using standard plating in place of Ferro-Fibrous, and the MASC system, which has been removed to allow for the armor to be one ton heavier. These changes lower its maximum speed to 129.6 km/h and slightly increases the overall armor protection. It also features a Datacom communication system and Scarborough Track targeting system.
 
-It is not surprising that the Mercury established a new lower tech variant during the technological decline of the Succession Wars and the relative rarity ensuring the Mercury remained a highly sought after mech.
+history:After the Amaris Civil War and the dissolution of the Star League, those SLDF units which still fielded the Mercury were either stationed on Terra or at the Graham IV factory, all of whom left with General Kerensky in the Exodus. In the Succession Wars which followed, the Mercury factories were destroyed and the design teetered on the edge of the abyss. Of those SLDF units which stayed behind, the 3rd Regimental Combat Team had the highest concentration of the 'Mechs, with twelve Mercuries gathered together in the 8th Recon Battalion. All of them were ultimately lost during fighting on Sendai in 2798. As the years wore on those desperate few Mercuries still clinging to existence were increasingly rebuilt in haphazard fashion with less advanced and more shoddy parts until they ceased to look quite like the noble 'Mechs they once were. In the end nothing could be done to stop the decline of the Mercury and it eventually became extinct in the Inner Sphere. It was with some surprise that ComStar unveiled their Com Guards early in the thirty-first century, a brand-new military force fielding a number of extinct designs such as the Mercury. Precentor Martial Anastasius Focht even went so far as to restart three of the mothballed Mercury production lines on Terra to resume production of the original model. A new variant, the MCY-97, was unveiled in time to meet the Clan Invasion (the Clans had also preserved the Mercury, and indeed its revolutionary design was responsible for their development of the OmniMech). One of these lines was eventually turned over to making the Nexus in 3054 while the rest continued to produce so many Mercuries that the 'Mech's life was extended for several more years. This included the dark years of the Jihad, when the Word of Blake also used the Mercury to outfit their Militia.
 
-Capability: The high mobility and all energy loadout of the Mercury combined to make for a very effective scout and raiding platform able to outlast it's pilots in most situations.
-
-If there is any shortfall of the Mercury's capabilities it is in the lack of jump jets.  This leaves the Mercury in rare situations where it's high mobility is largely negated by rough/built up terrain.
-
-Engineers developed a modular mounting system for the paired Hessen IX Small Lasers to allow for quick removal of damaged components.  While it is not as advanced as modern Omni-mechs the origins of that technology can still be seen in this system.
-
-With the rediscovery of many Star League technologies and the developments of new technologies the Mercury has benefited with the return of it's more advanced variants from the days of the Star Lague as well as all new variants.
-
-Deployment: Initially tightly controlled the Mercury was reduced to nearly mythical status, especially after the combat loses that the Eridani Light Horse suffered on Sendai in 2789.  Fortunately Mitchel Vehicles was able to produce enough Mercury mechs that the design eventually re-emerged and spread during the Succession Wars.
-
-Who ever the Mercury ends up serving the obvious combination of high ground mobility and energy weapon loadout ensures it sees heavy use in units tasked with recon and raiding.
-
-The Mercury even has some popularity as a counter to the same mission roles due to it's higher armor.
+manufacturer:Mitchell Vehicles, Field Refits
+primaryfactory:Sirius V
+systemmanufacturer:CHASSIS:Bergan MX II
+systemmanufacturer:ENGINE:LTV 160
+systemmanufacturer:ARMOR:Mitchell-091 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:DataTech 401
+systemmanufacturer:TARGETING:Skyhunter IV Overview

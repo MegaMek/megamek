@@ -34,8 +34,8 @@ public class SubforcesNode extends RulesetNode {
     protected SubforcesNode() {
         altFaction = null;
         parentFaction = false;
-        subforces = new ArrayList<ValueNode>();
-        optionSubforces = new ArrayList<OptionGroupNode>();
+        subforces = new ArrayList<>();
+        optionSubforces = new ArrayList<>();
     }
 
     public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd) {
@@ -44,10 +44,10 @@ public class SubforcesNode extends RulesetNode {
 
     public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd,
             boolean isAttached) {
-        ArrayList<ForceDescriptor> retVal = new ArrayList<ForceDescriptor>();
+        ArrayList<ForceDescriptor> retVal = new ArrayList<>();
         for (ValueNode n : subforces) {
             if (n.matches(fd)) {
-                ArrayList<ForceDescriptor> subs = new ArrayList<ForceDescriptor>();
+                ArrayList<ForceDescriptor> subs = new ArrayList<>();
                 for (int i = 0; i < n.getNum(); i++) {
                     /* Remove the middle weight class to keep the overall weight class
                      * roughly the same.
@@ -80,7 +80,7 @@ public class SubforcesNode extends RulesetNode {
             if (n.matches(fd)) {
                 ValueNode vn = n.selectOption(fd);
                 if (vn != null) {
-                    ArrayList<ForceDescriptor> subs = new ArrayList<ForceDescriptor>();
+                    ArrayList<ForceDescriptor> subs = new ArrayList<>();
                     for (int i = 0; i < vn.getNum(); i++) {
                         if (fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
                                 && i == vn.getNum() / 2) {

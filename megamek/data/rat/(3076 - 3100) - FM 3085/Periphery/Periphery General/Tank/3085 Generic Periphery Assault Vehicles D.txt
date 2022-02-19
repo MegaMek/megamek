@@ -1,6 +1,6 @@
 3085 Generic Periphery Assault Vehicles D
 Schrek PPC Carrier (Armor),1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Schrek PPC Carrier (Standard),3
 Ontos Heavy Tank (Standard),4
 Demolisher Heavy Tank (Standard Mk. II),5

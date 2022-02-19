@@ -1,12 +1,13 @@
 Version:1.0
 Dasher (Fire Moth)
 R
+mul id:7582
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3110
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #8 - Late Republic
+rules level:2
 
 mass:20
 engine:200 XL (Clan) Engine

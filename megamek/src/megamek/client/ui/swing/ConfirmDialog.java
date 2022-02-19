@@ -132,13 +132,14 @@ public class ConfirmDialog extends JDialog{
         Action yesAction = new AbstractAction() {
             private static final long serialVersionUID = -5442315938595454381L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 confirmation = true;
                 setVisible(false);
             }
         };
         butYes = new JButton(yesAction);
-        butYes.setText(Messages.getString("Yes")); //$NON-NLS-1$
+        butYes.setText(Messages.getString("Yes"));
 	butYes.setMnemonic(KeyEvent.VK_Y);
         KeyStroke ks = null;
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
@@ -152,13 +153,14 @@ public class ConfirmDialog extends JDialog{
         Action noAction = new AbstractAction() {
             private static final long serialVersionUID = -952830599469731009L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 confirmation = false;
                 setVisible(false);
             }
         };
         butNo = new JButton(noAction);
-        butNo.setText(Messages.getString("No")); //$NON-NLS-1$
+        butNo.setText(Messages.getString("No"));
 	butNo.setMnemonic(KeyEvent.VK_N);
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_N, 0);
         imap = butNo.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -183,8 +185,7 @@ public class ConfirmDialog extends JDialog{
         c.gridheight = 1;
 
         if (useCheckbox) {
-            botherCheckbox = new JCheckBox(Messages
-                    .getString("ConfirmDialog.dontBother")); //$NON-NLS-1$
+            botherCheckbox = new JCheckBox(Messages.getString("ConfirmDialog.dontBother"));
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);

@@ -1,12 +1,13 @@
 Version:1.0
 Firestorm
 (Standard)
+mul id:8129
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3145
-source:RecGuide 13 - Dark Ages
-rules level:4
+source:Rec Guide:ilClan #13 - Dark Ages
+rules level:2
 
 mass:50
 engine:250 XL (Clan) Engine

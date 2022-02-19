@@ -19,6 +19,10 @@ Kanazuchi Assault Battle Armor
 [Industrial Drill]
 </Model>
 
+<mul id:>
+1742
+</mul id:>
+
 <chassis>
 biped
 </chassis>

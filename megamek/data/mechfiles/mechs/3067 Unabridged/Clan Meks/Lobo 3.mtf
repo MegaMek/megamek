@@ -1,44 +1,53 @@
-Version:1.1
+Version:1.0
 Lobo
 3
+mul id:5669
 
 Config:Biped
-TechBase:Clan
-Era:3077
-Rules Level:2
-source:3067 Unabridged
+techbase:Clan
+era:3077
+source:3067 Unabridged - Jihad
+rules level:2
 
-Mass:40
-Engine:240 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:Standard
+mass:40
+engine:240 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:6
-Jump MP:0
+heat sinks:11 Clan Double
+walk mp:6
+jump mp:0
 
-Armor:Ferro-Fibrous
-LA Armor:12
-RA Armor:12
-LT Armor:15
-RT Armor:15
-CT Armor:18
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+armor:Ferro-Fibrous(Clan)
+LA armor:12
+RA armor:12
+LT armor:15
+RT armor:15
+CT armor:18
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:5
+RTR armor:5
+RTC armor:5
 
-Weapons:8
-1 CLAPGaussRifle, Right Torso, Ammo:40
-1 CLAPGaussRifle, Left Torso
-1 CLMGA, Right Arm, Ammo:200
-1 CLMGA, Left Arm
-1 CLStreakSRM4, Right Torso, Ammo:25
-1 CLStreakSRM4, Left Torso
-1 CLERPPC, Right Torso
-1 CLMediumPulseLaser, Left Torso
+Weapons:16
+Machine Gun Array, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun Array, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+Medium Pulse Laser, Left Torso
+Streak SRM 4, Left Torso
+AP Gauss Rifle, Left Torso
+ER PPC, Right Torso
+Streak SRM 4, Right Torso
+AP Gauss Rifle, Right Torso
 
 Left Arm:
 Shoulder
@@ -49,10 +58,10 @@ CLMG
 CLMG
 CLMG
 CLMG
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -63,52 +72,52 @@ CLMG
 CLMG
 CLMG
 CLMG
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLMediumPulseLaser
 CLStreakSRM4
 CLAPGaussRifle
-CLStreakSRM4 Ammo
-Ferro-Fibrous
+Clan Streak SRM 4 Ammo
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLERPPC
 CLERPPC
 CLStreakSRM4
 CLAPGaussRifle
-Clan AP Gauss Rifle Ammo
-CLMG Ammo (100)
-Endo-Steel
+CLAPGaussRifle Ammo
+Clan Machine Gun Ammo - Half
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
 
 Head:
 Life Support
@@ -117,19 +126,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

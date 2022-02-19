@@ -1,45 +1,30 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import megamek.client.Client;
+import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ratgenerator.RATGenerator;
+import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.UnitType;
+import megamek.common.enums.GamePhase;
+import megamek.common.enums.SkillLevel;
+import org.apache.logging.log4j.LogManager;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
@@ -47,17 +32,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-
-import megamek.MegaMek;
-import megamek.client.Client;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.IGame.Phase;
-import megamek.common.UnitType;
-import megamek.common.enums.SkillLevel;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
@@ -89,7 +70,7 @@ public class ForceGeneratorViewUi {
     }
 
     private void initUi() {
-        panControls = new ForceGeneratorOptionsView(clientGui, fd -> setGeneratedForce(fd));
+        panControls = new ForceGeneratorOptionsView(clientGui, this::setGeneratedForce);
 
         rightPanel = new JPanel();
         rightPanel = new JPanel(new GridBagLayout());
@@ -230,8 +211,7 @@ public class ForceGeneratorViewUi {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
         }
         
-        List<Entity> entities = new ArrayList<Entity>(
-                modelChosen.allEntities().size());
+        List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         Client c = null;
         if (null != playerName) {
             c = clientGui.getBots().get(playerName);
@@ -241,8 +221,8 @@ public class ForceGeneratorViewUi {
         }
         for (Entity e : modelChosen.allEntities()) {
             e.setOwner(c.getLocalPlayer());
-            if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
-                e.setDeployRound(c.getGame().getRoundCount()+1);
+            if (c.getGame().getPhase() != GamePhase.LOUNGE) {
+                e.setDeployRound(c.getGame().getRoundCount() + 1);
                 e.setGame(c.getGame());
                 // Set these to true, otherwise units reinforced in
                 // the movement turn are considered selectable
@@ -420,7 +400,7 @@ public class ForceGeneratorViewUi {
 
         public ForceTreeModel(ForceDescriptor root) {
             this.root = root;
-            listeners = new ArrayList<TreeModelListener>();
+            listeners = new ArrayList<>();
         }
 
         @Override
@@ -433,7 +413,7 @@ public class ForceGeneratorViewUi {
         @Override
         public Object getChild(Object parent, int index) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().get(index);
+                return ((ForceDescriptor) parent).getAllChildren().get(index);
             }
             return null;
         }
@@ -441,7 +421,7 @@ public class ForceGeneratorViewUi {
         @Override
         public int getChildCount(Object parent) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().size();
+                return ((ForceDescriptor) parent).getAllChildren().size();
             }
             return 0;
         }
@@ -449,7 +429,7 @@ public class ForceGeneratorViewUi {
         @Override
         public int getIndexOfChild(Object parent, Object child) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().indexOf(child);
+                return ((ForceDescriptor) parent).getAllChildren().indexOf(child);
             }
             return 0;
         }
@@ -464,7 +444,7 @@ public class ForceGeneratorViewUi {
             return (getChildCount(node) == 0)
                     || ((node instanceof ForceDescriptor)
                             && (((ForceDescriptor) node).getEschelon() != null)
-                            && (((ForceDescriptor)node).getEschelon() == 0));
+                            && (((ForceDescriptor) node).getEschelon() == 0));
         }
 
         @Override
@@ -501,10 +481,10 @@ public class ForceGeneratorViewUi {
                 setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
 
-            ForceDescriptor fd = (ForceDescriptor)value;
+            ForceDescriptor fd = (ForceDescriptor) value;
             if (fd.isElement()) {
                 StringBuilder name = new StringBuilder();
-                String uname = "";
+                String uname;
                 if (fd.getCo() == null) {
                     name.append("<font color='red'>")
                         .append(Messages.getString("ForceGeneratorDialog.noCrew"))
@@ -517,13 +497,13 @@ public class ForceGeneratorViewUi {
                 if (fd.getFluffName() != null) {
                     uname += "<br /><i>" + fd.getFluffName() + "</i>";
                 }
-                setText("<html>" + name.toString() + ", " + uname + "</html>");
+                setText("<html>" + name + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
                     try {
                         clientGui.loadPreviewImage(this, fd.getEntity(),
                                 clientGui.getClient().getLocalPlayer());
                     } catch (NullPointerException ex) {
-                        MegaMek.getLogger().warning("No image found for " + fd.getEntity().getShortNameRaw());
+                        LogManager.getLogger().warn("No image found for " + fd.getEntity().getShortNameRaw());
                     }
                 }
             } else {
@@ -573,15 +553,14 @@ public class ForceGeneratorViewUi {
             fireTableDataChanged();
         }
 
-        public void removeEntities(int[] selectedRows) {
+        public void removeEntities(int... selectedRows) {
             for (int r : selectedRows) {
                 if ((r >= 0) && (r < entities.size())) {
                     entityIds.remove(entities.get(r).getExternalIdAsString());
                 }
             }
-            List<Entity> newList = entities.stream().filter(e -> entityIds.contains(e.getExternalIdAsString()))
+            entities = entities.stream().filter(e -> entityIds.contains(e.getExternalIdAsString()))
                     .collect(Collectors.toList());
-            entities = newList;
             fireTableDataChanged();
         }
 
@@ -591,9 +570,8 @@ public class ForceGeneratorViewUi {
                     addEntity(fd.getEntity());
                 }
             }
-            fd.getSubforces().stream().forEach(sf -> addEntities(sf));
-            fd.getAttached().stream().forEach(sf -> addEntities(sf));
-            
+            fd.getSubforces().forEach(this::addEntities);
+            fd.getAttached().forEach(this::addEntities);
         }
         
         public List<Entity> allEntities() {

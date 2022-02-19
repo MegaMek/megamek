@@ -1,6 +1,7 @@
 Version:1.0
 Kodiak II
 2
+mul id:6296
 
 Config:Biped
 TechBase:Clan
@@ -155,4 +156,19 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:Designed for Clan Ghost Bear, the Kodiak II is an Assault Class BattleMech which was first produced during the last decade of the thirty-first century. 
+
+capabilities:The 'Mech was engineered so it could serve as both a Command 'Mech and as a powerful assault 'Mech via a fitting of a heavy arsenal of missiles and a large array of energy weaponry. The design is based on the fourth variant of the original Kodiak. The Kodiak II is known for its Command facilities and its endurance. The powerful 'Mech carries 19 tons of Alshain Weapon's Forging AD56 Standard armor, giving it heavy resistance against weapons fire directed at it. At the heart of the machine is a 400-rated Extra-Light Fusion Engine, which while not as quick as other designs its weight saving qualities allows the 'Mech to carry is substantial weapons load out.
+
+deployment:The second variant of the Kodiak II is known for its resilience as well as its accurate weaponry. Introduced in the early 32nd Century, the Kodiak II 2 utilizes a number of advanced technologies which includes three torso mounted HarJel III Self-Repair Systems. Aside from inclusion of the new repair system, the version of the Kodiak II differs only slightly from the original. While retaining most of 'Mech weaponry and the Targeting Computer, the 'Mech's long-range weaponry are swapped out for pair of Streak LRM-20 launchers, while the 10-tubed launcher is dropped. 
+
+history:The Kodiak II would become a favorite design within the Clan Ghost Bear touman, being produced on Alshain at the Alshain Weapons factory. One of the Kodiak II's noted actions was during a border skirmish on the world of Jabuka, wherein elements of Clan Jade Falcon's 53rd Battle Cluster tangled with the 2nd Bear Regulars commanded by Star Colonel Anton Hall from the cockpit of a Kodiak II. The 'Mech would show its perseverance in the face of the 53rd's artillery bombardment of the Star Colonel's surviving units and ended up being the deciding factor which won the battle for the Ghost Bears.
+
+manufacturer:Alshain Weapons
+primaryfactory:Alshain
+systemmanufacturer:CHASSIS:Alshain LXL Endo Steel
+systemmanufacturer:ENGINE:400 Fusion XL
+systemmanufacturer:ARMOR:Forging AD56 Standard
+systemmanufacturer:COMMUNICATIONS:Garret L20
+systemmanufacturer:TARGETING:RCA Instatrac Mark IX with Artemis IV
 

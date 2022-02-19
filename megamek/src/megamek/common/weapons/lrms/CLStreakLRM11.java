@@ -44,10 +44,9 @@ public class CLStreakLRM11 extends StreakLRMWeapon {
         criticals = 1;
         bv = 190;
         cost = 165000;
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
-            .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        rulesRefs = "327,TO";
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
+        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
+        //Tech Advancement moved to StreakLRMWeapon.java
     }
 }

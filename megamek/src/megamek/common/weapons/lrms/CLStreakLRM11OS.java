@@ -44,7 +44,8 @@ public class CLStreakLRM11OS extends StreakLRMWeapon {
         criticals = 1;
         bv = 190;
         cost = 165000;
-        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
+        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)

@@ -1,6 +1,7 @@
 Version:1.0
 Man O' War (Gargoyle)
 Prime
+mul id:2010
 
 Config:Biped Omnimech
 techbase:Clan
@@ -32,21 +33,21 @@ RTR armor:10
 RTC armor:10
 
 Weapons:5
-SRM 6, Left Arm
 LB 5-X AC, Left Arm
-SRM 6, Right Arm
+SRM 6, Left Arm
 LB 5-X AC, Right Arm
+SRM 6, Right Arm
 ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLSRM6 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
--Empty-
+CLSRM6 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,12 +56,12 @@ CLLBXAC5 (OMNIPOD)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLSRM6 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
-CLLBXAC5 (OMNIPOD)
--Empty-
+CLSRM6 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,8 +70,8 @@ CLLBXAC5 (OMNIPOD)
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo SRM-6 (OMNIPOD)
-Clan LB 5-X AC Ammo (OMNIPOD)
+Clan Ammo SRM-6 (omnipod)
+Clan LB 5-X AC Ammo (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -83,8 +84,8 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo SRM-6 (OMNIPOD)
-Clan LB 5-X Cluster Ammo (OMNIPOD)
+Clan Ammo SRM-6 (omnipod)
+Clan LB 5-X Cluster Ammo (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -105,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (omnipod)
 -Empty-
 
 Head:
@@ -127,7 +128,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -141,7 +142,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-

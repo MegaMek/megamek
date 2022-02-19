@@ -1,11 +1,12 @@
 Version:1.0
 Warhammer
 WHM-10K
+mul id:7564
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3147
-source:Dark Age
+source:Rec Guide:ilClan #7 - Dark Age
 rules level:4
 
 mass:70

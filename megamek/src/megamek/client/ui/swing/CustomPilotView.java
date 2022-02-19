@@ -171,7 +171,7 @@ public class CustomPilotView extends JPanel {
             }
         }
         if (entity.getCrew() instanceof LAMPilot) {
-            LAMPilot pilot = (LAMPilot)entity.getCrew();
+            LAMPilot pilot = (LAMPilot) entity.getCrew();
             fldGunneryL.setText(Integer.toString(pilot.getGunneryMechL()));
             fldGunneryM.setText(Integer.toString(pilot.getGunneryMechM()));
             fldGunneryB.setText(Integer.toString(pilot.getGunneryMechB()));
@@ -191,7 +191,7 @@ public class CustomPilotView extends JPanel {
             fldGunneryAero.setText("0");
         }
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
+        label = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT);
         if (entity instanceof Tank) {
             label.setText(Messages.getString("CustomMechDialog.labDriving"));
         } else if (entity instanceof Infantry) {
@@ -200,11 +200,11 @@ public class CustomPilotView extends JPanel {
         if (entity.getCrew() instanceof LAMPilot) {
             add(label, GBC.std());
             add(fldPiloting, GBC.eol());
-            fldPiloting.setText(Integer.toString(((LAMPilot)entity.getCrew()).getPilotingMech()));
-            label = new JLabel(Messages.getString("CustomMechDialog.labPilotingAero"), SwingConstants.RIGHT); //$NON-NLS-1$
+            fldPiloting.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingMech()));
+            label = new JLabel(Messages.getString("CustomMechDialog.labPilotingAero"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldPilotingAero, GBC.eop());
-            fldPilotingAero.setText(Integer.toString(((LAMPilot)entity.getCrew()).getPilotingAero()));
+            fldPilotingAero.setText(Integer.toString(((LAMPilot) entity.getCrew()).getPilotingAero()));
         } else {
             add(label, GBC.std());
             add(fldPiloting, GBC.eop());
@@ -213,14 +213,14 @@ public class CustomPilotView extends JPanel {
         }
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
-            label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldArtillery, GBC.eop());
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
         if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            label = new JLabel(Messages.getString("CustomMechDialog.labTough"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labTough"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldTough, GBC.eop());
         }
@@ -233,13 +233,13 @@ public class CustomPilotView extends JPanel {
                 }
             }
             if (slot == entity.getCrew().getCrewType().getPilotPos()) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labBackupPilot"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labBackupPilot"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(cbBackup, GBC.eop());
                 cbBackup.setToolTipText(Messages.getString("CustomMechDialog.tooltipBackupPilot"));
                 cbBackup.setSelectedItem(entity.getCrew().getCrewType().getRoleName(entity.getCrew().getBackupPilotPos()));
             } else if (slot == entity.getCrew().getCrewType().getGunnerPos()) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labBackupGunner"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labBackupGunner"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(cbBackup, GBC.eop());
                 cbBackup.setToolTipText(Messages.getString("CustomMechDialog.tooltipBackupGunner"));
@@ -274,7 +274,7 @@ public class CustomPilotView extends JPanel {
 
             // If we got any other entities, show the unit number controls.
             if (otherUnitEntities.hasNext()) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER);
                 add(choUnitNum, GBC.eop());
                 refreshUnitNum(otherUnitEntities);
             }

@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,7 +40,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
      */
     public ISPulseLaserMediumRecovered() {
         super();
-        name = "Medium Pulse Laser (Recoverd Prototype)";
+        name = "Medium Pulse Laser (Recovered Prototype)";
         setInternalName("ISMediumPulseLaserRecovered");
         addLookupName("IS Pulse Med Laser Recovered");
         shortName = "Medium Pulse Laser (P)";
@@ -82,7 +82,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new PrototypeLaserHandler(toHit, waa, game, server);
     }
 }

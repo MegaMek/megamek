@@ -1,6 +1,7 @@
 Version:1.1
 Crosscut
-ED-X2 ForestryMech
+ED-X2 LoggerMech
+mul id:741
 
 Config:Biped
 TechBase:Inner Sphere

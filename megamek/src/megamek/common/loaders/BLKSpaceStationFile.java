@@ -48,7 +48,9 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         setTechLevel(a);
         setFluff(a);
         checkManualBV(a);
@@ -363,7 +365,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                         }
                         newmount.setSize(size);
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
                 }
             }

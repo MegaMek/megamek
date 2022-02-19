@@ -1,10 +1,11 @@
 Version:1.0
 Wolverine
 WVR-9W2
+mul id:3584
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3084
+Era:3077
 Source:Dark Age
 Rules Level:2
 

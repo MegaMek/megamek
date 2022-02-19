@@ -1,11 +1,13 @@
 Version:1.0
 Vulture (Mad Dog)
 V
+mul id:7729
 
 Config:Biped Omnimech
 techbase:Clan
 era:3098
 rules level:3
+source:Rec Guide:ilClan #10 - Early Republic
 
 mass:60
 engine:300 XL (Clan) Engine(IS)

@@ -1,0 +1,165 @@
+Version:1.0
+Hellion
+D
+mul id:5657
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3068
+source:Rec Guide:ilClan #20 - Jihad
+Rules Level:2
+
+Mass:30
+Engine:210 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
+Walk MP:7
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:4
+ER Large Laser, Left Arm
+Heavy Medium Laser, Right Arm
+Heavy Medium Laser, Right Arm
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+CLMASC
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Hellion is a product of Clan Ice Hellion and their philosophy that espouses speed above all else. Based on the Mist Lynx, the Hellion is a fast OmniMech that has respectable firepower.
+ 
+capabilities:This light 'Mech is rather difficult to kill, incorporating five and a half tons of Ferro-Fibrous armor. To save weight, the Hellion also uses an Endo Steel chassis. While it is not especially fast for its size, the Hellion does use MASC to allow for bursts of additional speed.
+
+deployment:This variant carries an LRM-15, an ER Large Laser, and two Heavy Medium Lasers. 
+
+manufacturer:Hector MechWorks Facility Alpha,Prosoma War Works,Svarstaad Industriplex Alpha
+primaryfactory:Hector,Valencia,Svarstaad
+systemmanufacturer:CHASSIS:Hellion Light Endo Steel V5
+systemmanufacturer:ENGINE:210 XL
+systemmanufacturer:ARMOR:Compound Gamma Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:HCFA 3035 3.0
+systemmanufacturer:TARGETING:HCFA 3047 1.5

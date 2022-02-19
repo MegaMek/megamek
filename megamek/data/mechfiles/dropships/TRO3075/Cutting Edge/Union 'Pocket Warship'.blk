@@ -20,6 +20,10 @@ Union
 'Pocket Warship'
 </Model>
 
+<mul id:>
+5322
+</mul id:>
+
 <year>
 3071
 </year>
@@ -199,3 +203,35 @@ TRO 3075 - Jihad
 <escape_pod>
 7
 </escape_pod>
+
+<capabilities>
+The ubiquitous example of the company-sized BattleMech combat transport, the Union class is a venerable and capable member of the DropShip unit type. Capable of carrying twelve 'Mechs and two aerospace fighters (a standard 'Mech company including one air lance under classic SLDF doctrine), it is among the smaller dedicated military deployment vehicles, dwarfed by its larger cousin Overlord and especially the massive troop transports such as the Excalibur, Lee, or Colossus. The Union, while not as heavily armed as Assault DropShips, carries a formidable array of weapons. The semi-automated weaponry is significant enough to defend the ship from light ground forces and cause single and paired aerospace fighters pause.
+</capabilities>
+
+<overview>
+The Union is the archetypical DropShip, widely used in military and civilian roles and described as the yardstick against which all other DropShips are measured.
+</overview>
+
+<deployment>
+A refit developed by the Word of Blake, the Pocket WarShip variant of the Union attracted infamy for its shock appearance during the Jihad. Based on the upgraded model, the Medium Lasers have been replaced by ER Medium Lasers and the armor switched to thirty-three tons of Ferro-Aluminum plating, but the design appears otherwise visually identical. It's only when the two bow-mounted AR-10 launchers fire that the differences become apparent. The 'Mech bays were gutted to provide the space required for the Capital Missile Launchers and four Killer Whale, six White Shark, and ten Barracuda missiles. The fighter bays are retained while two Small Craft bays have been added to carry four squads of battle armor troops for boarding operations.
+</deployment>
+
+<history>
+The smaller but much more numerous, and implicitly also more cost-efficient and easier to manufacture, Union class weathered Lostech throughout the Succession Wars era better than the much larger vessels, and has been in continuous production ever since its inception. The ship was designed as a 'Mech deployment vehicle, not for prolonged comfortable travel. The interior personnel spaces aboard the Union are infamous for being very cramped on most Unions, and the air circulation system is often found lacking. The command and control facilities aboard Unions consisted of a Tactical Operations Room (TOR) sufficient to operate as a coordination point for smaller lance-sized combat transports partaking in company or larger sized operations. Likewise, it operates well in larger operations, where it may conduct missions of a surprise, diversionary or raiding role. The TOR was frequently removed from Union Class Dropships during refurbishment by the Clans.
+</history>
+
+<manufacturer>
+O'Neil Yards - Titan Yards
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Star League V250
+</systemManufacturers>
+
+<use>
+'Mech/ASF carrier
+</use>

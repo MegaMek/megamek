@@ -1,6 +1,7 @@
 Version:1.0
 Shadow Hawk IIC
 5
+mul id:2915
 
 Config:Biped
 TechBase:Clan
@@ -149,4 +150,17 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Shadow Hawk IIC is a second-line Clan BattleMech based upon the Shadow Hawk that was first fielded by the Star League.
 
+capabilities:The inexpensive unit is protected by seven and a half tons of Ferro-Fibrous armor, mounted on a weight-saving Endo Steel chassis. This medium 'Mech can reach a respectable top speed of 97 km/h, though it also carries enough jump jets to vault up to 180 meters at a time.
+
+deployment:This variant uses twin Zeta-Series X Plasma Cannons and a trio of Tau-II AP Gauss Rifles to decimate non-BattleMech formations.
+
+manufacturer:Trellshire Heavy Industries (Refit)
+primaryfactory:Twycross
+systemmanufacturer:CHASSIS:Lang T3
+systemmanufacturer:ENGINE:Consolidated Fusion 270 Standard
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Northrup Starlifters M45
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:TRTTS Mark II

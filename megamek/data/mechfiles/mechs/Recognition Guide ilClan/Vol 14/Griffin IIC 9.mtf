@@ -1,12 +1,13 @@
 Version:1.0
 Griffin IIC
 9
+mul id:8159
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3144
-source:ilClan Rec Guide 13 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #14 - Dark Age
+rules level:2
 
 mass:40
 engine:240 Fusion (Clan) Engine

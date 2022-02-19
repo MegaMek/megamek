@@ -36,6 +36,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         GunEmplacement e = new GunEmplacement();
@@ -49,6 +50,10 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
             e.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             e.setModel("");
+        }
+
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            e.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
         }
 
         setTechLevel(e);

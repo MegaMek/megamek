@@ -1,11 +1,12 @@
 Version:1.0
 Wolverine
 WVR-7M2
+mul id:8253
 
 Config:Biped
 techbase:Inner Sphere
 era:3072
-source:ilClan Rec Guide 18 - Jihad
+source:Rec Guide:ilClan #18 - Jihad
 rules level:2
 
 mass:55

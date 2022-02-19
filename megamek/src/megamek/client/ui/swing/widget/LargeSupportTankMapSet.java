@@ -1,18 +1,17 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -35,7 +34,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Tank unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
 public class LargeSupportTankMapSet implements DisplayMapSet {
 
@@ -45,7 +44,7 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
     private PMSimpleLabel[] labels = new PMSimpleLabel[16];
     private PMValueLabel[] vLabels = new PMValueLabel[16];
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     // Polygons for all areas
@@ -114,17 +113,16 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
             new int[] { 87, 87, 84, 80, 71, 59,  59,  75,  90,  90,  80,  65,
             65,  115, 115, 100, 90,  90,  105, 121, 121, 109, 100, 96, 93, 93 },
             new int[] { 42, 80, 80, 87, 87, 109, 149, 177, 177, 165, 165, 142,
-            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87 , 80, 80, 42 },
-            26);
+            125, 125, 142, 165, 165, 177, 177, 149, 109, 87,  87, 80, 80, 42 }, 26);
     // Turret internal structure
     private Polygon turretIS = new Polygon(
             new int[] { 65,  65,  80,  100, 115, 115 },
             new int[] { 125, 142, 165, 165, 142, 125 }, 6);
 
-    private static final Font FONT_LABEL = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public LargeSupportTankMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -132,21 +130,24 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         setAreas();
         setLabels();
         setBackGround();
-        //translateAreas();
         setContent();
     }
 
     public void setRest() {
+
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         LargeSupportTank t = (LargeSupportTank) e;
         int a = 1;
@@ -165,7 +166,7 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
-        vLabels[15].setValue(String.valueOf(((SupportTank)t).getBARRating(1)));
+        vLabels[15].setValue(String.valueOf(((SupportTank) t).getBARRating(1)));
     }
 
     private void setContent() {
@@ -199,142 +200,115 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[1] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.FrontArmor"), fm, Color.black, 85, 15); //$NON-NLS-1$
-        labels[2] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.FRS"), fm, Color.black, 170, 80); //$NON-NLS-1$
-        labels[3] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.FLS"), fm, Color.black, 10, 80); //$NON-NLS-1$
-        labels[4] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.RRS"), fm, Color.black, 170, 155); //$NON-NLS-1$
-        labels[5] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.RLS"), fm, Color.black, 10, 155); //$NON-NLS-1$
-        labels[6] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.RearArmor"), fm, Color.black, 85, 200); //$NON-NLS-1$
-        labels[7] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.TurretArmor"), fm, Color.black, 90, 104); //$NON-NLS-1$
-        labels[8] = WidgetUtils
-                .createLabel(
-                        Messages.getString("LargeSupportTankMapSet.FrontIS"), fm, Color.black, 80, 30); //$NON-NLS-1$
-        labels[9] = WidgetUtils.createLabel(
-                Messages.getString("LargeSupportTankMapSet.FRIS"), fm, Color.black, 120, 80); //$NON-NLS-1$
-        labels[10] = WidgetUtils.createLabel(
-                Messages.getString("LargeSupportTankMapSet.FLIS"), fm, Color.black, 43, 80); //$NON-NLS-1$
-        labels[11] = WidgetUtils.createLabel(
-                Messages.getString("LargeSupportTankMapSet.RRIS"), fm, Color.black, 140, 155); //$NON-NLS-1$
-        labels[12] = WidgetUtils.createLabel(
-                Messages.getString("LargeSupportTankMapSet.RLIS"), fm, Color.black, 43, 155); //$NON-NLS-1$
-        labels[13] = WidgetUtils
-                .createLabel(
-                        Messages.getString("LargeSupportTankMapSet.RearIS"), fm, Color.black, 85, 185); //$NON-NLS-1$
-        labels[14] = WidgetUtils
-                .createLabel(
-                        Messages.getString("LargeSupportTankMapSet.TurretIS"), fm, Color.black, 90, 140); //$NON-NLS-1$
-        labels[15] = WidgetUtils.createLabel(Messages
-                .getString("LargeSupportTankMapSet.BARRating"), fm, Color.white, 80, 220); //$NON-NLS-1$
+        labels[1] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FrontArmor"),
+                fm, Color.black, 85, 15);
+        labels[2] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FRS"),
+                fm, Color.black, 170, 80);
+        labels[3] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FLS"),
+                fm, Color.black, 10, 80);
+        labels[4] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RRS"),
+                fm, Color.black, 170, 155);
+        labels[5] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RLS"),
+                fm, Color.black, 10, 155);
+        labels[6] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RearArmor"),
+                fm, Color.black, 85, 200);
+        labels[7] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.TurretArmor"),
+                fm, Color.black, 90, 104);
+        labels[8] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FrontIS"),
+                fm, Color.black, 80, 30);
+        labels[9] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FRIS"),
+                fm, Color.black, 120, 80);
+        labels[10] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.FLIS"),
+                fm, Color.black, 43, 80);
+        labels[11] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RRIS"),
+                fm, Color.black, 140, 155);
+        labels[12] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RLIS"),
+                fm, Color.black, 43, 155);
+        labels[13] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.RearIS"),
+                fm, Color.black, 85, 185);
+        labels[14] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.TurretIS"),
+                fm, Color.black, 90, 140);
+        labels[15] = WidgetUtils.createLabel(Messages.getString("LargeSupportTankMapSet.BARRating"),
+                fm, Color.white, 80, 220);
 
         // Value labels for all parts of mek
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[1] = WidgetUtils.createValueLabel(115, 17, "", fm); //$NON-NLS-1$
-        vLabels[2] = WidgetUtils
-        .createValueLabel(164, 70, "", fm); //$NON-NLS-1$
-        vLabels[3] = WidgetUtils.createValueLabel(6, 70, "", fm); //$NON-NLS-1$
-        vLabels[4] = WidgetUtils.createValueLabel(
-                164, 140, "", fm); //$NON-NLS-1$
-        vLabels[5] = WidgetUtils
-        .createValueLabel(6, 140, "", fm); //$NON-NLS-1$
-        vLabels[6] = WidgetUtils
-        .createValueLabel(113, 202, "", fm); //$NON-NLS-1$
-        vLabels[7] = WidgetUtils
-        .createValueLabel(93, 115, "", fm); //$NON-NLS-1$
-        vLabels[8] = WidgetUtils.createValueLabel(93, 151, "", fm);//$NON-NLS-1$
-        vLabels[9] = WidgetUtils
-        .createValueLabel(140, 65, "", fm); //$NON-NLS-1$
-        vLabels[10] = WidgetUtils
-        .createValueLabel(43, 65, "", fm); //$NON-NLS-1$
-        vLabels[11] = WidgetUtils
-        .createValueLabel(145, 140, "", fm); //$NON-NLS-1$
-        vLabels[12] = WidgetUtils
-        .createValueLabel(43, 140, "", fm); //$NON-NLS-1$
-        vLabels[13] = WidgetUtils
-        .createValueLabel(113,187, "", fm); //$NON-NLS-1$
-        vLabels[14] = WidgetUtils
-        .createValueLabel(
-                110, 32, "", fm); //$NON-NLS-1$
-        vLabels[15] = WidgetUtils.createValueLabel(110, 222, "", fm); //$NON-NLS-1$
+        vLabels[1] = WidgetUtils.createValueLabel(115, 17, "", fm);
+        vLabels[2] = WidgetUtils.createValueLabel(164, 70, "", fm);
+        vLabels[3] = WidgetUtils.createValueLabel(6, 70, "", fm);
+        vLabels[4] = WidgetUtils.createValueLabel(164, 140, "", fm);
+        vLabels[5] = WidgetUtils.createValueLabel(6, 140, "", fm);
+        vLabels[6] = WidgetUtils.createValueLabel(113, 202, "", fm);
+        vLabels[7] = WidgetUtils.createValueLabel(93, 115, "", fm);
+        vLabels[8] = WidgetUtils.createValueLabel(93, 151, "", fm);
+        vLabels[9] = WidgetUtils.createValueLabel(140, 65, "", fm);
+        vLabels[10] = WidgetUtils.createValueLabel(43, 65, "", fm);
+        vLabels[11] = WidgetUtils.createValueLabel(145, 140, "", fm);
+        vLabels[12] = WidgetUtils.createValueLabel(43, 140, "", fm);
+        vLabels[13] = WidgetUtils.createValueLabel(113, 187, "", fm);
+        vLabels[14] = WidgetUtils.createValueLabel(110, 32, "", fm);
+        vLabels[15] = WidgetUtils.createValueLabel(110, 222, "", fm);
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+        tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }

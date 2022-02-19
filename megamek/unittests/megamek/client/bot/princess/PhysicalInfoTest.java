@@ -3,7 +3,7 @@ package megamek.client.bot.princess;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.QuadMech;
 import megamek.common.Tank;
@@ -11,8 +11,6 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +19,6 @@ import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 2/27/14 3:23 PM
  */
 @RunWith(JUnit4.class)
@@ -31,9 +28,7 @@ public class PhysicalInfoTest {
 
     @Test
     public void testInitDamage() {
-        MMLogger fakeLogger = new FakeLogger();
         Princess mockPrincess = Mockito.mock(Princess.class);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         FireControl mockFireControl = Mockito.mock(FireControl.class);
         Mockito.when(mockPrincess.getFireControl(Mockito.any(Entity.class))).thenReturn(mockFireControl);
@@ -44,7 +39,7 @@ public class PhysicalInfoTest {
                                                                 Mockito.any(Targetable.class),
                                                                 Mockito.any(EntityState.class),
                                                                 Mockito.any(PhysicalAttackType.class),
-                                                                Mockito.any(IGame.class)))
+                                                                Mockito.any(Game.class)))
                .thenReturn(mockToHit);
         Mockito.when(mockToHit.getValue()).thenReturn(7);
 
@@ -62,7 +57,7 @@ public class PhysicalInfoTest {
 
         EntityState mockTargetState = Mockito.mock(EntityState.class);
 
-        IGame mockGame = Mockito.mock(IGame.class);
+        Game mockGame = Mockito.mock(Game.class);
 
         PhysicalInfo testPhysicalInfo = Mockito.spy(new PhysicalInfo(mockPrincess));
         testPhysicalInfo.setShooter(mockShooter);
@@ -77,12 +72,12 @@ public class PhysicalInfoTest {
         PunchAttackAction punchAction = Mockito.mock(PunchAttackAction.class);
         Mockito.doReturn(punchAction).when(testPhysicalInfo).buildAction(Mockito.eq(punch), Mockito.anyInt(),
                                                                          Mockito.any(Targetable.class));
-        Mockito.when(punchAction.toHit(Mockito.any(IGame.class))).thenReturn(mockToHit);
+        Mockito.when(punchAction.toHit(Mockito.any(Game.class))).thenReturn(mockToHit);
 
         KickAttackAction kickAction = Mockito.mock(KickAttackAction.class);
         Mockito.doReturn(kickAction).when(testPhysicalInfo).buildAction(Mockito.eq(kick), Mockito.anyInt(),
                                                                         Mockito.any(Targetable.class));
-        Mockito.when(kickAction.toHit(Mockito.any(IGame.class))).thenReturn(mockToHit);
+        Mockito.when(kickAction.toHit(Mockito.any(Game.class))).thenReturn(mockToHit);
 
         // Test a vanilla punch.
         testPhysicalInfo.setShooter(mockShooter);

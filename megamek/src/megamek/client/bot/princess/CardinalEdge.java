@@ -45,6 +45,7 @@ public enum CardinalEdge {
         return index;
     }
     
+    @Override
     public String toString() {
         return text;
     }

@@ -1,25 +1,24 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.actions;
 
 import megamek.common.Compute;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -34,9 +33,6 @@ import megamek.common.ToHitData;
  * The attacker kicks the target.
  */
 public class KickAttackAction extends PhysicalAttackAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1697321306815235635L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -102,7 +98,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         double talonMultiplier = 1;
-        if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ){
+        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
             talonMultiplier += 0.5;
         }
 
@@ -119,7 +115,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         return toReturn;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return KickAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getLeg());
     }
@@ -127,7 +123,7 @@ public class KickAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified leg to kick
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
             Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
@@ -144,8 +140,8 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();
@@ -244,7 +240,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        if ( ae.isHullDown() ){
+        if (ae.isHullDown()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
 
@@ -287,7 +283,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
-        if ( ae.hasFunctionalLegAES() ) {
+        if (ae.hasFunctionalLegAES()) {
             toHit.addModifier(-1, "AES bonus");
         }
 
@@ -304,8 +300,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         //until then, we will assume that if the attacker height is less than half
         //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
         //See Dropship.rollHitLocation to see how HIT_KICK is handled
-        if(target instanceof Dropship) {
-            if((attackerElevation - targetElevation) > (target.getHeight()/2)) {
+        if (target instanceof Dropship) {
+            if ((attackerElevation - targetElevation) > (target.getHeight()/2)) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);

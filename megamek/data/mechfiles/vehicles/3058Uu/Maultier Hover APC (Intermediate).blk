@@ -15,6 +15,10 @@ Maultier Hover APC
 <Model>
 (Intermediate)
 </Model>
+
+<mul id:>
+2107
+</mul id:>
 <Tonnage>
 15
 </Tonnage>

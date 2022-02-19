@@ -15,6 +15,10 @@ Von Luckner Heavy Tank
 <Model>
 (Star League)
 </Model>
+
+<mul id:>
+3450
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

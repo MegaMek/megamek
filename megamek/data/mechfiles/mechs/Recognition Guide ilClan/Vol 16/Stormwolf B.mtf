@@ -1,12 +1,13 @@
 Version:1.0
 Stormwolf
 B
+mul id:8206
 
 Config:Biped Omnimech
 techbase:Clan
 era:3149
-source:Recognition Guide:ilClan #16 - Dark Age
-rules level:4
+source:Rec Guide:ilClan #16 - Dark Age
+rules level:3
 
 mass:50
 engine:300 XL (Clan) Engine(IS)
@@ -43,7 +44,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -57,7 +58,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -69,12 +70,12 @@ Clan Reflective
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Jump Jet
 Jump Jet
-CLPlasmaCannon
-CLPlasmaCannonAmmo
+CLPlasmaCannon (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
 CLMASC
 CLMASC
 -Empty-
@@ -89,8 +90,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-CLERPPC
-CLERPPC
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -112,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLLaserAntiMissileSystem
+CLLaserAntiMissileSystem 
 Sensors
 Life Support
 -Empty-
@@ -150,4 +151,11 @@ Clan Reflective
 -Empty-
 -Empty-
 
-
+manufacturer:Manufacturing Plant SFF-IT5, Kallon Weapon Industries
+primaryfactory:CSF Kraken Mobile Production Facility, Thermopolis
+systemmanufacturer:CHASSIS:Mynx Type Medium Endo-Steel
+systemmanufacturer:ENGINE:300 Extralight
+systemmanufacturer:ARMOR:Gamma Special Reflective
+systemmanufacturer:JUMPJET:Grandthrust Mk 3
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:SyncTracker (39-42071)

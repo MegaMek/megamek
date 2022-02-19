@@ -1,11 +1,12 @@
 Version:1.0
 Marauder IIC
 (Standard)
+mul id:2065
 
 Config:Biped
 techbase:Clan
 era:2828
-source:Succession Wars
+source:Rec Guide:ilClan #6 - Succession Wars
 rules level:2
 
 mass:85

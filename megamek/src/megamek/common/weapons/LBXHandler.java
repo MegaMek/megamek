@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -40,7 +40,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public LBXHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         sSalvoType = " pellet(s) ";
     }

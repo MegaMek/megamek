@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
@@ -74,10 +74,10 @@ public class MegaMekController implements KeyEventDispatcher {
     protected boolean ignoreKeyPresses = false;
 
     public MegaMekController() {
-        keyCmdSet = new HashSet<KeyCommandBind>();
-        cmdActionMap = new HashMap<String, ArrayList<CommandAction>>();
+        keyCmdSet = new HashSet<>();
+        cmdActionMap = new HashMap<>();
         keyRepeatTimer = new Timer("Key Repeat Timer");
-        repeatingTasks = new HashMap<KeyCommandBind, TimerTask>();
+        repeatingTasks = new HashMap<>();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class MegaMekController implements KeyEventDispatcher {
             CommandAction action) {
         ArrayList<CommandAction> actions = cmdActionMap.get(cmd);
         if (actions == null) {
-            actions = new ArrayList<CommandAction>();
+            actions = new ArrayList<>();
             actions.add(action);
             cmdActionMap.put(cmd, actions);
         } else {

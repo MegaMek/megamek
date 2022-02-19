@@ -266,12 +266,27 @@ public class CEntity {
         // TODO: Link this to a Bot configuration file
         runMP = entity.getRunMP();
         if (entity instanceof Mech) {
-            if (((Mech) entity).hasMASC()) {
-                if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
-                    masc_threat = false;
-                } else {
-                    masc_threat = true;
-                    runMP = entity.getRunMPwithoutMASC();
+            Entity.MPBoosters mpBoosters = ((Mech) entity).getMPBoosters();
+            if (mpBoosters.hasMASCAndOrSupercharger()) {
+                // do a check for each system
+                masc_threat = false;
+                if (mpBoosters.hasMASC()) {
+                    if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
+                        masc_threat = false;
+                    } else {
+                        masc_threat = true;
+                        runMP = entity.getRunMPwithoutMASC();
+                    }
+                }
+
+                if ((masc_threat == false) && mpBoosters.hasSupercharger()) {
+                    //we passed masc, but test for supercharger
+                    if (((Mech) entity).getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
+                        masc_threat = false;
+                    } else {
+                        masc_threat = true;
+                        runMP = entity.getRunMPwithoutMASC();
+                    }
                 }
             } else {
 

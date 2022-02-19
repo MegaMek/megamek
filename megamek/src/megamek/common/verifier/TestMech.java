@@ -1624,19 +1624,11 @@ public class TestMech extends TestEntity {
                 return false;
             }
             if (eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
-                if (!mech.entityIsQuad()) {
-                    if (buffer != null) {
-                        buffer.append(eq.getName()).append(" can only be used by quadruped Meks.\n");
-                    }
-                    return false;
+                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) && !mech.locationIsTorso(location)) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }
-                if (!mech.locationIsTorso(location)) {
-                    if (buffer != null) {
-                        buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
-                    }
-                    return false;
-                }
+                return false;
             }
             if (eq.hasFlag(MiscType.F_LIFTHOIST) && ((location == Mech.LOC_HEAD) || mech.locationIsLeg(location))) {
                 if (buffer != null) {

@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 /**
  * @author Andrew Hunter
  * @since Sep 12, 2004

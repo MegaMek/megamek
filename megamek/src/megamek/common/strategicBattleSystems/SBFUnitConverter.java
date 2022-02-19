@@ -21,6 +21,7 @@ package megamek.common.strategicBattleSystems;
 import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +58,7 @@ public class SBFUnitConverter {
     }
     private static SBFElementType getUnitType(Collection<AlphaStrikeElement> elements) {
         if (elements.isEmpty()) {
-            MegaMek.getLogger().error("Cannot determine SBF Element Type for an empty list of AS Elements.");
+            LogManager.getLogger().error("Cannot determine SBF Element Type for an empty list of AS Elements.");
             return null;
         }
         int majority = (int) Math.round(2.0 / 3 * elements.size());

@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 /**
  * @author Andrew Hunter
  * @since Oct 15, 2004

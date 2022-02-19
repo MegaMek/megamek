@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.BattleForceElement;
 import megamek.common.SimpleTechLevel;
 
 /**

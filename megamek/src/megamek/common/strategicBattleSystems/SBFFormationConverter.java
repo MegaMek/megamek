@@ -38,7 +38,7 @@ public final class SBFFormationConverter {
      *  approximately company-shaped to work, i.e. it has to contain some subforces with some entities
      *  in each subforce but no further subforces.
      */
-    public static SBFFormation convert(Force force, IGame game, boolean includePilots) {
+    public static SBFFormation convert(Force force, Game game, boolean includePilots) {
         if (!canConvertToSbfFormation(force, game)) {
             return null;
         }
@@ -74,7 +74,7 @@ public final class SBFFormationConverter {
     }
 
     /** Returns true if the given force can be converted to an SBF Formation. */
-    public static boolean canConvertToSbfFormation(Force force, IGame game) {
+    public static boolean canConvertToSbfFormation(Force force, Game game) {
         if ((force == null) || (game == null) || force.isEmpty()
                 || (game.getForces().getForce(force.getId()) != force)) {
             return false;

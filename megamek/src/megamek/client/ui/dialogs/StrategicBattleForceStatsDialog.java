@@ -35,14 +35,14 @@ import java.util.stream.Collectors;
 public class StrategicBattleForceStatsDialog extends AbstractDialog {
 
     private final Collection<Force> forceList;
-    private final IGame game;
+    private final Game game;
     private Collection<SBFFormation> formations;
     private final MMToggleButton pilotToggle = new MMToggleButton("Include Pilot");
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
     private JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
 
-    public StrategicBattleForceStatsDialog(JFrame frame, Collection<Force> fo, IGame gm) {
+    public StrategicBattleForceStatsDialog(JFrame frame, Collection<Force> fo, Game gm) {
         super(frame, true, "AlphaStrikeStatsDialog", "Ok.text");
         forceList = fo;
         game = gm;

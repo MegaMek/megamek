@@ -350,8 +350,7 @@ public enum UnitRole {
                         || unit.hasSPA(BattleForceSPA.VTS)
                         || unit.hasSPA(BattleForceSPA.MT)
                         || unit.hasSPA(BattleForceSPA.CT)
-                        || unit.hasSPA(BattleForceSPA.ST)
-                        || (unit.hasSPA(BattleForceSPA.CT) && unit.getSPA(BattleForceSPA.CT) >= 50);
+                        || unit.hasSPA(BattleForceSPA.ST);
             default:
                 break;
         }

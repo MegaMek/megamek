@@ -34,7 +34,7 @@ public class ACSCombatTeamConverter {
      *  approximately company-shaped to work, i.e. it has to contain some subforces with some entities
      *  in each subforce but no further subforces.
      */
-    public static ACSCombatTeam convert(Force force, IGame game, boolean includePilots) {
+    public static ACSCombatTeam convert(Force force, Game game, boolean includePilots) {
         if (!SBFFormationConverter.canConvertToSbfFormation(force, game)) {
             return null;
         }

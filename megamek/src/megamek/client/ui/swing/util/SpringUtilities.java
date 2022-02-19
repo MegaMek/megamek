@@ -34,6 +34,7 @@ import javax.swing.*;
 import javax.swing.SpringLayout;
 
 import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 
@@ -76,7 +77,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout)parent.getLayout();
         } catch (ClassCastException exc) {
-            MegaMek.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", exc);
+            LogManager.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", exc);
             return;
         }
 
@@ -161,7 +162,7 @@ public class SpringUtilities {
         try {
             layout = (SpringLayout) parent.getLayout();
         } catch (ClassCastException exc) {
-            MegaMek.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", exc);
+            LogManager.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", exc);
             return;
         }
 

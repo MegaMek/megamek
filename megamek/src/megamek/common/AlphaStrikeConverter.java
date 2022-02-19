@@ -27,6 +27,7 @@ import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.common.weapons.other.CLFussilade;
+import org.apache.logging.log4j.LogManager;
 
 import static megamek.common.ASUnitType.*;
 import static megamek.common.BattleForceElement.*;
@@ -56,12 +57,12 @@ public final class AlphaStrikeConverter {
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
-            MegaMek.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
+            LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
             return null; 
         }
         Entity undamagedEntity = getUndamagedEntity(entity);
         if (undamagedEntity == null) {
-            MegaMek.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
+            LogManager.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
 
@@ -626,7 +627,7 @@ public final class AlphaStrikeConverter {
                 }
             }
         }
-        MegaMek.getLogger().error("Mech Engine type cannot be converted!");
+        LogManager.getLogger().error("Mech Engine type cannot be converted!");
         return -1;
     }
 

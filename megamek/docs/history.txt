@@ -10,6 +10,7 @@ VERSION HISTORY:
 + Issues #2749 and #3418: Proper Supercharger Implementation and Improved MASC/Supercharger Hex Movement Display
 + PR #3446: Adding the Legendary SkillLevel
 + PR #3427: Properly Loading All Fonts in MegaMek
++ Updating to Mockito Core 4.3.1 from 4.2.0
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

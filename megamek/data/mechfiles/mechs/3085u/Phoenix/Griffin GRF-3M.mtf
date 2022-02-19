@@ -1,6 +1,7 @@
 Version:1.0
 Griffin
 GRF-3M
+mul id:1300
 
 Config:Biped
 TechBase:Inner Sphere

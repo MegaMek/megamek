@@ -19,6 +19,10 @@ Kanazuchi Assault Battle Armor
 [Salvage Arm]
 </Model>
 
+<mul id:>
+1743
+</mul id:>
+
 <chassis>
 biped
 </chassis>

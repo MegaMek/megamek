@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 BLR-1Gb
+mul id:285
 
 Config:Biped
 TechBase:Inner Sphere

@@ -20,6 +20,10 @@ Goblin Medium Tank
 (LRM)
 </Model>
 
+<mul id:>
+1223
+</mul id:>
+
 <year>
 2500
 </year>

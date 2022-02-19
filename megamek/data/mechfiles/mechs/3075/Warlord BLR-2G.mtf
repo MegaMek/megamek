@@ -1,6 +1,7 @@
 Version:1.0
 Warlord
 BLR-2G
+mul id:3511
 
 Config:Biped
 TechBase:Inner Sphere

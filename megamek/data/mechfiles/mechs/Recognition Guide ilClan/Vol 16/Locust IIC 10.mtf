@@ -1,6 +1,7 @@
 Version:1.0
 Locust IIC
 10
+mul id:8203
 
 Config:Biped
 techbase:Clan

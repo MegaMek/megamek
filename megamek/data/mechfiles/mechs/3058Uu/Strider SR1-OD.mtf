@@ -1,6 +1,7 @@
 Version:1.0
 Strider
 SR1-OD
+mul id:3088
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

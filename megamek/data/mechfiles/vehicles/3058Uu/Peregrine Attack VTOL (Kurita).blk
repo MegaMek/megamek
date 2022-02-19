@@ -15,6 +15,10 @@ Peregrine Attack VTOL
 <Model>
 (Kurita)
 </Model>
+
+<mul id:>
+2478
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

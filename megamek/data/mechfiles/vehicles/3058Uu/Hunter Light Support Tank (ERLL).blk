@@ -15,6 +15,10 @@ Hunter Light Support Tank
 <Model>
 (ERLL)
 </Model>
+
+<mul id:>
+1575
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

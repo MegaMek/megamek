@@ -1,6 +1,7 @@
 Version:1.1
 Spider
 SDR-7K
+mul id:3011
 
 Config:Biped
 TechBase:Inner Sphere

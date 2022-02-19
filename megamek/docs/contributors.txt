@@ -9,7 +9,6 @@
   Active Developers:
 	 Carl "Neoancient" Spain
 	 NickAragua
-	 Christopher Watford
 	 Juliez
 	 Justin "Windchild" Bowen
 
@@ -266,6 +265,7 @@
  	 Nicholas Walczak <arlith@users.sourceforge.net>
 	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
      Dylan Myers <https://github.com/Dylan-M>
+     Christopher Watford
 
   Icons and Images
       FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)

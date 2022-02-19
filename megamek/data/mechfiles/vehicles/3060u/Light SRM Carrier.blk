@@ -15,6 +15,10 @@ Light SRM Carrier
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+1869
+</mul id:>
 <Tonnage>
 40
 </Tonnage>

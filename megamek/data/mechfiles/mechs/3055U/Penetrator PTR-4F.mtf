@@ -1,6 +1,7 @@
 Version:1.0
 Penetrator
 PTR-4F
+mul id:2466
 
 Config:Biped
 TechBase:Inner Sphere

@@ -17,8 +17,12 @@ Tunnel Rat Mining Exoskeleton
 </Name>
 
 <Model>
-I / II [Armored Glove]
+I [Armored Glove]
 </Model>
+
+<mul id:>
+5303
+</mul id:>
 
 <year>
 3055

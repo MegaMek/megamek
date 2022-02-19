@@ -1,6 +1,7 @@
 Version:1.0
 Hunchback
 HBK-LGN-Pin 'Anastasia'
+mul id:8374
 
 Config:Biped
 techbase:Mixed (IS Chassis)

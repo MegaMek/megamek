@@ -15,6 +15,10 @@ Typhoon Urban Assault Vehicle
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+3337
+</mul id:>
 <Tonnage>
 70
 </Tonnage>

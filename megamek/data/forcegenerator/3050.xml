@@ -439,7 +439,7 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>0</pctSL>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>FWL:7,SIC:4,FC:10,FS:10,TC:1</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<pctOmni>0</pctOmni>
@@ -737,7 +737,7 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>0</pctSL>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>CC:4,LA:10,FC:10,FS:4</salvage>
 	</faction>
 	<faction key='FS.RG'>
 		<pctOmni>0</pctOmni>
@@ -4765,6 +4765,9 @@
 	</chassis>
 	<chassis name='Locust' unitType='Mek'>
 		<availability>CS:6-,HL:4,CLAN:1-,IS:9,NIOPS:6-,Periphery.Deep:5,WOB:6-,Periphery:6</availability>
+		<model name='C'>
+			<availability>CCC:2,LA:1,CLAN:1,CFM:2,FS:1,CGS:1,DC:1,CB:1</availability>
+		</model>
 		<model name='LCT-1E'>
 			<roles>recon</roles>
 			<availability>HL:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
@@ -5888,6 +5891,9 @@
 			<roles>fire_support</roles>
 			<availability>CCC:6,CSR:6,CDS:6,CSV:6,CNC:6,CFM:6,CCO:6</availability>
 		</model>
+		<model name='9'>
+			<availability>CHH:3,CLAN:2,CJF:3</availability>
+		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
 		<availability>IS:2+</availability>
@@ -6684,6 +6690,10 @@
 		<model name='SHD-5M'>
 			<availability>CC:3+,FRR:3+,FWL:6+,IS:3+,MERC:3+,DC:3+</availability>
 		</model>
+		<model name='SHD-5S'>
+			<roles>spotter</roles>
+			<availability>MERC:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Shamash Reconnaissance Vehicle' unitType='Tank'>
 		<availability>CSA:5,CIH:5,CDS:5,CW:5,CBS:7,CLAN:3,CGS:5,CGB:5</availability>
@@ -7278,6 +7288,9 @@
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
 		<availability>CC:7,HL:2,CLAN:2,IS:8,Periphery.Deep:6,WOB:4-,FS:7,MERC:8,Periphery:4,TC:4,CS:5-,LA:8,NIOPS:5-,MH:4,DC:8</availability>
+		<model name='TDR-5D'>
+			<availability>FS:2,MERC:3</availability>
+		</model>
 		<model name='TDR-5S'>
 			<availability>CC:7,HL:5,LA:5,General:7,Periphery.Deep:7,Periphery:7</availability>
 		</model>
@@ -7298,6 +7311,9 @@
 		</model>
 		<model name='TDR-9SE'>
 			<availability>LA:2+,MERC.ELH:5+,MERC:2+,FS:2+</availability>
+		</model>
+		<model name='TDR-9W'>
+			<availability>MERC.WD:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
@@ -7464,6 +7480,10 @@
 		</model>
 		<model name='C'>
 			<availability>CHH:7,CW:7,CNC:7,CSJ:7,CFM:7,CJF:7,CGS:7</availability>
+		</model>
+		<model name='M'>
+			<roles>fire_support</roles>
+			<availability>CNC:6,CSJ:4,CJF:6</availability>
 		</model>
 		<model name='Prime'>
 			<availability>CHH:8,CW:8,CNC:8,CFM:8,CSJ:8,CJF:8,CCO:8</availability>

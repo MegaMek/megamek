@@ -15,6 +15,10 @@ Hetzer Wheeled Assault Gun
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+1508
+</mul id:>
 <Tonnage>
 40
 </Tonnage>

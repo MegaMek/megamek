@@ -15,6 +15,10 @@ Vedette Medium Tank
 <Model>
 (Light Gauss)
 </Model>
+
+<mul id:>
+3392
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

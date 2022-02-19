@@ -19,6 +19,10 @@ Grenadier Battle Armor
 [Heavy Flamer]
 </Model>
 
+<mul id:>
+6739
+</mul id:>
+
 <chassis>
 biped
 </chassis>

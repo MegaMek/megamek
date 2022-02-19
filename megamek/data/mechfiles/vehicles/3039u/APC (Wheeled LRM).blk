@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Wheeled LRM)
 </Model>
 
+<mul id:>
+121
+</mul id:>
+
 <year>
 2500
 </year>

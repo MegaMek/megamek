@@ -20,6 +20,10 @@ Elemental Battle Armor
 (Fire) [Flamer]
 </Model>
 
+<mul id:>
+950
+</mul id:>
+
 <chassis>
 biped
 </chassis>

@@ -20,6 +20,10 @@ Pinto Attack VTOL
 (WoB)
 </Model>
 
+<mul id:>
+2533
+</mul id:>
+
 <Tonnage>
 30
 </Tonnage>

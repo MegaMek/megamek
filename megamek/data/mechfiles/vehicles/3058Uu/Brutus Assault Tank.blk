@@ -15,6 +15,10 @@ Brutus Assault Tank
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+435
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

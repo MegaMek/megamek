@@ -20,6 +20,10 @@ DI Morgan Assault Tank
 (Standard)
 </Model>
 
+<mul id:>
+900
+</mul id:>
+
 <Tonnage>
 100
 </Tonnage>

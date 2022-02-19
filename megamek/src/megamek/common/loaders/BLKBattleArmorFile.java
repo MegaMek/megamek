@@ -45,6 +45,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setModel("");
         }
 
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
+
         setTechLevel(t);
         setFluff(t);
         checkManualBV(t);

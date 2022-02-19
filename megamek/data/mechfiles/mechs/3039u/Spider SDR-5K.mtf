@@ -1,6 +1,7 @@
 Version:1.0
 Spider
 SDR-5K
+mul id:3009
 
 Config:Biped
 TechBase:Inner Sphere

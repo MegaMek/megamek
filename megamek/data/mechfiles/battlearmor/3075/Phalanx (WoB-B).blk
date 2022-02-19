@@ -19,6 +19,10 @@ Phalanx Battle Armor
 (WoB-B)
 </Model>
 
+<mul id:>
+4814
+</mul id:>
+
 <chassis>
 biped
 </chassis>

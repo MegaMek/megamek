@@ -15,6 +15,10 @@ Foot Infantry
 <Model>
 Raventhir's Infantry Guard
 </Model>
+
+<mul id:>
+1142
+</mul id:>
 <squad_size>
 7
 </squad_size>

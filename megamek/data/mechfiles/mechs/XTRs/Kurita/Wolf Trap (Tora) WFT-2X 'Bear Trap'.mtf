@@ -1,6 +1,7 @@
 Version:1.1
 Wolf Trap (Tora)
 WFT-2X 'Bear Trap'
+mul id:3557
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.0
 Warhammer
 C 2
+mul id:7565
 
 Config:Biped
 techbase:Mixed (IS Chassis)

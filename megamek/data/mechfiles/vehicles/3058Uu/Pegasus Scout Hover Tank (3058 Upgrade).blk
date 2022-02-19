@@ -15,6 +15,10 @@ Pegasus Scout Hover Tank
 <Model>
 (3058 Upgrade)
 </Model>
+
+<mul id:>
+2455
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

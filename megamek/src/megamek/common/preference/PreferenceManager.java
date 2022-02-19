@@ -14,13 +14,13 @@
  */
 package megamek.common.preference;
 
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.annotation.*;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 
-import javax.xml.bind.*;
-import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
@@ -126,9 +126,9 @@ public class PreferenceManager {
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             try {
-            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+                marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
             } catch (PropertyException ex) {
-            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+                marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
             }
             
             JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME), Settings.class, new Settings(clientPreferenceStore, stores));
@@ -221,6 +221,7 @@ public class PreferenceManager {
          */
         @SuppressWarnings("unused")
         private XmlProperty() {
+
         }
     }
 }

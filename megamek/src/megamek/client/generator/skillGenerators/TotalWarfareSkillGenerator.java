@@ -24,6 +24,7 @@ import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.Tank;
 import megamek.common.enums.SkillLevel;
+import org.apache.logging.log4j.LogManager;
 
 public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     //region Variable Declarations
@@ -80,13 +81,22 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 4;
                 break;
             case HEROIC:
-            default:
                 gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0) + 5;
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 5;
                 break;
+            case LEGENDARY:
+                gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0) + 6;
+                pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 6;
+                break;
+            default:
+                LogManager.getLogger().error("Attempting to generate skills for unknown skill level of " + level);
+                gunneryLevel = 0;
+                pilotingLevel = 0;
+                break;
         }
 
-        return cleanReturn(entity, SKILL_LEVELS[0][gunneryLevel], SKILL_LEVELS[1][pilotingLevel]);
+        return cleanReturn(entity, SKILL_LEVELS[0][Math.min(gunneryLevel, SKILL_LEVELS[0].length)],
+                SKILL_LEVELS[1][Math.min(pilotingLevel, SKILL_LEVELS[1].length)]);
     }
 
     /**

@@ -61,6 +61,9 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
             case HEROIC:
                 bonus = 6;
                 break;
+            case LEGENDARY:
+                bonus = 8;
+                break;
             case REGULAR:
             default:
                 bonus = 0;
@@ -85,8 +88,10 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
             level = SkillLevel.VETERAN;
         } else if (roll < 15) {
             level = SkillLevel.ELITE;
-        } else {
+        } else if (roll < 18) {
             level = SkillLevel.HEROIC;
+        } else {
+            level = SkillLevel.LEGENDARY;
         }
 
         return generateRandomSkills(level, entity, forceClan);

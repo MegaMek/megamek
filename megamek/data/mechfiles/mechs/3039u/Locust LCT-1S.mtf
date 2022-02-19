@@ -1,6 +1,7 @@
 Version:1.0
 Locust
 LCT-1S
+mul id:1900
 
 Config:Biped
 TechBase:Inner Sphere

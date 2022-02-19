@@ -15,6 +15,10 @@ Heavy Wheeled APC
 <Model>
 (LRM)
 </Model>
+
+<mul id:>
+1455
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

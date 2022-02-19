@@ -15,6 +15,10 @@ Hunter Light Support Tank
 <Model>
 'Assault Hunter'
 </Model>
+
+<mul id:>
+1572
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

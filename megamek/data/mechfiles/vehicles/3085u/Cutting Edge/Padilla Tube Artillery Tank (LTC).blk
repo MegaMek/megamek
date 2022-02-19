@@ -15,6 +15,10 @@ Padilla Tube Artillery Tank
 <Model>
 (LTC)
 </Model>
+
+<mul id:>
+2405
+</mul id:>
 <Tonnage>
 55
 </Tonnage>

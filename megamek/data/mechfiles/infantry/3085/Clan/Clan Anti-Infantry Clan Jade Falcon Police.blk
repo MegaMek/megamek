@@ -15,6 +15,10 @@ Clan Anti-Infantry
 <Model>
 Clan Jade Falcon Police
 </Model>
+
+<mul id:>
+599
+</mul id:>
 <squad_size>
 5
 </squad_size>

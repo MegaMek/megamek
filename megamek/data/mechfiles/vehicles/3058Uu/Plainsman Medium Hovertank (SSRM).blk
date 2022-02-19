@@ -15,6 +15,10 @@ Plainsman Medium Hovertank
 <Model>
 (Streak)
 </Model>
+
+<mul id:>
+2542
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

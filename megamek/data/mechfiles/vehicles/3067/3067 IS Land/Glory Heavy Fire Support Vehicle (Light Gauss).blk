@@ -15,6 +15,10 @@ Glory Heavy Fire Support Vehicle
 <Model>
 (Light Gauss)
 </Model>
+
+<mul id:>
+4218
+</mul id:>
 <Tonnage>
 85
 </Tonnage>

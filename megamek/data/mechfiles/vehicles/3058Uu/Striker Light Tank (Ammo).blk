@@ -15,6 +15,10 @@ Striker Light Tank
 <Model>
 (Ammo)
 </Model>
+
+<mul id:>
+5154
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

@@ -1,6 +1,7 @@
 Version:1.1
 BattleMaster
 BLR-K4
+mul id:301
 
 Config:Biped
 techbase:Inner Sphere

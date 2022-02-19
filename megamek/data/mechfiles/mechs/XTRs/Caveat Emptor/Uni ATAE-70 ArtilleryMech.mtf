@@ -1,6 +1,7 @@
 Version:1.0
 Uni ATAE-70 ArtilleryMech
 
+mul id:8101
 
 Config:Quad
 techbase:Inner Sphere

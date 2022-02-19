@@ -15,6 +15,10 @@ Brutus Assault Tank
 <Model>
 (LRM)
 </Model>
+
+<mul id:>
+432
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

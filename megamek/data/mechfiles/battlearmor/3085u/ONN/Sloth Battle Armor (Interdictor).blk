@@ -19,6 +19,10 @@ Sloth Battle Armor
 (Interdictor)
 </Model>
 
+<mul id:>
+2969
+</mul id:>
+
 <chassis>
 quad
 </chassis>

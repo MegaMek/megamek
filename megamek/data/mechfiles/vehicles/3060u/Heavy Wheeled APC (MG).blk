@@ -15,6 +15,10 @@ Heavy Wheeled APC
 <Model>
 (MG)
 </Model>
+
+<mul id:>
+1456
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

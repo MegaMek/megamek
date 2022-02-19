@@ -1,6 +1,7 @@
 Version:1.0
 Flashman
 FLS-10E
+mul id:8445
 
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -20,6 +20,10 @@ SeaBuster Strike Fighter
 (Standard)
 </Model>
 
+<mul id:>
+5010
+</mul id:>
+
 <year>
 3081
 </year>

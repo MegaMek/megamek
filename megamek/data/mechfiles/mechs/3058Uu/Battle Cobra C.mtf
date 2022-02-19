@@ -1,6 +1,7 @@
 Version:1.0
 Battle Cobra
 C
+mul id:270
 
 Config:Biped Omnimech
 TechBase:Clan

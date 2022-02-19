@@ -19,6 +19,10 @@ Thunderbird Battle Armor
 [Pulse Laser]
 </Model>
 
+<mul id:>
+3230
+</mul id:>
+
 <chassis>
 biped
 </chassis>

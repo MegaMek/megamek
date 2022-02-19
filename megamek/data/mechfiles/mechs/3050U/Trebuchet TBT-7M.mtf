@@ -1,6 +1,7 @@
 Version:1.0
 Trebuchet
 TBT-7M
+mul id:3300
 
 Config:Biped
 TechBase:Inner Sphere

@@ -19,6 +19,10 @@ Longinus Battle Armor
 'Hacked' [MG]
 </Model>
 
+<mul id:>
+1940
+</mul id:>
+
 <chassis>
 biped
 </chassis>

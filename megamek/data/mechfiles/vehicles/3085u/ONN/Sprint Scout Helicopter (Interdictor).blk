@@ -15,6 +15,10 @@ Sprint Scout Helicopter
 <Model>
 (Interdictor)
 </Model>
+
+<mul id:>
+3024
+</mul id:>
 <Tonnage>
 10
 </Tonnage>

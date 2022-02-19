@@ -1,6 +1,7 @@
 Version:1.0
 Wolverine
 WVR-10D
+mul id:8255
 
 Config:Biped
 techbase:Inner Sphere

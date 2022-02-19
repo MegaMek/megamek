@@ -16,6 +16,10 @@ Rogue Bear Heavy Battle Armor
 HR
 </Model>
 
+<mul id:>
+4932
+</mul id:>
+
 <chassis>
 biped
 </chassis>

@@ -19,6 +19,10 @@ Mantis Light Attack VTOL
 (ECCM)
 </Model>
 
+<mul id:>
+2028
+</mul id:>
+
 <Tonnage>
 15
 </Tonnage>

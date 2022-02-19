@@ -1,6 +1,7 @@
 Version:1.2
 Stinger
 STG-6S
+mul id:3067
 
 Config:Biped
 TechBase:Inner Sphere

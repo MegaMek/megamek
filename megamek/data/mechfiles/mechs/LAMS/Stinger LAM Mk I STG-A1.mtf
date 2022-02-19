@@ -1,6 +1,7 @@
 Version:1.0
 Stinger LAM Mk I
 STG-A1
+mul id:5140
 
 Config:LAM
 TechBase:Inner Sphere

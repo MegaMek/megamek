@@ -1,6 +1,7 @@
 Version:1.0
 Spider
 SDR-9M
+mul id:8306
 
 Config:Biped
 techbase:Inner Sphere

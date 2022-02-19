@@ -1,6 +1,7 @@
 Version:1.0
 Annihilator
 ANH-4A
+mul id:42
 
 Config:Biped
 TechBase:Inner Sphere

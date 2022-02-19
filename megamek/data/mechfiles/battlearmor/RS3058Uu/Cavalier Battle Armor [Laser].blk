@@ -20,6 +20,10 @@ Cavalier Battle Armor
 [Laser]
 </Model>
 
+<mul id:>
+500
+</mul id:>
+
 <year>
 3058
 </year>

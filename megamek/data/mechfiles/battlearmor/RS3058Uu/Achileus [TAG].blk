@@ -19,6 +19,10 @@ Achileus Light Battle Armor
 [TAG]
 </Model>
 
+<mul id:>
+11
+</mul id:>
+
 <Trooper Count>
 4
 </Trooper Count>

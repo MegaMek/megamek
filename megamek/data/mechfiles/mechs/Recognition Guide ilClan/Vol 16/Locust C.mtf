@@ -1,6 +1,7 @@
 Version:1.0
 Locust
 C
+mul id:7601
 
 Config:Biped
 techbase:Mixed (IS Chassis)

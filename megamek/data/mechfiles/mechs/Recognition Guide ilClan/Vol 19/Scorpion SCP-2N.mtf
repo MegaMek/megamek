@@ -1,6 +1,7 @@
 Version:1.1
 Scorpion
 SCP-2N
+mul id:8315
 
 Config:Quad
 techbase:Inner Sphere

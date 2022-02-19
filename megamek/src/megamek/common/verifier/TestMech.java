@@ -1562,12 +1562,6 @@ public class TestMech extends TestEntity {
                 }
                 return false;
             }
-            if (requiresHandActuator(eq) && !mech.hasSystem(Mech.ACTUATOR_HAND, location)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" requires a hand actuator.\n");
-                }
-                return false;
-            }
             if (eq.hasFlag(MiscType.F_SALVAGE_ARM) && (mech.entityIsQuad()
                     || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
                 if (buffer != null) {

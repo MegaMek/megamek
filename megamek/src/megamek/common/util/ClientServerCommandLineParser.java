@@ -1,31 +1,33 @@
 package megamek.common.util;
 
-import megamek.MegaMek;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
-public  class ServerCommandLineParser extends AbstractCommandLineParser {
+public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     public enum ServerCommandLineFlag {
         //region Enum Declarations
-        PORT("port","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
-        PASSWORD("password","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
-        ANNOUNCE("announce","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT),
-        MAIL("mail","set which port the server listens to. Defautls to "+ Server.DEFAULT_PORT);
+        PORT("set which port the server listens to or the client connects to. Default is "+ Server.DEFAULT_PORT),
+        PASSWORD("Password to ??? . Default is to use last password"),
+        ANNOUNCE("The url to the server announcer. Default is not to announce"),
+        MAIL("Mail ??. Default is no mail"),
+        PLAYERNAME("What name client gets in the lobby. Default is last used name"),
+        JOIN("the name or rul of the server to join"+ Server.LOCALHOST),
+        HELP("print this help message");
+
         //endregion Enum Declarations
 
-        private final String name;
         private final String toolTipText;
 
         //region Constructors
-        ServerCommandLineFlag(final String name, final String toolTipText) {
+        ServerCommandLineFlag(final String toolTipText) {
 //            final ResourceBundle resources = ResourceBundle.getBundle("mekhq.resources.Finances",
 //                    MegaMek.getMekHQOptions().getLocale(), new EncodeControl());
-            this.name = name;
             this.toolTipText = toolTipText; //resources.getString(toolTipText);
         }
         //endregion Constructors
@@ -45,7 +47,7 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
 
         @Override
         public String toString() {
-            return name;
+            return super.toString();
         }
     }
 
@@ -54,15 +56,10 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
     private String password;
     private String announceUrl = "";
     private String mailProperties;
+    private String host;
+    private String playerName = "";
 
-
-    // Options
-//    private static final String OPTION_PORT = "port";
-//    private static final String OPTION_PASSWORD = "password";
-//    private static final String OPTION_ANNOUNCE = "announce";
-//    private static final String OPTION_MAIL = "mail";
-
-    public ServerCommandLineParser(String[] args) {
+    public ClientServerCommandLineParser(String[] args) {
         super(args);
     }
 
@@ -92,6 +89,14 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
         return mailProperties;
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
     /**
      * @return the game file name option value or <code>null</code> if it wasn't set
      */
@@ -99,14 +104,26 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
         return gameFilename;
     }
 
+    public void printHelp() {
+        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
+        out.println(String.format("HELP"));
+        for( ServerCommandLineFlag flag : ServerCommandLineFlag.values() ) {
+            out.println(String.format("-%s %s",flag.toString().toLowerCase(), flag.toolTipText));
+        }
+        out.flush();
+        out.close();
+    }
+
     @Override
     protected void start() throws ParseException {
-        while (hasNext()) {
-            int tokType = getToken();
+        System.out.println(("TEST"));
+        while ( getTokenType() != TOK_EOF) {
+            int tokType = getTokenType();
+            String tokValue = getTokenValue();
             switch (tokType) {
                 case TOK_OPTION:
                     try {
-                        switch ( ServerCommandLineFlag.parseFromString(getTokenValue())) {
+                        switch ( ServerCommandLineFlag.parseFromString(tokValue)) {
                             case PORT:
                                 nextToken();
                                 parsePort();
@@ -123,62 +140,44 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
                                 nextToken();
                                 parseMail();
                                 break;
+                            case PLAYERNAME:
+                                nextToken();
+                                parsePlayerName();
+                                break;
+                            case JOIN:
+                                nextToken();
+                                parseHost();
+                                break;
+                            case HELP:
+                                nextToken();
+                                printHelp();
+                                //is it safe to exit here?
+                                System.exit(0);
                         }
                     } catch (Exception ex) {
-                        //ignore or fail?
+                        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
+                        out.println(String.format("Unknown flag %s",tokValue));
+                        out.close();
+                        printHelp();
+                        throw new ParseException(String.format("Unknown flag %s",tokValue));
                     }
                     break;
                 case TOK_LITERAL:
-                    gameFilename = getTokenValue();
+                    gameFilename = tokValue;
                     nextToken();
                     break;
                 case TOK_EOF:
                     // Do nothing, although this shouldn't happen
                     break;
                 default:
-                    throw new ParseException("unexpected input");
+                    throw new ParseException(String.format("Unexpected input %s",tokValue));
             }
             nextToken();
         }
-//        while (hasNext()) {
-//            int tokType = getToken();
-//            switch (tokType) {
-//                case TOK_OPTION:
-//                    switch (getTokenValue()) {
-//                        case OPTION_PORT:
-//                            nextToken();
-//                            parsePort();
-//                            break;
-//                        case OPTION_ANNOUNCE:
-//                            nextToken();
-//                            parseAnnounce();
-//                            break;
-//                        case OPTION_PASSWORD:
-//                            nextToken();
-//                            parsePassword();
-//                            break;
-//                        case OPTION_MAIL:
-//                            nextToken();
-//                            parseMail();
-//                            break;
-//                    }
-//                    break;
-//                case TOK_LITERAL:
-//                    gameFilename = getTokenValue();
-//                    nextToken();
-//                    break;
-//                case TOK_EOF:
-//                    // Do nothing, although this shouldn't happen
-//                    break;
-//                default:
-//                    throw new ParseException("unexpected input");
-//            }
-//            nextToken();
-//        }
     }
 
     private void parsePort() throws ParseException {
-        if (getToken() == TOK_LITERAL) {
+        if (getTokenType() == TOK_LITERAL) {
             int newPort = -1;
             try {
                 newPort = Integer.decode(getTokenValue());
@@ -195,7 +194,7 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
     }
 
     private void parseAnnounce() throws ParseException {
-        if (getToken() == TOK_LITERAL) {
+        if (getTokenType() == TOK_LITERAL) {
             announceUrl = getTokenValue();
         } else {
             throw new ParseException("meta server announce URL expected");
@@ -203,7 +202,7 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
     }
 
     private void parsePassword() throws ParseException {
-        if (getToken() == TOK_LITERAL) {
+        if (getTokenType() == TOK_LITERAL) {
             password = getTokenValue();
         } else {
             throw new ParseException("password expected");
@@ -211,10 +210,26 @@ public  class ServerCommandLineParser extends AbstractCommandLineParser {
     }
 
     private void parseMail() throws ParseException {
-        if (getToken() == TOK_LITERAL) {
+        if (getTokenType() == TOK_LITERAL) {
             mailProperties = getTokenValue();
         } else {
             throw new ParseException("mail properties expected");
         }
     }
+
+        private void parsePlayerName() throws ParseException {
+            if (getTokenType() == TOK_LITERAL) {
+                playerName = getTokenValue();
+            } else {
+                throw new ParseException("playerName expected");
+            }
+        }
+
+        private void parseHost() throws ParseException {
+            if (getTokenType() == TOK_LITERAL) {
+                host = getTokenValue();
+            } else {
+                throw new ParseException("mail properties expected");
+            }
+        }
 }

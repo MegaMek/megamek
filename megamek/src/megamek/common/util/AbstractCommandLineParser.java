@@ -113,7 +113,7 @@ public abstract class AbstractCommandLineParser {
      *
      * @return current token
      */
-    protected int getToken() {
+    protected int getTokenType() {
         return token;
     }
 

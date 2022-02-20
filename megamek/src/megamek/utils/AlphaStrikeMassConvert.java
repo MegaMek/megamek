@@ -72,6 +72,7 @@ public class AlphaStrikeMassConvert {
         headers.add("OV");
         headers.add("PV");
         headers.add("Specials");
+        headers.add("MUL ID");
         headers.add("\n");
         return String.join("\t", headers);
     }
@@ -96,6 +97,7 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getOverheat() + "");
         stats.add(element.getFinalPoints()+"");
         stats.add(element.getSpecialsString());
+        stats.add(element.getMulId() + "");
         stats.add("\n");
         return new StringBuilder(String.join("\t", stats));
     }

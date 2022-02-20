@@ -47,6 +47,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     // AP weapon mounts have a set damage value.
     static final double AP_MOUNT_DAMAGE = 0.05;
 
+    private int mulId = -1;
     protected ASUnitType asUnitType;
     
     /** 
@@ -643,5 +644,14 @@ public class AlphaStrikeElement extends BattleForceElement {
         return isAnyTypeOf(AF, CF, SC, DS, DA, JS, WS, SS)
                 || (isType(SV) && getMovementModes().contains("a") || getMovementModes().contains("k")
                 || getMovementModes().contains("i") || getMovementModes().contains("p"));
+    }
+
+
+    public int getMulId() {
+        return mulId;
+    }
+
+    public void setMulId(int mulId) {
+        this.mulId = mulId;
     }
 }

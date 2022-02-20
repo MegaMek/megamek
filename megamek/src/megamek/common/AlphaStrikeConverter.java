@@ -72,6 +72,7 @@ public final class AlphaStrikeConverter {
         result.setQuirks(undamagedEntity.getQuirks());
         result.model = undamagedEntity.getModel();
         result.chassis = undamagedEntity.getChassis();
+        result.setMulId(undamagedEntity.getMulId());
         result.role = UnitRoleHandler.getRoleFor(undamagedEntity);
         result.asUnitType = ASUnitType.getUnitType(undamagedEntity);
         result.size = getSize(undamagedEntity);
@@ -1522,7 +1523,10 @@ public final class AlphaStrikeConverter {
         }
 
         if (entity instanceof Aero) {
-            if (((Aero) entity).getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
+            if (((Aero) entity).getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE) {
+                element.addSPA(MHQ, 1);
+            }
+            if (entity.hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)) {
                 element.addSPA(MHQ, 1);
             }
             if (entity.isFighter()) {

@@ -13,6 +13,7 @@
  */
 package megamek.server;
 
+import megamek.client.ui.swing.MegaMekGUI;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.EmailService;
@@ -24,32 +25,27 @@ import java.io.FileReader;
 import java.util.Properties;
 
 public class DedicatedServer {
-    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t "
-            + "[-password <pass>] [-port <port>] [-mail <javamail.properties>] [<saved game>]";
+//    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
+//    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t "
+//            + "[-password <pass>] [-port <port>] [-mail <javamail.properties>] [<saved game>]";
 
     public static void start(String[] args) {
-        ClientServerCommandLineParser csparser = new ClientServerCommandLineParser(args);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args, true, false, false);
         try {
-            csparser.parse();
+            parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                            + ARGUMENTS_DESCRIPTION_MESSAGE);
+            LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
 
-        String saveGameFileName = csparser.getGameFilename();
-        int usePort;
-        if (csparser.getPort() != -1) {
-            usePort = csparser.getPort();
-        } else {
-            usePort = PreferenceManager.getClientPreferences().getLastServerPort();
-        }
-        String announceUrl = csparser.getAnnounceUrl();
-        String password = csparser.getPassword();
+        String saveGameFileName = parser.getGameFilename();
+        int usePort = Server.validatePort(parser.getPort());
+
+        String announceUrl = parser.getAnnounceUrl();
+        String password = parser.getPassword();
 
         EmailService mailer = null;
-        if (csparser.getMailProperties() != null) {
-            File propsFile = new File(csparser.getMailProperties());
+        if (parser.getMailProperties() != null) {
+            File propsFile = new File(parser.getMailProperties());
             try (var propsReader = new FileReader(propsFile)) {
                 var mailProperties = new Properties();
                 mailProperties.load(propsReader);

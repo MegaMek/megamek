@@ -10,26 +10,45 @@ import java.util.Locale;
 
 public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
+    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
+//    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
+//            + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
+//            + "(-eqedb) (-oul)] [<args>]";
+
     public enum ServerCommandLineFlag {
         //region Enum Declarations
-        PORT("set which port the server listens to or the client connects to. Default is "+ Server.DEFAULT_PORT),
+        HELP("print this help message"),
+        PORT(String.format("Port the server listens to or the client connects to. Valid range %d - %d. Default is %d", Server.MIN_PORT, Server.MAX_PORT, Server.DEFAULT_PORT)),
         PASSWORD("Password to ??? . Default is to use last password"),
-        ANNOUNCE("The url to the server announcer. Default is not to announce"),
-        MAIL("Mail ??. Default is no mail"),
-        PLAYERNAME("What name client gets in the lobby. Default is last used name"),
-        JOIN("the name or rul of the server to join"+ Server.LOCALHOST),
-        HELP("print this help message");
+        // server or host only options
+        ANNOUNCE("The url to the server announcer. Default is not to announce", true, false, true),
+        MAIL("Mail ??. Default is no mail", true, false, true),
+        // client or host only options
+        PLAYERNAME("Name client gets in game. Default is last used name", false, true, true),
+        // client only options
+        JOIN(String.format("Name or URL of the server to join. Default %s", Server.LOCALHOST), false, true, false);
 
         //endregion Enum Declarations
 
         private final String toolTipText;
+        private final boolean server;
+        private final boolean client;
+        private final boolean host;
 
         //region Constructors
         ServerCommandLineFlag(final String toolTipText) {
-//            final ResourceBundle resources = ResourceBundle.getBundle("mekhq.resources.Finances",
-//                    MegaMek.getMekHQOptions().getLocale(), new EncodeControl());
-            this.toolTipText = toolTipText; //resources.getString(toolTipText);
+            this(toolTipText, true, true, true);
         }
+
+        ServerCommandLineFlag(final String toolTipText, boolean server, boolean client, boolean host) {
+            //            final ResourceBundle resources = ResourceBundle.getBundle("mekhq.resources.Finances",
+            //                    MegaMek.getMekHQOptions().getLocale(), new EncodeControl());
+            this.toolTipText = toolTipText; //resources.getString(toolTipText);
+            this.server = server;
+            this.client = client;
+            this.host = host;
+        }
+
         //endregion Constructors
         //region File I/O
         /**
@@ -56,11 +75,18 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
     private String password;
     private String announceUrl = "";
     private String mailProperties;
-    private String host;
+    private String hostName;
     private String playerName = "";
 
-    public ClientServerCommandLineParser(String[] args) {
+    private final boolean server;
+    private final boolean client;
+    private final boolean host;
+
+    public ClientServerCommandLineParser(String[] args, boolean server, boolean client, boolean host) {
         super(args);
+        this.server = server;
+        this.client = client;
+        this.host = host;
     }
 
     /**
@@ -93,8 +119,8 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
         return playerName;
     }
 
-    public String getHost() {
-        return host;
+    public String getHostName() {
+        return hostName;
     }
 
     /**
@@ -106,17 +132,29 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     public void printHelp() {
         PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-        out.println(String.format("HELP"));
-        for( ServerCommandLineFlag flag : ServerCommandLineFlag.values() ) {
-            out.println(String.format("-%s %s",flag.toString().toLowerCase(), flag.toolTipText));
-        }
+        out.print(help());
         out.flush();
         out.close();
     }
 
+    public String help() {
+        StringBuilder sb = new StringBuilder();
+        for( ServerCommandLineFlag flag : ServerCommandLineFlag.values() ) {
+            if ( (flag.client && client) || (flag.server && server) || (flag.host && host)  ) {
+                sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.toolTipText));
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String formatErrorMessage(ParseException e) {
+        return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                + help());
+    }
+
     @Override
     protected void start() throws ParseException {
-        System.out.println(("TEST"));
         while ( getTokenType() != TOK_EOF) {
             int tokType = getTokenType();
             String tokValue = getTokenValue();
@@ -154,12 +192,12 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 //is it safe to exit here?
                                 System.exit(0);
                         }
-                    } catch (Exception ex) {
+                    } catch (ParseException ex) {
                         PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-                        out.println(String.format("Unknown flag %s",tokValue));
+                        out.print(formatErrorMessage(ex));
                         out.close();
                         printHelp();
-                        throw new ParseException(String.format("Unknown flag %s",tokValue));
+                        throw ex;
                     }
                     break;
                 case TOK_LITERAL:
@@ -184,8 +222,8 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
             } catch (NumberFormatException ignored) {
                 //ignore, leave at -1
             }
-            if ((newPort < 0) || (newPort > 65535)) {
-                throw new ParseException("invalid port number");
+            if ((newPort < 1025) || (newPort > 65535)) {
+                throw new ParseException(String.format("invalid port number %d, must be in range 1025 - 65535",newPort));
             }
             port = newPort;
         } else {
@@ -227,7 +265,7 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
         private void parseHost() throws ParseException {
             if (getTokenType() == TOK_LITERAL) {
-                host = getTokenValue();
+                hostName = getTokenValue();
             } else {
                 throw new ParseException("mail properties expected");
             }

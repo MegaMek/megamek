@@ -156,6 +156,13 @@ public abstract class AbstractCommandLineParser {
      */
     protected abstract void start() throws ParseException;
 
+    /**
+     *
+     * @return <code>String</code> error message for user
+     */
+    public abstract String formatErrorMessage(ParseException e);
+
+
     protected boolean hasNext() {
         return position < argsLen;
     }

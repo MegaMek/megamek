@@ -55,10 +55,7 @@ public class MegaMek {
     private static final MMOptions mmOptions = new MMOptions();
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
-    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
-            + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
-            + "(-eqedb) (-oul)] [<args>]";
+
 
     public static void main(String... args) {
         // First, create a global default exception handler
@@ -74,8 +71,9 @@ public class MegaMek {
         initializeLogging(MMConstants.PROJECT_NAME);
 
         // Third, Command Line Arguments and Startup
+        MegaMekCommandLineParser cp = new MegaMekCommandLineParser(args);
+
         try {
-            MegaMekCommandLineParser cp = new MegaMekCommandLineParser(args);
             cp.parse();
 
             String[] restArgs = cp.getRestArgs();
@@ -114,9 +112,7 @@ public class MegaMek {
                 startGUI();
             }
         } catch (MegaMekCommandLineParser.ParseException e) {
-            String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                    + ARGUMENTS_DESCRIPTION_MESSAGE;
-            LogManager.getLogger().fatal(message);
+            LogManager.getLogger().fatal(cp.formatErrorMessage(e));
             System.exit(1);
         }
     }
@@ -238,29 +234,29 @@ public class MegaMek {
 
     /**
      * Skip splash GUI, starts a host
+     * :megamek:run --args='-host'
      */
     private static void startHost(String... args) {
-        ClientServerCommandLineParser csparser = new ClientServerCommandLineParser(args);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args, false, false, true);
         try {
-            csparser.parse();
+            parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                    + ARGUMENTS_DESCRIPTION_MESSAGE);
+            LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
 
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
         File savegame = null;
-        if (csparser.getGameFilename() != null ) {
-            savegame = new File(csparser.getGameFilename());
+        if (parser.getGameFilename() != null ) {
+            savegame = new File(parser.getGameFilename());
             if (!savegame.isAbsolute()) {
-                savegame = new File("./savegames", csparser.getGameFilename());
+                savegame = new File("./savegames", parser.getGameFilename());
             }
         }
 
-        mmg.startHost(csparser.getPassword(), csparser.getPort(), csparser.getRegister(),
-                csparser.getAnnounceUrl(), savegame, csparser.getPlayerName() );
+        mmg.startHost(parser.getPassword(), parser.getPort(), parser.getRegister(),
+                parser.getAnnounceUrl(), savegame, parser.getPlayerName() );
     }
 
     /**
@@ -278,17 +274,16 @@ public class MegaMek {
      * Skip splash GUI, starts a client session
      */
     private static void startClient(String... args) {
-        ClientServerCommandLineParser csparser = new ClientServerCommandLineParser(args);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args, false, true, false);
         try {
-            csparser.parse();
+            parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                    + ARGUMENTS_DESCRIPTION_MESSAGE);
+            LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
         LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
-        mmg.startClient(csparser.getPlayerName(), csparser.getHost(), csparser.getPort());
+        mmg.startClient(parser.getPlayerName(), parser.getHostName(), parser.getPort());
     }
 
     /**
@@ -416,7 +411,10 @@ public class MegaMek {
         private static final String OPTION_CLIENT = "client";
         private static final String OPTION_QUICK = "quick";
 
-
+        private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
+        private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
+                + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
+                + "(-eqedb) (-oul)] [<args>]";
 
 
         MegaMekCommandLineParser(String... args) {
@@ -464,6 +462,12 @@ public class MegaMek {
          */
         String[] getRestArgs() {
             return restArgs;
+        }
+
+        @Override
+        public String formatErrorMessage(ParseException e) {
+            return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                    + ARGUMENTS_DESCRIPTION_MESSAGE);
         }
 
         @Override

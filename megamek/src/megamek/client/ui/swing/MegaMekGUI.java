@@ -43,6 +43,7 @@ import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -60,10 +61,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.MultiResolutionImage;
 import java.awt.image.BaseMultiResolutionImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -434,71 +432,76 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         startHost(hd.getServerPass(), hd.getPort(),  hd.isRegister(),
                 hd.isRegister() ? hd.getMetaserver() : "", null,
                 hd.getPlayerName());
-
-//        // kick off a RNG check
-//        d6();
-//
-//        // start server
-//        try {
-//            server = new Server(hd.getServerPass(), hd.getPort(), hd.isRegister(),
-//                    hd.isRegister() ? hd.getMetaserver() : "");
-//        } catch (Exception e) {
-//            LogManager.getLogger().error("Could not create server socket on port " + hd.getPort(), e);
-//            JOptionPane.showMessageDialog(frame,
-//                    Messages.getFormattedString("MegaMek.StartServerError", hd.getPort(), e.getMessage()),
-//                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-//            return;
-//        }
-//        // initialize client
-//        client = new Client(hd.getPlayerName(), Server.LOCALHOST, hd.getPort());
-//        ClientGUI gui = new ClientGUI(client, controller);
-//        controller.clientgui = gui;
-//        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-//        gui.initialize();
-//        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//        if (!client.connect()) {
-//            JOptionPane.showMessageDialog(frame,
-//                    Messages.getFormattedString("MegaMek.ServerConnectionError", Server.LOCALHOST, hd.getPort()),
-//                    Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-//            frame.setVisible(false);
-//            client.die();
-//        }
-//        launch(gui.getFrame());
     }
 
-//  :megamek:run --args='-host'
     public void startHost(String serverPassword, int port, boolean isRegister, String metaServer,  File savegame, String playerName) {
-        startServer(serverPassword, port, isRegister, metaServer, savegame);
+        startServer(serverPassword, port, isRegister, metaServer, null, savegame);
         startClient(playerName, Server.LOCALHOST, server.getPort());
     }
 
     /**
      *
-     * @param port, if 0, will return default port
+     * @param port, if or less 0, will return default port
      * @return valid port, or 0 if not a vali port
      */
     private int validatePort(int port)
     {
-        if (port <= 0) {
-            //use last port or default port
-            port = PreferenceManager.getClientPreferences().getLastServerPort();
-            if (port <= 0) {
-                return Server.DEFAULT_PORT;
-            }
-        }
+//        try {
+            return Server.validatePort(port);
 
-        if (port < 1029) {
-            // invalid port number
-            LogManager.getLogger().error("Port number must be greater than 1028. " + port);
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.StartServerError", port, "Port number must be greater than 1028. " + port),
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            return 0;
-        }
-        return port;
+//        }
+//        if (port <= 0) {
+//            //use last port or default port
+//            port = PreferenceManager.getClientPreferences().getLastServerPort();
+//            if (port <= 0) {
+//                return Server.DEFAULT_PORT;
+//            }
+//        }
+//
+//        if (port < 1029) {
+//            // invalid port number
+//            LogManager.getLogger().error("Port number must be greater than 1028. " + port);
+//            JOptionPane.showMessageDialog(frame,
+//                    Messages.getFormattedString("MegaMek.StartServerError", port, "Port number must be greater than 1028. " + port),
+//                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+//            return 0;
+//        }
+//        return port;
     }
 
-    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer,  File savegame) {
+//    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer, File savegame) {
+//        // kick off a RNG check
+//        d6();
+//        // start server
+//        port = validatePort(port);
+//        if (port == 0)
+//        {
+//            frame.setVisible(true);
+//            return;
+//        }
+//
+//        try {
+//            server = new Server( serverPassword, port, isRegister, metaServer);
+//        } catch (IOException ex) {
+//            LogManager.getLogger().error("Could not create server socket on port " + port, ex);
+//            JOptionPane.showMessageDialog(frame,
+//                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+//                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+//            frame.setVisible(true);
+//            return;
+//        }
+//
+//        if ((savegame != null) ) {
+//            if (!server.loadGame(savegame)) {
+//                JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+//                server.die();
+//                server = null;
+//                frame.setVisible(true);
+//                return;
+//            }
+//        }
+//    }
+    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer, String mailPropertiesFileName, File saveGameFileName) {
         // kick off a RNG check
         d6();
         // start server
@@ -509,8 +512,23 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
+        EmailService mailer = null;
+        if ( (mailPropertiesFileName != null) && (!mailPropertiesFileName.isBlank())) {
+            File propsFile = new File(mailPropertiesFileName);
+            try (var propsReader = new FileReader(propsFile)) {
+                var mailProperties = new Properties();
+                mailProperties.load(propsReader);
+                mailer = new EmailService(mailProperties);
+            } catch (Exception ex) {
+                LogManager.getLogger().error(
+                        "Error: could not load mail properties file \"" +
+                                propsFile.getAbsolutePath() + "\"", ex);
+                return;
+            }
+        }
+
         try {
-            server = new Server( serverPassword, port, isRegister, metaServer);
+            server = new Server( serverPassword, port, isRegister, metaServer, mailer, false);
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -520,8 +538,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        if ((savegame != null) ) {
-            if (!server.loadGame(savegame)) {
+        if ((saveGameFileName != null) ) {
+            if (!server.loadGame(saveGameFileName)) {
                 JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
                 server.die();
                 server = null;
@@ -763,27 +781,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         Compute.d6();
 
         // start server
-        startServer(serverPW, port, false, null, null);
+        startServer(serverPW, port, false, null, null, null);
         server.setGame(g);
         
         // apply any scenario damage
         sl.applyDamage(server);
 
-//        ClientGUI gui = null;
         if (!localName.isBlank()) {
             startClient(playerName, Server.LOCALHOST, port);
-            //            // initialize game
-//            client = new Client(playerName, Server.LOCALHOST, port);
-//            gui = new ClientGUI(client, controller);
-//            controller.clientgui = gui;
-//            gui.initialize();
-//            if (!client.connect()) {
-//                JOptionPane.showMessageDialog(frame,
-//                        Messages.getFormattedString("MegaMek.ServerConnectionError", Server.LOCALHOST, port),
-//                        Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE);
-//                frame.setVisible(false);
-//                client.die();
-//            }
         }
 
         // calculate initial BV

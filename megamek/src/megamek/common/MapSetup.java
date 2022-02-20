@@ -90,12 +90,9 @@ public class MapSetup implements Serializable {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         // The default header has the encoding and standalone properties
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-        try {
-            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-        } catch (PropertyException ex) {
-            marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-        }
-        JAXBElement<MapSetup> element = new JAXBElement<>(new QName("MAPSETUP"), MapSetup.class, derivedSetup);
+        marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+        JAXBElement<MapSetup> element = new JAXBElement<>(new QName("MAPSETUP"),
+                MapSetup.class, derivedSetup);
         marshaller.marshal(element, os);
     }
 

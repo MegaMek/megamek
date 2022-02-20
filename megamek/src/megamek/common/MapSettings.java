@@ -1592,14 +1592,9 @@ public class MapSettings implements Serializable {
 
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            try {
-                marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            } catch (PropertyException ex) {
-                marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            }
-
-            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
-
+            marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"),
+                    MapSettings.class, this);
             marshaller.marshal(element, os);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to write map settings xml", ex);

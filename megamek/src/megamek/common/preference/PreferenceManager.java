@@ -125,16 +125,11 @@ public class PreferenceManager {
             
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            try {
-                marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            } catch (PropertyException ex) {
-                marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            }
-            
-            JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME), Settings.class, new Settings(clientPreferenceStore, stores));
-            
+            marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+            JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME),
+                    Settings.class, new Settings(clientPreferenceStore, stores));
             marshaller.marshal(element, file);
-        } catch (JAXBException ex) {
+        } catch (Exception ex) {
             LogManager.getLogger().error("Failed writing client settings XML", ex);
         }
     }

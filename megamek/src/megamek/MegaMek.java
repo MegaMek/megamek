@@ -22,12 +22,10 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
-import megamek.common.util.ClientCommandLineParser;
-import megamek.common.util.ServerCommandLineParser;
+import megamek.common.util.ClientServerCommandLineParser;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.server.DedicatedServer;
-import megamek.server.Server;
 import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
@@ -81,6 +79,12 @@ public class MegaMek {
             cp.parse();
 
             String[] restArgs = cp.getRestArgs();
+
+//            if (cp.help())
+//            {
+//
+//            }
+
             if (cp.dedicatedServer()) {
                 startDedicatedServer(restArgs);
                 return;
@@ -236,11 +240,9 @@ public class MegaMek {
      * Skip splash GUI, starts a host
      */
     private static void startHost(String... args) {
-        ServerCommandLineParser sclp = new ServerCommandLineParser(args);
-        ClientCommandLineParser cclp = new ClientCommandLineParser(args);
+        ClientServerCommandLineParser csparser = new ClientServerCommandLineParser(args);
         try {
-            sclp.parse();
-            cclp.parse();
+            csparser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                     + ARGUMENTS_DESCRIPTION_MESSAGE);
@@ -249,16 +251,23 @@ public class MegaMek {
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
-        //            if (!server.loadGame(new File("./savegames", savegame)))
-        mmg.startHost(sclp.getPassword(), sclp.getPort(), sclp.getRegister(), sclp.getAnnounceUrl(),
-                null, cclp.getPlayerName() );
+        File savegame = null;
+        if (csparser.getGameFilename() != null ) {
+            savegame = new File(csparser.getGameFilename());
+            if (!savegame.isAbsolute()) {
+                savegame = new File("./savegames", csparser.getGameFilename());
+            }
+        }
+
+        mmg.startHost(csparser.getPassword(), csparser.getPort(), csparser.getRegister(),
+                csparser.getAnnounceUrl(), savegame, csparser.getPlayerName() );
     }
 
     /**
      * Skip splash GUI, starts a host with using quicksave file
      */
     private static void startQuickLoad(String... args) {
-        LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
+        LogManager.getLogger().info("Starting Quick Load Host Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
         //            if (!server.loadGame(new File("./savegames", savegame)))
@@ -269,10 +278,17 @@ public class MegaMek {
      * Skip splash GUI, starts a client session
      */
     private static void startClient(String... args) {
+        ClientServerCommandLineParser csparser = new ClientServerCommandLineParser(args);
+        try {
+            csparser.parse();
+        } catch (AbstractCommandLineParser.ParseException e) {
+            LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                    + ARGUMENTS_DESCRIPTION_MESSAGE);
+        }
         LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
-        mmg.startClient("", Server.LOCALHOST, 0);
+        mmg.startClient(csparser.getPlayerName(), csparser.getHost(), csparser.getPort());
     }
 
     /**
@@ -452,7 +468,8 @@ public class MegaMek {
 
         @Override
         protected void start() throws ParseException {
-            if (getToken() == TOK_OPTION) {
+            System.out.println(("TEST MM"));
+            if (getTokenType() == TOK_OPTION) {
                 final String tokenVal = getTokenValue();
                 nextToken();
                 switch (tokenVal) {
@@ -504,14 +521,14 @@ public class MegaMek {
                 }
             }
             processRestOfInput();
-            if (getToken() != TOK_EOF) {
+            if (getTokenType() != TOK_EOF) {
                 throw new ParseException("unexpected input");
             }
         }
 
         private void processEquipmentDb() throws ParseException {
             String filename;
-            if (getToken() == TOK_LITERAL) {
+            if (getTokenType() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
                 megamek.common.EquipmentType.writeEquipmentDatabase(new File(filename));
@@ -523,7 +540,7 @@ public class MegaMek {
 
         private void processExtendedEquipmentDb() throws ParseException {
             String filename;
-            if (getToken() == TOK_LITERAL) {
+            if (getTokenType() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
                 megamek.common.EquipmentType.writeEquipmentExtendedDatabase(new File(filename));
@@ -535,7 +552,7 @@ public class MegaMek {
 
         private void processDataDir() throws ParseException {
             String dataDirName;
-            if (getToken() == TOK_LITERAL) {
+            if (getTokenType() == TOK_LITERAL) {
                 dataDirName = getTokenValue();
                 nextToken();
                 Configuration.setDataDir(new File(dataDirName));
@@ -546,7 +563,7 @@ public class MegaMek {
 
         private void processUnitValidator() throws ParseException {
             String filename;
-            if (getToken() == TOK_LITERAL) {
+            if (getTokenType() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
                 MechSummary ms = MechSummaryCache.getInstance().getMech(filename);
@@ -616,7 +633,7 @@ public class MegaMek {
 
         private void processUnitBattleForceConverter() {
             String filename;
-            if (getToken() == TOK_LITERAL) {
+            if (getTokenType() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
 
@@ -655,7 +672,7 @@ public class MegaMek {
 
         private void processUnitAlphaStrikeConverter() {
             String filename;
-            if (getToken() == TOK_LITERAL) {
+            if (getTokenType() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
 
@@ -698,7 +715,7 @@ public class MegaMek {
 
         private void processUnitExporter(boolean officialUnitList) {
             String filename;
-            if ((getToken() == TOK_LITERAL) || officialUnitList) {
+            if ((getTokenType() == TOK_LITERAL) || officialUnitList) {
                 if (officialUnitList) {
                     filename = MechFileParser.FILENAME_OFFICIAL_UNITS;
                 } else {

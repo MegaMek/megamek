@@ -16,7 +16,7 @@ package megamek.server;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.EmailService;
-import megamek.common.util.ServerCommandLineParser;
+import megamek.common.util.ClientServerCommandLineParser;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -29,27 +29,27 @@ public class DedicatedServer {
             + "[-password <pass>] [-port <port>] [-mail <javamail.properties>] [<saved game>]";
 
     public static void start(String[] args) {
-        ServerCommandLineParser cp = new ServerCommandLineParser(args);
+        ClientServerCommandLineParser csparser = new ClientServerCommandLineParser(args);
         try {
-            cp.parse();
+            csparser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                             + ARGUMENTS_DESCRIPTION_MESSAGE);
         }
 
-        String saveGameFileName = cp.getGameFilename();
+        String saveGameFileName = csparser.getGameFilename();
         int usePort;
-        if (cp.getPort() != -1) {
-            usePort = cp.getPort();
+        if (csparser.getPort() != -1) {
+            usePort = csparser.getPort();
         } else {
             usePort = PreferenceManager.getClientPreferences().getLastServerPort();
         }
-        String announceUrl = cp.getAnnounceUrl();
-        String password = cp.getPassword();
+        String announceUrl = csparser.getAnnounceUrl();
+        String password = csparser.getPassword();
 
         EmailService mailer = null;
-        if (cp.getMailProperties() != null) {
-            File propsFile = new File(cp.getMailProperties());
+        if (csparser.getMailProperties() != null) {
+            File propsFile = new File(csparser.getMailProperties());
             try (var propsReader = new FileReader(propsFile)) {
                 var mailProperties = new Properties();
                 mailProperties.load(propsReader);

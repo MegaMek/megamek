@@ -21,6 +21,7 @@ import megamek.MegaMek;
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -56,11 +57,13 @@ import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -110,6 +113,9 @@ public class Server implements Runnable {
 
     // server setup
     public static final int DEFAULT_PORT = 2346;
+    public static final int MIN_PORT = 1024;
+    public static final int MAX_PORT = 65535;
+
     public static final String LOCALHOST = "localhost";
     private String password;
 
@@ -308,6 +314,30 @@ public class Server implements Runnable {
     };
 
     /**
+     *
+     * @param port, if or less 0, will return default port
+     * @return valid port, or 0 if not a vali port
+     */
+    public static int validatePort(int port)
+    {
+        if (port <= 0) {
+            //use last port or default port
+            port = PreferenceManager.getClientPreferences().getLastServerPort();
+            if (port <= 0) {
+                return Server.DEFAULT_PORT;
+            }
+        }
+
+//        if (port < MIN_PORT || port > MAX_PORT) {
+//            // invalid port number
+//            String msg = "Port number %d outside alllowed range %d-%d",port, MIN_PORT,MAX_PORT);
+//            LogManager.getLogger().error(msg);
+//            throw new Exception(msg);
+//
+//        }
+        return port;
+    }
+    /**
      * Used to ensure only one thread at a time is accessing this particular
      * instance of the server.
      */
@@ -321,6 +351,7 @@ public class Server implements Runnable {
                   String metaServerUrl) throws IOException {
         this(password, port, registerWithServerBrowser, metaServerUrl, null, false);
     }
+
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl, EmailService mailer) throws IOException {
         this(password, port, registerWithServerBrowser, metaServerUrl, mailer, false);

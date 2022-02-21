@@ -1,31 +1,30 @@
-# Builds MegaMek for CI (and CD via artifacts)
+# Builds MegaMek for Code Coverage
 #
 # Jobs:
-#    - ci_cd: Build MegaMek for CI/CD on the specified Operating Systems for the specified Java versions
-name: MegaMek CI with Gradle
+#    - code_coverage: Build MegaMek on the specified Operating Systems for the specified Java versions
+#          and upload the code coverage results to CodeCov.io
+name: MegaMek CI with Code Coverage
 
-# This Action Definition should be triggered only on
-# Pull Requests being added/updated against master.
+# This Action Definition should be triggered only on pushes to master
 on:
-  pull_request:
+  push:
     branches: [ master ]
 
 # Setup the Build Scan "VCS" link for all gradle invocations
 env:
-  GRADLE_OPTS: "-Dscan.link.VCS=${{ github.event.pull_request.html_url }}"
+  GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
 
 jobs:
-  # Perform CI (and CD as an artifact) of MegaMek any time a pull request is added or updated.
-  ci_cd:
+  # Perform build of MegaMek for Code Coverage any time master updated.
+  code_coverage:
     runs-on: ${{ matrix.os }}
 
     # Run this job once for each combination in the matrix below.
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # For CI/CD running on *nix is sufficient
+        os: [ ubuntu-latest ] # For Code QL running on *nix is sufficient
         java-distribution: [ temurin ]
         java-version: [ 11 ]
-      fail-fast: false
 
     steps:
     # Checkout the Pull Request source and put it in: ./megamek
@@ -58,8 +57,9 @@ jobs:
       id: gradle_build
       working-directory: megamek
       run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
-
+      
     # If the build step fails, try to upload any test logs in case it was a unit test failure.
+    #
     # The logs will be relative to the ./megamek directory.
     - name: Upload Test Logs on Failure
       uses: actions/upload-artifact@v2.2.4
@@ -75,30 +75,3 @@ jobs:
         directory: ./megamek/megamek/build/reports/jacoco/test
         fail_ci_if_error: false
         verbose: true
-
-    # If we have a buildScanUri comment on the PR
-    #
-    # NB: This only works if you're on the main MegaMek\megamek repo
-    #     for now due to a GitHub Actions limitation.
-# CAW: temporarily halted https://github.com/thollander/actions-comment-pull-request/issues/17
-#    - name: Comment on PR with Build Scan URI
-#      uses: thollander/actions-comment-pull-request@master
-#      if: always() && steps.gradle_build.outputs.buildScanUri != ''
-#      with:
-#        message: Build scan available at ${{ steps.gradle_build.outputs.buildScanUri }}
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    # Put the Windows Release in an artifact
-    # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
-    - name: Upload Windows Release
-      uses: actions/upload-artifact@v2.2.4
-      with:
-        name: release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-        path: ./megamek/megamek/build/distributions/*.zip
-
-    # Put the non-Windows release in an artifact
-    - name: Upload Nix/Mac Release
-      uses: actions/upload-artifact@v2.2.4
-      with:
-        name: release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-        path: ./megamek/megamek/build/distributions/*.tar

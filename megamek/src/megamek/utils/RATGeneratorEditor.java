@@ -62,7 +62,6 @@ public class RATGeneratorEditor extends JFrame {
     private MasterUnitListTableModel masterUnitListModel;
     private TableRowSorter<MasterUnitListTableModel> masterUnitListSorter;
 
-//    private final JTextField txtFaction = new JTextField(20);
     private final JComboBox<String> factionChooser = new JComboBox<>();
     private final JTable tblUnitEditor = new JTable();
     private final UnitEditorTableModel unitEditorModel = new UnitEditorTableModel();
@@ -70,12 +69,16 @@ public class RATGeneratorEditor extends JFrame {
     private final JTextField txtNewFaction = new JTextField(20);
     private final JCheckBox chkShowSubfactions = new JCheckBox();
     private final JCheckBox chkShowMinorFactions = new JCheckBox();
+
     private final JTable tblMasterFactionList = new JTable();
     private FactionListTableModel masterFactionListModel;
     private TableRowSorter<FactionListTableModel> masterFactionListSorter;
+
     private final JTable tblFactionEditor = new JTable();
     private FactionEditorTableModel factionEditorModel;
+
     private final JTextField txtSalvageFaction = new JTextField(20);
+
     private final JTable tblSalvageEditor = new JTable();
     private SalvageEditorTableModel salvageEditorModel;
 
@@ -223,7 +226,6 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private JComponent createUnitTab() {
-        Box editTab = Box.createHorizontalBox();
         Box unitSelectorSide = Box.createVerticalBox();
         JPanel unitSearchPanel = new UIUtil.FixedYPanel();
         unitSelectorSide.add(unitSearchPanel);
@@ -316,11 +318,7 @@ public class RATGeneratorEditor extends JFrame {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         factionEditSide.add(scroll);
 
-        editTab.add(unitContainer);
-        editTab.add(Box.createHorizontalStrut(15));
-        editTab.add(factionEditSide);
-
-        return editTab;
+        return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
     }
 
     private JPanel createFactionTab() {
@@ -446,13 +444,9 @@ public class RATGeneratorEditor extends JFrame {
 
         JPanel masterContainer = new UIUtil.FixedXPanel();
         masterContainer.setLayout(new BorderLayout());
-//        unitSelectorSide.add(scroll);
         masterContainer.add(masterScroll, BorderLayout.CENTER);
 
-        Box centerPanel = Box.createHorizontalBox();
-        centerPanel.add(masterContainer);
-        centerPanel.add(Box.createHorizontalStrut(15));
-        centerPanel.add(rightSide);
+        JSplitPane centerPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, masterContainer, rightSide);
 
         JPanel factionTab = new JPanel(new BorderLayout());
         factionTab.add(optionsPanel, BorderLayout.PAGE_START);
@@ -756,10 +750,13 @@ public class RATGeneratorEditor extends JFrame {
 
         @Override
         public void setValueAt(Object value, int row, int col) {
-            if (!(value instanceof String) || !((String) value).matches("\\d+[+\\-]?(:\\d+)?")) {
+            if (!(value instanceof String)) {
                 return;
             }
             String stringValue = (String) value;
+            if (!stringValue.isBlank() && !stringValue.matches("\\d+[+\\-]?(:\\d+)?")) {
+                return;
+            }
             AvailabilityRating ar;
             int era = ERAS[col - 1];
             if (stringValue.isBlank()) {
@@ -1169,11 +1166,6 @@ public class RATGeneratorEditor extends JFrame {
     }
     
     private static class SalvageEditorTableModel extends DefaultTableModel {
-        
-        /**
-         * 
-         */
-        private static final long serialVersionUID = -3155497417382584025L;
         
         ArrayList<String> factions;
         HashMap<String, ArrayList<String>> data;

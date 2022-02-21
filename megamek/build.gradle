@@ -4,6 +4,7 @@ plugins {
     id 'application'
     id 'maven-publish'
     id 'edu.sc.seis.launch4j' version '2.5.1'
+    id 'jacoco'
 }
 
 sourceSets {
@@ -45,19 +46,19 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-    jvmOptions = ['-Xmx2048m']
-    userdata = "userdata"
-    data = "data"
-    conf = "mmconf"
-    log = "logs"
-    docs = "docs"
-    lib = "lib"
-    distributionDir = "${buildDir}/distributions"
-    fileStagingDir = "${buildDir}/files"
-    repoDir = "${buildDir}/repo"
-    atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+    mmJvmOptions = ['-Xmx2048m']
+    data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
+    docs = "docs"
+    lib = "lib"
+    log = "logs"
+    mmconf = "mmconf"
+    userdata = 'userdata'
+    distributionDir = "${buildDir}/distributions"
+    fileStagingDir = "${buildDir}/files"
+    mmRepoDir = "${buildDir}/repo"
+    atlasedImages = "${fileStagingDir}/atlasedImages.txt"
     mavenPublishDir = "${buildDir}/mavenrepo"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
@@ -102,8 +103,8 @@ task copyFiles(type: Copy) {
     from projectDir
     
     include "${data}/**"
-    include "${conf}/**"
     include "${docs}/**"
+    include "${mmconf}/**"
     include "${rootDir}/license.txt"
     exclude "**/*.psd"
     // No need to copy the files that are going to be zipped
@@ -114,8 +115,8 @@ task copyFiles(type: Copy) {
     into fileStagingDir
     
     inputs.dir "${data}"
-    inputs.dir "${conf}"
     inputs.dir "${docs}"
+    inputs.dir "${mmconf}"
     inputs.file "${rootDir}/license.txt"
     outputs.dir fileStagingDir
 }
@@ -178,12 +179,12 @@ task stageFiles {
 
 task createStartScripts (type: CreateStartScripts) {
     description = 'Create shell script for generic distribution.'
-    applicationName = 'startup'
+    applicationName = 'mm'
     mainClassName = project.mainClassName
     outputDir = startScripts.outputDir
     classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
             .filter { it.name.endsWith(".jar") }
-    defaultJvmOpts = project.ext.jvmOptions
+    defaultJvmOpts = project.ext.mmJvmOptions
     // The default template assumes the start script is in a subdirectory and always
     // sets APP_HOME to the parent directory of the one containing the script.
     // So we provide a modified template.
@@ -205,7 +206,7 @@ distributions {
         contents {
             from fileStagingDir
             from(createStartScripts.outputs.files) {
-                include "startup*"
+                include "mm*"
             }
             from(jar)
             from (project.sourceSets.main.runtimeClasspath.files
@@ -243,7 +244,7 @@ createExe {
     doLast {
         new File("${buildDir}/${outputDir}/${inifile}").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
-${project.ext.jvmOptions.join('\n')}
+${project.ext.mmJvmOptions.join('\n')}
 """        
     }
 }
@@ -263,12 +264,12 @@ unixDistTar {
 
 // The repository can only be cloned into an empty directory so we need to delete anything left over
 // from a previous build
-task deleteRepoDir (type: Delete) {
-    delete = "${repoDir}"
+task deleteMMRepoDir (type: Delete) {
+    delete = "${mmRepoDir}"
 }
 
-task cloneRepo (type: Exec, dependsOn: deleteRepoDir) {
-    description = 'Clones the repository to ensure we are working with a clean directory tree'
+task cloneMMRepo (type: Exec, dependsOn: deleteMMRepoDir) {
+    description = 'Clones the MegaMek repository to ensure we are working with a clean directory tree'
     group = 'distribution'
     commandLine "git"
     args "clone", "--branch", mmBranch, "--single-branch", mmGitRoot, "${buildDir}/repo"
@@ -314,10 +315,10 @@ task assembleDist(overwrite: true) {
 task buildFromRepo (type: GradleBuild) {
     description = 'Assembles the distribution packages in the clean repository copy'
     group = 'distribution'
-    dependsOn cloneRepo
+    dependsOn cloneMMRepo
     
-    buildFile = "${repoDir}/build.gradle"
-    dir = "${repoDir}"
+    buildFile = "${mmRepoDir}/build.gradle"
+    dir = "${mmRepoDir}"
     tasks = [ ':megamek:assembleDist' ]
 }
 
@@ -377,3 +378,16 @@ task cleanPublishingDir (type: Delete) {
 
 publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
 
+test {
+    // report is always generated after tests run
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    // tests are required to run before generating the report
+    dependsOn test
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}

@@ -17,6 +17,7 @@ package megamek;
 
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.MegaMekGUI;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -71,34 +72,29 @@ public class MegaMek {
         initializeLogging(MMConstants.PROJECT_NAME);
 
         // Third, Command Line Arguments and Startup
-        MegaMekCommandLineParser cp = new MegaMekCommandLineParser(args);
+        MegaMekCommandLineParser parser = new MegaMekCommandLineParser(args);
 
         try {
-            cp.parse();
+            parser.parse();
 
-            String[] restArgs = cp.getRestArgs();
+            String[] restArgs = parser.getRestArgs();
 
-//            if (cp.help())
-//            {
-//
-//            }
-
-            if (cp.dedicatedServer()) {
+            if (parser.dedicatedServer()) {
                 startDedicatedServer(restArgs);
                 return;
             }
 
-            if (cp.host()) {
+            if (parser.host()) {
                 startHost(restArgs);
                 return;
             }
 
-            if (cp.client()) {
+            if (parser.client()) {
                 startClient(restArgs);
                 return;
             }
 
-            if (cp.quick())
+            if (parser.quick())
             {
                 startQuickLoad(restArgs);
             }
@@ -106,13 +102,13 @@ public class MegaMek {
             getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
             initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
 
-            if (cp.ratGenEditor()) {
+            if (parser.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);
             } else {
                 startGUI();
             }
         } catch (MegaMekCommandLineParser.ParseException e) {
-            LogManager.getLogger().fatal(cp.formatErrorMessage(e));
+            LogManager.getLogger().fatal(parser.formatErrorMessage(e));
             System.exit(1);
         }
     }
@@ -155,6 +151,13 @@ public class MegaMek {
         } catch (Exception ex) {
             LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
         }
+    }
+
+    public static void printToOut(String text) {
+        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
+        out.print(text);
+        out.flush();
+        out.close();
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -237,7 +240,8 @@ public class MegaMek {
      * :megamek:run --args='-host'
      */
     private static void startHost(String... args) {
-        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args, false, false, true);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+                MegaMekCommandLineParser.MegaMekCommandLineFlag.HOST.toString(), false, false, true);
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
@@ -248,10 +252,10 @@ public class MegaMek {
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
         File savegame = null;
-        if (parser.getGameFilename() != null ) {
-            savegame = new File(parser.getGameFilename());
+        if (parser.getSaveGameFileName() != null ) {
+            savegame = new File(parser.getSaveGameFileName());
             if (!savegame.isAbsolute()) {
-                savegame = new File("./savegames", parser.getGameFilename());
+                savegame = new File("./savegames", parser.getSaveGameFileName());
             }
         }
 
@@ -266,7 +270,6 @@ public class MegaMek {
         LogManager.getLogger().info("Starting Quick Load Host Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
-        //            if (!server.loadGame(new File("./savegames", savegame)))
         mmg.quickLoadGame();
     }
 
@@ -274,7 +277,8 @@ public class MegaMek {
      * Skip splash GUI, starts a client session
      */
     private static void startClient(String... args) {
-        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args, false, true, false);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+                MegaMekCommandLineParser.MegaMekCommandLineFlag.CLIENT.toString() ,false, true, false);
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
@@ -386,7 +390,7 @@ public class MegaMek {
     /**
      * This class parses the options passed into to MegaMek from the command line.
      */
-    private static class MegaMekCommandLineParser extends AbstractCommandLineParser {
+    public static class MegaMekCommandLineParser extends AbstractCommandLineParser {
         private boolean dedicatedServer = false;
         private boolean host = false;
         private boolean client = false;
@@ -394,57 +398,61 @@ public class MegaMek {
         private boolean ratGenEditor = false;
         private String[] restArgs = new String[0];
 
-        // Options
-        private static final String OPTION_DEDICATED = "dedicated";
-        private static final String OPTION_EQUIPMENT_DB = "eqdb";
-        private static final String OPTION_EQUIPMENT_EXTENDED_DB = "eqedb";
-        private static final String OPTION_UNIT_VALIDATOR = "validate";
-        private static final String OPTION_UNIT_EXPORT = "export";
-        private static final String OPTION_OFFICAL_UNIT_LIST = "oul";
-        private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc";
-        private static final String OPTION_UNIT_ALPHASTRIKE_CONVERSION = "asc";
-        private static final String OPTION_DATADIR = "data";
-        private static final String OPTION_RATGEN_EDIT = "editratgen";
+        public enum MegaMekCommandLineFlag {
+            //region Enum Declarations
+            // standard game options
+            HELP("print this help message"),
+            DEDICATED("Run a gui-less dedicated server. Run '-dedicated -help' for more details."),
+            HOST("Start a game with the gui. Run '-host -help' for more details."),
+            CLIENT("Join a server as a player or observer. Run '-client -help' for more details."),
+            QUICK("Start a game by loading "+ ClientGUI.QUICKSAVE_FILE),
+            // exporters and utilities
+            EQDB("OPTION_EQUIPMENT_DB"),
+            EQEDB("OPTION_EQUIPMENT_EXTENDED_DB"),
+            EXPORT("OPTION_UNIT_EXPORT"),
+            VALIDATE("OPTION_UNIT_VALIDATOR"),
+            OUL("OFFICIAL_UNIT_LIST"),
+            BFC("OPTION_UNIT_BATTLEFORCE_CONVERSION"),
+            ASC("OPTION_UNIT_ALPHASTRIKE_CONVERSION"),
+            EDITRATGEN("OPTION_RATGEN_EDIT"),
+            DATADIR("OPTION_DATADIR"),
+            ;
+            //endregion Enum Declarations
 
-        private static final String OPTION_ECHO = "echo";
-        private static final String OPTION_HOST = "host";
-        private static final String OPTION_CLIENT = "client";
-        private static final String OPTION_QUICK = "quick";
+            private final String helpText;
+
+            MegaMekCommandLineFlag(final String helpText) {
+                this.helpText = helpText;
+            }
+
+            public static MegaMekCommandLineFlag parseFromString(final String text) {
+                try {
+                    return valueOf(text.toUpperCase(Locale.ROOT));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text '%s'",text);
+                    throw(ex);
+                }
+            }
+        }
 
         private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-        private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek "
-                + "[-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|"
-                + "(-eqedb) (-oul)] [<args>]";
-
 
         MegaMekCommandLineParser(String... args) {
             super(args);
         }
 
-        /**
-         * @return true if this is a dedicated server.
-         */
         boolean dedicatedServer() {
             return dedicatedServer;
         }
 
-        /**
-         * @return true if this is a host.
-         */
         boolean host() {
             return host;
         }
 
-        /**
-         * @return true if this is a client.
-         */
         boolean client() {
             return client;
         }
 
-        /**
-         * @return true if this is a client.
-         */
         boolean quick() {
             return quick;
         }
@@ -467,61 +475,80 @@ public class MegaMek {
         @Override
         public String formatErrorMessage(ParseException e) {
             return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                    + ARGUMENTS_DESCRIPTION_MESSAGE);
+                    + help());
+        }
+
+        public void printHelp() {
+            PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
+            out.print(help());
+            out.flush();
+            out.close();
+        }
+
+        public String help() {
+            StringBuilder sb = new StringBuilder();
+            for( MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values() ) {
+                    sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.helpText));
+            }
+            return sb.toString();
         }
 
         @Override
         protected void start() throws ParseException {
-            System.out.println(("TEST MM"));
             if (getTokenType() == TOK_OPTION) {
                 final String tokenVal = getTokenValue();
                 nextToken();
-                switch (tokenVal) {
-                    case OPTION_EQUIPMENT_DB:
-                        processEquipmentDb();
-                        break;
-                    case OPTION_EQUIPMENT_EXTENDED_DB:
-                        processExtendedEquipmentDb();
-                        break;
-                    case OPTION_DATADIR:
-                        processDataDir();
-                        break;
-                    case OPTION_UNIT_VALIDATOR:
-                        processUnitValidator();
-                        break;
-                    case OPTION_UNIT_EXPORT:
-                        processUnitExporter();
-                        break;
-                    case OPTION_OFFICAL_UNIT_LIST:
-                        processUnitExporter(true);
-                        break;
-                    case OPTION_UNIT_BATTLEFORCE_CONVERSION:
-                        processUnitBattleForceConverter();
-                        break;
-                    case OPTION_UNIT_ALPHASTRIKE_CONVERSION:
-                        processUnitAlphaStrikeConverter();
-                        break;
-                    case OPTION_DEDICATED:
-                        dedicatedServer = true;
-                        break;
-                    case OPTION_HOST:
-                        LogManager.getLogger().error("HOST");
-                        host = true;
-                        break;
-                    case OPTION_CLIENT:
-                        LogManager.getLogger().error("HOST");
-                        client = true;
-                        break;
-                    case OPTION_QUICK:
-                        LogManager.getLogger().error("QUICK");
-                        quick = true;
-                        break;
-                    case OPTION_RATGEN_EDIT:
-                        ratGenEditor = true;
-                        break;
-                    case OPTION_ECHO:
-                        LogManager.getLogger().error("ECHO: " + getTokenValue());
-                        break;
+                try {
+                    switch (MegaMekCommandLineFlag.parseFromString(tokenVal)) {
+                        case HELP:
+                            printHelp();
+                            System.exit(0);
+                        case EQDB:
+                            processEquipmentDb();
+                            break;
+                        case EQEDB:
+                            processExtendedEquipmentDb();
+                            break;
+                        case DATADIR:
+                            processDataDir();
+                            break;
+                        case VALIDATE:
+                            processUnitValidator();
+                            break;
+                        case EXPORT:
+                            processUnitExporter();
+                            break;
+                        case OUL:
+                            processUnitExporter(true);
+                            break;
+                        case BFC:
+                            processUnitBattleForceConverter();
+                            break;
+                        case ASC:
+                            processUnitAlphaStrikeConverter();
+                            break;
+                        case DEDICATED:
+                            dedicatedServer = true;
+                            break;
+                        case HOST:
+                            host = true;
+                            break;
+                        case CLIENT:
+                            client = true;
+                            break;
+                        case QUICK:
+                            quick = true;
+                            break;
+                        case EDITRATGEN:
+                            ratGenEditor = true;
+                            break;
+                    }
+                } catch (ParseException ex) {
+                    PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
+                    out.print(formatErrorMessage(ex));
+                    out.close();
+                    printHelp();
+                    throw ex;
                 }
             }
             processRestOfInput();

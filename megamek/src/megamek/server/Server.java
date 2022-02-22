@@ -42,10 +42,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.BoardUtilities;
-import megamek.common.util.EmailService;
-import megamek.common.util.SerializationHelper;
-import megamek.common.util.StringUtil;
+import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
@@ -315,28 +312,72 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param port, if or less 0, will return default port
-     * @return valid port, or 0 if not a vali port
+     * @param password, if null or empty, will use default
+     * @return valid port
      */
-    public static int validatePort(int port)
-    {
+    public static String validateHostName(String hostName, String defaultValue) throws AbstractCommandLineParser.ParseException {
+        if (hostName == null || hostName.isBlank()) {
+            hostName = defaultValue;
+
+            if (hostName == null || hostName.isBlank()) {
+               return Server.LOCALHOST;
+            }
+
+            return hostName;
+
+        }
+        return hostName;
+    }
+
+    /**
+     *
+     * @param password, if null or empty, will use default
+     * @return valid port
+     */
+    public static String validatePlayerName(String playerName, String defaultValue) throws AbstractCommandLineParser.ParseException {
+        if (playerName == null || playerName.isBlank()) {
+            playerName = defaultValue;
+            return playerName;
+        }
+        return playerName;
+    }
+
+    /**
+     *
+     * @param password, if null or empty, will last used password
+     * @return valid port
+     */
+    public static String validatePassword(String password, String defaultValue) throws AbstractCommandLineParser.ParseException {
+        if (password == null || password.isBlank()) {
+            password = defaultValue;
+            return password;
+        }
+        return password;
+    }
+
+    /**
+     *
+     * @param port, if or less 0, will return last used
+     * @return valid port
+     */
+    public static int validatePort(int port, int defaultValue) throws AbstractCommandLineParser.ParseException {
         if (port <= 0) {
-            //use last port or default port
-            port = PreferenceManager.getClientPreferences().getLastServerPort();
+            port = defaultValue; //PreferenceManager.getClientPreferences().getLastServerPort();
             if (port <= 0) {
                 return Server.DEFAULT_PORT;
             }
         }
 
-//        if (port < MIN_PORT || port > MAX_PORT) {
-//            // invalid port number
-//            String msg = "Port number %d outside alllowed range %d-%d",port, MIN_PORT,MAX_PORT);
-//            LogManager.getLogger().error(msg);
-//            throw new Exception(msg);
-//
-//        }
+        if (port < MIN_PORT || port > MAX_PORT) {
+            // invalid port number
+            String msg = String.format("Port number %d outside allowed range %d-%d", port, MIN_PORT,MAX_PORT);
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
+
+        }
         return port;
     }
+
     /**
      * Used to ensure only one thread at a time is accessing this particular
      * instance of the server.

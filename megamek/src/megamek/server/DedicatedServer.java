@@ -13,7 +13,7 @@
  */
 package megamek.server;
 
-import megamek.client.ui.swing.MegaMekGUI;
+import megamek.MegaMek;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.EmailService;
@@ -30,18 +30,18 @@ public class DedicatedServer {
 //            + "[-password <pass>] [-port <port>] [-mail <javamail.properties>] [<saved game>]";
 
     public static void start(String[] args) {
-        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args, true, false, false);
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+                MegaMek.MegaMekCommandLineParser.MegaMekCommandLineFlag.DEDICATED.toString(),
+                true, false, false);
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
 
-        String saveGameFileName = parser.getGameFilename();
-        int usePort = Server.validatePort(parser.getPort());
+        String saveGameFileName = parser.getSaveGameFileName();
 
         String announceUrl = parser.getAnnounceUrl();
-        String password = parser.getPassword();
 
         EmailService mailer = null;
         if (parser.getMailProperties() != null) {
@@ -60,19 +60,24 @@ public class DedicatedServer {
 
         // kick off a RNG check
         megamek.common.Compute.d6();
+
         // start server
-        Server dedicated;
+        Server server;
+        int usePort = parser.getPort();
+        String password = parser.getPassword();
         try {
-            if (password == null || password.length() == 0) {
-                password = PreferenceManager.getClientPreferences().getLastServerPass();
-            }
-            dedicated = new Server(password, usePort, !announceUrl.isBlank(), announceUrl, mailer, true);
+            password = Server.validatePassword(password, PreferenceManager.getClientPreferences().getLastServerPass());
+            usePort = Server.validatePort(usePort, PreferenceManager.getClientPreferences().getLastServerPort());
+            server = new Server(password, usePort, !announceUrl.isBlank(), announceUrl, mailer, true);
+            MegaMek.printToOut(String.format("Server Started at %s:%d", server.getHost(), server.getPort()));
         } catch (Exception ex) {
             LogManager.getLogger().error("Error: could not start server at localhost" + ":" + usePort, ex);
+            MegaMek.printToOut(parser.help());
             return;
         }
+
         if (null != saveGameFileName) {
-            dedicated.loadGame(new File(saveGameFileName));
+            server.loadGame(new File(saveGameFileName));
         }
     }
 

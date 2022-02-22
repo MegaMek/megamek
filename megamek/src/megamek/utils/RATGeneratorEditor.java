@@ -19,7 +19,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
-import org.apache.commons.collections.list.TreeList;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -62,7 +61,7 @@ public class RATGeneratorEditor extends JFrame {
     private MasterUnitListTableModel masterUnitListModel;
     private TableRowSorter<MasterUnitListTableModel> masterUnitListSorter;
 
-    private final JComboBox<String> factionChooser = new JComboBox<>();
+    private final JComboBox<FactionRecord> factionChooser = new JComboBox<>();
     private final JTable tblUnitEditor = new JTable();
     private final UnitEditorTableModel unitEditorModel = new UnitEditorTableModel();
 
@@ -168,11 +167,16 @@ public class RATGeneratorEditor extends JFrame {
             return;
         }
         factionChooser.removeAllItems();
-        List<String> sortedFactionList = new TreeList();
-        rg.getFactionList().stream().map(fr -> fr.getKey()).sorted().forEach(sortedFactionList::add);
-        for (String factionKey : sortedFactionList) {
-            factionChooser.addItem(factionKey);
-        }
+        rg.getFactionList().stream()
+                .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))
+                .forEach(factionChooser::addItem);
+        factionChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+            if (value == null) {
+                return new JLabel();
+            } else {
+                return new JLabel(value.getName() + " (" + value.getKey() + ")");
+            }
+        });
     }
 
     private JComponent buildOptionPanel() {
@@ -287,7 +291,7 @@ public class RATGeneratorEditor extends JFrame {
         JButton button = new JButton("Add Row");
         topPanel.add(button);
         button.addActionListener(ev -> {
-            if (!unitEditorModel.addEntry((String) factionChooser.getSelectedItem())) {
+            if (!unitEditorModel.addEntry(factionChooser.getSelectedItem().toString())) {
                 JOptionPane.showMessageDialog(this, 
                         "Unable to add model or chassis entry. Please select a unit model. " +
                         "If adding a model entry, make sure you already have a chassis entry defined.");
@@ -509,7 +513,7 @@ public class RATGeneratorEditor extends JFrame {
                 "Chassis", "Model", "Unit Type", "Year", "Role", "Deployed With", "Exclude Factions"
         };
 
-        private ArrayList<ModelRecord> data;
+        private final ArrayList<ModelRecord> data;
 
         public MasterUnitListTableModel(Collection<ModelRecord> modelList) {
             data = new ArrayList<>();
@@ -687,32 +691,6 @@ public class RATGeneratorEditor extends JFrame {
             return ERAS[col - 1] + " (" + getEra(ERAS[col - 1]) + ")";
         }
 
-        private String getEra(int year) {
-            if (year <= 2570) {
-                return "AoW";
-            } else if (year <= 2780) {
-                return "SL";
-            } else if (year <= 2900) {
-                return "ESW";
-            } else if (year <= 3049) {
-                return "LSW";
-            } else if (year <= 3061) {
-                return "Clans";
-            } else if (year <= 3067) {
-                return "Civil W";
-            } else if (year <= 3080) {
-                return "Jihad";
-            } else if (year <= 3100) {
-                return "ERep";
-            } else if (year <= 3130) {
-                return "LRep";
-            } else if (year <= 3150) {
-                return "Dark Age";
-            } else {
-                return "ilClan";
-            }
-        }
-
         @Override
         public int getColumnCount() {
             if (data == null) {
@@ -850,7 +828,7 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private static class UnitTypeComparator implements Comparator<String> {
-        private Map<String, Integer> keys;
+        private final Map<String, Integer> keys;
 
         public UnitTypeComparator() {
             keys = new HashMap<>();
@@ -880,7 +858,7 @@ public class RATGeneratorEditor extends JFrame {
         public final String[] colNames = {"Code", "Name", "Years", "Minor", "Clan",
             "Periphery", "Ratings", "Use Alt"};
         
-        private ArrayList<FactionRecord> data;
+        private final ArrayList<FactionRecord> data;
         
         public FactionListTableModel(Collection<FactionRecord> factionList) {
             data = new ArrayList<>();
@@ -1033,7 +1011,7 @@ public class RATGeneratorEditor extends JFrame {
             if (column == 0) {
                 return "";
             } else {
-                return Integer.toString(ERAS[column - 1]);
+                return ERAS[column - 1] + " (" + getEra(ERAS[column - 1]) + ")";
             }
         }
 
@@ -1212,7 +1190,7 @@ public class RATGeneratorEditor extends JFrame {
             if (col == 0) {
                 return "Faction";
             }
-            return Integer.toString(ERAS[col - 1]); 
+            return ERAS[col - 1] + " (" + getEra(ERAS[col - 1]) + ")";
         }
         
         @Override
@@ -1304,6 +1282,32 @@ public class RATGeneratorEditor extends JFrame {
             fireTableDataChanged();
         }
         
+    }
+
+    private static String getEra(int year) {
+        if (year <= 2570) {
+            return "AoW";
+        } else if (year <= 2780) {
+            return "SL";
+        } else if (year <= 2900) {
+            return "ESW";
+        } else if (year <= 3049) {
+            return "LSW";
+        } else if (year <= 3061) {
+            return "Clans";
+        } else if (year <= 3067) {
+            return "Civil W";
+        } else if (year <= 3080) {
+            return "Jihad";
+        } else if (year <= 3100) {
+            return "ERep";
+        } else if (year <= 3130) {
+            return "LRep";
+        } else if (year <= 3150) {
+            return "Dark Age";
+        } else {
+            return "ilClan";
+        }
     }
 
     /**

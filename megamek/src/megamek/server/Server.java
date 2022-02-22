@@ -113,6 +113,7 @@ public class Server implements Runnable {
     public static final int MIN_PORT = 1024;
     public static final int MAX_PORT = 65535;
 
+    public static final String DEFAULT_PLAYERNAME = "Player";
     public static final String LOCALHOST = "localhost";
     private String password;
 
@@ -312,64 +313,62 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param password, if null or empty, will use default
-     * @return valid port
+     * @param , if null or empty, will use default, or if that is null or empty, LOCALHOST
+     * @return valid hostName
      */
-    public static String validateHostName(String hostName, String defaultValue) throws AbstractCommandLineParser.ParseException {
-        if (hostName == null || hostName.isBlank()) {
-            hostName = defaultValue;
-
-            if (hostName == null || hostName.isBlank()) {
-               return Server.LOCALHOST;
-            }
-
-            return hostName;
-
+    public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
+        if (serverAddress == null || serverAddress.isBlank()) {
+            String msg = String.format("serverAddress must not be null or empty");
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
         }
-        return hostName;
+        return serverAddress.trim();
     }
 
     /**
      *
-     * @param password, if null or empty, will use default
-     * @return valid port
+     * @param playerName, if null or empty, will use default, or raise an exception if default is null or empty
+     * @return valid playerName
      */
-    public static String validatePlayerName(String playerName, String defaultValue) throws AbstractCommandLineParser.ParseException {
-        if (playerName == null || playerName.isBlank()) {
-            playerName = defaultValue;
-            return playerName;
+    public static String validatePlayerName(String playerName) throws AbstractCommandLineParser.ParseException {
+        if (playerName == null) {
+            String msg = String.format("playerName must not be null");
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
         }
-        return playerName;
+
+        if (playerName.isBlank()) {
+            String msg = String.format("playerName must not be empty string");
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
+        }
+
+        return playerName.trim();
     }
 
     /**
      *
-     * @param password, if null or empty, will last used password
-     * @return valid port
+     * @param password, if null or empty, will return default - but sometimes null or empty means no password, not default
+     * @return valid password or empty string if no password
      */
-    public static String validatePassword(String password, String defaultValue) throws AbstractCommandLineParser.ParseException {
+    public static String validatePassword(String password) throws AbstractCommandLineParser.ParseException {
         if (password == null || password.isBlank()) {
-            password = defaultValue;
-            return password;
+            return "";
         }
-        return password;
+        return password.trim();
     }
 
     /**
      *
-     * @param port, if or less 0, will return last used
-     * @return valid port
+     * @param port, if or less 0, will return default, if illegal number, throws ParseException
+     * @return valid port number
      */
-    public static int validatePort(int port, int defaultValue) throws AbstractCommandLineParser.ParseException {
+    public static int validatePort(int port) throws AbstractCommandLineParser.ParseException {
         if (port <= 0) {
-            port = defaultValue; //PreferenceManager.getClientPreferences().getLastServerPort();
-            if (port <= 0) {
-                return Server.DEFAULT_PORT;
-            }
+            return Server.DEFAULT_PORT;
         }
 
         if (port < MIN_PORT || port > MAX_PORT) {
-            // invalid port number
             String msg = String.format("Port number %d outside allowed range %d-%d", port, MIN_PORT,MAX_PORT);
             LogManager.getLogger().error(msg);
             throw new AbstractCommandLineParser.ParseException(msg);
@@ -408,8 +407,8 @@ public class Server implements Runnable {
      * @param mailer an email service instance to use for sending round reports.
      * @param dedicated set to true if this server is started from a GUI-less context
      */
-    public Server(String password, int port, boolean registerWithServerBrowser,
-        String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+    public Server(@Nullable String password, int port, boolean registerWithServerBrowser,
+                  @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
         this.metaServerUrl = (metaServerUrl != null) && (!metaServerUrl.isBlank()) ? metaServerUrl : null;
         this.password = (password != null) && (!password.isBlank()) ? password : null;
 

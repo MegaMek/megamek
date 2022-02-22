@@ -68,10 +68,10 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
     private String saveGameFileName;
     private int port;
     private String password;
-    private String announceUrl = "";
+    private String announceUrl;
     private String mailProperties;
     private String hostName;
-    private String playerName = "";
+    private String playerName;
 
     private final String parent;
     private final boolean server;
@@ -210,15 +210,8 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
     private void parsePort() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
             int newPort = -1;
-            try {
-                newPort = Integer.decode(getTokenValue());
-            } catch (NumberFormatException ignored) {
-                //ignore, leave at -1
-            }
-            if ((newPort < 1025) || (newPort > 65535)) {
-                throw new ParseException(String.format("invalid port number %d, must be in range 1025 - 65535",newPort));
-            }
-            port = newPort;
+            newPort = Integer.decode(getTokenValue());
+            port = Server.validatePort(newPort);
         } else {
             throw new ParseException("port number expected");
         }
@@ -234,7 +227,7 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parsePassword() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            password = getTokenValue();
+            password = Server.validatePlayerName(getTokenValue());
         } else {
             throw new ParseException("password expected");
         }
@@ -250,7 +243,7 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parsePlayerName() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            playerName = getTokenValue();
+            playerName = Server.validatePlayerName(getTokenValue());
         } else {
             throw new ParseException("playerName expected");
         }
@@ -258,7 +251,7 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parseHost() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            hostName = getTokenValue();
+            hostName = Server.validateServerAddress(getTokenValue());
         } else {
             throw new ParseException("host name or url expected");
         }

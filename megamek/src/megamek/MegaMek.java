@@ -15,6 +15,7 @@
  */
 package megamek;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.client.ui.swing.ClientGUI;
@@ -401,22 +402,21 @@ public class MegaMek {
         public enum MegaMekCommandLineFlag {
             //region Enum Declarations
             // standard game options
-            HELP("print this help message"),
-            DEDICATED("Run a gui-less dedicated server. Run '-dedicated -help' for more details."),
-            HOST("Start a game with the gui. Run '-host -help' for more details."),
-            CLIENT("Join a server as a player or observer. Run '-client -help' for more details."),
-            QUICK("Start a game by loading "+ ClientGUI.QUICKSAVE_FILE),
+            HELP(Messages.getString("MegaMek.Help")),
+            DEDICATED(Messages.getString("MegaMek.Help.Dedicated")),
+            HOST(Messages.getString("MegaMek.Help.Host")),
+            CLIENT(Messages.getString("MegaMek.Help.Client")),
+            QUICK(Messages.getFormattedString("MegaMek.Help.Quick", ClientGUI.QUICKSAVE_FILE)),
             // exporters and utilities
-            EQDB("OPTION_EQUIPMENT_DB"),
-            EQEDB("OPTION_EQUIPMENT_EXTENDED_DB"),
-            EXPORT("OPTION_UNIT_EXPORT"),
-            VALIDATE("OPTION_UNIT_VALIDATOR"),
-            OUL("OFFICIAL_UNIT_LIST"),
-            BFC("OPTION_UNIT_BATTLEFORCE_CONVERSION"),
-            ASC("OPTION_UNIT_ALPHASTRIKE_CONVERSION"),
-            EDITRATGEN("OPTION_RATGEN_EDIT"),
-            DATADIR("OPTION_DATADIR"),
-            ;
+            EQDB("MegaMek.Help.EquipmentDB"),
+            EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
+            EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
+            VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),
+            OUL(Messages.getString("MegaMek.Help.OfficialUnitList")),
+            BFC(Messages.getString("MegaMek.Help.UnitBattleforceConversion")),
+            ASC(Messages.getString("MegaMek.Help.UnitAlphastrikeConversion")),
+            EDITRATGEN(Messages.getString("MegaMek.Help.RatgenEdit")),
+            DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir()));
             //endregion Enum Declarations
 
             private final String helpText;
@@ -487,6 +487,7 @@ public class MegaMek {
 
         public String help() {
             StringBuilder sb = new StringBuilder();
+            sb.append(Messages.getString("MegaMek.Version") + MMConstants.VERSION+"\n");
             for( MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values() ) {
                     sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.helpText));
             }

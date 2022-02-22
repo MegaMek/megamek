@@ -1,9 +1,13 @@
 package megamek.common.util;
 
+import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.client.ui.Messages;
+import megamek.common.Configuration;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -15,18 +19,18 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     public enum ClientServerCommandLineFlag {
         //region Enum Declarations
-        HELP("print this help message"),
-        PORT(String.format("Port the server listens to or the client connects to. Valid range %d - %d. Default is %d", Server.MIN_PORT, Server.MAX_PORT, Server.DEFAULT_PORT)),
-        PASSWORD("Password to server . Default is to use last password"),
+        HELP(Messages.getString("MegaMek.Help")),
+        PORT(Messages.getFormattedString("MegaMek.Help.Port", Server.MIN_PORT, Server.MAX_PORT, Server.DEFAULT_PORT)),
+        PASSWORD(Messages.getString("MegaMek.Help.Password")),
         // server or host only options
-        ANNOUNCE("The url to the server announcer. Default is not to announce", true, false, true),
-        MAIL("Mail ??. Default is no mail", true, false, true),
-        SAVEGAME("Open a saved game", true, false, true),
+        ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
+        MAIL(Messages.getString("MegaMek.Help.Mail"), true, false, true),
+        SAVEGAME(Messages.getString("MegaMek.Help.SaveGame"), true, false, true),
         // client or host only options
-        PLAYERNAME("Name client gets in game. Default is last used name", false, true, true),
+        PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
         // client only options
-        SERVER(String.format("Name or URL of the server to join. Default %s", Server.LOCALHOST), false, true, false)
-        ;
+        SERVER(Messages.getFormattedString("MegaMek.Help.Server", Server.LOCALHOST), false, true, false),
+        DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir()));
         //endregion Enum Declarations
 
         private final String helpText;
@@ -40,8 +44,6 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
         }
 
         ClientServerCommandLineFlag(final String helpText, boolean server, boolean client, boolean host) {
-            //            final ResourceBundle resources = ResourceBundle.getBundle("mekhq.resources.Finances",
-            //                    MegaMek.getMekHQOptions().getLocale(), new EncodeControl());
             this.helpText = helpText; //resources.getString(helpText);
             this.server = server;
             this.client = client;
@@ -127,6 +129,7 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     public String help() {
         StringBuilder sb = new StringBuilder();
+        sb.append(Messages.getString("MegaMek.Version") + MMConstants.VERSION+"\n");
         sb.append(String.format("Help for %s\n", parent));
         for( ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values() ) {
             if ( (flag.client && client) || (flag.server && server) || (flag.host && host)  ) {
@@ -175,6 +178,9 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 break;
                             case SAVEGAME:
                                 parseSaveGame();
+                                break;
+                            case DATADIR:
+                                processDataDir();
                                 break;
                         }
                     } catch (ParseException ex) {
@@ -263,6 +269,17 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
             saveGameFileName = getTokenValue();
         } else {
             throw new ParseException("Saved game filename expected");
+        }
+    }
+
+    private void processDataDir() throws ParseException {
+        String dataDirName;
+        if (getTokenType() == TOK_LITERAL) {
+            dataDirName = getTokenValue();
+            nextToken();
+            Configuration.setDataDir(new File(dataDirName));
+        } else {
+            throw new ParseException("directory name expected");
         }
     }
 }

@@ -66,8 +66,8 @@ public class DedicatedServer {
         int usePort = parser.getPort();
         String password = parser.getPassword();
         try {
-            password = Server.validatePassword(password, PreferenceManager.getClientPreferences().getLastServerPass());
-            usePort = Server.validatePort(usePort, PreferenceManager.getClientPreferences().getLastServerPort());
+//            password = Server.validatePassword(password, PreferenceManager.getClientPreferences().getLastServerPass());
+//            usePort = Server.validatePort(usePort, PreferenceManager.getClientPreferences().getLastServerPort());
             server = new Server(password, usePort, !announceUrl.isBlank(), announceUrl, mailer, true);
             MegaMek.printToOut(String.format("Server Started at %s:%d", server.getHost(), server.getPort()));
         } catch (Exception ex) {

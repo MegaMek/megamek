@@ -33653,8 +33653,7 @@ public class Server implements Runnable {
                 game.removeEntity(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pods.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
-        } // End Escape Pod/Lifeboat Ejection
-        else {
+        } else {
             if (airborne) {
                 // Can't abandon in atmosphere with no escape pods
                 r = new Report(6402);
@@ -33671,7 +33670,7 @@ public class Server implements Runnable {
             EjectedCrew crew = new EjectedCrew(entity, nEscaped);
             entity.addEscapeCraft(crew.getExternalIdAsString());
             
-            //Report the escape
+            // Report the escape
             r = new Report(6403);
             r.subject = entity.getId();
             r.addDesc(entity);
@@ -33679,22 +33678,23 @@ public class Server implements Runnable {
             r.indent();
             vDesc.addElement(r);
 
-            //If there are passengers aboard, get them out first
+            // If there are passengers aboard, get them out first
             if (entity.getNPassenger() > 0) {
                 int change = Math.min(entity.getNPassenger(), nEscaped);
                 entity.setNPassenger(Math.max(entity.getNPassenger() - nEscaped, 0));
                 crew.addPassengers(entity.getExternalIdAsString(), change);
                 nEscaped -= change;
             }
-            //Now get the crew out with such airlock space as is left
+
+            // Now get the crew out with such airlock space as is left
             if (nEscaped > 0) {
                 entity.setNCrew(entity.getNCrew() - nEscaped);
                 entity.getCrew().setCurrentSize(Math.max(0, entity.getCrew().getCurrentSize() - nEscaped));
                 crew.addNOtherCrew(entity.getExternalIdAsString(), nEscaped);
-                //*Damage* the host ship's crew to account for the people that left
+                // *Damage* the host ship's crew to account for the people that left
                 vDesc.addAll(damageCrew(entity, entity.getCrew().calculateHits()));
                 if (entity.getCrew().getHits() >= Crew.DEATH) {
-                    //Then we've finished ejecting
+                    // Then we've finished ejecting
                     entity.getCrew().setEjected(true);
                 }
             }
@@ -33717,15 +33717,15 @@ public class Server implements Runnable {
             } else {
                 // On the ground, crew must abandon into a legal hex
                 Coords legalPosition = null;
-                //Small Craft can just abandon into the hex they occupy
+                // Small Craft can just abandon into the hex they occupy
                 if (!entity.isLargeCraft() && !crew.isLocationProhibited(entity.getPosition())) {
                     legalPosition = entity.getPosition();
                 } else {
-                    //Use the passed in coords. We already calculated whether they're legal or not
+                    // Use the passed in coords. We already calculated whether they're legal or not
                     legalPosition = pos;
                 }
-                // Cannot abandon if there is no legal hex.  This shoudln't have
-                // been allowed
+
+                // Cannot abandon if there is no legal hex. This shouldn't have been allowed
                 if (legalPosition == null) {
                     LogManager.getLogger().error("Spacecraft crews cannot abandon if there is no legal hex!");
                     return vDesc;

@@ -1,16 +1,19 @@
 /*
- * MegaMek -
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -31,12 +34,11 @@ import static org.junit.Assert.*;
  * @author nderwin
  */
 public class MapSettingsTest {
-
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
-    
+
     @Test
-    public void testSaveAndLoad() throws UnsupportedEncodingException, IOException {
+    public void testSaveAndLoad() throws Exception {
         File f = tmpFolder.newFile("test-map-settings.xml");
         OutputStream os = new FileOutputStream(f);
         
@@ -128,5 +130,4 @@ public class MapSettingsTest {
         assertEquals(8, testMe.getMountainHeightMax());
         assertEquals(0, testMe.getMountainStyle());
     }
-
 }

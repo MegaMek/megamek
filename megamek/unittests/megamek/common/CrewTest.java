@@ -1,21 +1,25 @@
 /*
- * MegaMek - Copyright (C) 2000-2005 Ben Mazur
- * (bmazur@sev.org)
+ * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
-import junit.framework.TestCase;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -25,84 +29,37 @@ import org.mockito.Mockito;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 10/30/13 9:25 AM
  */
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class CrewTest {
-
     @Test
     public void testGetBVSkillMultiplier() {
-        int gunnery = 4;
-        int piloting = 5;
-
-        // Test the default case.
-        Game mockGame = null;
-        double expected = 1.0;
-        double actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
-
-        // Test a case with the 'alternate_pilot_bv_mod' option turned off.
-        mockGame = Mockito.mock(Game.class);
+        Game mockGame = Mockito.mock(Game.class);
         GameOptions mockOptions = Mockito.mock(GameOptions.class);
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
-        expected = 1.0;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
-        // Test turning the option on.
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(true);
-        expected = 1.0;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
 
-        // Test a 3/4 pilot.
-        gunnery = 3;
-        piloting = 4;
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 1.32;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
-        // Test turning the option on.
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(true);
-        expected = 1.32;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
+        // Test a 5/6 pilot
+        testGetBVSkillMultiplier(mockGame, mockOptions, false, 5, 6, 0.86);
+        testGetBVSkillMultiplier(mockGame, mockOptions, true, 5, 6, 0.86);
 
-        // Test a 5/6 pilot.
-        gunnery = 5;
-        piloting = 6;
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 0.86;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
-        // Test turning the option on.
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(true);
-        expected = 0.86;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
+        // Test a 5/6 pilot
+        testGetBVSkillMultiplier(mockGame, mockOptions, false, 4, 5, 1.0);
+        testGetBVSkillMultiplier(mockGame, mockOptions, true, 4, 5, 1.0);
 
-        // Test a 2/6 pilot.
-        gunnery = 2;
-        piloting = 6;
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 1.35;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
-        // Test turning the option on.
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(true);
-        expected = 1.33;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
+        // Test a 3/4 pilot
+        testGetBVSkillMultiplier(mockGame, mockOptions, false, 3, 4, 1.32);
+        testGetBVSkillMultiplier(mockGame, mockOptions, true, 3, 4, 1.32);
 
-        // Test a 0/0 pilot.
-        gunnery = 0;
-        piloting = 0;
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
-        expected = 2.42;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
-        // Test turning the option on.
-        Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(true);
-        expected = 2.7;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
-        TestCase.assertEquals(expected, actual, 0.001);
+        // Test a 2/6 pilot
+        testGetBVSkillMultiplier(mockGame, mockOptions, false, 2, 6, 1.35);
+        testGetBVSkillMultiplier(mockGame, mockOptions, true, 2, 6, 1.33);
+
+        // Test a 0/0 pilot
+        testGetBVSkillMultiplier(mockGame, mockOptions, false, 0, 0, 2.42);
+        testGetBVSkillMultiplier(mockGame, mockOptions, true, 0, 0, 2.7);
+    }
+
+    private void testGetBVSkillMultiplier(final Game mockGame, final GameOptions mockOptions, final boolean useAlternatePilotBVMod, final int gunnery, final int piloting, final double expected) {
+        Mockito.when(mockOptions.booleanOption(Mockito.eq(OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD)))
+                .thenReturn(useAlternatePilotBVMod);
+        Assert.assertEquals(expected, Crew.getBVSkillMultiplier(gunnery, piloting, mockGame), 0.001);
     }
 }

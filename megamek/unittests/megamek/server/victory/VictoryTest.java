@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.server.victory;
 
 import megamek.client.ui.swing.util.PlayerColour;
@@ -21,7 +37,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(value = JUnit4.class)
-public class ServerTest {
+public class VictoryTest {
 
     protected Game createMockedGame() {
         Game testGame = Mockito.mock(Game.class);
@@ -35,7 +51,6 @@ public class ServerTest {
         return testGame;
     }
 
-
     @Test
     public void testVictory() throws IOException {
         Server testServer = new Server("test", 0);
@@ -44,12 +59,12 @@ public class ServerTest {
 
         Game testGame = createMockedGame();
 
-        //test whether the server.victory() returns false when mocking VictoryResult as false
+        // test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         testServer.setGame(testGame);
         assertFalse(testServer.victory());
 
-        //test whether the server.victory() returns true when mocking VictoryResult as true
+        // test whether the server.victory() returns true when mocking VictoryResult as true
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         testServer.setGame(testGame);
         assertTrue(testServer.victory());
@@ -78,8 +93,6 @@ public class ServerTest {
         testServer.setGame(testGame);
         testServer.victory();
         Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
-
-
     }
 
     @Test
@@ -90,11 +103,9 @@ public class ServerTest {
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         Mockito.when(testGame.isForceVictory()).thenReturn(true);
 
-
         testServer.setGame(testGame);
         testServer.victory();
         Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
-
     }
 
     @Test
@@ -137,7 +148,4 @@ public class ServerTest {
 
         assertSame(2, testServer2.getvPhaseReport().size());
     }
-
 }
-
-

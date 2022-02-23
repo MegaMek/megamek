@@ -291,7 +291,7 @@ public class RATGeneratorEditor extends JFrame {
         JButton button = new JButton("Add Row");
         topPanel.add(button);
         button.addActionListener(ev -> {
-            if (!unitEditorModel.addEntry(factionChooser.getSelectedItem().toString())) {
+            if ((factionChooser.getSelectedItem() != null) && !unitEditorModel.addEntry(factionChooser.getSelectedItem().toString())) {
                 JOptionPane.showMessageDialog(this, 
                         "Unable to add model or chassis entry. Please select a unit model. " +
                         "If adding a model entry, make sure you already have a chassis entry defined.");
@@ -309,9 +309,9 @@ public class RATGeneratorEditor extends JFrame {
         button = new JButton("Copy Row");
         topPanel.add(button);
         button.addActionListener(ev -> {
-            if (tblUnitEditor.getSelectedRow() >= 0) {
+            if ((tblUnitEditor.getSelectedRow() >= 0) && (factionChooser.getSelectedItem() != null)) {
                 unitEditorModel.copyRow(tblUnitEditor.convertRowIndexToModel(tblUnitEditor.getSelectedRow()),
-                        (String) factionChooser.getSelectedItem());
+                        factionChooser.getSelectedItem().toString());
             }
         });
 

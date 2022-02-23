@@ -228,7 +228,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // TODO : This check is good for now, but at some point we want atmospheric flying
             // TODO : droppers to be able to lob offboard missiles and we could use it in space for
             // TODO : extreme range bearings-only fights, plus Ortillery.
-            if (!space && (e.getAltitude() == 0)) {
+            // TODO : Further, this should be revisited with a rules query when it comes to
+            // TODO : handling offboard gun emplacements, especially if they are allowed
+            if (!space && (e.getAltitude() == 0) && !(e instanceof GunEmplacement)) {
                 // No need to bother checking weapons if the map and entity don't meet criteria for
                 // offboard units
                 entityEligibleForOffBoard = e.getWeaponList().stream()

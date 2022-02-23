@@ -219,11 +219,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship));
             isMech &= (e instanceof Mech);
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
-            isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
-            isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);
+            isVTOL &= e.getMovementMode().isVTOL();
+            isWiGE &= (e instanceof Tank) && e.getMovementMode().isWiGE();
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMech);
-            isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
+            isGlider &= (e instanceof Protomech) && e.getMovementMode().isWiGE();
             final boolean entityEligibleForOffBoard;
             // TODO : This check is good for now, but at some point we want atmospheric flying
             // TODO : droppers to be able to lob offboard missiles and we could use it in space for

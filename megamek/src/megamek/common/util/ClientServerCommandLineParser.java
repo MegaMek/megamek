@@ -4,6 +4,8 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -20,17 +22,19 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
     public enum ClientServerCommandLineFlag {
         //region Enum Declarations
         HELP(Messages.getString("MegaMek.Help")),
+        USEDEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
         PORT(Messages.getFormattedString("MegaMek.Help.Port", Server.MIN_PORT, Server.MAX_PORT, Server.DEFAULT_PORT)),
-        PASSWORD(Messages.getString("MegaMek.Help.Password")),
+        DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir())),
         // server or host only options
         ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
         MAIL(Messages.getString("MegaMek.Help.Mail"), true, false, true),
         SAVEGAME(Messages.getString("MegaMek.Help.SaveGame"), true, false, true),
+        PASSWORD(Messages.getString("MegaMek.Help.Password"), true, false, true),
         // client or host only options
         PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
         // client only options
         SERVER(Messages.getFormattedString("MegaMek.Help.Server", Server.LOCALHOST), false, true, false),
-        DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir()));
+        ;
         //endregion Enum Declarations
 
         private final String helpText;
@@ -67,10 +71,11 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private String saveGameFileName;
     private int port;
+    private boolean useDefaults;
     private String password;
     private String announceUrl;
     private String mailProperties;
-    private String hostName;
+    private String serverAddress;
     private String playerName;
 
     private final String parent;
@@ -96,10 +101,12 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
     /**
      * @return the password option value, will be null if not set.
      */
+    @Nullable
     public String getPassword() {
         return password;
     }
 
+    @Nullable
     public String getAnnounceUrl() {
         return announceUrl;
     }
@@ -108,18 +115,24 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
         return (announceUrl != null) && (!announceUrl.isBlank());
     }
 
+    @Nullable
     public String getMailProperties() {
         return mailProperties;
     }
 
+    @Nullable
     public String getPlayerName() {
         return playerName;
     }
 
-    public String getHostName() {
-        return hostName;
+    @Nullable
+    public String getServerAddress() {
+        return serverAddress;
     }
 
+    public boolean getUseDefaults() {
+        return useDefaults;
+    }
     /**
      * @return the game file name option value or <code>null</code> if it wasn't set
      */
@@ -150,7 +163,6 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
         while ( getTokenType() != TOK_EOF) {
             int tokenType = getTokenType();
             final String tokenValue = getTokenValue();
-            nextToken();
             switch (tokenType) {
                 case TOK_OPTION:
                     try {
@@ -159,28 +171,39 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 MegaMek.printToOut(help());
                                 System.exit(0);
                             case PORT:
+                                nextToken();
                                 parsePort();
                                 break;
                             case ANNOUNCE:
+                                nextToken();
                                 parseAnnounce();
                                 break;
                             case PASSWORD:
+                                nextToken();
                                 parsePassword();
                                 break;
                             case MAIL:
+                                nextToken();
                                 parseMail();
                                 break;
                             case PLAYERNAME:
+                                nextToken();
                                 parsePlayerName();
                                 break;
                             case SERVER:
-                                parseHost();
+                                nextToken();
+                                parseServerAddress();
                                 break;
                             case SAVEGAME:
+                                nextToken();
                                 parseSaveGame();
                                 break;
                             case DATADIR:
+                                nextToken();
                                 processDataDir();
+                                break;
+                            case USEDEFAULTS:
+                                useDefaults = true;
                                 break;
                         }
                     } catch (ParseException ex) {
@@ -227,9 +250,9 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parsePassword() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            password = Server.validatePlayerName(getTokenValue());
+            password = Server.validatePassword(getTokenValue());
         } else {
-            throw new ParseException("password expected");
+            //throw new ParseException("password expected");
         }
     }
 
@@ -249,9 +272,9 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
         }
     }
 
-    private void parseHost() throws ParseException {
+    private void parseServerAddress() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            hostName = Server.validateServerAddress(getTokenValue());
+            serverAddress = Server.validateServerAddress(getTokenValue());
         } else {
             throw new ParseException("host name or url expected");
         }
@@ -273,6 +296,79 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
             Configuration.setDataDir(new File(dataDirName));
         } else {
             throw new ParseException("directory name expected");
+        }
+    }
+
+    public Resolver getResolver(String defaultPassword, int defaultPort, String defaultServerAddress) {
+        return new Resolver(this, defaultPassword, defaultPort, defaultServerAddress);
+    }
+
+    public class Resolver {
+        public final String playerName, serverAddress, password, saveGameFileName, announceUrl, mailPropertiesFile;
+        public final boolean registerServer;
+        public final int port;
+
+        public Resolver(ClientServerCommandLineParser parser, String defaultPassword, int defaultPort, String defaultServerAddress)
+        {
+            try {
+                parser.parse();
+            } catch (AbstractCommandLineParser.ParseException e) {
+                LogManager.getLogger().error(parser.formatErrorMessage(e));
+            }
+
+            String playerName = parser.getPlayerName();
+            String serverAddress = parser.getServerAddress();
+            int port = parser.getPort();
+            String password = parser.getPassword();
+            String saveGameFileName = parser.getSaveGameFileName();
+            String announceUrl = parser.getAnnounceUrl();
+            boolean registerServer = parser.getRegister();
+            String mailPropertiesFile = parser.getMailProperties();
+
+            //always fallback to last used player name
+            if (playerName == null || playerName.isBlank()) {
+                playerName = PreferenceManager.getClientPreferences().getLastPlayerName();
+            }
+
+            if (!parser.getUseDefaults()) {
+                if (password == null) {
+                    password = defaultPassword;
+                }
+
+                if (port <= 0) {
+                    port = defaultPort;
+                }
+
+                if (serverAddress == null) {
+                    serverAddress = defaultServerAddress;
+                }
+            }
+
+            // use hard-coded defaults if not otherwise defined
+            if (port <= 0) {
+                port = Server.DEFAULT_PORT;
+            }
+
+            if (playerName == null || playerName.isBlank()) {
+                playerName = Server.DEFAULT_PLAYERNAME;
+            }
+
+            if (serverAddress == null || serverAddress.isBlank()) {
+                serverAddress = Server.LOCALHOST;
+            }
+
+            if (password != null && password.isBlank()) {
+                password = null;
+            }
+
+            this.playerName = playerName;
+            this.serverAddress = serverAddress;
+            this.port = port;
+            this.password = password;
+            this.saveGameFileName = saveGameFileName;
+            this.announceUrl = announceUrl;
+            this.registerServer = registerServer;
+            this.mailPropertiesFile = mailPropertiesFile;
         }
     }
 }

@@ -313,7 +313,7 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param , if null or empty, will use default, or if that is null or empty, LOCALHOST
+     * @param serverAddress
      * @return valid hostName
      */
     public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
@@ -327,7 +327,7 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param playerName, if null or empty, will use default, or raise an exception if default is null or empty
+     * @param playerName
      * @return valid playerName
      */
     public static String validatePlayerName(String playerName) throws AbstractCommandLineParser.ParseException {
@@ -348,19 +348,16 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param password, if null or empty, will return default - but sometimes null or empty means no password, not default
-     * @return valid password or empty string if no password
+     * @param password
+     * @return valid password or null if no password or password is blank string
      */
     public static String validatePassword(String password) throws AbstractCommandLineParser.ParseException {
-        if (password == null || password.isBlank()) {
-            return "";
-        }
         return password.trim();
     }
 
     /**
      *
-     * @param port, if or less 0, will return default, if illegal number, throws ParseException
+     * @param port, if 0 or less, will return default, if illegal number, throws ParseException
      * @return valid port number
      */
     public static int validatePort(int port) throws AbstractCommandLineParser.ParseException {

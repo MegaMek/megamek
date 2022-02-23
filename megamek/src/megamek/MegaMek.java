@@ -249,19 +249,24 @@ public class MegaMek {
             LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
 
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
+                PreferenceManager.getClientPreferences().getLastServerPass(),
+                PreferenceManager.getClientPreferences().getLastServerPort(),
+                PreferenceManager.getClientPreferences().getLastConnectAddr()
+        );
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
-        File savegame = null;
-        if (parser.getSaveGameFileName() != null ) {
-            savegame = new File(parser.getSaveGameFileName());
-            if (!savegame.isAbsolute()) {
-                savegame = new File("./savegames", parser.getSaveGameFileName());
+        File gameFile = null;
+        if (resolver.saveGameFileName != null ) {
+            gameFile = new File(resolver.saveGameFileName);
+            if (!gameFile.isAbsolute()) {
+                gameFile = new File("./savegames", resolver.saveGameFileName);
             }
         }
 
-        mmg.startHost(parser.getPassword(), parser.getPort(), parser.getRegister(),
-                parser.getAnnounceUrl(), savegame, parser.getPlayerName() );
+        mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
+                resolver.announceUrl, gameFile, resolver.playerName );
     }
 
     /**
@@ -285,10 +290,17 @@ public class MegaMek {
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
+
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
+                PreferenceManager.getClientPreferences().getLastServerPass(),
+                PreferenceManager.getClientPreferences().getLastConnectPort(),
+                PreferenceManager.getClientPreferences().getLastConnectAddr()
+        );
+
         LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
         MegaMekGUI mmg = new MegaMekGUI();
         mmg.start(false);
-        mmg.startClient(parser.getPlayerName(), parser.getHostName(), parser.getPort());
+        mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
     }
 
     /**

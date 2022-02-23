@@ -444,14 +444,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // kick off a RNG check
         d6();
         // start server
-//        try {
-//            serverPassword = Server.validatePassword(serverPassword,"");
-//            port = Server.validatePort(port, Server.DEFAULT_PORT);
-//        } catch (Exception ex){
-//            LogManager.getLogger().error("Failed to start Server", ex);
-//            frame.setVisible(true);
-//            return;
-//        }
+        try {
+            serverPassword = Server.validatePassword(serverPassword);
+            port = Server.validatePort(port);
+        } catch (Exception ex){
+            LogManager.getLogger().error("Failed to start Server", ex);
+            frame.setVisible(true);
+            return;
+        }
 
         EmailService mailer = null;
         if ( (mailPropertiesFileName != null) && (!mailPropertiesFileName.isBlank())) {
@@ -470,7 +470,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         try {
             server = new Server( serverPassword, port, isRegister, metaServer, mailer, false);
-            MegaMek.printToOut(String.format("Server Started at %s:%d", server.getHost(), server.getPort()));
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled"));
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -491,23 +491,19 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
     }
 
-    public void startClient(String playerName, String hostName, int port) {
-//        try {
-//            hostName = Server.validateHostName(hostName,PreferenceManager.getClientPreferences().getLastConnectAddr());
-//            playerName = Server.validatePlayerName(playerName, PreferenceManager.getClientPreferences().getLastPlayerName());
-//            port = Server.validatePort(port, Server.DEFAULT_PORT);
-//        } catch (Exception ex){
-//            LogManager.getLogger().error("Failed to start client", ex);
-//            JOptionPane.showMessageDialog(frame,
-//                    Messages.getFormattedString("MegaMek.ServerConnectionError", hostName, port),
-//                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-//            frame.setVisible(true);
-//            return;
-//        }
-        if ((playerName == null) || playerName.isBlank()) playerName = Server.DEFAULT_PLAYERNAME;
-        if ((hostName == null) || hostName.isBlank()) hostName = Server.LOCALHOST;
+    public void startClient(String playerName, String serverAddress, int port) {
+        try {
+            port = Server.validatePort(port);
+        } catch (Exception ex){
+            LogManager.getLogger().error("Failed to start client", ex);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            frame.setVisible(true);
+            return;
+        }
 
-        client = new Client(playerName, hostName, port);
+        client = new Client(playerName, serverAddress, port);
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -515,11 +511,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             JOptionPane.showMessageDialog(frame,
-                    Messages.getFormattedString("MegaMek.ServerConnectionError", hostName, port),
+                    Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             client.die();
             gui.die();
             frame.setVisible(true);
+            MegaMek.printToOut(String.format("Client failed to connect to %s:%d", client.getHost(), client.getPort()));
             return;
         }
         MegaMek.printToOut(String.format("Client connected to %s:%d", client.getHost(), client.getPort()));

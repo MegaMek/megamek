@@ -15,6 +15,7 @@
 */
 package megamek.client.ui.swing.boardview;
 
+import megamek.MMConstants;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
@@ -1258,7 +1259,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
         if (selectedEntity != null) {
-            Princess princess = new Princess("test", Server.LOCALHOST, 2020);
+            Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
             pathEnum.recalculateMovesFor(this.selectedEntity);

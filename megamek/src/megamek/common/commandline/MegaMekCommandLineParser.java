@@ -77,8 +77,8 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     @Override
     public String help() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Messages.getString("MegaMek.Version") + MMConstants.VERSION+"\n");
-        for( MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values() ) {
+        sb.append(String.format("%s %s\n", Messages.getString("MegaMek.Version"), MMConstants.VERSION));
+        for( MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values()) {
             sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.helpText));
         }
         return sb.toString();

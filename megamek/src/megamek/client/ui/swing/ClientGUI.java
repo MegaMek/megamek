@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
@@ -174,9 +175,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String HELP_ABOUT = "helpAbout";
     //endregion help menu
     //endregion action commands
-
-    public static final String QUICKSAVE_FILE = "quicksave";
-    public static final String QUICKSAVE_PATH = "./savegames";
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -1526,9 +1524,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     
     /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
     private boolean quickSaveGame() {
-//        String file = "quicksave";
-//        String path = "./savegames";
-        client.sendChat("/localsave " + QUICKSAVE_FILE + " " + QUICKSAVE_PATH);
+        client.sendChat("/localsave " + MMConstants.QUICKSAVE_FILE + " " + MMConstants.QUICKSAVE_PATH);
         return true;
     }
 

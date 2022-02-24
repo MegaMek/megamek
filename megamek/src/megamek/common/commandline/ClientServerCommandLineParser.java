@@ -14,6 +14,7 @@
 package megamek.common.commandline;
 
 import megamek.MMConstants;
+import megamek.MMOptions;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
@@ -103,9 +104,9 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
     @Override
     public String help() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Messages.getString("MegaMek.Version") + MMConstants.VERSION+"\n");
+        sb.append(String.format("%s %s\n", Messages.getString("MegaMek.Version"), MMConstants.VERSION));
         sb.append(String.format("Help for %s\n", parent));
-        for( ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values() ) {
+        for( ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values()) {
             if ( (flag.isClientArg() && client) || (flag.isServerArg() && server) || (flag.isHostArg() && host)  ) {
                 sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.getHelpText()));
             }
@@ -115,13 +116,13 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     @Override
     protected void start() throws ParseException {
-        while ( getTokenType() != TOK_EOF) {
+        while (getTokenType() != TOK_EOF) {
             int tokenType = getTokenType();
             final String tokenValue = getTokenValue();
             switch (tokenType) {
                 case TOK_OPTION:
                     try {
-                        switch ( ClientServerCommandLineFlag.parseFromString(tokenValue)) {
+                        switch (ClientServerCommandLineFlag.parseFromString(tokenValue)) {
                             case HELP:
                                 MegaMek.printToOut(help());
                                 System.exit(0);
@@ -179,7 +180,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                     // Do nothing, although this shouldn't happen
                     break;
                 default:
-                    throw new ParseException(String.format("Unexpected input %s",tokenValue));
+                    throw new ParseException(String.format("Unexpected input %s", tokenValue));
             }
             nextToken();
         }
@@ -190,10 +191,9 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             int newPort = -1;
             try {
                 newPort = Integer.decode(getTokenValue());
-            } catch (NumberFormatException ex)
-            {
+            } catch (NumberFormatException ex) {
                 throw new ParseException(String.format(
-                        "port number must be a number. %s is not valid %s\n%s",
+                        "port number must be a number. '%s' is not valid\n%s",
                         getTokenValue(), ex.getMessage()));
             }
             port = Server.validatePort(newPort);
@@ -261,8 +261,9 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
         }
     }
 
-    public Resolver getResolver(String defaultPassword, int defaultPort, String defaultServerAddress) {
-        return new Resolver(this, defaultPassword, defaultPort, defaultServerAddress);
+    public Resolver getResolver(String defaultPassword, int defaultPort,
+                                String defaultServerAddress, String defaultPlayerName) {
+        return new Resolver(this, defaultPassword, defaultPort, defaultServerAddress, defaultPlayerName);
     }
 
     public class Resolver {
@@ -270,7 +271,8 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
         public final boolean registerServer;
         public final int port;
 
-        public Resolver(ClientServerCommandLineParser parser, String defaultPassword, int defaultPort, String defaultServerAddress)
+        public Resolver(ClientServerCommandLineParser parser, String defaultPassword, int defaultPort,
+                        String defaultServerAddress, String defaultPlayerName)
         {
             try {
                 parser.parse();
@@ -288,8 +290,8 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             String mailPropertiesFile = parser.getMailProperties();
 
             //always fallback to last used player name
-            if (playerName == null || playerName.isBlank()) {
-                playerName = PreferenceManager.getClientPreferences().getLastPlayerName();
+            if ((playerName == null) || playerName.isBlank()) {
+                playerName = defaultPlayerName;
             }
 
             if (!parser.getUseDefaults()) {
@@ -308,18 +310,18 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
             // use hard-coded defaults if not otherwise defined
             if (port <= 0) {
-                port = Server.DEFAULT_PORT;
+                port = MMConstants.DEFAULT_PORT;
             }
 
-            if (playerName == null || playerName.isBlank()) {
-                playerName = Server.DEFAULT_PLAYERNAME;
+            if ((playerName == null) || playerName.isBlank()) {
+                playerName = MMConstants.DEFAULT_PLAYERNAME;
             }
 
-            if (serverAddress == null || serverAddress.isBlank()) {
-                serverAddress = Server.LOCALHOST;
+            if ((serverAddress == null) || serverAddress.isBlank()) {
+                serverAddress = MMConstants.LOCALHOST;
             }
 
-            if (password != null && password.isBlank()) {
+            if ((password != null) && password.isBlank()) {
                 password = null;
             }
 

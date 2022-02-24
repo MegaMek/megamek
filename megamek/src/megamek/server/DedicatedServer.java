@@ -45,7 +45,7 @@ public class DedicatedServer {
         ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
                 PreferenceManager.getClientPreferences().getLastServerPass(),
                 PreferenceManager.getClientPreferences().getLastServerPort(),
-                null
+                null, null
                 );
 
         EmailService mailer = null;
@@ -57,8 +57,8 @@ public class DedicatedServer {
                 mailer = new EmailService(mailProperties);
             } catch (Exception ex) {
                 LogManager.getLogger().error(
-                    "Error: could not load mail properties file \"" +
-                    propsFile.getAbsolutePath() + "\"", ex);
+                        "Error: could not load mail properties file \"" +
+                                propsFile.getAbsolutePath() + "\"", ex);
                 return;
             }
         }

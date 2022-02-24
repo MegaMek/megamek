@@ -13,6 +13,7 @@
  */
 package megamek.common.commandline;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.server.Server;
@@ -24,7 +25,7 @@ public enum ClientServerCommandLineFlag {
     //region Enum Declarations
     HELP(Messages.getString("MegaMek.Help")),
     USEDEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
-    PORT(Messages.getFormattedString("MegaMek.Help.Port", Server.MIN_PORT, Server.MAX_PORT, Server.DEFAULT_PORT)),
+    PORT(Messages.getFormattedString("MegaMek.Help.Port", MMConstants.MIN_PORT, MMConstants.MAX_PORT, MMConstants.DEFAULT_PORT)),
     DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir())),
     // server or host only options
     ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
@@ -34,7 +35,7 @@ public enum ClientServerCommandLineFlag {
     // client or host only options
     PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
     // client only options
-    SERVER(Messages.getFormattedString("MegaMek.Help.Server", Server.LOCALHOST), false, true, false),
+    SERVER(Messages.getFormattedString("MegaMek.Help.Server", MMConstants.LOCALHOST), false, true, false),
     ;
     //endregion Enum Declarations
 

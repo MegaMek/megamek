@@ -13,6 +13,7 @@
  */
 package megamek.test;
 
+import megamek.MMConstants;
 import megamek.common.Board;
 import megamek.common.net.*;
 import megamek.server.Server;
@@ -127,12 +128,12 @@ public class PacketTool extends Frame implements Runnable {
 
         // Populate the connection panel.
         panConnect.add(new Label(" Connect To:"));
-        hostName = new TextField(Server.LOCALHOST, 10);
+        hostName = new TextField(MMConstants.LOCALHOST, 10);
         panConnect.add(hostName);
         panConnect.add(new Label("Port Number:"));
-        hostPort = new TextField( String.valueOf(Server.DEFAULT_PORT), 10);
+        hostPort = new TextField( String.valueOf(MMConstants.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
-        button = new Button("Listen");
+        button = new Button("ListNen");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -108,12 +108,6 @@ public class Server implements Runnable {
     private static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     // server setup
-    public static final int DEFAULT_PORT = 2346;
-    public static final int MIN_PORT = 1024;
-    public static final int MAX_PORT = 65535;
-
-    public static final String DEFAULT_PLAYERNAME = "Player";
-    public static final String LOCALHOST = "localhost";
     private String password;
 
     private final String metaServerUrl;
@@ -312,11 +306,11 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param serverAddress
+     * @param serverAddress throw ParseException if null or empty
      * @return valid hostName
      */
     public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
-        if (serverAddress == null || serverAddress.isBlank()) {
+        if ((serverAddress == null) || serverAddress.isBlank()) {
             String msg = String.format("serverAddress must not be null or empty");
             LogManager.getLogger().error(msg);
             throw new AbstractCommandLineParser.ParseException(msg);
@@ -326,7 +320,7 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param playerName
+     * @param playerName throw ParseException if null or empty
      * @return valid playerName
      */
     public static String validatePlayerName(String playerName) throws AbstractCommandLineParser.ParseException {
@@ -351,23 +345,23 @@ public class Server implements Runnable {
      * @return valid password or null if no password or password is blank string
      */
     @Nullable
-    public static String validatePassword(@Nullable String password) throws AbstractCommandLineParser.ParseException {
-        if (password == null || password.isBlank()) return null;
+    public static String validatePassword(@Nullable String password) {
+        if ((password == null) || password.isBlank()) return null;
         return password.trim();
     }
 
     /**
      *
-     * @param port, if 0 or less, will return default, if illegal number, throws ParseException
+     * @param port if 0 or less, will return default, if illegal number, throws ParseException
      * @return valid port number
      */
     public static int validatePort(int port) throws AbstractCommandLineParser.ParseException {
         if (port <= 0) {
-            return Server.DEFAULT_PORT;
+            return MMConstants.DEFAULT_PORT;
         }
 
-        if (port < MIN_PORT || port > MAX_PORT) {
-            String msg = String.format("Port number %d outside allowed range %d-%d", port, MIN_PORT,MAX_PORT);
+        if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
+            String msg = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT, MMConstants.MAX_PORT);
             LogManager.getLogger().error(msg);
             throw new AbstractCommandLineParser.ParseException(msg);
 

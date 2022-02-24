@@ -425,13 +425,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     public void startHost(String serverPassword, int port, boolean isRegister, String metaServer,
                           String mailPropertiesFileName, File savegame, String playerName) {
         startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame);
-        startClient(playerName, Server.LOCALHOST, server.getPort());
+        startClient(playerName, MMConstants.LOCALHOST, server.getPort());
     }
 
 
 
     public void startServer(String serverPassword, int port, boolean isRegister, String metaServer,
-                            String mailPropertiesFileName, File saveGameFileName) {
+                            String mailPropertiesFileName, File saveGameFile) {
 
         try {
             serverPassword = Server.validatePassword(serverPassword);
@@ -474,11 +474,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
             return;
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Could not create server", ex);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            frame.setVisible(true);
+            return;
         }
 
-        if ((saveGameFileName != null) ) {
-            if (!server.loadGame(saveGameFileName)) {
-                JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+        if (saveGameFile != null) {
+            if (!server.loadGame(saveGameFile)) {
+                JOptionPane.showMessageDialog(frame,
+                        Messages.getFormattedString("MegaMek.LoadGameAlert.message", saveGameFile.getAbsolutePath()),
+                        Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
                 server.die();
                 server = null;
                 frame.setVisible(true);
@@ -551,14 +560,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        //extract game data before starting to check and get player names
+        // extract game data before starting to check and get player names
         Game newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
             newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
-            LogManager.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
-            JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
+            LogManager.getLogger().error("Unable to load file: " + fc.getSelectedFile().getAbsolutePath(), e);
+            JOptionPane.showMessageDialog(frame, Messages.getFormattedString("MegaMek.LoadGameAlert.message", fc.getSelectedFile().getAbsolutePath()),
             Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -591,9 +600,18 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
     public void quickLoadGame() {
+        File file = new File( MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE);
+        if (!file.exists() || !file.canRead()) {
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            frame.setVisible(true);
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath())+"\n");
+            return;
+        }
+
         startHost("", 0, false, "", null,
-                new File(ClientGUI.QUICKSAVE_FILE, ClientGUI.QUICKSAVE_PATH),
-                PreferenceManager.getClientPreferences().getLastPlayerName());
+                file, PreferenceManager.getClientPreferences().getLastPlayerName());
     }
 
     /**
@@ -713,7 +731,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             hasSlot = true;
             playerName = pa[0].getName();
             localName = playerName;
-            port = Server.DEFAULT_PORT;
+            port = MMConstants.DEFAULT_PORT;
             serverPW = "";
             playerTypes[0] = 0;
             for (int i = 1; i < playerTypes.length; i++) {
@@ -732,7 +750,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         sl.applyDamage(server);
 
         if (!localName.isBlank()) {
-            startClient(playerName, Server.LOCALHOST, port);
+            startClient(playerName, MMConstants.LOCALHOST, port);
         }
 
         // calculate initial BV
@@ -742,12 +760,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         for (int x = 0; x < pa.length; x++) {
             if (playerTypes[x] == ScenarioDialog.T_BOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as Princess");
-                BotClient c = new Princess(pa[x].getName(), Server.LOCALHOST, port);
+                BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
                 c.getGame().addGameListener(new BotGUI(c));
                 c.connect();                
             } else if (playerTypes[x] == ScenarioDialog.T_OBOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as TestBot");
-                BotClient c = new TestBot(pa[x].getName(), Server.LOCALHOST, port);
+                BotClient c = new TestBot(pa[x].getName(), MMConstants.LOCALHOST, port);
                 c.getGame().addGameListener(new BotGUI(c));
                 c.connect();
             }

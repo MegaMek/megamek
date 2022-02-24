@@ -289,7 +289,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals(Server.LOCALHOST)) {
+            if (!host.equals(MMConstants.LOCALHOST)) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }

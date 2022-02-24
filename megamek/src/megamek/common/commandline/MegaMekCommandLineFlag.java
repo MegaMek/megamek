@@ -13,6 +13,7 @@
  */
 package megamek.common.commandline;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Configuration;
@@ -27,7 +28,7 @@ public enum MegaMekCommandLineFlag {
     DEDICATED(Messages.getString("MegaMek.Help.Dedicated")),
     HOST(Messages.getString("MegaMek.Help.Host")),
     CLIENT(Messages.getString("MegaMek.Help.Client")),
-    QUICK(Messages.getFormattedString("MegaMek.Help.Quick", ClientGUI.QUICKSAVE_FILE)),
+    QUICK(Messages.getFormattedString("MegaMek.Help.Quick", MMConstants.QUICKSAVE_FILE)),
     // exporters and utilities
     EQDB("MegaMek.Help.EquipmentDB"),
     EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),

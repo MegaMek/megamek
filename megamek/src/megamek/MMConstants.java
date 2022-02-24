@@ -48,4 +48,15 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
     //endregion File Paths
+
+    //region Server
+    public static final int DEFAULT_PORT = 2346;
+    public static final int MIN_PORT = 1024;
+    public static final int MAX_PORT = 65535;
+
+    public static final String DEFAULT_PLAYERNAME = "Player";
+    public static final String LOCALHOST = "localhost";
+    public static final String QUICKSAVE_FILE = "quicksave";
+    public static final String QUICKSAVE_PATH = "./savegames";
+    //endregion Server
 }

@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
 import megamek.client.ui.swing.ClientDialog;
@@ -92,7 +93,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.playerNames = playerNames;
 
         setPlayerName(""); // initialize player name
-        setPort(Server.DEFAULT_PORT);
+        setPort(MMConstants.DEFAULT_PORT);
         setConfirmed(false);
 
         initComponents();

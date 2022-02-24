@@ -95,16 +95,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Construct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI(boolean show ) {
-//        try {
-//            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//            File btFontFile = new MegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
-//            Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
-//            LogManager.getLogger().info("Loaded Font: " + btFont.getName());
-//            ge.registerFont(btFont);
-//        } catch (Exception e) {
-//            LogManager.getLogger().error("Failed to Register BT Classic Font", e);
-//        }
-
         createController();
 
         GUIPreferences.getInstance().addPreferenceChangeListener(this);

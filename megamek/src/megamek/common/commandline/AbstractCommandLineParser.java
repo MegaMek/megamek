@@ -13,6 +13,8 @@
  */
 package megamek.common.commandline;
 
+import megamek.client.ui.Messages;
+
 /**
  * Very simple skeleton for the command line parser. Provides basic scanner
  * primitives and token types. Descendants should implement at least
@@ -20,7 +22,7 @@ package megamek.common.commandline;
  */
 public abstract class AbstractCommandLineParser {
 
-    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
+    private static final String INCORRECT_ARGUMENTS_MESSAGE = Messages.getString("MegaMek.Help.IncorrectArguments");
 
     /**
      * Exception thrown in case of error

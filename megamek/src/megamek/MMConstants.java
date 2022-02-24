@@ -58,5 +58,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String LOCALHOST = "localhost";
     public static final String QUICKSAVE_FILE = "quicksave";
     public static final String QUICKSAVE_PATH = "./savegames";
+    public static final String SAVE_FILE_EXT = ".sav";
+    public static final String SAVE_FILE_GZ_EXT = SAVE_FILE_EXT + ".gz";
     //endregion Server
 }

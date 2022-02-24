@@ -13,6 +13,7 @@
  */
 package megamek.server.commands;
 
+import megamek.MMConstants;
 import megamek.common.Player;
 import megamek.common.net.AbstractConnection;
 import megamek.server.Server;
@@ -46,9 +47,9 @@ public class LoadGameCommand extends ServerCommand {
         }
         if (args.length > 1) {
             String sFinalFile = args[1];
-            if (!sFinalFile.endsWith(".sav") 
-                    && !sFinalFile.endsWith(".sav.gz")) {
-                sFinalFile = sFinalFile + ".sav";
+            if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)
+                    && !sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+                sFinalFile = sFinalFile + MMConstants.SAVE_FILE_EXT;
             }
             if (!sFinalFile.endsWith(".gz")) {
                 sFinalFile = sFinalFile + ".gz";

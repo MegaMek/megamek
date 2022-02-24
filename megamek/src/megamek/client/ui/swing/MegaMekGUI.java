@@ -546,7 +546,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((dir.getName().endsWith(".sav") || dir.getName().endsWith(".sav.gz") || dir.isDirectory()));
+                return ((dir.getName().endsWith(MMConstants.SAVE_FILE_EXT) || dir.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT) || dir.isDirectory()));
             }
 
             @Override
@@ -600,7 +600,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
     public void quickLoadGame() {
-        File file = new File( MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE);
+        File file = new File( MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE + MMConstants.SAVE_FILE_GZ_EXT);
         if (!file.exists() || !file.canRead()) {
             JOptionPane.showMessageDialog(frame,
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),

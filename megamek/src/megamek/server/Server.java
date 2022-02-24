@@ -1193,11 +1193,11 @@ public class Server implements Runnable {
     public void sendSaveGame(int connId, String sFile, String sLocalPath) {
         saveGame(sFile, false);
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav.gz")) {
-            if (sFinalFile.endsWith(".sav")) {
+        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+            if (sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
                 sFinalFile = sFile + ".gz";
             } else {
-                sFinalFile = sFile + ".sav.gz";
+                sFinalFile = sFile + MMConstants.SAVE_FILE_GZ_EXT;
             }
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
@@ -1237,8 +1237,8 @@ public class Server implements Runnable {
         xstream.setMode(XStream.ID_REFERENCES);
 
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav")) {
-            sFinalFile = sFile + ".sav";
+        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
+            sFinalFile = sFile + MMConstants.SAVE_FILE_EXT;
         }
         File sDir = new File("savegames");
         if (!sDir.exists()) {
@@ -1278,8 +1278,8 @@ public class Server implements Runnable {
      */
     public void sendLoadGame(int connId, String sFile) {
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav") && !sFinalFile.endsWith(".sav.gz")) {
-            sFinalFile = sFile + ".sav";
+        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT) && !sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+            sFinalFile = sFile + MMConstants.SAVE_FILE_EXT;
         }
         if (!sFinalFile.endsWith(".gz")) {
             sFinalFile = sFinalFile + ".gz";

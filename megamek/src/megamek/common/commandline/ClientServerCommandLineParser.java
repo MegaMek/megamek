@@ -1,4 +1,17 @@
-package megamek.common.util;
+/*
+ * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
+package megamek.common.commandline;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -13,61 +26,8 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Locale;
 
-public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
-
-    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-
-    public enum ClientServerCommandLineFlag {
-        //region Enum Declarations
-        HELP(Messages.getString("MegaMek.Help")),
-        USEDEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
-        PORT(Messages.getFormattedString("MegaMek.Help.Port", Server.MIN_PORT, Server.MAX_PORT, Server.DEFAULT_PORT)),
-        DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir())),
-        // server or host only options
-        ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
-        MAIL(Messages.getString("MegaMek.Help.Mail"), true, false, true),
-        SAVEGAME(Messages.getString("MegaMek.Help.SaveGame"), true, false, true),
-        PASSWORD(Messages.getString("MegaMek.Help.Password"), true, false, true),
-        // client or host only options
-        PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
-        // client only options
-        SERVER(Messages.getFormattedString("MegaMek.Help.Server", Server.LOCALHOST), false, true, false),
-        ;
-        //endregion Enum Declarations
-
-        private final String helpText;
-        private final boolean server;
-        private final boolean client;
-        private final boolean host;
-
-        //region Constructors
-        ClientServerCommandLineFlag(final String helpText) {
-            this(helpText, true, true, true);
-        }
-
-        ClientServerCommandLineFlag(final String helpText, boolean server, boolean client, boolean host) {
-            this.helpText = helpText; //resources.getString(helpText);
-            this.server = server;
-            this.client = client;
-            this.host = host;
-        }
-
-        public static ClientServerCommandLineFlag parseFromString(final String text) {
-            try {
-                return valueOf(text.toUpperCase(Locale.ROOT));
-            } catch (Exception ex) {
-                LogManager.getLogger().error("Failed to parse the ClientServerCommandLineFlag from '%s' ", text);
-                throw(ex);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return super.toString();
-        }
-    }
+public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private String saveGameFileName;
     private int port;
@@ -140,22 +100,17 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
         return saveGameFileName;
     }
 
+    @Override
     public String help() {
         StringBuilder sb = new StringBuilder();
         sb.append(Messages.getString("MegaMek.Version") + MMConstants.VERSION+"\n");
         sb.append(String.format("Help for %s\n", parent));
         for( ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values() ) {
-            if ( (flag.client && client) || (flag.server && server) || (flag.host && host)  ) {
-                sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.helpText));
+            if ( (flag.isClientArg() && client) || (flag.isServerArg() && server) || (flag.isHostArg() && host)  ) {
+                sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.getHelpText()));
             }
         }
         return sb.toString();
-    }
-
-    @Override
-    public String formatErrorMessage(ParseException e) {
-        return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                + help());
     }
 
     @Override
@@ -233,7 +188,14 @@ public  class ClientServerCommandLineParser extends AbstractCommandLineParser {
     private void parsePort() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
             int newPort = -1;
-            newPort = Integer.decode(getTokenValue());
+            try {
+                newPort = Integer.decode(getTokenValue());
+            } catch (NumberFormatException ex)
+            {
+                throw new ParseException(String.format(
+                        "port number must be a number. %s is not valid %s\n%s",
+                        getTokenValue(), ex.getMessage()));
+            }
             port = Server.validatePort(newPort);
         } else {
             throw new ParseException("port number expected");

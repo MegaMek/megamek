@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.util;
+package megamek.common.commandline;
 
 /**
  * Very simple skeleton for the command line parser. Provides basic scanner
@@ -19,6 +19,9 @@ package megamek.common.util;
  * <code>start</code> function
  */
 public abstract class AbstractCommandLineParser {
+
+    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
+
     /**
      * Exception thrown in case of error
      */
@@ -156,15 +159,19 @@ public abstract class AbstractCommandLineParser {
      */
     protected abstract void start() throws ParseException;
 
+    public abstract String help();
+
+    protected boolean hasNext() {
+        return position < argsLen;
+    }
+
     /**
      *
      * @return <code>String</code> error message for user
      */
-    public abstract String formatErrorMessage(ParseException e);
-
-
-    protected boolean hasNext() {
-        return position < argsLen;
+    public String formatErrorMessage(Exception e) {
+        return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
+                + help());
     }
 
     /**

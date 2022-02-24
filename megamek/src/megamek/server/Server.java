@@ -21,13 +21,13 @@ import megamek.MegaMek;
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
@@ -54,7 +54,6 @@ import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -351,7 +350,9 @@ public class Server implements Runnable {
      * @param password
      * @return valid password or null if no password or password is blank string
      */
-    public static String validatePassword(String password) throws AbstractCommandLineParser.ParseException {
+    @Nullable
+    public static String validatePassword(@Nullable String password) throws AbstractCommandLineParser.ParseException {
+        if (password == null || password.isBlank()) return null;
         return password.trim();
     }
 

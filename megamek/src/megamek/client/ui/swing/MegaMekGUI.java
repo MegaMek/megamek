@@ -428,22 +428,21 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         startHost(hd.getServerPass(), hd.getPort(),  hd.isRegister(),
-                hd.isRegister() ? hd.getMetaserver() : "", null,
+                hd.isRegister() ? hd.getMetaserver() : "", null, null,
                 hd.getPlayerName());
     }
 
     public void startHost(String serverPassword, int port, boolean isRegister, String metaServer,
-                          File savegame, String playerName) {
-        startServer(serverPassword, port, isRegister, metaServer, null, savegame);
+                          String mailPropertiesFileName, File savegame, String playerName) {
+        startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame);
         startClient(playerName, Server.LOCALHOST, server.getPort());
     }
 
 
 
-    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer, String mailPropertiesFileName, File saveGameFileName) {
-        // kick off a RNG check
-        d6();
-        // start server
+    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer,
+                            String mailPropertiesFileName, File saveGameFileName) {
+
         try {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
@@ -464,13 +463,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 LogManager.getLogger().error(
                         "Error: could not load mail properties file \"" +
                                 propsFile.getAbsolutePath() + "\"", ex);
+                JOptionPane.showMessageDialog(frame,
+                        Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+                        Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+                frame.setVisible(true);
                 return;
             }
         }
 
+        // kick off a RNG check
+        d6();
+        // start server
         try {
             server = new Server( serverPassword, port, isRegister, metaServer, mailer, false);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled"));
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled")+"\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -493,6 +499,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     public void startClient(String playerName, String serverAddress, int port) {
         try {
+            playerName = Server.validatePlayerName(playerName);
+            serverAddress = Server.validateServerAddress(serverAddress);
             port = Server.validatePort(port);
         } catch (Exception ex){
             LogManager.getLogger().error("Failed to start client", ex);
@@ -587,14 +595,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         startHost(hd.getServerPass(), hd.getPort(),
-                hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "",
+                hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "", null,
                 fc.getSelectedFile(), hd.getPlayerName());
     }
     
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
     public void quickLoadGame() {
-        startHost("", 0, false, "",
-                new File(ClientGUI.QUICKSAVE_FILE, ClientGUI.QUICKSAVE_PATH),"" );
+        startHost("", 0, false, "", null,
+                new File(ClientGUI.QUICKSAVE_FILE, ClientGUI.QUICKSAVE_PATH),
+                PreferenceManager.getClientPreferences().getLastPlayerName());
     }
 
     /**

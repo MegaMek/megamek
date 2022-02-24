@@ -126,7 +126,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
     }
 
     public void setServerPass(String serverPass) {
-        this.serverPass = serverPass.trim();
+        this.serverPass = serverPass == null ? null : serverPass.trim();
     }
 
     public boolean isRegister() {

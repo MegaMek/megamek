@@ -15,10 +15,12 @@ package megamek.server;
 
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.common.commandline.MegaMekCommandLineFlag;
+import megamek.common.commandline.MegaMekCommandLineParser;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.AbstractCommandLineParser;
+import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.util.EmailService;
-import megamek.common.util.ClientServerCommandLineParser;
+import megamek.common.commandline.ClientServerCommandLineParser;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -32,7 +34,7 @@ public class DedicatedServer {
 
     public static void start(String[] args) {
         ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
-                MegaMek.MegaMekCommandLineParser.MegaMekCommandLineFlag.DEDICATED.toString(),
+                MegaMekCommandLineFlag.DEDICATED.toString(),
                 true, false, false);
         try {
             parser.parse();
@@ -45,25 +47,6 @@ public class DedicatedServer {
                 PreferenceManager.getClientPreferences().getLastServerPort(),
                 null
                 );
-//        int usePort = parser.getPort();
-//        String password = parser.getPassword();
-//        String saveGameFileName = parser.getSaveGameFileName();
-//        String announceUrl = parser.getAnnounceUrl();
-//        boolean registerServer = parser.getRegister();
-//        String mailPropertiesFile = parser.getMailProperties();
-//
-//        if (!parser.getUseDefaults()) {
-//            if (password == null) {
-//                password = PreferenceManager.getClientPreferences().getLastServerPass();
-//            }
-//            if (usePort <= 0) {
-//                usePort = PreferenceManager.getClientPreferences().getLastServerPort();
-//            }
-//        }
-//        if (usePort <= 0) {
-//            usePort = Server.DEFAULT_PORT;
-//        }
-
 
         EmailService mailer = null;
         if (resolver.mailPropertiesFile != null) {
@@ -80,17 +63,6 @@ public class DedicatedServer {
             }
         }
 
-
-
-//        if (usePort <= 0) {
-//            usePort = PreferenceManager.getClientPreferences().getLastServerPort();
-//            if (usePort <= 0) {
-//                usePort = Server.DEFAULT_PORT;
-//            }
-//        }
-
-
-
         // kick off a RNG check
         megamek.common.Compute.d6();
 
@@ -99,7 +71,7 @@ public class DedicatedServer {
 
         try {
             server = new Server(resolver.password, resolver.port, resolver.registerServer, resolver.announceUrl, mailer, true);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled"));
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled")+"\n");
         } catch (Exception ex) {
             LogManager.getLogger().error("Error: could not start server at localhost" + ":" + resolver.port, ex);
             MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStartFailed"));

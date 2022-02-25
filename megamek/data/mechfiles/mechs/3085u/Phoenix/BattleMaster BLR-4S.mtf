@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 BLR-4S
+mul id:294
 
 Config:Biped
 TechBase:Inner Sphere

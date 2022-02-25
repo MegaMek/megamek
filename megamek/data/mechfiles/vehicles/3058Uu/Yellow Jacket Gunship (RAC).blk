@@ -15,6 +15,10 @@ Yellow Jacket Gunship
 <Model>
 (RAC)
 </Model>
+
+<mul id:>
+3616
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

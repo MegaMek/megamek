@@ -20,6 +20,10 @@ Hiryo Armored Infantry Transport
 (Light PPC)
 </Model>
 
+<mul id:>
+1526
+</mul id:>
+
 <Tonnage>
 40
 </Tonnage>

@@ -1,6 +1,7 @@
 Version:1.0
 BattleAxe
 BKX-8D
+mul id:279
 
 Config:Biped
 TechBase:Inner Sphere

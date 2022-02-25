@@ -1,4 +1,5 @@
 size 32 34
+option exit_roads_to_pavement false
 hex 0101 0 "" "grass"
 hex 0201 0 "woods:1;foliage_elev:1" "grass"
 hex 0301 0 "" "grass"

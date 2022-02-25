@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002, 2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,16 +13,16 @@
  */
 package megamek.common;
 
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.util.BuildingTemplate;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 
-import javax.xml.bind.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.InputStream;
@@ -40,7 +40,7 @@ import java.util.List;
  * @since March 27, 2002, 1:07 PM
  */
 @XmlRootElement(name = "ENVIRONMENT")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(value = XmlAccessType.NONE)
 public class MapSettings implements Serializable {
     private static final long serialVersionUID = -6163977970758303066L;
 
@@ -1592,14 +1592,9 @@ public class MapSettings implements Serializable {
 
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            try {
-            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            } catch (PropertyException ex) {
-            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            }
-
-            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
-
+            marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"),
+                    MapSettings.class, this);
             marshaller.marshal(element, os);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to write map settings xml", ex);

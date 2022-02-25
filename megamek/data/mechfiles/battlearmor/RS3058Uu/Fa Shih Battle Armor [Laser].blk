@@ -19,6 +19,10 @@ Fa Shih Battle Armor
 [Laser]
 </Model>
 
+<mul id:>
+1015
+</mul id:>
+
 <chassis>
 biped
 </chassis>

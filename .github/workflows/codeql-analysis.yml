@@ -9,6 +9,7 @@
 # Learn more...
 # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
 name: "CodeQL"
+
 on:
   push:
     branches: [ master ]
@@ -35,7 +36,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
+
     # Setup the requested Java Distribution and Version from the matrix
     - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v2
@@ -71,4 +72,4 @@ jobs:
     #   make release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1        
+      uses: github/codeql-action/analyze@v1

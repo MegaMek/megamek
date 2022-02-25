@@ -1,6 +1,7 @@
 Version:1.1
 ScavengerMech SC-V SalvageMech
 (Standard)
+mul id:4987
 
 Config:Quad
 TechBase:Inner Sphere

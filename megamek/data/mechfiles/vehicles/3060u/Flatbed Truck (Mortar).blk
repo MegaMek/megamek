@@ -15,6 +15,10 @@ Flatbed Truck
 <Model>
 (Mortar)
 </Model>
+
+<mul id:>
+1131
+</mul id:>
 <Tonnage>
 10
 </Tonnage>

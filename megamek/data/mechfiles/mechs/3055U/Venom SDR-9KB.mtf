@@ -1,6 +1,7 @@
 Version:1.0
 Venom
 SDR-9KB
+mul id:3400
 
 Config:Biped
 TechBase:Inner Sphere

@@ -20,6 +20,10 @@ Yasha VTOL
 (Standard)
 </Model>
 
+<mul id:>
+3612
+</mul id:>
+
 <Tonnage>
 30
 </Tonnage>

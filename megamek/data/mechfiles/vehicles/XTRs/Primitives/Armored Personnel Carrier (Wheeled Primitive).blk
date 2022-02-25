@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Wheeled Primitive)
 </Model>
 
+<mul id:>
+123
+</mul id:>
+
 <year>
 2390
 </year>

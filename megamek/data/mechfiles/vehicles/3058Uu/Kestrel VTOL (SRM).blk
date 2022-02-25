@@ -15,6 +15,10 @@ Kestrel VTOL
 <Model>
 (SRM)
 </Model>
+
+<mul id:>
+1768
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

@@ -20,6 +20,10 @@ Trireme Infantry Transport
 (CS)
 </Model>
 
+<mul id:>
+3308
+</mul id:>
+
 <Tonnage>
 60
 </Tonnage>

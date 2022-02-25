@@ -1,6 +1,7 @@
 Version:1.1
 Atlas
 AS8-S
+mul id:8433
 
 Config:Biped
 techbase:Mixed (IS Chassis)

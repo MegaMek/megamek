@@ -16,7 +16,7 @@ jobs:
     # Run this job once for each combination in the matrix below.
     strategy:
       matrix:
-        os: [ ubuntu-latest ] # For Maven Repo Update running on *nix is sufficient
+        os: [ ubuntu-latest ] # For Maven Repository Update running on *nix is sufficient
         java-distribution: [ temurin ]
         java-version: [ 11 ]
 
@@ -35,7 +35,7 @@ jobs:
 
     # Make sure we can execute the Gradle wrapper
     - name: Grant execute permission for gradlew (*nix or MacOS)
-      working-directory: megamek  
+      working-directory: megamek
       run: chmod +x gradlew
       if: runner.os != 'Windows'
 

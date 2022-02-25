@@ -1,6 +1,7 @@
 Version:1.0
 Flashman
 FLS-C
+mul id:1128
 
 Config:Biped
 TechBase:Inner Sphere

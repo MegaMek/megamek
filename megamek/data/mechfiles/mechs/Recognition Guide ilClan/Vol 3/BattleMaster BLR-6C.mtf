@@ -1,6 +1,7 @@
 Version:1.1
 BattleMaster
 BLR-6C
+mul id:7476
 
 Config:Biped
 techbase:Inner Sphere

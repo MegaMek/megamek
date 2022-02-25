@@ -19,6 +19,10 @@ Fa Shih Battle Armor
 [Flamer]
 </Model>
 
+<mul id:>
+1014
+</mul id:>
+
 <chassis>
 biped
 </chassis>

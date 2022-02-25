@@ -20,6 +20,10 @@ Elemental Battle Armor
 (Space) [MG]
 </Model>
 
+<mul id:>
+954
+</mul id:>
+
 <chassis>
 biped
 </chassis>

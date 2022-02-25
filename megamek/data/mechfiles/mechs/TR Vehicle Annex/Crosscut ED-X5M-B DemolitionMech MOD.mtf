@@ -1,6 +1,7 @@
 Version:1.0
 Crosscut
 ED-X5M-B DemolitionMech MOD
+mul id:7171
 
 Config:Biped
 techbase:Inner Sphere

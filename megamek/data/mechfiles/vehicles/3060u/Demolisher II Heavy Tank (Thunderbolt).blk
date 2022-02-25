@@ -20,6 +20,10 @@ Demolisher II Heavy Tank
 (Thunderbolt)
 </Model>
 
+<mul id:>
+867
+</mul id:>
+
 <Tonnage>
 100
 </Tonnage>

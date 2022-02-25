@@ -1,6 +1,7 @@
 Version:1.0
 Banshee
 BNC-12S
+mul id:8246
 
 Config:Biped
 techbase:Mixed (IS Chassis)

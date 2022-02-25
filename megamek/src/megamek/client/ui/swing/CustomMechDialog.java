@@ -219,24 +219,26 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship));
             isMech &= (e instanceof Mech);
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
-            isVTOL &= (e.getMovementMode() == EntityMovementMode.VTOL);
-            isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);
+            isVTOL &= e.getMovementMode().isVTOL();
+            isWiGE &= (e instanceof Tank) && e.getMovementMode().isWiGE();
             isQuadVee &= (e instanceof QuadVee);
             isLAM &= (e instanceof LandAirMech);
-            isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
-            boolean entityEligibleForOffBoard = false;
-            //TODO: This check is good for now, but at some point we want atmospheric flying droppers to be able to lob
-            // offboard missiles and we could use it in space for extreme range bearings-only fights, plus Ortillery. 
-            if (!space && e.getAltitude() == 0) {
-                // No need to bother checking weapons if the map and entity don't meet criteria for offboard units
-                for (Mounted mounted : e.getWeaponList()) {
-                    WeaponType wtype = (WeaponType) mounted.getType();
-                    if (wtype.hasFlag(WeaponType.F_ARTILLERY)
-                            || wtype instanceof CapitalMissileBayWeapon) {
-                        entityEligibleForOffBoard = true;
-                        break;
-                    }
-                }
+            isGlider &= (e instanceof Protomech) && e.getMovementMode().isWiGE();
+            final boolean entityEligibleForOffBoard;
+            // TODO : This check is good for now, but at some point we want atmospheric flying
+            // TODO : droppers to be able to lob offboard missiles and we could use it in space for
+            // TODO : extreme range bearings-only fights, plus Ortillery.
+            // TODO : Further, this should be revisited with a rules query when it comes to
+            // TODO : handling offboard gun emplacements, especially if they are allowed
+            if (!space && (e.getAltitude() == 0) && !(e instanceof GunEmplacement)) {
+                // No need to bother checking weapons if the map and entity don't meet criteria for
+                // offboard units
+                entityEligibleForOffBoard = e.getWeaponList().stream()
+                        .map(mounted -> (WeaponType) mounted.getType())
+                        .anyMatch(wtype -> wtype.hasFlag(WeaponType.F_ARTILLERY)
+                                || (wtype instanceof CapitalMissileBayWeapon));
+            } else {
+                entityEligibleForOffBoard = false;
             }
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
@@ -994,10 +996,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                 return;
             } else if ((currentfuel < 0) || (currentfuel > fuel)) {
-            	msg = (Messages.getString("CustomMechDialog.EnterCorrectFuel") + fuel + ".");
-            	title = Messages.getString("CustomMechDialog.NumberFormatError");
-            	JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
-            	return;
+                msg = (Messages.getString("CustomMechDialog.EnterCorrectFuel") + fuel + ".");
+                title = Messages.getString("CustomMechDialog.NumberFormatError");
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
+                return;
             }
         }
 

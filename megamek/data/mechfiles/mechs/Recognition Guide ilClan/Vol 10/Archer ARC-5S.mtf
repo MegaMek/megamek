@@ -1,6 +1,7 @@
 Version:1.0
 Archer
 ARC-5S
+mul id:80
 
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.0
 Grand Dragon
 DRG-12K
+mul id:8446
 
 Config:Biped
 techbase:Mixed (IS Chassis)

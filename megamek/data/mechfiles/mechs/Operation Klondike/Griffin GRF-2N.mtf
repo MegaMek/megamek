@@ -1,6 +1,7 @@
 Version:1.1
 Griffin
 GRF-2N
+mul id:1299
 
 Config:Biped
 TechBase:Inner Sphere

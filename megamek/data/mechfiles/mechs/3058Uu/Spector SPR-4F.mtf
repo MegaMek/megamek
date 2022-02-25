@@ -1,6 +1,7 @@
 Version:1.0
 Spector
 SPR-4F
+mul id:3002
 
 Config:Biped
 TechBase:Inner Sphere

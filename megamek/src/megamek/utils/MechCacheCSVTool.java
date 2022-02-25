@@ -46,7 +46,7 @@ public class MechCacheCSVTool {
             StringBuffer csvLine = new StringBuffer();
 
 
-            csvLine.append("Chassis,Model,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,MUL ID,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
@@ -61,6 +61,8 @@ public class MechCacheCSVTool {
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
+                // MUL ID
+                csvLine.append(mech.getMulId() + ",");
                 
                 // Combined Name
                 csvLine.append(mech.getChassis() + " " + mech.getModel() + ",");
@@ -100,12 +102,16 @@ public class MechCacheCSVTool {
                 }
 
                 // Unit Type
-                csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
-                
+                try {
+                    Entity e = new MechFileParser(mech.getSourceFile(), mech.getEntryName()).getEntity();
+                    csvLine.append(Entity.getEntityTypeName(e.getEntityType()));
+                } catch (megamek.common.loaders.EntityLoadingException e) {
+                }
+                csvLine.append(",");
 
                 //Role
                 csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
-                
+
                 // BV
                 csvLine.append(mech.getBV()  + ",");
                 

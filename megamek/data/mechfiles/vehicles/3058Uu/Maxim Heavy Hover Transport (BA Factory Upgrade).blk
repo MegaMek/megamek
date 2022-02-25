@@ -15,6 +15,10 @@ Maxim Heavy Hover Transport
 <Model>
 (BA Factory Upgrade)
 </Model>
+
+<mul id:>
+2119
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

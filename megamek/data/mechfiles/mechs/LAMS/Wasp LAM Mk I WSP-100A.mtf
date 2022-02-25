@@ -1,6 +1,7 @@
 Version:1.0
 Wasp LAM Mk I
 WSP-100A
+mul id:5393
 
 Config:LAM
 TechBase:Inner Sphere

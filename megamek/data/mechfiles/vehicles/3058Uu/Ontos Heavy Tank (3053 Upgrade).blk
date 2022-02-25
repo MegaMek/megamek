@@ -15,6 +15,10 @@ Ontos Heavy Tank
 <Model>
 (3053 Upgrade)
 </Model>
+
+<mul id:>
+2325
+</mul id:>
 <Tonnage>
 95
 </Tonnage>

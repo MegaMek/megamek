@@ -15,6 +15,10 @@ Regulator Hovertank
 <Model>
 (RAC)
 </Model>
+
+<mul id:>
+2676
+</mul id:>
 <Tonnage>
 45
 </Tonnage>

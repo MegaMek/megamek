@@ -15,6 +15,10 @@ Koryu Submarine
 <Model>
 (Civilian)
 </Model>
+
+<mul id:>
+1818
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

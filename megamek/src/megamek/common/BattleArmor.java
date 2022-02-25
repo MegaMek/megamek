@@ -2011,7 +2011,7 @@ public class BattleArmor extends Infantry {
     @Override
     public void setBattleForceMovement(Map<String,Integer> movement) {
         if (hasDWP()) {
-        	movement.put("", getWalkMP());
+            movement.put("", getWalkMP());
         }
         int move = Math.max(getWalkMP(true, false, false, true, false),
                 getJumpMP(true, true, true));

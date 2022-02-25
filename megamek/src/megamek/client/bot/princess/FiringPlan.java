@@ -138,8 +138,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         }
         
         if (getTwist() != 0) {
-        	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-        		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
+            actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
+                FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
         
         if (flipArms) {

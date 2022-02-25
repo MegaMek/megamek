@@ -1,25 +1,21 @@
 /*
  * MegaMek -
- *  Copyright (C) 2006
- *    Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2006 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 public class ArmlessMech extends BipedMech {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1333922747670982513L;
 
     public ArmlessMech(String inGyroType, String inCockpitType) {
@@ -42,7 +38,7 @@ public class ArmlessMech extends BipedMech {
     }
 
     /**
-     * Returns true if the entity can flip its arms
+     * @return true if the entity can flip its arms
      */
     @Override
     public boolean canFlipArms() {
@@ -76,12 +72,11 @@ public class ArmlessMech extends BipedMech {
     }
 
     /**
-     * Checks if the entity is getting up. If so, returns the target roll for
-     * the piloting skill check.
+     * Checks if the entity is getting up. If so, returns the target roll for the piloting skill
+     * check.
      */
     @Override
-    public PilotingRollData checkGetUp(MoveStep step,
-                                       EntityMovementType moveType) {
+    public PilotingRollData checkGetUp(MoveStep step, EntityMovementType moveType) {
         PilotingRollData roll = super.checkGetUp(step, moveType);
         roll.addModifier(4, "armless Mech");
         return roll;
@@ -92,12 +87,10 @@ public class ArmlessMech extends BipedMech {
      */
     @Override
     public HitData getTransferLocation(HitData hit) {
-        if (hit.getLocation() == LOC_LARM || hit.getLocation() == LOC_RARM) {
-            return new HitData(LOC_NONE);
-        }
-        return super.getTransferLocation(hit);
+        return ((hit.getLocation() == LOC_LARM) || (hit.getLocation() == LOC_RARM))
+                ? new HitData(LOC_NONE) : super.getTransferLocation(hit);
     }
-    
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_ARMLESS_MECH;

@@ -243,7 +243,7 @@ public class PathEnumerator {
                 lpf.run(new MovePath(game, mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
-                //add walking moves
+                // add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                         mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
@@ -255,7 +255,7 @@ public class PathEnumerator {
                 ppf.run(new MovePath(getGame(), mover));
                 paths.addAll(ppf.getPronePaths());
                 
-                //add jumping moves
+                // add jumping moves
                 if (mover.getJumpMP() > 0) {
                     ShortestPathFinder spf = ShortestPathFinder
                             .newInstanceOfOneToAll(mover.getJumpMP(),
@@ -269,7 +269,7 @@ public class PathEnumerator {
                 // calling .debug is expensive even if we don't actually log anything
                 // so let's not do this unless we're debugging
                 /* for (MovePath path : paths) {
-	                    getOwner().getLogger().debug(path.toString());
+                        getOwner().getLogger().debug(path.toString());
                 }*/
                 
                 // Try climbing over obstacles and onto bridges

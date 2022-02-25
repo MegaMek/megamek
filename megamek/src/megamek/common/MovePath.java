@@ -1603,7 +1603,7 @@ public class MovePath implements Cloneable, Serializable {
         copy.steps = new Vector<>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
-        //copy.fliesOverEnemy = fliesOverEnemy;
+        // copy.fliesOverEnemy = fliesOverEnemy;
         copy.cachedEntityState = cachedEntityState; // intentional pointer copy
     }
 

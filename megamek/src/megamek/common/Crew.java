@@ -67,7 +67,7 @@ public class Crew implements Serializable {
 
     // StratOps fatigue points
     private int fatigue;
-    //also need to track turns for fatigue by pilot because some may have later deployment
+    // also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueCount;
 
     //region RPG Skills
@@ -107,7 +107,7 @@ public class Crew implements Serializable {
     private final boolean[] koThisRound; // did I go KO this game round?
 
     // TODO: Allow individual crew to have SPAs, which involves determining which work for individuals
-    //and which work for the entire unit.
+    // and which work for the entire unit.
     private PilotOptions options = new PilotOptions();
 
     // SPA RangeMaster range bands
@@ -325,7 +325,7 @@ public class Crew implements Serializable {
         resetActedFlag();
 
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
-        //and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
+        // and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = new String[slots];
         for (int i = 0; i < slots; i++) {
             externalId[i] = UUID.randomUUID().toString();
@@ -1282,7 +1282,7 @@ public class Crew implements Serializable {
      */
     private void activeStatusChanged() {
         //Cockpit command console can be swapped deliberately by the player and should not be changed
-        //automatically unless the current pilot becomes inactive.
+        // automatically unless the current pilot becomes inactive.
         if (crewType.equals(CrewType.COMMAND_CONSOLE)
                 && isActive(getCurrentPilotIndex())) {
             return;

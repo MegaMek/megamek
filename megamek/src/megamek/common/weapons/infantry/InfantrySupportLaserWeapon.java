@@ -52,7 +52,7 @@ public class InfantrySupportLaserWeapon extends InfantryWeapon {
 		mediumRange = 6;
 		longRange = 9;
 		extremeRange = 12;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		tonnage = .072;
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2377, 2380, 2410, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

@@ -47,7 +47,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
 		ammoWeight = 0.00009;
 		ammoCost = 1;
 		shots = 3;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2882, 2885, 2950, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(F_LC)

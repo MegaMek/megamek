@@ -20,28 +20,28 @@ import megamek.common.AmmoType;
  * @since Sep 7, 2005
  */
 public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
-	private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicBladeZweihanderSwordWeapon() {
-		super();
+    public InfantryArchaicBladeZweihanderSwordWeapon() {
+        super();
 
-		name = "Blade (Zweihander Sword)";
-		setInternalName(name);
-		addLookupName("InfantryZweihanderSword");
-		addLookupName("ZweihanderSword");
-		ammoType = AmmoType.T_NA;
-		cost = 60;
-		tonnage = 0.0051;
-		bv = 0.0;
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.05;
-		infantryRange = 0;
-		rulesRefs = "195, ATOW-C";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+        name = "Blade (Zweihander Sword)";
+        setInternalName(name);
+        addLookupName("InfantryZweihanderSword");
+        addLookupName("ZweihanderSword");
+        ammoType = AmmoType.T_NA;
+        cost = 60;
+        tonnage = 0.0051;
+        bv = 0.0;
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.05;
+        infantryRange = 0;
+        rulesRefs = "195, ATOW-C";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
 
-	}
+    }
 }

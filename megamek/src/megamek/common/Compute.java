@@ -6994,7 +6994,7 @@ public class Compute {
                     //Also, if any modular equipment is missing, then we will consider this
                     //unit to be inoperable and will not allow it to load soldiers. This is because
                     //we have no mechanism in MM to handle BA where some suits have the equipment
-                    //and others do not
+                    // and others do not
                     boolean useSuit = true;
                     for (Mounted m : entity.getEquipment()) {
                         if (m.isMissingForTrooper(trooper)) {
@@ -7026,7 +7026,7 @@ public class Compute {
         if (entity instanceof SmallCraft || entity instanceof Jumpship) {
             //its not at all clear how many pilots dropships and jumpships
             //should have, but the old BattleSpace book suggests they should
-            //be able to get by with 2. For warships, lets go with 2 per shift
+            // be able to get by with 2. For warships, lets go with 2 per shift
             // so 6.
             if (entity instanceof Warship) {
                 return 6;

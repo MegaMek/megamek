@@ -22,7 +22,6 @@ import megamek.common.options.OptionsConstants;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -4702357516725749181L;
-    // equipment that affects this attack (AMS, ECM?, etc)
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
@@ -62,7 +61,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             return "Target not in range";
         }
 
-        //can't make a physical attack if you are evading
+        // can't make a physical attack if you are evading
         if (ae.isEvading()) {
             return "Attacker is evading.";
         }
@@ -81,7 +80,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 return "You can't target yourself";
             }
 
-            //can't target airborne aeros
+            // can't target airborne aeros
             if (te.isAirborne()) {
                 return "can't target airborne units";
             }
@@ -228,7 +227,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // Pilot skills
             Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-            //Attacking Weight Class Modifier.
+            // Attacking Weight Class Modifier.
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
                 if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                     toHit.addModifier(-2, "Weight Class Attack Modifier");
@@ -237,7 +236,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            //evading bonuses (
+            // evading bonuses
             if (te.isEvading()) {
                 toHit.addModifier(te.getEvasionBonus(), "target is evading");
             }

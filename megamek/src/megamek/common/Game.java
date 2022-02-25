@@ -1,6 +1,7 @@
 /*
  * MegaMek -
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -149,18 +150,17 @@ public class Game implements Serializable {
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
     /**
-     * The forces present in the game. The top level force holds all forces and force-less
-     * entities and should therefore not be shown.
+     * The forces present in the game. The top level force holds all forces and force-less entities
+     * and should therefore not be shown.
      */
     private Forces forces = new Forces(this);
 
     private transient Vector<GameListener> gameListeners = new Vector<>();
     
     /** 
-     * Stores princess behaviors for game factions. It does not indicate that a 
-     * faction is currently played by a bot, only that the most recent bot connected
-     * as that faction used these settings. Used to add the settings to savegames
-     * and allow restoring bots to their previous settings.
+     * Stores princess behaviors for game factions. It does not indicate that a faction is currently
+     * played by a bot, only that the most recent bot connected as that faction used these settings.
+     * Used to add the settings to savegames and allow restoring bots to their previous settings.
      */
     private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
@@ -204,19 +204,12 @@ public class Game implements Serializable {
 
     public Vector<Minefield> getMinefields(Coords coords) {
         Vector<Minefield> mfs = minefields.get(coords);
-        if (mfs == null) {
-            return new Vector<>();
-        }
-        return mfs;
+        return (mfs == null) ? new Vector<>() : mfs;
     }
 
     public int getNbrMinefields(Coords coords) {
         Vector<Minefield> mfs = minefields.get(coords);
-        if (mfs == null) {
-            return 0;
-        }
-
-        return mfs.size();
+        return (mfs == null) ? 0 : mfs.size();
     }
 
     /**
@@ -912,7 +905,7 @@ public class Game implements Serializable {
     }
 
     public synchronized void setEntitiesVector(List<Entity> entities) {
-        //checkPositionCacheConsistency();
+        // checkPositionCacheConsistency();
         this.entities.clear();
         this.entities.addAll(entities);
         reindexEntities();
@@ -1285,15 +1278,13 @@ public class Game implements Serializable {
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
             ((Mech) entity).setProtomechClampMounts();
-        }
-        if (entity instanceof Tank) {
+        } else if (entity instanceof Tank) {
             ((Tank) entity).setBAGrabBars();
             ((Tank) entity).setTrailerHitches();
         }
 
         // Add magnetic clamp mounts
-        if ((entity instanceof Mech) && !entity.isOmni()
-                && !entity.hasBattleArmorHandles()) {
+        if ((entity instanceof Mech) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountMech());
         } else if ((entity instanceof Tank) && !entity.isOmni()
                 && !entity.hasBattleArmorHandles()) {
@@ -1301,9 +1292,8 @@ public class Game implements Serializable {
         }
 
         entity.setGameOptions();
-        if (entity.getC3UUIDAsString() == null) { // We don't want to be
-            // resetting a UUID that
-            // exists already!
+        if (entity.getC3UUIDAsString() == null) {
+            // We don't want to be resetting a UUID that exists already!
             entity.setC3UUID();
         }
         // Add this Entity, ensuring that it's id is unique
@@ -1324,14 +1314,9 @@ public class Game implements Serializable {
 
         // And... lets get this straight now.
         if ((entity instanceof Mech)
-            && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
+                && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
             ((Mech) entity).setAutoEject(true);
-            if (((Mech) entity).hasCase()
-                || ((Mech) entity).hasCASEIIAnywhere()) {
-                ((Mech) entity).setCondEjectAmmo(false);
-            } else {
-                ((Mech) entity).setCondEjectAmmo(true);
-            }
+            ((Mech) entity).setCondEjectAmmo(!entity.hasCase() && !((Mech) entity).hasCASEIIAnywhere());
             ((Mech) entity).setCondEjectEngine(true);
             ((Mech) entity).setCondEjectCTDest(true);
             ((Mech) entity).setCondEjectHeadshot(true);
@@ -1573,7 +1558,7 @@ public class Game implements Serializable {
      * @return the {@link Entity} <code>List</code>
      */
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
-        //checkPositionCacheConsistency();
+        // checkPositionCacheConsistency();
         // Make sure the look-up is initialized
         if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
             resetEntityPositionLookup();
@@ -1956,13 +1941,11 @@ public class Game implements Serializable {
     }
 
     /**
-     * Determines if the indicated entity is stranded on a transport that can't
-     * move.
+     * Determines if the indicated entity is stranded on a transport that can't move.
      * <p>
      * According to
-     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart="> Randall Bills</a>,
-     * the "minimum move" rule allow stranded units to
-     * dismount at the start of the turn.
+     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall Bills</a>,
+     * the "minimum move" rule allow stranded units to dismount at the start of the turn.
      *
      * @param entity the <code>Entity</code> that may be stranded
      * @return <code>true</code> if the entity is stranded <code>false</code> otherwise.

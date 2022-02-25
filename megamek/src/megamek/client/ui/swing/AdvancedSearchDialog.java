@@ -479,7 +479,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 1;
 
         // Filter Expression
-        //c.insets = new Insets(50, 0, 0, 0);
+        // c.insets = new Insets(50, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblEqExpTxt, c);
         c.fill = GridBagConstraints.BOTH;

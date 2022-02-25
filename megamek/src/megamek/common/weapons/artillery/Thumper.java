@@ -45,7 +45,7 @@ public class Thumper extends ArtilleryWeapon {
         svslots = 7;
         bv = 43;
         cost = 187500;
-        rulesRefs = "284,TO";
+        rulesRefs = "284, TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
             .setAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)

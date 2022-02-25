@@ -202,7 +202,6 @@ public enum UnitRole {
                     score++;
                 }
                 if (unit.hasSPA(BattleForceSPA.AMS)
-    //					|| unit.hasSPA(BattleForceSPA.LAMS)
                         || unit.hasSPA(BattleForceSPA.RAMS)) {
                     score++;
                 }

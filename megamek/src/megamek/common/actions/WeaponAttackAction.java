@@ -13,6 +13,7 @@
  */
 package megamek.common.actions;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -1105,7 +1106,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Invalid Target Reasons
         
-        //a friendly unit can never be the target of a direct attack.
+        // a friendly unit can never be the target of a direct attack.
         // but we do allow vehicle flamers to cool. Also swarm missile secondary targets and strafing are exempt.
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) && !isStrafing && !exchangeSwarmTarget) {
             if (te != null && !te.getOwner().isEnemyOf(ae.getOwner())) {
@@ -1189,7 +1190,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Line of Sight and Range Reasons
 
 
-        //attacker partial cover means no leg weapons
+        // attacker partial cover means no leg weapons
         if (los.isAttackerCover() && weapon != null && ae.locationIsLeg(weapon.getLocation()) && !underWater) {
             return Messages.getString("WeaponAttackAction.LegBlockedByTerrain");
         }
@@ -1995,12 +1996,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
                 // Dive Bombing can only be conducted if starting between altitude 5 and altitude 3
                 if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-                    if (ae.getAltitude() > DiveBombAttack.DIVE_BOMB_MAX_ALTITUDE) {
+                    if (ae.getAltitude() > MMConstants.DIVE_BOMB_MAX_ALTITUDE) {
                         return Messages.getString("WeaponAttackAction.TooHighForDiveBomb");
                     }
                     if (ae.isAero()) {
                         int altLoss = ((IAero) ae).getAltLossThisRound();
-                        if ((ae.getAltitude() + altLoss) < DiveBombAttack.DIVE_BOMB_MIN_ALTITUDE) {
+                        if ((ae.getAltitude() + altLoss) < MMConstants.DIVE_BOMB_MIN_ALTITUDE) {
                             return Messages.getString("WeaponAttackAction.TooLowForDiveBomb");
                         }
                     }

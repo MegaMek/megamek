@@ -45,7 +45,7 @@ public class ISBAMRM1 extends MRMWeapon {
         tonnage = .06;
         criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "261,TM";
+        rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

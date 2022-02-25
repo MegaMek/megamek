@@ -41,7 +41,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JTextField txtYear;
     private JComboBox<FactionRecord> cbFaction;
     private JComboBox<FactionRecord> cbSubfaction;
-    private JComboBox<Integer> cbUnitType;	
+    private JComboBox<Integer> cbUnitType;
     private JComboBox<String> cbFormation;
     private JComboBox<String> cbRating;
     private JComboBox<String> cbFlags;
@@ -70,7 +70,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private JCheckBox chkRoleRaider;
     private JCheckBox chkRoleIncindiary;
     private JCheckBox chkRoleAntiAircraft;
-    private JCheckBox chkRoleAntiInfantry;	
+    private JCheckBox chkRoleAntiInfantry;
     private JCheckBox chkRoleArtillery;
     private JCheckBox chkRoleMissileArtillery;
     private JCheckBox chkRoleTransport;
@@ -826,7 +826,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     rs = null;
                 } else {
                     rs = Ruleset.findRuleset(rs.getParent());
-                }				
+                }
             }
         } while (rs != null && toc == null);
         return toc;
@@ -971,11 +971,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         } else {
             forceDesc.setSizeMod(0);
         }
-    }		
+    }
 
     public void setCurrentYear(int year) {
         currentYear = year;
-        yearUpdated();	    
+        yearUpdated();
     }
 
     /**
@@ -990,7 +990,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     @Override
     public void focusGained(FocusEvent arg0) {
-        //Do nothing
+        // Do nothing
     }
 
     @Override

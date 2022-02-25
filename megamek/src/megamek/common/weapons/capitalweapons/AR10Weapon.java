@@ -47,7 +47,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
-        rulesRefs = "210,TM";
+        rulesRefs = "210, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

@@ -53,7 +53,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 		mediumRange = 4;
 		longRange = 6;
 		extremeRange = 8;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2498, 2510, 2590, DATE_NONE, 3056)

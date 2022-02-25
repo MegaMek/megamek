@@ -104,7 +104,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
     public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
-    //board submenu
+    // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
     public static final String BOARD_OPEN = "fileBoardOpen";
     public static final String BOARD_SAVE = "fileBoardSave";
@@ -894,7 +894,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         if (bv != null) {
-            //cleanup our timers first
+            // cleanup our timers first
             bv.die();
         }
         for (String s : phaseComponents.keySet()) {

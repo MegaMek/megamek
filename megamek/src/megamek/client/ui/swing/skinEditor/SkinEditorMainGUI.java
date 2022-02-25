@@ -330,7 +330,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         if (bv != null) {
-            //cleanup our timers first
+            // cleanup our timers first
             bv.die();
         }
         Iterator<String> names = phaseComponents.keySet().iterator();
@@ -392,8 +392,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 }
                 //ChatLounge cl = (ChatLounge) phaseComponents.get(
                 //        String.valueOf(Game.Phase.LOUNGE));
-                //cb.setDoneButton(cl.butDone);
-                //cl.add(cb.getComponent(), BorderLayout.SOUTH);
+                // cb.setDoneButton(cl.butDone);
+                // cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
                 break;
             case DEPLOY_MINEFIELDS:
@@ -414,7 +414,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String
                         .valueOf(GamePhase.INITIATIVE_REPORT));
-                //cb.setDoneButton(rD.butDone);
+                // cb.setDoneButton(rD.butDone);
                 //rD.add(cb.getComponent(), GBC.eol().fill(
                 //        GridBagConstraints.HORIZONTAL));
                 break;

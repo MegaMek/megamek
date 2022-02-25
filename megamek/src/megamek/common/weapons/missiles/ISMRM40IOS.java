@@ -48,7 +48,7 @@ public class ISMRM40IOS extends MRMWeapon {
         shortAV = 24;
         medAV = 24;
         maxRange = RANGE_MED;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

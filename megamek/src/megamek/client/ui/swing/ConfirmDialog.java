@@ -140,12 +140,11 @@ public class ConfirmDialog extends JDialog{
         };
         butYes = new JButton(yesAction);
         butYes.setText(Messages.getString("Yes"));
-	butYes.setMnemonic(KeyEvent.VK_Y);
+        butYes.setMnemonic(KeyEvent.VK_Y);
         KeyStroke ks = null;
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
 
-        InputMap imap = butYes
-        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        InputMap imap = butYes.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap amap = butYes.getActionMap();
         imap.put(ks, YESACTION);
         amap.put(YESACTION, yesAction);
@@ -161,7 +160,7 @@ public class ConfirmDialog extends JDialog{
         };
         butNo = new JButton(noAction);
         butNo.setText(Messages.getString("No"));
-	butNo.setMnemonic(KeyEvent.VK_N);
+        butNo.setMnemonic(KeyEvent.VK_N);
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_N, 0);
         imap = butNo.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         amap = butNo.getActionMap();

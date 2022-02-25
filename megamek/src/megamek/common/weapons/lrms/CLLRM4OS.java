@@ -31,7 +31,7 @@ public class CLLRM4OS extends LRMWeapon {
         criticals = 0;
         bv = 9;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_PROTO_WEAPON); 
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_PROTO_WEAPON);
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         // But LRM Tech Base and Avail Ratings.
         rulesRefs = "231, TM";

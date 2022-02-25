@@ -24,33 +24,33 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicISVibroSwordWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicISVibroSwordWeapon() {
-		super();
+    public InfantryArchaicISVibroSwordWeapon() {
+        super();
 
-		name = "Blade (Vibro-sword, I.S.)";
-		setInternalName(name);
-		addLookupName("InfantryVibroSword");
-		addLookupName("InfantryISVibroSword");
-		addLookupName("IS Vibro Sword");
-		ammoType = AmmoType.T_NA;
-		cost = 300;
-		bv = 0.29;
+        name = "Blade (Vibro-sword, I.S.)";
+        setInternalName(name);
+        addLookupName("InfantryVibroSword");
+        addLookupName("InfantryISVibroSword");
+        addLookupName("IS Vibro Sword");
+        ammoType = AmmoType.T_NA;
+        cost = 300;
+        bv = 0.29;
         tonnage = .004;
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.32;
-		infantryRange = 0;
-		rulesRefs = "272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2435, 2440, 2500, DATE_NONE, DATE_NONE)
-				.setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(2435, 2440, 2500, 2850, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-				.setProductionFactions(F_TH).setTechRating(RATING_E)
-				.setAvailability(RATING_D, RATING_D, RATING_C, RATING_C);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.32;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2435, 2440, 2500, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setClanAdvancement(2435, 2440, 2500, 2850, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH).setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_D, RATING_C, RATING_C);
 
-	}
+    }
 }

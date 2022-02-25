@@ -46,7 +46,7 @@ public class ISExtendedLRM20 extends ExtendedLRMWeapon {
         medAV = 12;
         longAV = 12;
         extAV = 12;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)

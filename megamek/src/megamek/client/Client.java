@@ -108,7 +108,7 @@ public class Client implements IClientCommandHandler {
     //Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
 
-    //board view for getting entity art assets
+    // board view for getting entity art assets
     private BoardView bv;
 
     ConnectionHandler packetUpdate;
@@ -991,7 +991,7 @@ public class Client implements IClientCommandHandler {
                 cacheImgTag(e);
             }
         }
-        //cache the image data for the entities
+        // cache the image data for the entities
         for (Entity e: newEntities) {
             cacheImgTag(e);
         }
@@ -1079,7 +1079,7 @@ public class Client implements IClientCommandHandler {
         int condition = packet.getIntValue(1);
         @SuppressWarnings("unchecked")
         List<Force> forces = (List<Force>) packet.getObject(2);
-        //create a final image for the entity
+        // create a final image for the entity
         for (int id: entityIds) {
             cacheImgTag(game.getEntity(id));
         }
@@ -1211,7 +1211,7 @@ public class Client implements IClientCommandHandler {
         Pattern p = Pattern.compile("<s(.*?)n>");
         Matcher m = p.matcher(report.toString());
 
-        //add all instances to a hashset to prevent duplicates
+        // add all instances to a hashset to prevent duplicates
         while (m.find()) {
             String cleanedText = m.group(1).replaceAll("\\D", "");
             if (cleanedText.length() > 0) {
@@ -1256,7 +1256,7 @@ public class Client implements IClientCommandHandler {
         }
 
         if (getTargetImage(entity) != null) {
-            //convert image to base64, add to the <img> tag and store in cache
+            // convert image to base64, add to the <img> tag and store in cache
             Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             try {
                 String base64Text;

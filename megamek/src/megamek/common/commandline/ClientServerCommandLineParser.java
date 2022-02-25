@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -106,8 +106,8 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%s %s\n", Messages.getString("MegaMek.Version"), MMConstants.VERSION));
         sb.append(String.format("Help for %s\n", parent));
-        for( ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values()) {
-            if ( (flag.isClientArg() && client) || (flag.isServerArg() && server) || (flag.isHostArg() && host)  ) {
+        for (ClientServerCommandLineFlag flag : ClientServerCommandLineFlag.values()) {
+            if ((flag.isClientArg() && client) || (flag.isServerArg() && server) || (flag.isHostArg() && host)) {
                 sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.getHelpText()));
             }
         }
@@ -289,7 +289,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             boolean registerServer = parser.getRegister();
             String mailPropertiesFile = parser.getMailProperties();
 
-            //always fallback to last used player name
+            // always fallback to last used player name
             if ((playerName == null) || playerName.isBlank()) {
                 playerName = defaultPlayerName;
             }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -26,7 +26,7 @@ public enum ClientServerCommandLineFlag {
     HELP(Messages.getString("MegaMek.Help")),
     USEDEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
     PORT(Messages.getFormattedString("MegaMek.Help.Port", MMConstants.MIN_PORT, MMConstants.MAX_PORT, MMConstants.DEFAULT_PORT)),
-    DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir())),
+    DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir())),
     // server or host only options
     ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
     MAIL(Messages.getString("MegaMek.Help.Mail"), true, false, true),
@@ -35,8 +35,7 @@ public enum ClientServerCommandLineFlag {
     // client or host only options
     PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
     // client only options
-    SERVER(Messages.getFormattedString("MegaMek.Help.Server", MMConstants.LOCALHOST), false, true, false),
-    ;
+    SERVER(Messages.getFormattedString("MegaMek.Help.Server", MMConstants.LOCALHOST), false, true, false);
     //endregion Enum Declarations
 
     private final String helpText;

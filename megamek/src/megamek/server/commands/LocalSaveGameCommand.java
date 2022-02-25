@@ -50,7 +50,7 @@ public class LocalSaveGameCommand extends ServerCommand {
                     .sendServerChat("Local Save only outside double blind games.");
         } else {
             String fileName = MMConstants.DEFAULT_SAVEGAME_NAME;
-            String localPath = MMConstants.SAVEGAME_DIR+ File.separator;
+            String localPath = MMConstants.SAVEGAME_DIR + File.separator;
             if (args.length > 1) {
                 fileName = args[1];
             }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -38,7 +38,7 @@ public enum MegaMekCommandLineFlag {
     BFC(Messages.getString("MegaMek.Help.UnitBattleforceConversion")),
     ASC(Messages.getString("MegaMek.Help.UnitAlphastrikeConversion")),
     EDITRATGEN(Messages.getString("MegaMek.Help.RatgenEdit")),
-    DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir",  Configuration.dataDir()));
+    DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir()));
     //endregion Enum Declarations
 
     public final String helpText;
@@ -51,7 +51,7 @@ public enum MegaMekCommandLineFlag {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text '%s'",text);
+            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text '%s'", text);
             throw(ex);
         }
     }

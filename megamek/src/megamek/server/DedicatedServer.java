@@ -68,7 +68,7 @@ public class DedicatedServer {
 
         try {
             server = new Server(resolver.password, resolver.port, resolver.registerServer, resolver.announceUrl, mailer, true);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled")+"\n");
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (Exception ex) {
             LogManager.getLogger().error("Error: could not start server at localhost" + ":" + resolver.port, ex);
             MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStartFailed"));

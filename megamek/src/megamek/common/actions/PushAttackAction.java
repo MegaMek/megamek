@@ -38,7 +38,7 @@ public class PushAttackAction extends DisplacementAttackAction {
      * pushes are impossible when physical attacks are impossible, or a
      * retractable blade is extended
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param ae
      * @param target
      * @return
@@ -162,7 +162,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }
@@ -204,7 +204,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is the target of another push/charge/DFA");
         }
 
-        //can't push airborne targets
+        // can't push airborne targets
         if (te.isAirborne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push an airborne target.");
         }

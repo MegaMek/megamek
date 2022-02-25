@@ -38,6 +38,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
 
     /**
      * To-hit number for a ram, assuming that movement has been handled
+     *
+     * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
@@ -47,6 +49,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
 
     /**
      * To-hit number for a ram, assuming that movement has been handled
+     *
+     * @param game The current {@link Game}
      */
     public ToHitData toHit(Game game, Targetable target, Coords src,
                            int elevation, EntityMovementType movement) {

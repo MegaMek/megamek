@@ -46,7 +46,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
         this.atClass = CLASS_CAPITAL_MISSILE;
-        rulesRefs = "345,TO";
+        rulesRefs = "345, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)

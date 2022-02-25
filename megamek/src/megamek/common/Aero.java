@@ -349,7 +349,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         // partially repaired engine
         if (getPartialRepairs().booleanOption("aero_engine_crit")) {
-        	j--;
+            j--;
         }
 
         // if they are not airborne, then they get MP halved (aerodyne) or no MP
@@ -735,39 +735,39 @@ public class Aero extends Entity implements IAero, IBomber {
         if (gearHit) {
             return vTakeoff ? 1 : 5;
         } else {
-        	return 0;
+            return 0;
         }
     }
 
     //Landing mods for partial repairs
     @Override
     public int getLandingGearPartialRepairs() {
-    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
-        return 2;
-    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
+        if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+            return 2;
+        } else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
-    //Avionics mods for partial repairs
+    // Avionics mods for partial repairs
     @Override
     public int getAvionicsMisreplaced() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+        if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
-    	} else {
-    	return 0;
-    	}
+        } else {
+        return 0;
+        }
     }
 
     @Override
     public int getAvionicsMisrepaired() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
+        if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     public void setOHeatSinks(int hs) {
@@ -833,20 +833,20 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-        		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-        	return (int) (fuel * 0.9);
+                || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+            return (int) (fuel * 0.9);
         } else {
-        	return fuel;
+            return fuel;
         }
     }
 
     @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-            	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+                || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (currentfuel * 0.9);
         } else {
-        	return currentfuel;
+            return currentfuel;
         }
     }
 
@@ -864,7 +864,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public void setCurrentFuel(int gas) {
-    	currentfuel = gas;
+        currentfuel = gas;
     }
 
     @Override
@@ -2612,7 +2612,7 @@ public class Aero extends Entity implements IAero, IBomber {
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         // this is a control roll. Affected by:
         // avionics damage
-    	// partial repairs
+        // partial repairs
         // pilot damage
         // current velocity
         int avihits = getAvionicsHits();
@@ -3196,7 +3196,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3223,7 +3223,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3251,7 +3251,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range
@@ -3932,20 +3932,20 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         // Cargo bays and bay doors for large craft
         for (Bay next : getTransportBays()) {
-        	if (next.getBayDamage() > 0) {
-        	    if (!first) {
+            if (next.getBayDamage() > 0) {
+                if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
-        	first = false;
-        	}
-        	if (next.getCurrentDoors() < next.getDoors()) {
-        	    if (!first) {
+            toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
+            first = false;
+            }
+            if (next.getCurrentDoors() < next.getDoors()) {
+                if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
-        	first = false;
-        	}
+            toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
+            first = false;
+            }
         }
         return toReturn.toString();
     }

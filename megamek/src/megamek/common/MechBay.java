@@ -63,8 +63,8 @@ public final class MechBay extends Bay {
 
         // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs
         if (((unit instanceof Mech) && !(unit instanceof QuadVee) && !(unit instanceof LandAirMech))
-        		|| ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH))
-        		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER))) {
+                || ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH))
+                || ((unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
 

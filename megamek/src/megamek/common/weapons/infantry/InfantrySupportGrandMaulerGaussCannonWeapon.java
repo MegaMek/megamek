@@ -48,7 +48,7 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
 		ammoWeight = 0.0045;
 		ammoCost = 5;
 		shots = 5;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3059, 3065, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FS)

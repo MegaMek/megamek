@@ -69,7 +69,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
 
     /**
      * Gets the entity associated with this attack action, using the passed-in game object.
-     * Returns the entity even if it was destroyed or fled.
+     * @return the entity even if it was destroyed or fled.
      */
     public Entity getEntity(Game g) {
         return getEntity(g, getEntityId());
@@ -77,7 +77,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     
     /**
      * Gets an entity with the given ID, using the passed-in game object.
-     * Returns the entity even if it was destroyed or fled.
+     * @return the entity even if it was destroyed or fled.
      */
     public Entity getEntity(Game g, int entityID) {
         Entity e = g.getEntity(entityID);
@@ -92,6 +92,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     /**
      * used by the toHit of derived classes atype may be null if not using an
      * ammo based weapon
+     *
+     * @param game The current {@link Game}
      */
     public static ToHitData nightModifiers(Game game, Targetable target,
             AmmoType atype, Entity attacker, boolean isWeapon) {

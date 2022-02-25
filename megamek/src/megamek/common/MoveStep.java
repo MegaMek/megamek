@@ -158,7 +158,7 @@ public class MoveStep implements Serializable {
 
     /**
      * Flag that indicates that this step is into prohibited terrain.
-     * <p/>
+     * <p>
      * If the unit is jumping, this step is only invalid if it is the end of the
      * path.
      */
@@ -447,7 +447,7 @@ public class MoveStep implements Serializable {
     /**
      * Get the target of the current step.
      *
-     * @param game - The <code>Game</code> object.
+     * @param game The current {@link Game}
      * @return The <code>Targetable</code> that is the target of this step. For
      *         example, the enemy being charged. This value may be
      *         <code>null</code>
@@ -474,7 +474,7 @@ public class MoveStep implements Serializable {
     /**
      * Helper for compile(), to deal with steps that move to a new hex.
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param entity
      * @param prev
      */
@@ -723,9 +723,9 @@ public class MoveStep implements Serializable {
     /**
      * Compile the static move data for this step.
      *
-     * @param game   the <code>Game</code> being played.
+     * @param game The current {@link Game}
      * @param entity the <code>Entity</code> taking this step.
-     * @param prev   the previous step in the path.
+     * @param prev the previous step in the path.
      */
     protected void compile(final Game game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
         final boolean isInfantry = entity instanceof Infantry;
@@ -1144,7 +1144,7 @@ public class MoveStep implements Serializable {
     /**
      * Takes the given state as the previous state and sets flags from it.
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param prev
      */
     public void copy(final Game game, MoveStep prev) {
@@ -1802,7 +1802,7 @@ public class MoveStep implements Serializable {
      * Things that can make a step illegal as part of a movement path are
      * considered in MovePath.addStep.
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param entity
      * @param prev
      */
@@ -1946,7 +1946,7 @@ public class MoveStep implements Serializable {
             // and 8 hexes on the ground map, regardless of any other considerations
             // unless they're out of control, in which case, well...
             if (useSpheroidAtmosphere(game, entity) && 
-            		(((IAero) entity).isOutControlTotal() ||
+                    (((IAero) entity).isOutControlTotal() ||
                     (!game.getBoard().onGround() && (this.getDistance() > 1) || 
                             (game.getBoard().onGround() && (getDistance() > 8))))) {
                 return;
@@ -1962,7 +1962,7 @@ public class MoveStep implements Serializable {
             }
 
             /*
-             * TODO: better to disable this in movement display //don't let them
+             * TODO: better to disable this in movement display // don't let them
              * evade more than once if (type == MoveStepType.EVADE) {
              * if (isEvading) { return; } else { setEvading(true); } }
              */
@@ -2266,7 +2266,7 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
-            //and can switch to track mode while prone then stand.
+            // and can switch to track mode while prone then stand.
             if (getEntity().isProne()
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -3124,7 +3124,7 @@ public class MoveStep implements Serializable {
 
     /**
      * Is movement possible from a previous position to this one?
-     * <p/>
+     * <p>
      * This function does not comment on whether an overall movement path is
      * possible, just whether the <em>current</em> step is possible.
      */

@@ -30,13 +30,13 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         setInternalName("CLBAHeavyGrenadeLauncher");
         addLookupName("CLBAHeavyGL");
         addLookupName("Heavy BA Grenade Launcher");      
-      	addLookupName("ISBAHeavyGrenadeLauncher");
+        addLookupName("ISBAHeavyGrenadeLauncher");
         addLookupName("BA Heavy Grenade Launcher");
         addLookupName("ISBAAutoGL");
         addLookupName("ISBAHeavyGL");
         //Per TM Errata the original Grenade Launcher becomes the Heavy. Lookups below to keep unit files consistent.
         addLookupName("ISBAGrenadeLauncher");
-      	addLookupName("IS BA Grenade Launcher");
+        addLookupName("IS BA Grenade Launcher");
         sortingName = "Grenade Launcher D";
         heat = 0;
         damage = 1;
@@ -51,7 +51,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         bv = 1;
         cost = 4500;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "256,TM";
+        rulesRefs = "256, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

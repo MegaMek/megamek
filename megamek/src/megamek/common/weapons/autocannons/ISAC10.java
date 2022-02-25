@@ -18,40 +18,40 @@ package megamek.common.weapons.autocannons;
  * @since Sep 25, 2004
  */
 public class ISAC10 extends ACWeapon {
-	private static final long serialVersionUID = 814114264108820161L;
+    private static final long serialVersionUID = 814114264108820161L;
 
-	public ISAC10() {
-		super();
-		name = "AC/10";
-		setInternalName("Autocannon/10");
-		addLookupName("IS Auto Cannon/10");
-		addLookupName("Auto Cannon/10");
-		addLookupName("AutoCannon/10");
-		addLookupName("AC/10");
-		addLookupName("ISAC10");
-		addLookupName("IS Autocannon/10");
-		heat = 3;
-		damage = 10;
-		rackSize = 10;
-		shortRange = 5;
-		mediumRange = 10;
-		longRange = 15;
-		extremeRange = 20;
-		tonnage = 12.0;
-		criticals = 7;
-		bv = 123;
-		cost = 200000;
-		shortAV = 10;
-		medAV = 10;
-		maxRange = RANGE_MED;
-		explosionDamage = damage;
-		rulesRefs = "208,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(true).setTechRating(RATING_C)
+    public ISAC10() {
+        super();
+        name = "AC/10";
+        setInternalName("Autocannon/10");
+        addLookupName("IS Auto Cannon/10");
+        addLookupName("Auto Cannon/10");
+        addLookupName("AutoCannon/10");
+        addLookupName("AC/10");
+        addLookupName("ISAC10");
+        addLookupName("IS Autocannon/10");
+        heat = 3;
+        damage = 10;
+        rackSize = 10;
+        shortRange = 5;
+        mediumRange = 10;
+        longRange = 15;
+        extremeRange = 20;
+        tonnage = 12.0;
+        criticals = 7;
+        bv = 123;
+        cost = 200000;
+        shortAV = 10;
+        medAV = 10;
+        maxRange = RANGE_MED;
+        explosionDamage = damage;
+        rulesRefs = "208, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(true).setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
-		        .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
-		        .setISApproximate(false, false, false, false, false)
-		        .setClanAdvancement(2443, 2460, 2465, 2850, DATE_NONE)
-		        .setClanApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH);
-	}
+                .setISAdvancement(2443, 2460, 2465, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(2443, 2460, 2465, 2850, DATE_NONE)
+                .setClanApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH);
+    }
 }

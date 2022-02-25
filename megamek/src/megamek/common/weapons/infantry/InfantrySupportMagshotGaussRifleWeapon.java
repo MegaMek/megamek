@@ -48,7 +48,7 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
 		ammoWeight = 0.0165;
 		ammoCost = 10;
 		shots = 20;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3059, 3065, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FS)

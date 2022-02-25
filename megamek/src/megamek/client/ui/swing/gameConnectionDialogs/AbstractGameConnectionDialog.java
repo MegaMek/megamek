@@ -25,10 +25,14 @@ import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
 import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+<<<<<<< HEAD
 import megamek.common.util.StringUtil;
 import megamek.server.Server;
+=======
+>>>>>>> master
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -44,7 +48,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
      * We need a way to access the action map for a JComboBox editor, so that we can
      * have it fire an action when wenter is pressed. This simple class allows this.
      */
-    public class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
+    public static class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
 
         private static final long serialVersionUID = 4496820410417436582L;
 
@@ -99,7 +103,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         initComponents();
 
         // if the player name is specified, overwrite the preference with it
-        if (!StringUtil.isNullOrEmpty(playerName)) {
+        if (!StringUtility.isNullOrEmpty(playerName)) {
             setPlayerName(playerName);
         }
     }
@@ -225,6 +229,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     //region Validation
     public boolean dataValidation(String errorTitleKey) {
+
         if (!isConfirmed()) {
             return false;
         }

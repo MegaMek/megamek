@@ -18,8 +18,8 @@
  */
 package megamek;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.StringUtil;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 
@@ -198,7 +198,7 @@ public final class Version implements Comparable<Version>, Serializable {
     }
 
     public void fillFromText(final @Nullable String text) {
-        if (StringUtil.isNullOrEmpty(text)) {
+        if (StringUtility.isNullOrEmpty(text)) {
             final String message = String.format(
                     "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
                     ((text == null) ? "a null string" : text));

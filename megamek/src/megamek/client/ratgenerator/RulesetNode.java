@@ -54,7 +54,7 @@ public class RulesetNode {
             } else {
                 assertions.put(wn.getNodeName(), Ruleset.substituteConstants(wn.getTextContent()));
             }
-        }		
+        }
     }
 
     /* Allow augmented to be passed separately so the eschelon entry in the ruleset TOC

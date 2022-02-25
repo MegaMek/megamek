@@ -120,7 +120,7 @@ public class PathDecorator {
         
         // if there is a bad guy in the last step, clip to one step short and see if we can't get around.
         if ((clippedSource.getLastStep() != null) &&
-        	clippedSource.getGame().getFirstEnemyEntity(clippedSource.getLastStep().getPosition(), clippedSource.getEntity()) != null) {
+            clippedSource.getGame().getFirstEnemyEntity(clippedSource.getLastStep().getPosition(), clippedSource.getEntity()) != null) {
             clippedSource.removeLastStep();
             
             for (int desiredMP : desiredMPs) {

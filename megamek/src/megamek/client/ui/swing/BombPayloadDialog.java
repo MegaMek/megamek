@@ -271,7 +271,7 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
             current[i] = b_choices[i].getSelectedIndex();
         }
 
-        //don't factor in your own choice when determining how much is left
+        // don't factor in your own choice when determining how much is left
         int[] left = new int[b_choices.length];
         for (int i = 0; i < left.length; i++) {
             left[i] = limit;

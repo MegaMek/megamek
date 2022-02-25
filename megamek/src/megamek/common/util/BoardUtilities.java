@@ -90,7 +90,7 @@ public class BoardUtilities {
             }
         }
 
-        //assuming that the map setting and board types match
+        // assuming that the map setting and board types match
         result.setType(medium);
 
         return result;
@@ -824,7 +824,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Converts water hexes to ice hexes. Works best with snow&ice theme.
+     * Converts water hexes to ice hexes. Works best with snow and ice themes.
      */
     protected static void postProcessDeepFreeze(Hex[] hexSet, int modifier) {
         int n;
@@ -1058,7 +1058,7 @@ public class BoardUtilities {
                     }
                 }
 
-                //check for rapids/torrents created by wind
+                // check for rapids/torrents created by wind
                 if ((windCond > PlanetaryConditions.WI_MOD_GALE)
                         && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)) {
 

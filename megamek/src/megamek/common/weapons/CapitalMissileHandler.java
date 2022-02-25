@@ -1,15 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
@@ -35,11 +41,6 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class CapitalMissileHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
-
     private static final long serialVersionUID = -1618484541772117621L;
     boolean advancedPD = false;
 
@@ -49,8 +50,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
+    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
@@ -266,7 +266,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         }
         
         //Capital missiles shouldn't be able to target buildings, being space-only weapons
-        //but if they aren't defined, handleEntityDamage() doesn't work.
+        // but if they aren't defined, handleEntityDamage() doesn't work.
         int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up

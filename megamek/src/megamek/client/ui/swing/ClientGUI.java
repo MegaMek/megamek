@@ -105,7 +105,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
     public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
-    //board submenu
+    // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
     public static final String BOARD_OPEN = "fileBoardOpen";
     public static final String BOARD_SAVE = "fileBoardSave";
@@ -388,7 +388,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     /**
      * Have the client register itself as a listener wherever it's needed.
-     * <p/>
+     * <p>
      * According to
      * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
      * major bad no-no to perform these registrations before the constructor
@@ -523,7 +523,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     /**
      * Called when the user selects the "Help->Contents" menu item.
-     * <p/>
+     * <p>
      * This method can be called by subclasses.
      */
     private void showHelp() {
@@ -805,7 +805,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Save all the current in use Entities each grouped by
      * player name
-     * <p/>
+     * <p>
      * and a file for salvage
      */
     public void doSaveUnit() {
@@ -895,7 +895,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         if (bv != null) {
-            //cleanup our timers first
+            // cleanup our timers first
             bv.die();
         }
         for (String s : phaseComponents.keySet()) {
@@ -1358,7 +1358,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     /**
      * Pops up a dialog box asking a yes/no question
-     * <p/>
+     * <p>
      * The player will be given a chance to not show the dialog again.
      *
      * @param title    the <code>String</code> title of the dialog box.

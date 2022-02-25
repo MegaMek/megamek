@@ -147,7 +147,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     /**
      * Updates the supplied Game's list of hexes illuminated.
      * 
-     * @param game      The game to update
+     * @param game The {@link Game} to update
      * @return          True if new hexes were added, else false.
      */
     public boolean setHexesIlluminated(Game game) {

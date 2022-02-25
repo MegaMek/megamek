@@ -58,7 +58,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Determine if the other object is an equivalent INarc pod. <p/> Overrides
+     * Determine if the other object is an equivalent INarc pod. <p> Overrides
      * <code>Object#equals(Object)</code>.
      *
      * @param obj the other <code>Object</code> which may be an equivalent
@@ -84,7 +84,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Get a <code>String</code> representing this INarc pod. <p/> Overrides
+     * Get a <code>String</code> representing this INarc pod. <p> Overrides
      * <code>Object#toString()</code>.
      *
      * @return a <code>String</code> that represents this INarc pod.

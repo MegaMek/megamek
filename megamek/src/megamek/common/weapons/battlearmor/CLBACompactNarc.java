@@ -40,7 +40,7 @@ public class CLBACompactNarc extends NarcWeapon {
         tonnage = .15;
         criticals = 1;
         cost = 15000;
-        rulesRefs = "263,TM";
+        rulesRefs = "263, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -50,7 +50,7 @@ public class CLBACompactNarc extends NarcWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(2870, 2875, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_CSV)	
+                .setPrototypeFactions(F_CSV)
                 .setProductionFactions(F_CSV);
     }
 }

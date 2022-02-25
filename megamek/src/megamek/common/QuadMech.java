@@ -185,7 +185,7 @@ public class QuadMech extends Mech {
     }
 
     /**
-     * Returns this mech's running/flank mp modified for leg loss & stuff.
+     * Returns this mech's running/flank mp modified for leg loss and stuff.
      */
 
     @Override
@@ -199,7 +199,7 @@ public class QuadMech extends Mech {
     }
 
     /**
-     * Returns run MP without considering MASC modified for leg loss & stuff.
+     * Returns run MP without considering MASC modified for leg loss and stuff.
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -213,17 +213,18 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-    	return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
+        return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
     }
     
-	@Override
-	public boolean isValidSecondaryFacing(int dir) {
-		int rotate = dir - getFacing();
-		if (canChangeSecondaryFacing()) {
-			return (rotate <= 1) || (rotate == 5);
-		} else
-			return rotate == 0;
-	}	 
+    @Override
+    public boolean isValidSecondaryFacing(int dir) {
+        int rotate = dir - getFacing();
+        if (canChangeSecondaryFacing()) {
+            return (rotate <= 1) || (rotate == 5);
+        } else {
+            return rotate == 0;
+        }
+    }
 
     /**
      * Returns true is the location is a leg
@@ -917,7 +918,7 @@ public class QuadMech extends Mech {
         if (!retVal) {
             return false;
         }
-        //check the locations
+        // check the locations
         int[] locations = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
         int badLocs = 0;
         for ( int loc = locations.length -1; loc >= 0; loc--) {
@@ -928,7 +929,7 @@ public class QuadMech extends Mech {
         if (!(badLocs <2)) {
             return false;
         }
-        //check the Gyro
+        // check the Gyro
         return !isGyroDestroyed();
     }
 

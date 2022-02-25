@@ -230,7 +230,7 @@ public class TripodMech extends Mech {
     }
 
     /**
-     * Returns this mech's running/flank mp modified for leg loss & stuff.
+     * Returns this mech's running/flank mp modified for leg loss and stuff.
      */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat,
@@ -242,7 +242,7 @@ public class TripodMech extends Mech {
     }
 
     /**
-     * Returns run MP without considering MASC modified for leg loss & stuff.
+     * Returns run MP without considering MASC modified for leg loss and stuff.
      */
 
     @Override

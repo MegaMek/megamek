@@ -145,7 +145,7 @@ public class QuadVee extends QuadMech {
         
         //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
         //which we are interpreting as a cumulative 1/2 MP.
-        //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
+        // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
 
         int badTracks = 0;
         for (int loc = 0; loc < locations(); loc++) {

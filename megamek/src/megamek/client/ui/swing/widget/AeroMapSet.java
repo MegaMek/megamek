@@ -133,18 +133,18 @@ public class AeroMapSet implements DisplayMapSet {
         }
         
         if (t instanceof Dropship) {
-        	// add kf boom and docking collar
-        	Dropship ds = (Dropship) t;
-        	int kfboom = 0;
-        	int collar = 0;
-        	if (ds.isKFBoomDamaged()) {
-        		kfboom = 1;
-        	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
-        	if (ds.isDockCollarDamaged()) {
-        		collar = 1;
-        	}
-        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
+            // add kf boom and docking collar
+            Dropship ds = (Dropship) t;
+            int kfboom = 0;
+            int collar = 0;
+            if (ds.isKFBoomDamaged()) {
+                kfboom = 1;
+            }
+            vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
+            if (ds.isDockCollarDamaged()) {
+                collar = 1;
+            }
+            vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }

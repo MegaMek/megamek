@@ -48,7 +48,7 @@ public class InfantrySupportSRMLightInfernoWeapon extends InfantryWeapon {
 		shots = 2;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		tonnage = .010;
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

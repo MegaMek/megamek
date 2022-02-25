@@ -42,19 +42,14 @@ public class InfantryFireControl extends FireControl {
     }
 
     /**
-     * Calculates the maximum damage a unit can do at a given range. Chance to
-     * hit is not a factor.
-     *
-     * @param shooter
-     *            The firing unit.
-     * @param range
-     *            The range to be checked.
-     * @param useExtremeRange
-     *            Is the extreme range optional rule in effect?
+     * Calculates the maximum damage a unit can do at a given range. Chance to hit is not a factor.
+     * @param range The range to be checked.
+     * @param useExtremeRange Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
-    public double getMaxDamageAtRange(final MovePath shooterPath, final MovePath targetPath, final int range,
-            final boolean useExtremeRange, final boolean useLOSRange) {
+    public double getMaxDamageAtRange(final MovePath shooterPath, final MovePath targetPath,
+                                      final int range, final boolean useExtremeRange,
+                                      final boolean useLOSRange) {
         double maxFGDamage = 0;
         double maxInfantryWeaponDamage = 0;
         Entity shooter = shooterPath.getEntity();
@@ -160,8 +155,7 @@ public class InfantryFireControl extends FireControl {
      *            The current state of the target unit.
      * @param maxHeat
      *            How much heat we're willing to tolerate. Ignored, since infantry doesn't track heat.
-     * @param game
-     *            The game currently being played.
+     * @param game The current {@link Game}
      * @return the 'best' firing plan under a certain heat.
      */
     @Override
@@ -240,8 +234,7 @@ public class InfantryFireControl extends FireControl {
      *            The unit being fired on.
      * @param targetState
      *            The current state of the target.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     private FiringPlan guessFiringPlan(final Entity shooter, @Nullable EntityState shooterState,

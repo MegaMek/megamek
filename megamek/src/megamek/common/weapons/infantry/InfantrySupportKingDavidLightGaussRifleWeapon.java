@@ -50,7 +50,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
 		ammoCost = 200;
 		shots = 80;
 		bursts = 16;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

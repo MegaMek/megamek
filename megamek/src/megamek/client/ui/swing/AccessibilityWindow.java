@@ -224,7 +224,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 processAccessibleGUI();
                 systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
             } else {
-                //default to running commands in the accesibility window, added a say command for chat.
+                // default to running commands in the accesibility window, added a say command for chat.
                 systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
             }
             inputField.setText("");

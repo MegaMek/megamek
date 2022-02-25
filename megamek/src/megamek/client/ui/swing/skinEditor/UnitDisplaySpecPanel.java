@@ -223,7 +223,6 @@ public class UnitDisplaySpecPanel extends JPanel {
      * UI elements.
      *
      * @param udSpec
-     * @return
      */
     public void updateSkinSpec(UnitDisplaySkinSpecification udSpec) {
 

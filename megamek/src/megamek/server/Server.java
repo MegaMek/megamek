@@ -2252,7 +2252,7 @@ public class Server implements Runnable {
                 resetActivePlayersDone();
                 rollInitiative();
                 //Cockpit command consoles that switched crew on the previous round are ineligible for force
-                //commander initiative bonus. Now that initiative is rolled, clear the flag.
+                // commander initiative bonus. Now that initiative is rolled, clear the flag.
                 game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
                 if (!game.shouldDeployThisRound()) {
@@ -5069,9 +5069,8 @@ public class Server implements Runnable {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
-                    switch (hitSide) {// quite hackish...I think it ought to
-                        // work, though.
-                        case 0:// can this happen?
+                    switch (hitSide) { // quite hackish... I think it ought to work, though.
+                        case 0: // can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
                         case 1:
@@ -5162,8 +5161,8 @@ public class Server implements Runnable {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
-                    switch (hitSide) {// quite hackish...I think it ought to work, though.
-                        case 0:// can this happen?
+                    switch (hitSide) { // quite hackish... I think it ought to work, though.
+                        case 0: // can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
                         case 1:
@@ -6866,7 +6865,7 @@ public class Server implements Runnable {
                     }
                 } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0) {
                     //External units on LAMs, including swarmers, fall automatically and take damage,
-                    //and the LAM itself may take one or more criticals.
+                    // and the LAM itself may take one or more criticals.
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true, true));
                     }
@@ -10421,7 +10420,7 @@ public class Server implements Runnable {
      * deliver artillery inferno
      *
      * @param coords    the <code>Coords</code> where to deliver
-     * @param ae        the attacking <code>entity<code>
+     * @param ae        the attacking <code>entity</code>
      * @param subjectId the <code>int</code> id of the target
      */
     public void deliverArtilleryInferno(Coords coords, Entity ae,
@@ -10979,7 +10978,7 @@ public class Server implements Runnable {
      *            - <code>true</code> if the entity is not in the middle of a
      *            jump
      * @param vMineReport
-     *            - the report vector that reports will be added to
+     *            - the {@link Report} <code>Vector</code> that reports will be added to
      * @return - <code>true</code> if the entity set off any mines
      */
     private boolean enterMinefield(Entity entity, Coords c, int curElev, boolean isOnGround,
@@ -11002,7 +11001,7 @@ public class Server implements Runnable {
      *            - <code>true</code> if the entity is not in the middle of a
      *            jump
      * @param vMineReport
-     *            - the report vector that reports will be added to
+     *            - the {@link Report} <code>Vector</code> that reports will be added to
      * @param target
      *            - the <code>int</code> target number for detonation. If this
      *            will be determined by density, it should be -1
@@ -21125,9 +21124,9 @@ public class Server implements Runnable {
      *
      * @param en        The <code>Entity</code> who's pilot gets damaged.
      * @param damage    The <code>int</code> amount of damage.
-     * @param crewPos   The <code>int</code>position of the crew member in a <code>MultiCrewCockpit</crew>
-     *                  that takes the damage. A value < 0 applies the damage to all crew members.
-     *                  The basic <crew>Crew</crew> ignores this value.
+     * @param crewPos   The <code>int</code>position of the crew member in a <code>MultiCrewCockpit</code>
+     *                  that takes the damage. A value &lt; 0 applies the damage to all crew members.
+     *                  The basic <code>Crew</code> ignores this value.
      */
     public Vector<Report> damageCrew(Entity en, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<>();
@@ -23425,7 +23424,7 @@ public class Server implements Runnable {
      * @param te             The carrying Entity
      * @param hit            The hit to resolve
      * @param damage         The amount of damage to be allocated
-     * @param vDesc          The report vector
+     * @param vDesc          The {@link Report} <code>Vector</code>
      * @param passenger      The BA squad
      * @return               The amount of damage remaining
      */
@@ -26626,7 +26625,7 @@ public class Server implements Runnable {
     /**
      * Checks for aero criticals
      *
-     * @param vDesc         - report vector
+     * @param vDesc         - {@link Report} <code>Vector</code>
      * @param a             - the entity being critted
      * @param hit           - the hitdata for the attack
      * @param damage_orig   - the original damage of the attack
@@ -27154,7 +27153,7 @@ public class Server implements Runnable {
 
     /**
      * Checks for location breach and returns phase logging.
-     * <p/>
+     * <p>
      *
      * @param entity the <code>Entity</code> that needs to be checked.
      * @param loc    the <code>int</code> location on the entity that needs to be
@@ -27169,7 +27168,6 @@ public class Server implements Runnable {
 
     /**
      * Checks for location breach and returns phase logging.
-     * <p/>
      *
      * @param entity     the <code>Entity</code> that needs to be checked.
      * @param loc        the <code>int</code> location on the entity that needs to be
@@ -29324,7 +29322,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Filter a report vector for double blind.
+     * Filter a {@link Report} <code>Vector</code> for double blind.
      *
      * @param originalReportVector the original <code>Vector<Report></code>
      * @param p                    the <code>Player</code> who should see stuff only visible to
@@ -32055,7 +32053,7 @@ public class Server implements Runnable {
      *            <code>Entity</code>s at that position. This value should not
      *            be <code>null</code>.
      * @param coords
-     *            - The <code>Coords></code> of the building basement hex that
+     *            - The <code>Coords</code> of the building basement hex that
      *            has collapsed
      */
     public void collapseBasement(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap,
@@ -32155,7 +32153,7 @@ public class Server implements Runnable {
      *            <code>Entity</code>s at that position. This value should not
      *            be <code>null</code>.
      * @param coords
-     *            - The <code>Coords></code> of the building hex that has
+     *            - The <code>Coords</code> of the building hex that has
      *            collapsed
      * @param collapseAll
      *            - A <code>boolean</code> indicating whether or not this
@@ -32445,7 +32443,7 @@ public class Server implements Runnable {
      * Apply the given amount of damage to the building. Please note, this
      * method does <b>not</b> apply any damage to units inside the building,
      * update the clients, or check for the building's collapse.
-     * <p/>
+     * <p>
      * A default message will be used to describe why the building took the
      * damage.
      *
@@ -35126,7 +35124,7 @@ public class Server implements Runnable {
      * deliver inferno bomb
      *
      * @param coords    the <code>Coords</code> where to deliver
-     * @param ae        the attacking <code>entity<code>
+     * @param ae        the attacking <code>entity</code>
      * @param subjectId the <code>int</code> id of the target
      */
     public void deliverBombInferno(Coords coords, Entity ae, int subjectId,

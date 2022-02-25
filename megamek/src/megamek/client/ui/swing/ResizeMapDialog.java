@@ -17,8 +17,8 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -323,14 +323,14 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         // Create a new instance of the file chooser.
         JFileChooser fileChooser = new JFileChooser(targetDir);
 
-        // Only allow selectoin of one file.
+        // Only allow selection of one file.
         fileChooser.setMultiSelectionEnabled(false);
 
         // Give the file chooser a title.
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtil.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrEmpty(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 

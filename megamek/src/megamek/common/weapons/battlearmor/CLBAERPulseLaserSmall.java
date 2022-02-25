@@ -49,7 +49,7 @@ public class CLBAERPulseLaserSmall extends PulseLaserWeapon {
         bv = 36;
         cost = 30000;
         flags = flags.or(F_BURST_FIRE).or(F_NO_FIRES).or(F_BA_WEAPON).
-        		andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)

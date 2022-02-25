@@ -69,7 +69,7 @@ public class BattleForceElement {
         }
         structure = en.getBattleForceStructurePoints();
         if (en instanceof Aero) {
-        	rangeBands = RANGE_BAND_NUM_AERO;
+            rangeBands = RANGE_BAND_NUM_AERO;
         }
         initWeaponLocations(en);
         heat = new int[rangeBands];
@@ -91,7 +91,7 @@ public class BattleForceElement {
     }
     
     protected void computeMovement(Entity en) {
-    	en.setBattleForceMovement(movement);    	
+        en.setBattleForceMovement(movement);
     }
     
     public String getName() {
@@ -103,22 +103,22 @@ public class BattleForceElement {
     }
     
     public Set<String> getMovementModes() {
-    	return movement.keySet();
+        return movement.keySet();
     }
     
     public int getMovement(String mode) {
-    	return movement.get(mode);
+        return movement.get(mode);
     }
     
     public int getPrimaryMovementValue() {
-    	return movement.values().iterator().next();
+        return movement.values().iterator().next();
     }
     
     public String getMovementAsString() {
-    	return movement.entrySet().stream()
-    			.map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
-    					+ e.getKey())
-    			.collect(Collectors.joining("/"));    	
+        return movement.entrySet().stream()
+                .map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
+                        + e.getKey())
+                .collect(Collectors.joining("/"));
     }
     
     public int getFinalArmor() {
@@ -142,23 +142,23 @@ public class BattleForceElement {
     }
     
     public double getDamage(int loc, int rangeIndex, int damageClass) {
-    	return weaponLocations[loc].getDamage(damageClass, rangeIndex);
+        return weaponLocations[loc].getDamage(damageClass, rangeIndex);
     }
     
     public double getDamage(int rangeIndex) {
-    	return weaponLocations[0].getDamage(rangeIndex);
+        return weaponLocations[0].getDamage(rangeIndex);
     }
     
     public double getDamage(int rangeIndex, int damageClass) {
-    	return getDamage(0, rangeIndex, damageClass);
+        return getDamage(0, rangeIndex, damageClass);
     }
     
     public double getIndirectFire() {
-    	return getIndirectFire(0);
+        return getIndirectFire(0);
     }
     
     public double getIndirectFire(int loc) {
-    	return weaponLocations[loc].getIF();
+        return weaponLocations[loc].getIF();
     }
     
     public String getLocationName(int loc) {
@@ -166,11 +166,11 @@ public class BattleForceElement {
     }
     
     public Integer getSPA(BattleForceSPA spa) {
-    	return specialAbilities.get(spa);
+        return specialAbilities.get(spa);
     }
     
     public boolean hasSPA(BattleForceSPA spa) {
-    	return specialAbilities.containsKey(spa);
+        return specialAbilities.containsKey(spa);
     }
 
     public int getFinalPoints() {
@@ -231,7 +231,7 @@ public class BattleForceElement {
             if (weapon.hasFlag(WeaponType.F_TAG)) {
                 if (weapon.hasFlag(WeaponType.F_C3MBS)) {
                     specialAbilities.merge(BattleForceSPA.C3BSM, 1, Integer::sum);
-                    specialAbilities.merge(BattleForceSPA.MHQ, 12, Integer::sum); //count half-tons
+                    specialAbilities.merge(BattleForceSPA.MHQ, 12, Integer::sum); // count half-tons
                 } else if (weapon.hasFlag(WeaponType.F_C3M)) {
                     specialAbilities.merge(BattleForceSPA.C3M, 1, Integer::sum);
                     specialAbilities.merge(BattleForceSPA.MHQ, 10, Integer::sum);
@@ -445,7 +445,7 @@ public class BattleForceElement {
     }
     
     protected double locationMultiplier(Entity en, int loc, Mounted mount) {
-    	return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+        return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
     
     protected void addArtillery(WeaponType weapon) {
@@ -709,13 +709,13 @@ public class BattleForceElement {
         }
         
         public boolean hasDamage() {
-        	return hasStandardDamage()
-        			|| specialDamage.keySet().stream().anyMatch(this::hasDamageClass);
+            return hasStandardDamage()
+                    || specialDamage.keySet().stream().anyMatch(this::hasDamageClass);
         }
         
         public boolean hasDamageRounded() {
-        	return hasStandardDamageRounded()
-        			|| specialDamage.keySet().stream().anyMatch(this::hasDamageClassRounded);
+            return hasStandardDamageRounded()
+                    || specialDamage.keySet().stream().anyMatch(this::hasDamageClassRounded);
         }
         
         public boolean hasDamageClass(int damageClass) {

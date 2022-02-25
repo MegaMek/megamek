@@ -13,7 +13,9 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.util.StringUtil;
+import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -184,7 +186,7 @@ public class BehaviorSettings implements Serializable {
      * @param description The name to be used.
      */
     public void setDescription(final String description) throws PrincessException {
-        if (StringUtil.isNullOrEmpty(description)) {
+        if (StringUtility.isNullOrEmpty(description)) {
             throw new PrincessException("Description is required!");
         }
         this.description = description.trim();
@@ -205,7 +207,7 @@ public class BehaviorSettings implements Serializable {
      * @param target The target to be added.
      */
     public void addStrategicTarget(final String target) {
-        if (StringUtil.isNullOrEmpty(target)) {
+        if (StringUtility.isNullOrEmpty(target)) {
             return;
         }
         strategicBuildingTargets.add(target);
@@ -730,7 +732,7 @@ public class BehaviorSettings implements Serializable {
             final Element behavior = doc.createElement("behavior");
 
             final Element nameNode = doc.createElement("name");
-            nameNode.setTextContent(StringUtil.makeXmlSafe(getDescription()));
+            nameNode.setTextContent(MegaMekXmlUtil.escape(getDescription()));
             behavior.appendChild(nameNode);
 
             final Element destinationEdgeNode = doc.createElement("destinationEdge");
@@ -777,7 +779,7 @@ public class BehaviorSettings implements Serializable {
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
                     final Element targetElement = doc.createElement("target");
-                    targetElement.setTextContent(StringUtil.makeXmlSafe(t));
+                    targetElement.setTextContent(MegaMekXmlUtil.escape(t));
                     targetsNode.appendChild(targetElement);
                 }
                 for (final int id : getPriorityUnitTargets()) {

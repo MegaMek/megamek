@@ -76,7 +76,7 @@ public class PlanetaryConditions implements Serializable {
     public static final int DIR_RANDOM = 6;
     
 
-    //atmospheric pressure
+    // atmospheric pressure
     public static final int ATMO_VACUUM   = 0;
     public static final int ATMO_TRACE    = 1;
     public static final int ATMO_THIN     = 2;
@@ -419,7 +419,7 @@ public class PlanetaryConditions implements Serializable {
             }
         }
 
-        //atmospheric pressure may limit wind strength
+        // atmospheric pressure may limit wind strength
         if ((atmosphere == ATMO_TRACE) && (windStrength > WI_STORM)) {
             windStrength = WI_STORM;
         }
@@ -661,7 +661,7 @@ public class PlanetaryConditions implements Serializable {
             isLargeCraft = (en instanceof Dropship) || (en instanceof Jumpship);
             isAero = (en.isAero()) && !isLargeCraft;
         }
-        //anything else is infantry
+        // anything else is infantry
         
         // Beyond altitude 9, Aeros can't see. No need to repeat this test.
         if (isAero && (en.getAltitude() > 9)) {
@@ -897,7 +897,7 @@ public class PlanetaryConditions implements Serializable {
         terrainAffected = b;
     }
 
-    //can weather alter the terrain (add snow, mud, etc.)
+    // can weather alter the terrain (add snow, mud, etc.)
     public boolean isTerrainAffected() {
         return terrainAffected;
     }

@@ -68,7 +68,7 @@ import megamek.common.annotations.Nullable;
 
     /**
      * Get the exterior locations that a loaded squad covers.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param isRear
@@ -87,7 +87,7 @@ import megamek.common.annotations.Nullable;
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of a
      * loaded squad of Battle Armor troopers.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param isLoaded
@@ -149,12 +149,8 @@ import megamek.common.annotations.Nullable;
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception IllegalArgumentException
-     *                - If the unit can't be loaded, an
-     *                <code>IllegalArgumentException</code> exception will be
-     *                thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public final void load(Entity unit) throws IllegalArgumentException {
@@ -250,7 +246,6 @@ import megamek.common.annotations.Nullable;
      *            facing.
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
-     * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
      */
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {

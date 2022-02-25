@@ -47,7 +47,7 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 		ammoCost = 3;
 		shots = 20;
 		bursts = 2;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2865, 2870, 2925, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

@@ -16,6 +16,7 @@ package megamek.client.ui.swing.widget;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.DataVerifier;
 import megamek.client.ui.swing.util.VerifyNotNullOrEmpty;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.util.StringUtil;
 
 import javax.swing.*;
@@ -26,12 +27,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is an extension of the {@link JTextField} that includes the capacity for {@link DataVerifier} objects to be
- * added.  These verifiers will be checked when the component loses focus and if any fail, the background of the field
- * will be turned red and the tool tip updated with information on what verifier was failed.
+ * This is an extension of the {@link JTextField} that includes the capacity for {@link DataVerifier}
+ * objects to be added. These verifiers will be checked when the component loses focus and if any
+ * fail, the background of the field will be turned red and the tool tip updated with information
+ * on what verifier was failed.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/14/14 1:08 PM
  */
 public class VerifiableTextField extends JTextField implements FocusListener {
@@ -87,7 +88,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
      * @return TRUE if the field's text value is NULL or an empty {@link String}.
      */
     public boolean isTextNullOrEmpty() {
-        return StringUtil.isNullOrEmpty(getText());
+        return StringUtility.isNullOrEmpty(getText());
     }
 
     /**
@@ -145,16 +146,6 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
         verifiers.remove(v);
         setBackground(UIManager.getColor("TextField.background"));
-    }
-
-    /**
-     * @return The text of the field with XML reserved characters properly escaped.
-     */
-    public String getXmlSafeText() {
-        if (isTextNullOrEmpty()) {
-            return "";
-        }
-        return StringUtil.makeXmlSafe(getText());
     }
 
     @Override

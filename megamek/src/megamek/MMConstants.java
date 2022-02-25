@@ -61,4 +61,10 @@ public final class MMConstants extends SuiteConstants {
     public static final String SAVE_FILE_EXT = ".sav";
     public static final String SAVE_FILE_GZ_EXT = SAVE_FILE_EXT + ".gz";
     //endregion Server
+
+    //region Unsorted Constants
+    public static final int DIVE_BOMB_MIN_ALTITUDE = 3;
+    public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
+    public static final double INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
+    //endregion Unsorted Constants
 }

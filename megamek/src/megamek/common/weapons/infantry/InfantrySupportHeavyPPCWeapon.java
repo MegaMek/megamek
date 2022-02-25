@@ -47,7 +47,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 		ammoWeight = 0.0025;
 		shots = 150;
 		tonnage = 1.800;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)

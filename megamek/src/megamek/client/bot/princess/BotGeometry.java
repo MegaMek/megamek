@@ -128,7 +128,7 @@ public class BotGeometry {
                 setIntercept(c.getX());
             } else if ((getDirection() == 1) || (getDirection() == 4)) {
                 setIntercept(c.getY() + ((c.getX() + 1) / 2));
-            } else {//direction==2||direction==5
+            } else {// direction==2||direction==5
                 setIntercept(c.getY() - ((c.getX()) / 2));
             }
         }
@@ -210,7 +210,7 @@ public class BotGeometry {
             if (getDirection() == 0 || getDirection() == 3) {
                 return new Coords(getIntercept(), h.getYfromX(getIntercept()));
             }
-            //direction must be 1 here, and h.direction=2
+            // direction must be 1 here, and h.direction=2
             return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
         }
 
@@ -286,24 +286,22 @@ public class BotGeometry {
      * 3 primary directions of a hex map
      */
     public static class ConvexBoardArea {
-
-        //left/right indicates whether its the small x
-        //or large x line
-        //        HexLine[] left=new HexLine[3];
-        //        HexLine[] right=new HexLine[3];
-        //edge points to the previous lines in the right order
+        // left/right indicates whether it's the small x or large x line
+        //     HexLine[] left = new HexLine[3];
+        //     HexLine[] right = new HexLine[3];
+        // edge points to the previous lines in the right order
         private HexLine[] edges = new HexLine[6];
         private Coords[] vertices = new Coords[6];
         
         ConvexBoardArea() {
+
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) {
                 return true;
-            }
-            if (!(o instanceof ConvexBoardArea)) {
+            } else if (!(o instanceof ConvexBoardArea)) {
                 return false;
             }
 

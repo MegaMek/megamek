@@ -104,12 +104,12 @@ public class Client implements IClientCommandHandler {
     private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
-    public Map<String, Client> bots = new TreeMap<>(StringUtil.stringComparator());
+    public Map<String, Client> bots = new TreeMap<>(String::compareTo);
 
     //Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
 
-    //board view for getting entity art assets
+    // board view for getting entity art assets
     private BoardView bv;
 
     ConnectionHandler packetUpdate;
@@ -992,7 +992,7 @@ public class Client implements IClientCommandHandler {
                 cacheImgTag(e);
             }
         }
-        //cache the image data for the entities
+        // cache the image data for the entities
         for (Entity e: newEntities) {
             cacheImgTag(e);
         }
@@ -1080,7 +1080,7 @@ public class Client implements IClientCommandHandler {
         int condition = packet.getIntValue(1);
         @SuppressWarnings("unchecked")
         List<Force> forces = (List<Force>) packet.getObject(2);
-        //create a final image for the entity
+        // create a final image for the entity
         for (int id: entityIds) {
             cacheImgTag(game.getEntity(id));
         }
@@ -1212,7 +1212,7 @@ public class Client implements IClientCommandHandler {
         Pattern p = Pattern.compile("<s(.*?)n>");
         Matcher m = p.matcher(report.toString());
 
-        //add all instances to a hashset to prevent duplicates
+        // add all instances to a hashset to prevent duplicates
         while (m.find()) {
             String cleanedText = m.group(1).replaceAll("\\D", "");
             if (cleanedText.length() > 0) {
@@ -1242,7 +1242,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Hashtable for storing <img> tags containing base64Text src.
+     * Hashtable for storing img tags containing base64Text src.
      */
     protected void cacheImgTag(Entity entity) {
         if (entity == null) {
@@ -1257,7 +1257,7 @@ public class Client implements IClientCommandHandler {
         }
 
         if (getTargetImage(entity) != null) {
-            //convert image to base64, add to the <img> tag and store in cache
+            // convert image to base64, add to the <img> tag and store in cache
             Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             try {
                 String base64Text;
@@ -1726,7 +1726,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Perform a dump of the current memory usage.
-     * <p/>
+     * <p>
      * This method is useful in tracking performance issues on various player's
      * systems. You can activate it by changing the "memorydumpon" setting to
      * "true" in the clientsettings.xml file.

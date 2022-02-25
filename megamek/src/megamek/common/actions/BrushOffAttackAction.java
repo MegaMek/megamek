@@ -73,12 +73,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
      *
-     * @param game - the <code>Game</code> object containing all entities.
+     * @param game The current {@link Game} containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                                                         getTargetId()), getArm());
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getArm());
     }
 
     /**
@@ -86,12 +85,11 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
      *
-     * @param game       - the <code>Game</code> object containing all entities.
-     * @param attackerId - the <code>int</code> ID of the attacking unit.
-     * @param target     - the <code>Targetable</code> object being targeted.
-     * @param arm        - the <code>int</code> of the arm making the attack; this
-     *                   value must be <code>BrushOffAttackAction.RIGHT</code> or
-     *                   <code>BrushOffAttackAction.LEFT</code>.
+     * @param game The current {@link Game} containing all entities.
+     * @param attackerId the <code>int</code> ID of the attacking unit.
+     * @param target the <code>Targetable</code> object being targeted.
+     * @param arm the <code>int</code> of the arm making the attack; this value must be
+     *            <code>BrushOffAttackAction.RIGHT</code> or <code>BrushOffAttackAction.LEFT</code>.
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public static ToHitData toHit(Game game, int attackerId,
@@ -144,7 +142,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }

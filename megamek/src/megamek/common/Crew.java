@@ -67,7 +67,7 @@ public class Crew implements Serializable {
 
     // StratOps fatigue points
     private int fatigue;
-    //also need to track turns for fatigue by pilot because some may have later deployment
+    // also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueCount;
 
     //region RPG Skills
@@ -107,7 +107,7 @@ public class Crew implements Serializable {
     private final boolean[] koThisRound; // did I go KO this game round?
 
     // TODO: Allow individual crew to have SPAs, which involves determining which work for individuals
-    //and which work for the entire unit.
+    // and which work for the entire unit.
     private PilotOptions options = new PilotOptions();
 
     // SPA RangeMaster range bands
@@ -325,7 +325,7 @@ public class Crew implements Serializable {
         resetActedFlag();
 
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
-        //and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
+        // and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = new String[slots];
         for (int i = 0; i < slots; i++) {
             externalId[i] = UUID.randomUUID().toString();
@@ -997,20 +997,18 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
-     * @param game the game to use to determine the modifier
+     * @param game The {@link Game} to use to determine the modifier
+     * @return the BV multiplier for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier(Game game) {
         return getBVSkillMultiplier(true, game);
     }
 
     /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
      * @param usePiloting whether or not to use the default value non-anti-mech
      *                    infantry/BA should not use the anti-mech skill
-     * @param game the game to use to determine the modifier
+     * @param game The {@link Game} to use to determine the modifier
+     * @return the BV multiplier for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier(boolean usePiloting, Game game) {
         int pilotVal = getPiloting();
@@ -1022,7 +1020,7 @@ public class Crew implements Serializable {
 
     public double getBVImplantMultiplier() {
 
-        // get highest level
+        // get the highest level
         int level = 1;
         if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             level = 2;
@@ -1284,7 +1282,7 @@ public class Crew implements Serializable {
      */
     private void activeStatusChanged() {
         //Cockpit command console can be swapped deliberately by the player and should not be changed
-        //automatically unless the current pilot becomes inactive.
+        // automatically unless the current pilot becomes inactive.
         if (crewType.equals(CrewType.COMMAND_CONSOLE)
                 && isActive(getCurrentPilotIndex())) {
             return;

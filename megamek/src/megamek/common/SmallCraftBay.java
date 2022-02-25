@@ -93,10 +93,10 @@ public final class SmallCraftBay extends Bay {
 
         // Only ASFs, Fighter-mode LAMs or Small Craft
         if (((unit.isAero()) 
-        		&& !(unit instanceof FighterSquadron) 
-        		&& !(unit instanceof Dropship) 
-        		&& !(unit instanceof Jumpship)) 
-        		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
+                && !(unit instanceof FighterSquadron)
+                && !(unit instanceof Dropship)
+                && !(unit instanceof Jumpship))
+                || ((unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
 
@@ -190,8 +190,8 @@ public final class SmallCraftBay extends Bay {
     public Vector<Integer> initializeRecoverySlots() {
         Vector<Integer> slots = new Vector<>();
         // We have to account for changes in the number of doors, so remove all slots first.
-    	slots.removeAllElements();
-    	//now add 2 slots back on for each functional door.
+        slots.removeAllElements();
+        // now add 2 slots back on for each functional door.
         for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
@@ -246,9 +246,9 @@ public final class SmallCraftBay extends Bay {
     // destroy a door
     @Override
     public void destroyDoor() {
-    	if (getCurrentDoors() > 0) {
-    		setCurrentDoors(getCurrentDoors() - 1);
-    	}
+        if (getCurrentDoors() > 0) {
+            setCurrentDoors(getCurrentDoors() - 1);
+        }
     
         // get rid of two empty recovery slots
         // it doesn't matter which ones

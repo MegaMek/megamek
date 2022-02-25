@@ -15,16 +15,16 @@
  */
 package megamek.common.verifier;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.*;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -35,13 +35,13 @@ import java.util.Map;
 
 /**
  * Performs verification of the validity of different types of 
- * <code>Entity</code> subclasses.  Most of the actual validation is performed
+ * <code>Entity</code> subclasses. Most of the actual validation is performed
  * by <code>TestEntity</code> and its subclasses. 
  * 
  * @author Reinhard Vicinus
  */
 @XmlRootElement(name = "entityverifier")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(value = XmlAccessType.NONE)
 public class EntityVerifier implements MechSummaryCache.Listener {
     public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml";
 

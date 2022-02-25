@@ -1,6 +1,7 @@
 Version:1.1
 Crosscut
 ED-XX 'Ichabod'
+mul id:744
 
 Config:Biped
 TechBase:Inner Sphere

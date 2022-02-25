@@ -15,6 +15,10 @@ Zhukov Heavy Tank
 <Model>
 (Liao)
 </Model>
+
+<mul id:>
+3649
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

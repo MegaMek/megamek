@@ -1,6 +1,7 @@
 Version:1.0
 Stinger
 C 2
+mul id:8128
 
 Config:Biped
 techbase:Clan

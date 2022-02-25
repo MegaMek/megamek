@@ -20,6 +20,10 @@ O-66 'Oppie' Hazardous Materials Recovery Vehicle
 O-66 HMRV
 </Model>
 
+<mul id:>
+4740
+</mul id:>
+
 <Tonnage>
 150
 </Tonnage>

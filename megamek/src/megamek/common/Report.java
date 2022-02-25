@@ -543,6 +543,11 @@ public class Report implements Serializable {
      * @param v a Vector of Report objects
      */
     public static void addNewline(Vector<Report> v) {
+        if (v.isEmpty()) {
+            // We can't add a new line to an empty report vector
+            return;
+        }
+
         try {
             v.elementAt(v.size() - 1).newlines++;
         } catch (Exception ex) {

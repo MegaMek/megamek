@@ -19,6 +19,10 @@ Grenadier Battle Armor
 [SL]
 </Model>
 
+<mul id:>
+4244
+</mul id:>
+
 <chassis>
 biped
 </chassis>

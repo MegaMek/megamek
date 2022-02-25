@@ -15,6 +15,10 @@ Heavy Infantry
 <Model>
 Heavy Urban Response Platoon
 </Model>
+
+<mul id:>
+1436
+</mul id:>
 <squad_size>
 7
 </squad_size>

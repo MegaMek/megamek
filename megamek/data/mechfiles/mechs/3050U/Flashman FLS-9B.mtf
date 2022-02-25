@@ -1,6 +1,7 @@
 Version:1.0
 Flashman
 FLS-9B
+mul id:1125
 
 Config:Biped
 TechBase:Inner Sphere

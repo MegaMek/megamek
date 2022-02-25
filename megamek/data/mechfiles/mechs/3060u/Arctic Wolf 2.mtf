@@ -1,6 +1,7 @@
 Version:1.0
 Arctic Wolf
 2
+mul id:100
 
 Config:Biped
 TechBase:Clan

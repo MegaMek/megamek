@@ -1252,11 +1252,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if (cmd.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) {
             // pop up are you sure dialog
-            if (!((ce() instanceof VTOL) && ce().hasWorkingMisc(
-                    MiscType.F_JET_BOOSTER))) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"),
+                    Messages.getString("MovementDisplay.ConfirmMASCRoll", ce().getMASCTarget()),
+                    true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForMASC(false);
+                }
+            }
+        }
+
+        if (cmd.hasActiveSupercharger() && GUIPreferences.getInstance().getNagForMASC()) {
+            if (!(ce() instanceof VTOL)) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmMoveRoll", ce().getMASCTarget()),
+                        Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
                         true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {

@@ -15,6 +15,10 @@ J. Edgar Light Hover Tank
 <Model>
 (TAG)
 </Model>
+
+<mul id:>
+1642
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

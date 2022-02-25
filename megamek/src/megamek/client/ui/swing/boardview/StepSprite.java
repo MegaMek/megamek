@@ -99,7 +99,7 @@ class StepSprite extends Sprite {
             case MOVE_RUN:
             case MOVE_VTOL_RUN:
             case MOVE_OVER_THRUST:
-                if (step.isUsingMASC()) {
+                if (step.isUsingMASC() || step.isUsingSupercharger()) {
                     col = GUIP.getColor("AdvancedMoveMASCColor");
                 } else {
                     col = GUIP.getColor("AdvancedMoveRunColor");
@@ -484,12 +484,6 @@ class StepSprite extends Sprite {
             costStringBuf.append(")");
         }
 
-        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
-            costStringBuf.append("[");
-            costStringBuf.append(step.getTargetNumberMASC());
-            costStringBuf.append("+]");
-        }
-
         EntityMovementType moveType = step.getMovementType(isLastStep);
         if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
                 || (moveType == EntityMovementType.MOVE_VTOL_RUN)
@@ -516,5 +510,38 @@ class StepSprite extends Sprite {
         graph.drawString(costString, costX, stepPos.y + 39);
         graph.setColor(col);
         graph.drawString(costString, costX - 1, stepPos.y + 38);
+
+        // draw target number hints smaller
+        int rollY = (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
+        StringBuilder rollsStringBuf = new StringBuilder();
+        if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+            rollsStringBuf.append('S');
+            rollsStringBuf.append(step.getTargetNumberSupercharger());
+            rollsStringBuf.append('+');
+        }
+
+        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+            if (step.isUsingSupercharger()) {
+                rollsStringBuf.append(' ');
+            }
+            rollsStringBuf.append('M');
+            rollsStringBuf.append(step.getTargetNumberMASC());
+            rollsStringBuf.append('+');
+        }
+
+        if (rollsStringBuf.length() != 0) {
+            // draw it below the main string.
+            String rollsString = rollsStringBuf.toString();
+            Font smallFont = getMovementFont().deriveFont(getMovementFont().getSize() * 0.5f);
+            graph.setFont(smallFont);
+            int rollsX = stepPos.x + 42;
+            if (shiftFlag) {
+                rollsX -= (graph.getFontMetrics(graph.getFont()).stringWidth(rollsString) / 2);
+            }
+            graph.setColor(Color.darkGray);
+            graph.drawString(rollsString, rollsX, stepPos.y + 39 + rollY);
+            graph.setColor(col);
+            graph.drawString(rollsString, rollsX - 1, stepPos.y + 38 + rollY);
+        }
     }
 }

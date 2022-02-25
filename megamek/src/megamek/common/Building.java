@@ -24,6 +24,12 @@ import java.util.*;
 /**
  * This class represents a single, possibly multi-hex building on the board.
  *
+ * FIXME : This needs a complete rewrite to properly handle the latest building rules
+ *
+ * Rewrite Notes:
+ * TODO : 1) Migrate Magic Numbers to Enums
+ * TODO : 2) Offboard Gun Emplacements: Revisit with a required rules query (CustomMechDialog - 22-Feb-2022)
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {

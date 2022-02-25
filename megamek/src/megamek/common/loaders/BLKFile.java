@@ -523,6 +523,9 @@ public class BLKFile {
 
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
+        if (t.hasMulId()) {
+            blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
+        }
         blk.writeBlockData("year", t.getYear());
         if (t.getOriginalBuildYear() >= 0) {
             blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
@@ -1226,7 +1229,7 @@ public class BLKFile {
 
         } // End has-transporters
     }
-    
+
     /**
      * Class that holds data relating to transport bays
      * and functionality to parse .blk file transport bay entries

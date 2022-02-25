@@ -1320,8 +1320,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        // hull down vees can't fire front weapons
-        if ((ae instanceof Tank) && ae.isHullDown() && weapon != null && (weapon.getLocation() == Tank.LOC_FRONT)) {
+        // hull down vees can't fire front weapons unless indirect
+        if ((ae instanceof Tank) && ae.isHullDown() && (weapon != null) && 
+                (weapon.getLocation() == Tank.LOC_FRONT) && !isIndirect) {
             return Messages.getString("WeaponAttackAction.FrontBlockedByTerrain");
         }
 

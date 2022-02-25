@@ -1,6 +1,7 @@
 Version:1.1
 Starslayer
 STY-2C-EC
+mul id:7680
 
 Config:Biped
 techbase:Mixed (IS Chassis)

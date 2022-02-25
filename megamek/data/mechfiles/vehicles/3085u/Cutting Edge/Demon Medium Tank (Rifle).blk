@@ -15,6 +15,10 @@ Demon Medium Tank
 <Model>
 (Rifle)
 </Model>
+
+<mul id:>
+870
+</mul id:>
 <Tonnage>
 45
 </Tonnage>

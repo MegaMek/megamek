@@ -330,7 +330,7 @@ public class Server implements Runnable {
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl, EmailService mailer) throws IOException {
         this.metaServerUrl = metaServerUrl;
-        this.password = password.length() > 0 ? password : null;
+        this.password = password.isBlank() ? password : null;
         this.mailer = mailer;
 
         // initialize server socket
@@ -6697,7 +6697,7 @@ public class Server implements Runnable {
             if (firstStep && ((entity instanceof Mech) || (entity instanceof Tank))) {
                 // Not necessarily a fall, but we need to give them a new turn to plot movement with
                 // likely reduced MP.
-                fellDuringMovement = checkMASCFailure(entity, md);
+                fellDuringMovement = checkMASCFailure(entity, md) || checkSuperchargerFailure(entity, md);
             }
 
             if (firstStep) {
@@ -6710,7 +6710,7 @@ public class Server implements Runnable {
                         // this one in case it's needed to process a skid.
                         if (processFailedVehicleManeuver(entity, curPos, 0, step,
                                 step.isThisStepBackwards(), lastStepMoveType, distance, 2, mof)) {
-                            if (md.hasActiveMASC()) {
+                            if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
                                 mpUsed = entity.getRunMPwithoutMASC();
@@ -6746,7 +6746,7 @@ public class Server implements Runnable {
                     if (mof > 0) {
                         if (processFailedVehicleManeuver(entity, curPos, 0, step, step.isThisStepBackwards(),
                                 lastStepMoveType, distance, 2, mof)) {
-                            if (md.hasActiveMASC()) {
+                            if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
                                 mpUsed = entity.getRunMPwithoutMASC();
@@ -7517,7 +7517,7 @@ public class Server implements Runnable {
                                 (null == prevStep) ?step : prevStep,
                                         step.isThisStepBackwards(),
                                         lastStepMoveType, distance, mof, mof)) {
-                            if (md.hasActiveMASC()) {
+                            if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                                 mpUsed = entity.getRunMP();
                             } else {
                                 mpUsed = entity.getRunMPwithoutMASC();
@@ -7692,7 +7692,7 @@ public class Server implements Runnable {
                     entity.setSecondaryFacing(curFacing);
 
                     // skid consumes all movement
-                    if (md.hasActiveMASC()) {
+                    if (md.hasActiveMASC() || md.hasActiveSupercharger()) {
                         mpUsed = entity.getRunMP();
                     } else {
                         mpUsed = entity.getRunMPwithoutMASC();
@@ -8657,7 +8657,7 @@ public class Server implements Runnable {
         }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
-        rollTarget = entity.checkSprintingWithMASC(overallMoveType,
+        rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType,
                 entity.mpUsed);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             doSkillCheckInPlace(entity, rollTarget);
@@ -8683,12 +8683,12 @@ public class Server implements Runnable {
             }
         }
 
-        rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, entity.mpUsed);
+        rollTarget = entity.checkSprintingWithMASCAndSupercharger(overallMoveType, entity.mpUsed);
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
         }
         if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-                && md.hasActiveMASC() && entity.canFall()) {
+                && (md.hasActiveMASC() || md.hasActiveSupercharger()) && entity.canFall()) {
             doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
 
@@ -9558,6 +9558,59 @@ public class Server implements Runnable {
             // Check for failure and process it
             if (mascFailure) {
                 addReport(vReport);
+                ApplyMASCOrSuperchargerCriticals(entity, md, crits);
+                return true;
+            }
+        } else {
+            addReport(vReport);
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the entity used a supercharger during movement, and if so checks for
+     * and resolves any failures.
+     *
+     * @param entity  The unit using MASC/supercharger
+     * @param md      The current <code>MovePath</code>
+     * @return        Whether the unit failed the check
+     */
+    private boolean checkSuperchargerFailure(Entity entity, MovePath md) {
+        HashMap<Integer, List<CriticalSlot>> crits = new HashMap<>();
+        Vector<Report> vReport = new Vector<>();
+        if (entity.checkForSuperchargerFailure(md, vReport, crits)) {
+            boolean superchargerFailure = true;
+            // Check to see if the pilot can reroll due to Edge
+            if (entity.getCrew().hasEdgeRemaining()
+                    && entity.getCrew().getOptions()
+                    .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
+                entity.getCrew().decreaseEdge();
+                // Need to reset the SuperchargerUsed flag
+                entity.setSuperchargerUsed(false);
+                // Report to notify user that supercharger check was rerolled
+                Report supercharger_report = new Report(6501);
+                supercharger_report.subject = entity.getId();
+                supercharger_report.indent(2);
+                supercharger_report.addDesc(entity);
+                vReport.add(supercharger_report);
+                // Report to notify user how much edge pilot has left
+                supercharger_report = new Report(6510);
+                supercharger_report.subject = entity.getId();
+                supercharger_report.indent(2);
+                supercharger_report.addDesc(entity);
+                supercharger_report.add(entity.getCrew().getOptions()
+                        .intOption(OptionsConstants.EDGE));
+                vReport.addElement(supercharger_report);
+                // Recheck Supercharger failure
+                if (!entity.checkForSuperchargerFailure(md, vReport, crits)) {
+                    // The reroll passed, don't process the failure
+                    superchargerFailure = false;
+                    addReport(vReport);
+                }
+            }
+            // Check for failure and process it
+            if (superchargerFailure) {
+                addReport(vReport);
                 // If this is supercharger failure we need to damage the supercharger as well as
                 // the additional criticals. For mechs this requires the additional step of finding
                 // the slot and marking it as hit so it can't absorb future damage.
@@ -9579,31 +9632,36 @@ public class Server implements Runnable {
                     }
                     supercharger.setMode("Off");
                 }
-                for (Integer loc : crits.keySet()) {
-                    List<CriticalSlot> lcs = crits.get(loc);
-                    for (CriticalSlot cs : lcs) {
-                        // HACK: if loc is -1, we need to deal motive damage to
-                        // the tank, the severity of which is stored in the critslot index
-                        if (loc == -1) {
-                            addReport(vehicleMotiveDamage((Tank) entity,
-                                    0, true, cs.getIndex()));
-                        } else {
-                            addReport(applyCriticalHit(entity, loc, cs,
-                                    true, 0, false));
-                        }
-                    }
-                }
-                // do any PSR immediately
-                addReport(resolvePilotingRolls(entity));
-                game.resetPSRs(entity);
-                // let the player replot their move as MP might be changed
-                md.clear();
+                ApplyMASCOrSuperchargerCriticals(entity, md, crits);
                 return true;
             }
         } else {
             addReport(vReport);
         }
         return false;
+    }
+
+    private void ApplyMASCOrSuperchargerCriticals(Entity entity, MovePath md,
+                                                  HashMap<Integer, List<CriticalSlot>> crits ) {
+        for (Integer loc : crits.keySet()) {
+            List<CriticalSlot> lcs = crits.get(loc);
+            for (CriticalSlot cs : lcs) {
+                // HACK: if loc is -1, we need to deal motive damage to
+                // the tank, the severity of which is stored in the critslot index
+                if (loc == -1) {
+                    addReport(vehicleMotiveDamage((Tank) entity,
+                            0, true, cs.getIndex()));
+                } else {
+                    addReport(applyCriticalHit(entity, loc, cs,
+                            true, 0, false));
+                }
+            }
+        }
+        // do any PSR immediately
+        addReport(resolvePilotingRolls(entity));
+        game.resetPSRs(entity);
+        // let the player replot their move as MP might be changed
+        md.clear();
     }
 
     /**
@@ -35185,12 +35243,10 @@ public class Server implements Runnable {
                 keptAttacks.add(ah);
             }
         }
+
         // resolve standard to capital one more time
-        handleAttackReports.addAll(checkFatalThresholds(lastAttackerId,
-                lastAttackerId));
-        if (handleAttackReports.size() > 0) {
-            Report.addNewline(handleAttackReports);
-        }
+        handleAttackReports.addAll(checkFatalThresholds(lastAttackerId, lastAttackerId));
+        Report.addNewline(handleAttackReports);
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

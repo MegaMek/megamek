@@ -1,6 +1,7 @@
 Version:1.0
 Hoplite
 HOP-4B
+mul id:4330
 
 Config:Biped
 TechBase:Inner Sphere

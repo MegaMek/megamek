@@ -1,6 +1,7 @@
 Version:1.1
 Thunderbolt
 TDR-11S
+mul id:8193
 
 Config:Biped
 techbase:Inner Sphere

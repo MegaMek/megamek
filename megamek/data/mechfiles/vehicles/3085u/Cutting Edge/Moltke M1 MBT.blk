@@ -15,6 +15,10 @@ Moltke MBT
 <Model>
 M1
 </Model>
+
+<mul id:>
+2205
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

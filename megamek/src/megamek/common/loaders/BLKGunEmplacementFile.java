@@ -44,6 +44,10 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
             e.setModel("");
         }
 
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            e.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
+
         setTechLevel(e);
         setFluff(e);
         checkManualBV(e);

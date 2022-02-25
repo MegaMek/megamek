@@ -29,15 +29,21 @@ import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
+import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * This is the primary MegaMek class.
@@ -78,12 +84,11 @@ public class MegaMek {
             }
 
             getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
+            initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
 
             if (cp.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);
             } else {
-                // Load button ordering
-                ButtonOrderPreferences.getInstance().setButtonPriorities();
                 startGUI();
             }
         } catch (CommandLineParser.ParseException e) {
@@ -222,7 +227,7 @@ public class MegaMek {
      * @return the underlying information for this launch of MegaMek
      */
     public static String getUnderlyingInformation(final String originProject) {
-        return MegaMek.getUnderlyingInformation(originProject, MMConstants.PROJECT_NAME);
+        return getUnderlyingInformation(originProject, MMConstants.PROJECT_NAME);
     }
 
     /**
@@ -230,13 +235,80 @@ public class MegaMek {
      * @param currentProject the currently described project
      * @return the underlying information for this launch
      */
-    public static String getUnderlyingInformation(final String originProject, final String currentProject) {
-        return String.format("Starting %s v%s\n\tRelease Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
-                currentProject, MMConstants.VERSION, MMConstants.RELEASE_DATE, LocalDate.now(),
-                originProject, System.getProperty("java.vendor"), System.getProperty("java.version"),
+    public static String getUnderlyingInformation(final String originProject,
+                                                  final String currentProject) {
+        final LocalDateTime buildDate = getBuildDate();
+        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tRelease Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
+                currentProject, MMConstants.VERSION, ((buildDate == null) ? "N/A" : buildDate),
+                MMConstants.RELEASE_DATE, LocalDate.now(), originProject,
+                System.getProperty("java.vendor"), System.getProperty("java.version"),
                 System.getProperty("os.name"), System.getProperty("os.version"),
                 System.getProperty("os.arch"), Locale.getDefault(), currentProject,
                 Runtime.getRuntime().maxMemory() / Math.pow(2, 30));
+    }
+
+    public static @Nullable LocalDateTime getBuildDate() {
+        try {
+            final URL url = Thread.currentThread().getContextClassLoader().getResource(JarFile.MANIFEST_NAME);
+            if (url == null) {
+                return null;
+            }
+            final Attributes attributes = new Manifest(url.openStream()).getMainAttributes();
+            return LocalDateTime.parse(attributes.getValue("Build-Date"));
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * This is used to initialize suite-wide graphical setups.
+     * @param currentProject the currently described project
+     */
+    public static void initializeSuiteGraphicalSetups(final String currentProject) {
+        // Setup Fonts
+        parseFontDirectory(new File(MMConstants.FONT_DIRECTORY));
+
+        // Setup Themes
+        UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
+        UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+        UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
+        UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf");
+
+        // Set a couple of things to make the Swing GUI look more "Mac-like" on Macs
+        // Taken from: http://www.devdaily.com/apple/mac/java-mac-native-look/Introduction.shtml
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", currentProject);
+
+        // Setup Button Order Preferences
+        ButtonOrderPreferences.getInstance().setButtonPriorities();
+    }
+
+    /**
+     * Recursively search the provided directory, attempting to create and then register truetype
+     * fonts from .ttf files
+     * @param directory the directory to parse
+     */
+    private static void parseFontDirectory(final File directory) {
+        final String[] filenames = directory.list();
+        if (filenames == null) {
+            return;
+        }
+
+        for (final String filename : filenames) {
+            if (filename.toLowerCase().endsWith(MMConstants.TRUETYPE_FONT)) {
+                try (InputStream fis = new FileInputStream(directory.getPath() + '/' + filename)) {
+                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
+                            Font.createFont(Font.TRUETYPE_FONT, fis));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed to parse font", ex);
+                }
+            } else {
+                final File file = new File(directory, filename);
+                if (file.isDirectory()) {
+                    parseFontDirectory(file);
+                }
+            }
+        }
     }
 
     /**

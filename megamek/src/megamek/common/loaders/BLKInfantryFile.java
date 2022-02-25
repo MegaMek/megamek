@@ -49,6 +49,9 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find model block.");
         }
         t.setModel(dataFile.getDataAsString("Model")[0]);
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
 
         setTechLevel(t);
         setFluff(t);

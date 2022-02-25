@@ -1,6 +1,7 @@
 Version:1.0
 Commando
 COM-7B
+mul id:675
 
 Config:Biped
 TechBase:Inner Sphere

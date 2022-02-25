@@ -1,6 +1,7 @@
 Version:1.0
 Spector
 SPR-5S
+mul id:3004
 
 Config:Biped
 TechBase:Inner Sphere

@@ -20,6 +20,10 @@ Kage Light Battle Armor
 (Space)
 </Model>
 
+<mul id:>
+1731
+</mul id:>
+
 <chassis>
 biped
 </chassis>

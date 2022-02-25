@@ -14,13 +14,13 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
-import java.util.*;
-
 import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+
+import java.math.BigInteger;
+import java.util.*;
 
 /**
  * Validation and construction data for advanced aerospace units (jumpships, warships, space stations)

@@ -15,10 +15,10 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -1146,7 +1146,7 @@ public class EntityListFile {
         }
 
         String extraData = crew.writeExtraDataToXMLLine(pos);
-        if (!StringUtil.isNullOrEmpty(extraData)) {
+        if (!StringUtility.isNullOrEmpty(extraData)) {
             output.write(extraData);
         }
     }

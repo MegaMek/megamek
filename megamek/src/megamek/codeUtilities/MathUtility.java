@@ -21,9 +21,6 @@ package megamek.codeUtilities;
 public class MathUtility {
     //region Linear Interpolation
     /**
-     *
-     * @param min
-     * @param max
      * @return integer rounded linear interpolation value between min and max
      */
     public static int lerp(final int min, final int max, final double f) {
@@ -32,7 +29,7 @@ public class MathUtility {
     }
 
     /**
-     * @return linear interpolation value between min and max
+     * @return double linear interpolation value between min and max
      */
     public static double lerp(final double min, final double max, final double f) {
         // The order of operations is important here, to not lose precision
@@ -40,7 +37,7 @@ public class MathUtility {
     }
 
     /**
-     * @return linear interpolation value between min and max
+     * @return float linear interpolation value between min and max
      */
     public static float lerp(final float min, final float max, final float f) {
         // The order of operations is important here, to not lose precision
@@ -48,7 +45,7 @@ public class MathUtility {
     }
 
     /**
-     * @return linear interpolation value between min and max
+     * @return long linear interpolation value between min and max
      */
     public static long lerp(final long min, final long max, final long f) {
         // The order of operations is important here, to not lose precision

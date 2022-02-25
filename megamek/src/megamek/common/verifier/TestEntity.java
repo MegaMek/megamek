@@ -14,16 +14,15 @@
  */
 package megamek.common.verifier;
 
+import megamek.common.*;
+import megamek.common.Entity.MPBoosters;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.StringUtil;
+
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.util.StringUtil;
-
-import megamek.common.Entity.MPBoosters;
 
 /**
  * Abstract parent class for testing and validating instantiations of <code> Entity</code> subclasses.

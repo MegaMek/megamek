@@ -16,6 +16,7 @@ package megamek.client.ui.swing.widget;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.DataVerifier;
 import megamek.client.ui.swing.util.VerifyNotNullOrEmpty;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.util.StringUtil;
 
 import javax.swing.*;
@@ -87,7 +88,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
      * @return TRUE if the field's text value is NULL or an empty {@link String}.
      */
     public boolean isTextNullOrEmpty() {
-        return StringUtil.isNullOrEmpty(getText());
+        return StringUtility.isNullOrEmpty(getText());
     }
 
     /**
@@ -145,16 +146,6 @@ public class VerifiableTextField extends JTextField implements FocusListener {
         }
         verifiers.remove(v);
         setBackground(UIManager.getColor("TextField.background"));
-    }
-
-    /**
-     * @return The text of the field with XML reserved characters properly escaped.
-     */
-    public String getXmlSafeText() {
-        if (isTextNullOrEmpty()) {
-            return "";
-        }
-        return StringUtil.makeXmlSafe(getText());
     }
 
     @Override

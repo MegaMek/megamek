@@ -17,6 +17,7 @@ package megamek.common;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
@@ -14891,7 +14892,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
-            if (StringUtil.isNullOrEmpty(q.getLocation())) {
+            if (StringUtility.isNullOrEmpty(q.getLocation())) {
 
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {

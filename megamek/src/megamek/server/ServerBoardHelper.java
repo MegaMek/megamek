@@ -18,16 +18,15 @@
  */
 package megamek.server;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 class ServerBoardHelper {
     
@@ -50,7 +49,7 @@ class ServerBoardHelper {
             scanForBoardsInDir(boardDir, "", boardSize, result);
         }
         
-        result.sort(StringUtil.stringComparator());
+        result.sort(String::compareTo);
         return result;
     }
     

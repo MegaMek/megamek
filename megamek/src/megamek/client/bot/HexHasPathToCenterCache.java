@@ -13,10 +13,10 @@
  */
 package megamek.client.bot;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.EntityMovementMode;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.StringUtil;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -88,7 +88,7 @@ public final class HexHasPathToCenterCache {
      * @param hexCoords The coordinates, {@link Coords#toFriendlyString()}, of the starting hex.
      */
     void remove(String hexCoords) {
-        if (StringUtil.isNullOrEmpty(hexCoords)) {
+        if (StringUtility.isNullOrEmpty(hexCoords)) {
             return;
         }
         Set<Key> keySet = new HashSet<>(cache.keySet());
@@ -115,7 +115,7 @@ public final class HexHasPathToCenterCache {
          * @throws IllegalArgumentException if hexCoords is NULL or Empty or movementMode is NULL.
          */
         Key(String hexCoords, EntityMovementMode movementMode) {
-            if (StringUtil.isNullOrEmpty(hexCoords)) {
+            if (StringUtility.isNullOrEmpty(hexCoords)) {
                 throw new IllegalArgumentException("Starting Coords is NULL or Empty.");
             }
             if (movementMode == null) {

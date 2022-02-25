@@ -257,7 +257,7 @@ public class MegaMek {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e)+"\n");
+            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
             System.exit(1);
         }
 
@@ -296,12 +296,12 @@ public class MegaMek {
      */
     private static void startClient(String... args) {
         ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
-                MegaMekCommandLineFlag.CLIENT.toString() ,false, true, false);
+                MegaMekCommandLineFlag.CLIENT.toString(), false, true, false);
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e)+"\n");
+            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
             System.exit(1);
         }
 

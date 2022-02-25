@@ -103,7 +103,7 @@ public class Client implements IClientCommandHandler {
     private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
-    public Map<String, Client> bots = new TreeMap<>(StringUtil.stringComparator());
+    public Map<String, Client> bots = new TreeMap<>(String::compareTo);
 
     //Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;

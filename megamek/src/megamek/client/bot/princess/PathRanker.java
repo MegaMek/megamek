@@ -15,10 +15,10 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -167,7 +167,7 @@ public abstract class PathRanker implements IPathRanker {
                 if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                    if (!StringUtil.isNullOrEmpty(validation)) {
+                    if (!StringUtility.isNullOrEmpty(validation)) {
                         msg.append("\n\t").append(validation);
                         continue;
                     }

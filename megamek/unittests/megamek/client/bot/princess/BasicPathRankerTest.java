@@ -15,10 +15,10 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
-import megamek.common.util.StringUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +104,7 @@ public class BasicPathRankerTest {
             failure.append("\nExpected :").append(expected.getRank());
             failure.append("\nActual   :").append(actual.getRank());
         }
-        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }   

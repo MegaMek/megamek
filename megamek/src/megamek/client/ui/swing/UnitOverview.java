@@ -14,38 +14,18 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Vector;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.PMUtil;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.IArmorState;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class UnitOverview implements IDisplayable {
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;

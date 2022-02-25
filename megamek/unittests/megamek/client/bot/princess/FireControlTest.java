@@ -14,16 +14,15 @@
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.util.StringUtil;
+import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
-import megamek.common.weapons.StopSwarmAttack;
 import megamek.server.SmokeCloud;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,13 +31,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -1295,7 +1288,7 @@ public class FireControlTest {
             failure.append("\nExpected: ").append(expected.getDesc());
             failure.append("\nActual:   ").append(actualTHD.getDesc());
         }
-        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }
@@ -2646,7 +2639,7 @@ public class FireControlTest {
             }
         }
 
-        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }
@@ -2676,8 +2669,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
         final FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter, mockTarget, mockGame,
-                                                                  testToHitThreshold);
+                testToHitThreshold);
         Assert.assertFalse("Expected not 0.0.  Got " + plan.getUtility(),
-                           0.00001 > Math.abs(0 - plan.getUtility()));
+                0.00001 > Math.abs(0 - plan.getUtility()));
     }
 }

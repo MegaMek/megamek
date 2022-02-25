@@ -14,9 +14,6 @@
  */
 package megamek.common.verifier;
 
-import java.util.*;
-import java.util.function.Function;
-
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
@@ -31,6 +28,9 @@ import megamek.common.weapons.missiles.MRMWeapon;
 import megamek.common.weapons.missiles.RLWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Class for testing and validating instantiations for Conventional Fighters and

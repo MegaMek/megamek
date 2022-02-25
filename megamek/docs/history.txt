@@ -18,6 +18,8 @@ VERSION HISTORY:
 + Adding JUnit Jupiter 5.8.2
 + PR #3458: Rat Generator Editor UI Updates
 + Issue #3460: Preventing Gun Emplacement Offboard Deployment and NPEs
++ PR #3423: Increasing the chat levels for some useful princess gameplay messages
++ PR #3445: Fixing MegaMek's Javadoc Build
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

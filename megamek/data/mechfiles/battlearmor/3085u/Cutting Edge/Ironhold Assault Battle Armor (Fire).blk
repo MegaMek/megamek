@@ -19,6 +19,10 @@ Ironhold Assault Battle Armor
 (Fire)
 </Model>
 
+<mul id:>
+1622
+</mul id:>
+
 <chassis>
 biped
 </chassis>

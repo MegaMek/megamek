@@ -314,7 +314,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FWL:5,FS:10,TC:1,DC:1</salvage>
 	</faction>
 	<faction key='FS.CL'>
 		<salvage pct='6'></salvage>
@@ -492,7 +492,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:8,LA:10</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='6'></salvage>
@@ -4114,6 +4114,12 @@
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
 		<availability>CC:9,CS:5-,LA:8,CLAN:5,IS:6,Periphery.Deep:6,NIOPS:5-,FS:7,MERC:6,Periphery:6,TC:6,DC:8</availability>
+		<model name='TDR-5D'>
+			<availability>FS:4,MERC:2</availability>
+		</model>
+		<model name='TDR-5L'>
+			<availability>CC:1</availability>
+		</model>
 		<model name='TDR-5S'>
 			<availability>CC:8,LA:8,General:8,CLAN:2-,Periphery.Deep:8,Periphery:8</availability>
 		</model>

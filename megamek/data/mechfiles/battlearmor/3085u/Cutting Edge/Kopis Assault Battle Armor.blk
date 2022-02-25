@@ -20,6 +20,10 @@ Kopis Assault Battle Armor
 'The Dark Alley'
 </Model>
 
+<mul id:>
+1814
+</mul id:>
+
 <chassis>
 biped
 </chassis>

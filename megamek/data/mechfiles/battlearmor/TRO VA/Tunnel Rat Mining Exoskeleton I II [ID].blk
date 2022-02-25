@@ -17,11 +17,15 @@ Tunnel Rat Mining Exoskeleton
 </Name>
 
 <Model>
-I / II [Industrial Drill]
+II [Industrial Drill]
 </Model>
 
+<mul id:>
+7218
+</mul id:>
+
 <year>
-3055
+3058
 </year>
 
 <type>

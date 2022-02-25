@@ -15,6 +15,10 @@ Light Thunderbolt Carrier
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+1877
+</mul id:>
 <Tonnage>
 40
 </Tonnage>

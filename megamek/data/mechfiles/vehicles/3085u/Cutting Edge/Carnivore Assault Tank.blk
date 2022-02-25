@@ -20,6 +20,10 @@ Carnivore Assault Tank
 (Standard)
 </Model>
 
+<mul id:>
+465
+</mul id:>
+
 <Tonnage>
 80
 </Tonnage>

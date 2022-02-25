@@ -19,6 +19,10 @@ Tornado PA(L)
 G12
 </Model>
 
+<mul id:>
+5256
+</mul id:>
+
 <chassis>
 biped
 </chassis>

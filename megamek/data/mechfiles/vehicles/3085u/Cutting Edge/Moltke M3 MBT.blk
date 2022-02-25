@@ -15,6 +15,10 @@ Moltke MBT
 <Model>
 M3
 </Model>
+
+<mul id:>
+2207
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

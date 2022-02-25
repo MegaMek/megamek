@@ -15,6 +15,10 @@ Drillson Heavy Hover Tank
 <Model>
 (Sealed)
 </Model>
+
+<mul id:>
+930
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

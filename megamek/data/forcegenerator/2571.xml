@@ -189,7 +189,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:1,TH:10,LA:4,SL:5</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>

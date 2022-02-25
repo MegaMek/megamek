@@ -403,21 +403,11 @@ public class MiscType extends EquipmentType {
     }
 
     public boolean isShield() {
-        if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_SHIELD_LARGE) || hasSubType((MiscType.S_SHIELD_MEDIUM))
-                || hasSubType(MiscType.S_SHIELD_SMALL))) {
-            return true;
-        }
-        // else
-        return false;
+        return hasFlag(F_CLUB) && hasSubType(S_SHIELD_LARGE | S_SHIELD_MEDIUM | S_SHIELD_SMALL);
     }
 
     public boolean isVibroblade() {
-        if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_VIBRO_LARGE) || hasSubType((MiscType.S_VIBRO_MEDIUM))
-                || hasSubType(MiscType.S_VIBRO_SMALL))) {
-            return true;
-        }
-        // else
-        return false;
+        return hasFlag(F_CLUB) && hasSubType(S_VIBRO_LARGE | S_VIBRO_MEDIUM | S_VIBRO_SMALL);
     }
 
     public boolean isIndustrial() {

@@ -1,6 +1,7 @@
 Version:1.0
 UrbanMech
 UM-R60L
+mul id:3355
 
 Config:Biped
 TechBase:Inner Sphere

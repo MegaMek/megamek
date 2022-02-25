@@ -13,17 +13,17 @@
  */
 package megamek.common.options;
 
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.bind.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
@@ -403,20 +403,16 @@ public class GameOptions extends AbstractOptions {
     public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
             JAXBContext jc = JAXBContext.newInstance(GameOptionsXML.class, Option.class, BasicOption.class);
-            
+
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            
+
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            try {
-                marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            } catch (PropertyException ex) {
-                marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            }
-            
+            marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
-            
+
             marshaller.marshal(element, new File(file));
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed writing Game Options XML", ex);

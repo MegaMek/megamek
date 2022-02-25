@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 C
+mul id:303
 
 Config:Biped
 TechBase:Clan

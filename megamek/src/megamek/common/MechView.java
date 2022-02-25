@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -245,11 +246,22 @@ public class MechView {
         if (useAlternateCost && entity.getAlternateCost() > 0) {
             cost = entity.getAlternateCost();
         }
-        sHead.add(new LabeledElement(Messages.getString("MechView.Cost"),//
+        sHead.add(new LabeledElement(Messages.getString("MechView.Cost"),
                 dFormatter.format(cost) + " C-bills"));
-        if (!entity.getSource().isEmpty()) {
-            sHead.add(new LabeledElement(Messages.getString("MechView.Source"), entity.getSource()));//
+        if (entity.hasMulId()) {
+            sHead.add(new HyperLinkElement(MMConstants.MUL_URL_PREFIX + entity.getMulId(),
+                    Messages.getString("MechView.Source")));
+            if (!entity.getSource().isEmpty()) {
+                sHead.add(new LabeledElement("", entity.getSource()));
+            } else {
+                sHead.add(new LabeledElement("", Messages.getString("MechView.Unknown")));
+            }
+        } else {
+            if (!entity.getSource().isEmpty()) {
+                sHead.add(new LabeledElement(Messages.getString("MechView.Source"), entity.getSource()));
+            }
         }
+
         UnitRole role = UnitRoleHandler.getRoleFor(entity);
         if (role != UnitRole.UNDETERMINED) {
             sHead.add(new LabeledElement("Role", role.toString()));
@@ -1334,6 +1346,30 @@ public class MechView {
         @Override
         public String toHTML() {
             return value + "<br/>\n";
+        }
+    }
+
+    /**
+     * Displays a hyperlink. Does not add a line break after itself.
+     */
+    private static class HyperLinkElement implements ViewElement {
+
+        private final String address;
+        private final String displayText;
+
+        HyperLinkElement(String address, String displayText) {
+            this.address = address;
+            this.displayText = displayText;
+        }
+
+        @Override
+        public String toPlainText() {
+            return displayText;
+        }
+
+        @Override
+        public String toHTML() {
+            return "<A HREF=" + address + ">" + displayText + "</A>";
         }
     }
     

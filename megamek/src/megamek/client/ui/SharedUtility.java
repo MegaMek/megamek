@@ -561,10 +561,10 @@ public class SharedUtility {
         checkNag(rollTarget, nagReport, psrList);
 
         //if we sprinted with MASC or a supercharger, then we need a PSR
-        rollTarget = entity.checkSprintingWithMASC(overallMoveType, md.getMpUsed());
+        rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType, md.getMpUsed());
         checkNag(rollTarget, nagReport, psrList);
 
-        rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
+        rollTarget = entity.checkSprintingWithMASCAndSupercharger(overallMoveType, md.getMpUsed());
         checkNag(rollTarget, nagReport, psrList);
 
         rollTarget = entity.checkUsingOverdrive(overallMoveType);

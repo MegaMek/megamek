@@ -20,6 +20,10 @@ Elemental Battle Armor
 (Space) [MicroPL]
 </Model>
 
+<mul id:>
+955
+</mul id:>
+
 <chassis>
 biped
 </chassis>

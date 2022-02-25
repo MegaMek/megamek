@@ -1,6 +1,7 @@
 Version:1.0
 Crossbow
 T
+mul id:8235
 
 Config:Biped Omnimech
 techbase:Clan

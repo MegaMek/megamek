@@ -1,6 +1,7 @@
 Version:1.1
 BattleMaster
 BLR-3M (Rogers)
+mul id:3805
 
 Config:Biped
 TechBase:Inner Sphere

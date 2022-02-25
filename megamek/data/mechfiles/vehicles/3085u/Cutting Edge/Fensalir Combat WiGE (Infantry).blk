@@ -20,6 +20,10 @@ Fensalir Combat WiGE
 (Infantry)
 </Model>
 
+<mul id:>
+1056
+</mul id:>
+
 <Tonnage>
 80
 </Tonnage>

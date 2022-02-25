@@ -1,6 +1,7 @@
 Version:1.0
 Raptor
 RTX1-OR
+mul id:2655
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

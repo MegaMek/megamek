@@ -1,6 +1,7 @@
 Version:1.0
 Locust
 LCT-7S
+mul id:8200
 
 Config:Biped
 techbase:Mixed (IS Chassis)

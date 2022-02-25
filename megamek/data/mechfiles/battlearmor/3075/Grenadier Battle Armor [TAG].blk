@@ -19,6 +19,10 @@ Grenadier Battle Armor
 [TAG]
 </Model>
 
+<mul id:>
+4245
+</mul id:>
+
 <chassis>
 biped
 </chassis>

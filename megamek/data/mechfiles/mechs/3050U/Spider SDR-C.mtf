@@ -1,6 +1,7 @@
 Version:1.0
 Spider
 SDR-C
+mul id:3020
 
 Config:Biped
 TechBase:Inner Sphere

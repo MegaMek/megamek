@@ -1,6 +1,7 @@
 Version:1.1
 Scorpion
 C
+mul id:8316
 
 Config:Quad
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 BLR-1GHE 'HellSinger'
+mul id:5877
 
 Config:Biped
 TechBase:Inner Sphere

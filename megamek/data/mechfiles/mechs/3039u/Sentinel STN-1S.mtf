@@ -1,6 +1,7 @@
 Version:1.0
 Sentinel
 STN-1S
+mul id:2856
 
 Config:Biped
 TechBase:Inner Sphere

@@ -15,6 +15,10 @@ Jump Laser Infantry
 <Model>
 Principes III 103rd Jump Battalion
 </Model>
+
+<mul id:>
+1717
+</mul id:>
 <squad_size>
 7
 </squad_size>

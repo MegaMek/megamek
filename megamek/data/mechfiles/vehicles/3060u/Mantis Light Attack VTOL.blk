@@ -15,6 +15,10 @@ Mantis Light Attack VTOL
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+2029
+</mul id:>
 <Tonnage>
 15
 </Tonnage>

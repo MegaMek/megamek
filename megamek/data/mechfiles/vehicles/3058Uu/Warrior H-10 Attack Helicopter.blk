@@ -20,6 +20,10 @@ Warrior Attack Helicopter
 H-10
 </Model>
 
+<mul id:>
+3512
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>

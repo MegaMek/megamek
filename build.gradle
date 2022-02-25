@@ -4,10 +4,10 @@ plugins {
 
 allprojects {
     apply plugin: 'java'
-    
+
     sourceCompatibility = 11
     targetCompatibility = 11
-    
+
     repositories {
         mavenCentral()
         maven { url 'https://jitpack.io' } // SerialKiller master branch
@@ -16,7 +16,7 @@ allprojects {
 
 subprojects {
     group = 'org.megamek'
-    version = '0.49.7-SNAPSHOT'
+    version = '0.49.8-SNAPSHOT'
 }
 
 ext {
@@ -25,11 +25,11 @@ ext {
     // these properties to append the branch name to the artifact id if the repo is not in the master
     // branch, making it available separately to the child project. 
     mmBranch = grgit.branch.current().name
-    mmBranchTag = mmBranch.equals('master')? '' : '-' + mmBranch
+    mmBranchTag = mmBranch.equals('master') ? '' : '-' + mmBranch
 }
 
 // A properties_local.gradle file can be used to override any of the above options. For instance,
-// rootProject.ext.gitRoot = 'file:///path/to/local/repo' will cause the release target to clone a
+// rootProject.ext.mmGitRoot = 'file:///path/to/local/repo' will cause the release target to clone a
 // local copy of the repository rather than downloading it.
 
 def localProperties = file('properties_local.gradle')

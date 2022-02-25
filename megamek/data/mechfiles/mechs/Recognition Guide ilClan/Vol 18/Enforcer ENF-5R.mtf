@@ -1,6 +1,7 @@
 Version:1.0
 Enforcer
 ENF-5R
+mul id:8249
 
 Config:Biped
 techbase:Inner Sphere

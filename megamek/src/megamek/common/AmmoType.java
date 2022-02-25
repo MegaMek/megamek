@@ -2958,7 +2958,7 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "284, TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_B)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setISAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE).setPrototypeFactions(F_TH)
+                .setAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH);
         return ammo;
     }
@@ -2987,7 +2987,7 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "284, TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_B)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE).setPrototypeFactions(F_TH)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH);
         return ammo;
     }
@@ -3016,7 +3016,8 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "284, TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_B)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE).setPrototypeFactions(F_TH)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+                .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH);
         return ammo;
     }

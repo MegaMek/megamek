@@ -1,6 +1,7 @@
 Version:1.0
 Penetrator
 PTR-6M
+mul id:2467
 
 Config:Biped
 TechBase:Inner Sphere

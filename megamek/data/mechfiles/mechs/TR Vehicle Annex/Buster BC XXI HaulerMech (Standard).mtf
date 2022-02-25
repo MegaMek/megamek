@@ -1,6 +1,7 @@
 Version:1.1
 Buster BC XXI HaulerMech
 (Standard)
+mul id:7220
 
 Config:Biped
 TechBase:Inner Sphere

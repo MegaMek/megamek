@@ -15,6 +15,10 @@ Tyr Infantry Support Tank
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+5314
+</mul id:>
 <Tonnage>
 45
 </Tonnage>

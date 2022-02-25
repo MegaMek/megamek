@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 C 3
+mul id:7477
 
 Config:Biped
 techbase:Clan

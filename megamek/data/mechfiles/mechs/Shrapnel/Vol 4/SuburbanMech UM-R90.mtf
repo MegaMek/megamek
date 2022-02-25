@@ -1,6 +1,7 @@
 Version:1.0
 SuburbanMech
 UM-R90
+mul id:7928
 
 Config:Biped
 techbase:Inner Sphere

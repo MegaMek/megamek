@@ -1,6 +1,7 @@
 Version:1.0
 Colossus
 CLS-4S
+mul id:662
 
 Config:Biped
 TechBase:Inner Sphere

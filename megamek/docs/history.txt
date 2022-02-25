@@ -1,6 +1,25 @@
 VERSION HISTORY:
 ----------------
-0.49.7-SNAPSHOT
+0.49.8-SNAPSHOT
++ PR #3431: MUL ID
++ PR #3447: Adding Build-Date to the Manifest File
++ Issue #3436: Choose splash image and sizing based on dpi scaled sizes
++ PR #3451: Properly Treating Blank Passwords as not being Passwords
++ Issue #3435: Check if the report vector is empty before adding a new line
++ Issues #2749 and #3418: Proper Supercharger Implementation and Improved MASC/Supercharger Hex Movement Display
++ PR #3446: Adding the Legendary SkillLevel
++ PR #3427: Properly Loading All Fonts in MegaMek
++ Updating to Mockito Core 4.3.1 from 4.2.0
++ Updating to JAXB 3.0.1 from 2.3.2
++ Updating to JAXB Runtime 3.0.2 from 2.3.2
++ PR #3452: Mech melee equipment validation update
++ PR #3454: Hull-down vehicles can indirectly fire body-mounted LRMs per errata
++ Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
++ Adding JUnit Jupiter 5.8.2
++ PR #3458: Rat Generator Editor UI Updates
++ Issue #3460: Preventing Gun Emplacement Offboard Deployment and NPEs
+
+0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit
 + PR #3347: TacOps: AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
 + PR #3346: Logging: Default Global Exception Handler and Standardized Legacy Logging
@@ -13,7 +32,7 @@ VERSION HISTORY:
 + Updating to Apache FreeMarker 2.3.31 from 2.3.28
 + Updating to Jackson Core 2.13.1 from 2.9.8
 + Issue #3357: Updating to Jakarta.Mail 2.0.1 from Javax.Mail 1.6.2
-+ Data: Equipment Name fixes/standardizations identified with recent changes to MML equipment tab.  Biggest change was removing duplicate C3 Master entries and consolidating them in a C3 weapons folder. Includes fixes to impacted unit files. 
++ Data: Equipment Name fixes/ standardizations identified with recent changes to MML equipment tab.  Biggest change was removing duplicate C3 Master entries and consolidating them in a C3 weapons folder. Includes fixes to impacted unit files. 
 + Issue #3371: Fixing TurnOrdered NPEs for null Entity game and null Player team
 + Data: Updated EVS Map Pack (I like big maps I cannot lie)
 + Issue: #3384: Swarm LRMs not available, but Swarm-I are
@@ -39,6 +58,9 @@ VERSION HISTORY:
 + Issue #3363: Apply Zweihander damage to both arms when using an improvised club
 + PR #3428: Creating a standard FontComboBox
 + PR #3432: Attack Handler: Fixing return packet NPE and Improving Logging
++ Data: New Sprites, unit file fixes and ForcePack Wolf Dragoons.
++ Issue #3444: Clan Tech base can have Artillery pieces but Ammo for them is not available.
++ Data: Updated Force Generator to include RecGuide 16, Updated Flynn, SimonLandmine, Ulysses Map Packs, Updated Camos and new sprites. 
 
 0.49.6 (2021-12-31 2200 UTC)
 + Issue #2917: Missing Water Tile Hexes in Nightly Builds

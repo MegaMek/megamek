@@ -1,6 +1,7 @@
 Version:1.0
 Crosscut
 ED-X5M LoggerMech MOD
+mul id:7170
 
 Config:Biped
 TechBase:Inner Sphere

@@ -15,6 +15,10 @@ Drillson Heavy Hover Tank
 <Model>
 (ERLL)
 </Model>
+
+<mul id:>
+929
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

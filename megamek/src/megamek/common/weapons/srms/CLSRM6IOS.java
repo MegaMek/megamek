@@ -47,7 +47,7 @@ public class CLSRM6IOS extends SRMWeapon {
         cost = 64000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)

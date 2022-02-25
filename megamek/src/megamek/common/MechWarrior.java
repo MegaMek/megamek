@@ -141,6 +141,6 @@ public class MechWarrior extends EjectedCrew {
     
     @Override
     public boolean canSpot() {
-    	return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
+        return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
     }
 }

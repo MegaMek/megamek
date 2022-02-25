@@ -2585,7 +2585,6 @@ public class Jumpship extends Aero {
      */
     @Override
     protected int calculateWalk() {
-    	return walkMP;
+        return walkMP;
     }
-    
 }

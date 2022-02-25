@@ -2026,17 +2026,17 @@ public class MULParser {
      *  @param entity
      */
     private void parseDropCrit(Element dropCritTag, Entity entity) {
-    	String dockingcollar = dropCritTag.getAttribute(DOCKING_COLLAR);
-    	String kfboom = dropCritTag.getAttribute(KFBOOM);
+        String dockingcollar = dropCritTag.getAttribute(DOCKING_COLLAR);
+        String kfboom = dropCritTag.getAttribute(KFBOOM);
 
-    	Dropship d = (Dropship) entity;
+        Dropship d = (Dropship) entity;
 
-    	if (dockingcollar.length() > 0) {
-    		d.setDamageDockCollar(true);
-    	}
-    	if (kfboom.length() > 0) {
-    		d.setDamageKFBoom(true);
-    	}
+        if (dockingcollar.length() > 0) {
+            d.setDamageDockCollar(true);
+        }
+        if (kfboom.length() > 0) {
+            d.setDamageKFBoom(true);
+        }
     }
 
     /**
@@ -2046,55 +2046,55 @@ public class MULParser {
      *  @param entity
      */
     private void parseTransportBay (Element bayTag, Entity entity) {
-    	// Look for the element's attributes.
-    	String index = bayTag.getAttribute(INDEX);
+        // Look for the element's attributes.
+        String index = bayTag.getAttribute(INDEX);
 
-    	int bay;
-    	// Did we find the required index?
-    	if ((index == null) || (index.length() == 0)) {
-    		warning.append("Could not find index for bay.\n");
-    		return;
-    	} else {
-    	// Try to get a good index value.
-    		bay = -1;
-    		try {
-    			bay = Integer.parseInt(index);
-    		} catch (NumberFormatException excep) {
-    			// Handled by the next if test
-    		}
-    		if (bay < 0) {
-    			warning.append("Found invalid index value for bay: ").append(index).append(".\n");
-    			return;
-    		} else if (entity.getBayById(bay) == null) {
-    			warning.append("The entity, ")
-    			.append(entity.getShortName())
-    			.append(" does not have a bay at index: ")
-    			.append(bay).append(".\n");
-    			return;
-    		}
-    	} // End check for required fields
+        int bay;
+        // Did we find the required index?
+        if ((index == null) || (index.length() == 0)) {
+            warning.append("Could not find index for bay.\n");
+            return;
+        } else {
+        // Try to get a good index value.
+            bay = -1;
+            try {
+                bay = Integer.parseInt(index);
+            } catch (NumberFormatException excep) {
+                // Handled by the next if test
+            }
+            if (bay < 0) {
+                warning.append("Found invalid index value for bay: ").append(index).append(".\n");
+                return;
+            } else if (entity.getBayById(bay) == null) {
+                warning.append("The entity, ")
+                .append(entity.getShortName())
+                .append(" does not have a bay at index: ")
+                .append(bay).append(".\n");
+                return;
+            }
+        } // End check for required fields
 
-    	Bay currentbay = entity.getBayById(bay);
+        Bay currentbay = entity.getBayById(bay);
 
-    	// Handle children for each bay.
-    	NodeList nl = bayTag.getChildNodes();
-    	for (int i = 0; i < nl.getLength(); i++) {
-    		Node currNode = nl.item(i);
+        // Handle children for each bay.
+        NodeList nl = bayTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
 
-    		if (currNode.getParentNode() != bayTag) {
-    			continue;
-    		}
-    		int nodeType = currNode.getNodeType();
-    		if (nodeType == Node.ELEMENT_NODE) {
-    			String nodeName = currNode.getNodeName();
-    			if (nodeName.equalsIgnoreCase(BAYDAMAGE)) {
-    				currentbay.setBayDamage(Double.parseDouble(currNode.getTextContent()));
-    			} else if (nodeName.equalsIgnoreCase(BAYDOORS)) {
+            if (currNode.getParentNode() != bayTag) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                String nodeName = currNode.getNodeName();
+                if (nodeName.equalsIgnoreCase(BAYDAMAGE)) {
+                    currentbay.setBayDamage(Double.parseDouble(currNode.getTextContent()));
+                } else if (nodeName.equalsIgnoreCase(BAYDOORS)) {
                     currentbay.setCurrentDoors(Integer.parseInt(currNode.getTextContent()));
-    		    } else if (nodeName.equalsIgnoreCase(LOADED)) {
+                } else if (nodeName.equalsIgnoreCase(LOADED)) {
                     currentbay.troops.add(Integer.parseInt(currNode.getTextContent()));
                 }
-    	    }
+            }
         }
     } // End parseTransportBay
 

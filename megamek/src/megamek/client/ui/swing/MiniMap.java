@@ -1341,8 +1341,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-						+ e.getOldPhase() + ".png");
+                File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+                        + e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (IOException e1) {

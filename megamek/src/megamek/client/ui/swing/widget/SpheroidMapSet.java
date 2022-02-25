@@ -118,7 +118,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         vLabels[7].setValue(getCriticalHitTally(t.getFCSHits(), 3));
         vLabels[8].setValue(getCriticalHitTally(t.getSensorHits(), 3));
         if (t instanceof SmallCraft) {
-            //add in thrusters
+            // add in thrusters
             SmallCraft sc = (SmallCraft) t;
             vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(), 3));
             vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(), 3));
@@ -127,18 +127,18 @@ public class SpheroidMapSet implements DisplayMapSet{
             vLabels[10].setValue("-");
         }
         if (t instanceof Dropship) {
-        	// add docking collar and kf boom
-        	Dropship ds = (Dropship) t;
-        	int kfboom = 0;
-        	int collar = 0;
-        	if (ds.isKFBoomDamaged()) {
-        		kfboom = 1;
-        	}
-        	vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
-        	if (ds.isDockCollarDamaged()) {
-        		collar = 1;
-        	}
-        	vLabels[12].setValue(getCriticalHitTally(collar, 1));
+            // add docking collar and kf boom
+            Dropship ds = (Dropship) t;
+            int kfboom = 0;
+            int collar = 0;
+            if (ds.isKFBoomDamaged()) {
+                kfboom = 1;
+            }
+            vLabels[11].setValue(getCriticalHitTally(kfboom, 1));
+            if (ds.isDockCollarDamaged()) {
+                collar = 1;
+            }
+            vLabels[12].setValue(getCriticalHitTally(collar, 1));
         }
 
     }

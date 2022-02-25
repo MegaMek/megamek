@@ -34,7 +34,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     Vector<Report> vPhaseReport;
 
     //track turns of snow, sleet, and ice
-    //do it this way because we may eventually implement more customizable conditions
+    // do it this way because we may eventually implement more customizable conditions
     int modSnowTurn = 0;
     int heavySnowTurn = 0;
     int sleetTurn = 0;
@@ -150,7 +150,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
                 Hex currentHex = board.getHex(currentXCoord, currentYCoord);
 
-                //check for fires and potentially put them out
+                // check for fires and potentially put them out
                 if (currentHex.containsTerrain(Terrains.FIRE)) {
                     //only standard fires get put out
                     if (currentHex.terrainLevel(Terrains.FIRE)
@@ -199,7 +199,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                     server.getHexUpdateSet().add(currentCoords);
                 }
 
-                //check for the melting of any snow or ice
+                // check for the melting of any snow or ice
                 if (currentHex.terrainLevel(Terrains.SNOW) > 1
                         && currentHex.containsTerrain(Terrains.FIRE) 
                         && currentHex.getFireTurn() == 3) {
@@ -230,7 +230,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                     }
                 }
 
-                //check for rapids/torrents created by wind
+                // check for rapids/torrents created by wind
                 //FIXME: This doesn't seem to be doing anything
                 if (conditions.getWindStrength() > PlanetaryConditions.WI_MOD_GALE
                         && currentHex.containsTerrain(Terrains.WATER) 

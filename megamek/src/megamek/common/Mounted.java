@@ -91,7 +91,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
     // I can also use this for weapons of the same type on a capital fighter
-    //and now Machine Gun Arrays too!
+    // and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<>();
     private Vector<Integer> bayAmmo = new Vector<>();
     
@@ -1670,11 +1670,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
     
     public boolean isOmniPodMounted() {
-    	return omniPodMounted;
+        return omniPodMounted;
     }
     
     public void setOmniPodMounted(boolean omniPodMounted) {
-    	this.omniPodMounted = omniPodMounted;
+        this.omniPodMounted = omniPodMounted;
     }
 
     public boolean isWeaponGroup() {

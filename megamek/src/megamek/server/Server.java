@@ -2169,7 +2169,7 @@ public class Server implements Runnable {
                 resetActivePlayersDone();
                 rollInitiative();
                 //Cockpit command consoles that switched crew on the previous round are ineligible for force
-                //commander initiative bonus. Now that initiative is rolled, clear the flag.
+                // commander initiative bonus. Now that initiative is rolled, clear the flag.
                 game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
                 if (!game.shouldDeployThisRound()) {
@@ -4986,9 +4986,8 @@ public class Server implements Runnable {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
-                    switch (hitSide) {// quite hackish...I think it ought to
-                        // work, though.
-                        case 0:// can this happen?
+                    switch (hitSide) { // quite hackish... I think it ought to work, though.
+                        case 0: // can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
                         case 1:
@@ -5079,8 +5078,8 @@ public class Server implements Runnable {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
-                    switch (hitSide) {// quite hackish...I think it ought to work, though.
-                        case 0:// can this happen?
+                    switch (hitSide) { // quite hackish... I think it ought to work, though.
+                        case 0: // can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
                         case 1:
@@ -6783,7 +6782,7 @@ public class Server implements Runnable {
                     }
                 } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0) {
                     //External units on LAMs, including swarmers, fall automatically and take damage,
-                    //and the LAM itself may take one or more criticals.
+                    // and the LAM itself may take one or more criticals.
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true, true));
                     }

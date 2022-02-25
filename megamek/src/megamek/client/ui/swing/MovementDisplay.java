@@ -972,7 +972,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
-        //check if there should be a turn timer running
+        // check if there should be a turn timer running
         tt = TurnTimer.init(this, clientgui.getClient());
     }
 
@@ -1496,7 +1496,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String body = Messages
                     .getString("MovementDisplay.MicroliteMove.message");
             clientgui.doAlertDialog(title, body);
-            return;            	
+            return;
         }
         
         if (cmd.automaticWiGELanding(true)
@@ -3116,7 +3116,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Entity tr = game.getEntity(id);
             thisTrain.add(tr);
         }
-        //and store all the valid Hitch transporters that each one has
+        // and store all the valid Hitch transporters that each one has
         //really, there shouldn't be but one per entity. "Towing" front and rear with the
         //tractor in the center isn't going to work well...
         for (Entity e : thisTrain) {
@@ -3157,10 +3157,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             //Set the transporter number in the towed entity from the selection
             choice.setTargetBay(hc.getNumber());
-            //and then the Entity id the transporter is attached to...
+            // and then the Entity id the transporter is attached to...
             choice.setTowedBy(hc.getId());
         } else {
-            //and in case there's just one choice...
+            // and in case there's just one choice...
             choice.setTargetBay(hitchChoices.get(0).getNumber());
             choice.setTowedBy(hitchChoices.get(0).getId());
         }
@@ -5299,10 +5299,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Give the player the opportunity to unload all entities that are stranded
      * on immobile transports.
      * <p/>
-     * According to <a href= "http://www.classicbattletech.com/w3t/showflat
-     * .php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart="
-     * > Randall Bills</a>, the "minimum move" rule allow stranded units to
-     * dismount at the start of the turn.
+     * According to
+     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall Bills</a>,
+     * the "minimum move" rule allow stranded units to dismount at the start of the turn.
      */
     private void unloadStranded() {
         Vector<Entity> stranded = new Vector<>();

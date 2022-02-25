@@ -113,7 +113,7 @@ public class SpheroidPathFinder {
             
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
         }
     }
     

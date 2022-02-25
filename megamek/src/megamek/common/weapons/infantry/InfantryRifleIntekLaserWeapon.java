@@ -45,7 +45,7 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		ammoWeight = 0.0003;
 		shots = 15;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2875, 2880, 2950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

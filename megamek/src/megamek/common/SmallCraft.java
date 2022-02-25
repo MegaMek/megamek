@@ -272,7 +272,7 @@ public class SmallCraft extends Aero {
         if (isPrimitive()) {
             return 1.84 * primitiveFuelFactor();
         }
-    	return 1.84;
+        return 1.84;
     }
 
     @Override
@@ -1010,6 +1010,6 @@ public class SmallCraft extends Aero {
      */
     @Override
     protected int calculateWalk() {
-    	return walkMP;
+        return walkMP;
     }
 }

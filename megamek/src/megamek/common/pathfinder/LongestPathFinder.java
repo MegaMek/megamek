@@ -203,7 +203,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                         return null;
                     } else if (topMpUsed < mpCMpUsed) {
                         //topMP travels less but also uses less movement points so we should keep it
-                        //and add mpCandidate to the list of optimal longest paths.
+                        // and add mpCandidate to the list of optimal longest paths.
                         break;
                     }
                 }
@@ -307,7 +307,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                         + "while traveling the same distance"));
             }
 
-            //assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
+            // assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
             if (!inAthmosphere) {
                 return null; //there is no point considering hexes flown straight if we are not in athmo
             }

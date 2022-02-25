@@ -101,36 +101,36 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     @Override
     protected double locationMultiplier(Entity en, int loc, Mounted mount) {
-    	return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+        return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
     
     @Override
     protected void computeMovement(Entity en) {
-    	en.setAlphaStrikeMovement(movement);    	
+        en.setAlphaStrikeMovement(movement);
     }
     
     @Override
     public String getMovementAsString() {
-    	return movement.entrySet().stream()
-    			.map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
-    					+ "\"" + e.getKey())
-    			.collect(Collectors.joining("/"));    	
+        return movement.entrySet().stream()
+                .map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
+                        + "\"" + e.getKey())
+                .collect(Collectors.joining("/"));
     }
     
     public int getTargetMoveModifier() {
-    	int base = getPrimaryMovementValue();
-    	if (base > 34) {
-    		return 5;
-    	} else if (base > 18) {
-    		return 4;
-    	} else if (base > 12) {
-    		return 3;
-    	} else if (base > 8) {
-    		return 2;
-    	} else if (base > 4) {
-    		return 1;
-    	}
-    	return 0;
+        int base = getPrimaryMovementValue();
+        if (base > 34) {
+            return 5;
+        } else if (base > 18) {
+            return 4;
+        } else if (base > 12) {
+            return 3;
+        } else if (base > 8) {
+            return 2;
+        } else if (base > 4) {
+            return 1;
+        }
+        return 0;
     }
     
     protected static final int[] TROOP_FACTOR = {
@@ -169,13 +169,13 @@ public class AlphaStrikeElement extends BattleForceElement {
     //TODO: Override calculatePointValue(Entity en)
     
     public String getASDamageString(int loc) {
-    	return getASDamageString(loc, true);
+        return getASDamageString(loc, true);
     }
     
     public String getASDamageString(int loc, boolean showIfNoDamage) {
-    	if (!weaponLocations[loc].hasDamage()) {
-    		return "";
-    	}
+        if (!weaponLocations[loc].hasDamage()) {
+            return "";
+        }
         StringBuilder str = new StringBuilder(locationNames[loc]);
         if (locationNames[loc].length() > 0) {
             str.append("(");

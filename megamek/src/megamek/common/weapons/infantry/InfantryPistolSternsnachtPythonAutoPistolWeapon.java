@@ -45,7 +45,7 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
 		ammoWeight = 0.00016;
 		ammoCost = 4;
 		shots = 12;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3048, 3051, 3068, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(F_LC)

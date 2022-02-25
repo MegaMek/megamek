@@ -46,7 +46,7 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         infantryRange = 2;
         ammoWeight = 0.0003;
         shots = 6;
-        rulesRefs = "273,TM";
+        rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false, false, false)
         .setPrototypeFactions(F_FS)

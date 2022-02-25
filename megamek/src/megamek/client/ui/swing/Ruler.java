@@ -26,7 +26,6 @@ import java.awt.event.*;
 
 /**
  * @author Ken Nguyen (kenn)
- * @version 1.0
  */
 public class Ruler extends JDialog implements BoardViewListener {
     private static final long serialVersionUID = -4820402626782115601L;

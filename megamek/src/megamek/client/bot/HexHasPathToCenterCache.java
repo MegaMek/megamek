@@ -24,12 +24,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Maintains a cache of hexes and movement type against whether or not they have a valid path to the center of the
- * board.  This class does not maintain the actual movement path but rather a simple boolean flag of whether a path
- * to center exists.
+ * Maintains a cache of hexes and movement type against whether or not they have a valid path to the
+ * center of the board. This class does not maintain the actual movement path but rather a simple
+ * boolean flag of whether a path to center exists.
  *
  * @author Deric Page (dericpage@users.sourceforge.net)
- * @version %Id%
  * @since 10/20/2014 10:31 AM
  */
 public final class HexHasPathToCenterCache {

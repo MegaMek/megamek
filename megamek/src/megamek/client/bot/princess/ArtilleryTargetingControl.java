@@ -73,9 +73,11 @@ public class ArtilleryTargetingControl {
      * @param damage
      * @param coords
      * @param shooter
-     * @param game
+     * @param game The current {@link Game}
+     * @param owner the {@link Princess} bot to calculate for
      */
-    public double calculateDamageValue(int damage, Coords coords, Entity shooter, Game game, Princess owner) {
+    public double calculateDamageValue(int damage, Coords coords, Entity shooter, Game game,
+                                       Princess owner) {
         if (getDamageValue(damage, coords) != null) {
             return getDamageValue(damage, coords);
         }
@@ -108,7 +110,7 @@ public class ArtilleryTargetingControl {
      * @param damage How much damage will we do
      * @param coords Coordinates to hit
      * @param shooter Entity doing the shooting
-     * @param game Game pointer
+     * @param game The current {@link Game}
      */
     private double calculateDamageValueForHex(int damage, Coords coords, Entity shooter, Game game, Princess owner) {
         double value = 0;
@@ -185,7 +187,7 @@ public class ArtilleryTargetingControl {
      * This includes hexes on and within the max radius of all non-airborne enemy entities
      * and hexes on and within the max radius of all strategic targets.
      * @param shooter Entity doing the shooting
-     * @param game Game pointer
+     * @param game The current {@link Game}
      * @param owner Bot pointer
      */
     private void buildTargetList(Entity shooter, Game game, Princess owner) {
@@ -224,7 +226,7 @@ public class ArtilleryTargetingControl {
      * to the given HexTarget set. 
      * @param coords Center coordinates
      * @param targetList List of target hexes
-     * @param game game pointer
+     * @param game The current {@link Game}
      */
     private void addHexDonuts(Coords coords, Set<Targetable> targetList, Game game) {
         // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
@@ -242,7 +244,7 @@ public class ArtilleryTargetingControl {
     /**
      * Calculate an indirect artillery "fire plan", taking into account the possibility of rotating the turret.
      * @param shooter Entity doing the shooting
-     * @param game Game pointer
+     * @param game The current {@link Game}
      * @param owner Princess pointer
      * @return Firing plan
      */
@@ -255,7 +257,7 @@ public class ArtilleryTargetingControl {
     /**
      * Put together an indirect artillery "fire plan".
      * @param shooter Entity doing the shooting
-     * @param game Game pointer
+     * @param game The current {@link Game}
      * @param owner Princess pointer
      * @return Firing plan
      */
@@ -357,7 +359,7 @@ public class ArtilleryTargetingControl {
     /**
      * Worker function that calculates the shooter's "best" actions that result in a TAG being fired.
      * @param shooter
-     * @param game
+     * @param game The current {@link Game}
      * @param owner
      * @return
      */
@@ -381,7 +383,7 @@ public class ArtilleryTargetingControl {
      * Worker function that selects the appropriate ammo for the given entity and weapon.
      * @param shooter
      * @param currentWeapon
-     * @param game
+     * @param game The current {@link Game}
      * @return
      */
     private int findAmmo(Entity shooter, Mounted currentWeapon, Game game) {

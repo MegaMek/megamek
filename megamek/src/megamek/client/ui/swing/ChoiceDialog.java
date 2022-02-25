@@ -38,11 +38,10 @@ import megamek.client.ui.Messages;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
- * from the available choices. The question string is tokenised on "\n". <p/>
+ * from the available choices. The question string is tokenised on "\n". <p>
  * Refactored from SingleChoiceDialog (which was based on Confirm)
  * 
  * @author suvarov454@sourceforge.net
- * @version $version: $
  */
 public class ChoiceDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 3093043054221558221L;

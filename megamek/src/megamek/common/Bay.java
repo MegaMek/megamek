@@ -220,11 +220,8 @@ public class Bay implements Transporter, ITechnology {
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
-     *            <code>IllegalArgumentException</code> exception will be
-     *            thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {

@@ -570,7 +570,7 @@ public abstract class BotClient extends Client {
     }
     
     /**
-     * Gets valid & empty starting coords around the specified point. This
+     * Gets valid and empty starting coords around the specified point. This
      * method iterates through the list of Coords and returns the first Coords
      * that does not have a stacking violation.
      */

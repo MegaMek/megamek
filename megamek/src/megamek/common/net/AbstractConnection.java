@@ -223,9 +223,8 @@ public abstract class AbstractConnection {
 
     /**
      * Sets the connection ID
-     *
+     * Note: Be careful with using this method
      * @param id new connection ID
-     * @note Be careful with using this method
      */
     public void setId(int id) {
         this.id = id;

@@ -201,7 +201,7 @@ public class KeyBindParser {
      * When the keybinds change, a PreferenceChange with the name KeyBindParser.KEYBINDS_CHANGED
      * is fired.
      *
-     * @param listener - the PreferenceListener</code> that wants to register itself.
+     * @param listener the <code>PreferenceListener</code> that wants to register itself.
      */    
     public synchronized static void addPreferenceChangeListener(IPreferenceChangeListener listener) {
         if (!listeners.contains((listener))) {
@@ -212,7 +212,7 @@ public class KeyBindParser {
     /**
      * De-register an object from being alerted when the key binds (may) have changed.
      *
-     * @param listener - the PreferenceListener</code> that wants to remove itself.
+     * @param listener the <code>PreferenceListener</code> that wants to remove itself.
      */
     public synchronized static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
         listeners.remove(listener);

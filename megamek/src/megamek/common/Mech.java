@@ -462,7 +462,7 @@ public abstract class Mech extends Entity {
     /**
      * OmniMechs have handles for Battle Armor squads to latch onto. Please
      * note, this method should only be called during this Mech's construction.
-     * <p/>
+     * <p>
      * Overrides <code>Entity#setOmni(boolean)</code>
      */
     @Override
@@ -813,7 +813,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Checks whether any type of TSM is active. Industrial and prototype
-     * are always on. Standard is on when heat level is >= 9.
+     * are always on. Standard is on when heat level is &gt;= 9.
      *
      * @param includeIndustrial Whether to include industrial TSM in the check
      * @return Whether the mech has some form of TSM and it's active
@@ -823,7 +823,7 @@ public abstract class Mech extends Entity {
             if (includeIndustrial && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
                 return true;
             } else if (m.getType().hasFlag(MiscType.F_TSM)) {
-                return (heat >=9) || m.getType().hasFlag(MiscType.F_PROTOTYPE);
+                return (heat >= 9) || m.getType().hasFlag(MiscType.F_PROTOTYPE);
             }
         }
         return false;
@@ -1410,7 +1410,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Returns this mech's jumping MP, modified for missing & underwater jets
+     * Returns this mech's jumping MP, modified for missing and underwater jets
      * and gravity.
      */
     @Override
@@ -5669,7 +5669,7 @@ public abstract class Mech extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -5697,7 +5697,7 @@ public abstract class Mech extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -5842,7 +5842,7 @@ public abstract class Mech extends Entity {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range

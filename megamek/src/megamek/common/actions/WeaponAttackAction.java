@@ -757,6 +757,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * To-hit number for attacker firing a generic weapon at the target. Does
      * not factor in any special weapon or ammo considerations, including range
      * modifiers. Also does not include gunnery skill.
+     *
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
@@ -848,7 +850,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * If so, a reason string will be returned. A null return means we can continue
      * processing the attack
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param attackerId  The ID number of the attacking entity
      * @param target The Targetable object being attacked
@@ -2529,7 +2531,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * If so, a reason string will be returned. A null return means we can continue
      * processing the attack
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -2760,15 +2762,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the weather or other special environmental
      * effects. These affect everyone on the board.
-     * @param game  The current game
-     * @param ae    The attacking entity
+     * @param game The current {@link Game}
+     * @param ae The attacking entity
      * @param target The Targetable object being attacked
-     * 
      * @param wtype The WeaponType of the weapon being used
      * @param atype The AmmoType being used for this attack
-     * 
      * @param toHit The running total ToHitData for this WeaponAttackAction
-     * 
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      */
     private static ToHitData compileEnvironmentalToHitMods(Game game, Entity ae, Targetable target, WeaponType wtype,
@@ -2863,7 +2862,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Got a heavy large laser that gets a +1 TH penalty?  You'll find that here.
      * Bonuses related to the attacker's condition?  Ammunition being used?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae    The attacking entity
      * @param spotter   The spotting entity, if using indirect fire
      * @param target The Targetable object being attacked
@@ -3067,7 +3066,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Using precision AC rounds that get a -1 TH bonus?  You'll find that here.
      * Bonuses related to the attacker's condition?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -3211,7 +3210,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Attacker has damaged sensors?  You'll find that here.
      * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param los The calculated LOS between attacker and target
@@ -3495,7 +3494,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Attacker has damaged sensors?  You'll find that here.
      * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -3844,7 +3843,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Pilot wounded?  Has an SPA?  You'll find that here.
      * Defender's a superheavy mech?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param te The target Entity
      * @param toHit The running total ToHitData for this WeaponAttackAction
@@ -4015,7 +4014,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * -4 for shooting at an immobile target?  You'll find that here.
      * Attacker strafing?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -4361,7 +4360,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Also, if the to-hit table is changed due to cover/angle/elevation, look here.
      * -4 for shooting at an immobile target?  Using a weapon with a TH penalty?  Those are in other methods.
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -4598,7 +4597,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * If you're using a weapon that does something totally special and doesn't apply mods like everything else, look here
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -4669,7 +4668,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Convenience method that compiles the ToHit modifiers applicable to infantry/BA swarm attacks
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type
@@ -4780,7 +4779,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Method to handle modifiers for swarm missile secondary targets
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param swarmPrimaryTarget The original Targetable object being attacked
@@ -4902,7 +4901,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * Convenience method that compiles the ToHit modifiers applicable to artillery attacks
      * 
-     * @param game The current game
+     * @param game The current {@link Game}
      * @param ae The Entity making this attack
      * @param target The Targetable object being attacked
      * @param ttype  The targetable object type

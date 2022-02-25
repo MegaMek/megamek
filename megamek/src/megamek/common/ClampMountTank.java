@@ -1,36 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 /**
- * Represtents the space on a vehicle used by Battle Armor squads equiped with
+ * Represents the space on a vehicle used by Battle Armor squads equipped with
  * Magnetic Clamps to attach themselves for transport. This transporter gets
  * assigned to all of a player's vehicles in the Exchange Phase if any Battle
  * Armor squad equipped with a Magnetic Clamp is on that player's side.
- *
- * @see megamek.server.Server#executePhase(int)
- * @see megamek.server.Server#checkForMagneticClamp()
  */
-
-/* package */public class ClampMountTank extends BattleArmorHandlesTank {
-
-    // Private attributes, constants and helper functions.
-
-    /**
-     *
-     */
+public class ClampMountTank extends BattleArmorHandlesTank {
     private static final long serialVersionUID = 593951005031815098L;
     /**
      * The set of front locations that load troopers externally.
@@ -51,7 +40,7 @@ package megamek.common;
     // Protected constructors and methods.
 
     /**
-     * Get the exterior locations that a loaded squad covers. <p/> Sub-classes
+     * Get the exterior locations that a loaded squad covers. <p> Sub-classes
      * are encouraged to override this method.
      *
      * @param isRear - a <code>boolean</code> value stating if the given
@@ -77,7 +66,7 @@ package megamek.common;
 
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of
-     * a loaded squad of Battle Armor troopers. <p/> Sub-classes are encouraged
+     * a loaded squad of Battle Armor troopers. <p> Sub-classes are encouraged
      * to override this method.
      *
      * @param isLoaded - a <code>boolean</code> that indicates that troopers

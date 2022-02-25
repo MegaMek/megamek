@@ -29,17 +29,17 @@ import megamek.common.Tank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * 
- * @author Jay Lawson Looks for a fluff image for an entity based on model and
- *         chassis. Heavily based on code from {@link MegaMekLab#ImageHelper}.
+ * Looks for a fluff image for an entity based on model and chassis.
+ *
+ * Heavily based on code from MegaMekLab's ImageHelper.
+ * @author Jay Lawson
  */
 public class FluffImageHelper {
     public static final String DIR_NAME_MECH = "mech";
     public static final String DIR_NAME_AERO = "aero";
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_VEHICLE = "vehicle";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = 
-        { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
 
     /**
      * Get the fluff image for the specified unit, if available.

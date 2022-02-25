@@ -353,7 +353,7 @@ public class LosEffects {
      * attacker and target. Checks to see if the attacker and target are at an angle where the LOS
      * line will pass between two hexes. If so, calls losDivided, otherwise calls losStraight.
      *
-     * @param game the game to calculate using
+     * @param game The current {@link Game}
      * @param attacker the attacker, which may be null. If it is, the view is blocked.
      * @param target the target, which may be null. If it is, the view is blocked.
      * @param spotting if the person is spotting
@@ -1359,14 +1359,13 @@ public class LosEffects {
     }
 
     /**
-     * find out if the left or right side of the divided LOS is better for the
-     * target
-     * return 0 if right is better, 1 if left is better, 2 if both are equal
+     * Finds out if the left or right side of the divided LOS is better for the target
      * @param in
-     * @param game
+     * @param game The current {@link Game}
      * @param ai
      * @param targetInBuilding
      * @param los
+     * @return 0 if right is better, 1 if left is better, 2 if both are equal
      */
     public static int dividedLeftBetter(ArrayList<Coords> in, Game game,
             AttackInfo ai, boolean targetInBuilding, LosEffects los) {

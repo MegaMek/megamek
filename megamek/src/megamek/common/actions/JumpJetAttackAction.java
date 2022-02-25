@@ -100,6 +100,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified leg to kick
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);

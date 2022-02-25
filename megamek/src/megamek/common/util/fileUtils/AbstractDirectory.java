@@ -134,7 +134,7 @@ public abstract class AbstractDirectory {
      *
      * @param categoryName the <code>String</code> name of the category whose item names are required
      * @param itemName the <code>String</code> name of the indicated item
-     * @return the <code>Object<code> in the given category with the given name
+     * @return the <code>Object</code> in the given category with the given name
      * @throws Exception if there's any error getting the item
      */
     public @Nullable Object getItem(final @Nullable String categoryName,

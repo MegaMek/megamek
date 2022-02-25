@@ -49,14 +49,14 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Creates a new TargetRoll with a base value & desc
+     * Creates a new TargetRoll with a base value and desc
      */
     public TargetRoll(int value, String desc) {
         addModifier(value, desc);
     }
 
     /**
-     * Creates a new TargetRoll with a base value & desc, which is possibly
+     * Creates a new TargetRoll with a base value and desc, which is possibly
      * not cumulative
      *
      * @param value

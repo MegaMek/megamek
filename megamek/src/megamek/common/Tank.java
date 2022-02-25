@@ -3268,7 +3268,7 @@ public class Tank extends Entity {
     /**
      * OmniVehicles have handles for Battle Armor squads to latch onto. Please
      * note, this method should only be called during this Tank's construction.
-     * <p/>
+     * <p>
      * Overrides <code>Entity#setOmni(boolean)</code>
      */
     @Override
@@ -3501,7 +3501,7 @@ public class Tank extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3528,7 +3528,7 @@ public class Tank extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3783,7 +3783,7 @@ public class Tank extends Entity {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range

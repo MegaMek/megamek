@@ -31,7 +31,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
     // Protected constructors and methods.
 
     /**
-     * Get the exterior locations that a loaded squad covers. <p/> Sub-classes
+     * Get the exterior locations that a loaded squad covers. <p> Sub-classes
      * are encouraged to override this method.
      *
      * @param isRear - a <code>boolean</code> value stating if the given
@@ -48,7 +48,6 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
      * Determine if transported units prevent a weapon in the given location
      * from firing.
      * <p>
-     * Sub-classes should override the <code>getBlockedLocs</code> method.
      *
      * @param loc - the <code>int</code> location attempting to fire.
      * @param isRear - a <code>boolean</code> value stating if the given
@@ -56,7 +55,6 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
      *            location is front facing.
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
-     * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
      */
     @Override
     public final boolean isWeaponBlockedAt(int loc, boolean isRear) {

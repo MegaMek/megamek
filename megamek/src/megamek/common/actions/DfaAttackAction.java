@@ -63,8 +63,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * Checks if a death from above attack can hit the target, including
-     * movement
+     * Checks if a death from above attack can hit the target, including movement
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, MovePath md) {
@@ -172,8 +172,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * To-hit number for a death from above attack, assuming that movement has
-     * been handled
+     * To-hit number for a death from above attack, assuming that movement has been handled
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, Coords src) {

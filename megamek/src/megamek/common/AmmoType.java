@@ -13670,10 +13670,10 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Checks to ensure that the given ammo can be used with the given weapon type.
-     * Performs the following tests:<br/>
-     * {@code ammo} != null<br/>
-     * {@link Mounted#getType()} instanceof {@link AmmoType}<br/>
-     * {@link Mounted#isAmmoUsable()}<br/>
+     * Performs the following tests:<br>
+     * {@code ammo} != null<br>
+     * {@link Mounted#getType()} instanceof {@link AmmoType}<br>
+     * {@link Mounted#isAmmoUsable()}<br>
      * {@link #isAmmoValid(AmmoType, WeaponType)}.
      *
      * @param ammo       The ammunition to be tested.
@@ -13692,9 +13692,9 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Checks to ensure that the given ammunition type is compatible with the given
-     * weapon type. Performs the following tests:<br/>
-     * {@code ammoType} != null<br/>
-     * {@link AmmoType#getAmmoType()} == {@link WeaponType#getAmmoType()}<br/>
+     * weapon type. Performs the following tests:<br>
+     * {@code ammoType} != null<br>
+     * {@link AmmoType#getAmmoType()} == {@link WeaponType#getAmmoType()}<br>
      * {@link AmmoType#getRackSize()} == {@link WeaponType#getRackSize()}
      *
      * @param ammoType   The type of ammo to be tested.

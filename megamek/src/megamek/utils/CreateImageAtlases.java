@@ -36,7 +36,6 @@ import megamek.common.Configuration;
  * tileset file will be scanned and updated to reflect the new image location.
  *
  * @author arlith
- *
  */
 public class CreateImageAtlases {
 
@@ -73,25 +72,14 @@ public class CreateImageAtlases {
 
     int improperImgDimsCount = 0;
 
-    /**
-     * 
-     */
     CreateImageAtlases() {
         this(10);
     }
 
-    /**
-     * 
-     * @param imagesPerRow
-     */
     CreateImageAtlases(int imagesPerRow) {
         this.imagesPerRow = imagesPerRow;
     }
 
-    /**
-     * 
-     * @param file
-     */
     void scanDirectory(File file) {
         if (file.isDirectory()) {
             // Ignore certian directories
@@ -198,18 +186,10 @@ public class CreateImageAtlases {
         imgFileToAtlasMap.writeToFile();
     }
 
-    /**
-     * 
-     */
     public static void printUsage() {
 
     }
 
-    /**
-     * 
-     * @param args
-     * @return
-     */
     public static void main(String[] args) {
         CreateImageAtlases atlasCreator = new CreateImageAtlases();
 

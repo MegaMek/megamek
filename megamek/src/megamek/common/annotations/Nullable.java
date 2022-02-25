@@ -19,11 +19,12 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
 /**
- * When used on a method, this annotation denotes that the method may return a null value.  As a result, consumers of
- * that value should be prepared to handle nulls.</br>
- * </br>
- * When used on a parameter, this annotation denotes that the parameter may contain a null value.  As a result, any
- * overriding methods need ot be able to handle nulls.
+ * When used on a method, this annotation denotes that the method may return a null value.
+ * As a result, consumers of that value should be prepared to handle nulls.
+ * <br>
+ * <br>
+ * When used on a parameter, this annotation denotes that the parameter may contain a null value.
+ * As a result, any overriding methods need ot be able to handle nulls.
  */
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 @Documented

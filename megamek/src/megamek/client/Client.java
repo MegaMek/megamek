@@ -42,6 +42,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
+import megamek.server.Server;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
@@ -288,7 +289,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals("localhost")) {
+            if (!host.equals(MMConstants.LOCALHOST)) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
@@ -1611,7 +1612,7 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_LOAD_SAVEGAME:
                 String loadFile = (String) c.getObject(0);
                 try {
-                    File f = new File("savegames", loadFile);
+                    File f = new File(MMConstants.SAVEGAME_DIR, loadFile);
                     sendLoadGame(f);
                 } catch (Exception e) {
                     System.err.println("Unable to find the file: " + loadFile);

@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.gameConnectionDialogs;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ButtonEsc;
 import megamek.client.ui.swing.ClientDialog;
@@ -27,6 +28,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -91,7 +93,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.playerNames = playerNames;
 
         setPlayerName(""); // initialize player name
-        setPort(2346);
+        setPort(MMConstants.DEFAULT_PORT);
         setConfirmed(false);
 
         initComponents();
@@ -132,7 +134,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     }
 
     public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+        this.playerName = playerName.trim();
         if (playerNames == null) {
             if (playerNameField == null) {
                 playerNameField = new JTextField(playerName, 16);
@@ -223,20 +225,28 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     //region Validation
     public boolean dataValidation(String errorTitleKey) {
-        if (!isConfirmed() || StringUtility.isNullOrEmpty(getPlayerName()) || (getPort() == 0)) {
+
+        if (!isConfirmed()) {
             return false;
-        } else if (!validatePlayerName()) {
+        }
+
+        try {
+            setPlayerName(Server.validatePlayerName(playerName));
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PlayerNameError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
+        try {
+            setPort(Server.validatePort(port));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PortError"),
+                    Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
         return true;
-    }
-
-    private boolean validatePlayerName() {
-        // Players should have to enter a non-blank, non-whitespace name.
-        return !getPlayerName().trim().isBlank();
     }
     //endregion Validation
 

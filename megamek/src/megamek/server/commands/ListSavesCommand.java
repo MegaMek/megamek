@@ -15,6 +15,7 @@ package megamek.server.commands;
 
 import java.io.File;
 
+import megamek.MMConstants;
 import megamek.server.Server;
 
 /**
@@ -33,7 +34,7 @@ public class ListSavesCommand extends ServerCommand {
 
     @Override
     public void run(int connId, String[] args) {
-        File sDir = new File("savegames");
+        File sDir = new File(MMConstants.SAVEGAME_DIR);
         if (!sDir.exists()) {
             server.sendServerChat("savegames directory not found.");
         }
@@ -43,8 +44,8 @@ public class ListSavesCommand extends ServerCommand {
         for (int i = 0; i < saveGames.length; i++) {
             if (saveGames[i].isFile()) {
                 File save = saveGames[i];
-                if (save.getName().endsWith(".sav")
-                        || save.getName().endsWith(".sav.gz")) {
+                if (save.getName().endsWith(MMConstants.SAVE_FILE_EXT)
+                        || save.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
                     server.sendServerChat("  " + save.getName());
                     listedAFile = true;
                 }

@@ -26,6 +26,8 @@ import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
@@ -40,10 +42,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.BoardUtilities;
-import megamek.common.util.EmailService;
-import megamek.common.util.SerializationHelper;
-import megamek.common.util.StringUtil;
+import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
@@ -60,6 +59,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -170,6 +170,8 @@ public class Server implements Runnable {
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
+
+    private final boolean dedicated;
 
     /**
      * Special packet queue for client feedback requests.
@@ -303,20 +305,90 @@ public class Server implements Runnable {
     };
 
     /**
+     *
+     * @param serverAddress
+     * @return valid hostName
+     * @throws AbstractCommandLineParser.ParseException for null or empty serverAddress
+     */
+    public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
+        if ((serverAddress == null) || serverAddress.isBlank()) {
+            String msg = String.format("serverAddress must not be null or empty");
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
+        }
+        return serverAddress.trim();
+    }
+
+    /**
+     *
+     * @param playerName throw ParseException if null or empty
+     * @return valid playerName
+     */
+    public static String validatePlayerName(String playerName) throws AbstractCommandLineParser.ParseException {
+        if (playerName == null) {
+            String msg = String.format("playerName must not be null");
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
+        }
+
+        if (playerName.isBlank()) {
+            String msg = String.format("playerName must not be empty string");
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
+        }
+
+        return playerName.trim();
+    }
+
+    /**
+     *
+     * @param password
+     * @return valid password or null if no password or password is blank string
+     */
+    @Nullable
+    public static String validatePassword(@Nullable String password) {
+        if ((password == null) || password.isBlank()) return null;
+        return password.trim();
+    }
+
+    /**
+     *
+     * @param port if 0 or less, will return default, if illegal number, throws ParseException
+     * @return valid port number
+     */
+    public static int validatePort(int port) throws AbstractCommandLineParser.ParseException {
+        if (port <= 0) {
+            return MMConstants.DEFAULT_PORT;
+        }
+
+        if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
+            String msg = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT, MMConstants.MAX_PORT);
+            LogManager.getLogger().error(msg);
+            throw new AbstractCommandLineParser.ParseException(msg);
+
+        }
+        return port;
+    }
+
+    /**
      * Used to ensure only one thread at a time is accessing this particular
      * instance of the server.
      */
     private final Object serverLock = new Object();
 
     public Server(String password, int port) throws IOException {
-        this(password, port, false, "", null);
+        this(password, port, false, "", null, false);
     }
 
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl) throws IOException {
-        this(password, port, registerWithServerBrowser, metaServerUrl, null);
+        this(password, port, registerWithServerBrowser, metaServerUrl, null, false);
     }
 
+    public Server(String password, int port, boolean registerWithServerBrowser,
+                  String metaServerUrl, EmailService mailer) throws IOException {
+        this(password, port, registerWithServerBrowser, metaServerUrl, mailer, false);
+    }
     /**
      * Construct a new GameHost and begin listening for incoming clients.
      *
@@ -326,12 +398,15 @@ public class Server implements Runnable {
      * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register
      *                                  with the master server browser on megamek.info
      * @param mailer an email service instance to use for sending round reports.
+     * @param dedicated set to true if this server is started from a GUI-less context
      */
-    public Server(String password, int port, boolean registerWithServerBrowser,
-                  String metaServerUrl, EmailService mailer) throws IOException {
-        this.metaServerUrl = metaServerUrl;
-        this.password = password.isBlank() ? password : null;
+    public Server(@Nullable String password, int port, boolean registerWithServerBrowser,
+                  @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+        this.metaServerUrl = (metaServerUrl != null) && (!metaServerUrl.isBlank()) ? metaServerUrl : null;
+        this.password = (password != null) && (!password.isBlank()) ? password : null;
+
         this.mailer = mailer;
+        this.dedicated = dedicated;
 
         // initialize server socket
         serverSocket = new ServerSocket(port);
@@ -414,16 +489,18 @@ public class Server implements Runnable {
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
-
-            final TimerTask register = new TimerTask() {
-                @Override
-                public void run() {
-                    registerWithServerBrowser(true, Server.getServerInstance().metaServerUrl);
-                }
-            };
-            serverBrowserUpdateTimer = new Timer(
-                    "Server Browser Register Timer", true);
-            serverBrowserUpdateTimer.schedule(register, 1, 40000);
+            if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
+                final TimerTask register = new TimerTask() {
+                    @Override
+                    public void run() {
+                        registerWithServerBrowser(true, Server.getServerInstance().metaServerUrl);
+                    }
+                };
+                serverBrowserUpdateTimer = new Timer("Server Browser Register Timer", true);
+                serverBrowserUpdateTimer.schedule(register, 1, 40000);
+            } else {
+                LogManager.getLogger().error("Invalid URL for server browser " + this.metaServerUrl);
+            }
         }
 
         // Fully initialised, now accept connections
@@ -534,6 +611,13 @@ public class Server implements Runnable {
     }
 
     /**
+     * @return true run from a GUI-less context
+     */
+    public boolean getDedicated() {
+        return dedicated;
+    }
+
+    /**
      * Shuts down the server.
      */
     public void die() {
@@ -581,7 +665,7 @@ public class Server implements Runnable {
             serverBrowserUpdateTimer.cancel();
         }
 
-        if (!metaServerUrl.isBlank()) {
+        if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
             registerWithServerBrowser(false, metaServerUrl);
         }
 
@@ -1110,15 +1194,15 @@ public class Server implements Runnable {
     public void sendSaveGame(int connId, String sFile, String sLocalPath) {
         saveGame(sFile, false);
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav.gz")) {
-            if (sFinalFile.endsWith(".sav")) {
+        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+            if (sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
                 sFinalFile = sFile + ".gz";
             } else {
-                sFinalFile = sFile + ".sav.gz";
+                sFinalFile = sFile + MMConstants.SAVE_FILE_GZ_EXT;
             }
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
-        String localFile = "savegames" + File.separator + sFinalFile;
+        String localFile = MMConstants.SAVEGAME_DIR + File.separator + sFinalFile;
         try (InputStream in = new FileInputStream(localFile); InputStream bin = new BufferedInputStream(in)) {
             List<Integer> data = new ArrayList<>();
             int input;
@@ -1154,10 +1238,10 @@ public class Server implements Runnable {
         xstream.setMode(XStream.ID_REFERENCES);
 
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav")) {
-            sFinalFile = sFile + ".sav";
+        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
+            sFinalFile = sFile + MMConstants.SAVE_FILE_EXT;
         }
-        File sDir = new File("savegames");
+        File sDir = new File(MMConstants.SAVEGAME_DIR);
         if (!sDir.exists()) {
             sDir.mkdir();
         }
@@ -1195,8 +1279,8 @@ public class Server implements Runnable {
      */
     public void sendLoadGame(int connId, String sFile) {
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav") && !sFinalFile.endsWith(".sav.gz")) {
-            sFinalFile = sFile + ".sav";
+        if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT) && !sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
+            sFinalFile = sFile + MMConstants.SAVE_FILE_EXT;
         }
         if (!sFinalFile.endsWith(".gz")) {
             sFinalFile = sFinalFile + ".gz";

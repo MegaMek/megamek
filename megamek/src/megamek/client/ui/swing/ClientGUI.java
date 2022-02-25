@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
@@ -627,7 +628,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
-                String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
+                String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, MMConstants.DEFAULT_SAVEGAME_NAME);
                 if (filename != null) {
                     client.sendChat("/save " + filename);
                 }
@@ -1499,7 +1500,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private boolean saveGame() {
         ignoreHotKeys = true;
-        JFileChooser fc = new JFileChooser("./savegames");
+        JFileChooser fc = new JFileChooser(MMConstants.SAVEGAME_DIR);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
 
@@ -1523,9 +1524,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     
     /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
     private boolean quickSaveGame() {
-        String file = "quicksave";
-        String path = "./savegames";
-        client.sendChat("/localsave " + file + " " + path);
+        client.sendChat("/localsave " + MMConstants.QUICKSAVE_FILE + " " + MMConstants.QUICKSAVE_PATH);
         return true;
     }
 

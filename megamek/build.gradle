@@ -350,7 +350,7 @@ publishing {
             artifactId = "megamek${mmBranchTag}"
             from components.java
             artifact sourcesJar
-            artifact javadocJar
+//            artifact javadocJar
 
             pom {
                 name = "MegaMek"

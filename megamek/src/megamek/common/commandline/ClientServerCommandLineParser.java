@@ -214,7 +214,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
         if (getTokenType() == TOK_LITERAL) {
             password = Server.validatePassword(getTokenValue());
         } else {
-            //throw new ParseException("password expected");
+            throw new ParseException("password expected");
         }
     }
 

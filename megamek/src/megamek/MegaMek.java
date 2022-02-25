@@ -88,6 +88,9 @@ public class MegaMek {
                 return;
             }
 
+            getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
+            initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
+
             if (parser.host()) {
                 startHost(restArgs);
                 return;
@@ -102,9 +105,6 @@ public class MegaMek {
                 startQuickLoad(restArgs);
                 return;
             }
-
-            getMMPreferences().loadFromFile(MMConstants.MM_PREFERENCES_FILE);
-            initializeSuiteGraphicalSetups(MMConstants.PROJECT_NAME);
 
             if (parser.ratGenEditor()) {
                 RATGeneratorEditor.main(restArgs);

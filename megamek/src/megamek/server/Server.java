@@ -306,8 +306,9 @@ public class Server implements Runnable {
 
     /**
      *
-     * @param serverAddress throw ParseException if null or empty
+     * @param serverAddress
      * @return valid hostName
+     * @throws AbstractCommandLineParser.ParseException for null or empty serverAddress
      */
     public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
         if ((serverAddress == null) || serverAddress.isBlank()) {

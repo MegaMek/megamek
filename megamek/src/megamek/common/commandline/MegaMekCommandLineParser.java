@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -67,7 +67,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     }
 
     /**
-     * @return the the <code>array</code> of the unprocessed arguments
+     * @return the <code>array</code> of the unprocessed arguments
      */
     public String[] getRestArgs() {
         return restArgs;
@@ -78,7 +78,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
     public String help() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%s %s\n", Messages.getString("MegaMek.Version"), MMConstants.VERSION));
-        for( MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values()) {
+        for (MegaMekCommandLineFlag flag : MegaMekCommandLineFlag.values()) {
             sb.append(String.format("-%s %s\n", flag.toString().toLowerCase(), flag.helpText));
         }
         return sb.toString();
@@ -200,7 +200,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             }
 
             if (ms == null) {
-                LogManager.getLogger().error(new IOException(filename + " not found.  Try using \"chassis model\" for input."));
+                LogManager.getLogger().error(new IOException(filename + " not found. Try using \"chassis model\" for input."));
             } else {
                 try {
                     Entity entity = new MechFileParser(ms.getSourceFile(),

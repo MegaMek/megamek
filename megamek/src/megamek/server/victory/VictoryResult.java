@@ -41,8 +41,8 @@ public class VictoryResult {
     }
     
     protected VictoryResult(boolean win, int player, int team) {
-    	this.victory = win;
-    	tr = new Throwable();
+        this.victory = win;
+        tr = new Throwable();
         if (player != Player.PLAYER_NONE) {
             addPlayerScore(player, 1.0);
         }
@@ -52,7 +52,7 @@ public class VictoryResult {
     }
     
     protected static VictoryResult noResult() {
-    	return new VictoryResult(false, Player.PLAYER_NONE, Player.TEAM_NONE);
+        return new VictoryResult(false, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
     
     protected static VictoryResult drawResult() {

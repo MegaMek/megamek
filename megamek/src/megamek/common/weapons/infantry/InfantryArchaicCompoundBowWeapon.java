@@ -24,31 +24,31 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicCompoundBowWeapon() {
-		super();
+    public InfantryArchaicCompoundBowWeapon() {
+        super();
 
-		name = "Bow (Compound)";
-		setInternalName(name);
-		addLookupName("InfantryCompoundBow");
-		addLookupName("Compound Bow");
-		ammoType = AmmoType.T_NA;
-		cost = 15;
-		bv = 0.01;
+        name = "Bow (Compound)";
+        setInternalName(name);
+        addLookupName("InfantryCompoundBow");
+        addLookupName("Compound Bow");
+        ammoType = AmmoType.T_NA;
+        cost = 15;
+        bv = 0.01;
         tonnage = .001; 
-		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
-		infantryDamage = 0.01;
-		infantryRange = 0;
-		rulesRefs = "272, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_B, RATING_A, RATING_A, RATING_A);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
+        infantryDamage = 0.01;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_A, RATING_A, RATING_A);
 
-	}
+    }
 }

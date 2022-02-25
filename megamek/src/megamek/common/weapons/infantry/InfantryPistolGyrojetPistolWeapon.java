@@ -24,33 +24,33 @@ import megamek.common.AmmoType;
  */
 public class InfantryPistolGyrojetPistolWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryPistolGyrojetPistolWeapon() {
-		super();
-		name = "Gyrojet Pistol";
-		setInternalName(name);
-		addLookupName("InfantryGyrojetpistol");
-		ammoType = AmmoType.T_INFANTRY;
-		cost = 450;
-		bv = 0.04;
-		tonnage = .0025;
-		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-		infantryDamage = 0.04;
-		infantryRange = 0;
-		ammoWeight = 0.00018;
-		ammoCost = 1;
-		shots = 2;
-		rulesRefs = "273,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
-				.setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-				.setProductionFactions(F_TH).setTechRating(RATING_D)
-				.setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
+    public InfantryPistolGyrojetPistolWeapon() {
+        super();
+        name = "Gyrojet Pistol";
+        setInternalName(name);
+        addLookupName("InfantryGyrojetpistol");
+        ammoType = AmmoType.T_INFANTRY;
+        cost = 450;
+        bv = 0.04;
+        tonnage = .0025;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.04;
+        infantryRange = 0;
+        ammoWeight = 0.00018;
+        ammoCost = 1;
+        shots = 2;
+        rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setClanAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH).setTechRating(RATING_D)
+                .setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
 
-	}
+    }
 }

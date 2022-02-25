@@ -40,7 +40,7 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         this.flags = flags.or(F_CRUISE_MISSILE);
         this.bv = 2281;
         this.cost = 3000000;
-        rulesRefs = "284,TO";
+        rulesRefs = "284, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_E)

@@ -35,7 +35,7 @@ import java.util.*;
  */
 public class AbstractPathFinder<N, C, E> {
 
-    //after switching to java 8 and including java.util.function some of this
+    // after switching to java 8 and including java.util.function some of this
     //subclasses should be removed
 
     /**
@@ -302,7 +302,7 @@ public class AbstractPathFinder<N, C, E> {
             
             LogManager.getLogger().error(memoryMessage, e);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
         }
     }
 

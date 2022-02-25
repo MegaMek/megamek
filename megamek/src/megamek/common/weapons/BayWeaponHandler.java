@@ -124,10 +124,10 @@ public class BayWeaponHandler extends WeaponHandler {
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
                 &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
                 &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
-        		|| game.getBoard().inSpace()
-        		// Capital missile launchers should return the root handler...
-        		|| (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
-        		|| (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
+                || game.getBoard().inSpace()
+                // Capital missile launchers should return the root handler...
+                || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+                || (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 

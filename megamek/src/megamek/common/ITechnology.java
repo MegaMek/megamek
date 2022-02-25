@@ -47,7 +47,7 @@ public interface ITechnology {
     int DATE_PS = 1950;
     int DATE_ES = 2100;
 
-    //codes for recording which factions had access to technology at various points
+    // codes for recording which factions had access to technology at various points
     int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
     int F_IS = 0;
     int F_CC = 1;

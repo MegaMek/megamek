@@ -48,7 +48,7 @@ public class InfantrySupportSRMLightWeapon extends InfantryWeapon {
 		ammoWeight = 0.009;
 		ammoCost = 300;
 		shots = 2;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)

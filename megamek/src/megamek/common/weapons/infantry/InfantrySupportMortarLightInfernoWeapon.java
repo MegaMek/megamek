@@ -49,7 +49,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
 		ammoWeight = 0.002;
 		ammoCost = 24;
 		shots = 1;
-		rulesRefs = " 273,TM";
+		rulesRefs = " 273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

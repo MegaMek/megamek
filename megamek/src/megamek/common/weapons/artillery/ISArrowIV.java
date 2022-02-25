@@ -44,7 +44,7 @@ public class ISArrowIV extends ArtilleryWeapon {
         cost = 450000;
         this.flags = flags.or(F_MISSILE);
         this.missileArmor = 20;
-        rulesRefs = "284,TO";
+        rulesRefs = "284, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)

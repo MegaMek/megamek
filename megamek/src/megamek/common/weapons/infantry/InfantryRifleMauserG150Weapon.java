@@ -47,7 +47,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 		ammoCost = 5;
 		shots = 9;
 		bursts = 3;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3060, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

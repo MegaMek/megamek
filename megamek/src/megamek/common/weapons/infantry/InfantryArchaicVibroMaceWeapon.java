@@ -24,32 +24,32 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicVibroMaceWeapon() {
-		super();
+    public InfantryArchaicVibroMaceWeapon() {
+        super();
 
-		name = "Club (Vibro-Mace)";
-		setInternalName(name);
-		addLookupName("InfantryVibroMace");
-		addLookupName("IS Vibro Mace");
-		ammoType = AmmoType.T_NA;
-		cost = 300;
-		bv = 0.24;
+        name = "Club (Vibro-Mace)";
+        setInternalName(name);
+        addLookupName("InfantryVibroMace");
+        addLookupName("IS Vibro Mace");
+        ammoType = AmmoType.T_NA;
+        cost = 300;
+        bv = 0.24;
         tonnage = .004;
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.26;
-		infantryRange = 0;
-		rulesRefs = "272,TM";
-		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
-				.setISApproximate(true, true, false, false, false)
-				.setClanAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CF)
-				.setProductionFactions(F_CF).setTechRating(RATING_E)
-				.setAvailability(RATING_X, RATING_F, RATING_E, RATING_E);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.26;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, true, false, false, false)
+                .setClanAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CF)
+                .setProductionFactions(F_CF).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E);
 
-	}
+    }
 }

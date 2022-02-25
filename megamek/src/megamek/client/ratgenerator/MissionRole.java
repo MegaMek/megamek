@@ -101,7 +101,7 @@ public enum MissionRole {
             case ESCORT:
             case INTERCEPTOR:
             case GROUND_SUPPORT:
-            //case STRIKE:
+            // case STRIKE:
                 return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
 
             case ASSAULT:
@@ -657,7 +657,7 @@ public enum MissionRole {
                 return INTERCEPTOR;
             case "ground support":
                 return GROUND_SUPPORT;
-            //case "strike":
+            // case "strike":
                 //return STRIKE;
             case "training":
                 return TRAINING;

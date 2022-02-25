@@ -129,7 +129,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, "edge_when_aero_unit_cargo_lost", false);
         
         addOption(edge, OptionsConstants.EDGE, 0);
-        //different edge triggers 
+        // different edge triggers 
         //Mech Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, false);
         addOption(edge, OptionsConstants.EDGE_WHEN_TAC, false);

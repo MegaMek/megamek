@@ -47,7 +47,7 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
 		ammoCost = 8;
 		shots = 100;
 		bursts = 7;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2718, 2720, 2750, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2718, 2720, 2750, DATE_NONE, DATE_NONE)

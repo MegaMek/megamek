@@ -1946,7 +1946,7 @@ public class MoveStep implements Serializable {
             // and 8 hexes on the ground map, regardless of any other considerations
             // unless they're out of control, in which case, well...
             if (useSpheroidAtmosphere(game, entity) && 
-            		(((IAero) entity).isOutControlTotal() ||
+                    (((IAero) entity).isOutControlTotal() ||
                     (!game.getBoard().onGround() && (this.getDistance() > 1) || 
                             (game.getBoard().onGround() && (getDistance() > 8))))) {
                 return;
@@ -1962,7 +1962,7 @@ public class MoveStep implements Serializable {
             }
 
             /*
-             * TODO: better to disable this in movement display //don't let them
+             * TODO: better to disable this in movement display // don't let them
              * evade more than once if (type == MoveStepType.EVADE) {
              * if (isEvading) { return; } else { setEvading(true); } }
              */
@@ -2266,7 +2266,7 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
-            //and can switch to track mode while prone then stand.
+            // and can switch to track mode while prone then stand.
             if (getEntity().isProne()
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;

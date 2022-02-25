@@ -300,7 +300,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Aero Sanity Handling
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && !bMissed) {
             //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
-            //data from the 'real' toHit data of this bay handler
+            // data from the 'real' toHit data of this bay handler
             ToHitData autoHit = new ToHitData();
             autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
             int replaceReport;
@@ -376,7 +376,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         
         //Bearings-only missiles shouldn't be able to target buildings, being space-only weapons
-        //but if these two things aren't defined, handleEntityDamage() doesn't work.
+        // but if these two things aren't defined, handleEntityDamage() doesn't work.
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         int bldgAbsorbs = 0;
 

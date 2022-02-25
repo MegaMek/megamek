@@ -56,7 +56,7 @@ public class WeaponQuirks extends AbstractOptions {
     
     //TODO
     //unimplemented
-    //ammo feed problem
+    // ammo feed problem
     //EM Interference
     //jettison-capable Weapon
     //non-functional

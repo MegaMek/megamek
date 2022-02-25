@@ -47,7 +47,7 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
 		tonnage = .020;
 		ammoWeight = 0.003;
 		shots = 15;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3058, 3062, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_CS)

@@ -48,7 +48,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AR10;
         this.capital = true;
-        rulesRefs = "210,TM";
+        rulesRefs = "210, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

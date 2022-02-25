@@ -545,7 +545,7 @@ public class WeaponFireInfo {
         String currentFireMode = getWeapon().curMode().getName();
         int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
         if (!currentFireMode.equals(getWeapon().curMode().getName())) {
-        	setUpdatedFiringMode(spinMode);
+            setUpdatedFiringMode(spinMode);
         }
         
         setHeat(computeHeat(weapon));
@@ -665,10 +665,10 @@ public class WeaponFireInfo {
      * Null if no update required.
      */
     public Integer getUpdatedFiringMode() {
-    	return updatedFiringMode;
+        return updatedFiringMode;
     }
     
     public void setUpdatedFiringMode(int mode) {
-    	updatedFiringMode = mode;
+        updatedFiringMode = mode;
     }
 }

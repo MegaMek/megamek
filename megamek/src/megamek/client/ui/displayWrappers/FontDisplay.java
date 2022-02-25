@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.displayWrappers;
 
+import megamek.common.annotations.Nullable;
+
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +37,10 @@ public class FontDisplay {
     //endregion Variable Declarations
 
     //region Constructors
+    public FontDisplay(final String familyName) {
+        this(Font.decode(familyName).deriveFont(Font.PLAIN, 12f), familyName);
+    }
+
     public FontDisplay(final Font font, final String displayName) {
         this.font = font;
         this.displayName = displayName;
@@ -49,12 +55,30 @@ public class FontDisplay {
 
     public static List<FontDisplay> getSortedFontDisplays() {
         return Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-                .map(familyName -> new FontDisplay(Font.decode(familyName).deriveFont(Font.PLAIN, 16f), familyName))
+                .map(FontDisplay::new)
                 .collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
         return displayName;
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object other) {
+        if (other == null) {
+            return false;
+        } else if (this == other) {
+            return true;
+        } else if (other instanceof FontDisplay) {
+            return getFont().equals(((FontDisplay) other).getFont());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return font.hashCode();
     }
 }

@@ -38,7 +38,7 @@ public class FontDisplay {
 
     //region Constructors
     public FontDisplay(final String familyName) {
-        this(Font.decode(familyName).deriveFont(Font.PLAIN, 16f), familyName);
+        this(Font.decode(familyName).deriveFont(Font.PLAIN, 12f), familyName);
     }
 
     public FontDisplay(final Font font, final String displayName) {
@@ -72,10 +72,6 @@ public class FontDisplay {
             return true;
         } else if (other instanceof FontDisplay) {
             return getFont().equals(((FontDisplay) other).getFont());
-        } else if (other instanceof Font) {
-            return getFont().equals(other);
-        } else if (other instanceof String) {
-            return toString().equals(other);
         } else {
             return false;
         }

@@ -40,8 +40,7 @@ import java.util.zip.ZipFile;
  * line of the file should give the unit type number corresponding to
  * UnitType.java The remaining lines should be comma split. The first field
  * should give the frequency of that unit and the second line should give the
- * name of that unit written as <Model> <Chassis> Comment lines can also be
- * added with "#"
+ * name of that unit written as { Model } { Chassis }. Comment lines can also be added with "#".
  * </p>
  *
  * @author Jay Lawson

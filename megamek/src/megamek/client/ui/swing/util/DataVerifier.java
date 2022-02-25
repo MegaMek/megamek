@@ -13,22 +13,23 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * Interface for a data verification object.  Implementing classes should evaluate the value passed into the
- * {@link #verify} method to make sure it is valid according to the needs of the implementer.
+ * Interface for a data verification object. Implementing classes should evaluate the value passed
+ * into the {@link #verify} method to make sure it is valid according to the needs of the implementer.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/14/14 1:11 PM
  */
 public interface DataVerifier {
 
     /**
-     * Performs a verification of the given value.  If the value is good, a null is returned.  Otherwise a
-     * {@link String} explaining how the verification failed will be returned.
+     * Performs a verification of the given value. If the value is good, a null is returned.
+     * Otherwise, a {@link String} explaining how the verification failed will be returned.
      *
      * @param value The value to be evaluated.
      * @return NULL if the value is good, otherwise a description of how the evaluation failed.
      */
-    public String verify(Object value);
+    @Nullable String verify(Object value);
 }

@@ -1541,7 +1541,7 @@ public class Board implements Serializable {
     }
 
     /**
-     * @return an <code>Hashtable</code of <code>InfernoTrackers</code> on the board.
+     * @return an <code>Hashtable</code> of <code>InfernoTrackers</code> on the board.
      */
     public Hashtable<Coords, InfernoTracker> getInfernos() {
         return infernos;

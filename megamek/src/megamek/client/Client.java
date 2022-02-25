@@ -1241,7 +1241,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Hashtable for storing <img> tags containing base64Text src.
+     * Hashtable for storing img tags containing base64Text src.
      */
     protected void cacheImgTag(Entity entity) {
         if (entity == null) {
@@ -1725,7 +1725,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Perform a dump of the current memory usage.
-     * <p/>
+     * <p>
      * This method is useful in tracking performance issues on various player's
      * systems. You can activate it by changing the "memorydumpon" setting to
      * "true" in the clientsettings.xml file.

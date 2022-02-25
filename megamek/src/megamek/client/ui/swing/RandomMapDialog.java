@@ -37,7 +37,6 @@ import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/13/14 2:41 PM
  */
 public class RandomMapDialog extends JDialog implements ActionListener {

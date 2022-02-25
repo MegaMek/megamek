@@ -18,19 +18,14 @@ import java.awt.Dimension;
 import javax.swing.*;
 
 /**
- * Override of the basic {@link JComboBox} that adds the capacity to checkpoint its current value.  Once the value
- * is checkpointed, the {@link #hasChanged} method will reflect if the current value equals the checkpointed value
- * or not.
+ * Override of the basic {@link JComboBox} that adds the capacity to checkpoint its current value.
+ * Once the value is checkpointed, the {@link #hasChanged} method will reflect if the current value
+ * equals the checkpointed value or not.
  *
  * @author Deric Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/21/14 8:34 AM
  */
 public class CheckpointComboBox<E> extends JComboBox<E> {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5047466175280294296L;
     int checkpointIndex = -1;
 

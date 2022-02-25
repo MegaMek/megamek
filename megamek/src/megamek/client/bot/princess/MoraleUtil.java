@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Method for handling morale with Princess.
  *
- * @author Deric Page <deric dot page at gmail dot com>
+ * @author Deric Page (deric dot page at gmail dot com)
  * @since 5/13/14 8:36 AM
  */
 public class MoraleUtil {
@@ -56,7 +56,7 @@ public class MoraleUtil {
      * @param bravery          The index of the bravery setting in {@link BehaviorSettings}.
      * @param selfPreservation The index of the selfPreservation setting in {@link BehaviorSettings}.
      * @param player           The {@link Player} of the Princess bot.
-     * @param game             The game being played.
+     * @param game              The current {@link Game}
      */
     public void checkMorale(boolean forcedWithdrawal, int bravery, int selfPreservation,
                             Player player, Game game) {

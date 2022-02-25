@@ -40,7 +40,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     /**
      * Return the number of "normal" turns that this item requires. This is
      * normally the sum of multi-unit turns and the other turns.
-     * <p/>
+     * <p>
      * Subclasses are expected to override this value in order to make the "move
      * even" code work correctly.
      *

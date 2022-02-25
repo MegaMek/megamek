@@ -29,7 +29,6 @@ import java.io.File;
  *
  * @author James Damour (original)
  * @author Justin "Windchild" Bowen
- * @version 3
  */
 public class DirectoryItems extends AbstractDirectory {
     public DirectoryItems(final File root, final ItemFileFactory itemFactory)

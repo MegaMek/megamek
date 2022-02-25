@@ -19,11 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents a single, targetable hex of a building. The building
- * itself may occupy multiple hexes.
+ * This class represents a single, targetable hex of a building. The building itself may occupy
+ * multiple hexes.
  *
  * @author Suvarov454@sourceforge.net (James A. Damour)
- * @version $Revision$
  */
 public class BuildingTarget implements Targetable {
     private static final long serialVersionUID = 6432766092407639630L;

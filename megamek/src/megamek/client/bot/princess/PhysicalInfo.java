@@ -66,7 +66,7 @@ public class PhysicalInfo {
      * @param target             The {@link megamek.common.Targetable} of the attack.
      * @param targetState        The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param physicalAttackType The type of attack being made.
-     * @param game               The {@link megamek.common.Game} in progress.
+     * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.
      * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
@@ -108,7 +108,7 @@ public class PhysicalInfo {
      * @param shooter            The {@link megamek.common.Entity} doing the attacking.
      * @param target             The {@link megamek.common.Targetable} of the attack.
      * @param physicalAttackType The type of attack being made.
-     * @param game               The {@link megamek.common.Game} in progress.
+     * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.
      * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */

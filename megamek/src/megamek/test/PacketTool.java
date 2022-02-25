@@ -33,7 +33,7 @@ import java.util.TimerTask;
  * This class provides an AWT GUI for testing the transmission and reception of
  * <code>Packet</code>s.
  *
- * @author James Damour <suvarov454@users.sourceforge.net>
+ * @author James Damour (suvarov454@users.sourceforge.net)
  */
 public class PacketTool extends Frame implements Runnable {
 
@@ -305,7 +305,7 @@ public class PacketTool extends Frame implements Runnable {
     }
 
     /**
-     * Process a packet from a connection. <p/> Implements
+     * Process a packet from a connection. <p> Implements
      * <code>ConnectionHandler</code>.
      *
      * @param id - the <code>int</code> ID the connection that received the
@@ -467,7 +467,7 @@ public class PacketTool extends Frame implements Runnable {
     }
 
     /**
-     * Called when it is sensed that a connection has terminated. <p/>
+     * Called when it is sensed that a connection has terminated. <p>
      * Implements <code>ConnectionHandler</code>.
      *
      * @param deadConn - the <code>Connection</code> that has terminated.

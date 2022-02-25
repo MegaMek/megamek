@@ -1,17 +1,16 @@
 /*
  * MechEditor.java - Copyright (C) 2013 Jay Lawson
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -65,17 +64,12 @@ import megamek.common.VTOL;
 import megamek.common.options.OptionsConstants;
 
 /**
- *
- * @author Jay Lawson <jaylawson39 at yahoo.com> This dialog will allow the user
- *         to edit the damage and status characteristics of a unit This designed
- *         for use in both MegaMek and MHQ so don't go messing things up for MHQ
- *         by changing a bunch of stuff
+ * This dialog will allow the user to edit the damage and status characteristics of a unit.
+ * This is designed for use in both MegaMek and MHQ so don't go messing things up for MHQ by
+ * changing a bunch of stuff
+ * @author Jay Lawson (jaylawson39 at yahoo.com)
  */
 public class UnitEditorDialog extends JDialog {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 8144354264100884817L;
 
     private Entity entity;

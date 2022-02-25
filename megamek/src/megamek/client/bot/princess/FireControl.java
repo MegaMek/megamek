@@ -223,8 +223,8 @@ public class FireControl {
      * Returns the movement modifier calculated by {@link Compute#getAttackerMovementModifier(Game, int,
      * EntityMovementType)}.
      *
-     * @param game            The {@link Game} being played.
-     * @param shooterId       The ID of the unit doing the shooting.
+     * @param game The current {@link Game}
+     * @param shooterId The ID of the unit doing the shooting.
      * @param shooterMoveType The {@link EntityMovementType} of the unit doing the shooting.
      * @return The attacker movement modifier as a {@link ToHitData} object.
      */
@@ -249,13 +249,13 @@ public class FireControl {
     }
 
     /**
-     * Returns the movement modifier calculated by {@link Compute#getTargetMovementModifier(int, boolean, boolean,
-     * Game)}
+     * Returns the movement modifier calculated by
+     * {@link Compute#getTargetMovementModifier(int, boolean, boolean, Game)}
      *
      * @param hexesMoved The number of hexes the target unit moved.
-     * @param jumping    Set TRUE if the target jumped.
-     * @param vtol       Set TRUE if the target is a {@link VTOL}.
-     * @param game       The {@link Game} being played.
+     * @param jumping Set TRUE if the target jumped.
+     * @param vtol Set TRUE if the target is a {@link VTOL}.
+     * @param game The current {@link Game}
      * @return The target movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
@@ -269,12 +269,13 @@ public class FireControl {
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
      *
-     * @param shooter      The unit doing the shooting.
+     * @param shooter The unit doing the shooting.
      * @param shooterState The state of the unit doing the shooting.
-     * @param target       Who is being shot at.
-     * @param targetState  The state of the target.
-     * @param distance     Distance between shooter and target.
-     * @param game         The game being played.  @return The estimated to hit modifiers.
+     * @param target Who is being shot at.
+     * @param targetState The state of the target.
+     * @param distance Distance between shooter and target.
+     * @param game The current {@link Game}
+     * @return The estimated to hit modifiers.
      */
     ToHitData guessToHitModifierHelperForAnyAttack(final Entity shooter,
                                                    @Nullable EntityState shooterState,
@@ -413,12 +414,12 @@ public class FireControl {
     /**
      * Makes a rather poor guess as to what the to hit modifier will be with a physical attack.
      *
-     * @param shooter      The unit doing the attacking.
+     * @param shooter The unit doing the attacking.
      * @param shooterState The state of the unit doing the attacking.
-     * @param target       Who is being attacked.
-     * @param targetState  The state of the target.
-     * @param attackType   The tyep of physical attack being made.
-     * @param game         The game being played.
+     * @param target Who is being attacked.
+     * @param targetState The state of the target.
+     * @param attackType The type of physical attack being made.
+     * @param game The current {@link Game}
      * @return The estimated to hit modifiers.
      */
     ToHitData guessToHitModifierPhysical(final Entity shooter,
@@ -588,12 +589,12 @@ public class FireControl {
     /**
      * Returns the value of {@link LosEffects#calculateLOS(Game, Entity, Targetable, Coords, Coords, boolean)}.
      *
-     * @param game            The {@link Game} being played.
-     * @param shooter         The shooting unit.
-     * @param target          The unit being shot at as a {@link Targetable} object.
+     * @param game The current {@link Game}
+     * @param shooter The shooting unit.
+     * @param target The unit being shot at as a {@link Targetable} object.
      * @param shooterPosition The current {@link Coords} of the shooter.
-     * @param targetPosition  The current {@link Coords} of the target.
-     * @param spotting        Set TRUE if the shooter is simply spotting for indirect fire.
+     * @param targetPosition The current {@link Coords} of the target.
+     * @param spotting Set TRUE if the shooter is simply spotting for indirect fire.
      * @return The resulting {@link LosEffects}.
      */
     @StaticWrapper
@@ -609,7 +610,7 @@ public class FireControl {
      *
      * @param attacker The attacking {@link Entity}.
      * @param defender The target of the attack.
-     * @param game     The game being played.
+     * @param game The current {@link Game}
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
@@ -624,7 +625,7 @@ public class FireControl {
      *
      * @param attacker The attacking {@link Entity}.
      * @param defender The target of the attack.
-     * @param game     The game being played.
+     * @param game The current {@link Game}
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
@@ -691,8 +692,7 @@ public class FireControl {
      *            The {@link EntityState} of the unit being shot at.
      * @param weapon
      *            The weapon being fired as a {@link Mounted} object.
-     * @param game
-     *            The {@link Game being played.}
+     * @param game The current {@link Game}
      * @return The to hit modifiers for the given weapon firing at the given
      *         target as a {@link ToHitData} object.
      */
@@ -975,8 +975,7 @@ public class FireControl {
      * @param weapon
      *            The weapon being fired as a {@link megamek.common.Mounted}
      *            object.
-     * @param game
-     *            The {@link megamek.common.Game being played.}
+     * @param game The current {@link Game}
      * @param assumeUnderFlightPlan
      *            Set TRUE to assume that the target falls under the given
      *            flight path.
@@ -1062,8 +1061,7 @@ public class FireControl {
      *            The unit being shot at.
      * @param weapon
      *            The weapon being fired.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return A description of the differences or NULL if there are none.
      */
     private String checkGuess(final Entity shooter,
@@ -1108,8 +1106,7 @@ public class FireControl {
      *            The unit being shot at.
      * @param attackType
      *            The attack being made.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return A description of the differences or NULL if there are none.
      */
     private @Nullable String checkGuessPhysical(final Entity shooter, final Targetable target,
@@ -1149,8 +1146,7 @@ public class FireControl {
      *
      * @param shooter
      *            The unit doing the shooting.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return A description of the differences or NULL if there are none.
      */
     @Nullable String checkAllGuesses(final Entity shooter, final Game game) {
@@ -1432,8 +1428,7 @@ public class FireControl {
      *            The current state of the target.
      * @param weapon
      *            The weapon being fired.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @param guessToHit
      *            Set TRUE to estimate the odds to hit rather than doing the
      *            full calculation.
@@ -1453,15 +1448,15 @@ public class FireControl {
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
-     * @param shooter               The unit doing the shooting.
-     * @param flightPath            The path the unit flies over this turn.
-     * @param target                The target being fired on.
-     * @param targetState           The current state of the target.
-     * @param weapon                The weapon being fired.
-     * @param game                  The game being played.
-     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
-     *                              calculation.
-     * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param shooter The unit doing the shooting.
+     * @param flightPath The path the unit flies over this turn.
+     * @param target The target being fired on.
+     * @param targetState The current state of the target.
+     * @param weapon The weapon being fired.
+     * @param game The current {@link Game}
+     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid
+     *                             doing the full calculation.
+     * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
     WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
@@ -1479,16 +1474,16 @@ public class FireControl {
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
-     * @param shooter               The unit doing the shooting.
-     * @param flightPath            The path the unit flies over this turn.
-     * @param target                The target being fired on.
-     * @param targetState           The current state of the target.
-     * @param weapon                The weapon being fired.
-     * @param game                  The game being played.
-     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
-     *                              calculation.
-     * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
-     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param shooter The unit doing the shooting.
+     * @param flightPath The path the unit flies over this turn.
+     * @param target The target being fired on.
+     * @param targetState The current state of the target.
+     * @param weapon The weapon being fired.
+     * @param game The current {@link Game}
+     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid
+     *                             doing the full calculation.
+     * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param bombPayload The bomb payload, as described in WeaponAttackAction.setBombPayload
      * @return The resulting {@link WeaponFireInfo}.
      */
     private WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
@@ -1507,10 +1502,10 @@ public class FireControl {
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
-     * @param shooter    The unit doing the shooting.
-     * @param target     The target being fired on.
-     * @param weapon     The weapon being fired.
-     * @param game       The game being played.
+     * @param shooter The unit doing the shooting.
+     * @param target The target being fired on.
+     * @param weapon The weapon being fired.
+     * @param game The current {@link Game}
      * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
@@ -1535,8 +1530,7 @@ public class FireControl {
      *            The unit being fired on.
      * @param targetState
      *            The current state of the target.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan guessFullFiringPlan(final Entity shooter,
@@ -1605,13 +1599,13 @@ public class FireControl {
     /**
      * Creates a firing plan that fires all weapons with nonzero to hit value in a air to ground strike
      *
-     * @param shooter               The unit doing the shooting.
-     * @param target                The unit being fired on.
-     * @param targetState           The current state of the target.
-     * @param flightPath            The path the shooter is flying over.
-     * @param game                  The game being played.
-     * @param assumeUnderFlightPath Set TRUE to automatically assume the target will be under the flight path rather
-     *                              than going through the full calculation.
+     * @param shooter The unit doing the shooting.
+     * @param target The unit being fired on.
+     * @param targetState The current state of the target.
+     * @param flightPath The path the shooter is flying over.
+     * @param game The current {@link Game}
+     * @param assumeUnderFlightPath Set TRUE to automatically assume the target will be under the
+     *                              flight path rather than going through the full calculation.
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan guessFullAirToGroundPlan(final Entity shooter,
@@ -1698,7 +1692,7 @@ public class FireControl {
      *
      * @param shooter               The unit doing the shooting.
      * @param target                The unit being fired on.
-     * @param game                  The game being played.
+     * @param game                  The current {@link Game}
      * @param passedOverTarget      Set TRUE to automatically assume the target will be under the flight path rather
      *                              than going through the full calculation.
      * @param guess                 Whether we're just thinking about this firing plan or about to                              
@@ -1757,8 +1751,8 @@ public class FireControl {
      * actual game rules from different states
      *
      * @param shooter The unit doing the shooting.
-     * @param target  The unit being fired on.
-     * @param game    The game being played.
+     * @param target The unit being fired on.
+     * @param game The current {@link Game}
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan getFullFiringPlan(final Entity shooter,
@@ -1989,16 +1983,13 @@ public class FireControl {
         return bestPlans;
     }
 
-    /*
+    /**
      * Gets the 'best' firing plan, using heat as a disutility. No twisting is
      * done
      * 
      * @param shooter The unit doing the shooting.
-     * 
      * @param target The unit being shot at.
-     * 
-     * @param game The game currently being played.
-     * 
+     * @param game The current {@link Game}
      * @return the 'best' firing plan, using heat as a disutility.
      */
     FiringPlan getBestFiringPlan(final Entity shooter,
@@ -2053,8 +2044,7 @@ public class FireControl {
      *            The current state of the target unit.
      * @param maxHeat
      *            How much heat we're willing to tolerate.
-     * @param game
-     *            The game currently being played.
+     * @param game The current {@link Game}
      * @return the 'best' firing plan under a certain heat.
      */
     protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter,
@@ -2287,7 +2277,7 @@ public class FireControl {
      * Gets all the entities that are potential targets
      *
      * @param shooter The unit doing the shooting.
-     * @param game    The game being played.
+     * @param game The current {@link Game}
      * @return A list of potential targets.
      */
     protected List<Targetable> getTargetableEnemyEntities(final Entity shooter,
@@ -2321,7 +2311,7 @@ public class FireControl {
      * Variation on getTargetableEnemyEntities.
      * Returns all possible enemy targets, regardless of LOS status.
      * @param player The player from whose perspective enemies are determined.
-     * @param game    The game being played.
+     * @param game The current {@link Game}
      * @return A list of potential targets.
      */
     static List<Targetable> getAllTargetableEnemyEntities(final Player player, final Game game,
@@ -2351,7 +2341,7 @@ public class FireControl {
      * Overload this function if you think you can do better.
      *
      * @param shooter The unit doing the shooting.
-     * @param game    The game being played.
+     * @param game The current {@link Game}
      * @return The best firing plan according to our calculations.
      */
     FiringPlan getBestFiringPlan(final Entity shooter,

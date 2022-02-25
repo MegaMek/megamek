@@ -824,7 +824,7 @@ public class BoardUtilities {
     }
 
     /**
-     * Converts water hexes to ice hexes. Works best with snow&ice theme.
+     * Converts water hexes to ice hexes. Works best with snow and ice themes.
      */
     protected static void postProcessDeepFreeze(Hex[] hexSet, int modifier) {
         int n;

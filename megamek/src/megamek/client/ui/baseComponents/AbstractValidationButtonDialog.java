@@ -38,12 +38,12 @@ import java.util.ResourceBundle;
  * and validateAction();
  *
  * The resources associated with this dialog need to contain at least the following keys:
- * - "Ok.text" -> text for the Ok button
- * - "Ok.toolTipText" -> toolTipText for the Ok button
- * - "Validate.text" -> text for the Validate button
- * - "Validate.toolTipText" -> toolTipText for the Validate button
- * - "Cancel.text" -> text for the Cancel button
- * - "Cancel.toolTipText" -> toolTipText for the Cancel button
+ * - "Ok.text" - text for the Ok button
+ * - "Ok.toolTipText" - toolTipText for the Ok button
+ * - "Validate.text" - text for the Validate button
+ * - "Validate.toolTipText" - toolTipText for the Validate button
+ * - "Cancel.text" - text for the Cancel button
+ * - "Cancel.toolTipText" - toolTipText for the Cancel button
  *
  * This is directly tied to MekHQ's AbstractMHQValidationButtonDialog, and any changes here MUST be
  * verified there.

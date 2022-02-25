@@ -1254,7 +1254,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Determine if this unit has an active stealth system.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -1284,7 +1284,7 @@ public class BattleArmor extends Infantry {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range

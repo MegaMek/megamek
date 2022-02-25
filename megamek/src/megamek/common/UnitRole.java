@@ -102,7 +102,7 @@ public enum UnitRole {
      *
      * @param entity      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
-     *                  more or less by the book, while values < 0 are more liberal and > 0 are
+     *                  more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
      *                  more strict.
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
@@ -131,11 +131,11 @@ public enum UnitRole {
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
      *
-     * @param unit      The unit to be checked for role qualification
-     * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
-     *                  more or less by the book, while values < 0 are more liberal and > 0 are
-     *                  stricter.
-     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     * @param unit		The unit to be checked for role qualification
+     * @param tolerance	A measure of how strictly to apply the qualifications. A value of zero is
+     * 					more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
+     * 					stricter.
+     * @return			Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
         double score = 0;

@@ -330,7 +330,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns an array of the Coords of hexes that are crossed by a straight
-     * line from the center of src to the center of dest, including src & dest.
+     * line from the center of src to the center of dest, including src and dest.
      * The returned coordinates are in line order, and if the line passes
      * directly between two hexes, it returns them both. Based on the degree of
      * the angle, the next hex is going to be one of three hexes. We check those
@@ -350,7 +350,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns an array of the Coords of hexes that are crossed by a straight
-     * line from the center of src to the center of dest, including src & dest.
+     * line from the center of src to the center of dest, including src and dest.
      * The returned coordinates are in line order, and if the line passes
      * directly between two hexes, it returns them both. Based on the degree of
      * the angle, the next hex is going to be one of three hexes. We check those
@@ -480,7 +480,7 @@ public class Coords implements Serializable {
     /**
      * Returns a list of all coordinates at the given distance dist, 
      * regardless of whether they're on the board or not. Returns an 
-     * empty Set for dist < 0 and the calling Coords itself for dist == 0.
+     * empty Set for dist &lt; 0 and the calling Coords itself for dist == 0.
      */
     public ArrayList<Coords> allAtDistance(int dist) { 
         ArrayList<Coords> retval = new ArrayList<>();

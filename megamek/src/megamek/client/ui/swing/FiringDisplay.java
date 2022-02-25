@@ -1011,7 +1011,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     /**
      * Cache the list of visible targets. This is used for the 'next target'
      * button.
-     * <p/>
+     * <p>
      * We'll sort it by range to us.
      */
     private void cacheVisibleTargets() {

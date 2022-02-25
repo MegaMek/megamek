@@ -27,7 +27,7 @@ import java.util.Hashtable;
  * to the mode identified by the given name.
  * <p>
  * There is no way to create the instance of the <code>EquipmentMode</code>
- * directly, use </code>EquipmentMode#getMode</code> instead.
+ * directly, use <code>EquipmentMode#getMode</code> instead.
  * 
  * @see megamek.common.EquipmentType
  * @see megamek.common.Mounted

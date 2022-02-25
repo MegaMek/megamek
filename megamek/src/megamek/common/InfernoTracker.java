@@ -1,43 +1,34 @@
-/**
+/*
  * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
 
 /**
  * This class records and defines the effects of hits by Inferno rounds on units
- * and hexes. It does not *apply* the effect, it just defines it. <p/> It makes
+ * and hexes. It does not *apply* the effect, it just defines it. <p> It makes
  * use of an inner class to define an Inferno round. This inner class should not
- * be directly accessed, but instead refered to by the constants:
+ * be directly accessed, but instead referred to by the constants:
  * <code>STANDARD_ROUND</code> and <code>INFERNO_IV_ROUND</code>.
  */
 public class InfernoTracker implements Serializable, RoundUpdated {
-    // Private helper classes, methods, and attributes.
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5256053831078922473L;
 
     /**
      * This class defines the effects of a single hit by an Inferno round.
      */
     /* package */static class Inferno implements Serializable {
-        /**
-         * 
-         */
         private static final long serialVersionUID = 1799687411697517801L;
         private int heatPerRound;
         private int burnRoundsPerHit;

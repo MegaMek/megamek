@@ -427,7 +427,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Have the panel register itself as a listener wherever it's needed.
-     * <p/>
+     * <p>
      * According to
      * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
      * major bad no-no to perform these registrations before the constructor
@@ -1062,7 +1062,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Cache the list of visible targets. This is used for the 'next target'
      * button.
-     * <p/>
+     * <p>
      * We'll sort it by range to us.
      */
     private void cacheVisibleTargets() {

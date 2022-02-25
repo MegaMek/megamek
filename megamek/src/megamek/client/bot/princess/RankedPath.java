@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version $Id$
  * @since 12/5/13 10:19 AM
  */
 class RankedPath implements Comparable<RankedPath> {

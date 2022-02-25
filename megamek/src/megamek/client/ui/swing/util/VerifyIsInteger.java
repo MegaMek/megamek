@@ -17,7 +17,6 @@ import megamek.common.util.StringUtil;
 
 /**
  * @author arlith
- * @version %Id%
  * @since 10/3/14
  */
 public class VerifyIsInteger implements DataVerifier {

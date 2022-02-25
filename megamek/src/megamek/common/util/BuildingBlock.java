@@ -106,8 +106,6 @@ public class BuildingBlock {
      * @param blockName
      *            The name of the data block to locate.
      * @return Returns the start index of the block data. Or -1 if not found.
-     * @see findEndIndex()
-     * @see getAllDataAsVector()
      */
     public int findStartIndex(String blockName) {
 
@@ -156,8 +154,6 @@ public class BuildingBlock {
      * @param blockName
      *            The name of the data block to locate.
      * @return Returns the end index of the block data. Or -1 if not found.
-     * @see findStartIndex()
-     * @see getAllDataAsVector()
      */
     public int findEndIndex(String blockName) {
         String line;
@@ -243,9 +239,6 @@ public class BuildingBlock {
         return data; // hand back the goods...
     }
 
-    /**
-     * @see getDataAsString()
-     */
     public int[] getDataAsInt(String blockName) {
         int[] data;
         int startIndex, endIndex;
@@ -293,9 +286,6 @@ public class BuildingBlock {
         return data; // hand back the goods...
     }
 
-    /**
-     * @see getDataAsString()
-     */
     public float[] getDataAsFloat(String blockName) {
 
         float[] data;
@@ -344,9 +334,6 @@ public class BuildingBlock {
         return data; // hand back the goods...
     }
 
-    /**
-     * @see getDataAsString()
-     */
     public double[] getDataAsDouble(String blockName) {
         double[] data;
         int startIndex, endIndex;

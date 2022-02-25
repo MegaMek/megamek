@@ -11,7 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common;
 
 import java.util.Objects;
@@ -22,7 +21,6 @@ import megamek.common.util.StringUtil;
  * Class to store pertinent quirk information.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %I% %G%
  * @since 2012-03-05
  */
 class QuirkEntry {

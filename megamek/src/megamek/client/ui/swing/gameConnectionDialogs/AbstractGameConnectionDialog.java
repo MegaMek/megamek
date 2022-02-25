@@ -28,11 +28,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-<<<<<<< HEAD
-import megamek.common.util.StringUtil;
 import megamek.server.Server;
-=======
->>>>>>> master
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;

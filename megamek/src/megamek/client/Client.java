@@ -1612,7 +1612,7 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_LOAD_SAVEGAME:
                 String loadFile = (String) c.getObject(0);
                 try {
-                    File f = new File("savegames", loadFile);
+                    File f = new File(MMConstants.SAVEGAME_DIR, loadFile);
                     sendLoadGame(f);
                 } catch (Exception e) {
                     System.err.println("Unable to find the file: " + loadFile);

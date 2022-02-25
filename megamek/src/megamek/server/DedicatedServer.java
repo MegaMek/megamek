@@ -28,9 +28,6 @@ import java.io.FileReader;
 import java.util.Properties;
 
 public class DedicatedServer {
-//    private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-//    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t "
-//            + "[-password <pass>] [-port <port>] [-mail <javamail.properties>] [<saved game>]";
 
     public static void start(String[] args) {
         ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,

@@ -171,7 +171,7 @@ public class Server implements Runnable {
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
 
-    private final  boolean dedicated;
+    private final boolean dedicated;
 
     /**
      * Special packet queue for client feedback requests.
@@ -1201,7 +1201,7 @@ public class Server implements Runnable {
             }
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
-        String localFile = "savegames" + File.separator + sFinalFile;
+        String localFile = MMConstants.SAVEGAME_DIR + File.separator + sFinalFile;
         try (InputStream in = new FileInputStream(localFile); InputStream bin = new BufferedInputStream(in)) {
             List<Integer> data = new ArrayList<>();
             int input;
@@ -1240,7 +1240,7 @@ public class Server implements Runnable {
         if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
             sFinalFile = sFile + MMConstants.SAVE_FILE_EXT;
         }
-        File sDir = new File("savegames");
+        File sDir = new File(MMConstants.SAVEGAME_DIR);
         if (!sDir.exists()) {
             sDir.mkdir();
         }

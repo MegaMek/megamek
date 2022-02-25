@@ -34,7 +34,7 @@ public class ListSavesCommand extends ServerCommand {
 
     @Override
     public void run(int connId, String[] args) {
-        File sDir = new File("savegames");
+        File sDir = new File(MMConstants.SAVEGAME_DIR);
         if (!sDir.exists()) {
             server.sendServerChat("savegames directory not found.");
         }

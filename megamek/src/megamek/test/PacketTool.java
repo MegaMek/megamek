@@ -133,7 +133,7 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.add(new Label("Port Number:"));
         hostPort = new TextField( String.valueOf(MMConstants.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
-        button = new Button("ListNen");
+        button = new Button("Listen");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

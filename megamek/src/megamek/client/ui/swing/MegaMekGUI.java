@@ -540,7 +540,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     void loadGame() {
-        JFileChooser fc = new JFileChooser("savegames");
+        JFileChooser fc = new JFileChooser(MMConstants.SAVEGAME_DIR);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
         fc.setFileFilter(new FileFilter() {

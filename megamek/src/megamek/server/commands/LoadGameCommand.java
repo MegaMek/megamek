@@ -51,10 +51,10 @@ public class LoadGameCommand extends ServerCommand {
                     && !sFinalFile.endsWith(MMConstants.SAVE_FILE_GZ_EXT)) {
                 sFinalFile = sFinalFile + MMConstants.SAVE_FILE_EXT;
             }
-            if (!sFinalFile.endsWith(".gz")) {
-                sFinalFile = sFinalFile + ".gz";
+            if (!sFinalFile.endsWith(MMConstants.GZ_FILE_EXT)) {
+                sFinalFile = sFinalFile + MMConstants.GZ_FILE_EXT;
             }
-            load(new File("savegames", sFinalFile), connId);
+            load(new File(MMConstants.SAVEGAME_DIR, sFinalFile), connId);
         } else {
             server.sendServerChat(connId, "you must provide a file name");
         }

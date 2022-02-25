@@ -436,7 +436,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start Server", ex);
             frame.setVisible(true);
             return;
@@ -466,7 +466,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // start server
         try {
             server = new Server( serverPassword, port, isRegister, metaServer, mailer, false);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled")+"\n");
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -501,7 +501,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             playerName = Server.validatePlayerName(playerName);
             serverAddress = Server.validateServerAddress(serverAddress);
             port = Server.validatePort(port);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start client", ex);
             JOptionPane.showMessageDialog(frame,
                     Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
@@ -600,13 +600,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
     public void quickLoadGame() {
-        File file = new File( MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE + MMConstants.SAVE_FILE_GZ_EXT);
+        File file = new File(MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE + MMConstants.SAVE_FILE_GZ_EXT);
         if (!file.exists() || !file.canRead()) {
             JOptionPane.showMessageDialog(frame,
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath())+"\n");
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()) + "\n");
             return;
         }
 

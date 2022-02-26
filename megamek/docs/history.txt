@@ -21,6 +21,7 @@ VERSION HISTORY:
 + PR #3423: Increasing the chat levels for some useful princess gameplay messages
 + PR #3445: Fixing MegaMek's Javadoc Build
 + Issue #3413: Command Line Flags and Argument Improvements
++ Updating FlatLaf to 2.0.2 from 2.0.1
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

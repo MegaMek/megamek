@@ -21,7 +21,6 @@ package megamek.client.ui.swing.calculationReport;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TextCalculationReport implements CalculationReport {

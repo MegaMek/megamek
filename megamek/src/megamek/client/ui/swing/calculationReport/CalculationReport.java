@@ -199,7 +199,7 @@ public interface CalculationReport {
      * as the Java way of converting "" + value seems to use Locale.US by default as well.
      */
     private String getRoundedResultString(String resultPrefix, double result) {
-        return (resultPrefix != null) ? resultPrefix : ""
+        return ((resultPrefix != null) ? resultPrefix : "")
                 + String.format(Locale.US, "%1$,.1f", result);
     }
 }

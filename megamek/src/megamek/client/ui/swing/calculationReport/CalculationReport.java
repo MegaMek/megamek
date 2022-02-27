@@ -188,7 +188,7 @@ public interface CalculationReport {
     CalculationReport addResultLine(@Nullable String type, @Nullable String calculation, @Nullable String result);
 
     /**
-     * Returns the CalucaltionReport as a JComponent that can be added to a dialog or other Swing component.
+     * Returns the CalculationReport as a JComponent that can be added to a dialog or other Swing component.
      *
      * @return The CalculationReport wrapped in a JComponent form.
      */

@@ -36,6 +36,7 @@ public class SwingCalculationReport implements CalculationReport {
         return report;
     }
 
+    @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
         newLine();
         gbc.gridx = 3;

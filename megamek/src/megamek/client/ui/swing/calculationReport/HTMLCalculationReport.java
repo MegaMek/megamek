@@ -55,6 +55,7 @@ public class HTMLCalculationReport implements CalculationReport {
         return editorPane;
     }
 
+    @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
         report.append(ROW_START);
         report.append(COL_START).append(COL_END);

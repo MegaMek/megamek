@@ -9,6 +9,7 @@ import megamek.common.annotations.Nullable;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -141,8 +142,7 @@ public class MenuScroller {
      */
     public static MenuScroller setScrollerFor(JMenu menu, int scrollCount, int interval,
                                               int topFixedCount, int bottomFixedCount) {
-        return new MenuScroller(menu, scrollCount, interval,
-        topFixedCount, bottomFixedCount);
+        return new MenuScroller(menu, scrollCount, interval, topFixedCount, bottomFixedCount);
     }
 
     /**
@@ -161,8 +161,7 @@ public class MenuScroller {
      */
     public static MenuScroller setScrollerFor(JPopupMenu menu, int scrollCount, int interval,
                                               int topFixedCount, int bottomFixedCount) {
-        return new MenuScroller(menu, scrollCount, interval,
-        topFixedCount, bottomFixedCount);
+        return new MenuScroller(menu, scrollCount, interval, topFixedCount, bottomFixedCount);
     }
 
     /**
@@ -266,16 +265,22 @@ public class MenuScroller {
      * @throws IllegalArgumentException if scrollCount or interval is 0 or negative or if
      * topFixedCount or bottomFixedCount is negative
      */
-    public MenuScroller(JPopupMenu menu, int scrollCount, int interval,
-        int topFixedCount, int bottomFixedCount) {
+    public MenuScroller(JPopupMenu menu, int scrollCount, int interval, int topFixedCount,
+                        int bottomFixedCount) {
         if ((scrollCount <= 0) || (interval <= 0)) {
             throw new IllegalArgumentException("scrollCount and interval must be greater than 0");
         } else if ((topFixedCount < 0) || (bottomFixedCount < 0)) {
             throw new IllegalArgumentException("topFixedCount and bottomFixedCount cannot be negative");
         }
 
-        upItem = new MenuScrollItem(MenuIcon.UP, -1);
-        downItem = new MenuScrollItem(MenuIcon.DOWN, +1);
+        upItem = new MenuScrollItem(MenuIcon.UP, evt -> {
+            firstIndex--;
+            refreshMenu();
+        });
+        downItem = new MenuScrollItem(MenuIcon.DOWN, evt -> {
+            firstIndex++;
+            refreshMenu();
+        });
         setScrollCount(scrollCount);
         setInterval(interval);
         setTopFixedCount(topFixedCount);
@@ -490,22 +495,19 @@ public class MenuScroller {
         }
     }
 
-    private class MenuScrollTimer extends Timer {
-        public MenuScrollTimer(final int increment, int interval) {
-            super(interval, e -> {
-                firstIndex += increment;
-                refreshMenu();
-            });
+    private static class MenuScrollTimer extends Timer {
+        public MenuScrollTimer(final int interval, final ActionListener actionListener) {
+            super(interval, actionListener);
         }
     }
 
     private class MenuScrollItem extends JMenuItem implements ChangeListener {
         private MenuScrollTimer timer;
 
-        public MenuScrollItem(MenuIcon icon, int increment) {
+        public MenuScrollItem(final MenuIcon icon, final ActionListener timerActionListener) {
             setIcon(icon);
             setDisabledIcon(icon);
-            timer = new MenuScrollTimer(increment, interval);
+            timer = new MenuScrollTimer(interval, timerActionListener);
             addChangeListener(this);
         }
 
@@ -567,7 +569,7 @@ public class MenuScroller {
      */
     public static void createScrollBarsOnMenus(JMenu menu) {
         if (menu.getMenuComponentCount() > 20) {
-         MenuScroller.setScrollerFor(menu, 20);
+            MenuScroller.setScrollerFor(menu, 20);
         }
 
         for (int i = 0; i < menu.getMenuComponentCount(); i++) {

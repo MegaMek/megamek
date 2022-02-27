@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.AmmoType;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
@@ -20,14 +21,9 @@ import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
-import megamek.common.util.StringUtil;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * FiringPlan is a series of {@link WeaponFireInfo} objects describing a full attack turn
@@ -138,8 +134,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         }
         
         if (getTwist() != 0) {
-        	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-        		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
+            actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
+                FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
         
         if (flipArms) {
@@ -324,7 +320,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     String getWeaponNames() {
         StringBuilder out = new StringBuilder("");
         for (WeaponFireInfo wfi : this) {
-            if (!StringUtil.isNullOrEmpty(out)) {
+            if (!StringUtility.isNullOrEmpty(out)) {
                 out.append(",");
             }
 

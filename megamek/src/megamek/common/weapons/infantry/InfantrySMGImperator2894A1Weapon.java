@@ -47,7 +47,7 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 		ammoCost = 5;
 		shots = 50;
 		bursts = 5;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2838, 2842, 2900, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

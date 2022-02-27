@@ -44,7 +44,7 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
 		infantryRange = 0;
 		ammoWeight = 0.0003;
 		shots = 15;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3028, 3030, 3058, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(F_CC)

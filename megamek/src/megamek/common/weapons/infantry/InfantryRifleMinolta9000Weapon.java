@@ -46,7 +46,7 @@ public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
 		ammoWeight = 0.00012;
 		ammoCost = 5;
 		shots = 10;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3055, 3100, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_CC)

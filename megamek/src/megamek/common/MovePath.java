@@ -1077,7 +1077,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Changes turn-forwards-opposite-turn sequences into quad lateral shifts.
-     * <p/>
+     * <p>
      * Finds the sequence of three steps that can be transformed, then removes
      * all three and replaces them with the lateral shift step.
      */
@@ -1603,7 +1603,7 @@ public class MovePath implements Cloneable, Serializable {
         copy.steps = new Vector<>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
-        //copy.fliesOverEnemy = fliesOverEnemy;
+        // copy.fliesOverEnemy = fliesOverEnemy;
         copy.cachedEntityState = cachedEntityState; // intentional pointer copy
     }
 

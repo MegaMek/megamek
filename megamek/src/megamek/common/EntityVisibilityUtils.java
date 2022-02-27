@@ -13,7 +13,7 @@ public class EntityVisibilityUtils {
      * Logic lifted from BoardView1.redrawEntity() that checks whether the given player playing the given game
      * can see the given entity. Takes into account double blind, hidden units, team vision, etc.
      * @param localPlayer The player to check.
-     * @param game Game object
+     * @param game The current {@link Game}
      * @param entity The entity to check
      * @return Whether or not the player can see the entity.
      */

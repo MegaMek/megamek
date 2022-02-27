@@ -13,8 +13,10 @@
  */
 package megamek.test;
 
+import megamek.MMConstants;
 import megamek.common.Board;
 import megamek.common.net.*;
+import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -33,7 +35,7 @@ import java.util.TimerTask;
  * This class provides an AWT GUI for testing the transmission and reception of
  * <code>Packet</code>s.
  *
- * @author James Damour <suvarov454@users.sourceforge.net>
+ * @author James Damour (suvarov454@users.sourceforge.net)
  */
 public class PacketTool extends Frame implements Runnable {
 
@@ -126,10 +128,10 @@ public class PacketTool extends Frame implements Runnable {
 
         // Populate the connection panel.
         panConnect.add(new Label(" Connect To:"));
-        hostName = new TextField("localhost", 10);
+        hostName = new TextField(MMConstants.LOCALHOST, 10);
         panConnect.add(hostName);
         panConnect.add(new Label("Port Number:"));
-        hostPort = new TextField("2346", 10);
+        hostPort = new TextField( String.valueOf(MMConstants.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
         button = new Button("Listen");
         button.addActionListener(new ActionListener() {
@@ -305,7 +307,7 @@ public class PacketTool extends Frame implements Runnable {
     }
 
     /**
-     * Process a packet from a connection. <p/> Implements
+     * Process a packet from a connection. <p> Implements
      * <code>ConnectionHandler</code>.
      *
      * @param id - the <code>int</code> ID the connection that received the
@@ -467,7 +469,7 @@ public class PacketTool extends Frame implements Runnable {
     }
 
     /**
-     * Called when it is sensed that a connection has terminated. <p/>
+     * Called when it is sensed that a connection has terminated. <p>
      * Implements <code>ConnectionHandler</code>.
      *
      * @param deadConn - the <code>Connection</code> that has terminated.

@@ -176,21 +176,21 @@ public class MechView {
             }
             
             if (inf.getCrew() != null) {
-	            ArrayList<String> augmentations = new ArrayList<>();
-	            for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-	            		e.hasMoreElements();) {
-	            	final IOption o = e.nextElement();
-	            	if (o.booleanValue()) {
-	            		augmentations.add(o.getDisplayableName());
-	            	}
-	            }
-	            if (augmentations.size() > 0) {
-	                ItemList augList = new ItemList("Augmentations");
-	            	for (String aug : augmentations) {
-	            		augList.addItem(aug);
-	            	}
-	            	sLoadout.add(augList);
-	            }
+                ArrayList<String> augmentations = new ArrayList<>();
+                for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+                        e.hasMoreElements();) {
+                    final IOption o = e.nextElement();
+                    if (o.booleanValue()) {
+                        augmentations.add(o.getDisplayableName());
+                    }
+                }
+                if (augmentations.size() > 0) {
+                    ItemList augList = new ItemList("Augmentations");
+                    for (String aug : augmentations) {
+                        augList.addItem(aug);
+                    }
+                    sLoadout.add(augList);
+                }
             }
         }
 

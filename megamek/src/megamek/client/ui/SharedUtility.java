@@ -113,13 +113,13 @@ public class SharedUtility {
             curPos = step.getPosition();
             curFacing = step.getFacing();
 
-            //check for vertical takeoff
+            // check for vertical takeoff
             if (step.getType() == MoveStepType.VTAKEOFF) {
                 rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            //check for landing
+            // check for landing
             if (step.getType() == MoveStepType.LAND) {
                 rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, false);
@@ -246,14 +246,14 @@ public class SharedUtility {
 
             final Hex curHex = game.getBoard().getHex(curPos);
 
-            //check for vertical takeoff
+            // check for vertical takeoff
             if ((step.getType() == MoveStepType.VTAKEOFF)
                     && entity.isAero()) {
                 rollTarget = ((IAero) entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            //check for landing
+            // check for landing
             if ((step.getType() == MoveStepType.LAND)
                     && entity.isAero()) {
                 rollTarget = ((IAero) entity).checkLanding(moveType,
@@ -306,7 +306,7 @@ public class SharedUtility {
                         .getPlanetaryConditions().getLightDisplayableName());
             }
 
-            //check if we are moving recklessly
+            // check if we are moving recklessly
             rollTarget = entity.checkRecklessMove(step, overallMoveType,
                     curHex, lastPos, curPos, prevHex);
             checkNag(rollTarget, nagReport, psrList);

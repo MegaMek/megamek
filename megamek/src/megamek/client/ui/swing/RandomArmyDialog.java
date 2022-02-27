@@ -269,7 +269,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
 
-        //construct the RAT panel
+        // construct the RAT panel
         m_pRAT.setLayout(new GridBagLayout());
         m_tUnits.setText("4");
 
@@ -325,7 +325,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         treeViewRAT.setPreferredSize(new Dimension(300, 200));
         m_pRAT.add(treeViewRAT, c);
 
-        //construct the RAT Generator panel
+        // construct the RAT Generator panel
         m_pRATGen.setLayout(new GridBagLayout());
         //put the general options and the unit-specific options into a single panel so they scroll together.
         JPanel pRATGenTop = new JPanel(new GridBagLayout());

@@ -14,17 +14,13 @@
  */
 package megamek.common.verifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+
+import java.util.*;
 
 /**
  * @author Reinhard Vicinus
@@ -764,7 +760,7 @@ public class TestTank extends TestEntity {
         if (getEntity().isSupportVehicle() && (getEntity().getWeight() < 5)) {
             return 0;
         }
-    	
+
         if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
             double weight = 0;
             for (Mounted m : tank.getWeaponList()) {

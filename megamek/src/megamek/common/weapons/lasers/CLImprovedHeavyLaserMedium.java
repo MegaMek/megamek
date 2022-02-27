@@ -48,7 +48,7 @@ public class CLImprovedHeavyLaserMedium extends LaserWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 5;
         explosive = true;
-        rulesRefs = "321,TO";
+        rulesRefs = "321, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)

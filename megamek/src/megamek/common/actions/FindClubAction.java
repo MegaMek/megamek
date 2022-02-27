@@ -40,7 +40,8 @@ public class FindClubAction extends AbstractEntityAction {
     }
 
     /**
-     * Returns whether an entity can find a club in its current location
+     * @param game The current {@link Game}
+     * @return whether an entity can find a club in its current location
      */
     public static boolean canMechFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
@@ -84,7 +85,7 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return false;
         }

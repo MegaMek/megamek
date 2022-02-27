@@ -24,6 +24,12 @@ import java.util.*;
 /**
  * This class represents a single, possibly multi-hex building on the board.
  *
+ * FIXME : This needs a complete rewrite to properly handle the latest building rules
+ *
+ * Rewrite Notes:
+ * TODO : 1) Migrate Magic Numbers to Enums
+ * TODO : 2) Offboard Gun Emplacements: Revisit with a required rules query (CustomMechDialog - 22-Feb-2022)
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class Building implements Serializable {
@@ -151,9 +157,9 @@ public class Building implements Serializable {
      * Update this building to include the new hex (and all hexes off the new
      * hex, which aren't already included).
      *
-     * @param coords tthe <code>Coords</code> of the new hex.
+     * @param coords the <code>Coords</code> of the new hex.
      * @param board the game's <code>Board</code> object.
-     * @exception IllegalArgumentException will be thrown if the given coordinates do not contain a
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a
      * building, or if the building covers multiple hexes with different CF.
      */
     protected void include(Coords coords, Board board, int structureType) {
@@ -230,7 +236,7 @@ public class Building implements Serializable {
      *               multiple hexes, this constructor will include them all in this building
      *               automatically.
      * @param board the game's <code>Board</code> object.
-     * @exception IllegalArgumentException will be thrown if the given coordinates do not contain a
+     * @throws IllegalArgumentException will be thrown if the given coordinates do not contain a
      * building, or if the building covers multiple hexes with different CFs.
      */
     public Building(Coords coords, Board board, int structureType, BasementType basementType) {
@@ -417,7 +423,7 @@ public class Building implements Serializable {
     /**
      * Roll what kind of basement this building has
      * @param coords the <code>Coords</code> of the building to roll for
-     * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
+     * @param vPhaseReport the {@link Report} <code>Vector</code> containing the phasereport
      * @return a <code>boolean</code> indicating weather the hex and building was changed or not
      */
     public boolean rollBasement(Coords coords, Board board, Vector<Report> vPhaseReport) {
@@ -463,8 +469,7 @@ public class Building implements Serializable {
      * Get the current construction factor of the building hex at the passed
      * coords. Any damage immediately updates this value.
      *
-     * @param coords
-     *            - the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      *
      * @return the <code>int</code> value of the building hex's current
      *         construction factor. This value will be greater than or equal to
@@ -479,8 +484,7 @@ public class Building implements Serializable {
      * the start of the current phase. Damage that is received during the phase
      * is applied at the end of the phase.
      *
-     * @param coords
-     *            - the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      * @return the <code>int</code> value of the building's construction factor
      *         at the start of this phase. This value will be greater than or
      *         equal to zero.
@@ -497,10 +501,10 @@ public class Building implements Serializable {
      * Set the current construction factor of the building hex. Call this method
      * immediately when the building sustains any damage.
      *
-     * @param coords the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      * @param cf the <code>int</code> value of the building hex's current construction factor. This
      *           value must be greater than or equal to zero.
-     * @exception IllegalArgumentException if the passed value is less than zero
+     * @throws IllegalArgumentException if the passed value is less than zero
      */
     public void setCurrentCF(int cf, Coords coords) {
         if (cf < 0) {
@@ -515,10 +519,10 @@ public class Building implements Serializable {
      * phase. Call this method at the end of the phase to apply damage sustained
      * by the building during the phase.
      *
-     * @param coords the <code>Coords> of the hex in question
+     * @param coords the <code>Coords</code> of the hex in question
      * @param cf the <code>int</code> value of the building hex's current construction factor. This
      *           value must be greater than or equal to zero.
-     * @exception IllegalArgumentException if the passed value is less than zero
+     * @throws IllegalArgumentException if the passed value is less than zero
      */
     public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {

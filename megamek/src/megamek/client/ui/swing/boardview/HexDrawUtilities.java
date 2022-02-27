@@ -15,7 +15,7 @@ import java.awt.geom.Point2D;
  * 
  * <BR>The methods named ...Full...Line() return closed shapes for
  * all 6 faces. They can be used to both graph.draw() and graph.fill().
- * <BR>When a border line is moved inside the hex (inset>0) and 
+ * <BR>When a border line is moved inside the hex (inset &gt; 0) and
  * for all border areas, the cuttype parameter controls how the line/area is
  * delimited. <BR>
  * CUT_BORDER extends the line/area out to the hex borders<BR>  

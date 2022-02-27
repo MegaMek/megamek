@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -27,7 +27,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirmechRamAttackAction;
@@ -83,9 +83,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private TurnTimer tt;
 
     /**
-     * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the movement phase. Each command has a string for the
-     * command plus a flag that determines what unit type it is appropriate for.
+     * This enumeration lists all of the possible ActionCommands that can be carried out during the
+     * movement phase. Each command has a string for the command plus a flag that determines what
+     * unit type it is appropriate for.
      *
      * @author arlith
      */
@@ -235,24 +235,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<>();
             for (MoveCommand cmd : MoveCommand.values()) {
                 // Check for movements that with disabled game options
-                if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
-                    && !manualShutdown) {
+                if (((cmd == MOVE_SHUTDOWN) || (cmd == MOVE_STARTUP)) && !manualShutdown) {
                     continue;
-                }
-                if (cmd == MOVE_SELF_DESTRUCT
-                    && !selfDestruct) {
+                } else if ((cmd == MOVE_SELF_DESTRUCT) && !selfDestruct) {
                     continue;
-                }
-
-                if (cmd == MOVE_FORWARD_INI && !forwardIni) {
+                } else if ((cmd == MOVE_FORWARD_INI) && !forwardIni) {
                     continue;
-                }
-                
-                if (cmd == MOVE_BOOTLEGGER && !advVehicle) {
+                } else if ((cmd == MOVE_BOOTLEGGER) && !advVehicle) {
                     continue;
-                }
-                
-                if (cmd == MOVE_STRAFE && !vtolStrafe) {
+                } else if ((cmd == MOVE_STRAFE) && !vtolStrafe) {
                     continue;
                 }
 
@@ -263,7 +254,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             return flaggedCmds.toArray(new MoveCommand[0]);
         }
-
     }
 
     // buttons
@@ -320,21 +310,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Create all of the buttons
         buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
-            String title = Messages
-                    .getString("MovementDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String title = Messages.getString("MovementDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
             String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
             if (Messages.keyExists(ttKey)) {
                 newButton.setToolTipText(Messages.getString(ttKey));
             }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
-            if (clientgui != null) {
-                newButton.setEnabled(false);
-            } else {
-                newButton.setEnabled(true);
-            }
+            newButton.setEnabled(clientgui == null);
             buttons.put(cmd, newButton);
         }
 
@@ -383,8 +367,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
                     @Override
                     public void performAction() {
-                        int curDir = cmd.getFinalFacing();
-                        int dir = curDir;
+                        int dir = cmd.getFinalFacing();
                         dir = (dir + 5) % 6;
                         Coords curPos = cmd.getFinalCoords();
                         Coords target = curPos.translated(dir);
@@ -414,8 +397,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
                     @Override
                     public void performAction() {
-                        int curDir = cmd.getFinalFacing();
-                        int dir = curDir;
+                        int dir = cmd.getFinalFacing();
                         dir = (dir + 7) % 6;
                         Coords curPos = cmd.getFinalCoords();
                         Coords target = curPos.translated(dir);
@@ -463,8 +445,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
                     @Override
                     public void performAction() {
-                        selectEntity(clientgui.getClient()
-                                .getNextEntityNum(cen));
+                        selectEntity(clientgui.getClient().getNextEntityNum(cen));
                     }
                 });
 
@@ -539,8 +520,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             if (gear != MovementDisplay.GEAR_JUMP) {
                                 if (!((cmd.getLastStep() != null)
                                         && cmd.getLastStep().isFirstStep() 
-                                        && (cmd.getLastStep().getType() 
-                                                == MoveStepType.LAY_MINE))) {
+                                        && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
                                     clear();
                                 }
                                 if (!cmd.isJumping()) {
@@ -592,6 +572,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             if (!((LandAirMech) ce()).canConvertTo(nextMode)) {
                                 nextMode = ce().nextConversionMode(nextMode);
                             }
+
                             if (!((LandAirMech) ce()).canConvertTo(nextMode)) {
                                 nextMode = ce().getMovementMode();
                             }
@@ -600,19 +581,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         clientgui.getBoardView().drawMovementData(ce(), cmd);
                     }
                 });
-
     }
 
     /**
-     * Return the button list: we need to determine what unit type is selected
-     * and then get a button list appropriate for that unit.
+     * @return the button list: we need to determine what unit type is selected and then get a
+     * button list appropriate for that unit.
      */
     @Override
     protected ArrayList<MegamekButton> getButtonList() {
-        int flag;
-
         final Entity ce = ce();
-        flag = CMD_MECH;
+        int flag = CMD_MECH;
         if (ce != null) {
             if (ce instanceof Infantry) {
                 flag = CMD_INF;
@@ -621,15 +599,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             } else if (ce instanceof Tank) {
                 flag = CMD_TANK;
             } else if (ce.isAero()) {
-                if (ce.isAirborne()
-                    && clientgui.getClient().getGame().useVectorMove()) {
-                    flag = CMD_AERO_VECTORED;
-                } else if (ce.isAirborne()
-                           && !clientgui.getClient().getGame().useVectorMove()) {
-                    flag = CMD_AERO;
+                if (ce.isAirborne()) {
+                    flag = clientgui.getClient().getGame().useVectorMove()
+                            ? CMD_AERO_VECTORED : CMD_AERO;
                 } else {
                     flag = CMD_TANK;
                 }
+
                 if (ce instanceof LandAirMech) {
                     flag |= CMD_CONVERTER;
                 }
@@ -645,9 +621,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 } else {
                     flag = CMD_MECH | CMD_CONVERTER;
                 }
-            } else if (ce instanceof Mech && ((Mech) ce).hasTracks()) {
+            } else if ((ce instanceof Mech) && ((Mech) ce).hasTracks()) {
                 flag = CMD_MECH | CMD_CONVERTER;
-            } else if (ce instanceof Protomech && ce.getMovementMode() == EntityMovementMode.WIGE) {
+            } else if ((ce instanceof Protomech) && ce.getMovementMode().isWiGE()) {
                 flag = CMD_MECH | CMD_AIRMECH;
             }
         }
@@ -685,16 +661,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 i++;
             }
         }
-        if (!buttonList.get(i - 1).getActionCommand()
-                       .equals(MoveCommand.MOVE_MORE.getCmd())) {
+        if (!buttonList.get(i - 1).getActionCommand().equals(MoveCommand.MOVE_MORE.getCmd())) {
             while ((i + 1) % buttonsPerGroup != 0) {
                 buttonList.add(null);
                 i++;
             }
             buttonList.add(getBtn(MoveCommand.MOVE_MORE));
         }
-        numButtonGroups = (int) Math.ceil((buttonList.size() + 0.0)
-                                          / buttonsPerGroup);
+        numButtonGroups = (int) Math.ceil((buttonList.size() + 0.0) / buttonsPerGroup);
         return buttonList;
     }
 
@@ -705,7 +679,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     public synchronized void selectNextPlayer() {
         clientgui.getClient().sendNextPlayer();
-        // endMyTurn();
     }
 
     /**
@@ -716,8 +689,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // hmm, sometimes this gets called when there's no ready entities?
         if (ce == null) {
-            System.err.println("MovementDisplay: tried to "
-                               + "select non-existant entity: " + en);
+            System.err.println("MovementDisplay: tried to " + "select non-existant entity: " + en);
             return;
         }
 
@@ -728,8 +700,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIPreferences.getInstance().getColor(
-                GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+        Color walkColor = GUIPreferences.getInstance().getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
         clientgui.getBoardView().setHighlightColor(walkColor);
         clear();
         
@@ -743,18 +714,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
 
-        String yourTurnMsg = Messages
-                .getString("MovementDisplay.its_your_turn");
+        String yourTurnMsg = Messages.getString("MovementDisplay.its_your_turn");
         if (ce.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)) {
             String poorPerfMsg;
             if (ce.getMpUsedLastRound() < ce.getWalkMP()) {
-                poorPerfMsg = Messages
-                        .getString("MovementDisplay.NotUpToSpeed");
+                poorPerfMsg = Messages.getString("MovementDisplay.NotUpToSpeed");
             } else {
                 poorPerfMsg = Messages.getString("MovementDisplay.UpToSpeed");
             }
-            setStatusBarText("<html><center>" + yourTurnMsg + "<br>"
-                             + poorPerfMsg + "</center></html>");
+            setStatusBarText("<html><center>" + yourTurnMsg + "<br>" + poorPerfMsg + "</center></html>");
         } else {
             setStatusBarText(yourTurnMsg);
         }
@@ -972,7 +940,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
-        //check if there should be a turn timer running
+        // check if there should be a turn timer running
         tt = TurnTimer.init(this, clientgui.getClient());
     }
 
@@ -1461,8 +1429,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForCrushingBuildings(
-                            false);
+                    GUIPreferences.getInstance().setNagForCrushingBuildings(false);
                 }
             } else {
                 return;
@@ -1474,9 +1441,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
-                    Messages.getString("MovementDisplay.insufficientAltitudeForConversion") +
-                   
-                            check, false);
+                    Messages.getString("MovementDisplay.insufficientAltitudeForConversion") + check,
+                    false);
             nag.setVisible(true);
             if (!nag.getAnswer()) {
                 return;
@@ -1491,12 +1457,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
                 && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
                     .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
-            String title = Messages
-                    .getString("MovementDisplay.MicroliteMove.title");
-            String body = Messages
-                    .getString("MovementDisplay.MicroliteMove.message");
+            String title = Messages.getString("MovementDisplay.MicroliteMove.title");
+            String body = Messages.getString("MovementDisplay.MicroliteMove.message");
             clientgui.doAlertDialog(title, body);
-            return;            	
+            return;
         }
         
         if (cmd.automaticWiGELanding(true)
@@ -3116,7 +3080,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Entity tr = game.getEntity(id);
             thisTrain.add(tr);
         }
-        //and store all the valid Hitch transporters that each one has
+        // and store all the valid Hitch transporters that each one has
         //really, there shouldn't be but one per entity. "Towing" front and rear with the
         //tractor in the center isn't going to work well...
         for (Entity e : thisTrain) {
@@ -3157,10 +3121,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             //Set the transporter number in the towed entity from the selection
             choice.setTargetBay(hc.getNumber());
-            //and then the Entity id the transporter is attached to...
+            // and then the Entity id the transporter is attached to...
             choice.setTowedBy(hc.getId());
         } else {
-            //and in case there's just one choice...
+            // and in case there's just one choice...
             choice.setTargetBay(hitchChoices.get(0).getNumber());
             choice.setTowedBy(hitchChoices.get(0).getId());
         }
@@ -5298,11 +5262,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      * Give the player the opportunity to unload all entities that are stranded
      * on immobile transports.
-     * <p/>
-     * According to <a href= "http://www.classicbattletech.com/w3t/showflat
-     * .php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart="
-     * > Randall Bills</a>, the "minimum move" rule allow stranded units to
-     * dismount at the start of the turn.
+     * <p>
+     * According to
+     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall Bills</a>,
+     * the "minimum move" rule allow stranded units to dismount at the start of the turn.
      */
     private void unloadStranded() {
         Vector<Entity> stranded = new Vector<>();

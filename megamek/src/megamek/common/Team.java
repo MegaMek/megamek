@@ -250,8 +250,8 @@ public final class Team extends TurnOrdered {
     }
 
     /**
-     * Two teams are equal if their ids and players are equal. <p/> Override
-     * <code>java.lang.Object#equals(Object)
+     * Two teams are equal if their ids and players are equal. <p> Override
+     * <code>java.lang.Object#equals(Object)</code>
      */
     @Override
     public boolean equals(Object object) {

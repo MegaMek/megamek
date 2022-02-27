@@ -210,10 +210,10 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Coords src = new Coords(x, y);
         Coords nextCoords = src.translated(windDir);
 
-        //check for height differences between hexes
+        // check for height differences between hexes
         //TODO: until further clarification only the heights matter (not the base elevation)
         //This means that a fire cannot spread from a level 6 building at base level 0 to
-        //a level 1 building at base level 0, for example.
+        // a level 1 building at base level 0, for example.
 
         final int curHeight = game.getBoard().getHex(src).ceiling();
 

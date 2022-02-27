@@ -49,7 +49,7 @@ public class ISRifleHeavy extends RifleWeapon {
         extAV = 9;
         maxRange = RANGE_MED;
         explosionDamage = 0;
-        rulesRefs = "338,TO";
+        rulesRefs = "338, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_B)
                 .setAvailability(RATING_C, RATING_F, RATING_X, RATING_D)

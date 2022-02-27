@@ -905,7 +905,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     /**
      * updates fields for the specified mech
-     * <p/>
+     * <p>
      * fix the ammo when it's added
      */
     public void displayMech(Entity en) {
@@ -1450,7 +1450,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             
             int range = inftype.getInfantryRange();
             if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET) {
-            	range /= 2;
+                range /= 2;
             }
             switch (range) {
                 case 0:
@@ -1966,10 +1966,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (wtype instanceof InfantryWeapon) {
             InfantryWeapon inftype = (InfantryWeapon) wtype;
             int iR = inftype.getInfantryRange();
-            ranges[0] = 
-                    new int[] { 0, iR, iR * 2, iR * 3, 0 };
-            ranges[1] =
-            		new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 }; 
+            ranges[0] = new int[] { 0, iR, iR * 2, iR * 3, 0 };
+            ranges[1] = new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 };
         }
 
         // Artillery gets fixed ranges, 100 as an arbitrary
@@ -2052,7 +2050,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
 
                 // set the standard ranges, depending on capital or no
-                //boolean isCap = wtype.isCapital();
+                // boolean isCap = wtype.isCapital();
                 int rangeMultiplier = wtype.isCapital() ? 2 : 1;
                 final Game game = unitDisplay.getClientGUI().getClient().getGame();
                 if (game.getBoard().onGround()) {

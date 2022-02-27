@@ -21,6 +21,7 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.DisengageAction;
@@ -1211,7 +1212,7 @@ public class Princess extends BotClient {
                     msg += " is crippled and withdrawing.";
                 }
                 LogManager.getLogger().debug(msg);
-                sendChat(msg, Level.WARN);
+                sendChat(msg, Level.ERROR);
 
                 // If this entity is falling back, able to flee the board, on 
                 // its home edge, and must flee, do so.
@@ -1225,7 +1226,7 @@ public class Princess extends BotClient {
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
                     msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
                     LogManager.getLogger().info(msg);
-                    sendChat(msg, Level.WARN);
+                    sendChat(msg, Level.ERROR);
                     final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.EJECT);
                     return mp;
@@ -1301,7 +1302,7 @@ public class Princess extends BotClient {
             final List<Entity> ents = game.getEntitiesVector();
             for (final Entity ent : ents) {
                 final String errors = getFireControl(ent).checkAllGuesses(ent, game);
-                if (!StringUtil.isNullOrEmpty(errors)) {
+                if (!StringUtility.isNullOrEmpty(errors)) {
                     LogManager.getLogger().warn(errors);
                 }
             }
@@ -1778,9 +1779,8 @@ public class Princess extends BotClient {
     }
 
     public int calculateAdjustment(final String ticks) {
-        
         int adjustment = 0;
-        if (StringUtil.isNullOrEmpty(ticks)) {
+        if (StringUtility.isNullOrEmpty(ticks)) {
             return 0;
         }
         for (final char tick : ticks.toCharArray()) {

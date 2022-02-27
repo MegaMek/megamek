@@ -52,7 +52,7 @@ public class ISGaussRifle extends GaussWeapon {
         longAV = 15;
         maxRange = RANGE_LONG;
         explosionDamage = 20;
-        rulesRefs = "219,TM";
+        rulesRefs = "219, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

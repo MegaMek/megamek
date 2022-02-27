@@ -227,7 +227,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
         
         //Capital missiles shouldn't be able to target buildings, being space-only weapons
-        //but if they aren't defined, handleEntityDamage() doesn't work.
+        // but if they aren't defined, handleEntityDamage() doesn't work.
         int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up
@@ -288,16 +288,16 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
                 AmmoType atype = (AmmoType) bayWAmmo.getType();
                 if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                		&& (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
-                		        || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
-                	weaponarmor = 40;
+                        && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                                || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                    weaponarmor = 40;
                 } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                		&& (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                        && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
                                 || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
-                	weaponarmor = 30;
+                    weaponarmor = 30;
                 } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
-                		&& atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                	weaponarmor = 20;
+                        && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                    weaponarmor = 20;
                 } else {
                 weaponarmor = bayWType.getMissileArmor();
                 }
@@ -449,7 +449,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
         //AR10 munitions
-    	if (atype.getAmmoType() == AmmoType.T_AR10) {
+        if (atype.getAmmoType() == AmmoType.T_AR10) {
             if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                 current_av = 4;
             } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
@@ -462,12 +462,12 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 current_av = 2;
             }
         }
-    	//Nuclear Warheads for non-AR10 missiles
-    	if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-    	    current_av = 100;
-    	} else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+        // Nuclear Warheads for non-AR10 missiles
+        if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            current_av = 100;
+        } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
             current_av = 1000;
-        }    	
+        }
         return current_av;
     } 
     /**
@@ -575,19 +575,19 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         
-        //Point Defense fire vs Capital Missiles
+        // Point Defense fire vs Capital Missiles
         CounterAV = calcCounterAV();
         
-        //CalcAttackValue triggers counterfire, so now we can safely get this
+        // CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = calcCapMissileAMSMod();
         
-        //Set up Capital Missile armor
+        // Set up Capital Missile armor
         CapMissileArmor = initializeCapMissileArmor();
         
-        //and now damage it
+        // and now damage it
         CapMissileArmor = (CapMissileArmor - CounterAV);
         
-        //Only do this if the missile wasn't destroyed
+        // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
             if (roll < toHit.getValue()) {
@@ -647,7 +647,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         // do we hit?
         bMissed = roll < toHit.getValue();
 
-        //Report Glancing/Direct Blow here because of Capital Missile weirdness
+        // Report Glancing/Direct Blow here because of Capital Missile weirdness
         if (!(amsBayEngagedCap || pdBayEngagedCap)) {
             addGlancingBlowReports(vPhaseReport);
     
@@ -659,7 +659,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             }
         }
         
-        //use this if AMS counterfire destroys all the Capital missiles
+        // use this if AMS counterfire destroys all the Capital missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
             r = new Report(3356);
             r.indent();
@@ -667,7 +667,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             vPhaseReport.addElement(r);
             return false;
         }
-        //use this if PD counterfire destroys all the Capital missiles
+        // use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
             r = new Report(3355);
             r.indent();
@@ -676,7 +676,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return false;
         }
 
-        //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        // Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
         
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -702,8 +702,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
 
         Report.addNewline(vPhaseReport);
-        //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
-        //data from the 'real' toHit data of this bay handler
+        // New toHit data to hold our bay auto hit. We want to be able to get glancing/direct blow
+        // data from the 'real' toHit data of this bay handler
         ToHitData autoHit = new ToHitData();
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;

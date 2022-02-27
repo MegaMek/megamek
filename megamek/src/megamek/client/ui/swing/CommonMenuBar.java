@@ -363,7 +363,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     /**
      * Register an object that wishes to be alerted when an item on this menu
-     * bar has been selected. <p/> Please note, the ActionCommand property of
+     * bar has been selected. <p> Please note, the ActionCommand property of
      * the action event will inform the listener as to which menu item that has
      * been selected. Not all listeners will be interested in all menu items.
      *

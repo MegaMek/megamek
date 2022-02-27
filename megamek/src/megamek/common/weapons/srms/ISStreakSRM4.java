@@ -38,7 +38,7 @@ public class ISStreakSRM4 extends StreakSRMWeapon {
         this.cost = 90000;
         this.shortAV = 8;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)

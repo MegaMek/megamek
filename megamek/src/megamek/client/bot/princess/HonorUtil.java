@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Deric Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 9/5/14 2:53 PM
  */
 public class HonorUtil implements IHonorUtil {

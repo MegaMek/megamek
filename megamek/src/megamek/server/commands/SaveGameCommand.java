@@ -20,6 +20,7 @@
 
 package megamek.server.commands;
 
+import megamek.MMConstants;
 import megamek.server.Server;
 
 /**
@@ -40,7 +41,7 @@ public class SaveGameCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        String fileName = "savegame.sav";
+        String fileName = MMConstants.DEFAULT_SAVEGAME_NAME;
         if (args.length > 1) {
             fileName = args[1];
         }

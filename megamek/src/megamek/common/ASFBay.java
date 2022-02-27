@@ -112,11 +112,8 @@ public final class ASFBay extends Bay {
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @throws IllegalArgumentException- If the unit can't be loaded, an
-     *            <code>IllegalArgumentException</code> exception will be
-     *            thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
@@ -189,11 +186,10 @@ public final class ASFBay extends Bay {
     }
 
     public Vector<Integer> initializeRecoverySlots() {
-
         Vector<Integer> slots = new Vector<>();
-        	// We have to account for changes in the number of doors, so remove all slots first.
-        	slots.removeAllElements();
-        	//now add 2 slots back on for each functional door.
+        // We have to account for changes in the number of doors, so remove all slots first.
+        slots.removeAllElements();
+        //now add 2 slots back on for each functional door.
         for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
@@ -231,9 +227,9 @@ public final class ASFBay extends Bay {
     @Override
     public void destroyDoorNext() {
 
-    	if (getDoorsNext() > 0) {
-    		setDoorsNext(getDoorsNext() - 1);
-    	}
+        if (getDoorsNext() > 0) {
+            setDoorsNext(getDoorsNext() - 1);
+        }
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
@@ -249,9 +245,9 @@ public final class ASFBay extends Bay {
     @Override
     public void destroyDoor() {
 
-    	if (getCurrentDoors() > 0) {
-    		setCurrentDoors(getCurrentDoors() - 1);
-    	}
+        if (getCurrentDoors() > 0) {
+            setCurrentDoors(getCurrentDoors() - 1);
+        }
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones

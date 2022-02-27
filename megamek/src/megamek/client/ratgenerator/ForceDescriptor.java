@@ -202,7 +202,7 @@ public class ForceDescriptor {
                     }
                 } else {
                     //If group generation is not set, then either this is a compound formation (e.g. squadron,
-                    //aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
+                    // aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
                     try {
                         Map<String,List<ForceDescriptor>> byGenRule = subforces.stream()
                                 .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
@@ -525,10 +525,10 @@ public class ForceDescriptor {
         int ratingLevel = getRatingLevel();
         int totalLevels = 5;
         /*
-         * 		Using the rating level relative to the total number of levels throws the results
-         * 		off for ComStar, which should behave as A-B out of A-F rather than A-B out of A-B.
+         * Using the rating level relative to the total number of levels throws the results
+         * off for ComStar, which should behave as A-B out of A-F rather than A-B out of A-B.
          *
-         * 		int totalLevels = RATGenerator.getInstance().getFaction(faction.split(",")[0]).getRatingLevels().size();
+         *  int totalLevels = RATGenerator.getInstance().getFaction(faction.split(",")[0]).getRatingLevels().size();
          */
         int target = 12 - ratingLevel;
         if (ratingLevel < 0) {
@@ -1004,8 +1004,6 @@ public class ForceDescriptor {
         }
 
         attached.forEach(ForceDescriptor::assignCommanders);
-
-        //		setIcon();
     }
 
     public void assignPositions() {
@@ -1125,27 +1123,27 @@ public class ForceDescriptor {
     }
 
     /*
-	public void assignBloodnames() {
-		assignBloodnames(getFactionRec());
-	}
+    public void assignBloodnames() {
+        assignBloodnames(getFactionRec());
+    }
 
-	public void assignBloodnames(FactionRecord fRec) {
-		if (fRec != null && fRec.isClan()) {
-			for (ForceDescriptor fd : subforces) {
-				fd.assignBloodnames();
-			}
-			for (ForceDescriptor fd : attached) {
-				fd.assignBloodnames();
-			}
+    public void assignBloodnames(FactionRecord fRec) {
+        if (fRec != null && fRec.isClan()) {
+            for (ForceDescriptor fd : subforces) {
+                fd.assignBloodnames();
+            }
+            for (ForceDescriptor fd : attached) {
+                fd.assignBloodnames();
+            }
 
-			if (co != null && (element || !(co.getAssignment() != null && co.getAssignment().isElement()))) {
-				co.assignBloodname();
-			}
-			if (xo != null && !(xo.getAssignment() != null && xo.getAssignment().isElement())) {
-				xo.assignBloodname();
-			}
-		}
-	}
+            if (co != null && (element || !(co.getAssignment() != null && co.getAssignment().isElement()))) {
+                co.assignBloodname();
+            }
+            if (xo != null && !(xo.getAssignment() != null && xo.getAssignment().isElement())) {
+                xo.assignBloodname();
+            }
+        }
+    }
      */
 
     public static int decodeWeightClass(String code) {

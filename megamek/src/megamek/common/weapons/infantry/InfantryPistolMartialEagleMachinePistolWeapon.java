@@ -47,7 +47,7 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 		ammoCost = 20;
 		shots = 30;
 		bursts = 3;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3040, 3045, 3060, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setPrototypeFactions(F_FW)

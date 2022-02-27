@@ -62,8 +62,7 @@ public abstract class MMRandom {
      *            value is less than or equal to zero, an
      *            <code>IllegalArgumentException</code> will be thrown.
      * @return a <code>Roll</code> object containing the roll results.
-     * @throws IllegalArgumentException will be thrown if the
-     *             input is <= 0.
+     * @throws IllegalArgumentException will be thrown if the input is &lt;= 0.
      */
     public Roll d6(int nDice) {
         if (0 >= nDice) {

@@ -42,7 +42,7 @@ public class CLBALightTAG extends TAGWeapon {
         bv = 0;
         cost = 40000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "270,TM";
+        rulesRefs = "270, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -52,7 +52,7 @@ public class CLBALightTAG extends TAGWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3054, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_DC)	
+                .setPrototypeFactions(F_DC)
                 .setProductionFactions(F_DC);
     }
 }

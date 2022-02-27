@@ -1,15 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
@@ -28,41 +34,20 @@ import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 public class TAGHandler extends WeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = -967656770476044773L;
 
-    /**
-     * @param toHit
-     * @param waa
-     * @param g
-     */
     public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
-     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         if (entityTarget == null) {
             Report r = new Report(3187);
             r.subject = subjectId;
@@ -100,47 +85,34 @@ public class TAGHandler extends WeaponHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
-     * .Entity, boolean, megamek.common.Building, java.util.Vector)
-     */
     @Override
-    protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean bldgDamagedOnMiss, Building bldg,
-            Vector<Report> vPhaseReport) {
+    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
+                                        Building bldg, Vector<Report> vPhaseReport) {
         int priority = 1;
         EquipmentMode mode = (weapon.curMode());
         if (mode != null) {
-            if (mode.getName().equals("1-shot")) {
-                priority = 1;
-            } else if (mode.getName().equals("2-shot")) {
-                priority = 2;
-            } else if (mode.getName().equals("3-shot")) {
-                priority = 3;
-            } else if (mode.getName().equals("4-shot")) {
-                priority = 4;
+            switch (mode.getName()) {
+                case "2-shot":
+                    priority = 2;
+                    break;
+                case "3-shot":
+                    priority = 3;
+                    break;
+                case "4-shot":
+                    priority = 4;
+                    break;
+                default:
+                    break;
             }
         }
         // add even misses, as they waste homing missiles.
-        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), 
-                target, priority, true);
+        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), target, priority, true);
         game.addTagInfo(info);
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.AttackHandler#cares(int)
-     */
     @Override
     public boolean cares(GamePhase phase) {
-        if (phase == GamePhase.OFFBOARD) {
-            return true;
-        }
-        return false;
+        return phase.isOffboard();
     }
 }

@@ -1137,35 +1137,35 @@ public class MtfFile implements IMechLoader {
         }
 
         if (lineLower.startsWith(MANUFACTURER)) {
-        	manufacturer = line.substring(MANUFACTURER.length());
-        	return true;
+            manufacturer = line.substring(MANUFACTURER.length());
+            return true;
         }
 
         if (lineLower.startsWith(PRIMARY_FACTORY)) {
-        	primaryFactory = line.substring(PRIMARY_FACTORY.length());
-        	return true;
+            primaryFactory = line.substring(PRIMARY_FACTORY.length());
+            return true;
         }
 
         if (lineLower.startsWith(SYSTEM_MANUFACTURER)) {
-        	String[] fields = line.split(":");
-        	if (fields.length > 2) {
-        		EntityFluff.System system = EntityFluff.System.parse(fields[1]);
-        		if (null != system) {
-        			systemManufacturers.put(system, fields[2].trim());
-        		}
-        	}
-        	return true;
+            String[] fields = line.split(":");
+            if (fields.length > 2) {
+                EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+                if (null != system) {
+                    systemManufacturers.put(system, fields[2].trim());
+                }
+            }
+            return true;
         }
 
         if (lineLower.startsWith(SYSTEM_MODEL)) {
-        	String[] fields = line.split(":");
-        	if (fields.length > 2) {
-        		EntityFluff.System system = EntityFluff.System.parse(fields[1]);
-        		if (null != system) {
-        			systemModels.put(system, fields[2].trim());
-        		}
-        	}
-        	return true;
+            String[] fields = line.split(":");
+            if (fields.length > 2) {
+                EntityFluff.System system = EntityFluff.System.parse(fields[1]);
+                if (null != system) {
+                    systemModels.put(system, fields[2].trim());
+                }
+            }
+            return true;
         }
 
         if (lineLower.startsWith(NOTES)) {

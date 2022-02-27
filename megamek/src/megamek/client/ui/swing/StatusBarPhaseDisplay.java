@@ -122,7 +122,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved
-     * with the <code>getButtonList()<code> method.  The number of buttons to
+     * with the <code>getButtonList()</code> method.  The number of buttons to
      * display is defined in <code>buttonsPerGroup</code> and which group of
      * buttons will be displayed is set by <code>currentButtonGroup</code>.
      */

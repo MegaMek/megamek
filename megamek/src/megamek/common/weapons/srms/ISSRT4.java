@@ -43,7 +43,7 @@ public class ISSRT4 extends SRTWeapon {
         this.criticals = 1;
         this.bv = 39;
         this.cost = 60000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

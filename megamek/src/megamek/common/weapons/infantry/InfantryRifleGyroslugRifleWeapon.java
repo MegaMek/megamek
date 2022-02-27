@@ -45,7 +45,7 @@ public class InfantryRifleGyroslugRifleWeapon extends InfantryWeapon {
 		ammoWeight = 0.0058;
 		ammoCost = 20;
 		shots = 50;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2520, 2530, 2570, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2520, 2530, 2570, DATE_NONE, DATE_NONE)

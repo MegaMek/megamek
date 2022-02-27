@@ -15,10 +15,10 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -492,7 +492,7 @@ public class EntityListFile {
 
     /**
      * Save the <code>Entity</code>s in the list to the given file.
-     * <p/>
+     * <p>
      * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
@@ -527,8 +527,8 @@ public class EntityListFile {
      * Save the entities from the game of client to the given file. This will create
      * separate sections for salvage, devastated, and ejected crews in addition
      * to the surviving units
-     * <p/>
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
+     * <p>
+     * The <code>Entity</code>s pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
      *
@@ -1146,7 +1146,7 @@ public class EntityListFile {
         }
 
         String extraData = crew.writeExtraDataToXMLLine(pos);
-        if (!StringUtil.isNullOrEmpty(extraData)) {
+        if (!StringUtility.isNullOrEmpty(extraData)) {
             output.write(extraData);
         }
     }

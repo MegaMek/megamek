@@ -82,7 +82,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); 	
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
@@ -90,8 +90,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false); 
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         
@@ -178,23 +178,23 @@ public class Quirks extends AbstractOptions {
             return true;
         }
 
-		if (en instanceof Mech) {
-			if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)) {
-				// Mechs with a hand actuator can have battlefists
-				if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
-					return true;
-				} else {
-					return false;
-				}		
-			}
-	         if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
-	                // Mechs with a hand actuator can have battlefists
-	                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
-	                    return true;
-	                } else {
-	                    return false;
-	                }       
-	            }
+        if (en instanceof Mech) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)) {
+                // Mechs with a hand actuator can have battlefists
+                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+             if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
+                    // Mechs with a hand actuator can have battlefists
+                    if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             if (qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)) {
                 if (en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)
                         && !en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
@@ -227,25 +227,25 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-        	if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
-        		return false;
-        	}
-        	
-        	if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
-        		return false;
-        	}
+            if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
+                return false;
+            }
+
+            if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
+                return false;
+            }
             
             return true;
         }
-		        
-		// Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
-		// made sense to him. Uncertain at this time if CGL would adopt them but
-		// including them since Quirks is already an option. Hammer
+
+        // Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
+        // made sense to him. Uncertain at this time if CGL would adopt them but
+        // including them since Quirks is already an option. Hammer
         if (en instanceof GunEmplacement) {
-        	if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
-        	        || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
-        	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
-        	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
@@ -311,7 +311,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
-        	}
+            }
             return true;
         }
 

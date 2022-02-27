@@ -84,16 +84,16 @@ public enum CrewType {
     }
 
     /**
-     * @return The index of the crew member that that provides a command bonus. A value < 0 indicates
-     *         there is no such position.
+     * @return The index of the crew member that that provides a command bonus. A value &lt; 0
+     * indicates there is no such position.
      */
     public int getCommanderPos() {
         return commanderPos;
     }
 
     /**
-     * @return The index of the crew member that that acts as a technical/tactical officer. A value < 0
-     *         indicates there is no such position.
+     * @return The index of the crew member that that acts as a technical/tactical officer. A value
+     * &lt; 0 indicates there is no such position.
      */
     public int getTechPos() {
         return techPos;
@@ -101,7 +101,7 @@ public enum CrewType {
 
     /**
      * @return The number of targets that can be attacked without incurring a secondary target penalty
-     *         with a dedicated gunner. A value < 0 indicates that there is no limit.
+     *         with a dedicated gunner. A value &lt; 0 indicates that there is no limit.
      */
     public int getMaxPrimaryTargets() {
         return maxPrimaryTargets;

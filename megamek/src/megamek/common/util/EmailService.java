@@ -17,6 +17,7 @@ package megamek.common.util;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -146,7 +147,7 @@ public class EmailService {
     public Vector<Player> getEmailablePlayers(Game game) {
         Vector<Player> emailable = new Vector<>();
         for (var player: game.getPlayersVector()) {
-            if (!StringUtil.isNullOrEmpty(player.getEmail()) && !player.isBot()
+            if (!StringUtility.isNullOrEmpty(player.getEmail()) && !player.isBot()
                     && !player.isObserver()) {
                 emailable.add(player);
             }

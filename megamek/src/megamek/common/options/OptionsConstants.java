@@ -227,7 +227,7 @@ public class OptionsConstants {
     
       //EDGE 
     public static final String EDGE = "edge";  
-    //different edge triggers
+    // different edge triggers
     //Mech Triggers
     public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit";  
     public static final String EDGE_WHEN_TAC= "edge_when_tac";  

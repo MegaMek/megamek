@@ -33,7 +33,7 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
         addLookupName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
         addLookupName("Nail Gun");
-        rulesRefs = "246,TM";
+        rulesRefs = "246, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

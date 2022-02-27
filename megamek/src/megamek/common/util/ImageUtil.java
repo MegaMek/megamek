@@ -219,19 +219,19 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have the format:
-     * <imageFile>(X,Y-Width,Height), where X,Y is the start of the image tile, and Width,Height are the size of the
-     * image tile.
+     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have
+     * the format {imageFile}(X,Y-Width,Height), where X,Y is the start of the image tile, and
+     * Width,Height are the size of the image tile.
      */
     public static class TileMapImageLoader implements ImageLoader {
         /**
-         * Given a String with the format "X,Y" split this into the X,Y components, and use those to greate a Coords
-         * object.
+         * Given a String with the format "X,Y" split this into the X,Y components, and use those to
+         * create a Coords object.
          *
          * @param c
          * @return
          */
-        protected Coords parseCoords(String c) {
+        protected @Nullable Coords parseCoords(@Nullable String c) {
             if (null == c || c.isEmpty()) {
                 return null;
             }
@@ -249,8 +249,8 @@ public final class ImageUtil {
         }
 
         /**
-         * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
-         * sub-image within the original image and return that sub-image.
+         * Given a string with the format {imageFile}(X,Y-W,H), load the image file and then use
+         * X,Y and W,H to find a sub-image within the original image and return that sub-image.
          */
         @Override
         public Image loadImage(String fileName) {

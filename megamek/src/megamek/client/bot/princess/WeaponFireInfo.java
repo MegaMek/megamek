@@ -68,7 +68,7 @@ public class WeaponFireInfo {
      * @param shooter The {@link megamek.common.Entity} doing the attacking.
      * @param target  The {@link megamek.common.Targetable} of the attack.
      * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game    The {@link megamek.common.Game} in progress.
+     * @param game    The current {@link Game}
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
@@ -88,7 +88,7 @@ public class WeaponFireInfo {
      * @param target       The {@link megamek.common.Targetable} of the attack.
      * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param weapon       The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game         The {@link megamek.common.Game} in progress.
+     * @param game         The current {@link Game}
      * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
@@ -110,7 +110,7 @@ public class WeaponFireInfo {
      * @param target                The {@link megamek.common.Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game                  The {@link megamek.common.Game} in progress.
+     * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
      * @param owner                 Instance of the princess owner
@@ -139,7 +139,7 @@ public class WeaponFireInfo {
      * @param target                The {@link megamek.common.Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game                  The {@link megamek.common.Game} in progress.
+     * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
@@ -545,7 +545,7 @@ public class WeaponFireInfo {
         String currentFireMode = getWeapon().curMode().getName();
         int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
         if (!currentFireMode.equals(getWeapon().curMode().getName())) {
-        	setUpdatedFiringMode(spinMode);
+            setUpdatedFiringMode(spinMode);
         }
         
         setHeat(computeHeat(weapon));
@@ -665,10 +665,10 @@ public class WeaponFireInfo {
      * Null if no update required.
      */
     public Integer getUpdatedFiringMode() {
-    	return updatedFiringMode;
+        return updatedFiringMode;
     }
     
     public void setUpdatedFiringMode(int mode) {
-    	updatedFiringMode = mode;
+        updatedFiringMode = mode;
     }
 }

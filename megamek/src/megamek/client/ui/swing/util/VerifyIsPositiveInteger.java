@@ -17,7 +17,6 @@ import megamek.common.util.StringUtil;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/14/14 3:44 PM
  */
 public class VerifyIsPositiveInteger implements DataVerifier {

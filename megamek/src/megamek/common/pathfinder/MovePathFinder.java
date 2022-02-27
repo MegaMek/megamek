@@ -40,16 +40,11 @@ import megamek.common.Tank;
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to
  * (coordinates x facing) and edges to MovePaths. Provides useful
  * implementations of functional interfaces defined in AbstractPathFinder.
- *
- * @param <C>
  */
 public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsWithFacing, C, MovePath> {
 
     /**
      * Node defined by coordinates and unit facing.
-     *
-     */
-    /**
      * @author Saginatio
      */
     public static class CoordsWithFacing {
@@ -113,10 +108,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
     /**
      * Filters MovePaths that are forcing PSR.
-     * <p/>
-     * Current implementation uses MoveStep.isDanger(). This implementation is
-     * broken :( It does not work properly for movement paths that use running
-     * mp.
+     * <p>
+     * FIXME : Current implementation uses MoveStep.isDanger(). This implementation is broken :(
+     * FIXME : It does not work properly for movement paths that use running mp.
      */
     public static class MovePathRiskFilter extends AbstractPathFinder.Filter<MovePath> {
         @Override
@@ -155,9 +149,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
     /**
      * Filters edges that are illegal.
-     * <p/>
-     * Current implementation uses MoveStep.isMovementPossible() to verify
-     * legality.
+     * <p>
+     * Current implementation uses MoveStep.isMovementPossible() to verify legality.
      */
     public static class MovePathLegalityFilter extends AbstractPathFinder.Filter<MovePath> {
         Game game;

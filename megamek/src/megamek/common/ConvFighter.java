@@ -14,6 +14,7 @@ package megamek.common;
 
 import java.util.Map;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.TestEntity;
 

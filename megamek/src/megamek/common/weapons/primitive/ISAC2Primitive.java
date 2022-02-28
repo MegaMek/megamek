@@ -20,6 +20,7 @@ import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrimitiveACWeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;

@@ -21,7 +21,7 @@
 
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.ASDamageVector;
+import megamek.common.alphaStrike.ASDamageVector;
 
 import java.util.ArrayList;
 import java.util.List;

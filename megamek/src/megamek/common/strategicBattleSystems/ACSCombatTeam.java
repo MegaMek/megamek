@@ -18,7 +18,7 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.ASDamageVector;
+import megamek.common.alphaStrike.ASDamageVector;
 
 /**
  * Represents an Abstract Combat System Combat Team (IOps, BattleForce). It is on the

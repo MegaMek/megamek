@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Mounted;
 /**
  * @author Andrew Hunter

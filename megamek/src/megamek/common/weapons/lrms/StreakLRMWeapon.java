@@ -14,7 +14,7 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;

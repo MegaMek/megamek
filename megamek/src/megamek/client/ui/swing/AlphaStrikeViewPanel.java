@@ -27,6 +27,7 @@ import javax.swing.*;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASConverter;
 
 public class AlphaStrikeViewPanel extends JPanel {
     
@@ -53,7 +54,7 @@ public class AlphaStrikeViewPanel extends JPanel {
         int row = 1;
         for (Entity entity : entities) {
             boolean oddRow = (row++ % 2) == 1;
-            var element2 = AlphaStrikeConverter.convert(entity, includePilot);
+            var element2 = ASConverter.convert(entity, includePilot);
             addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
             addGridElement(element2.getUnitType().toString(), oddRow);
             addGridElement(element2.getSize() + "", oddRow);

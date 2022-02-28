@@ -21,6 +21,9 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
@@ -28,7 +31,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
-import static megamek.common.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSPA.*;
 
 public final class SBFFormationConverter {
 
@@ -48,8 +51,8 @@ public final class SBFFormationConverter {
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
             for (Entity entity : forces.getFullEntities(subforce)) {
-                thisUnit.add(AlphaStrikeConverter.convert(entity, includePilots));
-                thisUnitBaseSkill.add(AlphaStrikeConverter.convert(entity, false));
+                thisUnit.add(ASConverter.convert(entity, includePilots));
+                thisUnitBaseSkill.add(ASConverter.convert(entity, false));
             }
             result.getUnits().add(SBFUnitConverter.createSbfUnit(thisUnit, subforce.getName(), thisUnitBaseSkill));
         }
@@ -89,14 +92,14 @@ public final class SBFFormationConverter {
         invalid |= subforces.stream().anyMatch(f -> f.getEntities().isEmpty());
         invalid |= subforces.stream().anyMatch(f -> f.getEntities().size() > 6);
         invalid |= subforces.stream().anyMatch(f -> !f.getSubForces().isEmpty());
-        invalid |= entities.stream().anyMatch(e -> !AlphaStrikeConverter.canConvert(e));
+        invalid |= entities.stream().anyMatch(e -> !ASConverter.canConvert(e));
         // Avoid some checks in the code below
         if (invalid) {
             return false;
         }
         for (Force subforce : subforces) {
             var elementsList = new ArrayList<AlphaStrikeElement>();
-            forces.getFullEntities(subforce).stream().map(AlphaStrikeConverter::convert).forEach(elementsList::add);
+            forces.getFullEntities(subforce).stream().map(ASConverter::convert).forEach(elementsList::add);
             invalid |= elementsList.stream().anyMatch(a -> a.hasSPA(LG)) && elementsList.size() > 2;
             invalid |= elementsList.stream().anyMatch(a -> a.hasAnySPAOf(VLG, SLG)) && elementsList.size() > 1;
             SBFUnit unit = SBFUnitConverter.createSbfUnit(elementsList, "temporary", elementsList);

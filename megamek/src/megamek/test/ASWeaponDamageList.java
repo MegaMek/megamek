@@ -2,7 +2,7 @@ package megamek.test;
 
 import java.util.*;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.EquipmentType;
 import megamek.common.WeaponType;
 import megamek.common.weapons.bayweapons.BayWeapon;

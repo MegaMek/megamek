@@ -14,11 +14,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
-import megamek.common.Compute;
 import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -42,8 +38,6 @@ import megamek.common.weapons.SRMInfernoHandler;
 import megamek.common.weapons.SRMSmokeWarheadHandler;
 import megamek.common.weapons.SRMTandemChargeHandler;
 import megamek.server.Server;
-
-import static megamek.common.MountedHelper.*;
 
 /**
  * @author Sebastian Brocks

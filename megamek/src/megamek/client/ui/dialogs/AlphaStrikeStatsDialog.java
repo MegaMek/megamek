@@ -32,6 +32,7 @@ import megamek.client.ui.swing.AlphaStrikeViewPanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class AlphaStrikeStatsDialog extends AbstractDialog {
     

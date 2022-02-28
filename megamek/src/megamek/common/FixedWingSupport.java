@@ -11,6 +11,7 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.verifier.SupportVeeStructure;
 
 import java.text.NumberFormat;

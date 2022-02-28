@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 

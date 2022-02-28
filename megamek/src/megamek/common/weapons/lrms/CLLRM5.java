@@ -15,7 +15,7 @@ package megamek.common.weapons.lrms;
 
 import static megamek.common.MountedHelper.*;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Mounted;
 
 /**

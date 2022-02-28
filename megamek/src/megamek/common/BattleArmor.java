@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;

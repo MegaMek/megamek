@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.AimingMode;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;

@@ -25,11 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.loaders.EntityLoadingException;
 
 public class AlphaStrikeMassConvert {
     
-    private static final ASUnitType typeFilter = ASUnitType.BM;  
+    private static final ASUnitType typeFilter = ASUnitType.BM;
 
     public static void main(String[] args) throws EntityLoadingException {
         System.out.println("Starting AlphaStrike conversion for the unit type " + typeFilter);
@@ -37,13 +40,13 @@ public class AlphaStrikeMassConvert {
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
         for (MechSummary unit : units) {
             Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
-            if (!AlphaStrikeConverter.canConvert(entity)) {
+            if (!ASConverter.canConvert(entity)) {
                 continue;
             }
             if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech
                     || entity instanceof Tank || entity instanceof Infantry || entity instanceof Protomech) {
                 System.out.println(entity.getShortName());
-                AlphaStrikeElement ase = AlphaStrikeConverter.convert(entity);
+                AlphaStrikeElement ase = ASConverter.convert(entity);
 //                if (ase.getUnitType() == typeFilter) {
                     table.append(clipboardElementString(ase));
 //                }

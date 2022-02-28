@@ -1,5 +1,7 @@
 package megamek.common;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSPA;
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
  * in ASC and Campaign Operations

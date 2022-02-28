@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;

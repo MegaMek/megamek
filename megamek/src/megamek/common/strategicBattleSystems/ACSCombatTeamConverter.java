@@ -19,12 +19,15 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
 import java.util.ArrayList;
 
-import static megamek.common.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSPA.*;
 
 public class ACSCombatTeamConverter {
 
@@ -44,8 +47,8 @@ public class ACSCombatTeamConverter {
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
             for (Entity entity : forces.getFullEntities(subforce)) {
-                thisUnit.add(AlphaStrikeConverter.convert(entity, includePilots));
-                thisUnitBaseSkill.add(AlphaStrikeConverter.convert(entity, false));
+                thisUnit.add(ASConverter.convert(entity, includePilots));
+                thisUnitBaseSkill.add(ASConverter.convert(entity, false));
             }
             result.getUnits().add(SBFUnitConverter.createSbfUnit(thisUnit, subforce.getName(), thisUnitBaseSkill));
         }

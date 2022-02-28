@@ -20,6 +20,7 @@
 package megamek.common;
 
 import megamek.MMConstants;
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;

@@ -21,6 +21,7 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import java.util.Arrays;
 

@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 

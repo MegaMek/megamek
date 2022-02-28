@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceSPA;
+
 import java.util.Map;
 
 /**

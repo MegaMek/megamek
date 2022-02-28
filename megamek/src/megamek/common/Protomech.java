@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.AimingMode;
 import megamek.common.preference.PreferenceManager;
 

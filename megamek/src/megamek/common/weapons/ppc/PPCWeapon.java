@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;

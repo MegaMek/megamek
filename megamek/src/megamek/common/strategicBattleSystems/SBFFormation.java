@@ -20,13 +20,16 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.*;
+import megamek.common.alphaStrike.ASArcSummary;
+import megamek.common.alphaStrike.ASDamage;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.common.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSPA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.AS;
 import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 

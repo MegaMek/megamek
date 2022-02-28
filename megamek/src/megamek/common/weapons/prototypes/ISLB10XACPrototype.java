@@ -14,7 +14,7 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Mounted;

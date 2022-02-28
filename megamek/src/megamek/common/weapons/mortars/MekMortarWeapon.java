@@ -20,7 +20,7 @@
 package megamek.common.weapons.mortars;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.ToHitData;

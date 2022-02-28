@@ -11,6 +11,7 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;

@@ -15,7 +15,7 @@ package megamek.common.weapons.prototypes;
 
 import megamek.common.SimpleTechLevel;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Mounted;
 
 /**

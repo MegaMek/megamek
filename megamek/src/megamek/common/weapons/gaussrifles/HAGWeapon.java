@@ -18,8 +18,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
-import megamek.common.Compute;
+import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;

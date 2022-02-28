@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 

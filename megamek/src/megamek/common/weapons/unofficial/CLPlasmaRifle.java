@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.BattleForceElement;
 
 /**
  * @author Sebastian Brocks

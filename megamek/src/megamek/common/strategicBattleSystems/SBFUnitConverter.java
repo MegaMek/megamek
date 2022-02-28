@@ -18,8 +18,7 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.MegaMek;
-import megamek.common.*;
+import megamek.common.alphaStrike.*;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -30,7 +29,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
-import static megamek.common.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSPA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.*;
 
 public class SBFUnitConverter {

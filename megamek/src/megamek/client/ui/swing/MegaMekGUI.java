@@ -35,6 +35,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.codeUtilities.DisplayUtilities;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -273,13 +274,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
-        int monitorW = currentMonitor.getWidth();
-        int monitorH = currentMonitor.getHeight();
-
-        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
-        int scaledMonitorW = (DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
-        int scaledMonitorH = (DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
-
+        int scaledMonitorW = DisplayUtilities.getScaledScreenWidth(currentMonitor);
+        int scaledMonitorH = DisplayUtilities.getScaledScreenHeight(currentMonitor);
+        
         Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
         JLabel panTitle;
         if (imgSplash != null) {
@@ -369,6 +366,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         addBag(quitB, gridbag, c);
         frame.validate();
         frame.pack();
+        // center window in screen
+        frame.setLocationRelativeTo(null);
     }
 
     /**

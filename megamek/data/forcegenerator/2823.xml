@@ -282,13 +282,13 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:8,LA:10</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:1,LA:8,FS:10</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='6'></salvage>
@@ -352,7 +352,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:8,LA:10</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='6'></salvage>
@@ -505,7 +505,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FWL:5,FS:10,TC:1,DC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='6'></salvage>
@@ -717,11 +717,12 @@
 		</model>
 	</chassis>
 	<chassis name='Atlas' unitType='Mek'>
-		<availability>CC:3,MOC:1,CS:4-,OA:1,LA:4,CLAN:4-,IS:3,FWL:3,NIOPS:4-,FS:5,TC:1,DC:5</availability>
+		<availability>CC:3,MOC:1,CS:4-,OA:1,LA:4,IS:3,FWL:3,NIOPS:4-,FS:5,TC:1,DC:5</availability>
 		<model name='AS7-D'>
 			<availability>General:8,CLAN:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 		<model name='AS7-D-DC'>
+			<roles>command</roles>
 			<availability>IS:1,MERC:0,DC:2</availability>
 		</model>
 	</chassis>

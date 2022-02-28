@@ -270,13 +270,13 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:10,LA:8</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:2,LA:10,FS:8</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='6'></salvage>
@@ -340,7 +340,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:10,LA:8</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='6'></salvage>
@@ -490,7 +490,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FWL:10,FS:8,TC:1,DC:2</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='6'></salvage>
@@ -734,12 +734,23 @@
 		</model>
 	</chassis>
 	<chassis name='Atlas' unitType='Mek'>
-		<availability>CC:3,MOC:1,CS:4-,OA:1,LA:4,CLAN:3-,IS:3,FWL:3,NIOPS:4-,FS:5,TC:1,DC:5</availability>
+		<availability>CC:3,MOC:1,CSV:2,IS:3,FS:5,TC:1,CS:4-,OA:1,CW:2,LA:4,FWL:3,NIOPS:4-,CSJ:2,DC:5,CB:2</availability>
 		<model name='AS7-D'>
 			<availability>General:8,CLAN:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 		<model name='AS7-D-DC'>
+			<roles>command</roles>
 			<availability>IS:1,MERC:0,DC:2</availability>
+		</model>
+		<model name='C'>
+			<availability>CW:2+,CSV:2+,CSJ:2+,CB:2+</availability>
+		</model>
+		<model name='C 2'>
+			<availability>CLAN:2+</availability>
+		</model>
+		<model name='C 3'>
+			<roles>missile_artillery</roles>
+			<availability>CLAN:2+</availability>
 		</model>
 	</chassis>
 	<chassis name='Avatar Heavy Cruiser' unitType='Warship'>
@@ -798,6 +809,7 @@
 			<availability>IS:8,Periphery.Deep:8,FS:6,BAN:8,Periphery:8</availability>
 		</model>
 		<model name='BLR-1G-DC'>
+			<roles>command</roles>
 			<availability>IS:2,MERC:0</availability>
 		</model>
 		<model name='BLR-1Gb'>
@@ -2764,7 +2776,7 @@
 		</model>
 		<model name='LNC25-02'>
 			<roles>fire_support</roles>
-			<availability>:0,DC:8-</availability>
+			<availability>DC:8-</availability>
 		</model>
 		<model name='LNC25-05'>
 			<roles>anti_infantry</roles>
@@ -2931,14 +2943,14 @@
 	<chassis name='Lupus' unitType='Mek' omni='Clan'>
 		<availability>CC:2,MOC:2,CDS:2,CBS:2,CSV:2,CLAN:2,FWL:2,MERC:2,CCO:6,CGS:2,TC:2</availability>
 		<model name='A'>
-			<availability>General:6</availability>
+			<availability>CLAN:6</availability>
 		</model>
 		<model name='B'>
-			<availability>General:6</availability>
+			<availability>CLAN:6</availability>
 		</model>
 		<model name='Prime'>
 			<roles>fire_support</roles>
-			<availability>General:8</availability>
+			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Lynx' unitType='Mek'>

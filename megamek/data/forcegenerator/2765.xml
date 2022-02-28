@@ -96,13 +96,13 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:8,LA:10,SL:10</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>OA:2,TH:7,LA:10,SL:10,FS:10</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='5'></salvage>
@@ -157,7 +157,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:8,LA:10,SL:10</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='5'></salvage>
@@ -238,7 +238,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:3,SL:10,FWL:2,FS:10,TC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='5'></salvage>
@@ -437,6 +437,9 @@
 		<model name='AS7-D-H'>
 			<availability>General:8</availability>
 		</model>
+		<model name='AS7-D-HT'>
+			<availability>SL.R:1+</availability>
+		</model>
 	</chassis>
 	<chassis name='Atlas' unitType='Mek'>
 		<availability>CC:2,LA:2,SL:4,FWL:2,IS:2,RWR:2,FS:2,DC:2</availability>
@@ -444,6 +447,7 @@
 			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 		<model name='AS7-D-DC'>
+			<roles>command</roles>
 			<availability>IS:1,MERC:0,DC:2</availability>
 		</model>
 	</chassis>
@@ -1936,10 +1940,16 @@
 		</model>
 	</chassis>
 	<chassis name='Lancelot' unitType='Mek'>
-		<availability>CC:5,MOC:4,OA:4,LA:5,SL:7,IS:5,RWR:5,MERC:5,DC:5,TC:4</availability>
+		<availability>CC:5,MOC:4,OA:4,LA:5,SL:7,IS:5,SL.R:7,RWR:5,MERC:5,DC:5,TC:4</availability>
 		<model name='LNC25-01'>
 			<roles>anti_aircraft</roles>
 			<availability>SL:8,IS:8,DC:8</availability>
+		</model>
+		<model name='LNC25-01X'>
+			<availability>SL.R:1</availability>
+		</model>
+		<model name='LNC25-01sl'>
+			<availability>SL:2,SL.R:4</availability>
 		</model>
 		<model name='LNC25-05'>
 			<roles>anti_infantry</roles>

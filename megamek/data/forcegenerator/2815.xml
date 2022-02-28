@@ -282,13 +282,13 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:8,LA:10</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:1,LA:7,FS:10</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='6'></salvage>
@@ -352,7 +352,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:8,LA:10</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='6'></salvage>
@@ -435,7 +435,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FWL:5,FS:10,TC:1,DC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='6'></salvage>
@@ -636,6 +636,7 @@
 			<availability>General:8,CLAN:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 		<model name='AS7-D-DC'>
+			<roles>command</roles>
 			<availability>IS:1,MERC:0,DC:2</availability>
 		</model>
 	</chassis>
@@ -835,12 +836,6 @@
 	</chassis>
 	<chassis name='Buster XV HaulerMech' unitType='Mek'>
 		<availability>PP:5</availability>
-		<model name='(AC)'>
-			<availability>PP:8</availability>
-		</model>
-		<model name='(PPC)'>
-			<availability>PP:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Cameron Battlecruiser' unitType='Warship'>
 		<availability>PP:2,CHH:1,CCC:1,CSR:2,CSV:1,CLAN:1,CGS:2,CCO:1,CS:1,CW:2,NIOPS:1,CJF:1,CGB:1</availability>
@@ -1267,12 +1262,6 @@
 	</chassis>
 	<chassis name='Crosscut' unitType='Mek'>
 		<availability>PP:5</availability>
-		<model name='ED-X2M ForestryMech(Flamer)'>
-			<availability>PP:8</availability>
-		</model>
-		<model name='ED-X2M2 ForestryMech(Rocket)'>
-			<availability>PP:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Cruiser' unitType='Warship'>
 		<availability>DC:2</availability>
@@ -1986,14 +1975,6 @@
 	</chassis>
 	<chassis name='Harvester Ant' unitType='Mek'>
 		<availability>PP:5</availability>
-		<model name='KIC-3 Agromech(LRM)'>
-			<roles>fire_support</roles>
-			<availability>PP:8</availability>
-		</model>
-		<model name='KIC-3 Agromech(MG)'>
-			<roles>anti_infantry</roles>
-			<availability>PP:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Heavy BattleMech Recovery Vehicle' unitType='Tank'>
 		<availability>General:4</availability>

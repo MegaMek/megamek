@@ -136,7 +136,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:6,FWL:4,FS:2,TC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='6'></salvage>
@@ -401,7 +401,7 @@
 			<availability>TH:6</availability>
 		</model>
 		<model name='(2470)'>
-			<availability>General:6</availability>
+			<availability>TH:8</availability>
 		</model>
 	</chassis>
 	<chassis name='DroST IIb Transport' unitType='Dropship'>
@@ -415,10 +415,6 @@
 	</chassis>
 	<chassis name='DroST Light Bulk Transport' unitType='Dropship'>
 		<availability>TH:4</availability>
-		<model name='IIA'>
-			<roles>cargo</roles>
-			<availability>TH:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Du Shi Wang Battleship' unitType='Warship'>
 		<availability>CC:6</availability>

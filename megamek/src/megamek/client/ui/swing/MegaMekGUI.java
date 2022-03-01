@@ -1030,7 +1030,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return null;
         }
 
-        Image img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+        Image img = ImageUtil.loadImageFromFile(file.toString());
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(img, 0);

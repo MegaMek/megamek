@@ -18,24 +18,51 @@
  */
 package megamek.codeUtilities;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ImageObserver;
 
 public class DisplayUtilities {
     private static final int DEFAULT_DISPLAY_DPI = 96;
+
+    /**
+     *
+     * @param currentMonitor
+     * @return the width of the screen taking into account display scaling
+     */
     public static int getScaledScreenWidth(DisplayMode currentMonitor) {
         int monitorW = currentMonitor.getWidth();
         int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
         return DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch;
     }
 
+    /**
+     *
+     * @param currentMonitor
+     * @return The height of the screen taking into account display scaling
+     */
     public static int getScaledScreenHeight(DisplayMode currentMonitor) {
         int monitorH = currentMonitor.getHeight();
         int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
         return DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch;
     }
 
-    public static Image constrainImageSize(Image image, int maxWidth) {
-        return image.getScaledInstance(maxWidth, -1, Image.SCALE_DEFAULT);
-
+    /**
+     *
+     * @param image
+     * @param maxWidth
+     * @param maxHeight
+     * @return an image with the same aspect ratio that fits within the given bounds, or the existing image if it already does
+     */
+    public static Image constrainImageSize(Image image, ImageObserver observer, int maxWidth, int maxHeight) {
+        Image newImage = image;
+        if (newImage.getWidth(observer) > maxWidth) {
+            newImage = newImage.getScaledInstance(maxWidth, -1, Image.SCALE_DEFAULT);
+        }
+        if (newImage.getHeight(observer) > maxHeight) {
+            newImage = newImage.getScaledInstance(-1, maxHeight, Image.SCALE_DEFAULT);
+        }
+        return newImage;
     }
+
 }

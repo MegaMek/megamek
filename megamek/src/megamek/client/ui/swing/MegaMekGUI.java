@@ -276,22 +276,24 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
         int scaledMonitorW = DisplayUtilities.getScaledScreenWidth(currentMonitor);
         int scaledMonitorH = DisplayUtilities.getScaledScreenHeight(currentMonitor);
-        
+
         Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
-        JLabel panTitle;
+
+        JLabel splash;
         if (imgSplash != null) {
+            imgSplash = DisplayUtilities.constrainImageSize(imgSplash, null, scaledMonitorW, scaledMonitorH);
             Icon icon = new ImageIcon(imgSplash);
-             panTitle = new JLabel(icon);
+            splash = new JLabel(icon);
         } else {
-            panTitle = new JLabel();
+            splash = new JLabel();
         }
         int splashW = imgSplash == null ? (int) (scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
         int splashH = imgSplash == null ? (int) (scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
 
-        Dimension splashDim =  new Dimension((int) splashW, (int) splashH);
-        panTitle.setMaximumSize(splashDim);
-        panTitle.setMinimumSize(splashDim);
-        panTitle.setPreferredSize(splashDim);
+        Dimension splashDim =  new Dimension(splashW, splashH);
+        splash.setMaximumSize(splashDim);
+        splash.setMinimumSize(splashDim);
+        splash.setPreferredSize(splashDim);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
@@ -338,7 +340,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.weightx = 0.0; c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 9;
-        addBag(panTitle, gridbag, c);
+        addBag(splash, gridbag, c);
         // Right Column
         c.insets = new Insets(4, 4, 1, 12);
         c.fill = GridBagConstraints.BOTH;
@@ -1046,7 +1048,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return null;
         }
 
-        BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+        Image img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(img, 0);
@@ -1055,6 +1057,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         } catch (InterruptedException e) {
             // really should never come here
         }
+
         return img;
     }
 

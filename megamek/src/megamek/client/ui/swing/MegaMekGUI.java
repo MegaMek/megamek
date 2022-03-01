@@ -32,10 +32,10 @@ import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.codeUtilities.DisplayUtilities;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -273,9 +273,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = DisplayUtilities.getScaledScreenSize(frame);
+        Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
         Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorSize.width, scaledMonitorSize.height);
-        JLabel splash = DisplayUtilities.createSplashComponent(imgSplash, frame, scaledMonitorSize);
+        JLabel splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());

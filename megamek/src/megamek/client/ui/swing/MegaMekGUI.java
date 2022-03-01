@@ -273,27 +273,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
-        int scaledMonitorW = DisplayUtilities.getScaledScreenWidth(currentMonitor);
-        int scaledMonitorH = DisplayUtilities.getScaledScreenHeight(currentMonitor);
-
-        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
-
-        JLabel splash;
-        if (imgSplash != null) {
-            imgSplash = DisplayUtilities.constrainImageSize(imgSplash, null, scaledMonitorW, scaledMonitorH);
-            Icon icon = new ImageIcon(imgSplash);
-            splash = new JLabel(icon);
-        } else {
-            splash = new JLabel();
-        }
-        int splashW = imgSplash == null ? (int) (scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
-        int splashH = imgSplash == null ? (int) (scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
-
-        Dimension splashDim =  new Dimension(splashW, splashH);
-        splash.setMaximumSize(splashDim);
-        splash.setMinimumSize(splashDim);
-        splash.setPreferredSize(splashDim);
+        Dimension scaledMonitorSize = DisplayUtilities.getScaledScreenSize(frame);
+        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorSize.width, scaledMonitorSize.height);
+        JLabel splash = DisplayUtilities.createSplashComponent(imgSplash, frame, scaledMonitorSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
@@ -302,7 +284,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.
-        int maximumWidth = (int) (0.9 * scaledMonitorW) - splashW;
+        int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splash.getPreferredSize().width;
 
         Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
         if (textDim.getWidth() > minButtonDim.getWidth()) {

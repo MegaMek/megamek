@@ -372,12 +372,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
             if (rerollRequests == null) { // normal init roll
                 // add a roll for all teams
-                item.getInitiative().addRoll(bonus);
+                item.getInitiative().addRoll(bonus, item);
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
                 for (ITurnOrdered rerollItem : rerollRequests) {
                     if (item == rerollItem) { // this is the team re-rolling
-                        item.getInitiative().replaceRoll(bonus);
+                        item.getInitiative().replaceRoll(bonus, item);
                         break; // each team only needs one reroll
                     }
                 }

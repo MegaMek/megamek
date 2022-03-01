@@ -2134,19 +2134,43 @@ public abstract class Mech extends Entity {
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#rollHitLocation(int, int)
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, Entity ae) {
+        return rollHitLocation(table, side, LOC_NONE,
+                AimingMode.NONE, LosEffects.COVER_NONE, ae);
+    }
 
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
+     * @see megamek.common.Entity#rollHitLocation(int, int, int, int, int)
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            AimingMode aimingMode, int cover) {
+        return rollHitLocation(table, side, LOC_NONE,
+                AimingMode.NONE, LosEffects.COVER_NONE, null);
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#rollHitLocation(int, int, int, int, int, int, int)
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            AimingMode aimingMode, int cover, Entity ae) {
         int roll = -1;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            roll = Compute.d6(2);
+
+            roll = Compute.doRoll(Compute.HIT_LOCATION, ae, this);
 
             if ((5 < roll) && (roll < 9)) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
@@ -2154,7 +2178,7 @@ public abstract class Mech extends Entity {
         }
 
         if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
-            roll = Compute.d6(2);
+            roll = Compute.doRoll(Compute.HIT_LOCATION, ae, this);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
                 if (pw != null) {
@@ -2412,7 +2436,7 @@ public abstract class Mech extends Entity {
             }
         }
         if (table == ToHitData.HIT_PUNCH) {
-            roll = Compute.d6(1);
+            roll = Compute.doRoll(Compute.PUNCH_LOCATION, ae, this);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences()
                         .getMekHitLocLog();
@@ -2529,7 +2553,7 @@ public abstract class Mech extends Entity {
             }
         }
         if (table == ToHitData.HIT_KICK) {
-            roll = Compute.d6(1);
+            roll = Compute.doRoll(Compute.KICK_LOCATION, ae, this);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences()
                         .getMekHitLocLog();

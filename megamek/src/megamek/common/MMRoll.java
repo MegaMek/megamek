@@ -133,6 +133,17 @@ public class MMRoll extends Roll {
     public int getIntValue() {
         return this.total;
     }
+    
+    /**
+     * Set the value of the roll. This is the total of each of the rolls of each
+     * virtual die.
+     * 
+     * @param value the <code>int</code> value of the roll.
+     */
+    @Override
+    public void setIntValue(int value) {
+        this.total = value;
+    }
 
     /**
      * Get a <code>String</code> containing the roll for each of the virtual

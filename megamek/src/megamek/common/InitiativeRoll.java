@@ -41,8 +41,8 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         wasRollReplaced.removeAllElements();
     }
 
-    public void addRoll(int bonus) {
-        int roll = Compute.d6(2);
+    public void addRoll(int bonus, ITurnOrdered item) {
+        int roll = Compute.doInitRoll(item);
         rolls.addElement(roll);
         originalRolls.addElement(roll);
         bonuses.addElement(bonus);
@@ -63,8 +63,8 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
      * Replace the previous init roll with a new one, and make a note that it
      * was replaced. Used for Tactical Genius special pilot ability (lvl 3).
      */
-    public void replaceRoll(int bonus) {
-        int roll = Compute.d6(2);
+    public void replaceRoll(int bonus, ITurnOrdered item) {
+        int roll = Compute.doInitRoll(item);
         rolls.setElementAt(roll, size() - 1);
         bonuses.setElementAt(bonus, size() - 1);
         wasRollReplaced.setElementAt(Boolean.TRUE, size() - 1);

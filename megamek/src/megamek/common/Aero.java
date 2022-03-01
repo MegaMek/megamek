@@ -1097,6 +1097,22 @@ public class Aero extends Entity implements IAero, IBomber {
                                    int cover) {
         return rollHitLocation(table, side);
     }
+    
+    /**
+     * Rolls up a hit location
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode, int cover, Entity ae) {
+        return rollHitLocation(table, side);
+    }
+    
+    /**
+     * Rolls up a hit location
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, Entity ae) {
+        return rollHitLocation(table, side);
+    }
 
     @Override
     public HitData rollHitLocation(int table, int side) {

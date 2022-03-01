@@ -250,7 +250,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // treat as a Streak launcher (cluster roll 11) to make this happen
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
                     nMissilesModifier, weapon.isHotLoaded(), true,
-                    isAdvancedAMS());
+                    isAdvancedAMS(), ae);
         } else {
             if (ae instanceof BattleArmor) {
                 int shootingStrength = 1;
@@ -265,7 +265,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        isAdvancedAMS());
+                        isAdvancedAMS(), ae);
             }
         }
 

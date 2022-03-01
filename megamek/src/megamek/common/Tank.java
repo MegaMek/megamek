@@ -917,6 +917,16 @@ public class Tank extends Entity {
         }
         return false;
     }
+    
+    /**
+     * Rolls up a hit location
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            AimingMode aimingMode, int cover, Entity ae) {
+        return rollHitLocation(table, side, aimedLocation,
+                aimingMode, cover);
+    }
 
     /**
      * Rolls up a hit location
@@ -1197,6 +1207,12 @@ public class Tank extends Entity {
     @Override
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
+    }
+    
+    @Override
+    public HitData rollHitLocation(int table, int side, Entity ae) {
+        return rollHitLocation(table, side, LOC_NONE,
+                AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     /**

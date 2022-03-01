@@ -1230,6 +1230,14 @@ public class Crew implements Serializable {
 
         return Compute.d6(2);
     }
+    
+    public int rollGunnerySkill(Entity ae) {
+        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {
+            return Compute.d6(3, 2);
+        }
+
+        return Compute.doRoll(Compute.HIT, ae);
+    }
 
     public int rollPilotingSkill() {
         if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) {

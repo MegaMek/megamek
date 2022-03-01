@@ -3143,13 +3143,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Rolls the to-hit number
      */
-    public abstract HitData rollHitLocation(int table, int side, int aimedLocation,
-                                            AimingMode aimingMode, int cover);
+    public abstract HitData rollHitLocation(int table, int side,
+                                            int aimedLocation, AimingMode aimingMode, int cover);
+    
+    /**
+     * Rolls the to-hit number
+     */
+    public abstract HitData rollHitLocation(int table, int side,
+                                            int aimedLocation, AimingMode aimingMode, int cover, Entity ae);
 
     /**
      * Rolls up a hit location
      */
     public abstract HitData rollHitLocation(int table, int side);
+    
+    /**
+     * Rolls up a hit location
+     */
+    public abstract HitData rollHitLocation(int table, int side, Entity ae);
 
     /**
      * Gets the location that excess damage transfers to. That is, one location

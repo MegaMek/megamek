@@ -61,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -245,6 +246,110 @@ public class Server implements Runnable {
 
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
+    /**
+     * Roll input buffers for each roll type for each player
+     */
+    private static Hashtable<Integer, CopyOnWriteArrayList<Integer>>[] rollBufferTable = new Hashtable[]
+    {
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // INITIATIVE = 0;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // PILOTING = 1;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // HIT = 2;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // CLUSTER = 3;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // HIT_LOCATION = 4;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // DETERMINE_CRITICALS = 5;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // CRITICAL_LOCATION = 6;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // PHYSICAL = 7;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // PUNCH_LOCATION = 8;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // KICK_LOCATION = 9;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // LOSE_CONSCIOUSNESS = 10;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // REGAIN_CONSCIOUSNESS = 11;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // HEAT_SHUTDOWN = 12;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // HEAT_RESTART = 13;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // HEAT_AMMO_EXPLOSION = 14;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // FACING_DIRECTION = 15;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>(), // SPOTLIGHT_HIT = 16;
+        new Hashtable<Integer, CopyOnWriteArrayList<Integer>>()  // UNJAM = 17;
+    };
+    
+    private static final class Lock { }
+    private final Object rollBufferTableLock = new Lock();
+    
+    public int GetRollBufferInt(int type, int player)
+    {
+        try {
+            
+            synchronized(rollBufferTableLock)
+            {
+                CopyOnWriteArrayList<Integer> rollBuffer = rollBufferTable[type].get(player);
+                if (null == rollBuffer)
+                {
+                    rollBuffer = new CopyOnWriteArrayList<Integer>();
+                }
+                
+                while (rollBuffer.isEmpty()) {
+                    Compute.SetActiveRollType(type);
+                    Compute.SetActiveRollPlayer(player);
+                    
+                    rollBufferTableLock.wait();
+                    rollBuffer = rollBufferTable[type].get(player);
+                }
+
+                int rollint = rollBuffer.remove(0);
+                rollBufferTable[type].put(player, rollBuffer);
+                return rollint;
+            }
+            
+        } catch(InterruptedException e) {
+            return -1;
+        }
+    }
+    
+    public CopyOnWriteArrayList<Integer> GetRollBuffer(int type, int player)
+    {
+        synchronized(rollBufferTableLock)
+        {
+            CopyOnWriteArrayList<Integer> rollBuffer = rollBufferTable[type].get(player);
+            return rollBuffer;
+        }
+    }
+    
+    public synchronized void SetRollBufferInt(int type, int player, int rollint)
+    {
+        synchronized(rollBufferTableLock)
+        {
+            CopyOnWriteArrayList<Integer> rollBuffer = rollBufferTable[type].get(player);
+            if (null == rollBuffer)
+            {
+                rollBuffer = new CopyOnWriteArrayList<Integer>();
+            }
+            
+            rollBuffer.add(rollint);
+            rollBufferTable[type].put(player, rollBuffer);
+            
+            rollBufferTableLock.notifyAll();
+        }
+    }
+    
+    public synchronized void ClearAllRollBuffers()
+    {
+        synchronized(rollBufferTableLock)
+        {
+            for (int type = Compute.INITIATIVE; type < Compute.NUMBER_OF_ROLL_TYPES; type++) {
+                for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
+                    Player player = i.nextElement();
+                    
+                    CopyOnWriteArrayList<Integer> rollBuffer = rollBufferTable[type].get(player.getId());
+                    if (null != rollBuffer)
+                    {
+                        rollBuffer.clear();
+                        rollBufferTable[type].put(player.getId(), rollBuffer);
+                    }
+                }
+            }
+        }
+    }
+    
+    
     private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
@@ -399,6 +504,7 @@ public class Server implements Runnable {
         registerCommand(new AssignNovaNetServerCommand(this));
         registerCommand(new AllowTeamChangeCommand(this));
         registerCommand(new JoinTeamCommand(this));
+        registerCommand(new RCommand(this));
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -2843,6 +2949,9 @@ public class Server implements Runnable {
                 }
                 // Decrement the ASEWAffected counter
                 decrementASEWTurns();
+                
+                /* Clear roll buffers for all players before next turn */
+                ClearAllRollBuffers();
 
                 break;
             case END_REPORT:
@@ -6827,7 +6936,7 @@ public class Server implements Runnable {
                         if (!doSkillCheckInSpace(entity, rollTarget)) {
                             a.setSI(a.getSI() - 1);
                             if (entity instanceof LandAirMech) {
-                                addReport(criticalEntity(entity, Mech.LOC_CT, false, 0, 1));
+                                addReport(criticalEntity(entity, Mech.LOC_CT, false, 0, 1, entity));
                             }
                             // check for destruction
                             if (a.getSI() == 0) {
@@ -7611,16 +7720,16 @@ public class Server implements Runnable {
                         addReport(damageEntity(entity, new HitData(Mech.LOC_LLEG), leapDistance));
                         addReport(damageEntity(entity, new HitData(Mech.LOC_RLEG), leapDistance));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_LLEG, false, 0, 0));
+                        addReport(criticalEntity(entity, Mech.LOC_LLEG, false, 0, 0, entity));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_RLEG, false, 0, 0));
+                        addReport(criticalEntity(entity, Mech.LOC_RLEG, false, 0, 0, entity));
                         if (entity instanceof QuadMech) {
                             addReport(damageEntity(entity, new HitData(Mech.LOC_LARM), leapDistance));
                             addReport(damageEntity(entity, new HitData(Mech.LOC_RARM), leapDistance));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_LARM, false, 0, 0));
+                            addReport(criticalEntity(entity, Mech.LOC_LARM, false, 0, 0, entity));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_RARM, false, 0, 0));
+                            addReport(criticalEntity(entity, Mech.LOC_RARM, false, 0, 0, entity));
                         }
                     }
                     // skill check for fall
@@ -9676,7 +9785,7 @@ public class Server implements Runnable {
                     mod = -2;
                 }
                 HitData hit = carrier.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                reports.addAll(criticalEntity(carrier, hit.getLocation(), false, mod, 0));
+                reports.addAll(criticalEntity(carrier, hit.getLocation(), false, mod, 0, carrier));
             }
         }
         return reports;
@@ -10699,7 +10808,7 @@ public class Server implements Runnable {
                             critRollMod -= 2;
                         }
                         vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), hit.isRear(),
-                                critRollMod, 0, DamageType.INFERNO));
+                                critRollMod, 0, DamageType.INFERNO, ae));
                     }
                 } else if (te instanceof ConvFighter) {
                     // CFs take a point SI damage for every three missiles that hit.
@@ -12049,7 +12158,7 @@ public class Server implements Runnable {
         addReport(r);
 
         // roll
-        final int diceRoll = entity.getCrew().rollPilotingSkill();
+        final int diceRoll = Compute.doRoll(Compute.PILOTING, entity);
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
@@ -12186,7 +12295,7 @@ public class Server implements Runnable {
         addReport(r);
 
         // roll
-        final int diceRoll = entity.getCrew().rollPilotingSkill();
+        final int diceRoll = Compute.doRoll(Compute.PILOTING, entity);
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
@@ -12316,7 +12425,7 @@ public class Server implements Runnable {
 
         int direction;
         if (src.equals(dest)) {
-            direction = Compute.d6() - 1;
+            direction  = Compute.doRoll(Compute.FACING_DIRECTION, entity) - 1;
         } else {
             direction = src.direction(dest);
         }
@@ -12367,7 +12476,7 @@ public class Server implements Runnable {
 
             if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
                 // collision roll
-                final int diceRoll = Compute.d6(2);
+                final int diceRoll = Compute.doRoll(Compute.PILOTING, entity);
                 if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                     r = new Report(2212);
                     r.add(toHit.getValue());
@@ -12390,7 +12499,7 @@ public class Server implements Runnable {
                     vPhaseReport.add(r);
                     while (damage > 0) {
                         int cluster = Math.min(5, damage);
-                        HitData hit = affaTarget.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                        HitData hit = affaTarget.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT, entity);
                         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                         vPhaseReport.addAll(damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;
@@ -12662,7 +12771,7 @@ public class Server implements Runnable {
                     && !entity.getIsJumpingNow()
                     && (stepForward.isMoveLegal() || stepBackwards.isMoveLegal())) {
                 // First, we need to make a PSR to see if we can step out
-                int result = Compute.d6(2);
+                int result = Compute.doRoll(Compute.PILOTING, entity);
                 roll = entity.getBasePilotingRoll();
 
                 r = new Report(2351);
@@ -12822,7 +12931,7 @@ public class Server implements Runnable {
                 && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));
-            int stuckroll = Compute.d6(2);
+            int stuckroll = Compute.doRoll(Compute.PILOTING, entity);
             // A DFA-ing mech is "displaced" into the target hex. Since it
             // must be jumping, it will automatically be bogged down
             if (stuckroll < roll.getValue() || entity.isMakingDfa()) {
@@ -15017,7 +15126,7 @@ public class Server implements Runnable {
         r.addDesc(ae);
         addReport(r);
         for (int location : criticalLocations) {
-            addReport(criticalEntity(ae, location, false, 0, 1));
+            addReport(criticalEntity(ae, location, false, 0, 1, ae));
         }
 
         if (missed) {
@@ -15172,7 +15281,7 @@ public class Server implements Runnable {
             return;
         }
 
-        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), ae);
         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         r = new Report(4045);
         r.subject = ae.getId();
@@ -15241,7 +15350,7 @@ public class Server implements Runnable {
                 if (!(target instanceof Infantry)) {
                     addNewLines();
                     addReport(criticalEntity(te, hit.getLocation(), hit.isRear(), 0,
-                            true, false, damage));
+                            true, false, damage, DamageType.NONE, ae));
                 }
 
                 if ((target instanceof BattleArmor) && (hit.getLocation() < te.locations())
@@ -15431,7 +15540,7 @@ public class Server implements Runnable {
             return;
         }
 
-        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), ae);
         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         r = new Report(4045);
         r.subject = ae.getId();
@@ -15505,7 +15614,7 @@ public class Server implements Runnable {
 
             if (te.hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_LEGS)) {
                 addNewLines();
-                addReport(criticalEntity(te, hit.getLocation(), hit.isRear(), 0, 0));
+                addReport(criticalEntity(te, hit.getLocation(), hit.isRear(), 0, 0, ae));
             }
         }
 
@@ -16605,7 +16714,7 @@ public class Server implements Runnable {
             return;
         }
 
-        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), ae);
         hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         r = new Report(4045);
         r.subject = ae.getId();
@@ -16964,7 +17073,7 @@ public class Server implements Runnable {
             ((Mech) te).setCheckForCrit(true);
         }
 
-        checkForSpikes(te, ae.rollHitLocation(ToHitData.HIT_PUNCH, Compute.targetSideTable(ae, te)).getLocation(),
+        checkForSpikes(te, ae.rollHitLocation(ToHitData.HIT_PUNCH, Compute.targetSideTable(ae, te), ae).getLocation(),
                 0, ae, Mech.LOC_LARM, Mech.LOC_RARM);
 
         addNewLines();
@@ -17501,7 +17610,7 @@ public class Server implements Runnable {
 
             // Apply damage to the attacker.
             int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg, target.getPosition());
-            HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(target.getPosition()));
+            HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(target.getPosition()), ae);
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE,
                     false, false, throughFront));
@@ -18088,7 +18197,7 @@ public class Server implements Runnable {
                 hit = new HitData(Mech.LOC_CT);
             } else {
                 cluster = Math.min(5, damageTaken);
-                hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()));
+                hit = ae.rollHitLocation(toHit.getHitTable(), ae.sideTable(te.getPosition()), ae);
             }
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
@@ -18612,7 +18721,7 @@ public class Server implements Runnable {
 
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
-                HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), ae);
                 hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 if (directBlow) {
                     hit.makeDirectBlow(toHit.getMoS() / 3);
@@ -18662,7 +18771,7 @@ public class Server implements Runnable {
         addReport(r);
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
+            HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT, ae);
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
@@ -18670,14 +18779,14 @@ public class Server implements Runnable {
 
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_LEGS)) {
             addNewLines();
-            addReport(criticalEntity(ae, Mech.LOC_LLEG, false, 0, 0));
+            addReport(criticalEntity(ae, Mech.LOC_LLEG, false, 0, 0, ae));
             addNewLines();
-            addReport(criticalEntity(ae, Mech.LOC_RLEG, false, 0, 0));
+            addReport(criticalEntity(ae, Mech.LOC_RLEG, false, 0, 0, ae));
             if (ae instanceof QuadMech) {
                 addNewLines();
-                addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 0));
+                addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 0, ae));
                 addNewLines();
-                addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 0));
+                addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 0, ae));
             }
         }
 
@@ -19234,7 +19343,7 @@ public class Server implements Runnable {
                                         startup += 1;
                                 }
                             }
-                            int suRoll = Compute.d6(2);
+                            int suRoll = Compute.doRoll(Compute.HEAT_RESTART, entity);
                             r = new Report(5050);
                             r.subject = entity.getId();
                             r.addDesc(entity);
@@ -19307,7 +19416,7 @@ public class Server implements Runnable {
                                     shutdown += 1;
                             }
                         }
-                        int shutdownRoll = Compute.d6(2);
+                        int shutdownRoll = Compute.doRoll(Compute.HEAT_SHUTDOWN, entity);
                         r = new Report(5060);
                         r.subject = entity.getId();
                         r.addDesc(entity);
@@ -19355,7 +19464,7 @@ public class Server implements Runnable {
                 if (((Mech) entity).hasLaserHeatSinks()) {
                     boom--;
                 }
-                int boomRoll = Compute.d6(2);
+                int boomRoll = Compute.doRoll(Compute.HEAT_AMMO_EXPLOSION, entity);
                 r = new Report(5065);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -20295,7 +20404,7 @@ public class Server implements Runnable {
                     HitData newHit = mech.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     vPhaseReport.addAll(criticalEntity(mech,
                             newHit.getLocation(), newHit.isRear(),
-                            mech.getLevelsFallen(), 0));
+                            mech.getLevelsFallen(), 0, mech));
                 }
             }
         }
@@ -20417,7 +20526,7 @@ public class Server implements Runnable {
             r.add(rollTarget.getLastPlainDesc());
             vPhaseReport.add(r);
             // roll
-            final int diceRoll = Compute.d6(2);
+            final int diceRoll = Compute.doRoll(Compute.PILOTING, entity);
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
@@ -20643,7 +20752,7 @@ public class Server implements Runnable {
                 entity.doCheckEngineStallRoll(vPhaseReport);
                 return vPhaseReport;
             }
-            int diceRoll = entity.getCrew().rollPilotingSkill();
+            int diceRoll = Compute.doRoll(Compute.PILOTING, entity);
             r = new Report(2300);
             r.add(roll);
             r.add(diceRoll);
@@ -21156,7 +21265,7 @@ public class Server implements Runnable {
                 if (edgeUsed) {
                     e.getCrew().decreaseEdge();
                 }
-                int roll = Compute.d6(2);
+                int roll = Compute.doRoll(Compute.LOSE_CONSCIOUSNESS, e);
                 if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
                     roll = Math.min(12, roll + 1);
                 }
@@ -21225,7 +21334,7 @@ public class Server implements Runnable {
                     }
                     if (e.getCrew().isUnconscious(pos)
                             && !e.getCrew().isKoThisRound(pos)) {
-                        int roll = Compute.d6(2);
+                        int roll = Compute.doRoll(Compute.REGAIN_CONSCIOUSNESS, e);
 
                         if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
                             roll = Math.min(12, roll + 1);
@@ -22474,10 +22583,10 @@ public class Server implements Runnable {
                         if (te.hasArmoredChassis()) {
                             // crit roll with -1 mod
                             vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                                                        hit.isRear(), -1 + critBonus, damage_orig));
+                                                        hit.isRear(), -1 + critBonus, damage_orig, ae));
                         } else {
                             vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                                                        hit.isRear(), critBonus, damage_orig));
+                                                        hit.isRear(), critBonus, damage_orig, ae));
                         }
                     }
                 }
@@ -23079,7 +23188,7 @@ public class Server implements Runnable {
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
                     vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.isRear(),
-                            hit.glancingMod() + critBonus, damage_orig, damageType));
+                            hit.glancingMod() + critBonus, damage_orig, damageType, ae));
                 }
                 crits = 0;
 
@@ -23098,7 +23207,7 @@ public class Server implements Runnable {
                         critMod += hit.glancingMod();
                     }
                     vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.isRear(),
-                            critMod + critBonus, damage_orig));
+                            critMod + critBonus, damage_orig, ae));
                 }
                 specCrits = 0;
             }
@@ -24424,7 +24533,7 @@ public class Server implements Runnable {
             r.subject = en.getId();
             r.indent(2);
             reports.addElement(r);
-            reports.addAll(criticalEntity(en, loc, false, 0, 0));
+            reports.addAll(criticalEntity(en, loc, false, 0, 0, en));
         }
 
         // If the item is the ECM suite of a Mek Stealth system
@@ -25986,8 +26095,8 @@ public class Server implements Runnable {
      * Rolls and resolves critical hits with a die roll modifier.
      */
 
-    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, int damage) {
-        return criticalEntity(en, loc, isRear, critMod, true, false, damage);
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, int damage, Entity ae) {
+        return criticalEntity(en, loc, isRear, critMod, true, false, damage, DamageType.NONE, ae);
     }
 
     /**
@@ -25995,10 +26104,10 @@ public class Server implements Runnable {
      */
 
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, int damage,
-                                         DamageType damageType) {
-        return criticalEntity(en, loc, isRear, critMod, true, false, damage, damageType);
+            DamageType damageType, Entity ae) {
+        return criticalEntity(en, loc, isRear, critMod, true, false, damage, damageType, ae);
     }
-
+    
     /**
      * Rolls one critical hit
      */
@@ -26660,7 +26769,7 @@ public class Server implements Runnable {
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage) {
         return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital,
-                damage, DamageType.NONE);
+                damage, DamageType.NONE, null);
     }
 
     /**
@@ -26669,7 +26778,7 @@ public class Server implements Runnable {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage,
-            DamageType damageType) {
+            DamageType damageType, Entity ae) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -26709,7 +26818,8 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
             hits = 0;
-            int roll = Compute.d6(2);
+            int roll = 2;
+            roll = Compute.doRoll(Compute.DETERMINE_CRITICALS, ae, en);
             r = new Report(6310);
             r.subject = en.getId();
             String rollString = "";
@@ -26902,7 +27012,8 @@ public class Server implements Runnable {
             }
 
             // Randomly pick a slot to be hit.
-            int slotIndex = Compute.randomInt(en.getNumberOfCriticals(loc));
+            int slotIndex = Compute.doCritLocationRoll(ae, en, loc);
+
             slot = en.getCritical(loc, slotIndex);
 
             // There are certain special cases, like reactive armor
@@ -28191,7 +28302,7 @@ public class Server implements Runnable {
         } else {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
-                HitData hit = entity.rollHitLocation(damageTable, table);
+                HitData hit = entity.rollHitLocation(damageTable, table, entity);
                 hit.makeFallDamage(true);
                 vPhaseReport.addAll(damageEntity(entity, hit, cluster));
                 damage -= cluster;
@@ -28206,7 +28317,7 @@ public class Server implements Runnable {
         // Water damage
         while (waterDamage > 0) {
             int cluster = Math.min(5, waterDamage);
-            HitData hit = entity.rollHitLocation(damageTable, table);
+            HitData hit = entity.rollHitLocation(damageTable, table, entity);
             hit.makeFallDamage(true);
             vPhaseReport.addAll(damageEntity(entity, hit, cluster));
             waterDamage -= cluster;
@@ -28342,7 +28453,7 @@ public class Server implements Runnable {
             reports.add(r);
             reports.addAll(damageCrew(entity, 1, crewPos));
         } else {
-            int diceRoll = entity.getCrew().rollPilotingSkill();
+            int diceRoll = Compute.doRoll(Compute.PILOTING, entity);
             r = new Report(2325);
             r.subject = entity.getId();
             r.add(entity.getCrew().getCrewType().getRoleName(crewPos));
@@ -32840,7 +32951,7 @@ public class Server implements Runnable {
         int damage = 0;
         PhysicalResult pr = new PhysicalResult();
         ToHitData toHit = new ToHitData();
-        pr.roll = Compute.d6(2);
+        pr.roll = Compute.doRoll(Compute.PHYSICAL_ATTACK, ae);
         pr.aaa = aaa;
         if (aaa instanceof BrushOffAttackAction) {
             BrushOffAttackAction baa = (BrushOffAttackAction) aaa;
@@ -32933,7 +33044,7 @@ public class Server implements Runnable {
             }
             pr.damageRight = damageRight;
             pr.toHitRight = toHitRight;
-            pr.rollRight = Compute.d6(2);
+            pr.rollRight = Compute.doRoll(Compute.PHYSICAL_ATTACK, ae);
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction) aaa;
             toHit = paa.toHit(game);

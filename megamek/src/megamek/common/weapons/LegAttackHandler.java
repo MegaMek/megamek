@@ -107,6 +107,6 @@ public class LegAttackHandler extends WeaponHandler {
         if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MECH)) {
             critMod += 1;
         }
-        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
+        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage, ae));
     }
 }

@@ -1787,9 +1787,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // is this an underwater attack on a surface naval vessel?
         underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
         if (null != ae.getCrew()) {
-            roll = ae.getCrew().rollGunnerySkill();
+            roll = ae.getCrew().rollGunnerySkill(ae);
         } else {
-            roll = Compute.d6(2);
+            roll = Compute.doRoll(Compute.HIT, ae);
         }
         
         nweapons = getNumberWeapons();
@@ -1814,7 +1814,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected void initHit(Entity entityTarget) {
         hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                 toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                waa.getAimingMode(), toHit.getCover(), ae);
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(wtype.isCapital());
         hit.setBoxCars(roll == 12);

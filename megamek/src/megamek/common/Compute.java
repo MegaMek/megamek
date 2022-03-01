@@ -35,6 +35,7 @@ import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The compute class is designed to provide static methods for mechs and other
@@ -135,6 +136,123 @@ public class Compute {
             {40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40}};
 
     /**
+     * Roll types
+     */
+    public static final int NO_ROLL_TYPE = -1;
+    public static final int INITIATIVE = 0;                 // "init"
+    public static final int PILOTING = 1;                   // "psr"
+    public static final int HIT = 2;                        // "hit"
+    public static final int CLUSTER = 3;                    // "cluster"
+    public static final int HIT_LOCATION = 4;               // "location"
+    public static final int DETERMINE_CRITICALS = 5;        // "criticals"
+    public static final int CRITICAL_LOCATION = 6;          // "critlocation"
+    public static final int PHYSICAL_ATTACK = 7;            // "physical"
+    public static final int PUNCH_LOCATION = 8;             // "punch"
+    public static final int KICK_LOCATION = 9;              // "kick"
+    public static final int LOSE_CONSCIOUSNESS = 10;        // "consiousness"
+    public static final int REGAIN_CONSCIOUSNESS = 11;      // "wakeup"
+    public static final int HEAT_SHUTDOWN = 12;             // "heatshutdown"
+    public static final int HEAT_RESTART = 13;              // "heatrestart"
+    public static final int HEAT_AMMO_EXPLOSION = 14;       // "heatexplosion"
+    public static final int FACING_DIRECTION = 15;          // "facing"
+    public static final int SPOTLIGHT_HIT = 16;             // "spotlight"
+    public static final int UNJAM = 17;                     // "unjam"
+    public static final int NUMBER_OF_ROLL_TYPES = 18;
+    
+    /**
+     * Roll descriptions
+     */
+    public static final String[] rollDescriptions =
+    {
+        "Initiative",
+        "Piloting Skill",
+        "Hit",
+        "Cluster Hits",
+        "Hit Location",
+        "Determine Critical Hits",
+        "Critical Hit Location",
+        "Physical Attack",
+        "Punch Location",
+        "Kick Location",
+        "Pilot Lose Consciousness",
+        "Pilot Regain Consciousness",
+        "Heat Shutdown",
+        "Heat Restart",
+        "Heat Ammo Explosion",
+        "Facing Direction",
+        "Spotlight Hit",
+        "Weapon Unjam"
+    };
+    
+    /**
+     * Roll input on/off boolean setting, for each roll type, for each player OR for each unit
+     */    
+    private static Hashtable<Integer, Boolean>[] rollToggleTable = new Hashtable[]
+    {
+        new Hashtable<Integer, Boolean>(), // INITIATIVE = 0;
+        new Hashtable<Integer, Boolean>(), // PILOTING = 1;
+        new Hashtable<Integer, Boolean>(), // HIT = 2;
+        new Hashtable<Integer, Boolean>(), // CLUSTER = 3;
+        new Hashtable<Integer, Boolean>(), // HIT_LOCATION = 4;
+        new Hashtable<Integer, Boolean>(), // DETERMINE_CRITICALS = 5;
+        new Hashtable<Integer, Boolean>(), // CRITICAL_LOCATION = 6;
+        new Hashtable<Integer, Boolean>(), // PHYSICAL = 7;
+        new Hashtable<Integer, Boolean>(), // PUNCH_LOCATION = 8;
+        new Hashtable<Integer, Boolean>(), // KICK_LOCATION = 9;
+        new Hashtable<Integer, Boolean>(), // LOSE_CONSCIOUSNESS = 10;
+        new Hashtable<Integer, Boolean>(), // REGAIN_CONSCIOUSNESS = 11;
+        new Hashtable<Integer, Boolean>(), // HEAT_SHUTDOWN = 12;
+        new Hashtable<Integer, Boolean>(), // HEAT_RESTART = 13;
+        new Hashtable<Integer, Boolean>(), // HEAT_AMMO_EXPLOSION = 14;
+        new Hashtable<Integer, Boolean>(), // FACING_DIRECTION = 15;
+        new Hashtable<Integer, Boolean>(), // SPOTLIGHT_HIT = 16;
+        new Hashtable<Integer, Boolean>()  // UNJAM = 17;
+    };
+    
+    public static Boolean GetRollToggle(int type, int id)
+    {
+        Hashtable<Integer, Boolean> rollToggle = rollToggleTable[type];
+        if (null == rollToggle)
+        {
+            return false;
+        }
+        return rollToggle.getOrDefault(id, false);
+    }
+    
+    public static void SetRollToggle(int type, int id, Boolean on)
+    {
+        Hashtable<Integer, Boolean> rollToggle = rollToggleTable[type];
+        if (null == rollToggle)
+        {
+            rollToggleTable[type] = new Hashtable<Integer, Boolean>();
+        }
+        rollToggleTable[type].put(id, on);
+    }
+    
+    private static Boolean verboseRoll = false;
+    
+    public static void SetVerboseMode(Boolean on)
+    {
+        verboseRoll = on;
+    }
+    
+    private static int rollInputPlayer = 0;
+    
+    public static void SetRollInputPlayer(int player)
+    {
+        rollInputPlayer = player;
+    }
+    
+    private static int activeRollType = INITIATIVE;
+    private static int activeRollPlayer = 0;
+    
+    public static int GetActiveRollType() { return activeRollType; }
+    public static int GetActiveRollPlayer() { return activeRollPlayer; }
+    
+    public static void SetActiveRollType(int type) { activeRollType = type; }
+    public static void SetActiveRollPlayer(int player) { activeRollPlayer = player; }
+    
+    /**
      * Wrapper to random#d6(n)
      */
     public static int d6(int dice) {
@@ -174,6 +292,204 @@ public class Compute {
             }
         }
         return roll.getIntValue();
+    }
+    
+    /**
+     * Wrapper to random#d6(n) for init roll
+     */
+    public static Boolean checkRollToggle(int rollType, Entity re) {
+        int rp = -1;
+        int ru = -1;
+        if (re != null) {
+            rp = re.getOwnerId();
+            ru = re.getId();
+            return checkRollToggle(rollType, rp, ru);
+        }
+        return false;
+    }
+    
+    /**
+     * Wrapper to random#d6(n) for init roll
+     */
+    public static Boolean checkRollToggle(int rollType, int rp, int ru) {
+        if (rp != -1)
+        {
+            int id = -1;
+            
+            switch (rollType) {
+                case INITIATIVE:
+                    id = rp;
+                    break;
+                default:
+                    id = ru;
+                    break;
+            }
+            
+            if (GetRollToggle(rollType, id))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Wrapper to random#d6(n) for init roll
+     */
+    public static void reportRoll(Roll roll) {
+        if (Server.getServerInstance() != null) {
+            if (Server.getServerInstance().getGame().getOptions()
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
+                Server.getServerInstance().reportRoll(roll);
+            }
+        }
+    }
+    
+    public static int readRollBuffer(int rollType, int rp) {
+        activeRollType = rollType;
+        activeRollPlayer = rp;
+
+        int rollint = Server.getServerInstance().GetRollBufferInt(rollType, rp);
+        
+        return rollint;
+    }
+    
+    public static void printRollInfo(int rollType, Entity re, Entity oe, int rollint) {
+        int rp = -1;
+        int ru = -1;
+        if (re != null) {
+            rp = re.getOwnerId();
+            ru = re.getId();
+        }
+        int ou = -1;
+        if (oe != null) {
+            ou = oe.getId();
+        }
+        if (verboseRoll) {
+            Server.getServerInstance().sendServerChat(rollInputPlayer, 
+                    "Player [" + rp + "], Unit [" + ru + "], " +
+                    "Other Unit [" + ou + "], Roll [" + rollType + "], Roll Value: " + rollint);
+        }
+    }
+    
+    public static int doInitRoll(ITurnOrdered item) {
+        Roll roll = getRoll(INITIATIVE);
+        if (item instanceof Team) {
+            for (Enumeration<Player> i = ((Team) item).getPlayers(); i.hasMoreElements(); ) {
+                int rp = i.nextElement().getId();
+                if (checkRollToggle(INITIATIVE, rp, 0)) {
+                    Server.getServerInstance().sendServerChat(rollInputPlayer, 
+                            "Paused: Player " + rp + ", \"" + Server.getServerInstance().getGame().getPlayer(rp).getName() + "\": enter " + rollDescriptions[INITIATIVE] + " dice roll(s) with /r <sum> <sum>.. command to continue");
+                    int rollint = readRollBuffer(INITIATIVE, rp);
+                    if (rollint != -1) {
+                        roll.setIntValue(rollint);
+                    }
+                    if (verboseRoll) {
+                        Server.getServerInstance().sendServerChat(rollInputPlayer,
+                                "Player [" + rp + "], Roll [" + INITIATIVE + "], Roll Value: " + roll.getIntValue());
+                    }
+                    break;
+                }
+            }
+        }
+        /*
+        else if (item instanceof Player) {
+            int rp = ((Player) item).getId();
+            if (checkRollToggle(INITIATIVE, rp, 0)) {
+                int rollint = readRollBuffer(INITIATIVE, rp);
+                if (rollint != -1) {
+                    roll.setIntValue(rollint);
+                }
+            }
+            Server.getServerInstance().sendServerChat(rollInputPlayer,
+                    "Player [" + rp + "], Roll [" + INITIATIVE + "], Roll Value: " + roll.getIntValue());
+        }
+        */
+        reportRoll(roll);
+        return roll.getIntValue();
+    }
+
+    public static int doCritLocationRoll(Entity re, Entity te, int loc) {
+        int slotIndex = randomInt(te.getNumberOfCriticals(loc));
+        if (checkRollToggle(CRITICAL_LOCATION, re)) {
+            Server.getServerInstance().sendServerChat(rollInputPlayer, 
+                    "Paused: Player " + re.getOwnerId() + ", \"" + Server.getServerInstance().getGame().getPlayer(re.getOwnerId()).getName() + "\": enter " + rollDescriptions[CRITICAL_LOCATION] + " dice roll(s) (location number " + loc + ", max slot value " + te.getNumberOfCriticals(loc) + ") with /r <sum> <sum>.. command to continue");
+            int rollint = readRollBuffer(CRITICAL_LOCATION, re.getOwnerId());
+            if (rollint != -1) {
+                slotIndex = rollint;
+            }
+        }
+        printRollInfo(CRITICAL_LOCATION, re, te, slotIndex);
+        return slotIndex;
+    }
+    
+    /**
+     * Do roll
+     * @param rollType  Roll type
+     * @param re        Rolling entity, the owner of this entity is performs the roll
+     * @return Roll value as int from RNG or player input
+     */
+    public static int doRoll(int rollType, Entity re) {
+        return doRoll(rollType, re, null);
+    }
+    
+    /**
+     * Do roll
+     * @param rollType  Roll type
+     * @param re        Rolling entity, the owner of this entity is performs the roll
+     * @param oe        Other entity, could be target or attacker OR null
+     * @return Roll value as int from RNG or player input
+     */
+    public static int doRoll(int rollType, Entity re, Entity oe) {
+        Roll roll = getRoll(rollType);
+        if (re == null) {
+            re = oe;
+        }
+        if (checkRollToggle(rollType, re)) {
+            Server.getServerInstance().sendServerChat(rollInputPlayer, 
+                    "Paused: Player " + re.getOwnerId() + ", \"" + Server.getServerInstance().getGame().getPlayer(re.getOwnerId()).getName() + "\": enter " + rollDescriptions[rollType] + " dice roll(s) with /r <sum> <sum>.. command to continue");
+            int rollint = readRollBuffer(rollType, re.getOwnerId());
+            if (rollint != -1) {
+                roll.setIntValue(rollint);
+            }
+        }
+        printRollInfo(rollType, re, oe, roll.getIntValue());
+        reportRoll(roll);
+        return roll.getIntValue();
+    }
+    
+    /**
+     * Get Roll object with random value
+     */
+    private static Roll getRoll(int rollType) {
+        Roll roll;
+        switch (rollType) {
+            case INITIATIVE:
+            case PILOTING:
+            case HIT:
+            case CLUSTER:
+            case HIT_LOCATION:
+            case DETERMINE_CRITICALS:
+            case PHYSICAL_ATTACK:
+            case LOSE_CONSCIOUSNESS:
+            case REGAIN_CONSCIOUSNESS:
+            case HEAT_SHUTDOWN:
+            case HEAT_RESTART:
+            case HEAT_AMMO_EXPLOSION:
+            case SPOTLIGHT_HIT:
+            case UNJAM:
+                roll = random.d6(2);
+                break;
+            case PUNCH_LOCATION:
+            case KICK_LOCATION:
+            case FACING_DIRECTION:
+                roll = random.d6(1);
+                break;
+            default:
+                roll = random.d6(2);
+                break;
+        }
+        return roll;
     }
 
     /**
@@ -5088,6 +5404,62 @@ public class Compute {
         }
         throw new RuntimeException(
                 "Could not find number of missiles in hit table");
+    }
+    
+    public static int missilesHit(int missiles, int nMod, boolean hotloaded,
+            boolean streak, boolean advancedAMS, Entity ae) {
+        int nRoll = Compute.doRoll(Compute.CLUSTER, ae);
+        
+        if (hotloaded) {
+            int roll1 = Compute.d6();
+            int roll2 = Compute.d6();
+            int roll3 = Compute.d6();
+            int lowRoll1 = 0;
+            int lowRoll2 = 0;
+        
+            if ((roll1 <= roll2) && (roll1 <= roll3)) {
+                lowRoll1 = roll1;
+                lowRoll2 = Math.min(roll2, roll3);
+            } else if ((roll2 <= roll1) && (roll2 <= roll3)) {
+                lowRoll1 = roll2;
+                lowRoll2 = Math.min(roll1, roll3);
+            } else if ((roll3 <= roll1) && (roll3 <= roll2)) {
+                lowRoll1 = roll3;
+                lowRoll2 = Math.min(roll2, roll1);
+            }
+            nRoll = lowRoll1 + lowRoll2;
+        }
+        if (streak) {
+            nRoll = 11;
+        }
+        nRoll += nMod;
+        if (!advancedAMS) {
+            nRoll = Math.min(Math.max(nRoll, 2), 12);
+        } else {
+            nRoll = Math.min(nRoll, 12);
+        }
+        if (nRoll < 2) {
+            return 0;
+        }
+        
+        for (int[] element : clusterHitsTable) {
+            if (element[0] == missiles) {
+                return element[nRoll - 1];
+            }
+        }
+        // BA missiles may have larger number of missiles than max entry on the
+        // table
+        // if so, take largest, subtract value and try again
+        for (int i = clusterHitsTable.length - 1; i >= 0; i--) {
+            if (missiles > clusterHitsTable[i][0]) {
+                return clusterHitsTable[i][nRoll - 1]
+                        + Compute.missilesHit(
+                         missiles - clusterHitsTable[i][0], nMod,
+                         hotloaded, streak, advancedAMS);
+            }
+        }
+        throw new RuntimeException(
+        "Could not find number of missiles in hit table");
     }
 
     public static int calculateClusterHitTableAmount(int roll, int rackSize) {

@@ -105,7 +105,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                         entityTarget,
                         hit.getLocation(), hit.isRear(),
                         entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
-                                : 0, 4);
+                                : 0, 4, entityTarget);
 
         // Replace "no effect" results with 4 points of damage.
         if ((specialDamageReport.lastElement()).messageId == 6005) {

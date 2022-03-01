@@ -704,6 +704,23 @@ public class Infantry extends Entity {
                                    int cover) {
         return rollHitLocation(table, side);
     }
+    
+    /**
+     * Infantry only have one hit location.
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            AimingMode aimingMode, int cover, Entity ae) {
+        return rollHitLocation(table, side);
+    }
+    
+    /**
+     * Infantry only have one hit location.
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side, Entity ae) {
+        return new HitData(LOC_INFANTRY);
+    }
 
     @Override
     public HitData rollHitLocation(int table, int side) {

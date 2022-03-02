@@ -202,6 +202,18 @@ public class UnitTable {
 
     /**
      * @param index
+     * @return - a string representing the entry at the indicated index for use in the table
+     */
+    public String getTechBase(int index) {
+        if (index >= salvageTable.size()) {
+            return unitTable.get(index - salvageTable.size()).getUnitEntry().isClan() ? "Clan" : "IS";
+        } else {
+            return key.getFaction().isClan() ? "Clan" : "IS";
+        }
+    }
+
+    /**
+     * @param index
      * @return - the MechSummary entry for the indicated index, or null if this is a salvage entry
      */
     public MechSummary getMechSummary(int index) {

@@ -22,6 +22,9 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.Aero;
 import megamek.common.Entity;
 
+import java.util.Locale;
+import java.util.function.Function;
+
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSPA.*;
 
@@ -30,32 +33,57 @@ public class ASPointValueConverter {
     static int getPointValue(ASConverter.ConversionData conversionData) {
         AlphaStrikeElement element = conversionData.element;
         Entity entity = conversionData.entity;
+        CalculationReport report = conversionData.conversionReport;
+        report.addSubHeader("Point Value:");
 
         if (element.isGround()) {
-            double offensiveValue = getPointValueSDamage(element)
-                    + getPointValueMDamage(element) * 2
-                    + getPointValueLDamage(element);
+            double dmgS = getPointValueSDamage(element);
+            double dmgM = getPointValueMDamage(element);
+            double dmgL = getPointValueLDamage(element);
+            double offensiveValue = dmgS + dmgM * 2 + dmgL;
+            report.addLine("Damage", dmgS + " + 2 x " + dmgM + " + " + dmgL, "= ", offensiveValue);
 
             if (element.isAnyTypeOf(BM, PM)) {
                 offensiveValue += 0.5 * element.getSize();
+                report.addLine("Size", "+ " + element.getSize() + " / 2", "= ", offensiveValue);
             }
 
             if (element.getOverheat() >= 1) {
                 offensiveValue += 1 + 0.5 * (element.getOverheat() - 1);
+                report.addLine("Overheat", "+ " + (1 + 0.5 * (element.getOverheat() - 1)), "= ", offensiveValue);
             }
 
-            offensiveValue += getGroundOffensiveSPAMod(entity, element);
-            offensiveValue *= getGroundOffensiveBlanketMod(entity, element);
+            offensiveValue += getGroundOffensiveSPAMod(conversionData);
+            report.addLine("", "= ", offensiveValue);
+            double blanketMod = getGroundOffensiveBlanketMod(conversionData);
+            offensiveValue *= blanketMod;
+            report.addLine("Offensive Value",
+                    String.format(Locale.US, "%1$,.1f x %2$,.1f", offensiveValue, blanketMod),
+                    "= ", offensiveValue);
 
+            report.addEmptyLine();
             double defensiveValue = 0.125 * getHighestMove(element);
+            report.addLine("Movement", getHighestMove(element) + " / 8", "= " + defensiveValue);
+
             if (element.movement.containsKey("j")) {
                 defensiveValue += 0.5;
+                report.addLine("Jump-capable", "+ 0.5", "= ", defensiveValue);
             }
-            defensiveValue += getGroundDefensiveSPAMod(element);
+            defensiveValue += getGroundDefensiveSPAMod(conversionData);
+            report.addLine("", "= ", defensiveValue);
+
             defensiveValue += getDefensiveDIR(conversionData);
+            report.addLine("", "= ", defensiveValue);
+
             double subTotal = offensiveValue + defensiveValue;
+            report.addLine("Subtotal", "= ", subTotal);
+
             double bonus = agileBonus(element);
-            bonus += c3Bonus(element) ? 0.05 * subTotal : 0;
+            if (c3Bonus(conversionData)) {
+
+            }
+            bonus += c3Bonus(conversionData) ? 0.05 * subTotal : 0;
+
             bonus -= subTotal * brawlerMalus(element);
             subTotal += bonus;
             subTotal += forceBonus(element);
@@ -74,7 +102,7 @@ public class ASPointValueConverter {
                 offensiveValue += overheatFactor;
             }
 
-            offensiveValue += getAeroOffensiveSPAMod(entity, element);
+            offensiveValue += getAeroOffensiveSPAMod(conversionData);
             offensiveValue *= getAeroOffensiveBlanketMod(element);
             offensiveValue = ASConverter.roundUpToHalf(offensiveValue);
 
@@ -106,73 +134,119 @@ public class ASPointValueConverter {
         }
     }
 
-    private static double getGroundOffensiveSPAMod(Entity entity, AlphaStrikeElement element) {
-        double result = element.hasSPA(TAG) ? 0.5 : 0;
-        result += element.hasSPA(SNARC) ? (int)element.getSPA(SNARC) : 0;
-        result += element.hasSPA(INARC) ? (int)element.getSPA(INARC) : 0;
-        result += element.hasSPA(TSM) ? 1 : 0;
-        result += element.hasSPA(CNARC) ? 0.5 * (int)element.getSPA(CNARC) : 0;
-        result += element.hasSPA(LTAG) ? 0.25 : 0;
-        result += element.hasSPA(ECS) ? 0.25 : 0;
-        result += element.hasSPA(MEL) ? 0.5 : 0;
-        result += element.hasSPA(MDS) ? (int)element.getSPA(MDS) : 0;
-        result += element.hasSPA(MTAS) ? (int)element.getSPA(MTAS) : 0;
-        result += element.hasSPA(BTAS) ? 0.25 * (int)element.getSPA(BTAS) : 0;
-        result += element.hasSPA(TSEMP) ? 5 * (int)element.getSPA(TSEMP) : 0;
-        result += element.hasSPA(TSEMPO) ? Math.min(5, (int)element.getSPA(TSEMPO)) : 0;
-        result += element.hasSPA(BT) ? 0.5 * getHighestMove(element) * element.getSize() : 0;
-        result += element.hasSPA(IATM) ? ((ASDamageVector)element.getSPA(IATM)).L.damage : 0;
-        result += element.hasSPA(OVL) ? 0.25 * element.getOverheat() : 0;
-        if (element.hasSPA(HT)) {
+    /** Returns the Ground Offensive SPA modifier, ASC p.139. */
+    private static double getGroundOffensiveSPAMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
+
+        double result = 0;
+        result += processSPAMod("Offensive SPA", conversionData, TAG, e -> 0.5);
+        result += processSPAMod("Offensive SPA", conversionData, LTAG, e -> 0.25);
+        result += processSPAMod("Offensive SPA", conversionData, SNARC, e -> (double) element.getSPA(SNARC));
+        result += processSPAMod("Offensive SPA", conversionData, INARC, e -> (double) element.getSPA(INARC));
+        result += processSPAMod("Offensive SPA", conversionData, CNARC, e -> 0.5 * (double) element.getSPA(CNARC));
+        result += processSPAMod("Offensive SPA", conversionData, TSM, e -> 1.0);
+        result += processSPAMod("Offensive SPA", conversionData, ECS, e -> 0.25);
+        result += processSPAMod("Offensive SPA", conversionData, MEL, e -> 0.5);
+        result += processSPAMod("Offensive SPA", conversionData, MDS, e -> (double) element.getSPA(MDS));
+        result += processSPAMod("Offensive SPA", conversionData, MTAS, e -> (double) element.getSPA(MTAS));
+        result += processSPAMod("Offensive SPA", conversionData, BTAS, e -> 0.25 * (double) element.getSPA(BTAS));
+        result += processSPAMod("Offensive SPA", conversionData, TSEMP, e -> 5 * (double) element.getSPA(TSEMP));
+        result += processSPAMod("Offensive SPA", conversionData, TSEMPO, e -> Math.min(5.0, (int) element.getSPA(TSEMPO)));
+        result += processSPAMod("Offensive SPA", conversionData, BT, e -> 0.5 * getHighestMove(element) * element.getSize());
+        result += processSPAMod("Offensive SPA", conversionData, IATM, e -> (double) ((ASDamageVector) element.getSPA(IATM)).L.damage);
+        result += processSPAMod("Offensive SPA", conversionData, OVL, e -> 0.25 * element.getOverheat());
+        result += processSPAMod("Offensive SPA", conversionData, HT, e -> {
             ASDamageVector ht = (ASDamageVector) element.getSPA(HT);
-            result += Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage));
-            result += ht.M.damage > 0 ? 0.5 : 0;
-        }
-        if (element.hasSPA(IF)) {
-            result += element.isMinimalIF() ? 0.5 : ((ASDamageVector)element.getSPA(IF)).S.damage;
-        }
+            return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
+        });
+        result += processSPAMod("Offensive SPA", conversionData, IF,
+                e -> element.isMinimalIF() ? 0.5 : ((ASDamageVector)element.getSPA(IF)).S.damage);
         if (element.hasSPA(RHS)) {
             if (element.hasSPA(OVL)) {
                 result += 1;
+                report.addLine("Offensive SPA", "RHS and OVL", "+ 1");
             } else if (element.getOverheat() > 0) {
                 result += 0.5;
+                report.addLine("Offensive SPA", "RHS and OV > 0", "+ 0.5");
             } else {
                 result += 0.25;
+                report.addLine("Offensive SPA", "RHS", "+ 0.25");
             }
         }
-        result += getArtyOffensiveSPAMod(entity, element);
+        result += getArtyOffensiveSPAMod(conversionData);
         return result;
     }
 
-    private static double getArtyOffensiveSPAMod(Entity entity, AlphaStrikeElement element) {
-        double result = element.hasSPA(ARTAIS) ? 12 * (int)element.getSPA(ARTAIS) : 0;
-        result += element.hasSPA(ARTAC) ? 12 * (int)element.getSPA(ARTAC) : 0;
-        result += element.hasSPA(ARTT) ? 6 * (int)element.getSPA(ARTT) : 0;
-        result += element.hasSPA(ARTS) ? 12 * (int)element.getSPA(ARTS) : 0;
-        result += element.hasSPA(ARTBA) ? 6 * (int)element.getSPA(ARTBA) : 0;
-        result += element.hasSPA(ARTLTC) ? 2 * 6 * (int)element.getSPA(ARTLTC) : 0;
-        result += element.hasSPA(ARTSC) ? 1 * 6 * (int)element.getSPA(ARTSC) : 0;
-        result += element.hasSPA(ARTCM5) ? 5 * 6 * (int)element.getSPA(ARTCM5) : 0;
-        result += element.hasSPA(ARTCM7) ? (7 * 6 + 2 * 3 + 2 * 3) * (int)element.getSPA(ARTCM7) : 0;
-        result += element.hasSPA(ARTCM9) ? (9 * 6 + 4 * 3 + 2 * 3) * (int)element.getSPA(ARTCM9) : 0;
-        result += element.hasSPA(ARTCM12) ? (12 * 6 + 5 * 3 + 2 * 3) * (int)element.getSPA(ARTCM12) : 0;
-        result += element.hasSPA(ARTLT) ? (3 * 6 + 1 * 3 + 2 * 3) * (int)element.getSPA(ARTLT) : 0;
-        result += element.hasSPA(ARTTC) ? 0.5 * 6 * (int)element.getSPA(ARTTC) : 0;
+    /** Returns the Artillery part of the Ground Offensive SPA modifier, ASC p.139. */
+    private static double getArtyOffensiveSPAMod(ASConverter.ConversionData conversionData) {
+        double result = 0;
+        result += processSPAMod("Offensive SPA", conversionData, ARTAIS, e -> 12.0 * (int) e.getSPA(ARTAIS));
+        result += processSPAMod("Offensive SPA", conversionData, ARTAC, e -> 12.0 * (int) e.getSPA(ARTAC));
+        result += processSPAMod("Offensive SPA", conversionData, ARTT, e -> 6.0 * (int) e.getSPA(ARTT));
+        result += processSPAMod("Offensive SPA", conversionData, ARTS, e -> 12.0 * (int) e.getSPA(ARTS));
+        result += processSPAMod("Offensive SPA", conversionData, ARTBA, e -> 6.0 * (int) e.getSPA(ARTBA));
+        result += processSPAMod("Offensive SPA", conversionData, ARTLTC, e -> 12.0 * (int) e.getSPA(ARTLTC));
+        result += processSPAMod("Offensive SPA", conversionData, ARTSC, e -> 6.0 * (int) e.getSPA(ARTSC));
+        result += processSPAMod("Offensive SPA", conversionData, ARTCM5, e -> 30.0 * (int) e.getSPA(ARTCM5));
+        result += processSPAMod("Offensive SPA", conversionData, ARTCM7, e -> 54.0 * (int) e.getSPA(ARTCM7));
+        result += processSPAMod("Offensive SPA", conversionData, ARTCM9, e -> 72.0 * (int) e.getSPA(ARTCM9));
+        result += processSPAMod("Offensive SPA", conversionData, ARTCM12, e -> 93.0 * (int) e.getSPA(ARTCM12));
+        result += processSPAMod("Offensive SPA", conversionData, ARTLT, e -> 27.0 * (int) e.getSPA(ARTLT));
+        result += processSPAMod("Offensive SPA", conversionData, ARTTC, e -> 3.0 * (int) e.getSPA(ARTTC));
         return result;
     }
 
-    private static double getGroundOffensiveBlanketMod(Entity entity, AlphaStrikeElement element) {
-        double result = 1;
-        result += element.hasSPA(VRT) ? 0.1 : 0;
-        result -= element.hasSPA(BFC) ? 0.1 : 0;
-        result -= element.hasSPA(SHLD) ? 0.1 : 0;
-        if (element.asUnitType == SV || element.asUnitType == IM) {
-            result -= !element.hasAnySPAOf(AFC, BFC) ? 0.2 : 0;
+    /**
+     * A helper method for SPA modifiers of various types. Returns the modifier (or 0)
+     * and adds a line to the report.
+     *
+     * @param type A String that will be printed as the first report line element
+     * @param conversionData The ConversionData object holding entity, element and report
+     * @param spa The SPA to be checked
+     * @param spaMod A Function object that returns the modifier for the element and SPA. This is
+     *               called only when the given SPA is present on the element
+     * @return The result of the given spaMod function if the SPA is present on the element, 0 otherwise.
+     */
+    private static double processSPAMod(String type, ASConverter.ConversionData conversionData, BattleForceSPA spa,
+                                        Function<AlphaStrikeElement, Double> spaMod) {
+        AlphaStrikeElement element = conversionData.element;
+        if (element.hasSPA(spa)) {
+            double modifier = spaMod.apply(element);
+            conversionData.conversionReport.addLine(type,
+                    AlphaStrikeElement.formatSPAString(spa, element.getSPA(spa)),
+                    "+ ", modifier);
+            return modifier;
+        } else {
+            return 0;
         }
+    }
+
+    private static double getGroundOffensiveBlanketMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
+
+        double result = 1;
+        report.addLine("Blanket Modifier", "1");
+        result += processSPAMod("Blanket Modifier", conversionData, VRT, e -> 0.1);
+        result += processSPAMod("Blanket Modifier", conversionData, SHLD, e -> -0.1);
+        if (element.isAnyTypeOf(SV, IM)) {
+            if (!element.hasAnySPAOf(AFC, BFC)) {
+                result += -0.2;
+                report.addLine("", "No AFC/BFC", "- 0.2");
+            }
+        } else {
+            result += processSPAMod("Blanket Modifier", conversionData, BFC, e -> -0.1);
+        }
+        report.addLine("Blanket Modifier", "= ", result);
         return result;
     }
 
-    private static double getAeroOffensiveSPAMod(Entity entity, AlphaStrikeElement element) {
+    private static double getAeroOffensiveSPAMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        Entity entity = conversionData.entity;
+        CalculationReport report = conversionData.conversionReport;
+
         double result = element.hasSPA(SNARC) ? 1 : 0;
         result += element.hasSPA(INARC) ? 1 : 0;
         result += element.hasSPA(CNARC) ? 0.5 : 0;
@@ -183,7 +257,7 @@ public class ASPointValueConverter {
             result += Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage));
             result += ht.M.damage > 0 ? 0.5 : 0;
         }
-        result += getArtyOffensiveSPAMod(entity, element);
+        result += getArtyOffensiveSPAMod(conversionData);
         return result;
     }
 
@@ -198,22 +272,32 @@ public class ASPointValueConverter {
         return result;
     }
 
-    private static double getGroundDefensiveSPAMod(AlphaStrikeElement element) {
-        double result = element.hasSPA(ABA) ? 0.5 : 0;
-        result += element.hasSPA(AMS) ? 1 : 0;
-        result += element.hasSPA(CR) && element.getStructure() >= 3 ? 0.25 : 0;
-        result += element.hasSPA(FR) ? 0.5 : 0;
-        result += element.hasSPA(RAMS) ? 1.25 : 0;
-        result += (element.hasSPA(ARM) && element.structure > 1) ? 0.5 : 0;
+    private static double getGroundDefensiveSPAMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
 
         double armorThird = Math.floor((double)element.getFinalArmor() / 3);
         double barFactor = element.hasSPA(BAR) ? 0.5 : 1;
-        result += element.hasSPA(BHJ2) ? barFactor * armorThird : 0;
-        result += element.hasSPA(RCA) ? barFactor * armorThird : 0;
-        result += element.hasSPA(SHLD) ? barFactor * armorThird : 0;
-        result += element.hasSPA(BHJ3) ? barFactor * 1.5 * armorThird: 0;
-        result += element.hasSPA(BRA) ? barFactor * 0.75 * armorThird : 0;
-        result += element.hasSPA(IRA) ? barFactor * 0.5 * armorThird: 0;
+
+        double result = 0;
+        result += processSPAMod("Defensive SPA", conversionData, ABA, e -> 0.5);
+        result += processSPAMod("Defensive SPA", conversionData, AMS, e -> 1.0);
+        result += processSPAMod("Defensive SPA", conversionData, FR, e -> 0.5);
+        result += processSPAMod("Defensive SPA", conversionData, RAMS, e -> 1.25);
+        result += processSPAMod("Defensive SPA", conversionData, BHJ2, e -> barFactor * armorThird);
+        result += processSPAMod("Defensive SPA", conversionData, RCA, e -> barFactor * armorThird);
+        result += processSPAMod("Defensive SPA", conversionData, SHLD, e -> barFactor * armorThird);
+        result += processSPAMod("Defensive SPA", conversionData, BHJ3, e -> barFactor * 1.5 * armorThird);
+        result += processSPAMod("Defensive SPA", conversionData, BRA, e -> barFactor * 0.75 * armorThird);
+        result += processSPAMod("Defensive SPA", conversionData, IRA, e -> barFactor * 0.5 * armorThird);
+        if (element.hasSPA(CR) && (element.getStructure() >= 3)) {
+            result += 0.25;
+            report.addLine("Defensive SPA", "CR", "+ 0.25");
+        }
+        if (element.hasSPA(ARM) && (element.structure > 1)) {
+            result += 0.5;
+            report.addLine("Defensive SPA", "ARM", "+ 0.5");
+        }
         return result;
     }
 
@@ -230,36 +314,65 @@ public class ASPointValueConverter {
 
     private static double getDefensiveDIR(ASConverter.ConversionData conversionData) {
         AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
 
-        double result = element.getFinalArmor() * getArmorFactorMult(element);
-        result += element.getStructure() * getStructureMult(element);
+        double armorMultiplier = getArmorFactorMult(conversionData);
+        double result = element.getFinalArmor() * armorMultiplier;
+        report.addLine("Defensive DIR Armor",  element.getFinalArmor() + " x " + armorMultiplier, "= ", result);
+
+        double strucMultiplier = getStructureMult(conversionData);
+        result += element.getStructure() * strucMultiplier;
+        report.addLine("Defensive DIR Structure", element.getStructure() + " x " + strucMultiplier, "= ", result);
+
         result *= getDefenseFactor(conversionData);
+        report.addLine("Defensive DIR Def Factor", "= ", result);
+
         result = 0.5 * Math.round(result * 2);
+        report.addLine("Defensive DIR", "round to nearest half", "= ", result);
         return result;
     }
 
-    private static double getArmorFactorMult(AlphaStrikeElement element) {
+    private static double getArmorFactorMult(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
+
         double result = 2;
         if (element.asUnitType == CV) {
             if (element.getMovementModes().contains("t") || element.getMovementModes().contains("n")) {
                 result = 1.8;
+                report.addLine("Armor Multiplier", "Tracked/Naval", "1.8");
             } else if (element.getMovementModes().contains("h") || element.getMovementModes().contains("w")) {
                 result = 1.7;
+                report.addLine("Armor Multiplier", "Hover/Wheeled", "1.7");
             } else if (element.getMovementModes().contains("v") || element.getMovementModes().contains("g")) {
                 result = 1.5;
+                report.addLine("Armor Multiplier", "VTOL/WiGE", "1.5");
             }
             result += element.hasSPA(ARS) ? 0.1 : 0;
+            report.addLine("", "Armored Motive System", "+ 0.1");
         }
-        result /= element.hasSPA(BAR) ? 2 : 1;
+        if (result == 2) {
+            report.addLine("Armor Multiplier", "", "2");
+        }
+        if (element.hasSPA(BAR)) {
+            result /= 2;
+            report.addLine("BAR", "/ 2", "");
+        }
         return result;
     }
 
-    private static double getStructureMult(AlphaStrikeElement element) {
+    private static double getStructureMult(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
+
         if (element.asUnitType == BA || element.asUnitType == CI) {
+            report.addLine("Structure Multiplier", "Infantry", "2");
             return 2;
         } else  if (element.asUnitType == IM || element.hasSPA(BAR)) {
+            report.addLine("Structure Multiplier", "IM or BAR", "0.5");
             return 0.5;
         } else  {
+            report.addLine("Structure Multiplier", "", "1");
             return 1;
         }
     }
@@ -273,26 +386,42 @@ public class ASPointValueConverter {
     }
 
     private static double getDefenseFactor(ASConverter.ConversionData conversionData) {
+        CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
 
         double result = 0;
         double movemod = getMovementMod(conversionData);
         if (element.hasSPA(MAS) && (3 > movemod)) {
             result += 3;
+            report.addLine("MAS and MoveMod > 3", "+ 3", "");
         } else if (element.hasSPA(LMAS) && (2 > movemod)) {
             result += 2;
+            report.addLine("LMAS and MoveMod > 2", "+ 2", "");
         } else {
             result += movemod;
         }
-        result += element.isAnyTypeOf(BA, PM) ? 1 : 0;
+        if (element.isAnyTypeOf(BA, PM)) {
+            result += 1;
+            report.addLine("BA or PM", "+ 1", "");
+        }
         if ((element.isType(CV)) && (element.getMovementModes().contains("g")
                 || element.getMovementModes().contains("v"))) {
             result++;
+            report.addLine("VTOL or WiGE CV", "+ 1", "");
         }
-        result += element.hasSPA(STL) ? 1 : 0;
-        result -= element.hasAnySPAOf(LG, SLG, VLG)  ? 1 : 0;
-        result = 1 + (result <= 2 ? 0.1 : 0.25) * Math.max(result, 0);
-        return result;
+        if (element.hasSPA(STL)) {
+            result += 1;
+            report.addLine("STL", "+ 1", "");
+        }
+        if (element.hasAnySPAOf(LG, SLG, VLG)) {
+            result += -1;
+            report.addLine("LG, SLG or VLG", "- 1", "");
+        }
+        double defFactor = 1 + (result <= 2 ? 0.1 : 0.25) * Math.max(result, 0);
+        report.addLine("Defense Factor",
+                "1 + " + ((result <= 2) ? 0.1 : 0.25) + " x " + Math.max(result, 0),
+                "= " + defFactor);
+        return defFactor;
     }
 
     /**
@@ -300,7 +429,6 @@ public class ASPointValueConverter {
      * AlphaStrike Companion Errata v1.4, p.17
      */
     private static double getMovementMod(ASConverter.ConversionData conversionData) {
-        Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
 
@@ -314,8 +442,14 @@ public class ASPointValueConverter {
                 highestNonJumpMod = Math.max(highestNonJumpMod, mod);
             }
         }
-        double result = highestNonJumpMod == -1 ? highestJumpMod : highestNonJumpMod;
+        double result = (highestNonJumpMod == -1) ? highestJumpMod : highestNonJumpMod;
+        report.addLine("Correct Movement Modifier TMM", "", result);
         result += element.isInfantry() && element.isJumpCapable() ? 1 : 0;
+        if (element.isInfantry() && element.isJumpCapable()) {
+            result += 1;
+            report.addLine("Jump Capable Infantry", "+ 1", "");
+        }
+        report.addLine("DIR Movement modifier", "", result);
         return result;
     }
 
@@ -364,8 +498,12 @@ public class ASPointValueConverter {
     }
 
     /** C3 Bonus, AlphaStrike Companion Errata v1.4, p.17 */
-    private static boolean c3Bonus(AlphaStrikeElement element) {
-        return element.hasAnySPAOf(C3BSM, C3BSS, C3EM, C3I, C3M, C3S, AC3, NC3, NOVA);
+    private static boolean c3Bonus(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        if (element.hasAnySPAOf(C3BSM, C3BSS, C3EM, C3I, C3M, C3S, AC3, NC3, NOVA)) {
+            return true;
+        }
+        return false;
     }
 
     private static double forceBonus(AlphaStrikeElement element) {

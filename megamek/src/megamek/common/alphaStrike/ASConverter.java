@@ -20,6 +20,7 @@ package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.swing.calculationReport.HTMLCalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.BattleForceElement.WeaponLocation;
 import org.apache.logging.log4j.LogManager;
@@ -135,22 +136,22 @@ public final class ASConverter {
     static int tmmForMovement(int movement, ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
         if (movement > 34) {
-            report.addLine("", "Primary Movement > 34", "5");
+            report.addLine("TMM", "of " + movement, "5");
             return 5;
         } else if (movement > 18) {
-            report.addLine("", "18 < Primary Movement <= 34", "4");
+            report.addLine("TMM", "of " + movement, "4");
             return 4;
         } else if (movement > 12) {
-            report.addLine("", "12 < Primary Movement <= 18", "3");
+            report.addLine("TMM", "of " + movement, "3");
             return 3;
         } else if (movement > 8) {
-            report.addLine("", "8 < Primary Movement <= 12", "2");
+            report.addLine("TMM", "of " + movement, "2");
             return 2;
         } else if (movement > 4) {
-            report.addLine("", "4 < Primary Movement <= 8", "1");
+            report.addLine("TMM", "of " + movement, "1");
             return 1;
         } else {
-            report.addLine("", "Primary Movement <= 4", "0");
+            report.addLine("TMM", "of " + movement, "0");
             return 0;
         }
     }

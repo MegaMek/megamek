@@ -39,7 +39,7 @@ public class FilteredUnitListTool {
         // SV with amphibious chassis:
         // passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
         // --------------------
-        passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
+        passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_DUNE_BUGGY);
 
         // --------------------
         return passesFilter;

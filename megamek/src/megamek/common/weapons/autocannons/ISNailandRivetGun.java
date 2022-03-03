@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.EquipmentTypeLookup;
 /**
  * @author Sebastian Brocks
  */
@@ -22,7 +23,7 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
     public ISNailandRivetGun() {
         super();
         name = "Nail/Rivet Gun";
-        setInternalName(name);
+        setInternalName(EquipmentTypeLookup.NAIL_RIVET_GUN);
         addLookupName("ISNailRivet Gun");
         addLookupName("ISNail Gun");
         addLookupName("Nail/Rivet Gun");

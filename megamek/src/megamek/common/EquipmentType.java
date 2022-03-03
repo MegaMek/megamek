@@ -1502,4 +1502,16 @@ public class EquipmentType implements ITechnology {
     public String getSortingName() {
         return (sortingName != null) ? sortingName : name;
     }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type Strings.
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param eType An equipment type to check
+     * @param eTypes More equipment types to check
+     * @return true if the internalName of this equipment matches any of the given types
+     */
+    public boolean isAnyOf(String eType, String... eTypes) {
+        return internalName.equals(eType) || Arrays.asList(eTypes).contains(internalName);
+    }
 }

@@ -420,7 +420,7 @@ public final class UIUtil {
      */
     public static int getScaledScreenWidth(DisplayMode currentMonitor) {
         int monitorW = currentMonitor.getWidth();
-        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
+        int pixelPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
         return DEFAULT_DISPLAY_PPI * monitorW / pixelPerInch;
     }
 
@@ -431,13 +431,12 @@ public final class UIUtil {
      */
     public static int getScaledScreenHeight(DisplayMode currentMonitor) {
         int monitorH = currentMonitor.getHeight();
-        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
+        int pixelPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
         return DEFAULT_DISPLAY_PPI * monitorH / pixelPerInch;
     }
 
     /**
      *
-     * @param currentMonitor
      * @return The height of the screen taking into account display scaling
      */
     public static Dimension getScaledScreenSize(Component component) {
@@ -452,7 +451,7 @@ public final class UIUtil {
     public static Dimension getScaledScreenSize(DisplayMode currentMonitor) {
         int monitorH = currentMonitor.getHeight();
         int monitorW = currentMonitor.getWidth();
-        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
+        int pixelPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
         return new Dimension(
                 DEFAULT_DISPLAY_PPI * monitorW / pixelPerInch,
                 DEFAULT_DISPLAY_PPI * monitorH / pixelPerInch);
@@ -460,20 +459,24 @@ public final class UIUtil {
 
     /**
      *
-     * @param image
-     * @param maxWidth
-     * @param maxHeight
      * @return an image with the same aspect ratio that fits within the given bounds, or the existing image if it already does
      */
     public static Image constrainImageSize(Image image, ImageObserver observer, int maxWidth, int maxHeight) {
-        Image newImage = image;
-        if (newImage.getWidth(observer) > maxWidth) {
-            newImage = newImage.getScaledInstance(maxWidth, -1, Image.SCALE_DEFAULT);
+        int w = image.getWidth(observer);
+        int h = image.getHeight(observer);
+
+        if ((w <= maxWidth) && (h <= maxHeight)) {
+            return image;
         }
-        if (newImage.getHeight(observer) > maxHeight) {
-            newImage = newImage.getScaledInstance(-1, maxHeight, Image.SCALE_DEFAULT);
+
+        //choose resize that fits in bounds
+        double scaleW = maxWidth / (double)w;
+        double scaleH = maxHeight / (double)h;
+        if (scaleW < scaleH ) {
+            return ImageUtil.getScaledImage(image, maxWidth, (int)(h*scaleW));
+        } else {
+            return ImageUtil.getScaledImage(image, (int)(w*scaleH), maxHeight);
         }
-        return newImage;
     }
 
     /**
@@ -509,7 +512,7 @@ public final class UIUtil {
     public static JLabel createSplashComponent(String imgSplashFile, Component parent) {
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        Dimension scaledMonitorSize = getScaledScreenSize( parent.getGraphicsConfiguration().getDevice().getDisplayMode());
+        Dimension scaledMonitorSize = getScaledScreenSize(parent.getGraphicsConfiguration().getDevice().getDisplayMode());
 
         Image imgSplash = parent.getToolkit().getImage(imgSplashFile);
 
@@ -535,11 +538,11 @@ public final class UIUtil {
     public static JLabel createSplashComponent(Image imgSplash, ImageObserver observer, Dimension scaledMonitorSize) {
         JLabel splash;
         Dimension maxSize = new Dimension(
-                (int) (scaledMonitorSize.width*0.75),
+                (int) (scaledMonitorSize.width * 0.75),
                 (int) (scaledMonitorSize.height * 0.75));
 
         if (imgSplash != null) {
-            imgSplash = UIUtil.constrainImageSize(imgSplash, null, maxSize.width, maxSize.height );
+            imgSplash = UIUtil.constrainImageSize(imgSplash, null, maxSize.width, maxSize.height);
             Icon icon = new ImageIcon(imgSplash);
             splash = new JLabel(icon);
         } else {

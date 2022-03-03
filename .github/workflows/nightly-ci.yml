@@ -49,8 +49,10 @@ jobs:
 
     # Include --stacktrace to make some build failures easier to figure out.
     - name: Build with Gradle
-      working-directory: megamek
-      run: ./gradlew -I .github/build-scan-init.gradle build -x test --continue --stacktrace --scan
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: clean build -x test --continue --stacktrace --scan
+        build-root-directory: megamek
 
     - name: Upload Test Logs on Failure
       uses: actions/upload-artifact@v2.2.4

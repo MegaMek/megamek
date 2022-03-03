@@ -32,6 +32,7 @@ import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -272,29 +273,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Use the current monitor so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
-        int monitorW = currentMonitor.getWidth();
-        int monitorH = currentMonitor.getHeight();
-
-        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
-        int scaledMonitorW = (DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
-        int scaledMonitorH = (DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
-
-        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
-        JLabel panTitle;
-        if (imgSplash != null) {
-            Icon icon = new ImageIcon(imgSplash);
-             panTitle = new JLabel(icon);
-        } else {
-            panTitle = new JLabel();
-        }
-        int splashW = imgSplash == null ? (int) (scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
-        int splashH = imgSplash == null ? (int) (scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
-
-        Dimension splashDim =  new Dimension((int) splashW, (int) splashH);
-        panTitle.setMaximumSize(splashDim);
-        panTitle.setMinimumSize(splashDim);
-        panTitle.setPreferredSize(splashDim);
+        Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
+        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorSize.width, scaledMonitorSize.height);
+        JLabel splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
@@ -303,7 +284,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.
-        int maximumWidth = (int) (0.9 * scaledMonitorW) - splashW;
+        int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splash.getPreferredSize().width;
 
         Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
         if (textDim.getWidth() > minButtonDim.getWidth()) {
@@ -341,7 +322,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.weightx = 0.0; c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 9;
-        addBag(panTitle, gridbag, c);
+        addBag(splash, gridbag, c);
         // Right Column
         c.insets = new Insets(4, 4, 1, 12);
         c.fill = GridBagConstraints.BOTH;
@@ -369,6 +350,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         addBag(quitB, gridbag, c);
         frame.validate();
         frame.pack();
+        // center window in screen
+        frame.setLocationRelativeTo(null);
     }
 
     /**
@@ -1047,7 +1030,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return null;
         }
 
-        BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+        Image img = ImageUtil.loadImageFromFile(file.toString());
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(img, 0);
@@ -1056,6 +1039,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         } catch (InterruptedException e) {
             // really should never come here
         }
+
         return img;
     }
 

@@ -2511,7 +2511,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     
     private void updateConvertModeButton() {
 
-        if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
+        if ( (cmd == null) ||
+                (cmd.length() > 0) && (cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE)) {
             setModeConvertEnabled(false);
             return;
         }
@@ -4254,7 +4255,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
@@ -4263,9 +4264,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        // if all our entities are actually done, don't start up the turn.
+        // if all our entities are actually done and not hidden, don't start up the turn.
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
-                .stream().allMatch(Entity::isDone)) {
+                .stream().allMatch(Entity::isDone) &&
+                !clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
+                        .stream().anyMatch(Entity::isHidden)) {
             return;
         }
 

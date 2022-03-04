@@ -52,6 +52,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -32975,7 +32976,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // Did the player already send an 'unload' request?
+        // Did the player already send an 'unhide' request?
         // N.B. we're also building the list of players who
         // have declared their "unload stranded" actions.
         declared = new Vector<>();
@@ -33054,6 +33055,7 @@ public class Server implements Runnable {
                     // Unload the entity. Get the unit's transporter.
                     entity.setHidden(false);
                     //TODO may need to unset hiding phase
+                    LogManager.getLogger().error("TODO - update other clients, may need to unset hiding phase");
                 }
             }
 

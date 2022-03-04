@@ -530,7 +530,6 @@ public class Client implements IClientCommandHandler {
     public void sendUnhideHidden(int[] entityIds) {
         Object[] data = new Object[1];
         data[0] = entityIds;
-//        throw new NotImplementedException("sendUnhideHidden");
         send(new Packet(Packet.COMMAND_UNHIDE_HIDDEN, data));
     }
 

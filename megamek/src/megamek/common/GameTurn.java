@@ -516,8 +516,8 @@ public class GameTurn implements Serializable {
      * the "minimum move" rule allow stranded units to dismount at the start of the turn.
      */
     public static class UnhideHiddenTurn extends GameTurn {
-        //TODO needs real uid
-        private static final long serialVersionUID = 2403095752423407872L;
+        //TODO needs real UID
+        private static final long serialVersionUID = 6667777111L;
         private int[] entityIds;
 
         /**

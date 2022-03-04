@@ -1033,7 +1033,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         @Override
         public Class<?> getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
+            Object obj = getValueAt(0, c);
+            return obj == null ? null : obj.getClass();
         }
 
         @Override

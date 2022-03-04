@@ -212,7 +212,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         Entity entity = null;
 
         // Let the player know what's going on.
-        setStatusBarText(Messages.getString("MovementDisplay.AllPlayersUnload"));
+        setStatusBarText(Messages.getString("StatusBarPhaseDisplay.AllPlayersUnhideHidden"));
 
         // Collect the stranded entities into the vector.
         Iterator<Entity> entities = clientgui.getClient().getSelectedEntities(
@@ -243,8 +243,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         // Show the choices to the player
         int[] indexes = clientgui.doChoiceDialog(
-                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"),
-                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.message"),
+                Messages.getString("StatusBarPhaseDisplay.UnhideHiddenUnitsDialog.title"),
+                Messages.getString("StatusBarPhaseDisplay.UnhideHiddenUnitsDialog.message"),
                 names);
 
         // Convert the indexes into selected entity IDs and tell the server.

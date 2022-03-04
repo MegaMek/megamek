@@ -200,7 +200,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         if ((type instanceof MiscType)
                 && type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
-            setShotsLeft(30);
+            setShotsLeft(type.hasFlag(MiscType.F_BA_EQUIPMENT) ? 6 : 30);
         }
         if ((type instanceof MiscType)
                 && ((((MiscType) type).isShield() || type

@@ -212,8 +212,8 @@ public class TestMech extends TestEntity {
         // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
         // IO p. 113 (LAM), 134 (QV)
         if (mech instanceof LandAirMech) {
-            return Math.ceil(mech.getWeight()) *
-                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1);
+            return Math.ceil(mech.getWeight() *
+                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1));
         } else if (mech instanceof QuadVee) {
             return Math.ceil(mech.getWeight() * 0.1);
         }

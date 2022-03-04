@@ -4278,13 +4278,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
+            } else if (clientgui.getClient().canUnhideHidden()) {
+                unhideHidden();
             } else if (cen == Entity.NONE) {
                 beginMyTurn();
             }
         } else {
             endMyTurn();
             if ((e.getPlayer() == null)
-                    && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
+                    && ((clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)
+            || (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnhideHiddenTurn))) {
                 setStatusBarText(Messages
                         .getString("MovementDisplay.waitForAnother"));
             } else {

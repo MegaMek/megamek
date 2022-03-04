@@ -2144,19 +2144,37 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         if (clientgui.getClient().getGame().getPhase() == GamePhase.FIRING) {
             if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
+                if (clientgui.getClient().canUnhideHidden()) {
+                    unhideHidden();
+                } else if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
             } else {
                 endMyTurn();
-                String playerName;
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
+                if ((e.getPlayer() == null)
+                        && ((clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)
+                        || (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnhideHiddenTurn))) {
+                    setStatusBarText(Messages
+                            .getString("FiringDisplay.waitForAnother"));
                 } else {
-                    playerName = "Unknown";
+                    String playerName;
+                    if (e.getPlayer() != null) {
+                        playerName = e.getPlayer().getName();
+                    } else {
+                        playerName = "Unknown";
+                    }
+                    setStatusBarText(Messages.getString(
+                            "FiringDisplay.its_others_turn",
+                            new Object[] { playerName }));
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
+//                String playerName;
+//                if (e.getPlayer() != null) {
+//                    playerName = e.getPlayer().getName();
+//                } else {
+//                    playerName = "Unknown";
+//                }
+//                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
             }
         }
     }

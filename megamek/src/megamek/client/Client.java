@@ -44,6 +44,7 @@ import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
@@ -512,6 +513,25 @@ public class Client implements IClientCommandHandler {
         Object[] data = new Object[1];
         data[0] = entityIds;
         send(new Packet(Packet.COMMAND_UNLOAD_STRANDED, data));
+    }
+
+
+    /**
+     * Can I unhide entities?
+     */
+    public boolean canUnhideHidden() {
+        return (game.getTurn() instanceof GameTurn.UnhideHiddenTurn)
+                && game.getTurn().isValid(localPlayerNumber, game);
+    }
+
+    /**
+     * Send command to unload stranded entities to the server
+     */
+    public void sendUnhideHidden(int[] entityIds) {
+        Object[] data = new Object[1];
+        data[0] = entityIds;
+//        throw new NotImplementedException("sendUnhideHidden");
+        send(new Packet(Packet.COMMAND_UNHIDE_HIDDEN, data));
     }
 
     /**

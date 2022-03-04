@@ -26,8 +26,13 @@ import java.util.*;
 
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.Game;
+import megamek.common.GameTurn;
 import megamek.common.preference.*;
 
 /**
@@ -196,6 +201,62 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
         }
+    }
+
+    /**
+     * Give the player the opportunity to unhide all entities that are hidden
+     */
+    protected void unhideHidden() {
+        Vector<Entity> hidden = new Vector<>();
+        String[] names = null;
+        Entity entity = null;
+
+        // Let the player know what's going on.
+        setStatusBarText(Messages.getString("MovementDisplay.AllPlayersUnload"));
+
+        // Collect the stranded entities into the vector.
+        Iterator<Entity> entities = clientgui.getClient().getSelectedEntities(
+                new EntitySelector() {
+                    private final Game game = clientgui.getClient().getGame();
+                    private final GameTurn turn = clientgui.getClient().getGame().getTurn();
+                    private final int ownerId = clientgui.getClient().getLocalPlayer().getId();
+
+                    @Override
+                    public boolean accept(Entity acc) {
+                        return turn.isValid(ownerId, acc, game);
+                    }
+                });
+        while (entities.hasNext()) {
+            hidden.addElement(entities.next());
+        }
+
+        // Construct an array of stranded entity names
+        names = new String[hidden.size()];
+        for (int index = 0; index < names.length; index++) {
+            entity = hidden.elementAt(index);
+            String buffer;
+
+            buffer = entity.getDisplayName();
+
+            names[index] = buffer;
+        }
+
+        // Show the choices to the player
+        int[] indexes = clientgui.doChoiceDialog(
+                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"),
+                Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.message"),
+                names);
+
+        // Convert the indexes into selected entity IDs and tell the server.
+        int[] ids = null;
+        if (null != indexes) {
+            ids = new int[indexes.length];
+            for (int index = 0; index < indexes.length; index++) {
+                entity = hidden.elementAt(index);
+                ids[index] = entity.getId();
+            }
+        }
+        clientgui.getClient().sendUnhideHidden(ids);
     }
 
     @Override

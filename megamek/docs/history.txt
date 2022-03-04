@@ -23,8 +23,8 @@ VERSION HISTORY:
 + Issue #3413: Command Line Flags and Argument Improvements
 + Updating FlatLaf to 2.0.2 from 2.0.1
 + Data: Force Generator updates. In the process of adding missing units and updating units.
-+ PR #3476: Generated RAT table TechBase column  
-
++ PR #3476: Generated RAT table TechBase column
++ PR #3480: Correct Remote Sensor Dispenser BA ammo amount
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

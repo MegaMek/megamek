@@ -3323,6 +3323,7 @@ public class Server implements Runnable {
     private Vector<GameTurn> checkTurnOrderStrandedOrHidden(TurnVectors team_order) {
         Vector<GameTurn> turns = new Vector<>(team_order.getTotalTurns()
                 + team_order.getEvenTurns());
+
         // Stranded units only during movement phases, rebuild the turns vector
         if (game.getPhase() == GamePhase.MOVEMENT) {
             // See if there are any loaded units stranded on immobile transports.
@@ -3337,7 +3338,7 @@ public class Server implements Runnable {
         }
 
         // Hidden units only during movement and fire phases, rebuild the turns vector
-        if ((game.getPhase() == GamePhase.MOVEMENT) || (game.getPhase() == GamePhase.FIRING)) {
+        if ((game.getPhase() == GamePhase.MOVEMENT) || (game.getPhase() == GamePhase.FIRING) || (game.getPhase() == GamePhase.TARGETING) ) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> hiddenUnits = game.getSelectedEntities(
                     entity -> entity.isHidden());
@@ -3523,7 +3524,8 @@ public class Server implements Runnable {
         // N.B. ProtoMechs declare weapons fire based on their point.
         for (Iterator<Entity> loop = game.getEntities(); loop.hasNext();) {
             final Entity entity = loop.next();
-            if (entity.isSelectableThisTurn()) {
+            boolean isSelectable = entity.isSelectableThisTurn();
+            if (isSelectable) {
                 final Player player = entity.getOwner();
                 if ((entity instanceof SpaceStation)
                         && ((game.getPhase() == GamePhase.MOVEMENT)
@@ -32955,7 +32957,7 @@ public class Server implements Runnable {
         Entity entity;
 
         // Is this the right phase?
-        if ((game.getPhase() != GamePhase.MOVEMENT) && (game.getPhase() != GamePhase.FIRING)) {
+        if ((game.getPhase() != GamePhase.TARGETING) && (game.getPhase() != GamePhase.MOVEMENT) && (game.getPhase() != GamePhase.FIRING)) {
             LogManager.getLogger().error("Server got unhide hidden packet in wrong phase "+game.getPhase());
             return;
         }

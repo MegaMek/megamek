@@ -1333,19 +1333,30 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (clientgui.getClient().getGame().getPhase() == phase) {
 
             if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
+                if (clientgui.getClient().canUnhideHidden()) {
+                    unhideHidden(phase);
+                } else if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
                 setStatusBarText(Messages
                         .getString("TargetingPhaseDisplay.its_your_turn"));
             } else {
                 endMyTurn();
-                if (e.getPlayer() != null) {
+                if ((e.getPlayer() == null)
+                        && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnhideHiddenTurn)) {
+                    setStatusBarText(Messages
+                            .getString("FiringDisplay.waitForAnother"));
+                } else {
+                    String playerName;
+                    if (e.getPlayer() != null) {
+                        playerName = e.getPlayer().getName();
+                    } else {
+                        playerName = "Unknown";
+                    }
                     setStatusBarText(Messages.getString(
                             "TargetingPhaseDisplay.its_others_turn",
-                            e.getPlayer().getName()));
+                            new Object[] { playerName }));
                 }
-
             }
         }
     }

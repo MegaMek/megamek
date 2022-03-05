@@ -4281,8 +4281,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
-            } else if (clientgui.getClient().canUnhideHidden()) {
-                unhideHidden(GamePhase.MOVEMENT);
             } else if (cen == Entity.NONE) {
                 beginMyTurn();
             }

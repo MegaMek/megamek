@@ -9870,10 +9870,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
 
-        // Hidden units shouldn't be counted for turn order, unless deploying or unhidable
+        // Hidden units shouldn't be counted for turn order, unless deploying
         if (isHidden() && (phase != GamePhase.DEPLOYMENT)
-                && (phase != GamePhase.TARGETING)
-                && (phase != GamePhase.MOVEMENT)
                 && (phase != GamePhase.FIRING)) {
             return false;
         }
@@ -9929,11 +9927,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * or sprinting.
      */
     public boolean isEligibleForFiring() {
-        
-        if (isHidden()) {
-            return true;
-        }
-
         // if you're charging, no shooting
         if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()) {
             return false;
@@ -10155,10 +10148,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleForTargetingPhase() {
         if (isAssaultDropInProgress()) {
             return false;
-        }
-
-        if (isHidden()) {
-            return true;
         }
 
         for (Mounted mounted : getWeaponList()) {

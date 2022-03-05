@@ -493,6 +493,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
+        //TMP wait for database to finish loading
+        try {
+            Thread.sleep(8000);
+        } catch (InterruptedException ex ){
+            return;
+        }
+
         client = new Client(playerName, serverAddress, port);
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;

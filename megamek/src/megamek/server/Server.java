@@ -52,7 +52,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -3320,32 +3319,45 @@ public class Server implements Runnable {
         transmitAllPlayerUpdates();
     }
 
-    private Vector<GameTurn> checkTurnOrderStrandedOrHidden(TurnVectors team_order) {
-        Vector<GameTurn> turns = new Vector<>(team_order.getTotalTurns()
+    /**
+     *
+     * @param prepend
+     * @param team_order
+     * @return a vector with prepend turns aded at beginning, of capacity to hold all turns
+     */
+    private Vector<GameTurn> createGameTurnVector(Vector<GameTurn> prepend, TurnVectors team_order) {
+        Vector<GameTurn> turns = new Vector<>(prepend.size() + team_order.getTotalTurns()
                 + team_order.getEvenTurns());
+        if (prepend.size() != 0) {
+            turns.addAll(prepend);
+        }
+        return turns;
+    }
 
-        // Stranded units only during movement phases, rebuild the turns vector
+    /**
+     * Administrative turns (UnloadStrandedTurn, UnhideHiddenTurn) nee to happen before regular
+     * turns like firing and moving
+     * @return turns to be prepended
+     */
+    private Vector<GameTurn> createPrependTurns() {
+        Vector<GameTurn> turns = new Vector<>(8);
+
         if (game.getPhase() == GamePhase.MOVEMENT) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> strandedUnits = game.getSelectedEntities(
                     entity -> game.isEntityStranded(entity));
             if (strandedUnits.hasNext()) {
                 // Add a game turn to unload stranded units
-                turns = new Vector<>(team_order.getTotalTurns()
-                        + team_order.getEvenTurns() + 1);
                 turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
             }
         }
 
-        // Hidden units only during movement and fire phases, rebuild the turns vector
-        if ((game.getPhase() == GamePhase.MOVEMENT) || (game.getPhase() == GamePhase.FIRING) || (game.getPhase() == GamePhase.TARGETING) ) {
+        if ( (game.getPhase() == GamePhase.FIRING) || (game.getPhase() == GamePhase.TARGETING) ) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> hiddenUnits = game.getSelectedEntities(
                     entity -> entity.isHidden());
             if (hiddenUnits.hasNext()) {
                 // Add a game turn to unhide hidden units
-                turns = new Vector<>(team_order.getTotalTurns()
-                        + team_order.getEvenTurns() + 1);
                 turns.addElement(new GameTurn.UnhideHiddenTurn(hiddenUnits));
             }
         }
@@ -3357,7 +3369,10 @@ public class Server implements Runnable {
      *
      * @param phase the <code>int</code> id of the phase
      */
-    private void determineTurnOrderIUI(GamePhase phase) {
+    private void determineTurnOrderIndividualUnitInitiative(GamePhase phase) {
+
+        Vector<GameTurn> prependTurns = createPrependTurns();
+
         for (Iterator<Entity> loop = game.getEntities(); loop.hasNext();) {
             final Entity entity = loop.next();
             entity.resetOtherTurns();
@@ -3398,7 +3413,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = checkTurnOrderStrandedOrHidden(team_order);
+        Vector<GameTurn> turns = createGameTurnVector(prependTurns, team_order);
 
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
@@ -3427,9 +3442,12 @@ public class Server implements Runnable {
      */
     private void determineTurnOrder(GamePhase phase) {
         if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            determineTurnOrderIUI(phase);
+            determineTurnOrderIndividualUnitInitiative(phase);
             return;
         }
+
+        Vector<GameTurn> prependTurns = createPrependTurns();
+
         // and/or deploy even according to game options.
         boolean infMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_EVEN)
                 && ((game.getPhase() == GamePhase.INITIATIVE)
@@ -3605,7 +3623,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(), game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = checkTurnOrderStrandedOrHidden(team_order);
+        Vector<GameTurn> turns = createGameTurnVector(prependTurns, team_order);
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.

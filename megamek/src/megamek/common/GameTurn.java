@@ -506,14 +506,10 @@ public class GameTurn implements Serializable {
     }
 
     /**
-     * A type of game turn that indicates that one or more players should be given the opportunity
-     * to unload entities that are stranded on immobile transports. Each player declares which
-     * stranded units they will unload at the beginning of the movement phase, without being told
-     * what stranded units their opponent(s) are unloading.
-     * <p>
-     * According to
-     * <a href="http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=555466&page=2&view=collapsed&sb=5&o=0&fpart=">Randall Bills</a>,
-     * the "minimum move" rule allow stranded units to dismount at the start of the turn.
+     * indicates that one or more players should be given the opportunity
+     * to unhide hidden entities. Each player declares which
+     * hidden units they will unhide at the beginning of the phase, without being told
+     * what hidden units their opponent(s) are unhiding..
      */
     public static class UnhideHiddenTurn extends GameTurn {
         //TODO needs real UID
@@ -522,9 +518,9 @@ public class GameTurn implements Serializable {
 
         /**
          * Any player that owns an entity whose ID is in the passed array should be given a chance
-         * to unload it.
+         * to unhide it.
          *
-         * @param ids the array of <code>int</code> IDs of stranded entities. This value must not be
+         * @param ids the array of <code>int</code> IDs of hidden entities. This value must not be
          *           <code>null</code> or empty.
          * @throws IllegalArgumentException if a <code>null</code> or empty value is passed for ids.
          */
@@ -545,9 +541,9 @@ public class GameTurn implements Serializable {
 
         /**
          * Any player that owns an entity in the passed enumeration should be given a chance to
-         * unload it.
+         * unhide it.
          *
-         * @param entities the <code>Enumeration</code> of stranded entities. This value must not be
+         * @param entities the <code>Enumeration</code> of hidden entities. This value must not be
          *                <code>null</code> or empty.
          * @throws IllegalArgumentException if a <code>null</code> or empty value is passed for
          * entities.

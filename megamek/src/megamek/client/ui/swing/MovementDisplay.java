@@ -4282,7 +4282,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
             } else if (clientgui.getClient().canUnhideHidden()) {
-                unhideHidden();
+                unhideHidden(GamePhase.MOVEMENT);
             } else if (cen == Entity.NONE) {
                 beginMyTurn();
             }

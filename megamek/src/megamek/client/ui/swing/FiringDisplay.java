@@ -2145,7 +2145,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (clientgui.getClient().getGame().getPhase() == GamePhase.FIRING) {
             if (clientgui.getClient().isMyTurn()) {
                 if (clientgui.getClient().canUnhideHidden()) {
-                    unhideHidden();
+                    unhideHidden(GamePhase.FIRING);
                 } else if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
@@ -2153,8 +2153,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             } else {
                 endMyTurn();
                 if ((e.getPlayer() == null)
-                        && ((clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)
-                        || (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnhideHiddenTurn))) {
+                        && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnhideHiddenTurn)) {
                     setStatusBarText(Messages
                             .getString("FiringDisplay.waitForAnother"));
                 } else {

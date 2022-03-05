@@ -33,6 +33,7 @@ import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Game;
 import megamek.common.GameTurn;
+import megamek.common.enums.GamePhase;
 import megamek.common.preference.*;
 
 /**
@@ -206,7 +207,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     /**
      * Give the player the opportunity to unhide all entities that are hidden
      */
-    protected void unhideHidden() {
+    protected void unhideHidden(GamePhase phase) {
         Vector<Entity> hidden = new Vector<>();
         String[] names = null;
         Entity entity = null;
@@ -243,7 +244,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         // Show the choices to the player
         int[] indexes = clientgui.doChoiceDialog(
-                Messages.getString("StatusBarPhaseDisplay.UnhideHiddenUnitsDialog.title"),
+                phase.toString()+" "+Messages.getString("StatusBarPhaseDisplay.UnhideHiddenUnitsDialog.title"),
                 Messages.getString("StatusBarPhaseDisplay.UnhideHiddenUnitsDialog.message"),
                 names);
 

@@ -94,12 +94,12 @@ jobs:
     - name: Upload Windows Release
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        name: mm-release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: ./megamek/megamek/build/distributions/*.zip
 
     # Put the non-Windows release in an artifact
     - name: Upload Nix/Mac Release
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: ./megamek/megamek/build/distributions/*.tar

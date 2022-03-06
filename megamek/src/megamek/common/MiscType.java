@@ -1777,6 +1777,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHarJelIII());
         EquipmentType.addType(MiscType.createRadicalHeatSinkSystem());
         EquipmentType.addType(MiscType.createLAMBombBay());
+        EquipmentType.addType(MiscType.createLAMAdditionalFuel());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystemMech());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
         EquipmentType.addType(MiscType.createFluidSuctionSystem());
@@ -11173,19 +11174,36 @@ public class MiscType extends EquipmentType {
     public static MiscType createLAMBombBay() {
         MiscType misc = new MiscType();
         misc.name = "Bomb Bay";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.LAM_BOMB_BAY);
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
         misc.explosive = true;
+        misc.cost = 5000;
         misc.rulesRefs = "110, IO";
-
-        // Not listed in IO; this an amalgam of bimodal and standard LAM values.
+        // IO, p.220/221 + bimodal and standard LAM values
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
             .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setTechRating(RATING_D).setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createLAMAdditionalFuel() {
+        MiscType misc = new MiscType();
+        misc.name = "Fuel Tank";
+        misc.setInternalName(EquipmentTypeLookup.LAM_FUEL_TANK);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 200;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT);
+        misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel, IO p.111
+        misc.rulesRefs = "114, IO";
+        // IO, p.220/221:
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES)
+                .setTechRating(RATING_B).setAvailability(RATING_B, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 

@@ -4523,6 +4523,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return count;
     }
 
+    public int countWorkingMisc(String internalName, int location) {
+        int count = 0;
+        OUTER: for (Mounted m : getMisc()) {
+            if (!m.isInoperable() && m.getType().getInternalName().equalsIgnoreCase(internalName)
+                    && ((location == -1) || (m.getLocation() == location))) {
+                if (m.getType().hasModes()) {
+                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
+                        if (e.nextElement().equals("On") && !m.curMode().equals("On")) {
+                            continue OUTER;
+                        }
+                    }
+                }
+                count++;
+            }
+        }
+        return count;
+    }
+
     /**
      * Check if the entity has an arbitrary type of misc equipment
      *

@@ -353,6 +353,11 @@ public abstract class BotClient extends Client {
                 case DEPLOYMENT:
                     initialize();
                     break;
+                case PREMOVEMENT:
+                    sendDone(true);
+
+                    //                    initPremovement();
+                    break;
                 case MOVEMENT:
                     /* Do not uncomment this. It is so that bots stick around till end of game
                      * for proper salvage. If the bot dies out here, the salvage for all but the
@@ -377,6 +382,11 @@ public abstract class BotClient extends Client {
                         }
                     }
                     initMovement();
+                    break;
+                case PREFIRING:
+                    sendDone(true);
+
+                    //                    initPrefiring();
                     break;
                 case FIRING:
                     initFiring();

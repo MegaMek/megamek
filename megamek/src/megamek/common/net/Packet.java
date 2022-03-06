@@ -53,7 +53,9 @@ public class Packet {
     public static final int COMMAND_ENTITY_SINKSCHANGE = 166;
     public static final int COMMAND_ENTITY_ACTIVATE_HIDDEN = 167;
     public static final int COMMAND_ENTITY_SYSTEMMODECHANGE = 170;
-    
+
+    public static final int COMMAND_ENTITY_PREPHASE = 175;
+
     public static final int COMMAND_FORCE_UPDATE = 900;
     public static final int COMMAND_FORCE_ADD = 910;
     public static final int COMMAND_FORCE_DELETE = 920;

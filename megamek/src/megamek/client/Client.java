@@ -440,8 +440,14 @@ public class Client implements IClientCommandHandler {
             case MOVEMENT:
                 memDump("entering movement phase");
                 break;
+            case PREMOVEMENT:
+                memDump("entering premovement phase");
+                break;
             case OFFBOARD:
                 memDump("entering offboard phase");
+                break;
+            case PREFIRING:
+                memDump("entering prefiring phase");
                 break;
             case FIRING:
                 memDump("entering firing phase");
@@ -662,6 +668,18 @@ public class Client implements IClientCommandHandler {
         data[1] = attacks;
 
         send(new Packet(Packet.COMMAND_ENTITY_ATTACK, data));
+        flushConn();
+    }
+
+    /**
+     * Send s done with prephase turn
+     */
+    public void sendPrephaseData(int aen) {
+        Object[] data = new Object[1];
+
+        data[0] = aen;
+
+        send(new Packet(Packet.COMMAND_ENTITY_PREPHASE, data));
         flushConn();
     }
 

@@ -753,7 +753,9 @@ public class Game implements Serializable {
                 reset();
                 break;
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOYMENT:

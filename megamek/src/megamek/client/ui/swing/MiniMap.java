@@ -1336,6 +1336,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
                     || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
+                    || (e.getOldPhase() == GamePhase.PREMOVEMENT) || (e.getOldPhase() == GamePhase.PREFIRING)
                     || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {
                 File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {

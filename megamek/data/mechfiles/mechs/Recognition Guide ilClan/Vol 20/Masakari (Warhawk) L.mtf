@@ -1,11 +1,11 @@
 Version:1.3
 Masakari (Warhawk)
-Prime
-mul id:2097
+L
+mul id:8340
 Config:Biped Omnimech
 techbase:Clan
-era:2999
-source:TRO 3050 - Succession Wars
+era:3121
+source:Rec Guide:ilClan #20 - Dark Age
 rules level:2
 
 mass:85
@@ -34,37 +34,37 @@ RTC armor:10
 Weapons:5
 ER PPC, Left Arm
 ER PPC, Left Arm
-LRM 10, Left Arm
-ER PPC, Right Arm
-ER PPC, Right Arm
+ER Flamer, Left Arm
+ER Flamer, Left Arm
+ATM 12, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 CLERPPC (OMNIPOD)
 CLERPPC (OMNIPOD)
+PPC Capacitor (OMNIPOD)
 CLERPPC (OMNIPOD)
 CLERPPC (OMNIPOD)
-CLLRM10 (OMNIPOD)
-Clan Ammo LRM-10 (OMNIPOD)
+PPC Capacitor (OMNIPOD)
+CLERFlamer (OMNIPOD)
+CLERFlamer (OMNIPOD)
 Clan Ferro-Fibrous
--Empty-
--Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (OMNIPOD)
-CLERPPC (OMNIPOD)
-CLERPPC (OMNIPOD)
-CLERPPC (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+CLATM12 (OMNIPOD)
+Clan Ammo ATM-12 (OMNIPOD)
+Clan Ammo ATM-12 ER (OMNIPOD)
+Clan Ammo ATM-12 HE (OMNIPOD)
+CLCASEII (OMNIPOD)
 Clan Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Left Torso:
 Fusion Engine
@@ -88,8 +88,8 @@ CLDoubleHeatSink
 CLTargeting Computer (OMNIPOD)
 CLTargeting Computer (OMNIPOD)
 CLTargeting Computer (OMNIPOD)
-CLTargeting Computer (OMNIPOD)
-CLTargeting Computer (OMNIPOD)
+WatchdogECMSuite (OMNIPOD)
+WatchdogECMSuite (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
+Supercharger (OMNIPOD)
 -Empty-
 
 Head:
@@ -152,7 +152,7 @@ CLDoubleHeatSink
 
 overview:Introduced by Clan Smoke Jaguar in 2999 in preparation for the anticipated return to the Inner Sphere, while the Dragoon Compromise stalled such plans, the Jaguars unleashed the powerful Warhawk on their Warden opponents to deadly effect.
 capabilities:The Warhawk was powered by a massive 340 XL Engine that gave it a top speed of 64.8 km/h and mounted thirteen and a half tons of Ferro-Fibrous armor to protect itself from enemy fire. To dissipate the massive waste heat produced in its various configurations, it carried a staggering twenty double heat sinks. Additionally, though not truly fixed equipment on the chassis, the Warhawk managed to incorporate an advanced Targeting Computer into each of its configurations, making all of its direct fire weapons extremely accurate.
-deployment:In its primary configuration, the Warhawk had an impressive arsenal of long range weapons which were centered around four ER PPCs that took advantage of the 'Mech’s Targeting Computer. While unable to fire all of the ER PPCs at once it could use a volley fire strategy to manage its heat. These were backed up by an LRM-10 launcher that allowed the Warhawk a secondary weapon that can be utilized for long range combat.
+deployment:No Information Available
 history:Deployed extensively in the Jaguar frontline forces, and often seen paired with the Dire Wolf, the design truly came to prominence as originally intended, on the battlefields of the Jaguars' Invasion Corridor and earned the code name of Masakari - a Japanese battle-axe used on medieval Terra - from warriors within the DCMS who faced it. Though it appeared in the Toumans of a number of other Clans, such as the Ghost Bears and Jade Falcons, the Jaguars jealously guarded their production, and all examples of the highly prized 'Mech outside of the Jaguars were battlefield salvage until production lines and design specs finally spread to the Fire Mandrills, Diamond Sharks and Goliath Scorpions upon the Smoke Jaguars' Annihilation. Produced exclusively on the Clan Homeworlds, the design was one of many lost to the Inner Sphere Clans after contact with the Homeworlds ceased during the Jihad.
 manufacturer:Phan Industrialplex,Abysmal Manufacturing Complex,Kindraa Kline Primary Production Facility,Imperial BattleMechs
 primaryfactory:Huntress,Huntress,Dagda,Antwerp

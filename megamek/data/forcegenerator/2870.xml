@@ -3225,9 +3225,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>IS:3,MERC:3,Periphery:2</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>MOC:6,OA:6,General:6,TC:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>MOC:2,CS:6,OA:2,IS:4,MERC:3,TC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer' unitType='Aero'>

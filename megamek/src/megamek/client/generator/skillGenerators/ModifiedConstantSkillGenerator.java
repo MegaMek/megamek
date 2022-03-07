@@ -23,10 +23,6 @@ import megamek.common.*;
 import megamek.common.enums.SkillLevel;
 
 public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
-    //region Variable Declarations
-    private static final long serialVersionUID = -3276792082665884815L;
-    //endregion Variable Declarations
-
     //region Constructors
     public ModifiedConstantSkillGenerator() {
         super(SkillGeneratorMethod.MODIFIED_CONSTANT);
@@ -34,13 +30,14 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
     //endregion Constructors
 
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanner,
+                                      final boolean forceClan) {
         if (getType().isManeiDomini()) {
             // JHS72 pg. 121, they are always considered elite
             return SkillLevel.ELITE.getDefaultSkillValues();
         }
 
-        final int[] skills = super.generateRandomSkills(entity, forceClan);
+        final int[] skills = super.generateRandomSkills(entity, clanner, forceClan);
 
         // Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
         // Infantry Anti-'Mech skill should be one higher unless foot
@@ -54,7 +51,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
         }
 
         // Now lets handle clanners
-        if (getType().isClan() || (forceClan && entity.isClan())) {
+        if (getType().isClan() || (forceClan && clanner)) {
             // 'Mechs and Battle Armour are better (but not ProtoMechs),
             // Tanks are worse, while Gunnery is worse for Infantry, Conventional Fighters
             // and Small Craft

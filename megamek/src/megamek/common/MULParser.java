@@ -116,6 +116,7 @@ public class MULParser {
     private static final String PICKUP_ID = "pickUpId";
     private static final String NICK = "nick";
     private static final String GENDER = "gender";
+    private static final String CLANNER = "clanner";
     private static final String CAT_PORTRAIT = "portraitCat";
     private static final String FILE_PORTRAIT = "portraitFile";
     private static final String GUNNERY = "gunnery";
@@ -1245,6 +1246,10 @@ public class MULParser {
 
             if ((attributes.containsKey(GENDER)) && !attributes.get(GENDER).isBlank()) {
                 crew.setGender(Gender.parseFromString(attributes.get(GENDER)), slot);
+            }
+
+            if ((attributes.containsKey(CLANNER)) && !attributes.get(CLANNER).isBlank()) {
+                crew.setClanner(Boolean.parseBoolean(attributes.get(CLANNER)), slot);
             }
 
             if ((attributes.containsKey(CAT_PORTRAIT)) && !attributes.get(CAT_PORTRAIT).isBlank()) {

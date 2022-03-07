@@ -25,10 +25,6 @@ import megamek.common.LandAirMech;
 import megamek.common.enums.SkillLevel;
 
 public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
-    //region Variable Declarations
-    private static final long serialVersionUID = -7334417837623003013L;
-    //endregion Variable Declarations
-
     //region Constructors
     public TaharqaSkillGenerator() {
         super(SkillGeneratorMethod.TAHARQA);
@@ -38,12 +34,14 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
     /**
      * The base skill level for each entity is determined separately in Taharqa's Method
      * @param entity the Entity to generate a random skill array for
-     * @param forceClan forces the type to be clan if the entity is a clan unit
+     * @param clanner if the crew to generate a random skills array for are clanners
+     * @param forceClan forces the type to be clan if the crew are clanners
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
      * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
      */
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanner,
+                                      final boolean forceClan) {
         int bonus;
         switch (getLevel()) {
             case ULTRA_GREEN:
@@ -94,6 +92,6 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
             level = SkillLevel.LEGENDARY;
         }
 
-        return generateRandomSkills(level, entity, forceClan);
+        return generateRandomSkills(level, entity, clanner, forceClan);
     }
 }

@@ -1120,6 +1120,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
                 entity.getCrew().setGender(gender, i);
+                entity.getCrew().setClanner(panCrewMember[i].isClanner(), i);
                 entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 if (backup >= 0) {
                     if (i == entity.getCrew().getCrewType().getPilotPos()) {

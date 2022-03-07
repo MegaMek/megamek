@@ -36,6 +36,7 @@ import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
@@ -112,6 +113,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             e.setOwner(client.getLocalPlayer());
             client.sendAddEntity(e);
         }
+
         if (close) {
             setVisible(false);
         }
@@ -120,8 +122,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     private void autoSetSkillsAndName(Entity e, Player player) {
         ClientPreferences cs = PreferenceManager.getClientPreferences();
 
+        Arrays.fill(e.getCrew().getClanners(), e.isClan());
         if (cs.useAverageSkills()) {
-            clientGUI.getClient().getSkillGenerator().setRandomSkills(e, true);
+            clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
         }
 
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
@@ -129,8 +132,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
                 e.getCrew().setName((player != null)
-                        ? RandomNameGenerator.getInstance().generate(gender, player.getName())
-                        : RandomNameGenerator.getInstance().generate(gender), i);
+                        ? RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanner(i), player.getName())
+                        : RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanner(i)), i);
             }
         }
     }

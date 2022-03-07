@@ -326,6 +326,6 @@ public class CrewDescriptor {
     }
 
     public Crew createCrew(CrewType crewType) {
-        return new Crew(crewType, name, 1, gunnery, piloting, gender, null);
+        return new Crew(crewType, name, 1, gunnery, piloting, gender, assignment.getFactionRec().isClan(), null);
     }
 }

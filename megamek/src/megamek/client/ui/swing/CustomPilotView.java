@@ -49,6 +49,7 @@ public class CustomPilotView extends JPanel {
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
     private final JTextField fldNick = new JTextField(20);
+    private final JCheckBox chkClanner = new JCheckBox(Messages.getString("CustomMechDialog.chkClanner"));
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
     private final JTextField fldGunneryM = new JTextField(3);
@@ -96,12 +97,12 @@ public class CustomPilotView extends JPanel {
 
         portrait = entity.getCrew().getPortrait(slot);
         portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
-        add(portraitButton, GBC.std().gridheight(2));
+        add(portraitButton, GBC.std().gridheight(4));
 
         JButton button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
-            fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, isClanner(), entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
@@ -121,6 +122,9 @@ public class CustomPilotView extends JPanel {
             }
         });
         add(button, GBC.eop());
+
+        add(chkClanner, GBC.eop());
+        chkClanner.setSelected(entity.getCrew().isClanner(slot));
 
         label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT);
         add(label, GBC.std());
@@ -283,6 +287,7 @@ public class CustomPilotView extends JPanel {
         if (!editable) {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
+            chkClanner.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -345,6 +350,10 @@ public class CustomPilotView extends JPanel {
 
     public Gender getGender() {
         return gender;
+    }
+
+    public boolean isClanner() {
+        return chkClanner.isSelected();
     }
     
     public int getGunnery() {

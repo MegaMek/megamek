@@ -439,7 +439,7 @@ public class LobbyActions {
         }
         for (final Entity entity : entities) {
             final Client client = lobby.getLocalClient(entity);
-            client.getSkillGenerator().setRandomSkills(entity, true);
+            client.getSkillGenerator().setRandomSkills(entity);
         }
         sendUpdates(entities);
     }
@@ -456,7 +456,7 @@ public class LobbyActions {
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanner(i), e.getOwner().getName()), i);
             }
         }
         sendUpdates(entities);
@@ -477,7 +477,7 @@ public class LobbyActions {
         }
         sendUpdates(entities);
     }
-    
+
     /**
      * Asks for a name and creates a new top-level force of that name. 
      */
@@ -489,7 +489,7 @@ public class LobbyActions {
         }
         client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<>());
     }
-    
+
     /**
      * Asks for a name and creates a new top-level force of that name with the 
      * selected entities in it. 

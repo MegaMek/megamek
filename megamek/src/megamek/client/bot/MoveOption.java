@@ -268,15 +268,14 @@ public class MoveOption extends MovePath {
                 return false;
             }
         }
-        boolean isClan = getEntity().isClan();
+
         if ((last == null)
                 || (last.getMovementType(true) == EntityMovementType.MOVE_ILLEGAL)) {
             return false;
-        }
-        if ((last.getType() != MoveStepType.FORWARDS)
-                || (isClan
-                    && getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && (getEntity()
-                        .getSwarmAttackerId() == Entity.NONE))) {
+        } else if ((last.getType() != MoveStepType.FORWARDS)
+                || (getEntity().getCrew().isClanner()
+                && getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                && (getEntity().getSwarmAttackerId() == Entity.NONE))) {
             return false;
         }
         // TODO: this just takes the first target

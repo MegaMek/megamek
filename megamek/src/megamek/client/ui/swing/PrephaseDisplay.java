@@ -184,15 +184,15 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public boolean shouldPerformAction() {
-//                        if (!clientgui.getClient().isMyTurn()
-//                                || clientgui.getBoardView().getChatterBoxActive()
-//                                || !display.isVisible()
-//                                || display.isIgnoringEvents()
-//                                || !buttons.get(PrephaseCommand.PREPHASE_REVEAL).isEnabled()) {
-//                            return false;
-//                        } else {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.getBoardView().getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()
+                                || !buttons.get(PrephaseCommand.FIRE_FIRE).isEnabled()) {
+                            return false;
+                        } else {
                             return true;
-//                        }
+                        }
                     }
 
                     @Override
@@ -297,12 +297,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);
         for (PrephaseCommand cmd : commands) {
-//            if (cmd == PrephaseCommand.FIRE_CANCEL) {
-//                continue;
-//            }
-//            if ((cmd == PrephaseCommand.FIRE_DISENGAGE) && ((ce() == null) || !ce().isOffBoard())) {
-//                continue;
-//            }
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -362,13 +356,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             setRevealEnabled(true);
             butDone.setEnabled(true);
 
-
-            //            if (GUIPreferences.getInstance().getBoolean("FiringSolutions")
-//                    && !ce().isOffBoard()) {
-//                setFiringSolutions();
-//            } else {
-//                clientgui.getBoardView().clearFiringSolutionData();
-//            }
         } else {
             System.err.println("PrephaseDisplay: "
                     + "tried to select non-existant entity: " + en);
@@ -380,17 +367,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      */
     @Override
     public void ready() {
-
         // stop further input (hopefully)
         disableButtons();
 
+        clientgui.getClient().sendUpdateEntity(ce());
         clientgui.getClient().sendPrephaseData(cen);
+
+        // not sure if should finish turn ?
 //        clientgui.getClient().sendDone(true);
-
-        // send out attacks
-//        clientgui.getClient().sendAttackData(cen, attacks);
-
-
 
         endMyTurn();
     }
@@ -409,8 +393,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.maybeShowUnitDisplay();
         }
 
-        int fen = clientgui.getClient().getFirstEntityNum();
-        selectEntity(fen);
+        Entity next = clientgui.getClient().getGame()
+                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
+
+        if (next != null) {
+            selectEntity(next.getId());
+        } else {
+            selectEntity(Entity.NONE);
+        }
 
         clientgui.getBoardView().select(null);
 
@@ -454,306 +444,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
 
     private void reveal() {
-        clientgui.getClient().sendActivateHidden(cen, phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING );
+//        clientgui.getClient().sendActivateHidden(cen, phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING );
+        ce().setHiddenActivationPhase(phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING);
     }
-//    /**
-//     * Fire Mode - Adds a Fire Mode Change to the current Attack Action
-//     */
-//    private void changeMode(boolean forward) {
-//        int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
-//
-//        // Do nothing we have no unit selected.
-//        if (null == ce()) {
-//            return;
-//        }
-//
-//        // If the weapon does not have modes, just exit.
-//        Mounted m = ce().getEquipment(wn);
-//        if ((m == null) || !m.getType().hasModes()) {
-//            return;
-//        }
-//
-//        // Dropship Artillery cannot be switched to "Direct" Fire
-//        final WeaponType wtype = (WeaponType) m.getType();
-//        if ((ce() instanceof Dropship) && (wtype instanceof ArtilleryWeapon)) {
-//            return;
-//        }
-//
-//        // send change to the server
-//        int nMode = m.switchMode(forward);
-//        clientgui.getClient().sendModeChange(cen, wn, nMode);
-//
-//        // notify the player
-//        if (m.canInstantSwitch(nMode)) {
-//            clientgui.systemMessage(Messages.getString(
-//                    "FiringDisplay.switched", new Object[] { m.getName(),
-//                            m.curMode().getDisplayableName() }));
-//
-//        } else {
-//            clientgui.systemMessage(Messages.getString(
-//                    "FiringDisplay.willSwitch", new Object[] { m.getName(),
-//                            m.pendingMode().getDisplayableName() }));
-//        }
-//
-//        updateTarget();
-//        clientgui.mechD.wPan.displayMech(ce());
-//        clientgui.mechD.wPan.selectWeapon(wn);
-//    }
 
-//    /**
-//     * Called when the current entity is done firing. Send out our attack queue
-//     * to the server.
-//     */
-//    @Override
-//    public void ready() {
-//        if (attacks.isEmpty()
-//                && GUIPreferences.getInstance().getNagForNoAction()) {
-//            // comfirm this action
-//            String title = Messages
-//                    .getString("PrephaseDisplay.DontFireDialog.title");
-//            String body = Messages
-//                    .getString("PrephaseDisplay.DontFireDialog.message");
-//            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-//            if (!response.getShowAgain()) {
-//                GUIPreferences.getInstance().setNagForNoAction(false);
-//            }
-//            if (!response.getAnswer()) {
-//                return;
-//            }
-//        }
-//
-//        // stop further input (hopefully)
-//        disableButtons();
-//
-//        // remove temporary attacks from game & board
-//        removeTempAttacks();
-//
-//        // send out attacks
-//        clientgui.getClient().sendAttackData(cen, attacks);
-//
-//        // clear queue
-//        attacks.removeAllElements();
-//
-//        if ((ce() != null) && ce().isWeapOrderChanged()) {
-//            clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
-//        }
-//        endMyTurn();
-//    }
-
-//    private void doSearchlight() {
-//        // validate
-//        if ((ce() == null) || (target == null)) {
-//            throw new IllegalArgumentException(
-//                    "current searchlight parameters are invalid");
-//        }
-//
-//        if (!SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null)) {
-//            return;
-//        }
-//
-//        // create and queue a searchlight action
-//        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
-//                .getTargetType(), target.getTargetId());
-//        attacks.addElement(saa);
-//
-//        // and add it into the game, temporarily
-//        clientgui.getClient().getGame().addAction(saa);
-//        clientgui.getBoardView().addAttack(saa);
-//
-//        // refresh weapon panel, as bth will have changed
-//        updateTarget();
-//    }
-
-//    /**
-//     * Adds a weapon attack with the currently selected weapon to the attack
-//     * queue.
-//     */
-//    private void fire() {
-//        // get the selected weaponnum
-//        int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
-//        Mounted mounted = ce().getEquipment(weaponNum);
-//
-//        // validate
-//        if ((ce() == null) || (target == null) || (mounted == null)
-//                || !(mounted.getType() instanceof WeaponType)) {
-//            throw new IllegalArgumentException(
-//                    "current fire parameters are invalid");
-//        }
-//
-//        // declare searchlight, if possible
-//        if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
-//            doSearchlight();
-//        }
-//
-//        WeaponAttackAction waa = new WeaponAttackAction(cen,
-//                target.getTargetType(), target.getTargetId(), weaponNum);
-//        Game game = clientgui.getClient().getGame();
-//        int distance = Compute.effectiveDistance(game, waa.getEntity(game),
-//                waa.getTarget(game));
-//        if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
-//                || (mounted.isInBearingsOnlyMode()
-//                && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
-//                || (mounted.getType() instanceof CapitalMissileWeapon
-//                && Compute.isGroundToGround(ce(), target))) {
-//            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-//                    target.getTargetId(), weaponNum, clientgui.getClient()
-//                    .getGame());
-//            // Get the launch velocity for bearings-only telemissiles
-//            if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {
-//                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame, clientgui.getClient().getGame());
-//                tsd.setVisible(true);
-//                waa.setLaunchVelocity(tsd.getSetting());
-//                waa.updateTurnsTilHit(clientgui.getClient().getGame());
-//            }
-//        }
-//
-//        updateDisplayForPendingAttack(mounted, waa);
-//    }
-
-//    /**
-//     * Worker function that handles setting associated ammo and other bookkeeping/UI updates
-//     * for a pending weapon attack action.
-//     */
-//    public void updateDisplayForPendingAttack(Mounted mounted, WeaponAttackAction waa) {
-//        // put this and the rest of the method into a separate function for access externally.
-//        if ((null != mounted.getLinked())
-//                && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
-//            Mounted ammoMount = mounted.getLinked();
-//            waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
-//            waa.setAmmoCarrier(ammoMount.getEntity().getId());
-//            if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-//                VibrabombSettingDialog vsd = new VibrabombSettingDialog(
-//                        clientgui.frame);
-//                vsd.setVisible(true);
-//                waa.setOtherAttackInfo(vsd.getSetting());
-//            }
-//        }
-//
-//        // add the attack to our temporary queue
-//        attacks.addElement(waa);
-//
-//        // and add it into the game, temporarily
-//        clientgui.getClient().getGame().addAction(waa);
-//
-//        // set the weapon as used
-//        mounted.setUsedThisRound(true);
-//
-//        // find the next available weapon
-//        int nextWeapon = clientgui.mechD.wPan.selectNextWeapon();
-//
-//        // check; if there are no ready weapons, you're done.
-//        if ((nextWeapon == -1) && GUIPreferences.getInstance().getAutoEndFiring()) {
-//            ready();
-//            return;
-//        }
-//
-//        // otherwise, display firing info for the next weapon
-//        clientgui.mechD.wPan.displayMech(ce());
-//        clientgui.mechD.wPan.selectWeapon(nextWeapon);
-//        updateTarget();
-//        setDisengageEnabled(false);
-//    }
-
-//    /**
-//     * Skips to the next weapon
-//     */
-//    private void nextWeapon() {
-//        if (ce() == null) {
-//            return;
-//        }
-//        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
-//
-//        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
-//            clientgui.mechD.wPan.displayMech(ce());
-//        }
-//
-//        if (weaponId == -1) {
-//            setFireModeEnabled(false);
-//        } else {
-//            Mounted m = ce().getEquipment(weaponId);
-//            setFireModeEnabled(m.isModeSwitchable());
-//        }
-//        updateTarget();
-//    }
-
-//    /**
-//     * Skips to the previous weapon
-//     */
-//    void prevWeapon() {
-//        if (ce() == null) {
-//            return;
-//        }
-//        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
-//
-//        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
-//            clientgui.mechD.wPan.displayMech(ce());
-//        }
-//
-//        if (weaponId == -1) {
-//            setFireModeEnabled(false);
-//        } else {
-//            Mounted m = ce().getEquipment(weaponId);
-//            setFireModeEnabled(m.isModeSwitchable());
-//        }
-//        updateTarget();
-//    }
-//
-//    /**
-//     * Removes all current fire
-//     */
-//    private void clearAttacks() {
-//        // We may not have an entity selected yet (race condition).
-//        if (ce() == null) {
-//            return;
-//        }
-//
-//        // remove attacks, set weapons available again
-//        Enumeration<EntityAction> i = attacks.elements();
-//        while (i.hasMoreElements()) {
-//            Object o = i.nextElement();
-//            if (o instanceof WeaponAttackAction) {
-//                WeaponAttackAction waa = (WeaponAttackAction) o;
-//                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-//            }
-//        }
-//        attacks.removeAllElements();
-//
-//        // remove temporary attacks from game & board
-//        removeTempAttacks();
-//
-//        // restore any other movement to default
-//        ce().setSecondaryFacing(ce().getFacing());
-//        ce().setArmsFlipped(false);
-//        setDisengageEnabled(ce().isOffBoard() && ce().canFlee());
-//    }
-//
-//    /**
-//     * Removes temp attacks from the game and board
-//     */
-//    private void removeTempAttacks() {
-//        // remove temporary attacks from game & board
-//        clientgui.getClient().getGame().removeActionsFor(cen);
-//        clientgui.getBoardView().removeAttacksFor(ce());
-//
-//    }
-
-//    /**
-//     * removes the last action
-//     */
-//    private void removeLastFiring() {
-//        if (!attacks.isEmpty()) {
-//            Object o = attacks.lastElement();
-//            if (o instanceof WeaponAttackAction) {
-//                WeaponAttackAction waa = (WeaponAttackAction) o;
-//                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-//                attacks.removeElement(o);
-//                setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
-//                clientgui.mechD.wPan.displayMech(ce());
-//                clientgui.getClient().getGame().removeAction(o);
-//                clientgui.getBoardView().refreshAttacks();
-//            }
-//        }
-//    }
 
     /**
      * Refeshes all displays.
@@ -832,77 +526,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 //        }
     }
 
-//    /**
-//     * Have the player select a target from the entities at the given coords.
-//     *
-//     * @param pos - the <code>Coords</code> containing targets.
-//     */
-//    private Targetable chooseTarget(Coords pos) {
-//
-//        boolean friendlyFire = clientgui.getClient().getGame().getOptions()
-//                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-//        // Assume that we have *no* choice.
-//        Targetable choice = null;
-//        Iterator<Entity> choices;
-//
-//        // Get the available choices, depending on friendly fire
-//        if (friendlyFire) {
-//            choices = clientgui.getClient().getGame().getEntities(pos);
-//        } else {
-//            choices = clientgui.getClient().getGame()
-//                    .getEnemyEntities(pos, ce());
-//        }
-//
-//        // Convert the choices into a List of targets.
-//        List<Targetable> targets = new ArrayList<>();
-//        final Player localPlayer = clientgui.getClient().getLocalPlayer();
-//        while (choices.hasNext()) {
-//            Targetable t = choices.next();
-//            boolean isSensorReturn = false;
-//            boolean isVisible = true;
-//            if (t instanceof Entity) {
-//                isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
-//                isVisible = ((Entity) t).hasSeenEntity(localPlayer);
-//            }
-//            if (!ce().equals(t) && !isSensorReturn && isVisible) {
-//                targets.add(t);
-//            }
-//        }
-//
-//        // Is there a building in the hex?
-//        Building bldg = clientgui.getClient().getGame().getBoard()
-//                .getBuildingAt(pos);
-//        if (bldg != null) {
-//            targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
-//                    .getBoard(), Targetable.TYPE_BLDG_TAG));
-//        }
-//
-//        targets.add(new HexTarget(pos, Targetable.TYPE_HEX_TAG));
-//
-//        // Do we have a single choice?
-//        if (targets.size() == 1) {
-//            // Return that choice.
-//            choice = targets.get(0);
-//        }
-//
-//        // If we have multiple choices, display a selection dialog.
-//        else if (targets.size() > 1) {
-//            String input = (String) JOptionPane
-//                    .showInputDialog(
-//                            clientgui,
-//                            Messages.getString(
-//                                    "FiringDisplay.ChooseTargetDialog.message",
-//                                    new Object[] { pos.getBoardNum() }),
-//                            Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-//                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
-//                                    .getDisplayArray(targets), null);
-//            choice = SharedUtility.getTargetPicked(targets, input);
-//        } // End have-choices
-//
-//        // Return the chosen unit.
-//        return choice;
-//
-//    } // End private Targetable chooseTarget( Coords )
+
 
     //
     // GameListener
@@ -960,7 +584,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 && (clientgui.getClient().getGame().getPhase() != phase)) {
             endMyTurn();
         }
-        // if we're ending the firing phase, unregister stuff.
+
         if (clientgui.getClient().getGame().getPhase() == phase) {
             setStatusBarText(Messages
                     .getString("PrephaseDisplay.waitingForFiringPhase"));
@@ -984,32 +608,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         if (ev.getActionCommand().equals(PrephaseCommand.FIRE_FIRE.getCmd())) {
             reveal();
-            ready();
         }
 
-//        if (ev.getActionCommand().equals(PrephaseCommand.FIRE_FIRE.getCmd())) {
-//            fire();
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_SKIP.getCmd())) {
-//            nextWeapon();
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_NEXT.getCmd())) {
-//            selectEntity(clientgui.getClient().getNextEntityNum(cen));
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_NEXT_TARG.getCmd())) {
-//            jumpToNextTarget();
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_FLIP_ARMS.getCmd())) {
-//            updateFlipArms(!ce().getArmsFlipped());
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_MODE.getCmd())) {
-//            changeMode(true);
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_CANCEL.getCmd())) {
-//            clear();
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_SEARCHLIGHT.getCmd())) {
-//            doSearchlight();
-//        } else if (ev.getActionCommand().equals(PrephaseCommand.FIRE_DISENGAGE.getCmd())
-//                && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
-//                Messages.getString("MovementDisplay.EscapeDialog.message"))) {
-//            clear();
-//            attacks.add(new DisengageAction(cen));
-//            ready();
-//        }
+        if (ev.getActionCommand().equals(PrephaseCommand.FIRE_NEXT.getCmd())) {
+            selectEntity(clientgui.getClient()
+                    .getNextEntityNum(cen));
+        }
+
     }
 
 

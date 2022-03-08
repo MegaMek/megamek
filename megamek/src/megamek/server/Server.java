@@ -13427,6 +13427,8 @@ public class Server implements Runnable {
         }
 
         endCurrentTurn(entity);
+        entity.setDone(true);
+        entityUpdate(entity.getId());
     }
 
     /**

@@ -3216,6 +3216,7 @@ public class Server implements Runnable {
                 break;
             case PREMOVEMENT:
             case PREFIRING:
+                // Not sure needs to do anything
                 throw new NotImplementedException("skipCurrentTurn not implemented for "+game.getPhase());
             default:
                 break;
@@ -3333,12 +3334,12 @@ public class Server implements Runnable {
         transmitAllPlayerUpdates();
     }
 
-    private Vector<GameTurn> initTurnOrderStrandedOrHidden(TurnVectors team_order) {
+    private Vector<GameTurn> initGameTurnsWithStranded(TurnVectors team_order) {
         Vector<GameTurn> turns = new Vector<>(team_order.getTotalTurns()
                 + team_order.getEvenTurns());
 
         // Stranded units only during movement phases, rebuild the turns vector
-        // TODO maybe move this to premovemnt
+        // TODO maybe move this to Premovemnt?
         if (game.getPhase() == GamePhase.MOVEMENT) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> strandedUnits = game.getSelectedEntities(
@@ -3351,20 +3352,6 @@ public class Server implements Runnable {
                 turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
             }
         }
-//
-//        // Hidden units get special orders during prephase
-//        if ( (game.getPhase() == GamePhase.PREMOVEMENT) || (game.getPhase() == GamePhase.PREFIRING) ) {
-//            // See if there are any loaded units stranded on immobile transports.
-//            Iterator<Entity> hidd = game.getSelectedEntities(
-//                    entity -> entity.isHidden());
-//            if (hidd.hasNext()) {
-//                // Add a game turn to unload stranded units, if this
-//                // is the movement phase.
-//                turns = new Vector<>(team_order.getTotalTurns()
-//                        + team_order.getEvenTurns() + 1);
-//                turns.addElement(new GameTurn.UnloadStrandedTurn(hidd));
-//            }
-//        }
         return turns;
     }
 
@@ -3414,7 +3401,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = initTurnOrderStrandedOrHidden(team_order);
+        Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
 
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
@@ -3620,7 +3607,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(), game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = initTurnOrderStrandedOrHidden(team_order);
+        Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
@@ -13392,8 +13379,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Gets a bunch of entity attacks from the packet. If valid, processes them
-     * and ends the current turn.
+     * The end of a unit's Premovement or Prefiring
      */
     @SuppressWarnings("unchecked")
     private void receivePrephase(Packet packet, int connId) {
@@ -13402,7 +13388,7 @@ public class Server implements Runnable {
         // is this the right phase?
         if ((game.getPhase() != GamePhase.PREFIRING)
                 && (game.getPhase() != GamePhase.PREMOVEMENT)) {
-            LogManager.getLogger().error("Server got prephase packet in wrong phase "+game.getPhase());
+            LogManager.getLogger().error("Server got Prephase packet in wrong phase "+game.getPhase());
             return;
         }
 
@@ -13413,7 +13399,7 @@ public class Server implements Runnable {
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
             LogManager.getLogger().error(String.format(
-                    "Server got invalid attack packet from Connection %s, Entity %s, %s Turn",
+                    "Server got invalid packet from Connection %s, Entity %s, %s Turn",
                     connId, ((entity == null) ? "null" : entity.getShortName()),
                     ((turn == null) ? "null" : "invalid")));
             send(connId, createTurnVectorPacket());
@@ -13474,6 +13460,7 @@ public class Server implements Runnable {
 
         endCurrentTurn(entity);
     }
+
     /**
      * Process a batch of entity attack (or twist) actions by adding them to the
      * proper list to be processed later.

@@ -35,7 +35,6 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -43,9 +42,9 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import org.apache.commons.lang.NotImplementedException;
 
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -64,13 +63,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * @author arlith
      */
     public enum PrephaseCommand implements PhaseCommand {
-        FIRE_NEXT("fireNext"),
-        FIRE_FIRE("fireFire"),
-        FIRE_SKIP("fireSkip"),
-        //GHOSTTARGET
-        FIRE_SEARCHLIGHT("fireSearchlight"),
-        FIRE_CANCEL("fireCancel"),
-        FIRE_DISENGAGE("fireDisengage");
+        PREPHASE_NEXT("prephaseNext"),
+        PREPHASE_REVEAL("prephaseReveal"),
+        PREPHASE_CANCEL_REVEAL("prephaseCancelReveal");
+
+        // TODO GHOSTTARGET
 
         String cmd;
 
@@ -115,10 +112,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     private final GamePhase phase;
 
-
-
     /**
-     * Creates and lays out a new targeting phase display for the specified
+     * Creates and lays out a new Prefiring or PreMovement phase display for the specified
      * clientgui.getClient().
      */
     public PrephaseDisplay(final ClientGUI clientgui, GamePhase phase) {
@@ -127,7 +122,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         shiftheld = false;
 
         setupStatusBar(Messages
-                .getString("PrephaseDisplay.waitingForTargetingPhase"));
+                .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
 
         buttons = new HashMap<>(
                 (int) (PrephaseCommand.values().length * 1.25 + 0.5));
@@ -156,52 +151,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
-        // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
-                new CommandAction() {
 
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        throw new NotImplementedException("UNDO_LAST_STEP.performAction");
-                    }
-                });
-
-        // Register the action for FIRE
-        controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()
-                                || !buttons.get(PrephaseCommand.FIRE_FIRE).isEnabled()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        reveal();
-                    }
-                });
-
-        // Register the action for NEXT_UNIT
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
                 new CommandAction() {
 
@@ -219,8 +169,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        selectEntity(clientgui.getClient()
-                                .getNextEntityNum(cen));
+                        selectEntity(clientgui.getClient().getNextEntityNum(cen));
                     }
                 });
 
@@ -245,28 +194,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                         selectEntity(clientgui.getClient().getPrevEntityNum(cen));
                     }
                 });
-
-        // Register the action for CLEAR
-        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (clientgui.getBoardView().getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        clear();
-                    }
-                });
-
     }
 
     /**
@@ -353,14 +280,21 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
 
-            setRevealEnabled(true);
-            butDone.setEnabled(true);
+            refreshButtons();
 
         } else {
             System.err.println("PrephaseDisplay: "
                     + "tried to select non-existant entity: " + en);
         }
     }
+
+    private void refreshButtons() {
+        boolean isRevealing = ce().getHiddenActivationPhase() != GamePhase.UNKNOWN;
+        setRevealEnabled(!isRevealing);
+        setCancelRevealEnabled(isRevealing);
+        butDone.setEnabled(!ce().isDone());
+    }
+
     /**
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
@@ -373,9 +307,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getClient().sendUpdateEntity(ce());
         clientgui.getClient().sendPrephaseData(cen);
 
-        // not sure if should finish turn ?
-//        clientgui.getClient().sendDone(true);
-
         endMyTurn();
     }
 
@@ -383,8 +314,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        setStatusBarText(Messages.getString("MovementDisplay.its_your_turn"));
-        butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString()));
+        butDone.setText("<html><b>" + Messages.getString("PrephaseDisplay.Done") + "</b></html>");
         butDone.setEnabled(true);
         setNextEnabled(true);
         clientgui.getBoardView().clearFieldofF();
@@ -393,6 +324,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.maybeShowUnitDisplay();
         }
 
+        //TODO if more than one player on team, asometimes selects theirs
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
 
@@ -401,6 +333,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         } else {
             selectEntity(Entity.NONE);
         }
+
+
 
         clientgui.getBoardView().select(null);
 
@@ -437,18 +371,30 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      */
     private void disableButtons() {
         setRevealEnabled(false);
-        setSkipEnabled(false);
+        setCancelRevealEnabled(false);
         setNextEnabled(false);
         butDone.setEnabled(false);
     }
 
-
-    private void reveal() {
-//        clientgui.getClient().sendActivateHidden(cen, phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING );
-        ce().setHiddenActivationPhase(phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING);
+    private GamePhase revealInPhase() {
+        return phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING;
     }
 
+    private void reveal() {
+        // could just change client setting, and wait for ready() to send to server
+        //ce().setHiddenActivationPhase(revealInPhase());
 
+        // or could send change of state
+        clientgui.getClient().sendActivateHidden(cen, revealInPhase());
+    }
+
+    private void cancelReveal() {
+        // could just change client setting, an wait for done to confirm
+        //ce().setHiddenActivationPhase(GamePhase.UNKNOWN);
+
+        // or could send change of state
+        clientgui.getClient().sendActivateHidden(cen, GamePhase.UNKNOWN);
+    }
     /**
      * Refeshes all displays.
      */
@@ -496,9 +442,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftheld) {
-//                updateFlipArms(false);
-            }
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             clientgui.getBoardView().select(b.getCoords());
@@ -513,17 +456,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         final Client client = clientgui.getClient();
-
-//        if (client.isMyTurn() && (b.getCoords() != null)
-//                && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
-//            if (shiftheld) {
-//                updateFlipArms(false);
-//            } else if (phase == GamePhase.TARGETING) {
-//                target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
-//            } else {
-//                target(chooseTarget(b.getCoords()));
-//            }
-//        }
     }
 
 
@@ -559,19 +491,20 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                     beginMyTurn();
                 }
                 setStatusBarText(Messages
-                        .getString("PrephaseDisplay.its_your_turn"));
+                        .getFormattedString("PrephaseDisplay.its_your_turn", phase.toString()));
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getString(
+                    setStatusBarText(Messages.getFormattedString(
                             "PrephaseDisplay.its_others_turn",
-                            e.getPlayer().getName()));
+                            phase.toString(), e.getPlayer().getName()));
                 }
 
             }
         }
     }
 
+    //GameListener
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
@@ -587,8 +520,18 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         if (clientgui.getClient().getGame().getPhase() == phase) {
             setStatusBarText(Messages
-                    .getString("PrephaseDisplay.waitingForFiringPhase"));
+                    .getString("PrephaseDisplay.waitingForPrephasePhase"));
         }
+    }
+
+    //GameListener
+    @Override
+    public void gameEntityChange(GameEntityChangeEvent event) {
+        if (!event.getEntity().equals(ce())) {
+            return;
+        }
+
+        refreshButtons();
     }
 
     //
@@ -596,8 +539,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-
-        // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
@@ -606,31 +547,33 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (ev.getActionCommand().equals(PrephaseCommand.FIRE_FIRE.getCmd())) {
+        if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_REVEAL.getCmd())) {
             reveal();
         }
 
-        if (ev.getActionCommand().equals(PrephaseCommand.FIRE_NEXT.getCmd())) {
+        if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_CANCEL_REVEAL.getCmd())) {
+            cancelReveal();
+        }
+
+        if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient()
                     .getNextEntityNum(cen));
         }
-
     }
-
 
     private void setRevealEnabled(boolean enabled) {
-        buttons.get(PrephaseCommand.FIRE_FIRE).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(PrephaseCommand.FIRE_FIRE.getCmd(), enabled);
+        buttons.get(PrephaseCommand.PREPHASE_REVEAL).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PrephaseCommand.PREPHASE_REVEAL.getCmd(), enabled);
     }
 
-    private void setSkipEnabled(boolean enabled) {
-        buttons.get(PrephaseCommand.FIRE_SKIP).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SKIP.getCmd(), enabled);
+    private void setCancelRevealEnabled(boolean enabled) {
+        buttons.get(PrephaseCommand.PREPHASE_CANCEL_REVEAL).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PrephaseCommand.PREPHASE_CANCEL_REVEAL.getCmd(), enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
-        buttons.get(PrephaseCommand.FIRE_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
+        buttons.get(PrephaseCommand.PREPHASE_NEXT).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PrephaseCommand.PREPHASE_NEXT.getCmd(), enabled);
     }
 
 
@@ -704,10 +647,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         if (event.getValueIsAdjusting()) {
             return;
         }
-//        if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
-//            // update target data in weapon display
-//            updateTarget();
-//        }
     }
 
 

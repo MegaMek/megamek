@@ -25,6 +25,7 @@ VERSION HISTORY:
 + Data: Force Generator updates. In the process of adding missing units and updating units.
 + PR #3476: Generated RAT table TechBase column
 + PR #3480: Correct Remote Sensor Dispenser BA ammo amount
++ Issue #3484: Per errata, Battle Armor and infantry no longer allowed to set MGs to burst fire mode.
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

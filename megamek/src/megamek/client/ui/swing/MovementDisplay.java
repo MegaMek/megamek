@@ -560,6 +560,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     @Override
                     public void performAction() {
                         final Entity ce = ce();
+                        if (ce == null) {
+                            LogManager.getLogger().error("Cannot execute a conversion mode command for a null entity.");
+                            return;
+                        }
                         EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
                         // LAMs may have to skip the next mode due to damage
                         if (ce() instanceof LandAirMech) {

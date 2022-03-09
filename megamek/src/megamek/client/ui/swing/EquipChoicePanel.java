@@ -264,8 +264,9 @@ public class EquipChoicePanel extends JPanel {
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // Set up rapidfire mg
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)) {
+        // Set up rapidfire mg; per errata infantry of any kind cannot use them
+        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
+                !(entity instanceof Infantry)) {
             setupRapidfireMGs();
             add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }

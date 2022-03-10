@@ -1871,11 +1871,11 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Depsite being able to hover, aerodyne dropships are
-     * explicitely forbidden from vertical landings.
+     * Depsite being VSTOL in all other respects, aerodyne dropships are
+     * explicitely forbidden from vertical landings in atmosphere.
      */
     @Override
     public boolean canLandVertically() {
-        return isSpheroid();
+        return isSpheroid() || game.getPlanetaryConditions().isVacuum();
     }
 }

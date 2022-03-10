@@ -1871,11 +1871,20 @@ public class Dropship extends SmallCraft {
     }
 
     /**
-     * Depsite being VSTOL in all other respects, aerodyne dropships are
+     * Depsite being VSTOL in other respects, aerodyne dropships are
      * explicitely forbidden from vertical landings in atmosphere.
      */
     @Override
     public boolean canLandVertically() {
         return isSpheroid() || game.getPlanetaryConditions().isVacuum();
+    }
+
+    /**
+     * Depsite being VSTOL in other respects, aerodyne dropships are
+     * explicitely forbidden from vertical takeoff in atmosphere.
+     */
+    @Override
+    public boolean canTakeOffVertically() {
+        return (isSpheroid() || game.getPlanetaryConditions().isVacuum()) && (getCurrentThrust() > 2);
     }
 }

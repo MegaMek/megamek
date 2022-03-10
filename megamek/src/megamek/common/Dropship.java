@@ -1869,4 +1869,13 @@ public class Dropship extends SmallCraft {
     public void postProcessFacingChange() {
         mpUsed += 2;
     }
+
+    /**
+     * Depsite being able to hover, aerodyne dropships are
+     * explicitely forbidden from vertical landings.
+     */
+    @Override
+    public boolean canLandVertically() {
+        return isSpheroid();
+    }
 }

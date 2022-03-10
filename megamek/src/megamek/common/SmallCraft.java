@@ -1012,4 +1012,14 @@ public class SmallCraft extends Aero {
     protected int calculateWalk() {
         return walkMP;
     }
+
+    @Override
+    public int getTakeOffLength() {
+        return 20;
+    }
+
+    @Override
+    public int getLandingLength() {
+        return 8;
+    }
 }

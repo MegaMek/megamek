@@ -497,7 +497,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getFormattedString(
                             "PrephaseDisplay.its_others_turn",
-                            phase.toString(), e.getPlayer().getName()));
+                            e.getPlayer().getName(), phase.toString()));
                 }
 
             }

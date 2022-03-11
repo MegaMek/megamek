@@ -217,7 +217,16 @@ public abstract class BotClient extends Client {
                 new Vector<>(0));
         sendDone(true);
     }
-    
+
+    /**
+     * Calculates the prephase turn
+     * currently does nothing other than end turn
+     */
+    protected void calculatePrephaseTurn() {
+        sendPrephaseData(game.getFirstEntityNum(getMyTurn()));
+        sendDone(true);
+    }
+
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
     
@@ -354,9 +363,7 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case PREMOVEMENT:
-                    sendDone(true);
-
-                    //                    initPremovement();
+                    sendChat("Bot premovement");
                     break;
                 case MOVEMENT:
                     /* Do not uncomment this. It is so that bots stick around till end of game
@@ -384,9 +391,7 @@ public abstract class BotClient extends Client {
                     initMovement();
                     break;
                 case PREFIRING:
-                    sendDone(true);
-
-                    //                    initPrefiring();
+                    sendChat("Bot prefiring");
                     break;
                 case FIRING:
                     initFiring();
@@ -551,6 +556,9 @@ public abstract class BotClient extends Client {
                        || (game.getPhase() == GamePhase.OFFBOARD)) {
                 // Princess implements arty targeting; no plans to do so for testbod
                 calculateTargetingOffBoardTurn();
+            } else if ((game.getPhase() == GamePhase.PREMOVEMENT)
+                    || (game.getPhase() == GamePhase.PREFIRING)) {
+                calculatePrephaseTurn();
             }
             
             return true;

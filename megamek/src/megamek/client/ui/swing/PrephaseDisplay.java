@@ -280,7 +280,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
 
-            refreshButtons();
 
         } else {
             System.err.println("PrephaseDisplay: "
@@ -289,10 +288,20 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void refreshButtons() {
-        boolean isRevealing = ce().getHiddenActivationPhase() != GamePhase.UNKNOWN;
+        final Entity ce = ce();
+
+        if ( ce == null || ce.isDone() ) {
+            // how get here?
+            disableButtons();
+            return;
+        }
+
+        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
+
+        boolean isRevealing = ce.getHiddenActivationPhase() != GamePhase.UNKNOWN;
         setRevealEnabled(!isRevealing);
         setCancelRevealEnabled(isRevealing);
-        butDone.setEnabled(!ce().isDone());
+        butDone.setEnabled(true);
     }
 
     /**
@@ -314,31 +323,37 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString()));
+        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), "beginMyTurn"));
         butDone.setText("<html><b>" + Messages.getString("PrephaseDisplay.Done") + "</b></html>");
-        butDone.setEnabled(true);
-        setNextEnabled(true);
+
         clientgui.getBoardView().clearFieldofF();
 
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
 
-        //TODO if more than one player on team, asometimes selects theirs
+        // TODO if more than one player on team, sometimes selects theirs
+        // or doesnt choose if multturn
+        int nextId = Entity.NONE;
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
 
-        if (next != null) {
-            selectEntity(next.getId());
+        if (next == null) {
+            nextId = clientgui.getClient().getFirstEntityNum();
         } else {
-            selectEntity(Entity.NONE);
+            nextId = next.getId();
         }
-
-
+        selectEntity(nextId);
+//        if (next != null) {
+//            selectEntity(next.getId());
+//        } else {
+//            selectEntity(Entity.NONE);
+//        }
 
         clientgui.getBoardView().select(null);
-
         setupButtonPanel();
+        refreshButtons();
+
     }
 
     /**
@@ -363,7 +378,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
-        disableButtons();
+        refreshButtons();
+
     }
 
     /**
@@ -399,6 +415,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Refeshes all displays.
      */
     private void refreshAll() {
+        refreshButtons();
+
         if (ce() == null) {
             return;
         }
@@ -485,19 +503,19 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (clientgui.getClient().getGame().getPhase() == phase) {
-
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages
-                        .getFormattedString("PrephaseDisplay.its_your_turn", phase.toString()));
+//                else {
+//                    setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString()) + " gameTurnChange "+ce());
+//                }
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getFormattedString(
                             "PrephaseDisplay.its_others_turn",
-                            e.getPlayer().getName(), phase.toString()));
+                            phase.toString(), e.getPlayer().getName()));
                 }
 
             }

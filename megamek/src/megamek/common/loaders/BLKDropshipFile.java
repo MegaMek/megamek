@@ -111,9 +111,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             a.setSpheroid(true);
         }
         a.setMovementMode(nMotion);
-        if (a.isSpheroid()) {
-            a.setVSTOL(true);
-        }
+
+        // All dropships are VSTOL and can hover
+        a.setVSTOL(true);
+
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {

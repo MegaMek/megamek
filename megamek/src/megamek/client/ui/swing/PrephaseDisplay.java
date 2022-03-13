@@ -122,7 +122,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         shiftheld = false;
 
         setupStatusBar(Messages
-                .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
+                .getString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
 
         buttons = new HashMap<>(
                 (int) (PrephaseCommand.values().length * 1.25 + 0.5));
@@ -283,7 +283,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         } else {
             System.err.println("PrephaseDisplay: "
-                    + "tried to select non-existant entity: " + en);
+                    + "tried to select non-existent entity: " + en);
         }
     }
 
@@ -296,7 +296,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
+        setStatusBarText(Messages.getString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
 
         boolean isRevealing = ce.getHiddenActivationPhase() != GamePhase.UNKNOWN;
         setRevealEnabled(!isRevealing);
@@ -323,7 +323,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), "beginMyTurn"));
+        setStatusBarText(Messages.getString("PrephaseDisplay.its_your_turn", phase.toString(), ""));
         butDone.setText("<html><b>" + Messages.getString("PrephaseDisplay.Done") + "</b></html>");
 
         clientgui.getBoardView().clearFieldofF();
@@ -347,15 +347,12 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         setupButtonPanel();
         refreshButtons();
-
     }
 
     /**
      * Does end turn stuff.
      */
     private void endMyTurn() {
-        final Entity ce = ce();
-
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
         if ((phase == clientgui.getClient().getGame().getPhase())
@@ -373,7 +370,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
         refreshButtons();
-
     }
 
     /**
@@ -391,17 +387,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void reveal() {
-        // could just change client setting, and wait for ready() to send to server
-        //ce().setHiddenActivationPhase(revealInPhase());
-
-        // or could send change of state
         clientgui.getClient().sendActivateHidden(cen, revealInPhase());
     }
 
     private void cancelReveal() {
-        // could just change client setting, an wait for done to confirm
-        //ce().setHiddenActivationPhase(GamePhase.UNKNOWN);
-
         // or could send change of state
         clientgui.getClient().sendActivateHidden(cen, GamePhase.UNKNOWN);
     }
@@ -427,9 +416,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         return clientgui.getClient().getGame().getEntity(cen);
     }
 
-    //
     // BoardListener
-    //
     @Override
     public void hexMoused(BoardViewEvent b) {
         // Are we ignoring events?
@@ -460,21 +447,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    @Override
-    public void hexSelected(BoardViewEvent b) {
-
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        final Client client = clientgui.getClient();
-    }
-
-
-
-    //
     // GameListener
-    //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
@@ -501,13 +474,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-//                else {
-//                    setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString()) + " gameTurnChange "+ce());
-//                }
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getFormattedString(
+                    setStatusBarText(Messages.getString(
                             "PrephaseDisplay.its_others_turn",
                             phase.toString(), e.getPlayer().getName()));
                 }
@@ -546,9 +516,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         refreshButtons();
     }
 
-    //
     // ActionListener
-    //
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (isIgnoringEvents()) {

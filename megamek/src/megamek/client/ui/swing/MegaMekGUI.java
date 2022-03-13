@@ -409,6 +409,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                           String mailPropertiesFileName, File savegame, String playerName) {
         startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame);
         startClient(playerName, MMConstants.LOCALHOST, server.getPort());
+        //startClient(playerName+".2", MMConstants.LOCALHOST, server.getPort());
     }
 
 
@@ -497,6 +498,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+        // this seems to prevent NPEs when building the UI, presumably from the database loading
+        // would be better to wait for it to finish
         try {
             Thread.sleep(8);
         } catch ( InterruptedException ex) {

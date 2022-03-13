@@ -363,7 +363,6 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case PREMOVEMENT:
-                    sendChat("Bot premovement");
                     break;
                 case MOVEMENT:
                     /* Do not uncomment this. It is so that bots stick around till end of game
@@ -391,7 +390,6 @@ public abstract class BotClient extends Client {
                     initMovement();
                     break;
                 case PREFIRING:
-                    sendChat("Bot prefiring");
                     break;
                 case FIRING:
                     initFiring();

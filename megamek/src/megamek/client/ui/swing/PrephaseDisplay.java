@@ -332,8 +332,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.maybeShowUnitDisplay();
         }
 
-        // TODO if more than one player on team, sometimes selects theirs
-        // or doesnt choose if multturn
+        // make best guess at next unit to select
         int nextId = Entity.NONE;
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
@@ -344,11 +343,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             nextId = next.getId();
         }
         selectEntity(nextId);
-//        if (next != null) {
-//            selectEntity(next.getId());
-//        } else {
-//            selectEntity(Entity.NONE);
-//        }
 
         clientgui.getBoardView().select(null);
         setupButtonPanel();

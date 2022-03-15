@@ -122,7 +122,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         shiftheld = false;
 
         setupStatusBar(Messages
-                .getString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
+                .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
 
         buttons = new HashMap<>(
                 (int) (PrephaseCommand.values().length * 1.25 + 0.5));
@@ -296,7 +296,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        setStatusBarText(Messages.getString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
+        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
 
         boolean isRevealing = ce.getHiddenActivationPhase() != GamePhase.UNKNOWN;
         setRevealEnabled(!isRevealing);
@@ -323,7 +323,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        setStatusBarText(Messages.getString("PrephaseDisplay.its_your_turn", phase.toString(), ""));
+        setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ""));
         butDone.setText("<html><b>" + Messages.getString("PrephaseDisplay.Done") + "</b></html>");
 
         clientgui.getBoardView().clearFieldofF();
@@ -477,7 +477,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getString(
+                    setStatusBarText(Messages.getFormattedString(
                             "PrephaseDisplay.its_others_turn",
                             phase.toString(), e.getPlayer().getName()));
                 }
@@ -502,7 +502,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         if (clientgui.getClient().getGame().getPhase() == phase) {
             setStatusBarText(Messages
-                    .getString("PrephaseDisplay.waitingForPrephasePhase"));
+                    .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
         }
     }
 

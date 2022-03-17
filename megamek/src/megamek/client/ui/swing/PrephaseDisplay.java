@@ -67,8 +67,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         PREPHASE_REVEAL("prephaseReveal"),
         PREPHASE_CANCEL_REVEAL("prephaseCancelReveal");
 
-        // TODO GHOSTTARGET
-
         String cmd;
 
         /**
@@ -119,7 +117,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     public PrephaseDisplay(final ClientGUI clientgui, GamePhase phase) {
         super(clientgui);
         this.phase = phase;
-        shiftheld = false;
 
         setupStatusBar(Messages
                 .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
@@ -434,10 +431,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
                 || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
-        }
-        // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {

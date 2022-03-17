@@ -3216,8 +3216,7 @@ public class Server implements Runnable {
                 break;
             case PREMOVEMENT:
             case PREFIRING:
-                // Not sure needs to do anything
-                throw new NotImplementedException("skipCurrentTurn not implemented for "+game.getPhase());
+                endCurrentTurn(toSkip);
             default:
                 break;
         }

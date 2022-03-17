@@ -53,8 +53,6 @@ public class RATGeneratorEditor extends JFrame {
 
     private final JComboBox<String> cbUnitType = new JComboBox<>();
     private final JComboBox<String> cbMovementType = new JComboBox<>();
-    private final JRadioButton radioModel = new JRadioButton("Model");
-    private final JRadioButton radioChassis = new JRadioButton("Chassis");
 
     private final JTabbedPane panMain = new JTabbedPane();
 
@@ -79,8 +77,7 @@ public class RATGeneratorEditor extends JFrame {
     private FactionListTableModel masterFactionListModel;
     private TableRowSorter<FactionListTableModel> masterFactionListSorter;
 
-    private List<String> currentModelFactions = new ArrayList<>();
-    private List<String> currentChassisFactions = new ArrayList<>();
+    private final List<String> currentChassisFactions = new ArrayList<>();
 
     private final JTable tblFactionEditor = new JTable();
     private FactionEditorTableModel factionEditorModel;
@@ -214,52 +211,20 @@ public class RATGeneratorEditor extends JFrame {
         }
         cbMovementType.addActionListener(arg0 -> filterMasterUnitList());
 
-//        radioModel.setSelected(true);
-//        radioModel.addActionListener(ev -> {
-//            if (unitModelEditorModel.getMode() != UnitEditorTableModel.MODE_MODEL &&
-//                    tblMasterUnitList.getSelectedRow() >= 0) {
-//                ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
-//                unitModelEditorModel.setData(model, UnitEditorTableModel.MODE_MODEL);
-//            } else {
-//                unitModelEditorModel.clearData();
-//            }
-//        });
-//
-//        radioChassis.addActionListener(ev ->  {
-//            if (unitModelEditorModel.getMode() != UnitEditorTableModel.MODE_CHASSIS &&
-//                    tblMasterUnitList.getSelectedRow() >= 0) {
-//                ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
-//                unitModelEditorModel.setData(model, UnitEditorTableModel.MODE_CHASSIS);
-//            } else {
-//                unitModelEditorModel.clearData();
-//            }
-//        });
-
         result.add(new JLabel("Unit Type:"));
         result.add(cbUnitType);
         result.add(new JLabel("Movement Type:"));
         result.add(cbMovementType);
 
-        ButtonGroup group = new ButtonGroup();
-        group.add(radioModel);
-        group.add(radioChassis);
-
         return result;
     }
 
     private void setCurrentUnitFactions() {
-        currentModelFactions.clear();
         currentChassisFactions.clear();
         if (tblMasterUnitList.getSelectedRow() >= 0) {
             ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
             for (int i = 0; i < rg.getEraSet().size(); i++) {
-                Collection<AvailabilityRating> modelRecs = rg.getModelFactionRatings(ERAS[i], model.getKey());
                 Collection<AvailabilityRating> chassisRecs = rg.getChassisFactionRatings(ERAS[i], model.getChassisKey());
-                if (modelRecs != null) {
-                    for (AvailabilityRating rec : modelRecs) {
-                        currentModelFactions.add(rec.getFactionCode());
-                    }
-                }
                 if (chassisRecs != null) {
                     for (AvailabilityRating rec : chassisRecs) {
                         currentChassisFactions.add(rec.getFactionCode());
@@ -328,9 +293,37 @@ public class RATGeneratorEditor extends JFrame {
 
         Box factionEditSide = Box.createVerticalBox();
         factionEditSide.add(createUnitModelEditor());
-        factionEditSide.add(Box.createVerticalStrut(15));
+        factionEditSide.add(Box.createVerticalStrut(5));
+        factionEditSide.add(createCopyBetweenButtonPanel());
+        factionEditSide.add(Box.createVerticalStrut(5));
         factionEditSide.add(createUnitChassisEditor());
         return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
+    }
+
+    private JComponent createCopyBetweenButtonPanel() {
+        JPanel panel = new JPanel();
+        JButton copyToModelButton = new JButton("\u25B2");
+        copyToModelButton.addActionListener(ev -> {
+            if (tblUnitChassisEditor.getSelectedRow() >= 0) {
+                int modelRow = tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow());
+                copyBetween(unitChassisEditorModel, unitModelEditorModel, modelRow);
+            }
+        });
+        JButton copyToChassisButton = new JButton("\u25BC");
+        copyToChassisButton.addActionListener(ev -> {
+            if (tblUnitModelEditor.getSelectedRow() >= 0) {
+                int modelRow = tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow());
+                copyBetween(unitModelEditorModel, unitChassisEditorModel, modelRow);
+            }
+        });
+        panel.add(copyToModelButton);
+        panel.add(Box.createHorizontalStrut(100));
+        panel.add(copyToChassisButton);
+        return panel;
+    }
+
+    private void copyBetween(UnitEditorTableModel source, UnitEditorTableModel destination, int row) {
+        destination.addEntry(source.getRow(row));
     }
 
     private JComponent createUnitModelEditor() {
@@ -754,7 +747,7 @@ public class RATGeneratorEditor extends JFrame {
         public static final int MODE_SUMMARY = 2;
 
         ArrayList<String> factions;
-        HashMap<String, ArrayList<String>> data;
+        HashMap<String, List<String>> data;
         private int mode;
         private AbstractUnitRecord unitRecord;
         
@@ -893,10 +886,18 @@ public class RATGeneratorEditor extends JFrame {
         }
 
         public boolean addEntry(String faction) {
-            if (unitRecord == null) {                 
+            ArrayList<String> list = new ArrayList<>();
+            while (list.size() < ERAS.length) {
+                list.add("");
+            }
+            return addEntry(faction, list);
+        }
+
+        public boolean addEntry(String faction, List<String> factionData) {
+            if (unitRecord == null) {
                 return false;
             }
-            
+
             if (mode == MODE_MODEL) {
                 boolean chassisRecordFound = false;
                 for (int era : ERAS) {
@@ -905,20 +906,20 @@ public class RATGeneratorEditor extends JFrame {
                         break;
                     }
                 }
-                
+
                 if (!chassisRecordFound) {
                     return false;
                 }
-            }                    
-            
-            factions.add(faction);
-            ArrayList<String> list = new ArrayList<>();
-            while (list.size() < ERAS.length) {
-                list.add("");
             }
-            data.put(faction, list);
+
+            factions.add(faction);
+            data.put(faction, factionData);
             fireTableDataChanged();
             return true;
+        }
+
+        public boolean addEntry(RowData rowData) {
+            return addEntry(rowData.faction, rowData.eraData);
         }
 
         public void removeEntry(int row) {
@@ -934,10 +935,15 @@ public class RATGeneratorEditor extends JFrame {
             fireTableDataChanged();
         }
 
+        /** Returns the given row data as a List with the first entry being the faction. */
+        public RowData getRow(int row) {
+            return new RowData(factions.get(row), data.get(factions.get(row)));
+        }
+
         public void copyRow(int row, String newFaction) {
-            ArrayList<String> copyFrom = data.get(factions.get(row));
+            List<String> copyFrom = data.get(factions.get(row));
             factions.add(newFaction);
-            ArrayList<String> copyTo = new ArrayList<>();
+            List<String> copyTo = new ArrayList<>();
             for (int i = 0; i < ERAS.length; i++) {
                 copyTo.add(copyFrom.get(i));
             }       
@@ -958,6 +964,16 @@ public class RATGeneratorEditor extends JFrame {
 
         public int getMode() {
             return mode;
+        }
+    }
+
+    private static class RowData {
+        String faction;
+        List<String> eraData;
+
+        public RowData(String faction, List<String> eraData) {
+            this.faction = faction;
+            this.eraData = eraData;
         }
     }
 

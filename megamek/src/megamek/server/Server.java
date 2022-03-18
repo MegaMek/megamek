@@ -52,6 +52,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -2336,8 +2337,10 @@ public class Server implements Runnable {
                 // send turns to all players
                 send(createTurnVectorPacket());
                 break;
+            case PREMOVEMENT:
             case MOVEMENT:
             case DEPLOYMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:
@@ -2549,9 +2552,11 @@ public class Server implements Runnable {
             case MOVEMENT:
                 // write Movement Phase header to report
                 addReport(new Report(2000, Report.PUBLIC));
+            case PREMOVEMENT:
             case SET_ARTILLERY_AUTOHIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:
@@ -2747,6 +2752,9 @@ public class Server implements Runnable {
                     changePhase(GamePhase.TARGETING);
                 }
                 break;
+            case PREMOVEMENT:
+                changePhase(GamePhase.MOVEMENT);
+                break;
             case MOVEMENT:
                 detectHiddenUnits();
                 ServerHelper.detectMinefields(game, vPhaseReport, this);
@@ -2778,6 +2786,9 @@ public class Server implements Runnable {
                 break;
             case MOVEMENT_REPORT:
                 changePhase(GamePhase.OFFBOARD);
+                break;
+            case PREFIRING:
+                changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
                 // write Weapon Attack Phase header
@@ -2850,7 +2861,7 @@ public class Server implements Runnable {
                     vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(GamePhase.MOVEMENT);
+                    changePhase(GamePhase.PREMOVEMENT);
                 }
 
                 sendSpecialHexDisplayPackets();
@@ -2892,15 +2903,15 @@ public class Server implements Runnable {
                     addReport(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(GamePhase.FIRING);
+                    changePhase(GamePhase.PREFIRING);
                 }
                 break;
             case OFFBOARD_REPORT:
                 sendSpecialHexDisplayPackets();
-                changePhase(GamePhase.FIRING);
+                changePhase(GamePhase.PREFIRING);
                 break;
             case TARGETING_REPORT:
-                changePhase(GamePhase.MOVEMENT);
+                changePhase(GamePhase.PREMOVEMENT);
                 break;
             case END:
                 // remove any entities that died in the heat/end phase before
@@ -3203,6 +3214,9 @@ public class Server implements Runnable {
                 }
                 endCurrentTurn(toSkip);
                 break;
+            case PREMOVEMENT:
+            case PREFIRING:
+                endCurrentTurn(toSkip);
             default:
                 break;
         }
@@ -3319,10 +3333,12 @@ public class Server implements Runnable {
         transmitAllPlayerUpdates();
     }
 
-    private Vector<GameTurn> checkTurnOrderStranded(TurnVectors team_order) {
+    private Vector<GameTurn> initGameTurnsWithStranded(TurnVectors team_order) {
         Vector<GameTurn> turns = new Vector<>(team_order.getTotalTurns()
                 + team_order.getEvenTurns());
+
         // Stranded units only during movement phases, rebuild the turns vector
+        // TODO maybe move this to Premovemnt?
         if (game.getPhase() == GamePhase.MOVEMENT) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> strandedUnits = game.getSelectedEntities(
@@ -3384,7 +3400,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
+        Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
 
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
@@ -3590,7 +3606,7 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(), game);
 
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
+        Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
@@ -13359,6 +13375,44 @@ public class Server implements Runnable {
         Integer attackerId = (Integer) packet.getObject(1);
         Coords pos = (Coords) packet.getObject(2);
         game.getEntity(targetId).setPlayerPickedPassThrough(attackerId, pos);
+    }
+
+    /**
+     * The end of a unit's Premovement or Prefiring
+     */
+    @SuppressWarnings("unchecked")
+    private void receivePrephase(Packet packet, int connId) {
+        Entity entity = game.getEntity(packet.getIntValue(0));
+
+        // is this the right phase?
+        if ((game.getPhase() != GamePhase.PREFIRING)
+                && (game.getPhase() != GamePhase.PREMOVEMENT)) {
+            LogManager.getLogger().error("Server got Prephase packet in wrong phase "+game.getPhase());
+            return;
+        }
+
+        // can this player/entity act right now?
+        GameTurn turn = game.getTurn();
+        if (getGame().getPhase().isSimultaneous(getGame())) {
+            turn = game.getTurnForPlayer(connId);
+        }
+        if ((turn == null) || !turn.isValid(connId, entity, game)) {
+            LogManager.getLogger().error(String.format(
+                    "Server got invalid packet from Connection %s, Entity %s, %s Turn",
+                    connId, ((entity == null) ? "null" : entity.getShortName()),
+                    ((turn == null) ? "null" : "invalid")));
+            send(connId, createTurnVectorPacket());
+            send(connId, createTurnIndexPacket((turn == null) ? Player.PLAYER_NONE : turn.getPlayerNum()));
+            return;
+        }
+
+        // Update visibility indications if using double blind.
+        if (doBlind()) {
+            updateVisibilityIndicator(null);
+        }
+
+        endCurrentTurn(entity);
+        entityUpdate(entity.getId());
     }
 
     /**
@@ -31197,6 +31251,9 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_ATTACK:
                 receiveAttack(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_PREPHASE:
+                receivePrephase(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_GTA_HEX_SELECT:
                 receiveGroundToAirHexSelectPacket(packet, connId);

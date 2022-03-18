@@ -37,11 +37,13 @@ public enum GamePhase {
     INITIATIVE_REPORT("GamePhase.INITIATIVE_REPORT.text"),
     TARGETING("GamePhase.TARGETING.text"),
     TARGETING_REPORT("GamePhase.TARGETING_REPORT.text"),
+    PREMOVEMENT("GamePhase.PREMOVEMENT.text"),
     MOVEMENT("GamePhase.MOVEMENT.text"),
     MOVEMENT_REPORT("GamePhase.MOVEMENT_REPORT.text"),
     OFFBOARD("GamePhase.OFFBOARD.text"),
     OFFBOARD_REPORT("GamePhase.OFFBOARD_REPORT.text"),
     POINTBLANK_SHOT("GamePhase.POINTBLANK_SHOT.text"), // Fake phase only reached through hidden units
+    PREFIRING("GamePhase.PREFIRING.text"),
     FIRING("GamePhase.FIRING.text"),
     FIRING_REPORT("GamePhase.FIRING_REPORT.text"),
     PHYSICAL("GamePhase.PHYSICAL.text"),
@@ -103,6 +105,10 @@ public enum GamePhase {
         return this == TARGETING_REPORT;
     }
 
+    public boolean isPremovement() {
+        return this == PREMOVEMENT;
+    }
+
     public boolean isMovement() {
         return this == MOVEMENT;
     }
@@ -121,6 +127,10 @@ public enum GamePhase {
 
     public boolean isPointblankShot() {
         return this == POINTBLANK_SHOT;
+    }
+
+    public boolean isPrefiring() {
+        return this == PREFIRING;
     }
 
     public boolean isFiring() {
@@ -185,8 +195,10 @@ public enum GamePhase {
         switch (this) {
             case DEPLOYMENT:
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
             case OFFBOARD:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOY_MINEFIELDS:
@@ -207,7 +219,9 @@ public enum GamePhase {
                 return false;
             case DEPLOYMENT:
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOY_MINEFIELDS:
@@ -275,7 +289,9 @@ public enum GamePhase {
             case SET_ARTILLERY_AUTOHIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
+            case PREMOVEMENT:
             case MOVEMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case TARGETING:
@@ -303,6 +319,9 @@ public enum GamePhase {
             case TARGETING:
             case OFFBOARD:
                 return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
+            case PREMOVEMENT:
+            case PREFIRING:
+                return true;
             default:
                 return false;
         }

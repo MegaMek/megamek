@@ -11183,10 +11183,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "110, IO";
         // IO, p.220/221 + bimodal and standard LAM values
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
-            .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-            .setTechRating(RATING_D).setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setTechRating(RATING_D).setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -11200,8 +11200,9 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT);
         misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel, IO p.111
         misc.rulesRefs = "114, IO";
-        // IO, p.220/221:
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES)
+        // Mixture of IO, p.220/221 and LAM advancement
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
+                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
                 .setTechRating(RATING_B).setAvailability(RATING_B, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;

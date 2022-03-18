@@ -102,12 +102,7 @@ public class MechCacheCSVTool {
                 }
 
                 // Unit Type
-                try {
-                    Entity e = new MechFileParser(mech.getSourceFile(), mech.getEntryName()).getEntity();
-                    csvLine.append(Entity.getEntityTypeName(e.getEntityType()));
-                } catch (megamek.common.loaders.EntityLoadingException e) {
-                }
-                csvLine.append(",");
+                csvLine.append(mech.getFullAccurateUnitType()).append(",");
 
                 //Role
                 csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
@@ -116,7 +111,7 @@ public class MechCacheCSVTool {
                 csvLine.append(mech.getBV()  + ",");
                 
                 // Cost
-                csvLine.append(mech.getCost() + ",");
+                csvLine.append(mech.getDryCost() + ",");
 
                 //Level
                 csvLine.append(mech.getLevel() + ",");

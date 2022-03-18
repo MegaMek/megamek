@@ -32,6 +32,7 @@ public class MechSummary implements Serializable {
     private int mulId;
     private String unitType;
     private String unitSubType;
+    private String fullAccurateUnitType;
     private File sourceFile;
     private String entryName; // for files in zips
     private int year;
@@ -45,7 +46,10 @@ public class MechSummary implements Serializable {
     private int gmBV;
     private int rhBV;
     private int rhgmBV;
+    /** The full cost of the unit (including ammo). */
     private long cost;
+    /** The dry cost of the unit (excluding ammo). */
+    private long dryCost;
     private long unloadedCost;
     private long altCost;
     private long modified; // for comparison when loading
@@ -195,6 +199,10 @@ public class MechSummary implements Serializable {
         }
     }
 
+    public String getFullAccurateUnitType() {
+        return fullAccurateUnitType;
+    }
+
     public double getTons() {
         return tons;
     }
@@ -213,6 +221,10 @@ public class MechSummary implements Serializable {
 
     public long getCost() {
         return cost;
+    }
+
+    public long getDryCost() {
+        return dryCost;
     }
 
     public long getUnloadedCost() {
@@ -254,6 +266,10 @@ public class MechSummary implements Serializable {
         } else {
             return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL + 1);
         }
+    }
+
+    public void setFullAccurateUnitType(String type) {
+        fullAccurateUnitType = type;
     }
 
     public void setName(String sName) {
@@ -310,6 +326,10 @@ public class MechSummary implements Serializable {
 
     public void setCost(long nCost) {
         this.cost = nCost;
+    }
+
+    public void setDryCost(long nCost) {
+        this.dryCost = nCost;
     }
 
     public void setUnloadedCost(long nCost) {

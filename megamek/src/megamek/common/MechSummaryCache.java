@@ -375,6 +375,7 @@ public class MechSummaryCache {
         ms.setModel(e.getModel());
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));
+        ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
         ms.setSourceFile(f);
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
@@ -413,6 +414,7 @@ public class MechSummaryCache {
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
         ms.setCost((long) e.getCost(false));
+        ms.setDryCost((long) e.getCost(true));
         ms.setUnloadedCost(((long) e.getCost(true)));
         ms.setAlternateCost((int) e.getAlternateCost());
         ms.setCanon(e.isCanon());

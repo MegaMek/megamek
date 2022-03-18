@@ -19,6 +19,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.InfantryWeaponHandler;
+
 import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
@@ -391,6 +394,15 @@ public class WeaponFireInfo {
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             return weaponType.getRackSize();
+        }
+        
+        // infantry weapons use number of troopers multiplied by weapon damage, 
+        // with # troopers counting as 1 for support vehicles
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
+                (weaponType instanceof InfantryWeapon)) {
+            int numTroopers = (shooter instanceof Infantry) ? 
+                    ((Infantry) shooter).getShootingStrength() : 1;
+            return InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers;
         }
         
         // this is a special case - if we're considering hitting a swarmed target

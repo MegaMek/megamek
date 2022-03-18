@@ -28,6 +28,8 @@ VERSION HISTORY:
 + Issue #3484: Per errata, Battle Armor and infantry no longer allowed to set MGs to burst fire mode.
 + Issue #3386: Per TW, Aerodyne dropships and small craft can now hover, but can no longer vertically land or take off, except in vacuum.
 + Data: New Sprites and a few new camos.
++ Issue #3400: Introduced new pre-movement and pre-firing phases; currently they allow eligible units to unhide (rather than having to select an option via arcane dropdown in the Extras tab on the previous turn).
++ Issue #3505: Improved bot valuation of attacks by variable-damage infantry weapons (e.g. support lasers)
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

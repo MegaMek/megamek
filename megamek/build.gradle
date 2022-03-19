@@ -3,7 +3,7 @@ import java.time.LocalDateTime
 plugins {
     id 'application'
     id 'maven-publish'
-    id 'edu.sc.seis.launch4j' version '2.5.1'
+    id 'edu.sc.seis.launch4j' version '2.5.2'
     id 'jacoco'
 }
 

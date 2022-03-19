@@ -47,7 +47,7 @@ public class RATGeneratorEditor extends JFrame {
             "Aerospace", "Space", "None"
     };
 
-    private static final FactionRecord generalFactionDummy = new FactionRecord("General", "Special");
+    private static final FactionRecord GENERAL_FACTION = new FactionRecord("General", "General");
 
     private static RATGenerator rg;
     
@@ -180,7 +180,7 @@ public class RATGeneratorEditor extends JFrame {
 
     private void fillFactionChooser(JComboBox<FactionRecord> combo) {
         combo.removeAllItems();
-        combo.addItem(generalFactionDummy);
+        combo.addItem(GENERAL_FACTION);
         rg.getFactionList().stream()
                 .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))
                 .forEach(combo::addItem);

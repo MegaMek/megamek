@@ -163,7 +163,6 @@ public class SkinXMLHandler {
 
     /**
      * Initializes using the default skin file.
-     * @throws IOException
      */
     public static boolean initSkinXMLHandler() {
         String skinFilePath = GUIPreferences.getInstance().getSkinFile();
@@ -172,7 +171,6 @@ public class SkinXMLHandler {
 
     /**
      * Initializes using the supplied skin file.
-     * @throws IOException
      */
     public synchronized static boolean initSkinXMLHandler(String fileName) {
         // Reset UnitDisplay spec
@@ -322,11 +320,7 @@ public class SkinXMLHandler {
     }
 
     /**
-     *  Create a new SkinSpecification and populate it from the supplied border
-     *  tag
-     *
-     * @param border
-     * @return
+     * Create a new SkinSpecification and populate it from the supplied border tag
      */
     private static SkinSpecification parseBorderTag(String compName, Element border) {
         SkinSpecification skinSpec = new SkinSpecification(compName);

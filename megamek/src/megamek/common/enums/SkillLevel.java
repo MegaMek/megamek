@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,8 @@ public enum SkillLevel {
     REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText"),
     VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText"),
     ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText"),
-    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText");
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText"),
+    LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText");
     //endregion Enum Declarations
 
     //region Variable Declarations
@@ -87,12 +88,16 @@ public enum SkillLevel {
         return this == HEROIC;
     }
 
+    public boolean isLegendary() {
+        return this == LEGENDARY;
+    }
+
     public boolean isVeteranOrGreater() {
         return isVeteran() || isEliteOrGreater();
     }
 
     public boolean isEliteOrGreater() {
-        return isElite() || isHeroic();
+        return isElite() || isHeroic() || isLegendary();
     }
     //endregion Boolean Comparisons
 
@@ -105,20 +110,22 @@ public enum SkillLevel {
         switch (this) {
             case NONE:
                 LogManager.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
-                return new int[]{ 8, 8 };
+                return new int[] { 8, 8 };
             case ULTRA_GREEN:
-                return new int[]{ 6, 7 };
+                return new int[] { 6, 7 };
             case GREEN:
-                return new int[]{ 5, 6 };
+                return new int[] { 5, 6 };
             case VETERAN:
-                return new int[]{ 3, 4 };
+                return new int[] { 3, 4 };
             case ELITE:
-                return new int[]{ 2, 3 };
+                return new int[] { 2, 3 };
             case HEROIC:
-                return new int[]{ 1, 2 };
+                return new int[] { 1, 2 };
+            case LEGENDARY:
+                return new int[] { 0, 1 };
             case REGULAR:
             default:
-                return new int[]{ 4, 5 };
+                return new int[] { 4, 5 };
         }
     }
 

@@ -15,6 +15,10 @@ Thor Artillery Vehicle
 <Model>
 (AC)
 </Model>
+
+<mul id:>
+3186
+</mul id:>
 <Tonnage>
 55
 </Tonnage>

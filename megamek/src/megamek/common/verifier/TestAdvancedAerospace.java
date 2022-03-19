@@ -14,13 +14,13 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
-import java.util.*;
-
 import megamek.common.*;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+
+import java.math.BigInteger;
+import java.util.*;
 
 /**
  * Validation and construction data for advanced aerospace units (jumpships, warships, space stations)
@@ -906,7 +906,7 @@ public class TestAdvancedAerospace extends TestAero {
         }
         if (lateralMatch) {
             //We've already checked counts, so in the reverse direction we only need to see if there's
-            //anything not found on the other side.
+            // anything not found on the other side.
             for (EquipmentType eq : rightFwd.keySet()) {
                 if (!leftFwd.containsKey(eq)) {
                     lateralMatch = false;

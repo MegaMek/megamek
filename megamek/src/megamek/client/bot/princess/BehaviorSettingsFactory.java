@@ -235,8 +235,8 @@ public class BehaviorSettingsFactory {
     // DEFAULT BEHAVIORS
     //******************
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NONE} <br>
      * Forced Withdrawal: False <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -274,8 +274,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -310,8 +310,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: True <br>
      * Auto Flee: True <br>
@@ -349,8 +349,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>

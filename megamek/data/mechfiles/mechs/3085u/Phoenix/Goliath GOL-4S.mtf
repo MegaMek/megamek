@@ -1,6 +1,7 @@
 Version:1.0
 Goliath
 GOL-4S
+mul id:1234
 
 Config:Quad
 TechBase:Inner Sphere

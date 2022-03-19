@@ -40,8 +40,7 @@ import java.util.zip.ZipFile;
  * line of the file should give the unit type number corresponding to
  * UnitType.java The remaining lines should be comma split. The first field
  * should give the frequency of that unit and the second line should give the
- * name of that unit written as <Model> <Chassis> Comment lines can also be
- * added with "#"
+ * name of that unit written as { Model } { Chassis }. Comment lines can also be added with "#".
  * </p>
  *
  * @author Jay Lawson
@@ -368,17 +367,17 @@ public class RandomUnitGenerator implements Serializable {
      * @return - a string giving the name
      */
     public ArrayList<MechSummary> generate(int numRolls, String ratName) {
-    	return generate(numRolls, ratName, null);
+        return generate(numRolls, ratName, null);
     }
 
-	/**
+    /**
      * Generate a list of units from the RAT.
-	 *     
-	 * @param numRolls - the number of units to roll from the RAT
-	 * @param ratName - name of the RAT to roll on
-	 * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
+     *
+     * @param numRolls - the number of units to roll from the RAT
+     * @param ratName - name of the RAT to roll on
+     * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
      * @return - a list of units determined by the random rolls
-	 */
+     */
     public ArrayList<MechSummary> generate(int numRolls, String ratName, Predicate<MechSummary> filter) {
         ArrayList<MechSummary> units = new ArrayList<>();
 
@@ -400,24 +399,24 @@ public class RandomUnitGenerator implements Serializable {
             if (null != ratMap) {
                 RatEntry re = ratMap.get(ratName);
                 if (filter != null) {
-                	RatEntry filtered = new RatEntry();
-                	float totalWeight = 0.0f;
-                	MechSummaryCache msc = MechSummaryCache.getInstance();
-                	for (int i = 0; i < re.getUnits().size(); i++) {
-                		if (!re.getUnits().get(i).startsWith("@")) {
-	                		MechSummary ms = msc.getMech(re.getUnits().get(i));
-	                		if (ms == null || !filter.test(ms)) {
-	                			continue;
-	                		}
-                		}
-            			filtered.getUnits().add(re.getUnits().get(i));
-            			filtered.getWeights().add(re.getWeights().get(i));
-            			totalWeight += re.getWeights().get(i);
-                	}
-                	for (int i = 0; i < filtered.getWeights().size(); i++) {
-                		filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
-                	}
-                	re = filtered;
+                    RatEntry filtered = new RatEntry();
+                    float totalWeight = 0.0f;
+                    MechSummaryCache msc = MechSummaryCache.getInstance();
+                    for (int i = 0; i < re.getUnits().size(); i++) {
+                        if (!re.getUnits().get(i).startsWith("@")) {
+                            MechSummary ms = msc.getMech(re.getUnits().get(i));
+                            if (ms == null || !filter.test(ms)) {
+                                continue;
+                            }
+                        }
+                        filtered.getUnits().add(re.getUnits().get(i));
+                        filtered.getWeights().add(re.getWeights().get(i));
+                        totalWeight += re.getWeights().get(i);
+                    }
+                    for (int i = 0; i < filtered.getWeights().size(); i++) {
+                        filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
+                    }
+                    re = filtered;
                 }
                 if ((null != re) && (re.getUnits().size() > 0)) {
                     for (int roll = 0; roll < numRolls; roll++) {

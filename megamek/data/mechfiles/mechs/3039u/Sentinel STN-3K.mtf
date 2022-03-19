@@ -1,6 +1,7 @@
 Version:1.0
 Sentinel
 STN-3K
+mul id:2857
 
 Config:Biped
 TechBase:Inner Sphere

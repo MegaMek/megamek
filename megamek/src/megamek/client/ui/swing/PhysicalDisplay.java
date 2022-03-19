@@ -423,8 +423,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             boolean zweihandering = false;
             int armChosenZwei = PunchAttackAction.RIGHT;
             if (canZweihander) {
-                
-                //need to choose a primary arm. Do it based on highest predicted damage     		
+                // need to choose a primary arm. Do it based on highest predicted damage
                 ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient().getGame(),
                         cen, target, PunchAttackAction.LEFT, true);
                 ToHitData rightArmZwei = PunchAttackAction.toHit(clientgui.getClient().getGame(),

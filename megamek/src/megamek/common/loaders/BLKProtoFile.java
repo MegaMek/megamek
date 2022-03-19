@@ -11,25 +11,17 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- * This class loads 'Proto BLK files.
- *
- * @author Suvarov454@sourceforge.net (James A. Damour)
- * @version $revision:$
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestProtomech;
 
+/**
+ * This class loads ProtoMek BLK files.
+ * @author Suvarov454@sourceforge.net (James A. Damour)
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKProtoFile extends BLKFile implements IMechLoader {
 
     public BLKProtoFile(BuildingBlock bb) {
@@ -52,7 +44,9 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         } else {
             t.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }

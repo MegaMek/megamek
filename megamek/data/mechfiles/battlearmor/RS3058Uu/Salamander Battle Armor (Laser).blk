@@ -19,6 +19,10 @@ Salamander Battle Armor
 (Laser)
 </Model>
 
+<mul id:>
+2788
+</mul id:>
+
 <chassis>
 biped
 </chassis>

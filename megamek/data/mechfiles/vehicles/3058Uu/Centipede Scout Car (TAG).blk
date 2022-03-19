@@ -15,6 +15,10 @@ Centipede Scout Car
 <Model>
 (TAG)
 </Model>
+
+<mul id:>
+515
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

@@ -876,7 +876,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
-        //check if there should be a turn timer running
+        // check if there should be a turn timer running
         tt = TurnTimer.init(this, clientgui.getClient());
     }
 
@@ -1011,7 +1011,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     /**
      * Cache the list of visible targets. This is used for the 'next target'
      * button.
-     * <p/>
+     * <p>
      * We'll sort it by range to us.
      */
     private void cacheVisibleTargets() {

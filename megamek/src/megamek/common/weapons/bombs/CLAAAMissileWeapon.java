@@ -54,7 +54,7 @@ public class CLAAAMissileWeapon extends ThunderBoltWeapon {
         this.capital = false;
         this.missileArmor = 20;
         cost = 9000;
-        this.rulesRefs = "357,TO";
+        this.rulesRefs = "357, TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

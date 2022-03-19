@@ -248,7 +248,7 @@ public class Compute {
 
     /**
      * Sets the RNG to the specific instance.
-     * @param random A non-null instance of {@see MMRandom} to use
+     * @param random A non-null instance of {@link MMRandom} to use
      *               for all random number generation.
      */
     public static void setRNG(MMRandom random) {
@@ -970,7 +970,7 @@ public class Compute {
     /**
      * Worker function to determine if the target has been tagged.
      * @param target The non-entity target to check
-     * @param game Game object
+     * @param game The current {@link Game}
      * @return Whether or not the given entity or other targetable is tagged.
      */
     public static boolean isTargetTagged(Targetable target, Game game) {
@@ -999,7 +999,7 @@ public class Compute {
      * Worker function to determine if the target has been tagged by the specific attacker.
      * @param attacker The attacker.
      * @param target The non-entity target to check
-     * @param game Game object
+     * @param game The current {@link Game}
      * @return Whether or not the given entity or other targetable is tagged by the specific attacker.
      */
     public static boolean isTargetTagged(Entity attacker, Targetable target, Game game) {
@@ -1759,7 +1759,7 @@ public class Compute {
     /**
      * @param aPos the attacker's position
      * @param te the target entity
-     * @return the closest position along <code>te</codeE>'s flight path to <code>aPos</code>. In
+     * @return the closest position along <code>te</code>'s flight path to <code>aPos</code>. In
      * the case of multiple equi-distance positions, the first one is picked unless
      * <code>te</code>'s playerPickedPassThrough position is non-null.
      */
@@ -1830,11 +1830,10 @@ public class Compute {
      * find a c3, c3i, NC3, or nova spotter that is closer to the target than the
      * attacker.
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param attacker
      * @param target
-     * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are
-     *         found
+     * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are found
      */
     private static Entity findC3Spotter(Game game, Entity attacker,
             Targetable target) {
@@ -4151,7 +4150,7 @@ public class Compute {
      * possible to pass in the LosEffects, since they are commonly already
      * computed when this method is called.
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param los
      * @param ae
      * @param target
@@ -4241,7 +4240,7 @@ public class Compute {
      * Checks to see if an entity has already been detected by anyone
      * Used for sensor return icons on board
      *
-     * @param game - the current game
+     * @param game The current {@link Game}
      * @param targetId - the ID# of the target entity we're looking for
      */
     public static boolean isAnySensorContact(Game game, int targetId) {
@@ -4268,7 +4267,7 @@ public class Compute {
      * Checks to see if an entity is in anyone's firing solutions list
      * Used for visibility
      *
-     * @param game - the current game
+     * @param game The current {@link Game}
      * @param targetId - the ID # of the target we're firing at
      */
     public static boolean hasAnyFiringSolution(Game game, int targetId) {
@@ -4284,7 +4283,7 @@ public class Compute {
     /**
      * Calculates the ECM effects in play between a detector and target pair
      *
-     * @param game - the current game
+     * @param game The current {@link Game}
      * @param ae - the entity making a sensor scan
      * @param target - the entity we're trying to spot
      * @return
@@ -4311,15 +4310,14 @@ public class Compute {
     }
 
     /**
-     * Calculates the Sensor Shadow effect in play between a detector and target pair
+     * Calculates the Sensor Shadow effects in play between a detector and target pair
      *
-     * @param game - the current game
-     * @param ae - the entity making a sensor scan
-     * @param target - the entity we're trying to spot
+     * @param game The current {@link Game}
+     * @param ae the entity making a sensor scan
+     * @param target the entity we're trying to spot
      * @return
      */
-    private static int calcSensorShadow(Game game, Entity ae,
-            Targetable target) {
+    private static int calcSensorShadow(Game game, Entity ae, Targetable target) {
         int mod = 0;
         if (target.getTargetType() != Targetable.TYPE_ENTITY) {
             return 0;
@@ -4435,23 +4433,21 @@ public class Compute {
         detector.removeSensorContact(toRemove);
     }
 
-
     /**
-     *If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
-     *Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
-     *sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
+     * If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
+     * Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
+     * sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
      * This requires line of sight effects to determine if there are
      * certain intervening obstructions, like sensor shadows, asteroids and that sort of thing, that can reduce visual
-     * range.  Since repeated LoSEffects computations can be expensive, it is
+     * range. Since repeated LoSEffects computations can be expensive, it is
      * possible to pass in the LosEffects, since they are commonly already
      * computed when this method is called.
      *
-     * @param game - the current game
-     * @param ae - the entity making a sensor scan
-     * @param target - the entity we're trying to spot
+     * @param game The current {@link Game}
+     * @param ae the entity making a sensor scan
+     * @param target the entity we're trying to spot
      * @return
      */
-
     public static boolean calcFiringSolution(Game game, Entity ae,
             Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -4541,29 +4537,26 @@ public class Compute {
         if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
             tn -= 1;
         }
-        //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
+        // -2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
         if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
                 || ae.hasBAP(false)) {
             tn -= 2;
         }
 
-        //Now, determine if we've detected the target this round
+        // Now, determine if we've detected the target this round
         return roll >= tn;
     }
 
     /**
-     *Determines whether we have an "object" detection as defined in SO's Advanced Sensors rules starting on p117
+     * Determines whether we have an "object" detection as defined in SO's Advanced Sensors rules starting on p117
      *
-     * @param game - the current game
-     * @param ae - the entity making a sensor scan
-     * @param target - the entity we're trying to spot
+     * @param game The current {@link Game}
+     * @param ae the entity making a sensor scan
+     * @param target the entity we're trying to spot
      * @return
      */
-
-    public static boolean calcSensorContact(Game game, Entity ae,
-            Targetable target) {
-
-        //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
+    public static boolean calcSensorContact(Game game, Entity ae, Targetable target) {
+        // NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
         if (ae.getActiveSensor() == null) {
             return false;
         }
@@ -4574,8 +4567,8 @@ public class Compute {
         int maxSensorRange = ae.getActiveSensor().getRangeByBracket();
         int rangeIncrement = (int) Math.ceil(maxSensorRange / 10.0);
 
-        //A bit of a hack here. "Aero Sensors" return the ground range, because Sensor doesn't know about Game or Entity
-        //to do otherwise. We need to use the space range instead.
+        // A bit of a hack here. "Aero Sensors" return the ground range, because Sensor doesn't know about Game or Entity
+        // to do otherwise. We need to use the space range instead.
         if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
             maxSensorRange = Sensor.ASF_RADAR_MAX_RANGE;
             rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
@@ -4969,7 +4962,7 @@ public class Compute {
          *
          * @param e1 The first <code>Entity</code> to compare
          * @param e2 The second <code>Entity</code> to compare
-         * @return < 0 if the first unit has a higher initiative, > 0 if the second is higher,
+         * @return &lt; 0 if the first unit has a higher initiative, &gt; 0 if the second is higher,
          *         or 0 if one of the units is not an aerospace unit, does not have a valid position,
          *         or the two units are not in the same hex.
          */
@@ -5806,13 +5799,12 @@ public class Compute {
      * roads and bridges)? If so it will override prohibited terrain, it may
      * change movement costs, and it may lead to skids.
      *
-     * @param game     - the <code>Game</code> object.
-     * @param src      - the <code>Coords</code> being left.
-     * @param dest     - the <code>Coords</code> being entered.
+     * @param game The current {@link Game}
+     * @param src the <code>Coords</code> being left.
+     * @param dest the <code>Coords</code> being entered.
      * @param moveStep
      * @return <code>true</code> if movement between <code>src</code> and
-     * <code>dest</code> can be on pavement; <code>false</code>
-     * otherwise.
+     * <code>dest</code> can be on pavement; <code>false</code> otherwise.
      */
     public static boolean canMoveOnPavement(Game game, Coords src,
             Coords dest, MoveStep moveStep) {
@@ -5885,21 +5877,16 @@ public class Compute {
     }
 
     /**
-     * Determine if the given unit is inside of a building at the given
-     * coordinates.
+     * Determine if the given unit is inside of a building at the given coordinates.
      *
-     * @param game   - the <code>Game</code> object. This value may be
-     *               <code>null</code>.
-     * @param entity - the <code>Entity</code> to be checked. This value may be
-     *               <code>null</code>.
+     * @param game The current {@link Game}. This value may be <code>null</code>.
+     * @param entity the <code>Entity</code> to be checked. This value may be <code>null</code>.
      * @return <code>true</code> if the entity is inside of the building at
      * those coordinates. <code>false</code> if there is no building at
      * those coordinates or if the entity is on the roof or in the air
      * above the building, or if any input argument is <code>null</code>
-     * .
      */
-    public static boolean isInBuilding(Game game, Entity entity) {
-
+    public static boolean isInBuilding(@Nullable Game game, @Nullable Entity entity) {
         // No game, no building.
         if (game == null) {
             return false;
@@ -5915,23 +5902,18 @@ public class Compute {
     }
 
     /**
-     * Determine if the given unit is inside of a building at the given
-     * coordinates.
+     * Determine if the given unit is inside of a building at the given coordinates.
      *
-     * @param game   - the <code>Game</code> object. This value may be
-     *               <code>null</code>.
-     * @param entity - the <code>Entity</code> to be checked. This value may be
-     *               <code>null</code>.
-     * @param coords - the <code>Coords</code> of the building hex. This value may
-     *               be <code>null</code>.
+     * @param game The current {@link Game}. This value may be <code>null</code>.
+     * @param entity the <code>Entity</code> to be checked. This value may be <code>null</code>.
+     * @param coords the <code>Coords</code> of the building hex. This value may be <code>null</code>.
      * @return <code>true</code> if the entity is inside of the building at
      * those coordinates. <code>false</code> if there is no building at
      * those coordinates or if the entity is on the roof or in the air
      * above the building, or if any input argument is <code>null</code>
-     * .
      */
-    public static boolean isInBuilding(Game game, Entity entity, Coords coords) {
-
+    public static boolean isInBuilding(@Nullable Game game, @Nullable Entity entity,
+                                       @Nullable Coords coords) {
         // No game, no building.
         if (game == null) {
             return false;
@@ -6071,16 +6053,14 @@ public class Compute {
      * Gets a new target for a flight of swarm missiles that was just shot at an
      * entity and has missiles left
      *
-     * @param game
-     * @param aeId     The attacking <code>Entity</code>
+     * @param game The current {@link Game}
+     * @param aeId The attacking <code>Entity</code>
      * @param coords
-     * @param weaponId The <code>int</code> ID of the launcher used to fire this
-     *                 volley
-     * @return the new target <code>Entity</code>. May return null if no new
-     * target available
+     * @param weaponId The <code>int</code> ID of the launcher used to fire this volley
+     * @return the new target <code>Entity</code>. May return null if no new target available
      */
-    public static Entity getSwarmMissileTarget(Game game, int aeId,
-                                               Coords coords, int weaponId) {
+    public static @Nullable Entity getSwarmMissileTarget(Game game, int aeId, Coords coords,
+                                                         int weaponId) {
         Entity tempEntity = null;
         // first, check the hex of the original target
         Iterator<Entity> entities = game.getEntities(coords);
@@ -6455,7 +6435,7 @@ public class Compute {
      *
      * @param weapon
      * @param wtype
-     * @returnnew damage
+     * @return new damage
      */
     public static int dialDownDamage(Mounted weapon, WeaponType wtype) {
         return Compute.dialDownDamage(weapon, wtype, 1);
@@ -6700,7 +6680,7 @@ public class Compute {
      * @param pos  The coordinates of the hex to load from
      * @param elev The absolute elevation of the unit at the point of loading (surface
      *             of the hex + elevation over the surface)
-     * @param game The game object
+     * @param game The current {@link Game}
      * @return     All adjacent units that can mount the Entity
      */
     public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, Game game) {
@@ -7014,7 +6994,7 @@ public class Compute {
                     //Also, if any modular equipment is missing, then we will consider this
                     //unit to be inoperable and will not allow it to load soldiers. This is because
                     //we have no mechanism in MM to handle BA where some suits have the equipment
-                    //and others do not
+                    // and others do not
                     boolean useSuit = true;
                     for (Mounted m : entity.getEquipment()) {
                         if (m.isMissingForTrooper(trooper)) {
@@ -7046,7 +7026,7 @@ public class Compute {
         if (entity instanceof SmallCraft || entity instanceof Jumpship) {
             //its not at all clear how many pilots dropships and jumpships
             //should have, but the old BattleSpace book suggests they should
-            //be able to get by with 2. For warships, lets go with 2 per shift
+            // be able to get by with 2. For warships, lets go with 2 per shift
             // so 6.
             if (entity instanceof Warship) {
                 return 6;

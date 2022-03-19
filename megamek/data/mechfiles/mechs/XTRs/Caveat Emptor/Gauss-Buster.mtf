@@ -1,6 +1,7 @@
 Version:1.0
 Gauss-Buster MilitiaMech
 
+mul id:8100
 
 Config:Biped
 techbase:Inner Sphere

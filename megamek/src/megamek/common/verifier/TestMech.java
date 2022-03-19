@@ -85,37 +85,39 @@ public class TestMech extends TestEntity {
      * @return
      */
     public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
+        List<EquipmentType> legalArmors = new ArrayList<>();
         boolean industrialOnly = industrial
                 && (techManager.getTechLevel().ordinal() < SimpleTechLevel.EXPERIMENTAL.ordinal());
         boolean isLam = (etype & Entity.ETYPE_LAND_AIR_MECH) != 0;
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if ((at == EquipmentType.T_ARMOR_PATCHWORK)
-                    || (isLam && (at == EquipmentType.T_ARMOR_HARDENED))) {
+        for (int armorType = 0; armorType < EquipmentType.armorNames.length; armorType++) {
+            if ((armorType == EquipmentType.T_ARMOR_PATCHWORK)
+                    || (isLam && (armorType == EquipmentType.T_ARMOR_HARDENED))) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
+            String name = EquipmentType.getArmorTypeName(armorType, techManager.useClanTechBase());
             EquipmentType eq = EquipmentType.get(name);
             if ((null != eq)
                     && eq.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                    && ((armorType != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
                     && techManager.isLegal(eq)
                     && (!isLam || (eq.getCriticals(null) == 0))
                     && (!industrialOnly || ((MiscType) eq).isIndustrial())) {
-                retVal.add(eq);
+                legalArmors.add(eq);
             }
             if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
+                name = EquipmentType.getArmorTypeName(armorType, !techManager.useClanTechBase());
                 EquipmentType eq2 = EquipmentType.get(name);
                 if ((null != eq2) && (eq != eq2)
                         && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                        && ((armorType != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
                         && techManager.isLegal(eq2)
                         && (!isLam || (eq2.getCriticals(null) == 0))
                         && (!industrialOnly || ((null != eq) && ((MiscType) eq).isIndustrial()))) {
-                    retVal.add(eq2);
+                    legalArmors.add(eq2);
                 }
             }
         }
-        return retVal;
+        return legalArmors;
     }
     
     private Mech mech = null;
@@ -212,8 +214,8 @@ public class TestMech extends TestEntity {
         // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
         // IO p. 113 (LAM), 134 (QV)
         if (mech instanceof LandAirMech) {
-            return Math.ceil(mech.getWeight()) *
-                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1);
+            return Math.ceil(mech.getWeight() *
+                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1));
         } else if (mech instanceof QuadVee) {
             return Math.ceil(mech.getWeight() * 0.1);
         }
@@ -1464,30 +1466,7 @@ public class TestMech extends TestEntity {
                 illegal = true;
             }
         }
-        
-        // only one sword/vibroblade per arm
-        for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LARM; loc++) {
-            int count = 0;
-            for (Mounted m : mech.getMisc()) {
-                if (m.getLocation() == loc) {
-                    if (m.getType().hasFlag(MiscType.F_CLUB)
-                            && (m.getType().hasSubType(MiscType.S_SWORD)
-                                    || m.getType().hasSubType(
-                                            MiscType.S_VIBRO_LARGE)
-                                    || m.getType().hasSubType(
-                                            MiscType.S_VIBRO_MEDIUM) || m
-                                    .getType().hasSubType(
-                                            MiscType.S_VIBRO_SMALL))) {
-                        count++;
-                    }
-                }
-            }
-            if (count > 1) {
-                buff.append("only one sword/vibroblade per arm\n");
-                illegal = true;
-            }
-        }
-        
+
         return illegal;
     }
 
@@ -1510,12 +1489,13 @@ public class TestMech extends TestEntity {
     }
 
     /**
-     * @param misc A type of equipment that can be mounted in a mech arm
+     * @param equipment A type of equipment that can be mounted in a mech arm
      * @return     Whether the equipment requires the hand acutator
      */
-    public static boolean requiresHandActuator(MiscType misc) {
-        return misc.hasFlag(MiscType.F_CLUB)
-                && misc.hasSubType(MiscType.S_CHAIN_WHIP
+    public static boolean requiresHandActuator(EquipmentType equipment) {
+        return (equipment instanceof MiscType)
+                && equipment.hasFlag(MiscType.F_CLUB)
+                && equipment.hasSubType(MiscType.S_CHAIN_WHIP
                 | MiscType.S_HATCHET
                 | MiscType.S_MACE
                 | MiscType.S_SWORD
@@ -1551,12 +1531,10 @@ public class TestMech extends TestEntity {
      */
     public static boolean isValidMechLocation(Mech mech, EquipmentType eq, int location, @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_CLUB) && ((eq.getSubType() &
-                            (MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
-                                    | MiscType.S_WRECKING_BALL | MiscType.S_BACKHOE
+            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
+                                     | MiscType.S_BACKHOE | MiscType.S_MINING_DRILL
                                     | MiscType.S_COMBINE | MiscType.S_CHAINSAW
-                                    | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW
-                                    | MiscType.S_SPOT_WELDER | MiscType.S_PILE_DRIVER)) != 0)) {
+                                    | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW | MiscType.S_SPOT_WELDER))) {
                 if (mech.entityIsQuad() && (location != Mech.LOC_LT) && (location != Mech.LOC_RT)) {
                     if (buffer != null) {
                         buffer.append(eq.getName()).append(" must be mounted in a side torso.\n");
@@ -1568,6 +1546,23 @@ public class TestMech extends TestEntity {
                     }
                     return false;
                 }
+            }
+            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
+                    | MiscType.S_CHAIN_WHIP | MiscType.S_FLAIL | MiscType.S_LANCE | MiscType.S_WRECKING_BALL
+                    | MiscType.S_MACE | MiscType.S_RETRACTABLE_BLADE)
+                    || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
+                    && (mech.entityIsQuad() || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
+            }
+            if (eq.hasFlag(MiscType.F_HAND_WEAPON) && eq.hasSubType(MiscType.S_CLAW)
+                    && (mech.entityIsQuad() || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
+                if (buffer != null) {
+                    buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
+                }
+                return false;
             }
             if (eq.hasFlag(MiscType.F_SALVAGE_ARM) && (mech.entityIsQuad()
                     || ((location != Mech.LOC_LARM) && (location != Mech.LOC_RARM)))) {
@@ -1618,8 +1613,8 @@ public class TestMech extends TestEntity {
                 return false;
             }
             if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_LADDER))
+                    || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                    || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
                     && !mech.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");

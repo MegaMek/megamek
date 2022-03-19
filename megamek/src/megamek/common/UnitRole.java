@@ -102,7 +102,7 @@ public enum UnitRole {
      *
      * @param entity      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
-     *                  more or less by the book, while values < 0 are more liberal and > 0 are
+     *                  more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
      *                  more strict.
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
@@ -133,7 +133,7 @@ public enum UnitRole {
      *
      * @param unit		The unit to be checked for role qualification
      * @param tolerance	A measure of how strictly to apply the qualifications. A value of zero is
-     * 					more or less by the book, while values < 0 are more liberal and > 0 are
+     * 					more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
      * 					stricter.
      * @return			Boolean value indicating whether the unit meets the qualifications for this role.
      */
@@ -202,7 +202,6 @@ public enum UnitRole {
                     score++;
                 }
                 if (unit.hasSPA(BattleForceSPA.AMS)
-    //					|| unit.hasSPA(BattleForceSPA.LAMS)
                         || unit.hasSPA(BattleForceSPA.RAMS)) {
                     score++;
                 }

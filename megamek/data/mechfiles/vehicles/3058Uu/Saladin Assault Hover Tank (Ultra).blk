@@ -15,6 +15,10 @@ Saladin Assault Hover Tank
 <Model>
 (Ultra)
 </Model>
+
+<mul id:>
+2781
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

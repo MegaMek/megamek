@@ -40,7 +40,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * attack will force a PSR check for the prone Mek; if the PSR is missed,
      * the Mek takes normal falling damage.
      * 
-     * @param game - the <code>Game</code> object containing all entities.
+     * @param game The current {@link Game} containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
     public ToHitData toHit(Game game) {

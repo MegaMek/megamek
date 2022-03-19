@@ -109,12 +109,12 @@ public class Client implements IClientCommandHandler {
     private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
-    public Map<String, Client> bots = new TreeMap<>(StringUtil.stringComparator());
+    public Map<String, Client> bots = new TreeMap<>(String::compareTo);
 
     //Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
 
-    //board view for getting entity art assets
+    // board view for getting entity art assets
     private BoardView bv;
 
     ConnectionHandler packetUpdate;
@@ -294,7 +294,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
-            if (!host.equals("localhost")) {
+            if (!host.equals(MMConstants.LOCALHOST)) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
         }
@@ -445,8 +445,14 @@ public class Client implements IClientCommandHandler {
             case MOVEMENT:
                 memDump("entering movement phase");
                 break;
+            case PREMOVEMENT:
+                memDump("entering premovement phase");
+                break;
             case OFFBOARD:
                 memDump("entering offboard phase");
+                break;
+            case PREFIRING:
+                memDump("entering prefiring phase");
                 break;
             case FIRING:
                 memDump("entering firing phase");
@@ -535,7 +541,7 @@ public class Client implements IClientCommandHandler {
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
-        send(new Packet(PacketCommand.ENTITY_MOUNTED_FACINGCHANGE, nEntity, nEquip, nFacing));
+        send(new Packet(PacketCommand.ENTITY_MOUNTED_FACING_CHANGE, nEntity, nEquip, nFacing));
     }
 
     /**
@@ -655,6 +661,18 @@ public class Client implements IClientCommandHandler {
      */
     public void sendAttackData(int aen, Vector<EntityAction> attacks) {
         send(new Packet(PacketCommand.ENTITY_ATTACK, aen, attacks));
+        flushConn();
+    }
+
+    /**
+     * Send s done with prephase turn
+     */
+    public void sendPrephaseData(int aen) {
+        Object[] data = new Object[1];
+
+        data[0] = aen;
+
+        send(new Packet(PacketCommand.ENTITY_PREPHASE, data));
         flushConn();
     }
 
@@ -827,7 +845,7 @@ public class Client implements IClientCommandHandler {
      * in the lobby phase.
      */
     public void sendChangeTeam(Collection<Player> players, int newTeamId) {
-        send(new Packet(PacketCommand.PLAYER_TEAMCHANGE, players, newTeamId));
+        send(new Packet(PacketCommand.PLAYER_TEAM_CHANGE, players, newTeamId));
     }
 
     /**
@@ -977,7 +995,7 @@ public class Client implements IClientCommandHandler {
                 cacheImgTag(e);
             }
         }
-        //cache the image data for the entities
+        // cache the image data for the entities
         for (Entity e: newEntities) {
             cacheImgTag(e);
         }
@@ -1065,7 +1083,7 @@ public class Client implements IClientCommandHandler {
         int condition = packet.getIntValue(1);
         @SuppressWarnings("unchecked")
         List<Force> forces = (List<Force>) packet.getObject(2);
-        //create a final image for the entity
+        // create a final image for the entity
         for (int id: entityIds) {
             cacheImgTag(game.getEntity(id));
         }
@@ -1197,7 +1215,7 @@ public class Client implements IClientCommandHandler {
         Pattern p = Pattern.compile("<s(.*?)n>");
         Matcher m = p.matcher(report.toString());
 
-        //add all instances to a hashset to prevent duplicates
+        // add all instances to a hashset to prevent duplicates
         while (m.find()) {
             String cleanedText = m.group(1).replaceAll("\\D", "");
             if (cleanedText.length() > 0) {
@@ -1227,7 +1245,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Hashtable for storing <img> tags containing base64Text src.
+     * Hashtable for storing img tags containing base64Text src.
      */
     protected void cacheImgTag(Entity entity) {
         if (entity == null) {
@@ -1242,7 +1260,7 @@ public class Client implements IClientCommandHandler {
         }
 
         if (getTargetImage(entity) != null) {
-            //convert image to base64, add to the <img> tag and store in cache
+            // convert image to base64, add to the <img> tag and store in cache
             Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             try {
                 String base64Text;
@@ -1535,13 +1553,13 @@ public class Client implements IClientCommandHandler {
                 game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
                 game.processGameEvent(new GameSettingsChangeEvent(this));
                 break;
-            case SENDING_TAGINFO:
+            case SENDING_TAG_INFO:
                 Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
                 for (TagInfo ti : vti) {
                     game.addTagInfo(ti);
                 }
                 break;
-            case RESET_TAGINFO:
+            case RESET_TAG_INFO:
                 game.resetTagInfo();
                 break;
             case END_OF_GAME:
@@ -1550,7 +1568,7 @@ public class Client implements IClientCommandHandler {
                 // save victory report
                 saveEntityStatus(sEntityStatus);
                 break;
-            case SENDING_ARTILLERYATTACKS:
+            case SENDING_ARTILLERY_ATTACKS:
                 Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c.getObject(0);
                 game.setArtilleryVector(v);
                 break;
@@ -1587,7 +1605,7 @@ public class Client implements IClientCommandHandler {
             case LOAD_SAVEGAME:
                 String loadFile = (String) c.getObject(0);
                 try {
-                    File f = new File("savegames", loadFile);
+                    File f = new File(MMConstants.SAVEGAME_DIR, loadFile);
                     sendLoadGame(f);
                 } catch (Exception e) {
                     System.err.println("Unable to find the file: " + loadFile);
@@ -1692,7 +1710,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Perform a dump of the current memory usage.
-     * <p/>
+     * <p>
      * This method is useful in tracking performance issues on various player's
      * systems. You can activate it by changing the "memorydumpon" setting to
      * "true" in the clientsettings.xml file.

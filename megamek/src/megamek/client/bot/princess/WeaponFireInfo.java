@@ -19,6 +19,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.InfantryWeaponHandler;
+
 import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
@@ -68,7 +71,7 @@ public class WeaponFireInfo {
      * @param shooter The {@link megamek.common.Entity} doing the attacking.
      * @param target  The {@link megamek.common.Targetable} of the attack.
      * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game    The {@link megamek.common.Game} in progress.
+     * @param game    The current {@link Game}
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
@@ -88,7 +91,7 @@ public class WeaponFireInfo {
      * @param target       The {@link megamek.common.Targetable} of the attack.
      * @param targetState  The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param weapon       The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game         The {@link megamek.common.Game} in progress.
+     * @param game         The current {@link Game}
      * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
@@ -110,7 +113,7 @@ public class WeaponFireInfo {
      * @param target                The {@link megamek.common.Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game                  The {@link megamek.common.Game} in progress.
+     * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
      * @param owner                 Instance of the princess owner
@@ -139,7 +142,7 @@ public class WeaponFireInfo {
      * @param target                The {@link megamek.common.Targetable} of the attack.
      * @param targetState           The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
-     * @param game                  The {@link megamek.common.Game} in progress.
+     * @param game                  The current {@link Game}
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
@@ -393,6 +396,15 @@ public class WeaponFireInfo {
             return weaponType.getRackSize();
         }
         
+        // infantry weapons use number of troopers multiplied by weapon damage, 
+        // with # troopers counting as 1 for support vehicles
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
+                (weaponType instanceof InfantryWeapon)) {
+            int numTroopers = (shooter instanceof Infantry) ? 
+                    ((Infantry) shooter).getShootingStrength() : 1;
+            return InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers;
+        }
+        
         // this is a special case - if we're considering hitting a swarmed target
         // that's basically our only option
         if (weaponType.getInternalName() == Infantry.SWARM_WEAPON_MEK) {
@@ -545,7 +557,7 @@ public class WeaponFireInfo {
         String currentFireMode = getWeapon().curMode().getName();
         int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
         if (!currentFireMode.equals(getWeapon().curMode().getName())) {
-        	setUpdatedFiringMode(spinMode);
+            setUpdatedFiringMode(spinMode);
         }
         
         setHeat(computeHeat(weapon));
@@ -665,10 +677,10 @@ public class WeaponFireInfo {
      * Null if no update required.
      */
     public Integer getUpdatedFiringMode() {
-    	return updatedFiringMode;
+        return updatedFiringMode;
     }
     
     public void setUpdatedFiringMode(int mode) {
-    	updatedFiringMode = mode;
+        updatedFiringMode = mode;
     }
 }

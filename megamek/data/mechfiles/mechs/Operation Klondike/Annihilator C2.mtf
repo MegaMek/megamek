@@ -1,6 +1,7 @@
 Version:1.1
 Annihilator
 C 2
+mul id:45
 
 Config:Biped
 TechBase:Clan

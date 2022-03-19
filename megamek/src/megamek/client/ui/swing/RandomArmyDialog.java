@@ -269,7 +269,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
 
-        //construct the RAT panel
+        // construct the RAT panel
         m_pRAT.setLayout(new GridBagLayout());
         m_tUnits.setText("4");
 
@@ -325,7 +325,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         treeViewRAT.setPreferredSize(new Dimension(300, 200));
         m_pRAT.add(treeViewRAT, c);
 
-        //construct the RAT Generator panel
+        // construct the RAT Generator panel
         m_pRATGen.setLayout(new GridBagLayout());
         //put the general options and the unit-specific options into a single panel so they scroll together.
         JPanel pRATGenTop = new JPanel(new GridBagLayout());
@@ -1031,8 +1031,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         private static final int COL_WEIGHT = 0;
         private static final int COL_UNIT = 1;
-        private static final int COL_BV = 2;
-        private static final int N_COL = 3;
+        private static final int COL_CL_IS = 2;
+        private static final int COL_BV = 3;
+        private static final int N_COL = 4;
 
         @Override
         public int getRowCount() {
@@ -1059,6 +1060,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     return 240;
                 case COL_BV:
                     return 18;
+                case COL_CL_IS:
+                    return 20;
                 default:
                     return 0;
             }
@@ -1073,6 +1076,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     return Messages.getString("RandomArmyDialog.colUnit");
                 case (COL_BV):
                     return Messages.getString("RandomArmyDialog.colBV");
+                case COL_CL_IS:
+                    return Messages.getString("RandomArmyDialog.colCLIS");
             }
             return "??";
         }
@@ -1100,6 +1105,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         if (bv > 0) {
                             return String.valueOf(bv);
                         }
+                    case COL_CL_IS:
+                        return generatedRAT.getTechBase(row);
                 }
             }
             return "";

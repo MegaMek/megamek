@@ -27,7 +27,7 @@ import java.util.Vector;
  * formatting information.
  * <p>
  * Typically, the report will be created by the relevant section in the
- * <code>Server</code>, and added to the phase report vector. The actual text
+ * <code>Server</code>, and added to the phase {@link Report} <code>Vector</code>. The actual text
  * of the report must also be added to the <i>report-messages.properties</i>
  * file.
  * <p>
@@ -57,7 +57,6 @@ import java.util.Vector;
  * <p> " Crusader (Bob) does 6 damage to the tank."
  *
  * @author Ryan McConnell (oscarmm)
- * @version $Revision$
  * @since 0.30
  */
 public class Report implements Serializable {
@@ -311,9 +310,9 @@ public class Report implements Serializable {
 
     /**
      * Indicate which of two possible messages should be substituted for the
-     * <code>&lt;msg:<i>n</i>,<i>m</i>&gt; tag.  An argument of
+     * <code>&lt;msg:<i>n</i>,<i>m</i>&gt;</code> tag. An argument of
      * <code>true</code> would select message <i>n</i> while an
-     * argument of <code>false</code> would select <i>m</i>.  In the
+     * argument of <code>false</code> would select <i>m</i>. In the
      * future, this capability may be expanded to support more than
      * two choices.
      *
@@ -495,7 +494,7 @@ public class Report implements Serializable {
                 }
                 i++;
             }
-            //add the sprite code at the beginning of the line
+            // add the sprite code at the beginning of the line
             if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("\n")) {
                     text.insert(1, imageCode);
@@ -544,6 +543,11 @@ public class Report implements Serializable {
      * @param v a Vector of Report objects
      */
     public static void addNewline(Vector<Report> v) {
+        if (v.isEmpty()) {
+            // We can't add a new line to an empty report vector
+            return;
+        }
+
         try {
             v.elementAt(v.size() - 1).newlines++;
         } catch (Exception ex) {

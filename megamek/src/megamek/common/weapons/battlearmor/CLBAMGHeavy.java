@@ -43,7 +43,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
         criticals = 1;
         bv = 6;
         cost = 7500;
-        rulesRefs = "258,TM";
+        rulesRefs = "258, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

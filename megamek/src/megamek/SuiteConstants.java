@@ -26,8 +26,8 @@ import java.time.LocalDate;
 public abstract class SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.49.7-SNAPSHOT");
-    public static final LocalDate RELEASE_DATE = LocalDate.of(2021, 12, 31);
+    public static final Version VERSION = new Version("0.49.8-SNAPSHOT");
+    public static final LocalDate RELEASE_DATE = LocalDate.of(2022, 02, 18);
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file
@@ -40,7 +40,12 @@ public abstract class SuiteConstants {
     //region SuiteOptions
     //endregion SuiteOptions
 
+    //region File Formats
+    public static final String TRUETYPE_FONT = ".ttf";
+    //endregion File Formats
+
     //region File Paths
+    public static final String FONT_DIRECTORY = "data/fonts/";
     public static final String MHQ_PREFERENCES_FILE = "mmconf/mhq.preferences";
     public static final String MM_PREFERENCES_FILE = "mmconf/mm.preferences";
     public static final String MML_PREFERENCES_FILE = "mmconf/mml.preferences";

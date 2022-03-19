@@ -44,7 +44,7 @@ public class CLLRT5 extends LRTWeapon {
         this.criticals = 1;
         this.bv = 55;
         this.cost = 30000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

@@ -1,6 +1,7 @@
 Version:1.0
 Pendragon
 PDG-3R
+mul id:8000
 
 Config:Biped
 techbase:Inner Sphere

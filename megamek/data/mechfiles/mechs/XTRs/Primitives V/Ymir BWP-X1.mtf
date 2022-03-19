@@ -1,6 +1,7 @@
 Version:1.1
 Ymir
 BWP-X1 'Bipedal Weapons Platform'
+mul id:3623
 
 Config:Biped
 TechBase:Inner Sphere

@@ -15,6 +15,7 @@
 */
 package megamek.client.ui.swing.boardview;
 
+import megamek.MMConstants;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
@@ -59,6 +60,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
@@ -1257,7 +1259,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
         if (selectedEntity != null) {
-            Princess princess = new Princess("test", "localhost", 2020);
+            Princess princess = new Princess("test", MMConstants.LOCALHOST, 2020);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
             pathEnum.recalculateMovesFor(this.selectedEntity);
@@ -1742,7 +1744,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * is in the current view. This is used only when performing isometric
      * rending. This function is used to show units (with 50% transparency) that
      * are hidden behind a hill.
-     * <p/>
+     * <p>
      * TODO: Optimize this function so that it is only applied to sprites that
      * are actually hidden. This implementation performs the second rendering
      * for all sprites.
@@ -2830,12 +2832,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * triangle for the elevation, the companion triangle representing the
      * adjacent hex is also needed. The two triangles when drawn together make a
      * complete rectangle representing the complete elevated hex side.
-     * <p/>
+     * <p>
      * By drawing the elevated hex as two separate triangles we avoid clipping
      * problems with other hexes because the lower elevation is rendered before
      * the higher elevation. Thus any hexes that have a higher elevation than
      * the lower hex will overwrite the lower hex.
-     * <p/>
+     * <p>
      * The Triangle for each hex side is formed by points p1, p2, and p3. Where
      * p1 and p2 are the original hex edges, and p3 has the same X value as p1,
      * but the y value has been increased (or decreased) based on the difference

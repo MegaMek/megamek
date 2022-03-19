@@ -230,7 +230,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * 
      * @param destination
      * @param stepType
-     * @param game
+     * @param game The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination,
                                                         final MoveStepType stepType, final Game game) {
@@ -251,7 +251,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * 
      * @param maxMP maximum MP that entity can use
      * @param stepType
-     * @param game
+     * @param game The current {@link Game}
      */
     public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType, final Game game) {
         final ShortestPathFinder spf =

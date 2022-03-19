@@ -87,13 +87,13 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>OA:1,TH:10,LA:9,SL:10,FS:8</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='5'></salvage>
@@ -113,7 +113,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CRC'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:10,SL:10,FWL:4,FS:7,TC:1</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<salvage pct='5'></salvage>
@@ -136,7 +136,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='5'></salvage>
@@ -193,7 +193,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.RH'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>
@@ -1518,7 +1518,7 @@
 		</model>
 	</chassis>
 	<chassis name='Lancelot' unitType='Mek'>
-		<availability>CC:4,MOC:2,OA:2,LA:4,SL:6,IS:4,RWR:2,MERC:4,DC:4,TC:2</availability>
+		<availability>CC:4,MOC:2,OA:2,LA:4,SL:6,IS:4,SL.R:6,RWR:2,MERC:4,DC:4,TC:2</availability>
 		<model name='LNC25-01'>
 			<roles>anti_aircraft</roles>
 			<availability>SL:8,IS:8,DC:8</availability>
@@ -1625,9 +1625,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>FWL:6,MERC:6+,Periphery:5+,DC:6</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>General:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>MOC:4,OA:4,TH:6,LA:5,SL:6,FWL:5,RWR:3,FS:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer' unitType='Aero'>

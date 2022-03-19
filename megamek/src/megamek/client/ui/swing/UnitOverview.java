@@ -14,38 +14,18 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.Vector;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.PMUtil;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.IArmorState;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class UnitOverview implements IDisplayable {
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;
@@ -143,17 +123,17 @@ public class UnitOverview implements IDisplayable {
         int y = clipBounds.y + DIST_TOP;
 
         if (scroll) {
-        	if (scrollOffset > 0) {
-        		graph.drawImage(pageUp, x, y, null);
-        		graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
-        	} else {
-        		graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
-        		graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
-        	}
-        	y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-        			+ BUTTON_PADDING;
+            if (scrollOffset > 0) {
+                graph.drawImage(pageUp, x, y, null);
+                graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
+            } else {
+                graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
+                graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
+            }
+            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
+                    + BUTTON_PADDING;
         }
 
         for (int i = scrollOffset; (i < v.size())
@@ -197,16 +177,16 @@ public class UnitOverview implements IDisplayable {
         }
 
         if (scroll) {
-        	y -= PADDING;
-        	y += BUTTON_PADDING;
-        	if (scrollOffset == unitIds.length - actUnitsPerPage) {
-        		graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
-        		graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
-        	} else {
-        		graph.drawImage(scrollDown, x, y, null);
-        		graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-        				null);
+            y -= PADDING;
+            y += BUTTON_PADDING;
+            if (scrollOffset == unitIds.length - actUnitsPerPage) {
+                graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
+                graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
+            } else {
+                graph.drawImage(scrollDown, x, y, null);
+                graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                        null);
             }
            
         }
@@ -419,7 +399,7 @@ public class UnitOverview implements IDisplayable {
 
             //is the unit evading? - can't evade and be out of control so just draw on top
             if (entity.isEvading()) {
-                //draw evasion
+                // draw evasion
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
                 graph.setColor(Color.red);

@@ -20,6 +20,10 @@ Autocannon/10 Field Gun Infantry
 (Standard)
 </Model>
 
+<mul id:>
+8410
+</mul id:>
+
 <year>
 2500
 </year>

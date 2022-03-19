@@ -20,6 +20,10 @@ Goblin Medium Tank
 (SRM)
 </Model>
 
+<mul id:>
+1225
+</mul id:>
+
 <year>
 2500
 </year>

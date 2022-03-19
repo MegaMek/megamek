@@ -41,7 +41,7 @@ import megamek.common.MovePath;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
- * from the available choices. The question string is tokenised on "\n". <p/>
+ * from the available choices. The question string is tokenised on "\n". <p>
  * Refactored from SingleChoiceDialog (which was based on Confirm)
  *
  * @author suvarov454@sourceforge.net

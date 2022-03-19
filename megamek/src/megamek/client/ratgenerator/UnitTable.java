@@ -61,14 +61,14 @@ public class UnitTable {
      * @param year - the game year
      * @param rating - the unit's equipment rating; if null, the table is not adjusted for unit rating.
      * @param weightClasses - a collection of EntityWeightClass constants to include in the table;
-     * 						if null or empty all weight classes are included
+     * if null or empty all weight classes are included
      * @param networkMask - a ModelRecord.NETWORK_* constant
      * @param movementModes - the movement modes allowed to appear in the table; if null or empty, no filtering
-     * 						is applied.
+     * is applied.
      * @param roles - the roles for which to adjust the availability
-     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is <= 4
+     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is &lt;= 4
      * @param deployingFaction - when using the salvage/isorla mechanism, any omni unit will select
-     * 							the configuration based on the faction actually deploying
+     * the configuration based on the faction actually deploying
      * @return - a table containing the available units and their relative weights
      */
     public static UnitTable findTable(FactionRecord faction, int unitType, int year,
@@ -202,6 +202,18 @@ public class UnitTable {
 
     /**
      * @param index
+     * @return - a string representing the entry at the indicated index for use in the table
+     */
+    public String getTechBase(int index) {
+        if (index >= salvageTable.size()) {
+            return unitTable.get(index - salvageTable.size()).getUnitEntry().isClan() ? "Clan" : "IS";
+        } else {
+            return key.getFaction().isClan() ? "Clan" : "IS";
+        }
+    }
+
+    /**
+     * @param index
      * @return - the MechSummary entry for the indicated index, or null if this is a salvage entry
      */
     public MechSummary getMechSummary(int index) {
@@ -310,7 +322,7 @@ public class UnitTable {
      *
      * @param filter - passed to generateUnit() in the generated table.
      * @return - a unit generated from another faction, or null if none of the factions in
-     * 	       the salvage list contain any units that meet the parameters.
+     * the salvage list contain any units that meet the parameters.
      */
     private MechSummary generateSalvage(UnitFilter filter) {
         while (salvageTotal > 0) {

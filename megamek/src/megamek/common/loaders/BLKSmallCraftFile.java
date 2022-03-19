@@ -11,24 +11,16 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
     public BLKSmallCraftFile(BuildingBlock bb) {
@@ -49,7 +41,9 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -110,9 +104,9 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             a.setSpheroid(true);
         }
         a.setMovementMode(nMotion);
-        if (a.isSpheroid()) {
-            a.setVSTOL(true);
-        }
+
+        // All small craft are VSTOL and can hover
+        a.setVSTOL(true);
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {

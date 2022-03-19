@@ -48,7 +48,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         bv = 2;
         cost = 2500;
         explosionDamage = 2;
-        rulesRefs = "204,TM";
+        rulesRefs = "204, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)

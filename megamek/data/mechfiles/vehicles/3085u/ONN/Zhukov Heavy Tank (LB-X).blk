@@ -15,6 +15,10 @@ Zhukov Heavy Tank
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+3648
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

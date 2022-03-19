@@ -91,7 +91,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
     // I can also use this for weapons of the same type on a capital fighter
-    //and now Machine Gun Arrays too!
+    // and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<>();
     private Vector<Integer> bayAmmo = new Vector<>();
     
@@ -200,7 +200,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         if ((type instanceof MiscType)
                 && type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
-            setShotsLeft(30);
+            setShotsLeft(type.hasFlag(MiscType.F_BA_EQUIPMENT) ? 6 : 30);
         }
         if ((type instanceof MiscType)
                 && ((((MiscType) type).isShield() || type
@@ -320,9 +320,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     /**
      * Sets the equipment mode to the mode denoted by the given mode name
      *
-     * @param newMode
-     *            the name of the desired new mode
-     * @return new mode number on success, <code>-1<code> otherwise.
+     * @param newMode the name of the desired new mode
+     * @return new mode number on success, <code>-1</code> otherwise.
      */
     public int setMode(String newMode) {
         for (int x = 0, e = type.getModesCount(); x < e; x++) {
@@ -1670,11 +1669,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
     
     public boolean isOmniPodMounted() {
-    	return omniPodMounted;
+        return omniPodMounted;
     }
     
     public void setOmniPodMounted(boolean omniPodMounted) {
-    	this.omniPodMounted = omniPodMounted;
+        this.omniPodMounted = omniPodMounted;
     }
 
     public boolean isWeaponGroup() {

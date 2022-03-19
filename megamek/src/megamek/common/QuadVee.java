@@ -145,7 +145,7 @@ public class QuadVee extends QuadMech {
         
         //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
         //which we are interpreting as a cumulative 1/2 MP.
-        //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
+        // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
 
         int badTracks = 0;
         for (int loc = 0; loc < locations(); loc++) {
@@ -295,33 +295,22 @@ public class QuadVee extends QuadMech {
     }    
     
     /**
-     * QuadVees cannot benefit from MASC in vehicle mode, so in that case we only return true if there
-     * is an armed supercharger.
+     * QuadVees cannot benefit from MASC in vehicle mode
      */
     @Override
-    public boolean hasArmedMASC() {
-        boolean superchargerOnly = getConversionMode() == CONV_MODE_VEHICLE;
-        for (Mounted m : getEquipment()) {
-            if (!m.isDestroyed() && !m.isBreached()
-                    && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC)
-                    && (!superchargerOnly || m.getType().getSubType() == MiscType.S_SUPERCHARGER)
-                    && m.curMode().equals("Armed")) {
-                return true;
-            }
+    public MPBoosters getArmedMPBoosters() {
+        MPBoosters mpBoosters = super.getArmedMPBoosters();
+        if (getConversionMode() != CONV_MODE_VEHICLE) {
+            return  mpBoosters;
         }
-        return false;        
-    }
-    
-    /**
-     * Cannot benefit from MASC in vehicle mode.
-     */
-    @Override
-    public boolean hasArmedMASCAndSuperCharger() {
-        if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return false;
+        switch (mpBoosters) {
+            case MASC_AND_SUPERCHARGER:
+                return MPBoosters.SUPERCHARGER_ONLY;
+            case MASC_ONLY:
+                return MPBoosters.NONE;
+            default:
+                return mpBoosters;
         }
-        return super.hasArmedMASCAndSuperCharger();
     }
 
     /**

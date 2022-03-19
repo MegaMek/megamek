@@ -823,6 +823,19 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * Check for Supercharger use
+     */
+    public boolean hasActiveSupercharger() {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
+            final MoveStep step = i.nextElement();
+            if (step.isUsingSupercharger()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return the final coordinates if a mech were to perform all the steps in this path, or
      * null if there's an issue with determining the coords
      */
@@ -1064,7 +1077,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Changes turn-forwards-opposite-turn sequences into quad lateral shifts.
-     * <p/>
+     * <p>
      * Finds the sequence of three steps that can be transformed, then removes
      * all three and replaces them with the lateral shift step.
      */
@@ -1590,7 +1603,7 @@ public class MovePath implements Cloneable, Serializable {
         copy.steps = new Vector<>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<>(containedStepTypes);
-        //copy.fliesOverEnemy = fliesOverEnemy;
+        // copy.fliesOverEnemy = fliesOverEnemy;
         copy.cachedEntityState = cachedEntityState; // intentional pointer copy
     }
 

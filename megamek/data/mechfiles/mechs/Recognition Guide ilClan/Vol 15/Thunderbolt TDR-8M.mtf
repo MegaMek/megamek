@@ -1,6 +1,7 @@
 Version:1.0
 Thunderbolt
 TDR-8M
+mul id:8191
 
 Config:Biped
 techbase:Inner Sphere

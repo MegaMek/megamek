@@ -18,8 +18,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -37,7 +37,6 @@ import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/13/14 2:41 PM
  */
 public class RandomMapDialog extends JDialog implements ActionListener {
@@ -306,7 +305,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtil.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrEmpty(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 

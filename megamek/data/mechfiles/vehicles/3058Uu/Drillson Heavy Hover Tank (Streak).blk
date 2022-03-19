@@ -15,6 +15,10 @@ Drillson Heavy Hover Tank
 <Model>
 (Streak)
 </Model>
+
+<mul id:>
+933
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

@@ -46,7 +46,7 @@ public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.0003;
 		shots = 6;
 		bursts = 1;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)

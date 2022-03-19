@@ -15,6 +15,7 @@
 package megamek.client.bot;
 
 import megamek.client.bot.princess.*;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -33,7 +34,7 @@ public class ChatProcessor {
 
     boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
-        if (!StringUtil.isNullOrEmpty(message) &&
+        if (!StringUtility.isNullOrEmpty(message) &&
             (message.contains("declares individual victory at the end of the turn.")
              || message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
@@ -59,8 +60,7 @@ public class ChatProcessor {
     boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
         boolean result = false;
 
-        if (!StringUtil.isNullOrEmpty(message) &&
-            (message.contains(DefeatCommand.wantsDefeat))) {
+        if (!StringUtility.isNullOrEmpty(message) && message.contains(DefeatCommand.wantsDefeat)) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];

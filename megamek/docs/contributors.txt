@@ -6,7 +6,10 @@
   Current Maintainer:
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
-  Active Developers:
+ Website:
+    megamek.org
+
+   Active Developers:
 	 Carl "Neoancient" Spain
 	 NickAragua
 	 Juliez

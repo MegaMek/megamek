@@ -99,9 +99,9 @@ public class SubforcesNode extends RulesetNode {
                         apply(sub, i);
                         n.apply(sub, i);
                         vn.apply(sub, i);
-                        //						if (sub.getEschelon() == 0) {
-                        //							sub.generate(false);
-                        //						}
+                        // if (sub.getEschelon() == 0) {
+                        //     sub.generate(false);
+                        // }
                         subs.add(sub);
                     }
                     if (fd.getSizeMod() == ForceDescriptor.REINFORCED) {

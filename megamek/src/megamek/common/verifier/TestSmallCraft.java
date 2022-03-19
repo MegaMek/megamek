@@ -14,25 +14,14 @@
  */
 package megamek.common.verifier;
 
+import megamek.common.*;
+import megamek.common.util.StringUtil;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-import megamek.common.util.StringUtil;
 
 /**
  * Class for testing and validating instantiations for Small Craft and Dropships.
@@ -705,7 +694,7 @@ public class TestSmallCraft extends TestAero {
         }
         if (lateralMatch) {
             //We've already checked counts, so in the reverse direction we only need to see if there's
-            //anything not found on the other side.
+            // anything not found on the other side.
             for (EquipmentType eq : rightFwd.keySet()) {
                 if (!leftFwd.containsKey(eq)) {
                     lateralMatch = false;

@@ -1,6 +1,7 @@
 Version:1.0
 BattleMaster
 BLR-5M
+mul id:297
 
 Config:Biped
 TechBase:Inner Sphere

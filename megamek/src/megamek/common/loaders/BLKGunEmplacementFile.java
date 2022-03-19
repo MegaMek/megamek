@@ -12,24 +12,16 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author njrkrynn
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author njrkrynn
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
     public BLKGunEmplacementFile(BuildingBlock bb) {
@@ -50,6 +42,10 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
             e.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             e.setModel("");
+        }
+
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            e.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
         }
 
         setTechLevel(e);

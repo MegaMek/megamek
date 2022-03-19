@@ -63,6 +63,10 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             a.setModel("");
         }
 
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
+
         setTechLevel(a);
         setFluff(a);
 
@@ -87,7 +91,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (dataFile.exists("omnipodheatsinks")) {
-        	a.setPodHeatSinks(dataFile.getDataAsInt("omnipodheatsinks")[0]);
+            a.setPodHeatSinks(dataFile.getDataAsInt("omnipodheatsinks")[0]);
         }
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");

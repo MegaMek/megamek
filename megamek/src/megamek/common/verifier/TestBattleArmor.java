@@ -14,14 +14,14 @@
  */
 package megamek.common.verifier;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -281,7 +281,7 @@ public class TestBattleArmor extends TestEntity {
          * @throws IndexOutOfBoundsException if the weight class is not in the range allowed by the suit 
          */
         public double getWeight(int weightClass) {
-        	return weightsKg[weightClass] / 1000.0;
+            return weightsKg[weightClass] / 1000.0;
         }
 
     }
@@ -515,7 +515,7 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-    	return getWeightTurret();
+        return getWeightTurret();
     }
 
     @Override
@@ -529,13 +529,13 @@ public class TestBattleArmor extends TestEntity {
     }
     
     public double getWeightChassis() {
-    	if (ba.isClan()
-    			&& !((ba.getWeightClass() > EntityWeightClass.WEIGHT_ULTRA_LIGHT)
-    					&& (ba.isClanExoWithoutHarjel()))) {
-    		return CHASSIS_WEIGHT_CLAN[ba.getWeightClass()];
-    	} else {
-    		return CHASSIS_WEIGHT_IS[ba.getWeightClass()];
-    	}
+        if (ba.isClan()
+                && !((ba.getWeightClass() > EntityWeightClass.WEIGHT_ULTRA_LIGHT)
+                        && (ba.isClanExoWithoutHarjel()))) {
+            return CHASSIS_WEIGHT_CLAN[ba.getWeightClass()];
+        } else {
+            return CHASSIS_WEIGHT_IS[ba.getWeightClass()];
+        }
     }
     
     public double getWeightGroundMP() {
@@ -546,26 +546,26 @@ public class TestBattleArmor extends TestEntity {
             walkMP -= BIPED_FREE_MP;
         }
         if (walkMP > 0) {
-        	return ADDITIONAL_GROUND_MP_WEIGHT[ba.getWeightClass()] * walkMP;
+            return ADDITIONAL_GROUND_MP_WEIGHT[ba.getWeightClass()] * walkMP;
         } else {
-        	return 0;
+            return 0;
         }
     }
     
     public double getWeightSecondaryMotiveSystem() {
-    	int jumpMP = ba.getOriginalJumpMP();
-    	if (ba.getMovementMode() == EntityMovementMode.VTOL) {
-    		return jumpMP * BAMotiveSystems.BA_VTOL.getWeight(ba.getWeightClass());
-    	} else if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-    		return jumpMP * BAMotiveSystems.BA_UMU.getWeight(ba.getWeightClass());
-    	} else {
-    		return jumpMP * BAMotiveSystems.BA_JUMP.getWeight(ba.getWeightClass());
-    	}
+        int jumpMP = ba.getOriginalJumpMP();
+        if (ba.getMovementMode() == EntityMovementMode.VTOL) {
+            return jumpMP * BAMotiveSystems.BA_VTOL.getWeight(ba.getWeightClass());
+        } else if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
+            return jumpMP * BAMotiveSystems.BA_UMU.getWeight(ba.getWeightClass());
+        } else {
+            return jumpMP * BAMotiveSystems.BA_JUMP.getWeight(ba.getWeightClass());
+        }
     }
 
     @Override
     public double getWeightStructure() {
-    	return getWeightChassis() + getWeightGroundMP() + getWeightSecondaryMotiveSystem();
+        return getWeightChassis() + getWeightGroundMP() + getWeightSecondaryMotiveSystem();
     }
 
     @Override

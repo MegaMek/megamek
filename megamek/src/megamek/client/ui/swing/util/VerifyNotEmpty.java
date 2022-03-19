@@ -17,7 +17,6 @@ import java.util.Collection;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/14/14 1:20 PM
  */
 public class VerifyNotEmpty implements DataVerifier {

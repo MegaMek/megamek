@@ -20,6 +20,10 @@ Palmoni Assault Infantry Fighting Vehicle
 (Standard)
 </Model>
 
+<mul id:>
+2411
+</mul id:>
+
 <Tonnage>
 85
 </Tonnage>

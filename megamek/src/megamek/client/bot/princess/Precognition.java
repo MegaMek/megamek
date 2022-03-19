@@ -218,16 +218,16 @@ public class Precognition implements Runnable {
                             .getObject(0));
                     getGame().processGameEvent(new GameSettingsChangeEvent(this));
                     break;
-                case SENDING_TAGINFO:
+                case SENDING_TAG_INFO:
                     Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
                     for (TagInfo ti : vti) {
                         getGame().addTagInfo(ti);
                     }
                     break;
-                case RESET_TAGINFO:
+                case RESET_TAG_INFO:
                     getGame().resetTagInfo();
                     break;
-                case SENDING_ARTILLERYATTACKS:
+                case SENDING_ARTILLERY_ATTACKS:
                     Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c
                             .getObject(0);
                     getGame().setArtilleryVector(v);

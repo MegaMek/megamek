@@ -15,6 +15,10 @@ Ontos Heavy Tank
 <Model>
 (MML)
 </Model>
+
+<mul id:>
+2329
+</mul id:>
 <Tonnage>
 95
 </Tonnage>

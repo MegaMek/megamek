@@ -47,7 +47,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 		ammoCost = 10;
 		shots = 100;
 		bursts = 6;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)

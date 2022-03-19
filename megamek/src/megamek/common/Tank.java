@@ -134,7 +134,7 @@ public class Tank extends Entity {
     private boolean driverHit = false;
     private boolean commanderHit = false;
     //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
-    //but the command console benefits are lost as the backup has to take command.
+    // but the command console benefits are lost as the backup has to take command.
     private boolean usingConsoleCommander = false;
     /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
     private int extraCrewSeats = 0;
@@ -742,21 +742,7 @@ public class Tank extends Entity {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // If MASC was used last turn, increment the counter,
-        // otherwise decrement. Then, clear the counter
-        if (usedMASC) {
-            nMASCLevel++;
-            bMASCWentUp = true;
-        } else {
-            nMASCLevel = Math.max(0, nMASCLevel - 1);
-            if (bMASCWentUp) {
-                nMASCLevel = Math.max(0, nMASCLevel - 1);
-                bMASCWentUp = false;
-            }
-        }
-
-        // Clear the MASC flag
-        usedMASC = false;
+        incrementMASCAndSuperchargerLevels();
 
         // check for crew stun
         if (m_nStunnedTurns > 0) {
@@ -2187,13 +2173,14 @@ public class Tank extends Entity {
     }
 
     /**
-     * Tanks don't have MASC
+     * Tanks have Superchargers but don't have MASC
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
+
 
     /*
      * (non-Javadoc)
@@ -2281,6 +2268,7 @@ public class Tank extends Entity {
             return getOriginalRunMP();
         }
     }
+
 
     /**
      * Returns this entity's Sprint mp as a string.
@@ -3280,7 +3268,7 @@ public class Tank extends Entity {
     /**
      * OmniVehicles have handles for Battle Armor squads to latch onto. Please
      * note, this method should only be called during this Tank's construction.
-     * <p/>
+     * <p>
      * Overrides <code>Entity#setOmni(boolean)</code>
      */
     @Override
@@ -3513,7 +3501,7 @@ public class Tank extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3540,7 +3528,7 @@ public class Tank extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3774,8 +3762,18 @@ public class Tank extends Entity {
      */
     @Override
     public String getRunMPasString() {
-        if (hasArmedMASC()) {
-            return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+        MPBoosters mpBoosters = getMPBoosters();
+        if (mpBoosters.hasMASCAndOrSupercharger()) {
+            String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+            if (game != null) {
+                MPBoosters armed = getArmedMPBoosters();
+
+                str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
+                        + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                        + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
+                        + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+            }
+            return str;
         }
         return Integer.toString(getRunMP());
     }
@@ -3785,7 +3783,7 @@ public class Tank extends Entity {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range
@@ -3850,8 +3848,8 @@ public class Tank extends Entity {
         double move = getOriginalWalkMP();
 
         if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_MASC))
-        		.map(m -> m.getType().getSubType())
-        		.anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
+                .map(m -> m.getType().getSubType())
+                .anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
             move *= 1.25;
         }
 
@@ -3937,10 +3935,10 @@ public class Tank extends Entity {
      */
     @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
-    	if (index == 0) {
-    		return location > LOC_BODY? 1.0 : 0.0;
-    	}
-    	return getBattleForceLocationMultiplier(index, location, rearMounted);
+        if (index == 0) {
+            return location > LOC_BODY? 1.0 : 0.0;
+        }
+        return getBattleForceLocationMultiplier(index, location, rearMounted);
     }
     
     @Override

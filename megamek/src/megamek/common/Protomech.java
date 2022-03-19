@@ -458,7 +458,7 @@ public class Protomech extends Entity {
     }
 
     /**
-     * Returns this mech's jumping MP, modified for missing & underwater jets.
+     * Returns this mech's jumping MP, modified for missing and underwater jets.
      */
     @Override
     public int getJumpMPWithTerrain() {

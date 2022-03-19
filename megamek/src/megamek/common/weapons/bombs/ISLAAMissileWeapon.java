@@ -52,7 +52,7 @@ public class ISLAAMissileWeapon extends ThunderBoltWeapon {
         this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
         this.missileArmor = 6;
-        rulesRefs = "359,TO";
+        rulesRefs = "359, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

@@ -536,17 +536,17 @@ public class EquipmentType implements ITechnology {
      * @return True or false.
      */
     public boolean hasModeType(String modeType) {
-    	if (!hasModes()) {
-    		return false;
-    	}
-    	
-    	for (EquipmentMode mode : modes) {
-    		if (mode.getName().equals(modeType)) {
-    			return true;
-    		}
-    	}
-    	
-    	return false;
+        if (!hasModes()) {
+            return false;
+        }
+
+        for (EquipmentMode mode : modes) {
+            if (mode.getName().equals(modeType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -670,9 +670,9 @@ public class EquipmentType implements ITechnology {
      * <p>
      * Returns the mode number <code>modeNum</code> from the list of modes
      * available for this type of equipment. Modes are numbered from
-     * <code>0<code> to
-     * <code>getModesCount()-1</code>
-     * <p>
+     * <code>0</code> to
+     * <code>getModesCount() - 1</code>
+     * </p>
      * Fails if this type of the equipment doesn't have modes, or given mode is
      * out of the valid range.
      *
@@ -1137,26 +1137,6 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getTechRating();
     }
 
-    /**
-     * @deprecated Use {@link #calcEraAvailability(int, boolean) calcEraAvailability to get availability
-     *      for IS/Clan in a given year, or {@link #getBaseAvailability(int) getBaseAvailability}
-     *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
-     */
-    @Deprecated
-    public int getAvailability(int era) {
-        return calcEraAvailability(era);
-    }
-
-    /**
-     * @deprecated Use {@link #getYearAvailabilityName(int, boolean) getYearAvailabilityName}
-     *      to get availability for IS or Clan in a specific year,
-     *      or {@link #getEraAvailabilityName(int) getEraAvailabilityName to get code(s) for the era.
-     */
-    @Deprecated
-    public String getAvailabilityName(int era) {
-        return getEraAvailabilityName(era);
-    }
-
     @Override
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
@@ -1180,7 +1160,7 @@ public class EquipmentType implements ITechnology {
         }
 
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan) {
         return techAdvancement.getIntroductionDate(clan);
@@ -1521,5 +1501,17 @@ public class EquipmentType implements ITechnology {
      */
     public String getSortingName() {
         return (sortingName != null) ? sortingName : name;
+    }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type Strings.
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param eType An equipment type to check
+     * @param eTypes More equipment types to check
+     * @return true if the internalName of this equipment matches any of the given types
+     */
+    public boolean isAnyOf(String eType, String... eTypes) {
+        return internalName.equals(eType) || Arrays.asList(eTypes).contains(internalName);
     }
 }

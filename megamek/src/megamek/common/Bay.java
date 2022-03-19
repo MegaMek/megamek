@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import megamek.common.enums.GamePhase;
@@ -26,7 +25,6 @@ import java.util.Vector;
  * Represents a volume of space set aside for carrying cargo of some sort
  * aboard large spacecraft and mobile structures
  */
-
 public class Bay implements Transporter, ITechnology {
 
     // Private attributes and helper functions.
@@ -100,7 +98,7 @@ public class Bay implements Transporter, ITechnology {
      * @return The reduction of bay capacity due to damage.
      */
     public double getBayDamage() {
-    	return damage;
+        return damage;
     }
 
     /**
@@ -110,7 +108,7 @@ public class Bay implements Transporter, ITechnology {
      * @param damage The total amount of bay capacity reduced due to damage.
      */
     public void setBayDamage(double damage) {
-    	this.damage = Math.min(damage, totalSpace);
+        this.damage = Math.min(damage, totalSpace);
     }
     
     /**
@@ -140,7 +138,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     public void setCurrentDoors(int d) {
-    	currentdoors = d;
+        currentdoors = d;
     }
 
     // for setting doors after this launch
@@ -222,11 +220,8 @@ public class Bay implements Transporter, ITechnology {
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
-     *            <code>IllegalArgumentException</code> exception will be
-     *            thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
@@ -467,20 +462,20 @@ public class Bay implements Transporter, ITechnology {
 
     // destroy a door
     public void destroyDoor() {
-    	if (getCurrentDoors() > 0)
-    		setCurrentDoors(getCurrentDoors() - 1);
+        if (getCurrentDoors() > 0)
+            setCurrentDoors(getCurrentDoors() - 1);
     }
 
     // restore a door
     public void restoreDoor() {
-    	if (getCurrentDoors() < getDoors()) {
-    		setCurrentDoors(getCurrentDoors() + 1);
-    	}
+        if (getCurrentDoors() < getDoors()) {
+            setCurrentDoors(getCurrentDoors() + 1);
+        }
     }
 
     // restore all doors
     public void restoreAllDoors() {
-    	setCurrentDoors(getDoors());
+        setCurrentDoors(getDoors());
     }
 
     public int getNumberUnloadedThisTurn() {

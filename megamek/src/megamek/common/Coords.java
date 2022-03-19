@@ -1,24 +1,24 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * MegaMek - Copyright (C) 2020 - The MegaMek Team  
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlElement;
+
+import jakarta.xml.bind.annotation.XmlElement;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.annotations.Nullable;
 
@@ -330,7 +330,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns an array of the Coords of hexes that are crossed by a straight
-     * line from the center of src to the center of dest, including src & dest.
+     * line from the center of src to the center of dest, including src and dest.
      * The returned coordinates are in line order, and if the line passes
      * directly between two hexes, it returns them both. Based on the degree of
      * the angle, the next hex is going to be one of three hexes. We check those
@@ -350,7 +350,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns an array of the Coords of hexes that are crossed by a straight
-     * line from the center of src to the center of dest, including src & dest.
+     * line from the center of src to the center of dest, including src and dest.
      * The returned coordinates are in line order, and if the line passes
      * directly between two hexes, it returns them both. Based on the degree of
      * the angle, the next hex is going to be one of three hexes. We check those
@@ -480,7 +480,7 @@ public class Coords implements Serializable {
     /**
      * Returns a list of all coordinates at the given distance dist, 
      * regardless of whether they're on the board or not. Returns an 
-     * empty Set for dist < 0 and the calling Coords itself for dist == 0.
+     * empty Set for dist &lt; 0 and the calling Coords itself for dist == 0.
      */
     public ArrayList<Coords> allAtDistance(int dist) { 
         ArrayList<Coords> retval = new ArrayList<>();

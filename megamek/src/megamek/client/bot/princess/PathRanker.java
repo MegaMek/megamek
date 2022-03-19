@@ -15,10 +15,10 @@ package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -167,7 +167,7 @@ public abstract class PathRanker implements IPathRanker {
                 if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                    if (!StringUtil.isNullOrEmpty(validation)) {
+                    if (!StringUtility.isNullOrEmpty(validation)) {
                         msg.append("\n\t").append(validation);
                         continue;
                     }
@@ -319,6 +319,16 @@ public abstract class PathRanker implements IPathRanker {
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(')');
             successProbability *= odds;
         }
+        // Account for Supercharger
+        if (pathCopy.hasActiveSupercharger()) {
+            msg.append("\n\t\tSupercharger ");
+            int target = pathCopy.getEntity().getSuperchargerTarget();
+            msg.append(target);
+            // todo Does Natural Aptitude Piloting apply to this? I assume not.
+            double odds = Compute.oddsAbove(target) / 100d;
+            msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
+            successProbability *= odds;
+        }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
         getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
@@ -336,7 +346,7 @@ public abstract class PathRanker implements IPathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game     The {@link Game} currently in play.
+     * @param game The current {@link Game}
      * @return The distance to the unit's home edge.
      */
     @Override
@@ -401,7 +411,7 @@ public abstract class PathRanker implements IPathRanker {
      * TODO : incorporate test for building damage just from moving through building
      *
      * @param path The {@link MovePath} being traversed.
-     * @param game The {@link Game} being played.
+     * @param game The current {@link Game}
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, Game game) {

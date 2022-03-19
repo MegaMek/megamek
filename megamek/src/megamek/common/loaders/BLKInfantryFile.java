@@ -49,6 +49,9 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find model block.");
         }
         t.setModel(dataFile.getDataAsString("Model")[0]);
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
 
         setTechLevel(t);
         setFluff(t);
@@ -83,10 +86,10 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         if (nMotion == EntityMovementMode.INF_UMU
-        		&& sMotion.toLowerCase().contains("motorized")) {
-        	t.setMotorizedScuba();
+                && sMotion.toLowerCase().contains("motorized")) {
+            t.setMotorizedScuba();
         } else {
-        	t.setMovementMode(nMotion);
+            t.setMovementMode(nMotion);
         }
 
         // get primary and secondary weapons
@@ -132,7 +135,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         //TAG infantry have separate attacks for primary and secondary weapons.
         if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {
-        	t.setSpecializations(t.getSpecializations() | Infantry.TAG_TROOPS);
+            t.setSpecializations(t.getSpecializations() | Infantry.TAG_TROOPS);
             try {
                 t.addEquipment(ptype, Infantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {
@@ -221,14 +224,14 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
          * unit description.
          */
         if (dataFile.exists("augmentation")) {
-        	String[] augmentations = dataFile.getDataAsString("augmentation");
-        	for (String aug : augmentations) {
-        		try {
-        			t.getCrew().getOptions().getOption(aug).setValue(true);
-        		} catch (NullPointerException ex) {
-        			throw new EntityLoadingException("Could not locate pilot option " + aug);
-        		}
-        	}
+            String[] augmentations = dataFile.getDataAsString("augmentation");
+            for (String aug : augmentations) {
+                try {
+                    t.getCrew().getOptions().getOption(aug).setValue(true);
+                } catch (NullPointerException ex) {
+                    throw new EntityLoadingException("Could not locate pilot option " + aug);
+                }
+            }
         }
         t.recalculateTechAdvancement();
 

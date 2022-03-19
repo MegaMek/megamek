@@ -17,7 +17,6 @@
  *
  * Created on April 28, 2003, 9:00  PM
  */
-
 package megamek.server.commands;
 
 import megamek.common.options.OptionsConstants;
@@ -27,7 +26,6 @@ import megamek.server.Server;
  * Allows an observer to see all units
  * 
  * @author Dave Smith
- * @version
  */
 public class SeeAllCommand extends ServerCommand {
 

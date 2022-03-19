@@ -132,7 +132,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:9,FWL:5,FS:4,TC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='6'></salvage>

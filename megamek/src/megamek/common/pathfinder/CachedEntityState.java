@@ -19,9 +19,11 @@ public class CachedEntityState {
     
     private Integer walkMP;
     private Integer runMP;
+    private Integer runMPWithOneMasc;
     private Integer runMPWithoutMasc;
     private Integer runMPNoGravity;
     private Integer sprintMP;
+    private Integer sprintMPWithOneMasc;
     private Integer sprintMPWithoutMasc;
     private Integer jumpMP;
     private Integer jumpMPWithTerrain;
@@ -58,6 +60,14 @@ public class CachedEntityState {
         
         return runMPWithoutMasc;
     }
+
+    public int getRunMPwithOneMASC() {
+        if (runMPWithOneMasc == null) {
+            runMPWithOneMasc = backingEntity.getRunMPwithOneMASC();
+        }
+
+        return runMPWithOneMasc;
+    }
     
     public int getSprintMP() {
         if (sprintMP == null) {
@@ -66,7 +76,15 @@ public class CachedEntityState {
         
         return sprintMP;
     }
-    
+
+    public int getSprintMPwithOneMASC() {
+        if (sprintMPWithOneMasc == null) {
+            sprintMPWithOneMasc = backingEntity.getSprintMPwithOneMASC();
+        }
+
+        return sprintMPWithOneMasc;
+    }
+
     public int getSprintMPwithoutMASC() {
         if (sprintMPWithoutMasc == null) {
             sprintMPWithoutMasc = backingEntity.getSprintMPwithoutMASC();

@@ -18,6 +18,10 @@ JES I Tactical Missile Carrier
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+1703
+</mul id:>
 <year>
 3075
 </year>

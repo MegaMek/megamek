@@ -14,14 +14,15 @@
  */
 package megamek.common.verifier;
 
+import megamek.common.*;
+import megamek.common.Entity.MPBoosters;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.StringUtil;
+
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.util.StringUtil;
 
 /**
  * Abstract parent class for testing and validating instantiations of <code> Entity</code> subclasses.
@@ -410,17 +411,19 @@ public abstract class TestEntity implements TestEntityOption {
         return Entity.LOC_NONE;
     }
 
-    private boolean hasMASC() {
+    public MPBoosters getMPBoosters() {
         if (getEntity() instanceof Mech) {
-            return ((Mech) getEntity()).hasMASC();
+            return ((Mech) getEntity()).getMPBoosters();
         }
-        return false;
+        return MPBoosters.NONE;
     }
     
     public String printShortMovement() {
+        Entity.MPBoosters mpBoosters = getMPBoosters();
         return "Movement: " + getEntity().getOriginalWalkMP() + "/"
                 + (int) Math.ceil(getEntity().getOriginalWalkMP() * 1.5)
-                + (hasMASC() ? "(" + getEntity().getOriginalWalkMP() * 2 + ")" : "")
+                + (mpBoosters.hasMASCAndOrSupercharger() ? "(" + getEntity().getOriginalWalkMP() * 2 + ")" : "")
+                + (mpBoosters.hasMASCAndSupercharger() ? "(" + getEntity().getOriginalWalkMP() * 2.5 + ")" : "")
                 + (getEntity().getOriginalJumpMP() != 0 ? "/" + getEntity().getOriginalJumpMP() : "")
                 + "\n";
     }

@@ -20,6 +20,10 @@ Thumper Artillery Vehicle
 (Standard)
 </Model>
 
+<mul id:>
+3210
+</mul id:>
+
 <year>
 2734
 </year>

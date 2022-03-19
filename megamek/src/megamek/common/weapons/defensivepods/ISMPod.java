@@ -26,7 +26,7 @@ public class ISMPod extends MPodWeapon {
         setInternalName("ISMPod");
         addLookupName("ISM-Pod");
 
-        rulesRefs = "330,TO";
+        rulesRefs = "330, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)

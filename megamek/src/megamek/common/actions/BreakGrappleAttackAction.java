@@ -39,8 +39,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
     /**
      * Generates the to hit data for this action.
      *
-     * @param game
-     *            the game.
+     * @param game The current {@link Game}
      * @return the to hit data object for this action.
      * @see #toHit(Game, int, Targetable)
      */
@@ -50,6 +49,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number
+     * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);

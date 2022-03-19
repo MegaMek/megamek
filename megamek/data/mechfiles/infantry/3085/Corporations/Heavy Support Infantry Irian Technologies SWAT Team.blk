@@ -15,6 +15,10 @@ Heavy Support Infantry
 <Model>
 Irian Technologies SWAT Team
 </Model>
+
+<mul id:>
+1449
+</mul id:>
 <squad_size>
 7
 </squad_size>

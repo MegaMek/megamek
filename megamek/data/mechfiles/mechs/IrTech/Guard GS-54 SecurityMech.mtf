@@ -1,6 +1,7 @@
 Version:1.0
 Guard SecurityMech
 GS-54 
+mul id:4253
 
 Config:Quad
 techbase:Inner Sphere

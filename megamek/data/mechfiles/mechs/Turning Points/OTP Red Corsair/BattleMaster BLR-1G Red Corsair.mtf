@@ -1,6 +1,7 @@
 Version:1.1
 BattleMaster
 BLR-1G (Red Corsair)
+mul id:284
 
 Config:Biped
 TechBase:Clan

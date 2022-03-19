@@ -353,7 +353,7 @@ public class LosEffects {
      * attacker and target. Checks to see if the attacker and target are at an angle where the LOS
      * line will pass between two hexes. If so, calls losDivided, otherwise calls losStraight.
      *
-     * @param game the game to calculate using
+     * @param game The current {@link Game}
      * @param attacker the attacker, which may be null. If it is, the view is blocked.
      * @param target the target, which may be null. If it is, the view is blocked.
      * @param spotting if the person is spotting
@@ -740,7 +740,7 @@ public class LosEffects {
                 && Compute.isInBuilding(game, ai.attackAbsHeight
                         - game.getBoard().getHex(ai.attackPos).getLevel(), ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
-            //elevation differences count as building hexes passed through
+            // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight-ai.attackHeight) - (ai.targetAbsHeight-ai.targetHeight)));
         }
 
@@ -803,7 +803,7 @@ public class LosEffects {
                 && Compute.isInBuilding(game, ai.attackAbsHeight
                         - game.getBoard().getHex(ai.attackPos).getLevel(), ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
-            //elevation differences count as building hexes passed through
+            // elevation differences count as building hexes passed through
             los.buildingLevelsOrHexes += (Math
                     .abs((ai.attackAbsHeight - ai.attackHeight)
                             - (ai.targetAbsHeight - ai.targetHeight)));
@@ -855,7 +855,7 @@ public class LosEffects {
                 boolean losBlockedByCover = false;
                 if (leftLos.targetCover == COVER_HORIZONTAL && 
                         rightLos.targetCover == COVER_NONE) {
-                    //25% cover, left
+                    // 25% cover, left
                     leftLos.targetCover  = COVER_LOWLEFT;
                     rightLos.targetCover = COVER_LOWLEFT;
                     rightLos.setCoverBuildingPrimary(leftLos.getCoverBuildingPrimary());
@@ -864,7 +864,7 @@ public class LosEffects {
                     rightLos.setCoverLocPrimary(leftLos.getCoverLocPrimary());
                 } else if ((leftLos.targetCover == COVER_NONE && 
                           rightLos.targetCover == COVER_HORIZONTAL)) {
-                    //25% cover, right
+                    // 25% cover, right
                     leftLos.targetCover  = COVER_LOWRIGHT;
                     rightLos.targetCover = COVER_LOWRIGHT;
                     leftLos.setCoverBuildingPrimary(rightLos.getCoverBuildingPrimary());
@@ -873,7 +873,7 @@ public class LosEffects {
                     leftLos.setCoverLocPrimary(rightLos.getCoverLocPrimary());
                 } else if (leftLos.targetCover == COVER_FULL && 
                          rightLos.targetCover == COVER_NONE) {
-                    //vertical cover, left
+                    // vertical cover, left
                     leftLos.targetCover  = COVER_LEFT;
                     rightLos.targetCover = COVER_LEFT;
                     rightLos.setCoverBuildingPrimary(leftLos.getCoverBuildingPrimary());
@@ -883,7 +883,7 @@ public class LosEffects {
                     losBlockedByCover = true;
                 } else if (leftLos.targetCover == COVER_NONE && 
                          rightLos.targetCover == COVER_FULL) {
-                    //vertical cover, right
+                    // vertical cover, right
                     leftLos.targetCover  = COVER_RIGHT;
                     rightLos.targetCover = COVER_RIGHT;
                     leftLos.setCoverBuildingPrimary(rightLos.getCoverBuildingPrimary());
@@ -893,14 +893,14 @@ public class LosEffects {
                     losBlockedByCover = true;
                 } else if (leftLos.targetCover == COVER_FULL && 
                          rightLos.targetCover == COVER_HORIZONTAL) {
-                    //75% cover, left
+                    // 75% cover, left
                     leftLos.targetCover  = COVER_75LEFT;
                     rightLos.targetCover = COVER_75LEFT;
                     setSecondaryCover(leftLos, rightLos);                                       
                     losBlockedByCover = true;                    
                 } else if (leftLos.targetCover == COVER_HORIZONTAL && 
                           rightLos.targetCover == COVER_FULL) { 
-                    //75% cover, right
+                    // 75% cover, right
                     leftLos.targetCover  = COVER_75RIGHT;
                     rightLos.targetCover = COVER_75RIGHT;
                     setSecondaryCover(leftLos, rightLos);
@@ -926,7 +926,7 @@ public class LosEffects {
                 boolean losBlockedByCover = false;
                 if (leftLos.attackerCover == COVER_HORIZONTAL && 
                         rightLos.attackerCover == COVER_NONE) {
-                    //25% cover, left
+                    // 25% cover, left
                     leftLos.attackerCover  = COVER_LOWLEFT;
                     rightLos.attackerCover = COVER_LOWLEFT;
                     rightLos.targetCover = COVER_LOWLEFT;
@@ -934,42 +934,42 @@ public class LosEffects {
                     rightLos.setCoverDropshipPrimary(leftLos.getCoverDropshipPrimary());
                     rightLos.setDamagableCoverTypePrimary(leftLos.getDamagableCoverTypePrimary());
                     rightLos.setCoverLocPrimary(leftLos.getCoverLocPrimary());
-                } else if ((leftLos.attackerCover == COVER_NONE && 
-                          rightLos.attackerCover == COVER_HORIZONTAL)) {
-                    //25% cover, right
+                } else if ((leftLos.attackerCover == COVER_NONE)
+                        && (rightLos.attackerCover == COVER_HORIZONTAL)) {
+                    // 25% cover, right
                     leftLos.attackerCover  = COVER_LOWRIGHT;
                     rightLos.attackerCover = COVER_LOWRIGHT;
                     leftLos.setCoverBuildingPrimary(rightLos.getCoverBuildingPrimary());
                     leftLos.setCoverDropshipPrimary(rightLos.getCoverDropshipPrimary());
                     leftLos.setDamagableCoverTypePrimary(rightLos.getDamagableCoverTypePrimary());
                     leftLos.setCoverLocPrimary(rightLos.getCoverLocPrimary());
-                } else if (leftLos.attackerCover == COVER_FULL && 
-                         rightLos.attackerCover == COVER_NONE) {
+                } else if ((leftLos.attackerCover == COVER_FULL)
+                        && (rightLos.attackerCover == COVER_NONE)) {
                     //vertical cover, left
                     leftLos.attackerCover  = COVER_LEFT;
                     rightLos.attackerCover = COVER_LEFT;
                     losBlockedByCover = true;
-                } else if (leftLos.attackerCover == COVER_NONE && 
-                         rightLos.attackerCover == COVER_FULL) {
+                } else if ((leftLos.attackerCover == COVER_NONE)
+                        && (rightLos.attackerCover == COVER_FULL)) {
                     //vertical cover, right
                     leftLos.attackerCover  = COVER_RIGHT;
                     rightLos.attackerCover = COVER_RIGHT;
                     losBlockedByCover = true;
-                } else if (leftLos.attackerCover == COVER_FULL && 
-                         rightLos.attackerCover == COVER_HORIZONTAL) {
-                    //75% cover, left
+                } else if ((leftLos.attackerCover == COVER_FULL)
+                        && (rightLos.attackerCover == COVER_HORIZONTAL)) {
+                    // 75% cover, left
                     leftLos.attackerCover  = COVER_75LEFT;
                     rightLos.attackerCover = COVER_75LEFT;   
                     losBlockedByCover = true;
-                } else if (leftLos.attackerCover == COVER_HORIZONTAL && 
-                          rightLos.attackerCover == COVER_FULL) { 
-                    //75% cover, right
+                } else if ((leftLos.attackerCover == COVER_HORIZONTAL)
+                        && (rightLos.attackerCover == COVER_FULL)) {
+                    // 75% cover, right
                     leftLos.attackerCover  = COVER_75RIGHT;
                     rightLos.attackerCover = COVER_75RIGHT;
                     losBlockedByCover = true;
                 }
                 
-                //In the case of vertical and 75% cover, LoS will be blocked.  
+                // In the case of vertical and 75% cover, LoS will be blocked.
                 // We need to unblock it, unless Los is already blocked.
                 if (!los.blocked && (!leftLos.blocked || !rightLos.blocked) &&
                         losBlockedByCover) {                   
@@ -1092,7 +1092,7 @@ public class LosEffects {
 
         boolean coveredByDropship = false;
         Entity coveringDropship = null;
-        //check for grounded dropships - treat like a building 10 elevations tall
+        // check for grounded dropships - treat like a building 10 elevations tall
         if (bldgEl < 10) {
             for (Entity inHex : game.getEntitiesVector(coords)) {
                 if (ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
@@ -1359,14 +1359,13 @@ public class LosEffects {
     }
 
     /**
-     * find out if the left or right side of the divided LOS is better for the
-     * target
-     * return 0 if right is better, 1 if left is better, 2 if both are equal
+     * Finds out if the left or right side of the divided LOS is better for the target
      * @param in
-     * @param game
+     * @param game The current {@link Game}
      * @param ai
      * @param targetInBuilding
      * @param los
+     * @return 0 if right is better, 1 if left is better, 2 if both are equal
      */
     public static int dividedLeftBetter(ArrayList<Coords> in, Game game,
             AttackInfo ai, boolean targetInBuilding, LosEffects los) {
@@ -1416,7 +1415,7 @@ public class LosEffects {
     }
 
     private static boolean isDeadZone(Game game, AttackInfo ai) {
-        //determine who is higher and who is lower
+        // determine who is higher and who is lower
         int highElev = ai.attackAbsHeight;
         int lowElev = ai.targetAbsHeight;
         Coords highPos = ai.attackPos;
@@ -1446,7 +1445,7 @@ public class LosEffects {
                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                    bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
                }
-               //check for grounded dropships - treat like a building 10 elevations tall
+               // check for grounded dropships - treat like a building 10 elevations tall
                if (bldgEl < 10) {
                    for (Entity inHex : game.getEntitiesVector(c)) {
                        if (ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {

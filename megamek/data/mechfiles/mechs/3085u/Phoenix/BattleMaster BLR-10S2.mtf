@@ -1,6 +1,7 @@
 Version:1.1
 BattleMaster
 BLR-10S2
+mul id:281
 
 Config:Biped
 TechBase:Inner Sphere

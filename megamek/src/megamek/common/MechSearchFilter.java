@@ -26,7 +26,7 @@ import java.util.Vector;
 /**
  * Class to perform filtering on units. This class stores a list of
  * constraints and for a given <code>MechSummary</code> it can tell whether
- * that <code>MechSummary</codes> meets the constraints or not.
+ * that <code>MechSummary</code> meets the constraints or not.
  *
  * @author JSmyrloglou
  * @author Arlith

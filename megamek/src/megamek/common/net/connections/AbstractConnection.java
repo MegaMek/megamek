@@ -334,32 +334,18 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Reports receive exception to the <code>System.err</code>
+     * Reports receive exception to <code>System.err</code>
      *
      * @param ex <code>Exception</code>
      */
     protected void reportReceiveException(final Exception ex) {
-        StringBuffer message = new StringBuffer();
-        reportReceiveException(ex, message);
-        System.err.println(message);
-    }
-
-    /**
-     * Appends the receive exception report to the given
-     * <code>StringBuffer</code>
-     *
-     * @param ex <code>Exception</code>
-     */
-    protected void reportReceiveException(final Exception ex, final StringBuffer buffer) {
-        System.err.print(getConnectionTypeAbbreviation());
-        System.err.print(" error reading command: ");
-        System.err.println(ex.getMessage());
+        System.err.printf("%s error reading command: %s\n", getConnectionTypeAbbreviation(), ex.getMessage());
+        ex.printStackTrace();
         reportLastCommands();
     }
 
     /**
-     * Appends the last commands sent/received to the given
-     * <code>StringBuffer</code>
+     * Appends the last commands sent/received to <code>System.err</code>
      */
     protected synchronized void reportLastCommands() {
         reportLastCommands(true);
@@ -370,8 +356,8 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Appends the last commands sent or received to the given
-     * <code>StringBuffer</code> depending on the <code>sent</code> parameter
+     * Appends the last commands sent or received to <code>System.err</code> depending on the
+     * <code>sent</code> parameter
      *
      * @param sent indicates which commands (sent/received) should be reported
      */

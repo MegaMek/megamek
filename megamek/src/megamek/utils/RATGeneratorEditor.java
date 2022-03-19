@@ -919,7 +919,21 @@ public class RATGeneratorEditor extends JFrame {
         }
 
         public boolean addEntry(RowData rowData) {
-            return addEntry(rowData.faction, rowData.eraData);
+            boolean rowAdded = addEntry(rowData.faction, rowData.eraData);
+            if (rowAdded) {
+                for (int i = 0; i < ERAS.length; i++) {
+                    if (!rowData.eraData.get(i).isBlank()) {
+                        AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i],
+                                rowData.faction + ":" + rowData.eraData.get(i));
+                        if (mode == MODE_MODEL) {
+                            rg.setModelFactionRating(ERAS[i], getUnitKey(), ar);
+                        } else {
+                            rg.setChassisFactionRating(ERAS[i], getUnitKey(), ar);
+                        }
+                    }
+                }
+            }
+            return rowAdded;
         }
 
         public void removeEntry(int row) {

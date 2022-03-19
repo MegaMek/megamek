@@ -116,10 +116,10 @@ public abstract class AbstractConnection {
 
     public AbstractConnection(final int id, final @Nullable String host, final int port,
                               final @Nullable Socket socket) {
-        this.id = id;
+        setId(id);
         this.host = host;
         this.port = port;
-        this.socket = socket;
+        setSocket(socket);
         setMarshallingMethod(PacketMarshallerMethod.NATIVE_SERIALIZATION_MARSHALLING);
     }
     //endregion Constructors
@@ -140,6 +140,14 @@ public abstract class AbstractConnection {
      */
     public void setId(final int id) {
         this.id = id;
+    }
+
+    public @Nullable Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(final @Nullable Socket socket) {
+        this.socket = socket;
     }
 
     /**
@@ -217,9 +225,9 @@ public abstract class AbstractConnection {
      */
     public synchronized boolean open() {
         if (!open) {
-            if (socket == null) {
+            if (getSocket() == null) {
                 try {
-                    socket = new Socket(host, port);
+                    setSocket(new Socket(host, port));
                 } catch (Exception ignored) {
                     return false;
                 }
@@ -237,14 +245,14 @@ public abstract class AbstractConnection {
             LogManager.getLogger().info("Starting to shut down " + (isServer() ? "server" : "client"));
             sendQueue.reportContents();
             sendQueue.finish();
-            try {
-                if (socket != null) {
-                    socket.close();
+            if (getSocket() != null) {
+                try {
+                    getSocket().close();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Failed closing connection " + getId(), ex);
                 }
-            } catch (Exception ex) {
-                LogManager.getLogger().error("Failed closing connection " + getId(), ex);
             }
-            socket = null;
+            setSocket(null);
         }
 
         processConnectionEvent(new DisconnectedEvent(this));
@@ -254,17 +262,14 @@ public abstract class AbstractConnection {
      * @return if the socket for this connection has been closed.
      */
     public boolean isClosed() {
-        return (socket == null) || socket.isClosed();
+        return (getSocket() == null) || getSocket().isClosed();
     }
 
     /**
      * @return the address this socket is or was connected to
      */
     public String getInetAddress() {
-        if (socket != null) {
-            return socket.getInetAddress().toString();
-        }
-        return "Unknown";
+        return (getSocket() == null) ? "Unknown" : getSocket().getInetAddress().toString();
     }
 
     /**
@@ -394,7 +399,7 @@ public abstract class AbstractConnection {
      * @throws IOException
      */
     protected InputStream getInputStream() throws IOException {
-        return socket.getInputStream();
+        return Objects.requireNonNull(getSocket(), "Cannot get an input stream for a null socket").getInputStream();
     }
 
     /**
@@ -402,15 +407,23 @@ public abstract class AbstractConnection {
      * @throws IOException
      */
     protected OutputStream getOutputStream() throws IOException {
-        return socket.getOutputStream();
+        return Objects.requireNonNull(getSocket(), "Cannot get an output stream for a null socket").getOutputStream();
     }
 
+    /**
+     * @return the socket's send buffer size, or 0 if the socket is null
+     * @throws SocketException
+     */
     protected int getSendBufferSize() throws SocketException {
-        return socket.getSendBufferSize();
+        return (getSocket() == null) ? 0 : getSocket().getSendBufferSize();
     }
 
+    /**
+     * @return the socket's receive buffer size, or 0 if the socket is null
+     * @throws SocketException
+     */
     protected int getReceiveBufferSize() throws SocketException {
-        return socket.getReceiveBufferSize();
+        return (getSocket() == null) ? 0 : getSocket().getReceiveBufferSize();
     }
 
     /**

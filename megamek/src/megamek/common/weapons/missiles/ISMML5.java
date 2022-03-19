@@ -19,7 +19,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 
 import static megamek.common.MountedHelper.*;
@@ -66,11 +66,11 @@ public class ISMML5 extends MMLWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range == BattleForceElement.SHORT_RANGE) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
             return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 0.8 : 0.6;
-        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
             return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 0.6 : 0.45;
-        } else if (range == BattleForceElement.LONG_RANGE) {
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
             return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 0.4 : 0.3;
         } else {
             return 0;

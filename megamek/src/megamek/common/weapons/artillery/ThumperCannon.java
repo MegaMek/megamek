@@ -14,7 +14,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
@@ -65,9 +65,9 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range == BattleForceElement.SHORT_RANGE) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 0.375;
-        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
             return 0.5;
         } else {
             return 0;

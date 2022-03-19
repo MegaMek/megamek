@@ -18,7 +18,7 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -77,15 +77,15 @@ public abstract class RACWeapon extends UACWeapon {
     public double getBattleForceDamage(int range, Mounted disregard) {
         if (techAdvancement.getTechBase() == TECH_BASE_IS) {
             if (rackSize == 2) {
-                return (range <= BattleForceElement.LONG_RANGE) ? 0.8 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.8 : 0;
             } else {
-                return (range <= BattleForceElement.MEDIUM_RANGE) ? 2 : 0;
+                return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 2 : 0;
             }
         } else {
             if (rackSize == 2) {
                 return 0.8;
             } else {
-                return (range <= BattleForceElement.LONG_RANGE) ? 2 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 2 : 0;
             }
         }
     }

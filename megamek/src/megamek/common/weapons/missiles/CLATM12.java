@@ -19,7 +19,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 
 /**
@@ -68,9 +68,9 @@ public class CLATM12 extends ATMWeapon {
     
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        if (range <= BattleForceElement.SHORT_RANGE) {
+        if (range <= AlphaStrikeElement.SHORT_RANGE) {
             return 3;
-        } else if (range <= BattleForceElement.MEDIUM_RANGE) {
+        } else if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
             return 2;
         } else {
             return 1;

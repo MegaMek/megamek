@@ -14,7 +14,7 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -81,7 +81,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
 
     @Override
     public int getBattleForceHeatDamage(int range) {
-        if (range <= BattleForceElement.LONG_RANGE) {
+        if (range <= AlphaStrikeElement.LONG_RANGE) {
             return 7;
         }
         return 0;

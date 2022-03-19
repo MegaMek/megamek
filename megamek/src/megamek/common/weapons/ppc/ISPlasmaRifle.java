@@ -14,7 +14,7 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -80,7 +80,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
     
     @Override
     public int getBattleForceHeatDamage(int range) {
-        if (range <= BattleForceElement.MEDIUM_RANGE) {
+        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
             return 3;
         }
         return 0;

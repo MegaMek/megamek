@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 /**
  * @author Andrew Hunter
@@ -55,7 +55,7 @@ public class ISLB20XAC extends LBXACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= BattleForceElement.MEDIUM_RANGE) {
+        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
             return 1.26;
         } else {
             return 0;

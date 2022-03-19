@@ -32,6 +32,7 @@ import megamek.client.ui.swing.AlphaStrikeViewPanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class AlphaStrikeStatsDialog extends AbstractDialog {
@@ -101,7 +102,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         result.append("Specials");
         
         for (Entity entity: entities) {
-                var element = new AlphaStrikeElement(entity);
+            var element = ASConverter.convert(entity);
                 result.append(entity.getShortName());
                 result.append(element.getUnitType().toString());
                 result.append(element.getSize() + "");

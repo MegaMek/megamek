@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 
 /**
@@ -61,6 +61,6 @@ public class CLUAC2 extends UACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted ignore) {
-        return range == BattleForceElement.SHORT_RANGE ? 0.249 : 0.3;
+        return range == AlphaStrikeElement.SHORT_RANGE ? 0.249 : 0.3;
     }
 }

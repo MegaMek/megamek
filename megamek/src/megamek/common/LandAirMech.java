@@ -1918,19 +1918,19 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         applyDamage();
     }
 
-    @Override
-    public void setBattleForceMovement(Map<String, Integer> movement) {
-        super.setBattleForceMovement(movement);
-        movement.put("g", getAirMechCruiseMP(true, false));
-        movement.put("a", getFighterModeWalkMP(true, false));
-    }
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String, Integer> movement) {
-        super.setBattleForceMovement(movement);
-        movement.put("g", getAirMechCruiseMP(true, false) * 2);
-        movement.put("a", getFighterModeWalkMP(true, false));
-    }
+//    @Override
+//    public void setBattleForceMovement(Map<String, Integer> movement) {
+//        super.setBattleForceMovement(movement);
+//        movement.put("g", getAirMechCruiseMP(true, false));
+//        movement.put("a", getFighterModeWalkMP(true, false));
+//    }
+//
+//    @Override
+//    public void setAlphaStrikeMovement(Map<String, Integer> movement) {
+//        super.setBattleForceMovement(movement);
+//        movement.put("g", getAirMechCruiseMP(true, false) * 2);
+//        movement.put("a", getFighterModeWalkMP(true, false));
+//    }
 
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA, Integer> specialAbilities) {

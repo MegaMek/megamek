@@ -14,7 +14,7 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
@@ -63,7 +63,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= BattleForceElement.LONG_RANGE) {
+        if (range <= AlphaStrikeElement.LONG_RANGE) {
             return 0.1 * getRackSize();
         } else {
             return 0;

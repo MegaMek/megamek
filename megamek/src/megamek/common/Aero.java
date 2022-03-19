@@ -3756,10 +3756,10 @@ public class Aero extends Entity implements IAero, IBomber {
         return canGoDown(altitude, getPosition());
     }
 
-    @Override
-    public void setAlphaStrikeMovement(Map<String, Integer> moves) {
-        moves.put(getMovementModeAsBattleForceString(), getWalkMP());
-    }
+//    @Override
+//    public void setAlphaStrikeMovement(Map<String, Integer> moves) {
+//        moves.put(getMovementModeAsBattleForceString(), getWalkMP());
+//    }
 
     @Override
     public int getBattleForceArmorPoints() {

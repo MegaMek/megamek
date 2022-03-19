@@ -2510,30 +2510,16 @@ public class Infantry extends Entity {
         return false;
     }
 
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        moves.put(getMovementModeAsBattleForceString(),
-                Math.max(getWalkMP(), getJumpMP()) * 2);
-    }
-
-    @Override
-    public int getBattleForceSize() {
-        //The tables are on page 356 of StartOps
-        return 1;
-    }
+//    @Override
+//    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+//        moves.put(getMovementModeAsBattleForceString(),
+//                Math.max(getWalkMP(), getJumpMP()) * 2);
+//    }
 
     @Override
     public int getBattleForceArmorPoints() {
         // Infantry armor points is # of men / 15
         return (int) Math.ceil(getInternal(0)/15.0);
-    }
-
-    @Override
-    /**
-     * Each squad has 1 structure point
-     */
-    public int getBattleForceStructurePoints() {
-        return 1;
     }
 
     @Override

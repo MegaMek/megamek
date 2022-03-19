@@ -20,7 +20,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
@@ -81,7 +81,7 @@ public class CLBALBX extends Weapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getDamage());
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }
@@ -94,7 +94,7 @@ public class CLBALBX extends Weapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getDamage() * baSquadSize);
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

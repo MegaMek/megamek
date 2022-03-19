@@ -14,7 +14,7 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Mounted;
@@ -79,7 +79,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= BattleForceElement.LONG_RANGE) {
+        if (range <= AlphaStrikeElement.LONG_RANGE) {
             return 0.63;
         } else {
             return 0;

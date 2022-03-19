@@ -2009,26 +2009,16 @@ public class BattleArmor extends Infantry {
         return false;
     }
 
-    @Override
-    public void setBattleForceMovement(Map<String,Integer> movement) {
-        if (hasDWP()) {
-            movement.put("", getWalkMP());
-        }
-        int move = Math.max(getWalkMP(true, false, false, true, false),
-                getJumpMP(true, true, true));
-        movement.put(getMovementModeAsBattleForceString(), move);
-    }    
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        if (getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
-            moves.put("j", getJumpMP(true, true, true) * 2);
-        } else if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
-            moves.put("s", getActiveUMUCount() * 2);
-        } else {
-            moves.put(getMovementModeAsBattleForceString(), getOriginalWalkMP() * 2);
-        }
-    }
+//    @Override
+//    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+//        if (getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
+//            moves.put("j", getJumpMP(true, true, true) * 2);
+//        } else if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
+//            moves.put("s", getActiveUMUCount() * 2);
+//        } else {
+//            moves.put(getMovementModeAsBattleForceString(), getOriginalWalkMP() * 2);
+//        }
+//    }
     
     @Override
     public int getBattleForceArmorPoints() {
@@ -2042,14 +2032,6 @@ public class BattleArmor extends Infantry {
             }
         }
         return (int) Math.round(armor / 30.0);
-    }
-
-    @Override
-    /**
-     * Each BA squad has 2 structure points
-     */
-    public int getBattleForceStructurePoints() {
-        return 2;
     }
 
     @Override

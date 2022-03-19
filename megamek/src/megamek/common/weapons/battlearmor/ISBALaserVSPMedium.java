@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 
 /**
@@ -68,9 +68,9 @@ public class ISBALaserVSPMedium extends VariableSpeedPulseLaserWeapon {
 
     @Override
     public double getBattleForceDamage(int range) {
-        if (range == BattleForceElement.SHORT_RANGE) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 1.035;
-        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
             return 0.525;
         } else {
             return 0;

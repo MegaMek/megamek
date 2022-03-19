@@ -217,19 +217,6 @@ public class FixedWingSupport extends ConvFighter {
     }
 
     @Override
-    public int getBattleForceSize() {
-        //The tables are on page 356 of StartOps
-        if (getWeight() < 5) {
-            return 1;
-        }
-        if (getWeight() < 100) {
-            return 2;
-        }
-
-        return 3;
-    }
-
-    @Override
     protected int calculateWalk() {
         return getOriginalWalkMP();
     }

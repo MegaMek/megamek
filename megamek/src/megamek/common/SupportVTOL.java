@@ -111,18 +111,6 @@ public class SupportVTOL extends VTOL {
     }
 
     @Override
-    public int getBattleForceSize() {
-        //The tables are on page 356 of StartOps
-        if (getWeight() < 5) {
-            return 1;
-        }
-        if (getWeight() < 30) {
-            return 2;
-        }
-        return 3;
-    }
-
-    @Override
     public double getBaseEngineValue() {
         if (getWeight() < 5) {
             return 0.002;

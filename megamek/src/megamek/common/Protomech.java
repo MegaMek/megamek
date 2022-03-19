@@ -2090,24 +2090,24 @@ public class Protomech extends Entity {
             boolean ignoremodulararmor) {
         return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        double walk = getWalkMP();
-        if (hasMyomerBooster()) {
-            walk *= 1.25;
-        }
-        int baseWalk = (int) Math.round(walk * 2);
-        int baseJump = getJumpMP() * 2;
-        if (baseJump > 0) {
-            if (baseJump != baseWalk) {
-                moves.put("", baseWalk);
-            }
-            moves.put("j", baseJump);
-        } else {
-            moves.put(getMovementModeAsBattleForceString(), baseWalk);
-        }
-    }
+//
+//    @Override
+//    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+//        double walk = getWalkMP();
+//        if (hasMyomerBooster()) {
+//            walk *= 1.25;
+//        }
+//        int baseWalk = (int) Math.round(walk * 2);
+//        int baseJump = getJumpMP() * 2;
+//        if (baseJump > 0) {
+//            if (baseJump != baseWalk) {
+//                moves.put("", baseWalk);
+//            }
+//            moves.put("j", baseJump);
+//        } else {
+//            moves.put(getMovementModeAsBattleForceString(), baseWalk);
+//        }
+//    }
     
     @Override
     /*

@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
@@ -54,6 +54,6 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted ignore) {
-        return range == BattleForceElement.SHORT_RANGE ? 0.1 : 0.3;
+        return range == AlphaStrikeElement.SHORT_RANGE ? 0.1 : 0.3;
     }
 }

@@ -15,7 +15,7 @@ package megamek.common.weapons.lrms;
 
 import static megamek.common.MountedHelper.*;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 
 /**
@@ -56,11 +56,11 @@ public class CLLRM15 extends LRMWeapon {
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
-            return (range <= BattleForceElement.LONG_RANGE) ? 1.2 : 0;
+            return (range <= AlphaStrikeElement.LONG_RANGE) ? 1.2 : 0;
         } else if (isArtemisV(fcs)) {
-            return (range <= BattleForceElement.LONG_RANGE) ? 1.26 : 0;
+            return (range <= AlphaStrikeElement.LONG_RANGE) ? 1.26 : 0;
         } else {
-            return (range <= BattleForceElement.LONG_RANGE) ? 0.9 : 0;
+            return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.9 : 0;
         }
     }
 }

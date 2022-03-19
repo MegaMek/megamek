@@ -75,7 +75,7 @@ public class SBFUnitConverter {
     }
 
     private static int getUnitSize(Collection<AlphaStrikeElement> elements) {
-        return (int) Math.round(elements.stream().mapToInt(BattleForceElement::getSize).average().orElse(0));
+        return (int) Math.round(elements.stream().mapToInt(AlphaStrikeElement::getSize).average().orElse(0));
     }
 
     private static int getUnitTMM(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
@@ -401,7 +401,7 @@ public class SBFUnitConverter {
     }
 
     private static int calcUnitPointValue(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        int intermediate = (int) Math.round( 1.0d / 3 * elements.stream().mapToInt(BattleForceElement::getFinalPoints).sum());
+        int intermediate = (int) Math.round( 1.0d / 3 * elements.stream().mapToInt(AlphaStrikeElement::getFinalPoints).sum());
         double result = intermediate;
         if (unit.getSkill() > 4) {
             result = (1.0d + (unit.getSkill() - 4) * 0.1) * intermediate;

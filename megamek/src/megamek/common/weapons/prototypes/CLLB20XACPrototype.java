@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 
 import megamek.common.SimpleTechLevel;
@@ -58,7 +58,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= BattleForceElement.MEDIUM_RANGE) {
+        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
             return 1.26;
         } else {
             return 0;

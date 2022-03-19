@@ -13308,59 +13308,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Start of Battle Force Conversion Methods
-     */
-
-    public int getBattleForcePoints() {
-        double bv = calculateBattleValue(true, true);
-        int points = (int) Math.round(bv / 100);
-        return Math.max(1, points);
-    }
-
-    /**
-     * Get the movement mode of the entity and return it as a battle force
-     * string.
-     */
-    public String getMovementModeAsBattleForceString() {
-        switch (getMovementMode()) {
-            case NONE:
-            case BIPED:
-            case BIPED_SWIM:
-            case QUAD:
-            case QUAD_SWIM:
-                return "";
-            case TRACKED:
-                return "t";
-            case WHEELED:
-                return "w";
-            case HOVER:
-                return "h";
-            case VTOL:
-                return "v";
-            case NAVAL:
-            case HYDROFOIL:
-                return "n";
-            case SUBMARINE:
-            case INF_UMU:
-                return "s";
-            case INF_LEG:
-                return "f";
-            case INF_MOTORIZED:
-                return "m";
-            case INF_JUMP:
-                return "j";
-            case WIGE:
-                return "g";
-            case AERODYNE:
-                return "a";
-            case SPHEROID:
-                return "p";
-            default:
-                return "ERROR";
-        }
-    }
-
-    /**
      * Certain unit types can increase this with MASC, supercharger, or jet booster.
      * AlphaStrike needs the fraction retained because it doubles the movement for ground units,
      * while BattleForce rounds this to the nearest integer.
@@ -13372,44 +13319,44 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Handles base, jump, and underwater movement.
      */
-    public void setBattleForceMovement(Map<String,Integer> movement) {
-        int baseMove = (int) Math.round(getBaseBattleForceMovement());
-        int jumpMove = getOriginalJumpMP();
-        if (jumpMove == baseMove && getMovementModeAsBattleForceString().length() == 0) {
-            movement.put("j", baseMove);
-        } else {
-            movement.put(getMovementModeAsBattleForceString(), baseMove);
-            if (jumpMove >= baseMove) {
-                movement.put("j", jumpMove);
-            } else if (jumpMove > 0) {
-                movement.put("j", (int) Math.round(jumpMove * 0.66));
-            }
-        }
-        int umu = getAllUMUCount();
-        if (umu > 0) {
-            movement.put("s", umu);
-        }
-    }
+//    public void setBattleForceMovement(Map<String,Integer> movement) {
+//        int baseMove = (int) Math.round(getBaseBattleForceMovement());
+//        int jumpMove = getOriginalJumpMP();
+//        if (jumpMove == baseMove && getMovementModeAsBattleForceString().length() == 0) {
+//            movement.put("j", baseMove);
+//        } else {
+//            movement.put(getMovementModeAsBattleForceString(), baseMove);
+//            if (jumpMove >= baseMove) {
+//                movement.put("j", jumpMove);
+//            } else if (jumpMove > 0) {
+//                movement.put("j", (int) Math.round(jumpMove * 0.66));
+//            }
+//        }
+//        int umu = getAllUMUCount();
+//        if (umu > 0) {
+//            movement.put("s", umu);
+//        }
+//    }
 
     /**
      * Doubles base movement. Aero overrides this.
      */
-    public void setAlphaStrikeMovement(Map<String,Integer> movement) {
-        int baseMove = (int) Math.round(getBaseBattleForceMovement() * 2);
-        int jumpMove = getOriginalJumpMP();
-        if (jumpMove == baseMove) {
-            movement.put("j", baseMove);
-        } else {
-            movement.put(getMovementModeAsBattleForceString(), baseMove);
-            if (jumpMove > 0) {
-                movement.put("j", jumpMove * 2);
-            }
-        }
-        int umu = getAllUMUCount();
-        if (umu > 0) {
-            movement.put("s", umu * 2);
-        }
-    }
+//    public void setAlphaStrikeMovement(Map<String,Integer> movement) {
+//        int baseMove = (int) Math.round(getBaseBattleForceMovement() * 2);
+//        int jumpMove = getOriginalJumpMP();
+//        if (jumpMove == baseMove) {
+//            movement.put("j", baseMove);
+//        } else {
+//            movement.put(getMovementModeAsBattleForceString(), baseMove);
+//            if (jumpMove > 0) {
+//                movement.put("j", jumpMove * 2);
+//            }
+//        }
+//        int umu = getAllUMUCount();
+//        if (umu > 0) {
+//            movement.put("s", umu * 2);
+//        }
+//    }
 
     public int getBattleForceArmorPoints() {
         return (int) Math.round(getBattleForceArmorPointsRaw());
@@ -13801,23 +13748,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
-    }
-
-    public int getBattleForceSize() {
-        // the default BF Size is for ground Combat elements. Other types will
-        // need to override this
-        // The tables are on page 356 of StartOps
-        if (getWeight() < 40) {
-            return 1;
-        }
-        if (getWeight() < 60) {
-            return 2;
-        }
-        if (getWeight() < 80) {
-            return 3;
-        }
-
-        return 4;
     }
 
     @Override

@@ -14,7 +14,7 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
@@ -58,6 +58,6 @@ public class CLImprovedAC2 extends ACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted ignore) {
-        return range == BattleForceElement.SHORT_RANGE ? 0.132 : 0.2;
+        return range == AlphaStrikeElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

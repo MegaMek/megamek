@@ -18,7 +18,7 @@ import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BombastLaserWeaponHandler;
 import megamek.server.Server;
@@ -82,7 +82,7 @@ public class ISBombastLaser extends LaserWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= BattleForceElement.MEDIUM_RANGE) {
+        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
             return 1.02;
         } else {
             return 0;

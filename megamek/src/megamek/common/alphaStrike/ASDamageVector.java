@@ -68,7 +68,7 @@ public class ASDamageVector {
      * does not check if unused ranges happen to contain damage values of more than null, only if this
      * ASDamageVector was constructed to include the given range.
      */
-    public boolean usesDamage(BattleForceElement.ASRange range) {
+    public boolean usesDamage(ASRange range) {
         switch (range) {
             case EXTREME:
                 return rangeBands == 4;
@@ -82,7 +82,7 @@ public class ASDamageVector {
     }
 
     /** Returns the ASDamage of this ASDamageVector for the given range, so the S, M, L, or E damage. */
-    public ASDamage getDamage(BattleForceElement.ASRange range) {
+    public ASDamage getDamage(ASRange range) {
         switch (range) {
             case EXTREME:
                 return E;
@@ -107,6 +107,7 @@ public class ASDamageVector {
     }
 
     /**
+     *
      * Creates an ASDamageVector for special damage (e.g. IF2) from the given double value. 
      * The value is rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage.

@@ -14,7 +14,8 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.ASRange;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;
@@ -45,6 +46,7 @@ import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 // TODO add XML support back in.
@@ -671,13 +673,13 @@ public class WeaponType extends EquipmentType {
         if (range <= getLongRange()) {
             //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
             if (getDamage() == DAMAGE_VARIABLE
-                    && range == BattleForceElement.MEDIUM_RANGE
-                    && getLongRange() < BattleForceElement.LONG_RANGE) {
-                damage = getDamage(BattleForceElement.LONG_RANGE);
+                    && range == AlphaStrikeElement.MEDIUM_RANGE
+                    && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
+                damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
             }
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
             if (getToHitModifier() != 0) {
@@ -731,6 +733,32 @@ public class WeaponType extends EquipmentType {
     /** Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat. */
     public int getAlphaStrikeHeat() {
         return getHeat();
+    }
+
+    /**
+     * Returns the AlphaStrike conversion damage value of the weapon for the given range.
+     * See AlphaStrike Companion pp.104-114.
+     *
+     * @param range the range band
+     * @return The AlphaStrike conversion damage
+     */
+    public BigDecimal getAlphaStrikeDamage(ASRange range) {
+        return BigDecimal.ZERO;
+    }
+
+    /**
+     * Returns the AlphaStrike conversion damage value of the weapon for the given range.
+     * May take into account a given linked equipment such as Artemis IV if applicable -
+     * this depends on individual weapon types overriding this method. If not overridden,
+     * will return the value of {@link #getAlphaStrikeDamage(ASRange)}.
+     * See AlphaStrike Companion pp.104-114.
+     *
+     * @param range the range band
+     * @param linkedEquipment a linked equipment influencing the damage (Artemis, PPC Cap)
+     * @return The AlphaStrike conversion damage
+     */
+    public BigDecimal getAlphaStrikeDamage(ASRange range, Mounted linkedEquipment) {
+        return getAlphaStrikeDamage(range);
     }
     
     /** Returns true if this weapon type can be used for LRM-type indirect fire. */

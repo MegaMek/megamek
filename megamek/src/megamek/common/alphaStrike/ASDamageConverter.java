@@ -28,8 +28,8 @@ import megamek.common.weapons.other.CLFussilade;
 
 import java.util.*;
 
-import static megamek.common.alphaStrike.BattleForceElement.*;
 import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 
 final class ASDamageConverter {
 
@@ -173,7 +173,7 @@ final class ASDamageConverter {
                 } else {
                     result.addSPA(MTAS, 1);
                 }
-                continue;
+//                continue;
             }
 
             if (weapon.hasFlag(WeaponType.F_TSEMP)) {
@@ -226,7 +226,7 @@ final class ASDamageConverter {
                             }
                         }
                     }
-                    System.out.println("Ammo " + weapon.getName() + ammoCount + " / " + weaponsForAmmo);
+//                    System.out.println("Ammo " + weapon.getName() + ammoCount + " / " + weaponsForAmmo);
 
                     ammoForWeapon.put(weapon.getName(), (ammoCount / weaponsForAmmo / divisor) >= 10);
                 }
@@ -295,7 +295,7 @@ final class ASDamageConverter {
                 }
                 for (int r = 0; r < result.rangeBands; r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
-                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": " + dam + " Mul: " + damageModifier);
+//                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": " + dam + " Mul: " + damageModifier);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
                         result.weaponLocations[loc].addDamage(r, dam);
@@ -392,6 +392,7 @@ final class ASDamageConverter {
                 } else if ((spa == LRM) || (spa == AC) || (spa == IATM)) {
                     result.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, result.rangeBands));
                 } else if ((spa == FLK) || (spa == TOR)) {
+//                    System.out.println(spa.toString() + ": " + dmg);
                     result.addSPA(spa, ASDamageVector.createNormRndDmg(dmg, result.rangeBands));
                 } else if (spa == REL) {
                     result.addSPA(spa);
@@ -587,6 +588,7 @@ final class ASDamageConverter {
         double nonRounded = element.weaponLocations[0].standardDamage.get(RANGE_BAND_MEDIUM);
 //        System.out.println("Total M damage before heat adjust: " + nonRounded);
         element.overheat = Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4);
+//        System.out.println("Total M damage before heat adjust: " + nonRounded);
 
         // Determine OVL from long range damage and heat
         if (element.overheat > 0 && element.usesOVL()) {
@@ -607,7 +609,7 @@ final class ASDamageConverter {
         double rearHeat = getHeatGeneration(entity, element,true, false);
         double rearAdjustment = rearHeat - 4 > heatCapacity ? heatCapacity / (rearHeat - 4) : 1;
         for (int loc = 0; loc < element.weaponLocations.length; loc++) {
-            BattleForceElement.WeaponLocation wloc = element.weaponLocations[loc];
+            AlphaStrikeElement.WeaponLocation wloc = element.weaponLocations[loc];
             double adjustment = element.locationNames[loc].equals("REAR") ? rearAdjustment : frontadjustment;
             for (int i = 0; i < Math.min(maxAdjustmentRange, wloc.standardDamage.size()); i++) {
                 wloc.standardDamage.set(i, heatAdjust(wloc.standardDamage.get(i), adjustment));
@@ -631,8 +633,14 @@ final class ASDamageConverter {
      * Use only for determining if a unit has OV or OVL.
      */
     private static int heatDelta(double damage, int heatCapacity, double heat) {
+//        System.out.println("Heat Delta:");
+//        System.out.println("Damage: " + damage);
+//        System.out.println("Heat Capacity: " + heatCapacity);
+//        System.out.println("Heat: " + heat);
         int roundedUp = ASConverter.roundUp(roundUpToTenth(damage));
         int roundedUpAdjustedL = ASConverter.roundUp(roundUpToTenth(damage * heatCapacity / (heat - 4)));
+//        System.out.println("Raw: " + (damage * heatCapacity / (heat - 4)));
+//        System.out.println("RoundedUpAdjusted: " + roundedUpAdjustedL);
         return roundedUp - roundedUpAdjustedL;
     }
 
@@ -654,7 +662,15 @@ final class ASDamageConverter {
 
     /** Returns the given number, rounded up to the nearest tenth, based on the second decimal only. */
     public static double roundUpToTenth(double number) {
-        return 0.1 * ASConverter.roundUp(number * 10);
+        // return 0.1 * ASConverter.roundUp(number * 10);
+        // simply multiplying by 10, rounding up and dividing by 10 fails for some values due
+        // to rounding errors, e.g. 3.01 will not be rounded up to 3.1!
+        double intermediate = number * 100; // 301
+        int lastDigit = (int) (intermediate % 10);
+        if (lastDigit != 0) { // 1
+            intermediate += 10 - lastDigit; // 310
+        }
+        return intermediate / 100; // 3.1 or 3.099999999999
     }
 
     private static int getRearLocation(AlphaStrikeElement element) {

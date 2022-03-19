@@ -37,6 +37,7 @@ public class ASPointValueConverter {
         report.addSubHeader("Point Value:");
 
         if (element.isGround()) {
+            // Damage and OV
             double dmgS = getPointValueSDamage(element);
             double dmgM = getPointValueMDamage(element);
             double dmgL = getPointValueLDamage(element);
@@ -53,6 +54,7 @@ public class ASPointValueConverter {
                 report.addLine("Overheat", "+ " + (1 + 0.5 * (element.getOverheat() - 1)), "= ", offensiveValue);
             }
 
+            // Offensive SPA and Blanket Modifier
             offensiveValue += getGroundOffensiveSPAMod(conversionData);
             report.addLine("", "= ", offensiveValue);
             double blanketMod = getGroundOffensiveBlanketMod(conversionData);
@@ -61,6 +63,7 @@ public class ASPointValueConverter {
                     String.format(Locale.US, "%1$,.1f x %2$,.1f", offensiveValue, blanketMod),
                     "= ", offensiveValue);
 
+            // Defensive value, movement
             report.addEmptyLine();
             double defensiveValue = 0.125 * getHighestMove(element);
             report.addLine("Movement", getHighestMove(element) + " / 8", "= " + defensiveValue);
@@ -69,6 +72,8 @@ public class ASPointValueConverter {
                 defensiveValue += 0.5;
                 report.addLine("Jump-capable", "+ 0.5", "= ", defensiveValue);
             }
+
+            // Defensive SPA and DIR
             defensiveValue += getGroundDefensiveSPAMod(conversionData);
             report.addLine("", "= ", defensiveValue);
 
@@ -78,16 +83,18 @@ public class ASPointValueConverter {
             double subTotal = offensiveValue + defensiveValue;
             report.addLine("Subtotal", "= ", subTotal);
 
-            double bonus = agileBonus(element);
-            if (c3Bonus(conversionData)) {
-
-            }
-            bonus += c3Bonus(conversionData) ? 0.05 * subTotal : 0;
-
-            bonus -= subTotal * brawlerMalus(element);
+            // Agile, C3, Brawler
+            double bonus = agileBonus(conversionData);
+            bonus += c3Bonus(conversionData, subTotal);
+            bonus -= brawlerMalus(conversionData, subTotal);
             subTotal += bonus;
-            subTotal += forceBonus(element);
-            return Math.max(1, (int)Math.round(subTotal));
+
+            // Force Bonus
+            subTotal = addForceBonus(conversionData, subTotal);
+
+            int pointValue = Math.max(1, (int) Math.round(subTotal));
+            report.addLine("Final Point Value", "round normal", "= " + pointValue);
+            return pointValue;
 
         } else if (element.isAnyTypeOf(AF, CF)
                 || (element.isType(SV) && (entity instanceof Aero))) {
@@ -112,7 +119,7 @@ public class ASPointValueConverter {
             defensiveValue += getAeroDefensiveFactors(element);
 
             double subTotal = offensiveValue + defensiveValue;
-            subTotal += forceBonus(element);
+            subTotal = addForceBonus(conversionData, subTotal);
 
             return Math.max(1, (int)Math.round(subTotal));
         }
@@ -142,16 +149,16 @@ public class ASPointValueConverter {
         double result = 0;
         result += processSPAMod("Offensive SPA", conversionData, TAG, e -> 0.5);
         result += processSPAMod("Offensive SPA", conversionData, LTAG, e -> 0.25);
-        result += processSPAMod("Offensive SPA", conversionData, SNARC, e -> (double) element.getSPA(SNARC));
-        result += processSPAMod("Offensive SPA", conversionData, INARC, e -> (double) element.getSPA(INARC));
-        result += processSPAMod("Offensive SPA", conversionData, CNARC, e -> 0.5 * (double) element.getSPA(CNARC));
+        result += processSPAMod("Offensive SPA", conversionData, SNARC, e -> (double) (int) element.getSPA(SNARC));
+        result += processSPAMod("Offensive SPA", conversionData, INARC, e -> (double) (int) element.getSPA(INARC));
+        result += processSPAMod("Offensive SPA", conversionData, CNARC, e -> 0.5 * (int) element.getSPA(CNARC));
         result += processSPAMod("Offensive SPA", conversionData, TSM, e -> 1.0);
         result += processSPAMod("Offensive SPA", conversionData, ECS, e -> 0.25);
         result += processSPAMod("Offensive SPA", conversionData, MEL, e -> 0.5);
-        result += processSPAMod("Offensive SPA", conversionData, MDS, e -> (double) element.getSPA(MDS));
-        result += processSPAMod("Offensive SPA", conversionData, MTAS, e -> (double) element.getSPA(MTAS));
-        result += processSPAMod("Offensive SPA", conversionData, BTAS, e -> 0.25 * (double) element.getSPA(BTAS));
-        result += processSPAMod("Offensive SPA", conversionData, TSEMP, e -> 5 * (double) element.getSPA(TSEMP));
+        result += processSPAMod("Offensive SPA", conversionData, MDS, e -> (double) (int) element.getSPA(MDS));
+        result += processSPAMod("Offensive SPA", conversionData, MTAS, e -> (double) (int) element.getSPA(MTAS));
+        result += processSPAMod("Offensive SPA", conversionData, BTAS, e -> 0.25 * (int) element.getSPA(BTAS));
+        result += processSPAMod("Offensive SPA", conversionData, TSEMP, e -> 5 * (double) (int) element.getSPA(TSEMP));
         result += processSPAMod("Offensive SPA", conversionData, TSEMPO, e -> Math.min(5.0, (int) element.getSPA(TSEMPO)));
         result += processSPAMod("Offensive SPA", conversionData, BT, e -> 0.5 * getHighestMove(element) * element.getSize());
         result += processSPAMod("Offensive SPA", conversionData, IATM, e -> (double) ((ASDamageVector) element.getSPA(IATM)).L.damage);
@@ -457,8 +464,11 @@ public class ASPointValueConverter {
      * Determines the Brawler Malus, AlphaStrike Companion Errata v1.4, p.17
      * This is 0 if not applicable.
      */
-    private static double brawlerMalus(AlphaStrikeElement element) {
+    private static double brawlerMalus(ASConverter.ConversionData conversionData, double subTotal) {
+        CalculationReport report = conversionData.conversionReport;
+        AlphaStrikeElement element = conversionData.element;
         int move = getHighestMove(element);
+        double multiplier = 0;
         if (move >= 2 && !element.hasAnySPAOf(BT, ARTS, C3BSM, C3BSS, C3EM,
                 C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
                 ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)) {
@@ -469,21 +479,27 @@ public class ASPointValueConverter {
             boolean onlyShortRange = (dmgM + dmgL) == 0 && (dmgS > 0);
             boolean onlyShortMediumRange = (dmgL == 0) && (dmgS + dmgM > 0);
             if ((move >= 6) && (move <= 10) && onlyShortRange) {
-                return 0.25;
+                multiplier = 0.25;
             } else if ((move < 6) && onlyShortRange) {
-                return 0.5;
+                multiplier = 0.5;
             } else if ((move < 6) && onlyShortMediumRange) {
-                return 0.25;
+                multiplier = 0.25;
             }
         }
-        return 0;
+        double malus = roundToHalf(subTotal * multiplier);
+        if (multiplier != 0) {
+            report.addLine("Brawler", "- " + malus, "");
+        }
+        return roundToHalf(multiplier * subTotal);
     }
 
     /**
      * Determines the Agile Bonus, AlphaStrike Companion Errata v1.4, p.17
      * This is 0 if not applicable.
      */
-    private static double agileBonus(AlphaStrikeElement element) {
+    private static double agileBonus(ASConverter.ConversionData conversionData) {
+        CalculationReport report = conversionData.conversionReport;
+        AlphaStrikeElement element = conversionData.element;
         double result = 0;
         if (element.getTMM() >= 2) {
             double dmgS = element.isMinimalDmgS() ? 0.5 : element.getDmgS();
@@ -494,30 +510,76 @@ public class ASPointValueConverter {
                 result = (element.getTMM() - 2) * dmgS;
             }
         }
+//        double bonus = roundToHalf(subTotal * 0.05);
+        if (result != 0) {
+            report.addLine("Agile", "+ " + result, "");
+        }
+//        return roundToHalf(subTotal * 0.05);
         return roundToHalf(result);
     }
 
     /** C3 Bonus, AlphaStrike Companion Errata v1.4, p.17 */
-    private static boolean c3Bonus(ASConverter.ConversionData conversionData) {
+    private static double c3Bonus(ASConverter.ConversionData conversionData, double subTotal) {
+        CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
         if (element.hasAnySPAOf(C3BSM, C3BSS, C3EM, C3I, C3M, C3S, AC3, NC3, NOVA)) {
-            return true;
+            double bonus = roundToHalf(subTotal * 0.05);
+            report.addLine("C3 Bonus", "+ " + bonus, "");
+            return roundToHalf(subTotal * 0.05);
+        } else {
+            return 0;
         }
-        return false;
     }
 
-    private static double forceBonus(AlphaStrikeElement element) {
-        double result = element.hasSPA(AECM) ? 3 : 0;
-        result += element.hasSPA(BH) ? 2 : 0;
-        result += element.hasSPA(C3RS) ? 2 : 0;
-        result += element.hasSPA(ECM) ? 2 : 0;
-        result += element.hasSPA(LECM) ? 0.5 : 0;
-        result += element.hasSPA(MHQ) ? (int)element.getSPA(MHQ) : 0;
-        result += element.hasSPA(PRB) ? 1 : 0;
-        result += element.hasSPA(LPRB) ? 1 : 0;
-        result += element.hasSPA(RCN) ? 2 : 0;
-        result += element.hasSPA(TRN) ? 2 : 0;
-        return result;
+    /** Adds the force bonus to the current subTotal and returns the new subTotal. */
+    private static double addForceBonus(ASConverter.ConversionData conversionData, double subTotal) {
+        CalculationReport report = conversionData.conversionReport;
+        AlphaStrikeElement element = conversionData.element;
+
+        String calculation = "";
+        if (element.hasSPA(AECM)) {
+            subTotal += 3;
+            calculation += "+ 3 (AECM) ";
+        }
+        if (element.hasSPA(BH)) {
+            subTotal += 2;
+            calculation += "+ 2 (BH) ";
+        }
+        if (element.hasSPA(C3RS)) {
+            subTotal += 2;
+            calculation += "+ 2 (C3RS) ";
+        }
+        if (element.hasSPA(ECM)) {
+            subTotal += 2;
+            calculation += "+ 2 (ECM) ";
+        }
+        if (element.hasSPA(RCN)) {
+            subTotal += 2;
+            calculation += "+ 2 (RCN) ";
+        }
+        if (element.hasSPA(TRN)) {
+            subTotal += 2;
+            calculation += "+ 2 (TRN) ";
+        }
+        if (element.hasSPA(LPRB)) {
+            subTotal += 1;
+            calculation += "+ 1 (LPRB) ";
+        }
+        if (element.hasSPA(PRB)) {
+            subTotal += 1;
+            calculation += "+ 1 (PRB) ";
+        }
+        if (element.hasSPA(LECM)) {
+            subTotal += 0.5;
+            calculation += "+ 0.5 (LECM) ";
+        }
+        if (element.hasSPA(MHQ)) {
+            int mhqValue = (int) element.getSPA(MHQ);
+            subTotal += mhqValue;
+            calculation += "+ " + mhqValue + " (MHQ) ";
+        }
+        report.addLine("Force Bonus", calculation, "= ", subTotal);
+        return subTotal;
     }
 
     private static double getPointValueSDamage(AlphaStrikeElement element) {
@@ -525,7 +587,7 @@ public class ASPointValueConverter {
     }
 
     private static double getPointValueMDamage(AlphaStrikeElement element) {
-        return element.isMinimalDmgM() ? 1 : element.getDmgM();
+        return element.isMinimalDmgM() ? 0.5 : element.getDmgM();
     }
 
     private static double getPointValueLDamage(AlphaStrikeElement element) {

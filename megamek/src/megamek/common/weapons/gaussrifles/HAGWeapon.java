@@ -18,7 +18,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -60,21 +60,21 @@ public abstract class HAGWeapon extends GaussWeapon {
     @Override
     public double getBattleForceDamage(int range) {
         if (rackSize == 20) {
-            if (range == BattleForceElement.SHORT_RANGE) {
+            if (range == AlphaStrikeElement.SHORT_RANGE) {
                 return 1.328;
-            } else if (range <= BattleForceElement.LONG_RANGE) {
+            } else if (range <= AlphaStrikeElement.LONG_RANGE) {
                 return 1.2;
             }
         } else if (rackSize == 30) {
-            if (range == BattleForceElement.SHORT_RANGE) {
+            if (range == AlphaStrikeElement.SHORT_RANGE) {
                 return 1.992;
-            } else if (range <= BattleForceElement.LONG_RANGE) {
+            } else if (range <= AlphaStrikeElement.LONG_RANGE) {
                 return 1.8;
             }
         } else {
-            if (range == BattleForceElement.SHORT_RANGE) {
+            if (range == AlphaStrikeElement.SHORT_RANGE) {
                 return 2.656;
-            } else if (range <= BattleForceElement.LONG_RANGE) {
+            } else if (range <= AlphaStrikeElement.LONG_RANGE) {
                 return 2.4;
             }
         }

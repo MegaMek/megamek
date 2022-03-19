@@ -465,21 +465,6 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public int getBattleForceSize() {
-        // The tables are on page 356 of StartOps
-        if (getWeight() < 500000) {
-            return 1;
-        }
-        if (getWeight() < 800000) {
-            return 2;
-        }
-        if (getWeight() < 1200000) {
-            return 3;
-        }
-        return 4;
-    }
-
-    @Override
     public int getBattleForceStructurePoints() {
         return (int) Math.ceil(this.getSI() * 0.66);
     }

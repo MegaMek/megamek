@@ -2483,28 +2483,10 @@ public class Jumpship extends Aero {
         return true;
     }
     
-    @Override
     public void setAlphaStrikeMovement(Map<String,Integer> moves) {
         moves.put("k", (int) (getStationKeepingThrust() * 10));
     }
 
-    @Override
-    public int getBattleForceSize() {
-        // The tables are on page 356 of StartOps
-        if (getWeight() < 100000) {
-            return 1;
-        }
-        if (getWeight() < 300000) {
-            return 2;
-        }
-        return 3;
-    }
-
-    @Override
-    public int getBattleForceStructurePoints() {
-        return 1;
-    }
-    
     @Override
     public int getNumBattleForceWeaponsLocations() {
         return 4;

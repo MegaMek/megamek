@@ -80,15 +80,18 @@ final class ASArmStrConverter {
             }
 
             // Some empty locations report -1 armor!
+            if (entity.getArmor(loc) > 0) {
             armorPoints += Math.max(0, armorMod * entity.getArmor(loc));
             report.addLine(entity.getLocationAbbr(loc),
                     calculation.isBlank() ? "" : calculation + entity.getArmor(loc),
-                    "" + entity.getArmor(loc));
-            if (entity.hasRearArmor(loc)) {
+                    "", + armorMod * entity.getArmor(loc));
+
+            }
+            if (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) > 0)) {
                 armorPoints += armorMod * entity.getArmor(loc, true);
                 report.addLine(entity.getLocationAbbr(loc) + "(R)",
                         calculation.isBlank() ? "" : calculation + entity.getArmor(loc, true),
-                        "" + entity.getArmor(loc, true));
+                        "", armorMod * entity.getArmor(loc, true));
             }
         }
 

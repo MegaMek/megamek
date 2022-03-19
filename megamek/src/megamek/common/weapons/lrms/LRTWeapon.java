@@ -24,7 +24,7 @@ import static megamek.common.MountedHelper.isArtemisProto;
 import static megamek.common.MountedHelper.isArtemisV;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Mounted;
@@ -80,24 +80,24 @@ public abstract class LRTWeapon extends MissileWeapon {
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (isClan()) {
             if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
-                return (range <= BattleForceElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
             } else if (isArtemisV(fcs)) {
-                return (range <= BattleForceElement.LONG_RANGE) ? 0.42 * rackSize / 5 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.42 * rackSize / 5 : 0;
             } else {
-                return (range <= BattleForceElement.LONG_RANGE) ? 0.3  * rackSize / 5 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3  * rackSize / 5 : 0;
             }
         } else {
             if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
-                if (range == BattleForceElement.SHORT_RANGE) {
+                if (range == AlphaStrikeElement.SHORT_RANGE) {
                     return 0.2 * rackSize / 5;
                 } else {
-                    return (range <= BattleForceElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
+                    return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
                 }
             } else {
-                if (range == BattleForceElement.SHORT_RANGE) {
+                if (range == AlphaStrikeElement.SHORT_RANGE) {
                     return 0.15 * rackSize / 5;
                 } else {
-                    return (range <= BattleForceElement.LONG_RANGE) ? 0.3 * rackSize / 5 : 0;
+                    return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3 * rackSize / 5 : 0;
                 }
             }
         }

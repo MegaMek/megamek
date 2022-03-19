@@ -24,7 +24,7 @@ import static megamek.common.MountedHelper.isArtemisProto;
 import static megamek.common.MountedHelper.isArtemisV;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Mounted;
@@ -64,7 +64,7 @@ public abstract class SRTWeapon extends MissileWeapon {
     
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range >= BattleForceElement.LONG_RANGE) {
+        if (range >= AlphaStrikeElement.LONG_RANGE) {
             return 0;
         }
         if (isClan()) {

@@ -17,8 +17,8 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceElement;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -280,7 +280,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     Entity entity = new MechFileParser(unit.getSourceFile(),
                             unit.getEntryName()).getEntity();
 
-                    BattleForceElement bfe = new BattleForceElement(entity);
+                    AlphaStrikeElement bfe = ASConverter.convert(entity);
                     bfe.writeCsv(fw);
                 }
             } catch (Exception e) {
@@ -320,7 +320,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     Entity entity = new MechFileParser(unit.getSourceFile(),
                             unit.getEntryName()).getEntity();
 
-                    AlphaStrikeElement ase = new AlphaStrikeElement(entity);
+                    AlphaStrikeElement ase = ASConverter.convert(entity);
                     ase.writeCsv(bw);
                 }
             } catch (Exception ex) {

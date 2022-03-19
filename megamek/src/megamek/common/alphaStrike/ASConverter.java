@@ -20,14 +20,12 @@ package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
-import megamek.client.ui.swing.calculationReport.HTMLCalculationReport;
 import megamek.common.*;
-import megamek.common.alphaStrike.BattleForceElement.WeaponLocation;
 import org.apache.logging.log4j.LogManager;
+import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 
 import java.util.Objects;
 
-import static megamek.common.alphaStrike.BattleForceElement.RANGEBANDS_SMLE;
 
 /**
  * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics
@@ -102,7 +100,7 @@ public final class ASConverter {
         ASSpecialAbilityConverter.finalizeSpecials(element);
         element.points = ASPointValueConverter.getPointValue(conversionData);
         ASPointValueConverter.adjustPVforSkill(element);
-        System.out.println(conversionReport);
+//        System.out.println(conversionReport);
         return element;
     }
 
@@ -171,7 +169,7 @@ public final class ASConverter {
         if (entity instanceof Aero) {
             result.rangeBands = RANGEBANDS_SMLE;
         }
-        result.weaponLocations = new WeaponLocation[entity.getNumBattleForceWeaponsLocations()];
+        result.weaponLocations = new AlphaStrikeElement.WeaponLocation[entity.getNumBattleForceWeaponsLocations()];
         result.locationNames = new String[result.weaponLocations.length];
         for (int loc = 0; loc < result.locationNames.length; loc++) {
             result.weaponLocations[loc] = result.new WeaponLocation();

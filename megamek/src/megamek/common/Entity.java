@@ -9805,21 +9805,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Whether this type of unit can perform charges
+     * @return Whether this type of unit can perform charges
      */
     public boolean canCharge() {
         return !isImmobile() && (getWalkMP() > 0) && !isStuck() && !isProne();
     }
 
     /**
-     * Whether this type of unit can perform DFA attacks
+     * @return Whether this type of unit can perform DFA attacks
      */
     public boolean canDFA() {
         return !isImmobile() && (getJumpMP() > 0) && !isStuck() && !isProne();
     }
 
     /**
-     * Whether this type of unit can perform Ramming attacks
+     * @return Whether this type of unit can perform Ramming attacks
      */
     public boolean canRam() {
         return false;

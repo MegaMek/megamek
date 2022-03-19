@@ -1190,10 +1190,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 if (onGenerate != null) {
                     onGenerate.accept(forceDesc);
                 }
-            } catch (InterruptedException ex) {
-                //Ignore
-            } catch (ExecutionException e) {
-                e.getCause().printStackTrace();
+            } catch (InterruptedException ignored) {
+
+            } catch (ExecutionException ex) {
+                LogManager.getLogger().error("", ex);
             } finally {
                 btnGenerate.setEnabled(true);
             }

@@ -30077,7 +30077,6 @@ public class Server implements Runnable {
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
-
     }
 
     /**
@@ -30132,7 +30131,6 @@ public class Server implements Runnable {
      * @param connIndex the id for connection that received the packet.
      */
     private void receiveEntityNovaNetworkModeChange(Packet c, int connIndex) {
-
         try {
             int entityId = c.getIntValue(0);
             String networkID = c.getObject(1).toString();
@@ -30147,9 +30145,8 @@ public class Server implements Runnable {
             // by the clients possible input.
             e.setNewRoundNovaNetworkString(networkID);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
-
     }
 
     /**
@@ -34030,7 +34027,7 @@ public class Server implements Runnable {
                     guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon
                             .get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    LogManager.getLogger().error("", ex);
                 }
                 guerrilla.setDeployed(true);
                 guerrilla.setDone(true);
@@ -35291,8 +35288,8 @@ public class Server implements Runnable {
     public String getHost() {
         try {
             return InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return "";
         }
     }

@@ -16,8 +16,8 @@
 package megamek.client;
 
 import com.thoughtworks.xstream.XStream;
-import megamek.MegaMek;
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -42,7 +42,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
-import megamek.server.Server;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
@@ -273,11 +272,11 @@ public class Client implements IClientCommandHandler {
             try {
                 log.close();
             } catch (Exception e) {
-                LogManager.getLogger().error("Failed to close the logfile", e);
+                LogManager.getLogger().error("Failed to close the client game log file", e);
             }
         }
-        System.out.println("client: died");
-        System.out.flush();
+
+        LogManager.getLogger().info("Client: Shutdown complete");
     }
 
     /**
@@ -289,6 +288,7 @@ public class Client implements IClientCommandHandler {
             if (connected) {
                 die();
             }
+
             if (!host.equals(MMConstants.LOCALHOST)) {
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
             }
@@ -303,12 +303,6 @@ public class Client implements IClientCommandHandler {
     }
 
     private void initGameLog() {
-        // log = new GameLog(
-        // PreferenceManager.getClientPreferences().getGameLogFilename(),
-        // false,
-        // (new
-        // Integer(PreferenceManager.getClientPreferences().getGameLogMaxSize()).longValue()
-        // * 1024 * 1024) );
         log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
         log.append("<html><body>");
     }
@@ -1428,7 +1422,7 @@ public class Client implements IClientCommandHandler {
                 receivePlayerInfo(c);
                 break;
             case Packet.COMMAND_PLAYER_REMOVE:
-                for (Iterator<Client> botIterator = bots.values().iterator(); botIterator.hasNext();) {
+                for (Iterator<Client> botIterator = bots.values().iterator(); botIterator.hasNext(); ) {
                     Client bot = botIterator.next();
                     if (bot.localPlayerNumber == c.getIntValue(0)) {
                         botIterator.remove();
@@ -1605,26 +1599,27 @@ public class Client implements IClientCommandHandler {
                 String sFinalFile = (String) c.getObject(0);
                 String sLocalPath = (String) c.getObject(2);
                 String localFile = sLocalPath + File.separator + sFinalFile;
-                try {
-                    File sDir = new File(sLocalPath);
-                    if (!sDir.exists()) {
-                        sDir.mkdir();
+                File sDir = new File(sLocalPath);
+                if (!sDir.exists()) {
+                    try {
+                        if (!sDir.mkdir()) {
+                            LogManager.getLogger().error("Failed to create savegames directory.");
+                            return;
+                        }
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error("Unable to create savegames directory.", ex);
                     }
-                } catch (Exception e) {
-                    System.err.println("Unable to create savegames directory");
                 }
-                try {
 
-                    BufferedOutputStream fout = new BufferedOutputStream(new FileOutputStream(localFile));
-                    ArrayList<Integer> data = (ArrayList<Integer>) c.getObject(1);
+                try (OutputStream os = new FileOutputStream(localFile);
+                     BufferedOutputStream bos = new BufferedOutputStream(os)) {
+                    List<Integer> data = (List<Integer>) c.getObject(1);
                     for (Integer d : data) {
-                        fout.write(d);
+                        bos.write(d);
                     }
-                    fout.flush();
-                    fout.close();
-                } catch (Exception e) {
-                    System.err.println("Unable to save file: " + sFinalFile);
-                    e.printStackTrace();
+                    bos.flush();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Unable to save file " + sFinalFile, ex);
                 }
                 break;
             case Packet.COMMAND_LOAD_SAVEGAME:
@@ -1632,13 +1627,12 @@ public class Client implements IClientCommandHandler {
                 try {
                     File f = new File(MMConstants.SAVEGAME_DIR, loadFile);
                     sendLoadGame(f);
-                } catch (Exception e) {
-                    System.err.println("Unable to find the file: " + loadFile);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Unable to load savegame file: " + loadFile, ex);
                 }
                 break;
             case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
-                game.getBoard()
-                        .setSpecialHexDisplayTable((Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
+                game.getBoard().setSpecialHexDisplayTable((Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
                 game.processGameEvent(new GameBoardChangeEvent(this));
                 break;
             case Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES:
@@ -1701,9 +1695,8 @@ public class Client implements IClientCommandHandler {
                 e.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("Failed to process Entity Nova Network mode change", ex);
         }
-
     }
 
     public void sendDominoCFRResponse(MovePath mp) {

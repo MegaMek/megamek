@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import megamek.common.enums.AimingMode;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Protomechs. Level 2 Clan equipment.
@@ -689,8 +690,7 @@ public class Protomech extends Entity {
 
         roll = Compute.d6(2);
         try {
-            PrintWriter pw = PreferenceManager.getClientPreferences()
-                    .getMekHitLocLog();
+            PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
 
             if (pw != null) {
                 pw.print(table);
@@ -699,8 +699,8 @@ public class Protomech extends Entity {
                 pw.print("\t");
                 pw.println(roll);
             }
-        } catch (Throwable thrown) {
-            thrown.printStackTrace();
+        } catch (Throwable t) {
+            LogManager.getLogger().error("", t);
         }
 
         switch (roll) {

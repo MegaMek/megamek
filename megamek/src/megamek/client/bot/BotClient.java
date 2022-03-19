@@ -107,9 +107,9 @@ public abstract class BotClient extends Client {
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
-                    int numOwnedEntities = game.getEntitiesOwnedBy(getLocalPlayer());
-                    System.out.println("BotClient calculated turns, " + getName() + " phase " + e.getOldPhase()
-                            + " " + calculatedTurnsThisPhase + "/" + numOwnedEntities);
+                    LogManager.getLogger().info(String.format("%s: Calculated %d / %d turns for phase %s",
+                            getName(), calculatedTurnsThisPhase,
+                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase()));
                 }
                 calculatedTurnsThisPhase = 0;
             }
@@ -423,7 +423,7 @@ public abstract class BotClient extends Client {
                     break;
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            LogManager.getLogger().error("", t);
         }
     }
 
@@ -1090,12 +1090,10 @@ public abstract class BotClient extends Client {
                                 // hiding;
                                 // Default to stealth armor on in this case
 
-                                if ((known_count == 0)
-                                    || (known_bv < (total_bv / 2))) {
+                                if ((known_count == 0) || (known_bv < (total_bv / 2))) {
                                     new_stealth = 1;
                                 } else {
-                                    if ((known_range / known_count) <= (5 + Compute
-                                            .randomInt(5))) {
+                                    if ((known_range / known_count) <= (5 + Compute.randomInt(5))) {
                                         new_stealth = 0;
                                     } else {
                                         new_stealth = 1;
@@ -1103,8 +1101,7 @@ public abstract class BotClient extends Client {
                                 }
                             }
                             mEquip.setMode(new_stealth);
-                            sendModeChange(check_ent.getId(), check_ent
-                                    .getEquipmentNum(mEquip), new_stealth);
+                            sendModeChange(check_ent.getId(), check_ent.getEquipmentNum(mEquip), new_stealth);
                             break;
                         }
                     }
@@ -1113,11 +1110,11 @@ public abstract class BotClient extends Client {
         }
     }
 
-    private String getRandomBotMessage() {
+    private @Nullable String getRandomBotMessage() {
         String message = "";
 
         try {
-            String scrapFile = "./mmconf/botmessages.txt";
+            String scrapFile = "./mmconf/botmessages.txt"; // TODO : Remove inline file path
             FileInputStream fis = new FileInputStream(scrapFile);
             BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
             while (dis.ready()) {
@@ -1128,17 +1125,14 @@ public abstract class BotClient extends Client {
             }
             dis.close();
             fis.close();
-        }// File not found don't do anything just return a null and allow the
-        // bot to remain silent
-        catch (FileNotFoundException fnfe) {
-            // no chat message found continue on.
+        } catch (FileNotFoundException ignored) {
+            // Don't do anything, just return a null and allow the bot to remain silent
             return null;
-        }// CYA exception
-        catch (Exception ex) {
-            System.err.println("Error while reading ./mmconf/botmessages.txt.");
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error while reading ./mmconf/botmessages.txt", ex);
             return null;
         }
+
         return message;
     }
 
@@ -1267,20 +1261,13 @@ public abstract class BotClient extends Client {
 
         @Override
         public int hashCode() {
-            int result;
-            long temp;
-            result = coords.hashCode();
-            temp = Double.doubleToLongBits(fitness);
-            result = 31 * result + (int) (temp ^ (temp >>> 32));
-            return result;
+            long temp = Double.doubleToLongBits(fitness);
+            return 31 * coords.hashCode() + (int) (temp ^ (temp >>> 32));
         }
 
         @Override
         public String toString() {
-            return "RankedCoords{" +
-                   "coords=" + coords +
-                   ", fitness=" + fitness +
-                   '}';
+            return "RankedCoords{" + "coords=" + coords + ", fitness=" + fitness + '}';
         }
 
         int getX() {

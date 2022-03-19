@@ -2557,17 +2557,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         newEntities.add(newEntity);
                     }
                 }
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
+
             if (!newEntities.isEmpty()) {
                 client().sendAddEntity(newEntities);
             }
         }
     }
     
-    /** Returns a String representing the entities to export to the clipboard. */
+    /**
+     *  @return a String representing the entities to export to the clipboard.
+     */
     private String clipboardString(Collection<Entity> entities) {
         StringBuilder result = new StringBuilder();
         for (Entity entity: entities) {

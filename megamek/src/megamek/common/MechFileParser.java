@@ -84,17 +84,14 @@ public class MechFileParser {
             try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
                 parse(is, f.getName());
             } catch (Exception ex) {
-                System.out.println("Error parsing " + entryName + "!");
-                ex.printStackTrace();
+                LogManager.getLogger().error("", ex);
                 if (ex instanceof EntityLoadingException) {
-                    throw new EntityLoadingException("While parsing file "
-                            + f.getName() + ", " + ex.getMessage());
+                    throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
+                } else {
+                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
                 }
-                throw new EntityLoadingException("Exception from "
-                        + ex.getClass() + ": " + ex.getMessage());
             }
         } else {
-
             // try zip file
             try {
                 ZipFile zFile = new ZipFile(f.getAbsolutePath());
@@ -105,24 +102,22 @@ public class MechFileParser {
             } catch (NullPointerException npe) {
                 throw new NullPointerException();
             } catch (Exception ex) {
-                ex.printStackTrace();
-                throw new EntityLoadingException("Exception from "
-                        + ex.getClass() + ": " + ex.getMessage());
+                LogManager.getLogger().error("", ex);
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
         }
     }
 
-    public MechFileParser(InputStream is, String fileName)
-            throws EntityLoadingException {
+    public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
             parse(is, fileName);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             if (ex instanceof EntityLoadingException) {
                 throw new EntityLoadingException(ex.getMessage());
+            } else {
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
-            throw new EntityLoadingException("Exception from " + ex.getClass()
-                    + ": " + ex.getMessage());
         }
     }
 
@@ -130,8 +125,7 @@ public class MechFileParser {
         return m_entity;
     }
 
-    public void parse(InputStream is, String fileName)
-            throws EntityLoadingException {
+    public void parse(InputStream is, String fileName) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -210,14 +204,11 @@ public class MechFileParser {
      * Automatically add BattleArmorHandles to all OmniMechs.
      */
     public static void postLoadInit(Entity ent) throws EntityLoadingException {
-
         try {
             ent.loadDefaultQuirks();
             ent.loadDefaultCustomWeaponOrder();
-        } catch (Exception e) {
-            System.out.println("Error in postLoadInit for "
-                    + ent.getDisplayName() + "!");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error in postLoadInit for " + ent.getDisplayName(), ex);
         }
 
         // add any sensors to the entity's vector of sensors

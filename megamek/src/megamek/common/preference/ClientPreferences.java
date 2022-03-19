@@ -23,6 +23,7 @@ import megamek.MMConstants;
 import megamek.common.MovePath;
 import megamek.common.util.LocaleParser;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     //region Variable Declarations
@@ -327,12 +328,12 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     protected void setMekHitLocLog() {
         String name = store.getString(MEK_HIT_LOC_LOG);
-        if (name.length() != 0) {
+        if (!name.isEmpty()) {
             try {
                 mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
                 mekHitLocLog.println("Table\tSide\tRoll");
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
                 mekHitLocLog = null;
             }
         }

@@ -47,6 +47,8 @@ public class RATGeneratorEditor extends JFrame {
             "Aerospace", "Space", "None"
     };
 
+    private static final FactionRecord generalFactionDummy = new FactionRecord("General", "Special");
+
     private static RATGenerator rg;
     
     private static Integer[] ERAS;
@@ -172,22 +174,17 @@ public class RATGeneratorEditor extends JFrame {
         if (rg.getFactionList() == null) {
             return;
         }
-        factionChooserForModel.removeAllItems();
+        fillFactionChooser(factionChooserForModel);
+        fillFactionChooser(factionChooserForChassis);
+    }
+
+    private void fillFactionChooser(JComboBox<FactionRecord> combo) {
+        combo.removeAllItems();
+        combo.addItem(generalFactionDummy);
         rg.getFactionList().stream()
                 .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))
-                .forEach(factionChooserForModel::addItem);
-        factionChooserForModel.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
-            if (value == null) {
-                return new JLabel();
-            } else {
-                return new JLabel(value.getName() + " (" + value.getKey() + ")");
-            }
-        });
-        factionChooserForChassis.removeAllItems();
-        rg.getFactionList().stream()
-                .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))
-                .forEach(factionChooserForChassis::addItem);
-        factionChooserForChassis.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+                .forEach(combo::addItem);
+        combo.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
             if (value == null) {
                 return new JLabel();
             } else {

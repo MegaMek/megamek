@@ -22,20 +22,21 @@ import megamek.common.AmmoType;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
+public class InfantrySniperRifleMinolta9000Weapon extends InfantryWeapon {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryRifleMinolta9000Weapon() {
+	public InfantrySniperRifleMinolta9000Weapon() {
 		super();
 
-		name = "Rifle (Minolta 9000 Advanced Sniper System)";
+		name = "Sniper Rifle (Minolta 9000 Advanced Sniper System)";
 		setInternalName(name);
 		addLookupName("InfantryMinolta9000");
 		addLookupName("Minolta 9000 Advanced Sniper System");
+		addLookupName("Rifle (Minolta 9000 Advanced Sniper System)");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 1000;
 		bv = 1.79;

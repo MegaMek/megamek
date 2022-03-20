@@ -36,7 +36,7 @@ public class InfantrySniperRifleSniperWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryBoltActionSniperRifle");
 		addLookupName("Infantry Sniper Rifle");
-		addLookupName("Sniper Rifle (Sniper)");
+		addLookupName("Rifle (Sniper)");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 350;
 		bv = 0.92;

@@ -8532,6 +8532,29 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Tunnel Rat I Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>FC:2-,FS:3-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>FC:2-,FS:3-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>FC:2-,FS:3-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat II Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:2-,Periphery:2</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:2-,Periphery:2</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:2-,Periphery:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>LA:4-,FS:4-</availability>
+	</chassis>
 	<chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
 		<availability>CS:5,WOB:5</availability>
 		<model name='(Standard)'>

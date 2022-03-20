@@ -312,6 +312,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1</availability>
+		<model name='AL-A1'>
+			<availability>LA:2</availability>
+		</model>
+		<model name='AL-D1 &apos;Dokkalfar&apos;'>
+			<availability>LA:1</availability>
+		</model>
+	</chassis>
 	<chassis name='Alliance Space Station' unitType='Space Station'>
 		<availability>IS:1</availability>
 		<model name='(2713)'>

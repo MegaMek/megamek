@@ -280,6 +280,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1</availability>
+		<model name='AL-A1'>
+			<availability>LA:2</availability>
+		</model>
+		<model name='AL-D1 &apos;Dokkalfar&apos;'>
+			<availability>LA:1</availability>
+		</model>
+	</chassis>
 	<chassis name='Aquarius Escort' unitType='Small Craft'>
 		<availability>FWL:6</availability>
 		<model name='(Standard)'>

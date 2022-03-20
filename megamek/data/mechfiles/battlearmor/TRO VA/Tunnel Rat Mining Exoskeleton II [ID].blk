@@ -13,27 +13,27 @@ BattleArmor
 </UnitType>
 
 <Name>
-Tunnel Rat IV Mining Exoskeleton
+Tunnel Rat II Mining Exoskeleton
 </Name>
 
 <Model>
-[Armored Glove/LMG]
+[Industrial Drill]
 </Model>
 
 <mul id:>
-7215
+7219
 </mul id:>
 
 <year>
-3079
+3058
 </year>
 
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <motion_type>
-Jump
+Leg
 </motion_type>
 
 <cruiseMP>
@@ -45,19 +45,18 @@ Jump
 </armor_type>
 
 <armor_tech>
-5
+-1
 </armor_tech>
 
 <Squad Equipment>
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-ISBAExtendedLifeSupport:Body
 BASearchlight:Body
-ISBALightMachineGun:RA
+BABasicManipulator:LA
+BAIndustrialDrill:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -73,7 +72,7 @@ ISBALightMachineGun:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Jihad
+TRO Vehicle Annex (r) - Clan Invasion
 </source>
 
 <chassis>
@@ -81,11 +80,11 @@ biped
 </chassis>
 
 <jumpingMP>
-2
+0
 </jumpingMP>
 
 <armor>
-2
+1
 </armor>
 
 <Trooper Count>

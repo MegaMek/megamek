@@ -14701,6 +14701,54 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Tunnel Rat I Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat II Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-,Periphery:4</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat III Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:3-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:3-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:3-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat IV Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:3</availability>
+		<model name='[Armored Glove/GL]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='[Armored Glove/LMG]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='[Battle Claw/GL]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='[Battle Claw/LMG]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:3-</availability>
+	</chassis>
 	<chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
 		<availability>CS:4,WOB:4</availability>
 		<model name='(Original)'>

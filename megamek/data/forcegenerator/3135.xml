@@ -7386,6 +7386,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Gladiator Exoskeleton' unitType='BattleArmor'>
+		<availability>MH:2</availability>
+		<model name='(Standard) [AG]' mechanized='false'>
+			<availability>MH:3</availability>
+		</model>
+		<model name='(Standard) [BC/ID]' mechanized='false'>
+			<availability>MH:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>
 		<availability>LA:3,MH:3,MERC:4</availability>
 		<model name='GLD-5R'>
@@ -7543,6 +7552,16 @@
 		</model>
 		<model name='3'>
 			<availability>RA:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Gorilla Exoskeleton' unitType='BattleArmor'>
+		<availability>OP:2,MERC.KH:5,MERC.WD:5,IS:6,FWL:2,MERC:5,Periphery:4</availability>
+		<model name='&apos;Falcata&apos;' mechanized='false'>
+			<availability>OP:4,FWL:4</availability>
+		</model>
+		<model name='PEX-2B' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:5-,MERC.WD:5-,IS:6-,MERC:5-,Periphery:4-</availability>
 		</model>
 	</chassis>
 	<chassis name='Goshawk (Vapor Eagle)' unitType='Mek'>
@@ -7920,6 +7939,32 @@
 		<model name='2'>
 			<roles>urban</roles>
 			<availability>RD:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Groundhog Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:3-,MERC.WD:3-,IS:4-,MERC:3-,Periphery:3-</availability>
+		<model name='CEX-205 [Armored Glove]' mechanized='false'>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Basic Manipulator]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Cargo Lifter]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Mine Clearance]' mechanized='false'>
+			<roles>support,minesweeper</roles>
+			<availability>MERC.KH:3,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Salvage Arm]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
@@ -15586,6 +15631,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
 		<availability>CC:3,LA:6,IS:4,FWL:4,FS:5,CP:4,Periphery:3,DC:4</availability>
 		<model name='(2815)'>
@@ -17415,6 +17466,24 @@
 	</chassis>
 	<chassis name='Thunderbird Battle Armor' unitType='BattleArmor'>
 		<availability>CNC:8,CP:8,DC:4</availability>
+		<model name='(DCMS) [ER Laser]' mechanized='false'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='(DCMS)(Pulse Laser)' mechanized='false'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='(DCMS)(Upgrade)[LBX]' mechanized='false'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='(DCMS)[AP Gauss]' mechanized='false'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='(DCMS)[Upgrade](ER Laser)' mechanized='false'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='(DCMS)[Upgrade](Pulse Laser)' mechanized='false'>
+			<availability>DC:4</availability>
+		</model>
 		<model name='(Upgrade)[LBX]' mechanized='true'>
 			<availability>General:8</availability>
 		</model>
@@ -19159,6 +19228,12 @@
 		<availability>RD:2,RA:2</availability>
 		<model name='(Standard)'>
 			<availability>RD:4,RA:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

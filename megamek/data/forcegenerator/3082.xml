@@ -5456,6 +5456,9 @@
 		<model name='(Support) [Plasma]' mechanized='true'>
 			<availability>General:5</availability>
 		</model>
+		<model name='2 [MG]' mechanized='false'>
+			<availability>CC:3</availability>
+		</model>
 		<model name='[Flamer]' mechanized='true'>
 			<availability>CC:7</availability>
 		</model>
@@ -6323,6 +6326,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Gladiator Exoskeleton' unitType='BattleArmor'>
+		<availability>MH:2</availability>
+		<model name='(Standard) [AG]' mechanized='false'>
+			<availability>MH:3</availability>
+		</model>
+		<model name='(Standard) [BC/ID]' mechanized='false'>
+			<availability>MH:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>
 		<availability>MOC:3-,FVC:2-,LA:2,MH:2,MERC:3,DA:1-,Periphery:3-,DC:2-,TC:3-</availability>
 		<model name='GLD-1R'>
@@ -6495,6 +6507,16 @@
 			<availability>CSA:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Gorilla Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:6,MERC.WD:6,IS:6,FWL:2,MERC:5,Periphery:4</availability>
+		<model name='&apos;Falcata&apos;' mechanized='false'>
+			<availability>FWL:5</availability>
+		</model>
+		<model name='PEX-2B' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:6-,MERC.WD:6-,IS:6-,MERC:5-,Periphery:4-</availability>
+		</model>
+	</chassis>
 	<chassis name='Goshawk (Vapor Eagle)' unitType='Mek'>
 		<availability>CJF:2,RA:3</availability>
 		<model name='(Standard)'>
@@ -6626,6 +6648,10 @@
 	</chassis>
 	<chassis name='Gray Death Strike Armor' unitType='BattleArmor'>
 		<availability>LA:4</availability>
+		<model name='(Prototype)' mechanized='false'>
+			<roles>spotter</roles>
+			<availability>LA:1</availability>
+		</model>
 		<model name='(Standard)' mechanized='true'>
 			<roles>spotter</roles>
 			<deployedWith>Gray Death Standard Suit</deployedWith>
@@ -6783,6 +6809,32 @@
 		<model name='2'>
 			<roles>urban</roles>
 			<availability>CGB:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Groundhog Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:3-,MERC.WD:2,IS:4-,MERC:3-,Periphery:3-</availability>
+		<model name='CEX-205 [Armored Glove]' mechanized='false'>
+			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Basic Manipulator]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Cargo Lifter]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Mine Clearance]' mechanized='false'>
+			<roles>support,minesweeper</roles>
+			<availability>MERC.KH:3,MERC.WD:2,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Salvage Arm]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
@@ -13447,6 +13499,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
 		<availability>CC:3,HL:2,LA:6,CGB.FRR:3,IS:4,FWL:4,FS:5,Periphery:3,DC:4</availability>
 		<model name='(2815)'>
@@ -16415,6 +16473,12 @@
 		<model name='(2901)'>
 			<roles>destroyer</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

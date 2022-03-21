@@ -4808,6 +4808,15 @@
 			<availability>MERC.KH:1,MERC.WD:1,CW:3,CLAN:2,IS:1,MERC:1,CGB:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Gladiator Exoskeleton' unitType='BattleArmor'>
+		<availability>MH:2</availability>
+		<model name='(Standard) [AG]' mechanized='false'>
+			<availability>MH:4</availability>
+		</model>
+		<model name='(Standard) [BC/ID]' mechanized='false'>
+			<availability>MH:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>
 		<availability>MERC:1-</availability>
 		<model name='GLD-3R'>
@@ -4890,6 +4899,13 @@
 		</model>
 		<model name='3'>
 			<availability>CSA:4,CSR:4,CBS:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Gorilla Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:4,MERC.WD:4,IS:6,MERC:5,Periphery:4</availability>
+		<model name='PEX-2B' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:4-,MERC.WD:4-,IS:6-,MERC:5-,Periphery:4-</availability>
 		</model>
 	</chassis>
 	<chassis name='Goshawk (Vapor Eagle)' unitType='Mek'>
@@ -5123,6 +5139,32 @@
 		<model name='2'>
 			<roles>urban</roles>
 			<availability>CGB:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Groundhog Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:3-,MERC:2-,Periphery:1-</availability>
+		<model name='CEX-205 [Armored Glove]' mechanized='false'>
+			<availability>IS:3,MERC:2,Periphery:1</availability>
+		</model>
+		<model name='CEX-205 [Basic Manipulator]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:3,MERC:2,Periphery:1</availability>
+		</model>
+		<model name='CEX-205 [Cargo Lifter]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:3,MERC:2,Periphery:1</availability>
+		</model>
+		<model name='CEX-205 [Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:3,MERC:2,Periphery:1</availability>
+		</model>
+		<model name='CEX-205 [Mine Clearance]' mechanized='false'>
+			<roles>support,minesweeper</roles>
+			<availability>IS:3,MERC:2,Periphery:1</availability>
+		</model>
+		<model name='CEX-205 [Salvage Arm]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:3,MERC:2,Periphery:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
@@ -10040,6 +10082,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
 		<availability>CC:3,HL:2,FRR:3,IS:4,WOB:3,SIC:3,FS:5,CIR:3,Periphery:3,CS:3,LA:6,FWL:4,DC:4</availability>
 		<model name='(2815)'>
@@ -11482,6 +11530,54 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Tunnel Rat I Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:3-:3062,FS:5-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:3-:3062,FS:5-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:3-:3062,FS:5-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat II Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-,Periphery:4</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat III Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:2-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:2-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:2-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat IV Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:2-</availability>
+		<model name='[Armored Glove/GL]' mechanized='false'>
+			<availability>IS:2-</availability>
+		</model>
+		<model name='[Armored Glove/LMG]' mechanized='false'>
+			<availability>IS:2-</availability>
+		</model>
+		<model name='[Battle Claw/GL]' mechanized='false'>
+			<availability>IS:2-</availability>
+		</model>
+		<model name='[Battle Claw/LMG]' mechanized='false'>
+			<availability>IS:2-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>LA:4-,IS:2-:3062,FS:4-</availability>
+	</chassis>
 	<chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
 		<availability>CS:4,WOB:4</availability>
 		<model name='(Standard)'>
@@ -12220,6 +12316,12 @@
 		<availability>WOB:3</availability>
 		<model name='WHF-3B'>
 			<availability>WOB:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

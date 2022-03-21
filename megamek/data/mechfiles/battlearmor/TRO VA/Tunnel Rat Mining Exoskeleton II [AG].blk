@@ -13,15 +13,15 @@ BattleArmor
 </UnitType>
 
 <Name>
-Tunnel Rat Mining Exoskeleton
+Tunnel Rat II Mining Exoskeleton
 </Name>
 
 <Model>
-I [Armored Glove]
+[Armored Glove]
 </Model>
 
 <mul id:>
-5303
+5304
 </mul id:>
 
 <year>

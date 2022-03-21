@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultTreeModel;
 /**
  * StandardForceIconChooserTree is an implementation of AbstractIconChooserTree that initializes the
  * tree using the Camouflage Directory, with the additional and external category of Colour
- * Camouflage added before any of the the Camouflage Directory categories.
+ * Camouflage added before any of the Camouflage Directory categories.
  * @see AbstractIconChooserTree
  */
 public class CamoChooserTree extends AbstractIconChooserTree {

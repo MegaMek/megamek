@@ -2187,7 +2187,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 Double obj1BV = (Double) obj1.get(0); // BV
                 Double obj2BV = (Double) obj2.get(0); // BV
 
-                // first element in the the ArrayList is BV, second is heat
+                // first element in the ArrayList is BV, second is heat
                 // if same BV, lower heat first
                 if (obj1BV.equals(obj2BV)) {
                     Double obj1Heat = (Double) obj1.get(1);

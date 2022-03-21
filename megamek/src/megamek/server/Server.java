@@ -17251,7 +17251,7 @@ public class Server implements Runnable {
      *            grapples this will be both, for chain whip grapples this will
      *            be the arm with the chain whip in it.
      * @param teGrappleSide
-     *            The that the the target is grappling with. For normal grapples
+     *            The that the target is grappling with. For normal grapples
      *            this will be both, for chain whip grapples this will be the
      *            arm that is being whipped.
      */
@@ -28093,7 +28093,7 @@ public class Server implements Runnable {
      * @param fallHeight
      *            The height that Entity is falling.
      * @param facing
-     *            The facing of the fall. Used to determine the the hit location
+     *            The facing of the fall. Used to determine the hit location
      *            and also determines facing after the fall (used as an offset
      *            of the Entity's current facing).
      * @param roll
@@ -30464,7 +30464,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Performs the additional processing of the received options after the the
+     * Performs the additional processing of the received options after the
      * <code>receiveGameOptions<code> done its job; should be called after
      * <code>receiveGameOptions<code> only if the <code>receiveGameOptions<code>
      * returned <code>true</code>

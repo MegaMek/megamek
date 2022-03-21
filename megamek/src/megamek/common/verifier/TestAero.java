@@ -376,7 +376,7 @@ public class TestAero extends TestEntity {
 
     /**
      * @return the maximum number of turns the given unit could fly at safe thrust given its fuel
-     * payload. Aerospace fighters consume 1 fuel point per thrust point spent up the the maximum
+     * payload. Aerospace fighters consume 1 fuel point per thrust point spent up the maximum
      * safe thrust, whereas conventional fighters with turbine engines consume 0.5 fuel points per
      * thrust point spent up to the maximum safe thrust.
      * See Strategic Operations pg 34.
@@ -398,7 +398,7 @@ public class TestAero extends TestEntity {
     /**
      * Computes and returns the maximum number of turns the given unit could
      * fly at max thrust given its fuel payload. Aerospace fighters consume
-     * 1 fuel point per thrust point spent up the the maximum safe thrust and
+     * 1 fuel point per thrust point spent up the maximum safe thrust and
      * 2 fuel points per thrust point afterwards, whereas conventional fighters 
      * with ICE engines consume 0.5 fuel points per thrust point spent up to 
      * the maximum safe thrust and 1 fuel point per thrust up to the maximum 

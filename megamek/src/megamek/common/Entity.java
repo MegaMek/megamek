@@ -142,8 +142,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-
-
     public enum MPBoosters {
         NONE(),
         MASC_ONLY(),

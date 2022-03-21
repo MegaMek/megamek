@@ -29,6 +29,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -709,7 +710,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     @Override
     public void keyPressed(KeyEvent ke) {
-
         if (!bv.getChatterBoxActive()) {
             return;
         }
@@ -722,14 +722,13 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             if (hasTransferableText) {
                 try {
                     addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
-                  } catch (UnsupportedFlavorException | IOException ex) {
-                    System.out.println(ex);
-                    ex.printStackTrace();
-                  }
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
+                }
             }            
             return;
         }
-        
+
         if (ke.isAltDown() || ke.isControlDown()) {
             return;
         }
@@ -891,5 +890,4 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         message = "";
         visibleMessage ="";
     }
-
 }

@@ -450,7 +450,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     SwingUtilities.invokeLater(drawMapable);
                 }
             } catch (Throwable t) {
-                t.printStackTrace();
+                LogManager.getLogger().error("", t);
             }
         }
     };
@@ -1346,8 +1346,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                         + e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
                 }
 
             }

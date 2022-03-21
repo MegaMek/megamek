@@ -104,9 +104,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // TODO : SuiteOptions
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
-        } catch (Exception e) {
-            System.err.println("Error setting look and feel!");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to set look and feel!", ex);
         }
 
         // TODO : Move ToolTip setup to MegaMek::initializeSuiteSetups as part of implementing them

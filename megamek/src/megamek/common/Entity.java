@@ -604,7 +604,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean salvageable = true;
 
     /**
-     * The removal condition is set when the entitiy is removed from the game.
+     * The removal condition is set when the entity is removed from the game.
      */
     private int removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
 
@@ -4328,11 +4328,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         bomb.setWeaponGroup(true);
                         weaponGroupList.add(bomb);
                     }
-                } catch (LocationFullException ex) {
+                } catch (LocationFullException ignored) {
 
                 }
                 foundSpaceBomb = true;
             }
+
             if (!game.getBoard().inSpace()
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMech)
@@ -4344,24 +4345,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
+
                     }
                 }
-                if (numGroundBombs < 10 && isFighter()) {
+
+                if ((numGroundBombs < 10) && isFighter()) {
                     try {
                         Mounted bomb = addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
+
                     }
                 }
                 numGroundBombs++;
             }
-
         }
-
     }
 
     /**

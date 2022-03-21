@@ -34,9 +34,8 @@ public class ListEntitiesCommand extends ServerCommand {
                     server.sendServerChat(connId,
                             ent.getId() + " - " + ent.getDisplayName());
                 }
-            } catch (NumberFormatException nfe) {
-            } catch (NullPointerException npe) {
-            } catch (IndexOutOfBoundsException ioobe) {
+            } catch (Exception ignored) {
+
             }
         }
     }

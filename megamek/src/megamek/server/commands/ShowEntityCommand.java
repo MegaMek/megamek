@@ -37,7 +37,7 @@ public class ShowEntityCommand extends ServerCommand {
             } else {
                 server.sendServerChat(connId, "No such entity.");
             }
-        } catch (Exception ignorede) {
+        } catch (Exception ignored) {
 
         }
     }

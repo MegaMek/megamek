@@ -76,7 +76,7 @@ public class SeeAllCommand extends ServerCommand {
                 server.getPlayer(playerId).setSeeAll(!has_see_all);
                 server.sendEntities(playerId);
             } catch (Exception ex) {
-                server.sendServerChat("/seeall : seeall failed. ype /who for a list of players with id #s.");
+                server.sendServerChat("/seeall : seeall failed. Type /who for a list of players with id #s.");
             }
         }
     }

@@ -606,7 +606,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean salvageable = true;
 
     /**
-     * The removal condition is set when the entitiy is removed from the game.
+     * The removal condition is set when the entity is removed from the game.
      */
     private int removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
 

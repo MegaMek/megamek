@@ -271,12 +271,12 @@ public class Client implements IClientCommandHandler {
         if (log != null) {
             try {
                 log.close();
-            } catch (Exception e) {
-                LogManager.getLogger().error("Failed to close the client game log file", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Failed to close the client game log file", ex);
             }
         }
 
-        LogManager.getLogger().info("Client: Shutdown complete");
+        LogManager.getLogger().info(getName() + " client shutdown complete");
     }
 
     /**

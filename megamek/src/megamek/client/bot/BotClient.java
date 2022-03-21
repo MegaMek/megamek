@@ -1111,20 +1111,17 @@ public abstract class BotClient extends Client {
     }
 
     private @Nullable String getRandomBotMessage() {
-        String message = "";
+        String message = null;
 
-        try {
-            String scrapFile = "./mmconf/botmessages.txt"; // TODO : Remove inline file path
-            FileInputStream fis = new FileInputStream(scrapFile);
-            BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
-            while (dis.ready()) {
-                message = dis.readLine();
+        try (FileInputStream fis = new FileInputStream("./mmconf/botmessages.txt"); // TODO : Remove inline file path
+             InputStreamReader isr = new InputStreamReader(fis);
+             BufferedReader br = new BufferedReader(isr)) {
+            while (br.ready()) {
+                message = br.readLine();
                 if (Compute.randomInt(10) == 1) {
                     break;
                 }
             }
-            dis.close();
-            fis.close();
         } catch (FileNotFoundException ignored) {
             // Don't do anything, just return a null and allow the bot to remain silent
             return null;
@@ -1144,8 +1141,9 @@ public abstract class BotClient extends Client {
         ReportDisplay.setupStylesheet(textArea);
 
         textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(textArea,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         textArea.setText("<pre>" + message + "</pre>");
         JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
@@ -1267,7 +1265,7 @@ public abstract class BotClient extends Client {
 
         @Override
         public String toString() {
-            return "RankedCoords{" + "coords=" + coords + ", fitness=" + fitness + '}';
+            return String.format("RankedCoords { coords=%s, fitness=%f }", coords, fitness);
         }
 
         int getX() {

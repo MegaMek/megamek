@@ -37,7 +37,8 @@ VERSION HISTORY:
 + Data: Adding Shrapnel Infantry Weapons. These have been converted per the rules in AToWC but things like 
 	BV, proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
 	Compared to lots of the existing infantry weapons these are long ranged, and more powerful especially the sniper
-	rifles. 
+	rifles.
++ PR #3490: RATGeneratorEditor UX Improvements
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

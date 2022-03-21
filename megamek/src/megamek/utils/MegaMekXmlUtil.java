@@ -104,7 +104,6 @@ public class MegaMekXmlUtil {
      *
      * @see "https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#JAXB_Unmarshaller"
      */
-    @SuppressWarnings(value = "nls")
     public static XMLReader createSafeXMLReader() {
         if (SAX_PARSER_FACTORY == null) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -112,22 +111,20 @@ public class MegaMekXmlUtil {
                 spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
                 spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
                 spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
-                throw new AssertionError("SAX implementation does not recognize or support the features we want to disable", e);
-            } catch (ParserConfigurationException e) {
-                throw new AssertionError(e); // Only if we messed up the CFG above
+            } catch (SAXNotRecognizedException | SAXNotSupportedException ex) {
+                throw new AssertionError("SAX implementation does not recognize or support the features we want to disable", ex);
+            } catch (ParserConfigurationException ex) {
+                throw new AssertionError(ex); // Only if we messed up the CFG above
             }
             SAX_PARSER_FACTORY = spf;
         }
+
         try {
             return SAX_PARSER_FACTORY.newSAXParser().getXMLReader();
-        } catch (ParserConfigurationException e) {
-            throw new AssertionError(e); // Only if we messed up the CFG above
-        } catch (SAXException e) {
-            throw new AssertionError(e); // Whatever - just blow up. :-)
-            // As of 2018-11, Xerces does not throw generic SAXExceptions.
-            // Yes, SAX was designed when checked exception were all the rage.
+        } catch (ParserConfigurationException | SAXException ex) {
+            throw new AssertionError(ex);
         }
+
     }
 
     /**
@@ -139,6 +136,7 @@ public class MegaMekXmlUtil {
     public static Source createSafeXmlSource(InputStream inputStream) {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
+
     //region XML Writing
     //region Open Tag
     /**

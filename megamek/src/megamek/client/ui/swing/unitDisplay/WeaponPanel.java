@@ -1926,11 +1926,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     
     // this gathers all the range data 
     // it is a boiled down version of displaySelected,
-    // updateAttackValues, updateRangeDisplayforAmmo
+    // updateAttackValues, updateRangeDisplayForAmmo
     private void setFieldofFire(Mounted mounted) {
         // No field of fire without ClientGUI
-        if (unitDisplay.getClientGUI() == null) 
+        if (unitDisplay.getClientGUI() == null) {
             return;
+        }
         
         ClientGUI gui = unitDisplay.getClientGUI();
 
@@ -2074,14 +2075,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (gui.getCurrentPanel() instanceof FiringDisplay) {
             // twisting
             int facing = entity.getFacing();
-            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) 
+            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
+            }
             ((FiringDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
             // twisting
             int facing = entity.getFacing();
-            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) 
+            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
+            }
             ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here

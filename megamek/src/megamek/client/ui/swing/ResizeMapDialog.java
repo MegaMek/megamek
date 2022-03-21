@@ -319,7 +319,6 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
                              final String description, boolean isSave) {
-
         // Create a new instance of the file chooser.
         JFileChooser fileChooser = new JFileChooser(targetDir);
 
@@ -367,10 +366,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     private void doLoad() {
-
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
+                "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
         
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
@@ -391,7 +389,6 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     private boolean doSave() {
-
         // Apply the changes.
         if (!doApply()) {
             return false;
@@ -501,7 +498,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     private boolean isExpandWestProblem() {
         return mapSouthField.verifyText() &&
                 mapWestField.verifyText() &&
-                ((getExpandWest() & 1) == 1) && 
+                ((getExpandWest() & 1) == 1) &&
                 (getExpandSouth() < 1);
     }
 
@@ -531,15 +528,20 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
 
     @Override
     public void keyTyped(KeyEvent arg0) {
+
     }
     
-    /** Updates the theme list and sets the dialog to visible. Returns true if the user pressed Cancel. */
+    /**
+     * Updates the theme list and sets the dialog to visible.
+     * Returns true if the user pressed Cancel.
+     */
     public boolean activateDialog(Set<String> themeList) {
-        for (String s: themeList) choTheme.addItem(s);
+        for (String s : themeList) {
+            choTheme.addItem(s);
+        }
         choTheme.setSelectedItem(mapSettings.getTheme());
         userCancel = false;
         setVisible(true);
         return userCancel;
     }
-
 }

@@ -219,23 +219,34 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FiringPlan)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof FiringPlan)) {
+            return false;
+        } else if (!super.equals(o)) {
+            return false;
+        }
 
         FiringPlan that = (FiringPlan) o;
 
         final double TOLERANCE = 0.00001;
-        if (twist != that.twist) return false;
-        if (Math.abs(utility - that.utility) > TOLERANCE) return false;
-        if (!target.equals(that.target)) return false;
-        if (getHeat() != that.getHeat()) return false;
-        if (Math.abs(getKillProbability() - that.getKillProbability()) > TOLERANCE) return false;
-        if (Math.abs(getExpectedCriticals() - that.getExpectedCriticals()) > TOLERANCE) return false;
-        //noinspection RedundantIfStatement
-        if (Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE) return false;
-
-        return true;
+        if (twist != that.twist) {
+            return false;
+        } else if (Math.abs(utility - that.utility) > TOLERANCE) {
+            return false;
+        } else if (!target.equals(that.target)) {
+            return false;
+        } else if (getHeat() != that.getHeat()) {
+            return false;
+        } else if (Math.abs(getKillProbability() - that.getKillProbability()) > TOLERANCE) {
+            return false;
+        } else if (Math.abs(getExpectedCriticals() - that.getExpectedCriticals()) > TOLERANCE) {
+            return false;
+        } else if (Math.abs(getExpectedDamage() - that.getExpectedDamage()) > TOLERANCE) {
+            return false;
+        } else {
+            return true;
+        }
     }
     
     @Override

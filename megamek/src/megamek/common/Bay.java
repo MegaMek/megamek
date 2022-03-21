@@ -462,8 +462,9 @@ public class Bay implements Transporter, ITechnology {
 
     // destroy a door
     public void destroyDoor() {
-        if (getCurrentDoors() > 0)
+        if (getCurrentDoors() > 0) {
             setCurrentDoors(getCurrentDoors() - 1);
+        }
     }
 
     // restore a door
@@ -486,7 +487,9 @@ public class Bay implements Transporter, ITechnology {
         return unloadedThisTurn;
     }
 
-    /** Return the tonnage of the bay, not the actual mass or weight */
+    /**
+     * @return the tonnage of the bay, not the actual mass or weight
+     */
     public double getWeight() {
         return totalSpace;
     }

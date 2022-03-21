@@ -95,8 +95,9 @@ public class AbstractPathFinder<N, C, E> {
         public Collection<T> doFilter(Collection<T> collection) {
             List<T> filteredMoves = new ArrayList<>();
             for (T e : collection) {
-                if (shouldStay(e))
+                if (shouldStay(e)) {
                     filteredMoves.add(e);
+                }
             }
             return filteredMoves;
         }
@@ -120,10 +121,10 @@ public class AbstractPathFinder<N, C, E> {
          * @param e the last edge that was successfully relaxed
          * @return true iff algorithm should stop searching for new paths
          */
-        public boolean shouldStop(E e);
+        boolean shouldStop(E e);
     }
 
-    //way of checking multiple conditions and returning their alternation.
+    // way of checking multiple conditions and returning their alternation.
     private static class StopConditionsAlternation<E> implements StopCondition<E> {
         private List<StopCondition<? super E>> conditions = new ArrayList<>();
 
@@ -142,7 +143,7 @@ public class AbstractPathFinder<N, C, E> {
      * elapsed since initialisation or last restart() call.
      */
     public static class StopConditionTimeout<E> implements AbstractPathFinder.StopCondition<E> {
-        //this class should be redesigned to use an executor.
+        // this class should be redesigned to use an executor.
         private E lastEdge;
         private long start;
         private long stop;
@@ -183,7 +184,6 @@ public class AbstractPathFinder<N, C, E> {
         public boolean wasTimeoutEngaged() {
             return timeoutEngaged;
         }
-
     }
 
     private AdjacencyMap<E> adjacencyMap;
@@ -234,9 +234,7 @@ public class AbstractPathFinder<N, C, E> {
      * @see Filter
      */
     public void addFilter(Filter<E> edgeFilter) {
-        if (edgeFilter == null)
-            throw new NullPointerException();
-        filters.add(edgeFilter);
+        filters.add(Objects.requireNonNull(edgeFilter));
     }
 
     public void removeAllFilters() {
@@ -247,9 +245,7 @@ public class AbstractPathFinder<N, C, E> {
      * @see StopCondition
      */
     public void addStopCondition(StopCondition<E> stopCondition) {
-        if (stopCondition == null)
-            throw new NullPointerException();
-        this.stopCondition.conditions.add(stopCondition);
+        this.stopCondition.conditions.add(Objects.requireNonNull(stopCondition));
     }
 
     /**
@@ -282,8 +278,10 @@ public class AbstractPathFinder<N, C, E> {
                     }
                     candidates.addAll(filteredNeighbours);
                 }
-                if (stopCondition.shouldStop(e))
+
+                if (stopCondition.shouldStop(e)) {
                     break;
+                }
             }
         } catch (OutOfMemoryError e) {
             final String memoryMessage = "Not enough memory to analyse all options."
@@ -335,9 +333,7 @@ public class AbstractPathFinder<N, C, E> {
      * @see AdjacencyMap
      */
     public void setAdjacencyMap(AdjacencyMap<E> edgeNeighborsFactory) {
-        if (edgeNeighborsFactory == null)
-            throw new NullPointerException();
-        this.adjacencyMap = edgeNeighborsFactory;
+        this.adjacencyMap = Objects.requireNonNull(edgeNeighborsFactory);
     }
     
     public AdjacencyMap<E> getAdjacencyMap() {
@@ -352,9 +348,7 @@ public class AbstractPathFinder<N, C, E> {
      *            concatenated with the best path to the source of the edge)</i>
      */
     public void setComparator(Comparator<E> comparator) {
-        if (comparator == null)
-            throw new NullPointerException();
-        this.comparator = comparator;
+        this.comparator = Objects.requireNonNull(comparator);
         this.candidates = new PriorityQueue<>(100, comparator);
     }
 
@@ -362,9 +356,7 @@ public class AbstractPathFinder<N, C, E> {
      * @see DestinationMap
      */
     public void setDestinationMap(DestinationMap<N, E> nodeFactory) {
-        if (nodeFactory == null)
-            throw new NullPointerException();
-        this.destinationMap = nodeFactory;
+        this.destinationMap = Objects.requireNonNull(nodeFactory);
     }
     
     protected DestinationMap<N, E> getDestinationMap() {
@@ -375,9 +367,6 @@ public class AbstractPathFinder<N, C, E> {
      * @see EdgeRelaxer
      */
     public void setEdgeRelaxer(EdgeRelaxer<C, E> costRelaxer) {
-        if (costRelaxer == null)
-            throw new NullPointerException();
-        this.edgeRelaxer = costRelaxer;
+        this.edgeRelaxer = Objects.requireNonNull(costRelaxer);
     }
-
 }

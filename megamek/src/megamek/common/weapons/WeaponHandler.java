@@ -1410,12 +1410,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.subject = subjectId;
             r.add(coverDropship.getShortName());
             vPhaseReport.add(r);
-            // Damage the dropship
-            handleEntityDamage(coverDropship, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
+            // Damage the DropShip
+            handleEntityDamage(coverDropship, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             // Remove a blank line in the report list
-            if (vPhaseReport.elementAt(sizeBefore).newlines > 0)
+            if (vPhaseReport.elementAt(sizeBefore).newlines > 0) {
                 vPhaseReport.elementAt(sizeBefore).newlines--;
+            }
             // Indent reports related to the damage absorption
             while (sizeBefore < vPhaseReport.size()) {
                 vPhaseReport.elementAt(sizeBefore).indent(3);

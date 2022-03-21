@@ -70,8 +70,9 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     private void debugTime(String s, boolean collectGarbage) {
         //Change the "false" below to "true" to enable this function
         if (false) {
-            if (collectGarbage)
+            if (collectGarbage) {
                 System.gc();
+            }
             System.out.println(s + ": " + System.currentTimeMillis());
         }
     }
@@ -85,12 +86,13 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         boolean deepSnow = false;
         boolean ice = false;
 
-        if (!conditions.isTerrainAffected())
+        if (!conditions.isTerrainAffected()) {
             return;
+        }
 
         debugTime("resolve weather 1", true);
 
-        //first we need to increment the conditions
+        // first we need to increment the conditions
         if (conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW
                 || conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
                 && game.getBoard().onGround()) {

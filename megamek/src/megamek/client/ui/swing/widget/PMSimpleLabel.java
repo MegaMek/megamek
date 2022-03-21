@@ -94,8 +94,9 @@ public class PMSimpleLabel implements PMLabel {
      */
     @Override
     public void drawInto(Graphics g) {
-        if (!visible)
+        if (!visible) {
             return;
+        }
         Font font = g.getFont();
         Color temp = g.getColor();
         g.setColor(color);

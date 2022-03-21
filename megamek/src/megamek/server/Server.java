@@ -348,7 +348,9 @@ public class Server implements Runnable {
      */
     @Nullable
     public static String validatePassword(@Nullable String password) {
-        if ((password == null) || password.isBlank()) return null;
+        if ((password == null) || password.isBlank()) {
+            return null;
+        }
         return password.trim();
     }
 

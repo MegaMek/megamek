@@ -890,7 +890,11 @@ public class BoardEditor extends JPanel
         choTerrainType.setRenderer(renderer);
         // Selecting a terrain type in the Dropdown should deselect
         // all in the terrain overview list except when selected from there
-        choTerrainType.addActionListener(e -> { if (!terrListBlocker) lisTerrain.clearSelection(); });
+        choTerrainType.addActionListener(e -> {
+            if (!terrListBlocker) {
+                lisTerrain.clearSelection();
+            }
+        });
         choTerrainType.setFont(fontComboTerr);
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain"));
         butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -930,7 +934,9 @@ public class BoardEditor extends JPanel
         choTheme = new JComboBox<>();
         TilesetManager tileMan = bv.getTilesetManager();
         Set<String> themes = tileMan.getThemes();
-        for (String s: themes) choTheme.addItem(s);
+        for (String s : themes) {
+            choTheme.addItem(s);
+        }
         choTheme.addActionListener(this);
         panTheme.add(labTheme);
         panTheme.add(choTheme);

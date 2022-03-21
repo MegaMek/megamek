@@ -431,7 +431,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
     
     public boolean activateDialog(Set<String> themeList) {
-        for (String s: themeList) choTheme.addItem(s);
+        for (String s : themeList) {
+            choTheme.addItem(s);
+        }
         choTheme.setSelectedItem(mapSettings.getTheme());
         userCancel = false;
         setVisible(true);

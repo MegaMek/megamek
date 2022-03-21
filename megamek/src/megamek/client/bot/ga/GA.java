@@ -160,8 +160,9 @@ public abstract class GA {
     }
 
     void computeFitnessRankings() {
-        for (int i = 0; i < populationDim; i++)
+        for (int i = 0; i < populationDim; i++) {
             this.chromosomes[i].fitness = getFitness(i);
+        }
 
         Arrays.sort(chromosomes);
     }

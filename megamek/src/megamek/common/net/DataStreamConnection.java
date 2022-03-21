@@ -124,10 +124,11 @@ class DataStreamConnection extends AbstractConnection {
         super.flush();
         try {
             // Flush the output stream, to ensure all packets are sent
-            if (out != null)
+            if (out != null) {
                 synchronized (out) {
                     out.flush();
                 }
+            }
         } catch (SocketException se) {
             // close this connection, because it's broken
             // This can happen if the connection is closed while being written

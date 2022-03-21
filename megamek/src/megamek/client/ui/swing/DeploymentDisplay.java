@@ -722,8 +722,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         Messages.getString("DeploymentDisplay.alertDialog1.title"), 
                         JOptionPane.ERROR_MESSAGE);
             }
-        } // End load-unit
-        else if (actionCmd.equals(DeployCommand.DEPLOY_UNLOAD.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_UNLOAD.getCmd())) {
             // Do we have anyone to unload?
             Entity loader = ce();
             List<Entity> choices = loader.getLoadedUnits();
@@ -753,15 +752,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         LogManager.getLogger().error("Could not unload " + loaded.getShortName() + " from " + ce().getShortName()); 
                     }
                 }
-            } // End have-choices
-            else {
+            } else {
                 JOptionPane.showMessageDialog(clientgui.frame,
                         Messages.getString("DeploymentDisplay.alertDialog2.message", ce().getShortName()),
                         Messages.getString("DeploymentDisplay.alertDialog2.title"),
                         JOptionPane.ERROR_MESSAGE);
             }
-        } // End unload-unit
-        else if (actionCmd.equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
             if (JOptionPane.showConfirmDialog(clientgui.frame, 
                     Messages.getString("DeploymentDisplay.removeUnit", ce().getShortName()), 
                     Messages.getString("DeploymentDisplay.removeTitle"),

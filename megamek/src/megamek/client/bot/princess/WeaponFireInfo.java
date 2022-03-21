@@ -516,8 +516,7 @@ public class WeaponFireInfo {
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayload) || (0 == bombPayload.length)) {
             setAction(buildWeaponAttackAction());
-        }
-        else {
+        } else {
             setAction(buildBombAttackAction(bombPayload));
         }
         

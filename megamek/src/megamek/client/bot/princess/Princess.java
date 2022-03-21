@@ -459,15 +459,14 @@ public class Princess extends BotClient {
     protected Coords getFirstValidCoords(final Entity deployedUnit,
                                          final List<Coords> possibleDeployCoords) {
         if (Entity.ETYPE_GUN_EMPLACEMENT == (deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT)) {
-            final List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit,
-                                                                                possibleDeployCoords);
+            final List<Coords> validCoords = calculateTurretDeploymentLocations(
+                    (GunEmplacement) deployedUnit, possibleDeployCoords);
             if (0 < validCoords.size()) {            
                 return validCoords.get(0);
             }
             
             return null;
-        }
-        else if (getGame().useVectorMove()) {
+        } else if (getGame().useVectorMove()) {
             return calculateAdvancedAerospaceDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else {
             return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);

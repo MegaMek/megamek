@@ -2755,27 +2755,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Handle error condition.
         if (mountableUnits.isEmpty()) {
-            System.err.println("MovementDisplay#getMountedUnit() " +
-                               "called without mountable units.");
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (mountableUnits.size() > 1) {
-            String input = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui,
-                            Messages.getString(
-                                    "MovementDisplay.MountUnitDialog.message", new Object[]{
-                                                                                            ce.getShortName()}),
-                            Messages.getString("MovementDisplay.MountUnitDialog.title"),
-                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
-                                    .getDisplayArray(mountableUnits), null);
-            choice = (Entity) SharedUtility.getTargetPicked(mountableUnits,
-                                                            input);
-        } // End have-choices
-
-        // Only one choice.
-        else {
+            LogManager.getLogger().error("Called getMountedUnits without any mountable units.");
+        } else if (mountableUnits.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
+            String input = (String) JOptionPane.showInputDialog(clientgui,
+                    Messages.getString("MovementDisplay.MountUnitDialog.message", ce.getShortName()),
+                    Messages.getString("MovementDisplay.MountUnitDialog.title"),
+                    JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(mountableUnits),
+                    null);
+            choice = (Entity) SharedUtility.getTargetPicked(mountableUnits, input);
+        } else {
+            // Only one choice.
             choice = mountableUnits.get(0);
         }
 
@@ -2849,10 +2839,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                      JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(choices), null);
             choice = (Entity) SharedUtility.getTargetPicked(choices, input);
-        } // End have-choices
-
-        // Only one choice.
-        else {
+        } else {
+            // Only one choice.
             choice = choices.get(0);
         }
 
@@ -2965,10 +2953,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                      JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(choices), null);
             choice = (Entity) SharedUtility.getTargetPicked(choices, input);
-        } // End have-choices
-
-        // Only one choice.
-        else {
+        } else {
+            // Only one choice.
             choice = choices.get(0);
         }
         
@@ -3091,10 +3077,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (ce.getAllTowedUnits().isEmpty()) {
             LogManager.getLogger().debug("Method called without any towed units.");
             return null;
-        }
-        
-        // If we have multiple choices, display a selection dialog.
-        else if (ce.getAllTowedUnits().size() > 1) {
+        } else if (ce.getAllTowedUnits().size() > 1) {
+            // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane
                     .showInputDialog(
                             clientgui,
@@ -3105,10 +3089,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(towedUnits), null);
             choice = (Entity) SharedUtility.getTargetPicked(towedUnits, input);
-        } // End have-choices
-
-        // Only one choice.
-        else {
+        } else {
+            // Only one choice.
             choice = towedUnits.get(0);
             towedUnits.remove(0);
         }
@@ -3131,9 +3113,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (loadedUnits.size() == 0) {
             System.err
                     .println("MovementDisplay#getUnloadedUnit() called without loaded units.");
-        }
-        // If we have multiple choices, display a selection dialog.
-        else if (loadedUnits.size() > 1) {
+        } else if (loadedUnits.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane
                     .showInputDialog(
                             clientgui,
@@ -3144,10 +3125,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(loadedUnits), null);
             choice = (Entity) SharedUtility.getTargetPicked(loadedUnits, input);
-        } // End have-choices
-
-        // Only one choice.
-        else {
+        } else {
+            // Only one choice.
             choice = loadedUnits.get(0);
             loadedUnits.remove(0);
         }
@@ -4009,10 +3988,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (targets.size() == 1) {
             // Return that choice.
             choice = targets.get(0);
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (targets.size() > 1) {
+        } else if (targets.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane
                     .showInputDialog(
                             clientgui,

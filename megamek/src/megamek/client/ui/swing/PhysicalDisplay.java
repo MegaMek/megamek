@@ -1054,10 +1054,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 }
                 ready();
             }
-        }
-
-        // If only the left arm is available, confirm that choice.
-        else if (canHitLeft) {
+        } else if (canHitLeft) {
+            // If only the left arm is available, confirm that choice.
             choices = new String[1];
             choices[0] = left;
             String input = (String) JOptionPane.showInputDialog(clientgui,
@@ -1070,12 +1068,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         BrushOffAttackAction.LEFT));
                 ready();
 
-            } // End not-cancel
-
-        } // End confirm-left
-
-        // If only the right arm is available, confirm that choice.
-        else if (canHitRight) {
+            }
+        } else if (canHitRight) {
+            // If only the right arm is available, confirm that choice.
             choices = new String[1];
             choices[0] = right;
             String input = (String) JOptionPane.showInputDialog(clientgui,

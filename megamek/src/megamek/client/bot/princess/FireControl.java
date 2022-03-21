@@ -1901,16 +1901,21 @@ public class FireControl {
                 } else if ((weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.SWARM_MEK)) {
                     swarmAttack.add(weaponFireInfo);
                     continue;
-                }
-                // We probably shouldn't consider stopping swarm attacks, since Princess isn't smart enough to recognize the rare situations when this is a good idea(e.g. planning to put lots of allied fire on the swarm target next turn, target is likely to explode and ammo explosion splash damage is on, etc).
-                else if ((weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
+                } else if ((weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
+                    // We probably shouldn't consider stopping swarm attacks, since Princess isn't
+                    // smart enough to recognize the rare situations when this is a good idea
+                    // (e.g. planning to put lots of allied fire on the swarm target next turn,
+                    // target is likely to explode and ammo explosion splash damage is on, etc).
                     continue;
-                } else if (!(shooter instanceof BattleArmor) && Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon()
-                                                                                                         .getLocation()) {
+                } else if (!(shooter instanceof BattleArmor)
+                        && (Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
                     final double fieldGunMass = weaponFireInfo.getWeapon().getTonnage();
-                    //Only fire field guns up until we no longer have the men to fire more, since going over that limit results in nothing firing.
-                    //In theory we could adapt the heat system to handle this(with tonnage as heat and shooting strength as heat capacity, no heat tolerance).
-                    //This would behave much better for units with mixed type field guns, but given that those are rare, this should serve for now.
+                    // Only fire field guns up until we no longer have the men to fire more, since
+                    // going over that limit results in nothing firing.
+                    // In theory, we could adapt the heat system to handle this (with tonnage as
+                    // heat and shooting strength as heat capacity, no heat tolerance). This would
+                    // behave much better for units with mixed type field guns, but given that those
+                    // are rare, this should serve for now.
                     if (fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry) shooter).getShootingStrength()) {
                         fieldGuns.add(weaponFireInfo);
                         fieldGunMassAlreadyFired += fieldGunMass;
@@ -1930,7 +1935,7 @@ public class FireControl {
             calculateUtility(swarmAttack, heatTolerance, isAero);
             calculateUtility(legAttack, heatTolerance, isAero);         
             calculateUtility(fieldGuns, heatTolerance, isAero);
-            //Add these plans to the end of the list.
+            // Add these plans to the end of the list.
             bestPlans[maxHeat + 1] = swarmAttack;
             bestPlans[maxHeat + 2] = legAttack;
             bestPlans[maxHeat + 3] = fieldGuns;
@@ -1972,7 +1977,7 @@ public class FireControl {
         // dropping everything it has, including specialized munitions such as thunder bombs and infernos
         if (shooter.isAirborne() && 0 < shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
-                                                                 shooter.getGame(), shooter.passedOver(target), false);
+                    shooter.getGame(), shooter.passedOver(target), false);
             
             calculateUtility(diveBombPlan, Entity.DOES_NOT_TRACK_HEAT, true);
             if (diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
@@ -2019,9 +2024,8 @@ public class FireControl {
         
         // conventional fighters can drop bombs
         if (Entity.DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
-            && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
-            return alphaStrike; // No need to worry about heat if the unit
-                                // doesn't track it.
+                && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
+            return alphaStrike; // No need to worry about heat if the unit doesn't track it.
         }
 
         // Get all the best plans that generate less heat than an alpha strike.

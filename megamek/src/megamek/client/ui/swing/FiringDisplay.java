@@ -2574,11 +2574,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
             // Return that choice.
             choice = targets.get(0);
-
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (targets.size() > 1) {
+        } else if (targets.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(clientgui,
                     Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.title"),

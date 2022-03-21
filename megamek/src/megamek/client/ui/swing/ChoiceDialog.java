@@ -136,10 +136,8 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                     radioGroup.add(checkboxes[loop]);
                     choiceArea.add(checkboxes[loop]);
                 }
-            }
-
-            // All others use check boxes.
-            else {
+            } else {
+                // All others use check boxes.
                 checkboxes = new JCheckBox[choices.length];
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JCheckBox(choices[loop], false);
@@ -167,8 +165,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 butClearAll.addActionListener(this);
                 getContentPane().add(panAllButtons, center);
             }
-
-        } // End have-choices
+        }
         
         // Allow the player to confirm or abort the choice.
         setupButtons();
@@ -238,8 +235,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                     checkboxes[loop].setEnabled(false);
                 }              
             }
-        }
-        else {
+        } else {
             for (int loop = 0; loop < checkboxes.length; loop++) {
                 checkboxes[loop].setEnabled(true);           
             }
@@ -319,8 +315,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             setVisible(false);
         } else if (e.getSource().equals(checkboxes)) {
             
-        }
-        else {
+        } else {
             confirm = false;
             setVisible(false);
         }

@@ -3022,35 +3022,35 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Generates a Shape drawing area for the hex shadow effect in a lower hex
      * when a higher hex is found in direction.
      */
-    private final Shape getElevationShadowArea(Coords src, int direction) {
+    private @Nullable Shape getElevationShadowArea(Coords src, int direction) {
         final Hex srcHex = game.getBoard().getHex(src);
         final Hex destHex = game.getBoard().getHexInDir(src, direction);
 
         // When at the board edge, create a shadow in hexes of level < 0
-        if (destHex == null)
-        {
-            if (srcHex.getLevel() >= 0) return null;
-        }
-        else
-        {
+        if (destHex == null) {
+            if (srcHex.getLevel() >= 0) {
+                return null;
+            }
+        } else {
             // no shadow area when the current hex is not lower than the next hex in direction
-            if (srcHex.getLevel() >= destHex.getLevel()) return null;
-            if (GUIPreferences.getInstance().getHexInclines()
+            if (srcHex.getLevel() >= destHex.getLevel()) {
+                return null;
+            } else if (GUIPreferences.getInstance().getHexInclines()
                     && (destHex.getLevel() - srcHex.getLevel() < 2)
                     && !destHex.hasCliffTopTowards(srcHex)) {
                 return null;
             }
         }
 
-        return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
-                HexDrawUtilities.getHexBorderArea(direction, HexDrawUtilities.CUT_BORDER, 36)));
+        return AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
+                HexDrawUtilities.getHexBorderArea(direction, HexDrawUtilities.CUT_BORDER, 36));
     }
 
     /**
      * Generates a fill gradient which is rotated and aligned properly for
      * the drawing area for a hex shadow effect in a lower hex.
      */
-    private final GradientPaint getElevationShadowGP(Coords src, int direction) {
+    private GradientPaint getElevationShadowGP(Coords src, int direction) {
         final Hex srcHex = game.getBoard().getHex(src);
         final Hex destHex = game.getBoard().getHexInDir(src, direction);
 
@@ -3075,7 +3075,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         t.transform(p1, p1);
         t.transform(p2, p2);
 
-        return(new GradientPaint(p1, c1, p2, c2));
+        return new GradientPaint(p1, c1, p2, c2);
     }
 
     /**
@@ -3199,8 +3199,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             // nothing found
             return new Coords(-1,-1);
-        }
-        else {
+        } else {
             // not Isometric
             return cc;
         }
@@ -3212,7 +3211,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         EntitySprite sprite = entitySpriteIds.get(spriteKey);
         IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
         // We can ignore secondary locations for now, as we don't have moving
-        // multi-location entitys (will need to change for mobile structures)
+        // multi-location entities (will need to change for mobile structures)
 
         PriorityQueue<EntitySprite> newSprites;
         PriorityQueue<IsometricSprite> isoSprites;
@@ -5427,10 +5426,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (entities.size() == 1) {
             // Return that choice.
             choice = entities.get(0);
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (entities.size() > 1) {
+        } else if (entities.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
             String input = (String) JOptionPane.showInputDialog(null,
                     Messages.getString("BoardView1.ChooseEntityDialog.message", pos.getBoardNum()),
                     Messages.getString("BoardView1.ChooseEntityDialog.title"),
@@ -5716,13 +5713,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
         // Info block if there are more than 4 units in that hex
-        if (entityCount > maxShown)
-        {
+        if (entityCount > maxShown) {
             txt.append("<TABLE BORDER=0 BGCOLOR=#000060 width=100%><TR><TD><FONT COLOR=WHITE>There ");
-            if (entityCount-maxShown == 1)
+            if (entityCount-maxShown == 1) {
                 txt.append("is 1 more<BR>unit");
-            else
-                txt.append("are "+(entityCount-maxShown)+" more<BR>units");
+            } else {
+                txt.append("are " + (entityCount - maxShown) + " more<BR>units");
+            }
             txt.append(" in this hex...</FONT>");
             txt.append("</TD></TR></TABLE>");
         }
@@ -5745,23 +5742,22 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
-            if (aaa.getTurnsTilHit() == 1)
-                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1",
-                        new Object[] { wpName, ammoName }));
-            else
-                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN",
-                        new Object[] { wpName, ammoName, aaa.getTurnsTilHit() }));
+            if (aaa.getTurnsTilHit() == 1) {
+                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", wpName, ammoName));
+            } else {
+                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", wpName,
+                        ammoName, aaa.getTurnsTilHit()));
+            }
             txt.append("</FONT></TD></TR></TABLE>");
         }
 
         // Artillery fire adjustment
         final Mounted curWeapon = getSelectedArtilleryWeapon();
         if ((curWeapon != null) && (selectedEntity != null)) {
-            // process targetted hexes
+            // process targeted hexes
             int amod = 0;
             // Check the predesignated hexes
-            if (selectedEntity.getOwner().getArtyAutoHitHexes()
-                              .contains(mcoords)) {
+            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
                 amod = TargetRoll.AUTOMATIC_SUCCESS;
             } else {
                 amod = selectedEntity.aTracker.getModifier(curWeapon, mcoords);
@@ -5775,16 +5771,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             txt.append("<br>");
         }
 
-        final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                .getSpecialHexDisplay(mcoords);
+        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(mcoords);
         final GamePhase currPhase = game.getPhase();
         int round = game.getRoundCount();
         if (shdList != null) {
-            boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(
-                    mcoords);
+            boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(mcoords);
             for (SpecialHexDisplay shd : shdList) {
-                boolean isTypeAutoHit = shd.getType()
-                        == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
+                boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
                 // Don't draw if this SHD is obscured from this player
                 // The SHD list may also contain stale SHDs, so don't show
                 // tooltips for SHDs that aren't drawn.
@@ -5797,8 +5790,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         if (localPlayer.equals(shd.getOwner())) {
                             txt.append("Note: ");
                         } else {
-                            txt.append("Note (" + shd.getOwner().getName()
-                                       + "): ");
+                            txt.append("Note (" + shd.getOwner().getName() + "): ");
                         }
                     }
                     String buf = shd.getInfo();

@@ -1001,13 +1001,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (splashScreens.size() > 3) {
             // Default to the HD splash screen.
             String splashFileName = splashScreens.get(3);
-            // If both height and width is greater than 1080p use the UHD splash screen.
-            if (screenWidth > 1920 && screenHeight > 1080) {
+            if ((screenWidth > 1920) && (screenHeight > 1080)) {
+                // If both height and width is greater than 1080p use the UHD splash screen.
                 splashFileName = splashScreens.get(2);
-            }
-            // If both height and width is greater than 720p then use the FHD splash screen.
-            else if (screenWidth > 1280 && screenHeight > 720)
-            {
+            } else if ((screenWidth > 1280) && (screenHeight > 720)) {
+                // If both height and width is greater than 720p then use the FHD splash screen.
                 splashFileName = splashScreens.get(0);
             }
             return splashFileName;

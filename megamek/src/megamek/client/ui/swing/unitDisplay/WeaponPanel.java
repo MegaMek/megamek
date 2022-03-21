@@ -1939,8 +1939,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         ranges[0] = wtype.getRanges(mounted);
 
         AmmoType atype = null;
-        if (mounted.getLinked() != null) 
+        if (mounted.getLinked() != null) {
             atype = (AmmoType) mounted.getLinked().getType();
+        }
 
         // gather underwater ranges
         ranges[1] = wtype.getWRanges();
@@ -1976,38 +1977,39 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
-                ranges[0] = new int[] { 0, 0, 0, 100, 0 };  
-                ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+                ranges[0] = new int[] { 0, 0, 0, 100, 0 };
             } else {
-                ranges[0] = new int[] { 6, 0, 0, 17, 0 };  
-                ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+                ranges[0] = new int[] { 6, 0, 0, 17, 0 };
             }
+            ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
 
         // Override for the various ATM and MML ammos
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_ATM) {
-                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
-                    ranges[0] = new int[] { 4, 9, 18, 27, 36 }; 
-                else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) 
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                else 
-                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
-            } 
-            else if (atype.getAmmoType() == AmmoType.T_MML) {
-                if (atype.hasFlag(AmmoType.F_MML_LRM)) 
-                    ranges[0] = new int[] { 6, 7, 14, 21, 28 };
-                else 
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
-                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                     ranges[0] = new int[] { 4, 9, 18, 27, 36 };
-                else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) 
+                } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                     ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) 
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                else  
+                } else {
                     ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                }
+            } else if (atype.getAmmoType() == AmmoType.T_MML) {
+                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+                    ranges[0] = new int[] { 6, 7, 14, 21, 28 };
+                } else {
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                }
+            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                    ranges[0] = new int[] { 4, 9, 18, 27, 36 };
+                } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                } else {
+                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                }
             }
         }
 

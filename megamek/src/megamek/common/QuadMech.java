@@ -22,6 +22,7 @@ import java.util.List;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
 public class QuadMech extends Mech {
     /**
@@ -451,9 +452,10 @@ public class QuadMech extends Mech {
                         pw.print("\t");
                         pw.println(roll);
                     }
-                } catch (Throwable thrown) {
-                    thrown.printStackTrace();
+                } catch (Throwable t) {
+                    LogManager.getLogger().error("", t);
                 }
+
                 if (side == ToHitData.SIDE_FRONT) {
                     // normal front hits
                     switch (roll) {
@@ -622,9 +624,10 @@ public class QuadMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 switch (roll) {
                     case 1:
@@ -723,9 +726,10 @@ public class QuadMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             boolean left = (roll <= 3);
             if (side == ToHitData.SIDE_FRONT) {
                 if (left) {
@@ -765,8 +769,8 @@ public class QuadMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Swarm attack locations.
             switch (roll) {

@@ -350,8 +350,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (Throwable error) {
-            error.printStackTrace();
+        } catch (Throwable t) {
+            LogManager.getLogger().error("", t);
         }
 
         TimerSingleton.getInstance().killTimer();

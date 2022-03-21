@@ -2108,23 +2108,22 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
-                            HitData result = rollHitLocation(table, side,
-                                    aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side,
-                                    Mech.LOC_CT, cover, false));
+                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, cover, false));
                             return result;
-                        } // if
+                        }
                         return tac(table, side, Mech.LOC_CT, cover, false);
                     case 3:
                     case 4:
@@ -2367,9 +2366,10 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
                 switch (roll) {
@@ -2484,9 +2484,10 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
                 // front/rear kick hits
                 switch (roll) {
@@ -2530,22 +2531,19 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Swarm attack locations.
             switch (roll) {
                 case 2:
                     if (getCrew().hasEdgeRemaining()
-                            && getCrew().getOptions().booleanOption(
-                                    OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
-                        HitData result = rollHitLocation(table, side,
-                                aimedLocation, aimingMode, cover);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
-                                false, effects));
+                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
                         return result;
-                    } // if
+                    }
                     return new HitData(Mech.LOC_HEAD, false, effects);
                 case 3:
                     return new HitData(Mech.LOC_CT, true, effects);
@@ -2591,26 +2589,21 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Hits from above.
             switch (roll) {
                 case 1:
-                    return new HitData(Mech.LOC_LARM,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LARM, (side == ToHitData.SIDE_REAR));
                 case 2:
-                    return new HitData(Mech.LOC_LT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
                 case 3:
-                    return new HitData(Mech.LOC_CT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_CT, (side == ToHitData.SIDE_REAR));
                 case 4:
-                    return new HitData(Mech.LOC_RT,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
                 case 5:
-                    return new HitData(Mech.LOC_RARM,
-                            (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
                 case 6:
                     if (getCrew().hasEdgeRemaining()
                             && getCrew().getOptions().booleanOption(
@@ -2638,8 +2631,8 @@ public abstract class Mech extends Entity {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Hits from below.
             switch (roll) {

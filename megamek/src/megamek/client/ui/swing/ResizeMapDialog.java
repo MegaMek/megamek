@@ -410,7 +410,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
         return true;
     }

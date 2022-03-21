@@ -15,6 +15,7 @@
 package megamek.client.bot;
 
 import megamek.client.bot.MoveOption.DamageInfo;
+import megamek.client.bot.MoveOption.WeightedComparator;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -23,6 +24,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -159,17 +161,16 @@ public class TestBot extends BotClient {
                             running++;
                         }
                     }
+
                     try {
                         Thread.sleep(5000);
-                    } catch (InterruptedException e1) {
-                        System.out
-                                .println("Interrupted waiting for Bot to move.");
-                        e1.printStackTrace();
-                    } // Technically we should be using wait() but its not
-                    // waking up reliably.
+                    } catch (InterruptedException ex) {
+                        LogManager.getLogger().error("Interrupted waiting for Bot to move.", ex);
+                    }
+
+                    // Technically we should be using wait() but it's not waking up reliably.
                     if (running > 0) {
-                        sendChat("Calculating the move for " + running
-                                 + " units. ");
+                        sendChat("Calculating the move for " + running + " units. ");
                     } else {
                         sendChat("Finalizing move.");
                     }
@@ -567,20 +568,19 @@ public class TestBot extends BotClient {
                                 option.threat += Integer.MAX_VALUE;
                             }
                         }
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error("", ex);
                         option.threat += Integer.MAX_VALUE;
                     }
                 }
-            } // -- end while of each enemy
+            }
             self.current.setState();
-        } // -- end while of first pass
+        }
+
         // top balanced
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(1,
-                                                                             1), 100);
+        filterMoves(move_array, self.pass, new WeightedComparator(1, 1), 100);
         // top damage
-        filterMoves(move_array, self.pass, new MoveOption.WeightedComparator(
-                .5, 1), 100);
+        filterMoves(move_array, self.pass, new WeightedComparator(0.5, 1), 100);
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.List;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
 public class TripodMech extends Mech {
     /**
@@ -1025,9 +1026,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
                 switch (roll) {
@@ -1312,9 +1314,10 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
                 switch (roll) {
@@ -1429,24 +1432,22 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
+
             if ((side == ToHitData.SIDE_FRONT) || (side == ToHitData.SIDE_REAR)) {
                 // front/rear kick hits
                 switch (roll) {
                     case 1:
                     case 2:
-                        return new HitData(Mech.LOC_RLEG,
-                                           (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mech.LOC_RLEG, (side == ToHitData.SIDE_REAR));
                     case 3:
                     case 4:
-                        return new HitData(Mech.LOC_CLEG,
-                                           (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mech.LOC_CLEG, (side == ToHitData.SIDE_REAR));
                     case 5:
                     case 6:
-                        return new HitData(Mech.LOC_LLEG,
-                                           (side == ToHitData.SIDE_REAR));
+                        return new HitData(Mech.LOC_LLEG, (side == ToHitData.SIDE_REAR));
                 }
             }
             if (side == ToHitData.SIDE_LEFT) {
@@ -1489,8 +1490,8 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Swarm attack locations.
             switch (roll) {
@@ -1550,26 +1551,21 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Hits from above.
             switch (roll) {
                 case 1:
-                    return new HitData(Mech.LOC_LARM,
-                                       (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LARM, (side == ToHitData.SIDE_REAR));
                 case 2:
-                    return new HitData(Mech.LOC_LT,
-                                       (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_LT, (side == ToHitData.SIDE_REAR));
                 case 3:
-                    return new HitData(Mech.LOC_CT,
-                                       (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_CT, (side == ToHitData.SIDE_REAR));
                 case 4:
-                    return new HitData(Mech.LOC_RT,
-                                       (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RT, (side == ToHitData.SIDE_REAR));
                 case 5:
-                    return new HitData(Mech.LOC_RARM,
-                                       (side == ToHitData.SIDE_REAR));
+                    return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
                 case 6:
                     if (getCrew().hasEdgeRemaining()
                         && getCrew().getOptions().booleanOption(
@@ -1597,8 +1593,8 @@ public class TripodMech extends Mech {
                     pw.print("\t");
                     pw.println(roll);
                 }
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
             }
             // Hits from below.
             switch (roll) {

@@ -59,7 +59,7 @@ public class ScenarioLoaderTest {
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
 
             }
         }

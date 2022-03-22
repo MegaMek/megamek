@@ -235,6 +235,14 @@
 		<techMargin>1</techMargin>
 		<salvage pct='6'>LA:5,CIR:1</salvage>
 	</faction>
+	<faction key='RCM'>
+		<pctOmni>0,3,10,14,20</pctOmni>
+		<pctClan>0,0,3,6,12</pctClan>
+		<pctSL>18,45,51,54,74</pctSL>
+		<omniMargin>1</omniMargin>
+		<techMargin>1</techMargin>
+		<salvage pct='6'>FWL:10</salvage>
+	</faction>
 	<faction key='FS'>
 		<pctOmni>7,12,16,22,26</pctOmni>
 		<pctClan>0,0,4,8,10</pctClan>
@@ -380,14 +388,6 @@
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
 		<salvage pct='5'>LA:10</salvage>
-	</faction>
-	<faction key='RCM'>
-		<pctOmni>0,3,10,14,20</pctOmni>
-		<pctClan>0,0,3,6,12</pctClan>
-		<pctSL>18,45,51,54,74</pctSL>
-		<omniMargin>1</omniMargin>
-		<techMargin>1</techMargin>
-		<salvage pct='6'>FWL:10</salvage>
 	</faction>
 	<faction key='Stone'>
 		<omniMargin>1</omniMargin>
@@ -8321,6 +8321,24 @@
 			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>DC:2+</availability>
+		<model name='A'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='B'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='C'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='D'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>DC:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Ironhold Assault Battle Armor' unitType='BattleArmor'>
 		<availability>CJF:3</availability>
 		<model name='(Standard)' mechanized='false'>
@@ -13700,7 +13718,7 @@
 		</model>
 	</chassis>
 	<chassis name='Scorpion' unitType='Mek'>
-		<availability>CC:2-,CS:2-,HL:2-,LA:3,FRR:2-,Periphery.Deep:4-,FWL:2-,NIOPS:2-,WOB:2-,MERC:2-,Periphery:3-,DC:2-</availability>
+		<availability>CC:2-,HL:2-,FRR:2-,Periphery.Deep:4-,WOB:2-,MERC:2-,Periphery:3-,CS:2-,LA:3,FWL:2-,NIOPS:2-,RCM:2-,DC:2-</availability>
 		<model name='SCP-12C'>
 			<availability>WOB:4</availability>
 		</model>
@@ -13715,7 +13733,7 @@
 			<availability>HL:2-,FRR:4-,Periphery.Deep:8,MERC:4-,Periphery:4-</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>IS:6,Periphery:2</availability>
+			<availability>CC:2-,CS:2-,FRR:2-,FWL:2-,WOB:2-,RCM:2-,MERC:2-,Periphery:2,DC:2-</availability>
 		</model>
 		<model name='SCP-1TB'>
 			<availability>MERC:4</availability>

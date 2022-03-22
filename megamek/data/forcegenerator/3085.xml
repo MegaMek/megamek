@@ -156,6 +156,17 @@
 		<weightDistribution era='3085' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3085' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
+	<faction key='DoO'>
+		<pctOmni>0,5,12,16,24</pctOmni>
+		<pctClan>0,0,4,8,18</pctClan>
+		<pctSL>25,56,56,68,79</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='5'>CC:8,FWL:3</salvage>
+	</faction>
+	<faction key='CEI'>
+		<techMargin>3</techMargin>
+	</faction>
 	<faction key='DA'>
 		<pctOmni>0,3,10,14,20</pctOmni>
 		<pctClan>0,0,3,6,16</pctClan>
@@ -172,14 +183,6 @@
 		<techMargin>3</techMargin>
 		<salvage pct='5'>CC:7,PR:1,FWL:10</salvage>
 	</faction>
-	<faction key='DoO'>
-		<pctOmni>0,5,12,16,24</pctOmni>
-		<pctClan>0,0,4,8,18</pctClan>
-		<pctSL>25,56,56,68,79</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='5'>CC:8,FWL:3</salvage>
-	</faction>
 	<faction key='DTA'>
 		<pctOmni>0,5,12,16,24</pctOmni>
 		<pctClan>0,0,4,8,18</pctClan>
@@ -188,8 +191,37 @@
 		<techMargin>3</techMargin>
 		<salvage pct='5'>LA:4</salvage>
 	</faction>
-	<faction key='CEI'>
+	<faction key='MSC'>
+		<pctOmni>0,5,10,15,28</pctOmni>
+		<pctClan>0,0,4,8,18</pctClan>
+		<pctSL>25,56,52,60,82</pctSL>
+		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
+		<salvage pct='5'>FWL:8</salvage>
+	</faction>
+	<faction key='OP'>
+		<pctOmni>0,5,12,16,24</pctOmni>
+		<pctClan>0,0,4,8,18</pctClan>
+		<pctSL>25,56,64,68,81</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='5'>CC:10,DA:2</salvage>
+	</faction>
+	<faction key='RF'>
+		<pctOmni>0,4,10,14,20</pctOmni>
+		<pctClan>0,0,3,6,16</pctClan>
+		<pctSL>25,56,56,68,79</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='5'>FWL:10,MSC:2</salvage>
+	</faction>
+	<faction key='RCM'>
+		<pctOmni>0,5,12,16,24</pctOmni>
+		<pctClan>0,0,4,8,18</pctClan>
+		<pctSL>25,56,56,61,82</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='5'>RF:0,FWL:10</salvage>
 	</faction>
 	<faction key='FS'>
 		<pctOmni>8,12,18,24,30</pctOmni>
@@ -282,14 +314,6 @@
 		<techMargin>3</techMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MSC'>
-		<pctOmni>0,5,10,15,28</pctOmni>
-		<pctClan>0,0,4,8,18</pctClan>
-		<pctSL>25,56,52,60,82</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='5'>FWL:8</salvage>
-	</faction>
 	<faction key='MERC'>
 		<pctOmni>0,8,10,14,24</pctOmni>
 		<pctClan>0,4,6,8,20</pctClan>
@@ -308,14 +332,6 @@
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>FWL:8,MH:2,RCM:2</salvage>
-	</faction>
-	<faction key='OP'>
-		<pctOmni>0,5,12,16,24</pctOmni>
-		<pctClan>0,0,4,8,18</pctClan>
-		<pctSL>25,56,64,68,81</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='5'>CC:10,DA:2</salvage>
 	</faction>
 	<faction key='Periphery'>
 		<omniMargin>3</omniMargin>
@@ -357,14 +373,6 @@
 		<techMargin>3</techMargin>
 		<salvage pct='10'>FS:1,DC:1</salvage>
 	</faction>
-	<faction key='RF'>
-		<pctOmni>0,4,10,14,20</pctOmni>
-		<pctClan>0,0,3,6,16</pctClan>
-		<pctSL>25,56,56,68,79</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='5'>FWL:10,MSC:2</salvage>
-	</faction>
 	<faction key='RFS'>
 		<pctOmni>0,4,10,14,20</pctOmni>
 		<pctClan>0,0,3,6,16</pctClan>
@@ -385,14 +393,6 @@
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>RT:0,LA:10</salvage>
-	</faction>
-	<faction key='RCM'>
-		<pctOmni>0,5,12,16,24</pctOmni>
-		<pctClan>0,0,4,8,18</pctClan>
-		<pctSL>25,56,56,61,82</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='5'>RF:0,FWL:10</salvage>
 	</faction>
 	<faction key='RT'>
 		<omniMargin>3</omniMargin>
@@ -4398,6 +4398,12 @@
 		<model name='G'>
 			<availability>CHH:6,General:4</availability>
 		</model>
+		<model name='X 2'>
+			<availability>CJF:2</availability>
+		</model>
+		<model name='X 3'>
+			<availability>CJF:2</availability>
+		</model>
 		<model name='XR'>
 			<availability>CJF:8</availability>
 		</model>
@@ -4427,6 +4433,9 @@
 		</model>
 		<model name='H'>
 			<availability>CSA:6,General:5</availability>
+		</model>
+		<model name='I'>
+			<availability>General:4</availability>
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
@@ -8425,6 +8434,15 @@
 			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>CDS:2,ROS:2+</availability>
+		<model name='D'>
+			<availability>CDS:3,ROS:3</availability>
+		</model>
+		<model name='Prime'>
+			<availability>CDS:8,ROS:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Ironhold Assault Battle Armor' unitType='BattleArmor'>
 		<availability>CJF:4</availability>
 		<model name='(Anti-Tank)' mechanized='false'>
@@ -10852,6 +10870,9 @@
 	</chassis>
 	<chassis name='Mercury' unitType='Mek'>
 		<availability>ROS:5,NIOPS:6</availability>
+		<model name='MCY-105'>
+			<availability>ROS:5</availability>
+		</model>
 		<model name='MCY-97'>
 			<roles>recon</roles>
 			<availability>ROS:4</availability>
@@ -14051,7 +14072,7 @@
 		</model>
 	</chassis>
 	<chassis name='Scorpion' unitType='Mek'>
-		<availability>CC:2,FVC:2,HL:2,LA:4,CGB.FRR:2-,ROS:2,Periphery.Deep:4-,FWL:2,NIOPS:2-,MERC:2,Periphery:3,DC:3</availability>
+		<availability>CC:2,HL:2,Periphery.Deep:4-,MERC:2,Periphery:3-,FVC:2,RF:2-,LA:4,CGB.FRR:2-,ROS:2,FWL:2,NIOPS:2-,RCM:2-,DC:3</availability>
 		<model name='SCP-10M'>
 			<availability>CC:4,MOC:3,CGB.FRR:4,ROS:4,FWL:6,MERC:4,DC:4</availability>
 		</model>
@@ -14066,7 +14087,7 @@
 			<availability>FRR:2-,Periphery.Deep:8,MERC:2-,Periphery:3-</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>HL:2,IS:4,Periphery.Deep:1,Periphery:4</availability>
+			<availability>CC:2-,HL:2,RF:2-,FRR:2-,Periphery.Deep:1,FWL:2-,RCM:2-,MERC:1-,Periphery:4,DC:1-</availability>
 		</model>
 		<model name='SCP-1TB'>
 			<availability>ROS:4,MERC:4</availability>
@@ -14764,7 +14785,7 @@
 		</model>
 	</chassis>
 	<chassis name='Spider' unitType='Mek'>
-		<availability>MOC:2,CC:3,MERC:3,FS:3,Periphery:2,TC:2,FVC:3,CGB.FRR:5,ROS:4,Periphery.MW:4,Periphery.ME:4,FWL:6,NIOPS:3,DC:6</availability>
+		<availability>MOC:2,CC:3,OP:4,MERC:3,FS:3,Periphery:2,TC:2,DTA:4,FVC:3,RF:5,CGB.FRR:5,ROS:4,Periphery.MW:4,Periphery.ME:4,FWL:6,NIOPS:3,MSC:3,DA:3,RCM:6,DC:6</availability>
 		<model name='SDR-5K'>
 			<roles>anti_infantry</roles>
 			<availability>CGB.FRR:2-,DC:2-</availability>
@@ -14798,6 +14819,9 @@
 		</model>
 		<model name='SDR-8X'>
 			<availability>ROS:2,MERC:2,DC:2</availability>
+		</model>
+		<model name='SDR-9M'>
+			<availability>DTA:4,OP:4,RF:5,FWL:4,MSC:3,MERC:3,RCM:6,DA:3,DC:4</availability>
 		</model>
 		<model name='SDR-C'>
 			<availability>CC:5,FWL:5,FS:5,MERC:5,DC:5</availability>

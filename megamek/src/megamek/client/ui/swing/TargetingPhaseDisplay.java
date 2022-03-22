@@ -1069,19 +1069,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clearVisibleTargets();
 
         List<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
-        Comparator<Entity> sortComp = new Comparator<>() {
-            @Override
-            public int compare(Entity x, Entity y) {
-
-                int rangeToX = ce().getPosition().distance(x.getPosition());
-                int rangeToY = ce().getPosition().distance(y.getPosition());
-
-                if (rangeToX == rangeToY) {
-                    return x.getId() < y.getId() ? -1 : 1;
-                }
-
-                return rangeToX < rangeToY ? -1 : 1;
+        Comparator<Entity> sortComp = (x, y) -> {
+            int rangeToX = ce().getPosition().distance(x.getPosition());
+            int rangeToY = ce().getPosition().distance(y.getPosition());
+            if (rangeToX == rangeToY) {
+                return x.getId() < y.getId() ? -1 : 1;
             }
+            return rangeToX < rangeToY ? -1 : 1;
         };
 
         TreeSet<Entity> tree = new TreeSet<>(sortComp);

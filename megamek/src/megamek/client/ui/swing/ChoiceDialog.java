@@ -141,12 +141,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 checkboxes = new JCheckBox[choices.length];
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JCheckBox(choices[loop], false);
-                    checkboxes[loop].addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent evt) {
-                            checkDisableChoices();
-                        }
-                    });
+                    checkboxes[loop].addActionListener(evt -> checkDisableChoices());
                     choiceArea.add(checkboxes[loop]);
                 }
                 

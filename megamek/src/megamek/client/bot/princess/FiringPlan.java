@@ -271,65 +271,62 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
      * Hole punchers before crit seekers
      */
     void sortPlan() {
-        this.sort(new Comparator<>() {
-            @Override
-            public int compare(WeaponFireInfo o1, WeaponFireInfo o2) {
-                Mounted weapon1 = o1.getWeapon();
-                Mounted weapon2 = o2.getWeapon();
+        this.sort((o1, o2) -> {
+            Mounted weapon1 = o1.getWeapon();
+            Mounted weapon2 = o2.getWeapon();
 
-                // Both null, both equal.
-                if (weapon1 == null && weapon2 == null) {
-                    return 0;
-                }
-
-                // Not null beats null;
-                if (weapon1 == null) {
-                    return -1;
-                }
-                if (weapon2 == null) {
-                    return 1;
-                }
-
-                double dmg1 = -1;
-                double dmg2 = -1;
-
-                WeaponType weaponType1 = (WeaponType) weapon1.getType();
-                WeaponType weaponType2 = (WeaponType) weapon2.getType();
-
-                Mounted ammo1 = weapon1.getLinked();
-                Mounted ammo2 = weapon2.getLinked();
-
-                if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
-                    AmmoType ammoType = (AmmoType) ammo1.getType();
-                    if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage())
-                            || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
-                        dmg1 = ammoType.getDamagePerShot();
-                    }
-                }
-
-                if (dmg1 == -1) {
-                    dmg1 = weaponType1.getDamage();
-                }
-
-                if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
-                    AmmoType ammoType = (AmmoType) ammo2.getType();
-                    if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage())
-                            || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
-                        dmg2 = ammoType.getDamagePerShot();
-                    }
-                }
-
-                if (dmg2 == -1) {
-                    dmg2 = weaponType2.getDamage();
-                }
-
-                return -Double.compare(dmg1, dmg2);
+            // Both null, both equal.
+            if (weapon1 == null && weapon2 == null) {
+                return 0;
             }
+
+            // Not null beats null;
+            if (weapon1 == null) {
+                return -1;
+            }
+            if (weapon2 == null) {
+                return 1;
+            }
+
+            double dmg1 = -1;
+            double dmg2 = -1;
+
+            WeaponType weaponType1 = (WeaponType) weapon1.getType();
+            WeaponType weaponType2 = (WeaponType) weapon2.getType();
+
+            Mounted ammo1 = weapon1.getLinked();
+            Mounted ammo2 = weapon2.getLinked();
+
+            if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
+                AmmoType ammoType = (AmmoType) ammo1.getType();
+                if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage())
+                        || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
+                    dmg1 = ammoType.getDamagePerShot();
+                }
+            }
+
+            if (dmg1 == -1) {
+                dmg1 = weaponType1.getDamage();
+            }
+
+            if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
+                AmmoType ammoType = (AmmoType) ammo2.getType();
+                if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage())
+                        || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
+                    dmg2 = ammoType.getDamagePerShot();
+                }
+            }
+
+            if (dmg2 == -1) {
+                dmg2 = weaponType2.getDamage();
+            }
+
+            return -Double.compare(dmg1, dmg2);
         });
     }
 
     String getWeaponNames() {
-        StringBuilder out = new StringBuilder("");
+        StringBuilder out = new StringBuilder();
         for (WeaponFireInfo wfi : this) {
             if (!StringUtility.isNullOrEmpty(out)) {
                 out.append(",");

@@ -1,7 +1,6 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2008 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018-2021 - The MegaMek Team. All Rights Reserved.
+* Copyright (c) 2000-2008 - Ben Mazur (bmazur@sev.org).
+* Copyright (c) 2018-2022- The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -60,7 +59,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
@@ -384,7 +382,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     /** True when the board is in the process of centering to a spot. */
     private boolean isSoftCentering = false;
-    /** The final position of a soft centering relative to board size (x, y=0...1). */
+    /** The final position of a soft centering relative to board size (x, y = 0...1). */
     private Point2D softCenterTarget = new Point2D.Double();
     private Point2D oldCenter = new Point2D.Double();
     private long waitTimer;
@@ -434,75 +432,74 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (controller != null) {
             addDisplayable(keybindOverlay);
         }
-        ourTask = scheduleRedrawTimer();// call only once
+        ourTask = scheduleRedrawTimer(); // call only once
         clearSprites();
         addMouseListener(this);
-        addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent we) {
-                Point mousePoint = we.getPoint();
-                Point dispPoint = new Point(mousePoint.x + getBounds().x, mousePoint.y + getBounds().y);
-                
-                // If the mouse is over an IDisplayable, have it react instead of the board
-                // Currently only implemented for the ChatterBox
-                for (IDisplayable disp : displayables) {
-                    if (!(disp instanceof ChatterBox2)) {
-                        continue;
-                    }
-                    double width = scrollpane.getViewport().getSize().getWidth();
-                    double height = scrollpane.getViewport().getSize().getHeight();
-                    Dimension drawDimension = new Dimension();
-                    drawDimension.setSize(width, height);
-                    // we need to adjust the point, because it should be against
-                    // the displayable dimension
-                    if (disp.isMouseOver(dispPoint, drawDimension)) {
-                        ChatterBox2 cb2 = (ChatterBox2) disp;
-                        if (we.getWheelRotation() > 0) {
-                            cb2.scrollDown();
-                        } else {
-                            cb2.scrollUp();
-                        }
-                        refreshDisplayables();
-                        return;
-                    }
-                }
-                
-                // calculate a few things to reposition the map
-                Coords zoomCenter = getCoordsAt(we.getPoint());
-                Point hexL = getCentreHexLocation(zoomCenter);
-                Point inhexDelta = new Point(we.getPoint());
-                inhexDelta.translate(-HEX_W, -HEX_H);
-                inhexDelta.translate(-hexL.x, -hexL.y);
-                double ihdx = ((double) inhexDelta.x) / ((double) HEX_W) / scale;
-                double ihdy = ((double) inhexDelta.y) / ((double) HEX_H) / scale;
-                int oldzoomIndex = zoomIndex;
-                
-                boolean ZoomNoCtrl = GUIPreferences.getInstance().getMouseWheelZoom();
-                boolean wheelFlip = GUIPreferences.getInstance().getMouseWheelZoomFlip();
-                boolean zoomIn = (we.getWheelRotation() > 0) ^ wheelFlip; // = XOR
-                boolean doZoom = ZoomNoCtrl ^ we.isControlDown(); // = XOR
-                boolean horizontalScroll = !doZoom && we.isShiftDown();
+        addMouseWheelListener(we -> {
+            Point mousePoint = we.getPoint();
+            Point dispPoint = new Point(mousePoint.x + getBounds().x, mousePoint.y + getBounds().y);
 
-                if (doZoom) {
-                    if (zoomIn) {
-                        zoomIn();
-                    } else {
-                        zoomOut();
-                    }
-                    if (zoomIndex != oldzoomIndex) {
-                        adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
-                    }
-                } else { // SCROLL
-                    if (horizontalScroll) {
-                        hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
-                    } else {
-                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
-                    }
-                    stopSoftCentering();
+            // If the mouse is over an IDisplayable, have it react instead of the board
+            // Currently only implemented for the ChatterBox
+            for (IDisplayable disp : displayables) {
+                if (!(disp instanceof ChatterBox2)) {
+                    continue;
                 }
-                
-                pingMinimap();
+                double width = scrollpane.getViewport().getSize().getWidth();
+                double height = scrollpane.getViewport().getSize().getHeight();
+                Dimension drawDimension = new Dimension();
+                drawDimension.setSize(width, height);
+                // we need to adjust the point, because it should be against
+                // the displayable dimension
+                if (disp.isMouseOver(dispPoint, drawDimension)) {
+                    ChatterBox2 cb2 = (ChatterBox2) disp;
+                    if (we.getWheelRotation() > 0) {
+                        cb2.scrollDown();
+                    } else {
+                        cb2.scrollUp();
+                    }
+                    refreshDisplayables();
+                    return;
+                }
             }
+
+            // calculate a few things to reposition the map
+            Coords zoomCenter = getCoordsAt(we.getPoint());
+            Point hexL = getCentreHexLocation(zoomCenter);
+            Point inhexDelta = new Point(we.getPoint());
+            inhexDelta.translate(-HEX_W, -HEX_H);
+            inhexDelta.translate(-hexL.x, -hexL.y);
+            double ihdx = ((double) inhexDelta.x) / ((double) HEX_W) / scale;
+            double ihdy = ((double) inhexDelta.y) / ((double) HEX_H) / scale;
+            int oldzoomIndex = zoomIndex;
+
+            boolean ZoomNoCtrl = GUIPreferences.getInstance().getMouseWheelZoom();
+            boolean wheelFlip = GUIPreferences.getInstance().getMouseWheelZoomFlip();
+            boolean zoomIn = (we.getWheelRotation() > 0) ^ wheelFlip; // = XOR
+            boolean doZoom = ZoomNoCtrl ^ we.isControlDown(); // = XOR
+            boolean horizontalScroll = !doZoom && we.isShiftDown();
+
+            if (doZoom) {
+                if (zoomIn) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+
+                if (zoomIndex != oldzoomIndex) {
+                    adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
+                }
+            } else {
+                // SCROLL
+                if (horizontalScroll) {
+                    hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
+                } else {
+                    vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
+                }
+                stopSoftCentering();
+            }
+
+            pingMinimap();
         });
 
         MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
@@ -513,10 +510,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     if (disp.isBeingDragged()) {
                         return;
                     }
-                    double width = Math.min(boardSize.getWidth(), scrollpane
-                            .getViewport().getSize().getWidth());
-                    double height = Math.min(boardSize.getHeight(), scrollpane
-                            .getViewport().getSize().getHeight());
+                    double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
+                    double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
                     disp.isMouseOver(point, drawDimension);

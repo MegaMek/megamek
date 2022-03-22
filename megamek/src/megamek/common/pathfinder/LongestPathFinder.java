@@ -1,6 +1,5 @@
 /*
-* MegaMek -
-* Copyright (C) 2014 The MegaMek Team
+* Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -12,20 +11,14 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.pathfinder;
 
-import java.util.*;
-
 import megamek.client.bot.princess.MinefieldUtil;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
 import megamek.common.annotations.Nullable;
+
+import java.util.*;
 
 /**
  * Path finder that specialises in finding paths that can enter a single hex
@@ -335,16 +328,13 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @return the shortest move path to hex at given coordinates
      */
     public @Nullable MovePath getComputedPath(Coords coords) {
-        Deque<MovePath> q = getCost(coords, new Comparator<>() {
-            @Override
-            public int compare(Deque<MovePath> q1, Deque<MovePath> q2) {
-                MovePath mp1 = q1.getLast(), mp2 = q2.getLast();
-                int t = mp2.getHexesMoved() - mp1.getHexesMoved();
-                if (t != 0) {
-                    return t;
-                } else {
-                    return mp1.getMpUsed() - mp2.getMpUsed();
-                }
+        Deque<MovePath> q = getCost(coords, (q1, q2) -> {
+            MovePath mp1 = q1.getLast(), mp2 = q2.getLast();
+            int t = mp2.getHexesMoved() - mp1.getHexesMoved();
+            if (t != 0) {
+                return t;
+            } else {
+                return mp1.getMpUsed() - mp2.getMpUsed();
             }
         });
         if (q != null) {

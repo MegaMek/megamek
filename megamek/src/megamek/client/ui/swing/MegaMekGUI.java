@@ -959,14 +959,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     };
 
     @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
+    public void preferenceChange(PreferenceChangeEvent evt) {
         // Update to reflect new skin
-        if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
+        if (evt.getName().equals(GUIPreferences.SKIN_FILE)) {
             showMainMenu();
             frame.repaint();
-        } else if (e.getName().equals(GUIPreferences.UI_THEME)) {
+        } else if (evt.getName().equals(GUIPreferences.UI_THEME)) {
             try {
-                UIManager.setLookAndFeel((String) e.getNewValue());
+                UIManager.setLookAndFeel((String) evt.getNewValue());
                 // We went all Oprah and gave everybody frames...
                 // so now we have to let everybody who got a frame
                 // under their chair know that we updated our look
@@ -983,7 +983,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
     }
-    
+
     /**
      * Method used to determine the appropriate splash screen to use. This method looks 
      * at both the height and the width of the main monitor.
@@ -995,8 +995,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      */
     private String determineSplashScreen(final List<String> splashScreens,
                                          final int screenWidth, final int screenHeight) {
-        // Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash
-        // screens.
+        // Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash screens.
         if (splashScreens.size() > 3) {
             // Default to the HD splash screen.
             String splashFileName = splashScreens.get(3);
@@ -1033,7 +1032,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         tracker.addImage(img, 0);
         try {
             tracker.waitForID(0);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             // really should never come here
         }
 
@@ -1047,8 +1046,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * @return
      */
     private BaseMultiResolutionImage getMultiResolutionSplashScreen(final List<String> splashScreens) {
-
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = new ArrayList<>();
         if (splashScreens.size() > 3) {
             filenames.add(splashScreens.get(0));
             filenames.add(splashScreens.get(2));
@@ -1057,7 +1055,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             filenames.add(splashScreens.get(0));
         }
 
-        List<Image> images = new ArrayList<Image>();
+        List<Image> images = new ArrayList<>();
 
         for (String filename : filenames) {
             File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
@@ -1071,7 +1069,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 tracker.addImage(img, 0);
                 try {
                     tracker.waitForID(0);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     // really should never come here
                 }
             }

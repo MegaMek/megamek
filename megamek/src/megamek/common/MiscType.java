@@ -11154,23 +11154,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Unofficial or Made up Equipment
-    // No clue what this no unit is using this
-
-    /*
-     * public static MiscType createCoolantSystem() { MiscType misc = new
-     * MiscType();
-     * 
-     * misc.name = "Coolant System"; misc.setInternalName(misc.name); misc.tonnage =
-     * 9; misc.criticals = 2; misc.cost = 90000; misc.flags =
-     * misc.flags.or(F_COOLANT_SYSTEM).or(F_MECH_EQUIPMENT); misc.bv = 15;
-     * misc.techAdvancement.setTechBase(TECH_BASE_IS);
-     * misc.techAdvancement.setISAdvancement(DATE_NONE, 3049, DATE_NONE);
-     * misc.techAdvancement.setTechRating(RATING_C);
-     * misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X,
-     * RATING_E, RATING_X }); return misc; }
-     */
-
     public static MiscType createLAMBombBay() {
         MiscType misc = new MiscType();
         misc.name = "Bomb Bay";
@@ -11181,9 +11164,9 @@ public class MiscType extends EquipmentType {
         misc.explosive = true;
         misc.cost = 5000;
         misc.rulesRefs = "110, IO";
-        // IO, p.220/221 + bimodal and standard LAM values
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
-                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
+        // IO, p.220/221 (LAMs can be constructed in all later eras so Bomb Bays must not go extinct)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684)
+                .setClanAdvancement(DATE_NONE, 2684)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
                 .setTechRating(RATING_D).setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -11200,9 +11183,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT);
         misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel, IO p.111
         misc.rulesRefs = "114, IO";
-        // Mixture of IO, p.220/221 and LAM advancement
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
-                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
+        // IO, p.220/221
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES)
                 .setTechRating(RATING_B).setAvailability(RATING_B, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;

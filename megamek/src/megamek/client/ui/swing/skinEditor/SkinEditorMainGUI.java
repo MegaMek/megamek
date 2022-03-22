@@ -350,8 +350,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (Throwable error) {
-            error.printStackTrace();
+        } catch (Throwable t) {
+            LogManager.getLogger().error("", t);
         }
 
         TimerSingleton.getInstance().killTimer();
@@ -709,7 +709,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public void windowActivated(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI
-        // window doesn't deiconify.  This fix doesn't allow me to iconify the
+        // window doesn't deiconify. This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
         frame.setState(Frame.NORMAL);
@@ -737,7 +737,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public void windowDeiconified(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI
-        // window doesn't deiconify.  This fix doesn't allow me to iconify the
+        // window doesn't deiconify. This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
         frame.setState(Frame.NORMAL);
@@ -810,10 +810,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
     @Override
     public void componentHidden(ComponentEvent arg0) {
+
     }
 
     @Override
     public void componentMoved(ComponentEvent arg0) {
+
     }
 
     @Override
@@ -823,17 +825,16 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
     @Override
     public void componentShown(ComponentEvent arg0) {
+
     }
 
     /**
-     * Returns the panel for the current phase. The ClientGUI is split into the
-     * main panel (view) at the top, which takes up the majority of the view and
-     * the the "current panel" which has different controls based on the phase.
-     * 
-     * @return
+     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
+     * the view and the "current panel" which has different controls based on the phase.
+     *
+     * @return the panel for the current phase
      */
     public JComponent getCurrentPanel() {
         return curPanel;
     }
-
 }

@@ -207,8 +207,8 @@
 		<weightDistribution era='3039' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3039' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
-	<faction key='DA'/>
 	<faction key='EF'/>
+	<faction key='DA'/>
 	<faction key='FC'>
 		<salvage pct='6'>CC:5,FWL:8,DC:10</salvage>
 	</faction>
@@ -4001,9 +4001,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>MERC.KH:2,MERC.WD:2,IS:2,MERC:2,Periphery:2</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>MOC:6,OA:6,General:6,TC:6,Periphery:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>CS:2-,MERC.KH:5,MERC.WD:4,IS:4,MERC:4,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer II' unitType='Aero'>
@@ -4757,6 +4763,9 @@
 		<model name='OSR-3C'>
 			<availability>HL:2,IS:4,Periphery.Deep:4,MERC:4,Periphery:4</availability>
 		</model>
+		<model name='OSR-9C'>
+			<availability>FS:2-,DC:2-</availability>
+		</model>
 	</chassis>
 	<chassis name='Ostscout' unitType='Mek'>
 		<availability>CC:3,FRR:4,CLAN:2-,IS:3,SIC:3,FS:3,MERC:4,Periphery:1,CS:4,LA:3,FWL:4,NIOPS:4,DC:4</availability>
@@ -5498,6 +5507,12 @@
 		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
@@ -6692,6 +6707,12 @@
 		<model name='(2901)'>
 			<roles>destroyer</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

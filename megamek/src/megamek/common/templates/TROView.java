@@ -120,9 +120,8 @@ public class TROView {
                  final Writer out = new OutputStreamWriter(os)) {
                 template.process(model, out);
                 return os.toString();
-            } catch (TemplateException | IOException e) {
-                LogManager.getLogger().error("", e);
-                e.printStackTrace();
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
         }
         return null;

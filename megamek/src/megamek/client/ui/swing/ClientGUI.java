@@ -992,8 +992,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
             case OFFBOARD:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
                 if (frame.isShowing()) {
@@ -1127,6 +1129,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 panSecondary.add(component, secondary);
                 offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
+            case PREMOVEMENT:
+                component = new PrephaseDisplay(this, GamePhase.PREMOVEMENT);
+                ((PrephaseDisplay) component).initializeListeners();
+                main = "BoardView";
+                secondary = "PremovementDisplay";
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
             case MOVEMENT:
                 component = new MovementDisplay(this);
                 main = "BoardView";
@@ -1143,6 +1157,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView";
                 secondary = "OffboardDisplay";
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
+            case PREFIRING:
+                component = new PrephaseDisplay(this, GamePhase.PREFIRING);
+                ((PrephaseDisplay) component).initializeListeners();
+                main = "BoardView";
+                secondary = "Prefiring";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -2342,12 +2368,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
     
     /**
-     * Returns the panel for the current phase.  The ClientGUI is split into
-     * the main panel (view) at the top, which takes up the majority of the view
-     * and the the "current panel" which has different controls  based on the
-     * phase.
+     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
+     * the view and the "current panel" which has different controls based on the phase.
      * 
-     * @return
+     * @return the panel for the current phase
      */
     public JComponent getCurrentPanel() {
         return curPanel;

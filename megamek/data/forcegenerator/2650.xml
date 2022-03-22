@@ -280,6 +280,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1</availability>
+		<model name='AL-A1'>
+			<availability>LA:2</availability>
+		</model>
+		<model name='AL-D1 &apos;Dokkalfar&apos;'>
+			<availability>LA:1</availability>
+		</model>
+	</chassis>
 	<chassis name='Aquarius Escort' unitType='Small Craft'>
 		<availability>FWL:6</availability>
 		<model name='(Standard)'>
@@ -1625,9 +1634,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>FWL:6,MERC:6+,Periphery:5+,DC:6</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>General:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>MOC:4,OA:4,TH:6,LA:5,SL:6,FWL:5,RWR:3,FS:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer' unitType='Aero'>
@@ -2337,6 +2352,12 @@
 			<availability>LA:8,General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>CC:2-,TH:2-,LA:2-,FWL:2-,FS:2-,DC:2-</availability>
+		<model name='(Standard)'>
+			<availability>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
 		<availability>CC:2,LA:7,SL:4,FWL:2,RWR:2,FS:2,DC:2</availability>
 		<model name='STN-1S'>
@@ -2779,6 +2800,12 @@
 		<model name='(2606)'>
 			<roles>destroyer</roles>
 			<availability>SL:8,IS:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>TH:3-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:3-,IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

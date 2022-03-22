@@ -231,20 +231,17 @@ public class MegamekBorder extends EtchedBorder {
             } else {
                 insets = new Insets(5, 5, 5, 5);
             }
-        } catch (Exception e) {
-            System.out.println("Error: loading icons for " +
-                    "a MegamekBorder!");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error: loading icons for a MegaMekBorder!", ex);
             iconsLoaded = false;
-        }      
+        }
     }
     
     /**
      * Paints the border using the loaded corner icons and edge icons.
      */
     @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width,
-                            int height) {
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         // Do nothing if we don't want to draw a border
         if (noBorder) {
             return;

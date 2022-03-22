@@ -11,6 +11,7 @@ import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
 
 /** This class describes a vehicle crew that has abandoned its vehicle and now
  * functions as a rifle foot platoon of equal size.
@@ -70,7 +71,7 @@ public class EjectedCrew extends Infantry {
                         Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LogManager.getLogger().error("", ex);
             }
         }
     }
@@ -137,7 +138,7 @@ public class EjectedCrew extends Infantry {
                         Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LogManager.getLogger().error("", ex);
             }
         }
     }

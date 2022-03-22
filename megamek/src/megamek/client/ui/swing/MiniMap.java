@@ -450,7 +450,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     SwingUtilities.invokeLater(drawMapable);
                 }
             } catch (Throwable t) {
-                t.printStackTrace();
+                LogManager.getLogger().error("", t);
             }
         }
     };
@@ -1336,6 +1336,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
                     || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
+                    || (e.getOldPhase() == GamePhase.PREMOVEMENT) || (e.getOldPhase() == GamePhase.PREFIRING)
                     || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {
                 File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {
@@ -1345,8 +1346,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                         + e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
                 }
 
             }

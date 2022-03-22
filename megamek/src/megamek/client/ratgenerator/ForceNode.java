@@ -329,9 +329,7 @@ public class ForceNode extends RulesetNode {
         try {
             eschelon = Integer.parseInt(assertions.getProperty("eschelon"));
             assertions.remove("eschelon");
-        } catch (NullPointerException ex) {
-            throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
-        } catch (NumberFormatException ex) {
+        } catch (Exception ex) {
             throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
         }
 

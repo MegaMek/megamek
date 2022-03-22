@@ -13,16 +13,20 @@ BattleArmor
 </UnitType>
 
 <Name>
-Tunnel Rat Mining Exoskeleton
+Tunnel Rat I Mining Exoskeleton
 </Name>
 
 <Model>
-II [Armored Glove]
+[Armored Glove]
 </Model>
 
 <year>
 3058
 </year>
+
+<mul id:>
+5303
+</mul id:>
 
 <type>
 IS Level 2

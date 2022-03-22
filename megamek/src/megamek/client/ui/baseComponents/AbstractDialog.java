@@ -139,10 +139,10 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
-     * Re-sizes the dialog to a maximum width and height of 80% of the screen size
-     * when necessary. Then centers the dialog on the screen.
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * It then centers the dialog on the screen.
      */
-    private void fitAndCenter() {
+    protected void fitAndCenter() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int maxWidth = (int) (screenSize.width * 0.8);
         int maxHeight = (int) (screenSize.height * 0.8);

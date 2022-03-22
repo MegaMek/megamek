@@ -9,22 +9,38 @@ VERSION HISTORY:
 + Issues #2749 and #3418: Proper Supercharger Implementation and Improved MASC/Supercharger Hex Movement Display
 + PR #3446: Adding the Legendary SkillLevel
 + PR #3427: Properly Loading All Fonts in MegaMek
-+ Updating to Mockito Core 4.3.1 from 4.2.0
-+ Updating to JAXB 3.0.1 from 2.3.2
-+ Updating to JAXB Runtime 3.0.2 from 2.3.2
 + PR #3452: Mech melee equipment validation update
 + PR #3454: Hull-down vehicles can indirectly fire body-mounted LRMs per errata
-+ Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
-+ Adding JUnit Jupiter 5.8.2
 + PR #3458: Rat Generator Editor UI Updates
 + Issue #3460: Preventing Gun Emplacement Offboard Deployment and NPEs
 + PR #3423: Increasing the chat levels for some useful princess gameplay messages
 + PR #3445: Fixing MegaMek's Javadoc Build
 + Issue #3413: Command Line Flags and Argument Improvements
-+ Updating FlatLaf to 2.0.2 from 2.0.1
 + Data: Force Generator updates. In the process of adding missing units and updating units.
 + PR #3476: Generated RAT table TechBase column
 + PR #3480: Correct Remote Sensor Dispenser BA ammo amount
++ Issue #3484: Per errata, Battle Armor and infantry no longer allowed to set MGs to burst fire mode.
++ Issue #3386: Per TW, Aerodyne DropShips and small craft can now hover, but can no longer vertically land or take off, except in vacuum.
++ Data: New Sprites and a few new camos.
++ Issue #3400: Introduced new pre-movement and pre-firing phases; currently they allow eligible units to unhide (rather than having to select an option via arcane dropdown in the Extras tab on the previous turn).
++ Issue #3505: Improved bot valuation of attacks by variable-damage infantry weapons (e.g. support lasers)
++ Issue #3448: Display unit cost in mech summary without counting ammo.
++ Issue #3502: Disable Jump Button when prone
++ Data: Adding Shrapnel Infantry Weapons. These have been converted per the rules in AToWC but things like
+        proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
+        Compared to lots of the existing infantry weapons these are long ranged, and more powerful especially the sniper
+        rifles.
++ PR #3490: RATGeneratorEditor UX Improvements
++ PR #3515: Modernizing a bunch of Legacy Logging
++ Updating to Jackson XML 2.13.2 from 2.13.1
++ Updating to FlatLaf 2.1 from 2.0.1
++ Updating to JAXB 3.0.1 from 2.3.2
++ Updating to Log4j2 2.17.2 from 2.17.1
++ Updating to JAXB Runtime 3.0.2 from 2.3.2
++ Adding JUnit Jupiter 5.8.2
++ Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
++ Updating to Mockito 4.4.0 from 4.2.0
++ Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit
@@ -1044,7 +1060,7 @@ v0.43.10-RC4 (2018-04-18 18:00 UTC)
     Partially fixes #936: 0.43.9-RC3 Princess crashes
 + PR #950: Make Mount List Submenus
     Fixes issues #764: Mount List Too Long
-+ PR #967: Ant bulid.xml fix
++ PR #967: Ant build.xml fix
     Fixes issue with ant build.xml not seeing localized messages.properties files
 + PR #956: Added cost for T_AEROSPACE_ARMOR
     Fixes issue mekhq#671: aerospace armor costs -5
@@ -1070,7 +1086,7 @@ v0.43.9-RC3 (2018-03-13 18:00 UTC)
 + PR #909: Add MiscType entry for Clan Endo-Composite structure
     Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
 + PR #923: Bogdown after DFA
-    Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
+    Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Successful DFA
 + Remove duplicate Glancing Blow and Direct Blow report messages
 + PR #930: Fix the image cache
 + PR #931: Observer Initiative & TacGen ICB Reset
@@ -1302,17 +1318,13 @@ v0.43.3 (2017-07-18 18:30 UTC)
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist
-+ PR #518: Updated quirks for errata: Improved sensors, cooling system flaw,
-    fragile fuel tank
++ PR #518: Updated quirks for errata: Improved sensors, cooling system flaw, fragile fuel tank
 + Issue #526: Further image atlas packaging bugs
 + Issue #487: Carriage returns in startup.sh causing issues
-+ Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly
-    required, as they have default values if not defined)
++ Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly required, as they have default values if not defined)
 + Issue #529: Movement Interruption with Dialog Box Ends Turn
 + Data: New Sprites, Unit Fixes and RAT Fixes.
-+ Added BLK <grav_decks> tag.  This allows uers to specify grav decks by size,
-    rather than just by class.  The old tags still work, but the grav decks are
-    added with a default value for the size class
++ Added BLK <grav_decks> tag. This allows users to specify grav decks by size, rather than just by class. The old tags still work, but the grav decks are added with a default value for the size class
 
 v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements
@@ -1330,8 +1342,7 @@ v0.43.1 (2017-03-31 01:15 UTC)
 + Issue #494 - Updated Princess Behaviors (Thanks pfarland and xStormforgex)
 + Issue #484 and fixes to image names.
 + Issue #490: Fixed princess documentation.
-+ Feature: Princess will now respond with "You are not my boss." if a player
-    attempts to issue a command to an enemy Princess instance.
++ Feature: Princess will now respond with "You are not my boss." if a player attempts to issue a command to an enemy Princess instance.
 + Issue #198: Long Tom cannons cannot switch to indirect firing mode
 + Issue #456: Cannot cancel hot loading of LRMs during battle
 + Issue #457: Hot loaded LRMs not working properly
@@ -1341,14 +1352,12 @@ v0.43.1 (2017-03-31 01:15 UTC)
 + Issue #421: Toughness Text In Pilot Tab Spacing Issue
 + Issue #442: Tooltip colors still not quite right for firing vectors
 + Issue #507: Image atlas map has cross-platform issues
-+ Corrected BV calculations for HarJel II/III, coolant pods, and interface
-    cockpit.
++ Corrected BV calculations for HarJel II/III, coolant pods, and interface cockpit.
 + Issue #511: Fall height is wrong for falls when moving into a higher hex
 + Bug: Cannot fire arm-mounted weapons while prone.
 + Bug: ASF can use Silver Bullet Gauss Rifles/Ammo
 + Bug: Attack sprites/arrows no longer shown for sensor returns
-+ Feature: Unit files distinguish between fixed and pod-mounted equipment in
-    omni units.
++ Feature: Unit files distinguish between fixed and pod-mounted equipment in omni units.
 + Issue #510: Reports related to geysers weren't marked public
 + Issue #440: Explosions greater than 1 hex ring away not affecting all hexes
 + Issue #488: Chat window not disabling some hotkeys in targeting phase
@@ -1373,8 +1382,7 @@ v0.43.1 (2017-03-31 01:15 UTC)
 + Data: Turret Rats pt1 Thanks Bloodwolf. New Maps.
 
 v0.43.0 (2017-02-13 03:30 UTC)
-+Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for
-    BA SRM4(OS) and BA LBX
++ Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for BA SRM4(OS) and BA LBX
 + Issue #467: Princess bot NPEs in physical attacks phase
 + Issue #427: Firing weapons split across arm/torso while prone
 + Data: Some unit fixes, and new maps from DancefloorLandmine
@@ -1389,16 +1397,14 @@ v0.43.0 (2017-02-13 03:30 UTC)
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game
-+ Data/Feature: Turret Project Part 3 - Major additions to the number and 
-    types of turret. Sprites still in progress.
++ Data/Feature: Turret Project Part 3 - Major additions to the number and types of turret. Sprites still in progress.
 + Issue #444: Client dies during the fire phase
 
 v0.41.28 (2016-12-18 17:35 UTC)
 + Issue #437: Issues with tooltip foreground colors
 + Issue #438: "Show Wrecks" graphics option ignored in isometric mode
 + Bug: Natural Aptitude Pilot/Gunnery restored.
-+ Data/Feature: Turret Project Part 2 - Major additions to the number and 
-    types of turret. Sprites still in progress.
++ Data/Feature: Turret Project Part 2 - Major additions to the number and types of turret. Sprites still in progress.
 + Data: New Sprites.
 + Issue #434: Hex updates from server don't respect client set hex theme
 + Fixed ordering issues in official tilesets
@@ -1408,14 +1414,12 @@ v0.41.27 (2016-12-07 03:00 UTC)
 + Feature: PhaseDisplay buttons can now use tooltip text defined in i18n files
 + Bug: Manually targeting doesn't update next target id
 + Feature: Added "only valid" & "no allies" options to firing phase next target
-+ Feature: Added keybinds for "only valid" & "no allies" next target  -- This
-    means that some of the default keybinds have changed, check client settings
++ Feature: Added keybinds for "only valid" & "no allies" next target -- This means that some of the default keybinds have changed, check client settings
 + Bug: Heat-seeking LRM modifiers being applied before side table is set
 + Issue #401: Princess deploys multiple units in/on top of one building
 + Issue #404: Adjacent building auto-success could trump some automatic failures
 + Data: New Sprites.
-+ Data: Updated Key Binds.txt in Docs folder to take into account above valid
-    target feature.
++ Data: Updated Key Binds.txt in Docs folder to take into account above valid target feature.
 + Issue #393: Highlighting currently selected ASF flight path
 + Issue #416: Kill Count Victory ignores kills from destroyed units
 + Bug: Fix to Ammo Names and restoring Low/Profile for vehicles.

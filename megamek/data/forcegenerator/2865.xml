@@ -2938,9 +2938,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>IS:3,MERC:3,Periphery:2</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>MOC:6,OA:6,General:6,TC:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>MOC:3,CS:6,OA:3,IS:5,MERC:4,TC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer' unitType='Aero'>
@@ -4015,6 +4021,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>IS:2-,FS:2</availability>
+		<model name='(Standard)'>
+			<availability>IS:2,FS:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
 		<availability>CC:3,CS:3,LA:6,FWL:4,IS:4,FS:3,CIR:3,DC:4,Periphery:3</availability>
 		<model name='(2815)'>
@@ -4858,6 +4870,12 @@
 		<model name='(2606)'>
 			<roles>destroyer</roles>
 			<availability>CLAN:8,IS:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

@@ -115,6 +115,15 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>MOC:2,CC:10,FWL:10</salvage>
 	</faction>
+	<faction key='RF'>
+		<pctOmni>0,10,16,20,30</pctOmni>
+		<pctClan>0,0,8,12,20</pctClan>
+		<pctSL>70,80,88,88,80</pctSL>
+		<omniMargin>15</omniMargin>
+		<techMargin>15</techMargin>
+		<upgradeMargin>12</upgradeMargin>
+		<salvage pct='5'>FWL:10</salvage>
+	</faction>
 	<faction key='FS'>
 		<pctOmni>10,15,22,28,40</pctOmni>
 		<pctClan>0,0,12,18,20</pctClan>
@@ -263,15 +272,6 @@
 		<pctSL unitType='Vehicle'>85,0,55,55,55</pctSL>
 		<techMargin>15</techMargin>
 		<salvage pct='10'>FS:4,DC:10</salvage>
-	</faction>
-	<faction key='RF'>
-		<pctOmni>0,10,16,20,30</pctOmni>
-		<pctClan>0,0,8,12,20</pctClan>
-		<pctSL>70,80,88,88,80</pctSL>
-		<omniMargin>15</omniMargin>
-		<techMargin>15</techMargin>
-		<upgradeMargin>12</upgradeMargin>
-		<salvage pct='5'>FWL:10</salvage>
 	</faction>
 	<faction key='RR'>
 		<pctOmni>5,15,22,35</pctOmni>
@@ -4805,7 +4805,7 @@
 		</model>
 	</chassis>
 	<chassis name='Cougar' unitType='Mek' omni='Clan'>
-		<availability>CWE:4,CJF:5,CWIE:4</availability>
+		<availability>CWE:4,MERC.KH:2,MERC.WD:2,CLAN:3,IS:2,MERC:2,CJF:5,CWIE:4</availability>
 		<model name='A'>
 			<roles>fire_support</roles>
 			<availability>General:7</availability>
@@ -4835,6 +4835,9 @@
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
+		</model>
+		<model name='T'>
+			<availability>MERC.KH:3,MERC.WD:3,CLAN:8,IS:5,MERC:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Coyotl' unitType='Mek' omni='Clan'>
@@ -9315,6 +9318,18 @@
 			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>CDS:3,ROS:3+</availability>
+		<model name='D'>
+			<availability>CDS:3,ROS:3</availability>
+		</model>
+		<model name='L'>
+			<availability>CDS:4,LA:4,ROS:4,FWL:4,FS:4,RA:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>CDS:8,ROS:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Ironhold Assault Battle Armor' unitType='BattleArmor'>
 		<availability>CJF:5</availability>
 		<model name='(Anti-Tank)' mechanized='false'>
@@ -12047,7 +12062,10 @@
 		</model>
 	</chassis>
 	<chassis name='Mercury' unitType='Mek'>
-		<availability>ROS:4</availability>
+		<availability>CC:2,LA:2,ROS:4,FWL:2,DC:2</availability>
+		<model name='MCY-105'>
+			<availability>CC:2,LA:2,ROS:4,FWL:2,DC:2</availability>
+		</model>
 		<model name='MCY-97'>
 			<roles>recon</roles>
 			<availability>ROS:4</availability>
@@ -13094,7 +13112,10 @@
 		</model>
 	</chassis>
 	<chassis name='Orion' unitType='Mek'>
-		<availability>MOC:1,CC:2,CLAN:1,FS:2,CP:5,Periphery:3,TC:1,CWIE:2,CWE:2,Periphery.MW:3,Periphery.ME:3,FWL:5,DC:3</availability>
+		<availability>MOC:1,CC:2,CLAN:1,FS:2,CP:5,MERC:2,Periphery:3,TC:1,CWIE:2,CWE:2,Periphery.MW:3,Periphery.ME:3,FWL:5,DC:3</availability>
+		<model name='C 2'>
+			<availability>CWE:3-,FWL:2,MERC:2</availability>
+		</model>
 		<model name='ON1-K'>
 			<availability>CLAN:2-,Periphery:2-</availability>
 		</model>
@@ -14856,6 +14877,25 @@
 			<availability>TC:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Rime Otter' unitType='Mek' omni='Clan'>
+		<availability>RD:1</availability>
+		<model name='A'>
+			<availability>RD:5</availability>
+		</model>
+		<model name='B'>
+			<availability>RD:2</availability>
+		</model>
+		<model name='C'>
+			<availability>RD:4</availability>
+		</model>
+		<model name='D'>
+			<roles>spotter</roles>
+			<availability>RD:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>RD:7</availability>
+		</model>
+	</chassis>
 	<chassis name='Ripper Infantry Transport' unitType='VTOL'>
 		<availability>CC:5,CHH:4,FVC:4,LA:5,ROS:6,CLAN:2,FS:5,DC:5</availability>
 		<model name='(ERML)'>
@@ -15605,7 +15645,7 @@
 		</model>
 	</chassis>
 	<chassis name='Scorpion' unitType='Mek'>
-		<availability>CC:2,FVC:2,LA:4,ROS:2,FWL:2,MERC:2,CP:2,DC:4,Periphery:3</availability>
+		<availability>CC:2,MERC.KH:2-,IS:2,MERC:2,CP:2,Periphery:2-,FVC:2,MERC.WD:2-,RF:1-,LA:4,ROS:2,PIR:2,FWL:2,DA:2,DC:4</availability>
 		<model name='SCP-10M'>
 			<availability>CC:6,MOC:4,ROS:6,FWL:8,MERC:6,CP:8,DC:6</availability>
 		</model>
@@ -15616,14 +15656,21 @@
 		<model name='SCP-12S'>
 			<availability>LA:2,ROS:2,MERC:2</availability>
 		</model>
+		<model name='SCP-1BR'>
+			<availability>MERC.KH:2-,MERC.WD:2-,IS:2,MERC:3</availability>
+		</model>
 		<model name='SCP-1N'>
 			<availability>Periphery:2-</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>IS:1,Periphery.Deep:4,Periphery:6</availability>
+			<availability>CC:1-,MERC.KH:2-,MERC.WD:2-,RF:1-,Periphery.Deep:1-,FWL:1-,MERC:1-,Periphery:1-,DC:1-</availability>
 		</model>
 		<model name='SCP-1TB'>
 			<availability>ROS:4,MERC:4</availability>
+		</model>
+		<model name='SCP-2N'>
+			<roles>spotter</roles>
+			<availability>ROS:2,PIR:2,FWL:2,DA:2,MERC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Scourge' unitType='Mek'>
@@ -16440,7 +16487,7 @@
 		</model>
 	</chassis>
 	<chassis name='Spider' unitType='Mek'>
-		<availability>MOC:1,CC:2,MERC:2,FS:2,CP:6,Periphery:2,TC:1,FVC:2,ROS:4,Periphery.MW:4,Periphery.ME:4,FWL:6,DC:6</availability>
+		<availability>MOC:1,CC:2,FR:1,MERC:2,FS:2,CP:6,Periphery:2,TC:1,FVC:2,RF:5,ROS:4,Periphery.MW:4,Periphery.ME:4,FWL:6,MH:1,DA:3,DC:6</availability>
 		<model name='SDR-10K'>
 			<availability>ROS:4</availability>
 		</model>
@@ -16476,6 +16523,9 @@
 		</model>
 		<model name='SDR-8Xr'>
 			<availability>ROS:6,MERC:6,DC:6</availability>
+		</model>
+		<model name='SDR-9M'>
+			<availability>MOC:1,RF:5,FWL:4,MH:1,FR:1,MERC:2,DA:3,DC:4</availability>
 		</model>
 		<model name='SDR-C'>
 			<availability>CC:4,FWL:4,FS:4,MERC:4,CP:4,DC:4</availability>

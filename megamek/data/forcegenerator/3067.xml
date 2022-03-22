@@ -7668,6 +7668,24 @@
 			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>DC:2+</availability>
+		<model name='A'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='B'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='C'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='D'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>DC:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Ironsides' unitType='Aero'>
 		<availability>CS:6,CLAN:1,CNC:2,NIOPS:6,WOB:6,FWL.OH:1-,DC:2</availability>
 		<model name='IRN-SD1'>
@@ -12789,7 +12807,7 @@
 			<availability>HL:4-,FRR:6-,Periphery.Deep:6-,MERC:6-,Periphery:6-</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>IS:6</availability>
+			<availability>CC:2-,CS:2-,FRR:2-,FWL:2-,WOB:2-,MERC:2-,DC:2-</availability>
 		</model>
 		<model name='SCP-1TB'>
 			<availability>MERC:4</availability>

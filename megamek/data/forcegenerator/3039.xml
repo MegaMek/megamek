@@ -207,8 +207,8 @@
 		<weightDistribution era='3039' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3039' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
-	<faction key='DA'/>
 	<faction key='EF'/>
+	<faction key='DA'/>
 	<faction key='FC'>
 		<salvage pct='6'>CC:5,FWL:8,DC:10</salvage>
 	</faction>

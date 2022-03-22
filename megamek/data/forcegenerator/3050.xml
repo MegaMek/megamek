@@ -4206,6 +4206,24 @@
 			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>CSJ:3+</availability>
+		<model name='A'>
+			<availability>CSJ:6</availability>
+		</model>
+		<model name='B'>
+			<availability>CSJ:6</availability>
+		</model>
+		<model name='C'>
+			<availability>CSJ:6</availability>
+		</model>
+		<model name='D'>
+			<availability>CSJ:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>CSJ:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Ironsides' unitType='Aero'>
 		<availability>CS:6,CLAN:2,CNC:2,NIOPS:6,WOB:6,FWL.OH:1-</availability>
 		<model name='IRN-SD1'>
@@ -6618,7 +6636,7 @@
 			<availability>HL:6,LA:4,FRR:8,General:6,Periphery.Deep:7,MERC:8,Periphery:8</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>IS:4</availability>
+			<availability>MERC.KH:2,MERC.WD:2,IS:4,MERC:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Scout JumpShip' unitType='Jumpship'>

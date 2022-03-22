@@ -40,6 +40,7 @@ VERSION HISTORY:
 + Adding JUnit Jupiter 5.8.2
 + Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
 + Updating to Mockito 4.4.0 from 4.2.0
++ Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

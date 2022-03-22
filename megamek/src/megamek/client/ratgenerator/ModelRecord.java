@@ -278,14 +278,18 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     public void addRoles(String str) {
-        String[] fields = str.split(",");
-        for (String role : fields) {
-            MissionRole mr = MissionRole.parseRole(role);
-            if (mr != null) {
-                roles.add(mr);
-            } else {
-                LogManager.getLogger().error("Could not parse mission role for "
-                        + getChassis() + " " + getModel() + ": " + role);
+        if (str.isBlank()) {
+            roles.clear();
+        } else {
+            String[] fields = str.split(",");
+            for (String role : fields) {
+                MissionRole mr = MissionRole.parseRole(role);
+                if (mr != null) {
+                    roles.add(mr);
+                } else {
+                    LogManager.getLogger().error("Could not parse mission role for "
+                            + getChassis() + " " + getModel() + ": " + role);
+                }
             }
         }
     }

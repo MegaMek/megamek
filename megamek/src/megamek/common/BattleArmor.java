@@ -878,12 +878,10 @@ public class BattleArmor extends Infantry {
      * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
      * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
      *
-     * <P>This method should be overridden by subclasses of Entity to provide unit type specific calculations.
-     *
      * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
      * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
      * @param singleTrooper When true, returns the BV of a single trooper of this BA, otherwise of the full unit
-     * @return The Battle Value of this unit
+     * @return The Battle Value of this BattleArmor
      */
     public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
         if (useManualBV) {

@@ -1,19 +1,13 @@
 package megamek.client.ui.swing.table;
 
+import javax.swing.*;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
 
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-
 public class MegamekTable extends JTable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private static final int KEY_TIMEOUT = 1000;
@@ -133,5 +127,4 @@ public class MegamekTable extends JTable {
             }
         }
     }
-
 }

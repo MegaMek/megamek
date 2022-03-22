@@ -1,44 +1,28 @@
-/**
+/*
  * MegaMek - Copyright (C) 2010 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics2D;
-import java.awt.GridBagLayout;
-import java.awt.Image;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.common.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.common.Hex;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
 
 /**
  * @author beerockxs
@@ -136,7 +120,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, mech);
         Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager) clientgui.getBoardView().getTilesetManager()).baseFor(new Hex());
+        Image hexImage = clientgui.getBoardView().getTilesetManager().baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
@@ -206,7 +190,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, tank);
         Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager) clientgui.getBoardView().getTilesetManager()).baseFor(new Hex());
+        Image hexImage = clientgui.getBoardView().getTilesetManager().baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
@@ -256,7 +240,5 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
 
             dispose();
         }
-
     }
-
 }

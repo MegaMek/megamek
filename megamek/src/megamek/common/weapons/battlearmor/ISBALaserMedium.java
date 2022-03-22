@@ -52,7 +52,7 @@ public class ISBALaserMedium extends LaserWeapon {
                 .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
                 .setISAdvancement(3050, 3050, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS,F_LC,F_DC);
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC, F_DC);
     }
 }

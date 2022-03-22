@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,25 +11,19 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying vehicles 50 tons and under
- * aboard large spacecraft and mobile structures
+ * Represents a volume of space set aside for carrying vehicles 50 tons and under aboard large
+ * spacecraft and mobile structures
  */
-
 public final class LightVehicleBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1587851184051479305L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected LightVehicleBay() {
+    private LightVehicleBay() {
         totalSpace = 0;
         currentSpace = 0;
     }

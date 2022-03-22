@@ -1,5 +1,6 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
@@ -416,7 +417,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             }
 
             // suffering from TSEMP Interference?
-            if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
+            if (en.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(Messages.getString("MechDisplay.TSEMPInterference"));
             }

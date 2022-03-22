@@ -17,12 +17,7 @@ package megamek.common;
 /**
  * Represents a volume of space set aside for carrying liquid cargo
  */
-
 public final class LiquidCargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -30,20 +25,17 @@ public final class LiquidCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected LiquidCargoBay() {
+    private LiquidCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public LiquidCargoBay(double space, int doors, int bayNumber) {
         totalSpace = space;
@@ -66,9 +58,8 @@ public final class LiquidCargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
 
-        return result;
+        return false;
     }
 
     @Override
@@ -98,10 +89,9 @@ public final class LiquidCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "liquidcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        return "LiquidCargoBay: " + totalSpace + ":" + doors + ":" + bayNumber;
     }
-    
-    
+
     @Override
     public boolean isCargo() {
         return true;
@@ -112,5 +102,4 @@ public final class LiquidCargoBay extends Bay {
         // Based on the weight of the equipment (not capacity), rounded up to the whole ton
         return 100L * (long) Math.ceil(getWeight());
     }
-
 }

@@ -11,29 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
+
+import megamek.common.annotations.Nullable;
 
 import java.util.List;
 import java.util.Vector;
-
-import megamek.common.annotations.Nullable;
 
 /**
  * Represents a set of handles on an OmniMech used by Battle Armor units
  * equiped with Boarding Claws to attach themselves for transport. This is
  * standard equipment on OmniMechs.
  *
- * @see megamek.common.MechFileParser#postLoadInit
+ * @see MechFileParser#postLoadInit
  */
-
-/* package */class BattleArmorHandles implements Transporter {
-
-    // Private attributes, constants and helper functions.
-
-    /**
-     *
-     */
+class BattleArmorHandles implements Transporter {
     private static final long serialVersionUID = -7149931565043762975L;
 
     /**

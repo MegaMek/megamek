@@ -23,15 +23,8 @@ package megamek.common.weapons.battlearmor;
  * @author Sebastian Brocks
  */
 public class CLAdvancedSRM5 extends AdvancedSRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 546071313282533016L;
 
-    /**
-     *
-     */
     public CLAdvancedSRM5() {
         super();
         name = "Advanced SRM 5";
@@ -45,7 +38,7 @@ public class CLAdvancedSRM5 extends AdvancedSRMWeapon {
         extremeRange = 16;
         bv = 75;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .18;
+        tonnage = 0.18;
         criticals = 4;
         cost = 75000;
         rulesRefs = "261, TM";

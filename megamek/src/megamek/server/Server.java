@@ -17,8 +17,8 @@
 package megamek.server;
 
 import com.thoughtworks.xstream.XStream;
-import megamek.MegaMek;
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -42,17 +42,18 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.*;
+import megamek.common.util.BoardUtilities;
+import megamek.common.util.EmailService;
+import megamek.common.util.SerializationHelper;
+import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.AreaEffectHelper.NukeStats;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -60,7 +61,6 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -302,7 +302,6 @@ public class Server implements Runnable {
                 }
             }
         }
-
     };
 
     /**
@@ -19069,7 +19068,7 @@ public class Server implements Runnable {
                 if (entity.getTaserShutdownRounds() == 0) {
                     entity.setBATaserShutdown(false);
                     if (entity.isShutDown() && !entity.isManualShutdown()
-                            && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
+                            && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                         entity.setShutDown(false);
                         r = new Report(5045);
                         r.subject = entity.getId();
@@ -19398,7 +19397,7 @@ public class Server implements Runnable {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if ((entity.getTaserShutdownRounds() == 0)
-                       && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
+                       && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                     if ((entity.heat < 14) && !(entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);

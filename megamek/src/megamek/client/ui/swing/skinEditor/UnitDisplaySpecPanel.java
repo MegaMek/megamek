@@ -14,28 +14,19 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.skinEditor;
-
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Panel with elements for viewing and adjusting a specific
@@ -49,14 +40,8 @@ public class UnitDisplaySpecPanel extends JPanel {
      * A UI widget for displaying path information
      *
      * @author arlith
-     *
      */
-    private class BorderElement extends JPanel implements ActionListener,
-            DocumentListener {
-
-        /**
-         *
-         */
+    private class BorderElement extends JPanel implements ActionListener, DocumentListener {
         private static final long serialVersionUID = -2004313765932049794L;
 
         /**
@@ -176,9 +161,6 @@ public class UnitDisplaySpecPanel extends JPanel {
         }
     }
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -37452332974426228L;
 
     private BorderElement generalTabIdle;
@@ -210,9 +192,6 @@ public class UnitDisplaySpecPanel extends JPanel {
 
     SkinSpecEditor skinEditor;
 
-    /**
-     *
-     */
     public UnitDisplaySpecPanel(SkinSpecEditor skinEditor) {
         super(new GridBagLayout());
         this.skinEditor = skinEditor;
@@ -492,5 +471,4 @@ public class UnitDisplaySpecPanel extends JPanel {
     public void notifySkinChanges() {
         skinEditor.notifySkinChanges(false);
     }
-
 }

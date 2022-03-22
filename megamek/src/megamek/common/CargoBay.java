@@ -11,19 +11,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents a volume of space set aside for carrying general cargo
  * aboard large spacecraft and mobile structures.
  */
-
 public final class CargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     /**
@@ -41,8 +35,7 @@ public final class CargoBay extends Bay {
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public CargoBay(double space, int doors, int bayNumber) {
         totalSpace = space;
@@ -64,9 +57,7 @@ public final class CargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+        return false;
     }
 
     @Override

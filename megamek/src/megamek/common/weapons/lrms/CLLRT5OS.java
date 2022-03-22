@@ -23,15 +23,8 @@ package megamek.common.weapons.lrms;
  * @author Sebastian Brocks
  */
 public class CLLRT5OS extends LRTWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3651580547253252279L;
 
-    /**
-     *
-     */
     public CLLRT5OS() {
         super();
         name = "LRT 5 (OS)";
@@ -53,13 +46,13 @@ public class CLLRT5OS extends LRTWeapon {
         cost = 15000;
         rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_X, RATING_D, RATING_C, RATING_C)
-            .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CSF)
-            .setProductionFactions(F_CSF);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_C)
+                .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CSF)
+                .setProductionFactions(F_CSF);
     }
 }

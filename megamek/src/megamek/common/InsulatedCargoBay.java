@@ -11,18 +11,12 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents a volume of space set aside for carrying insulated cargo
  */
-
 public final class InsulatedCargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -30,7 +24,7 @@ public final class InsulatedCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected InsulatedCargoBay() {
+    private InsulatedCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -65,9 +59,8 @@ public final class InsulatedCargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
 
-        return result;
+        return false;
     }
 
     @Override

@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -22,22 +21,14 @@ import java.util.Vector;
 
 /**
  * Represents a docking collar with which a Jumpship can carry a DropShip
- *
  */
-
 public class DockingCollar implements Transporter {
-
-    // Private attributes and helper functions.
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4699786673513410716L;
 
     /**
      * The troops being carried.
      */
-    /* package */Vector<Integer> troops = new Vector<>();
+    Vector<Integer> troops = new Vector<>();
 
     private boolean damaged = false;
     private int collarNumber = 0;
@@ -47,7 +38,7 @@ public class DockingCollar implements Transporter {
     /**
      * The total amount of space available for troops.
      */
-    /* package */int totalSpace;
+    int totalSpace;
 
     /**
      * The current amount of space available for troops.
@@ -98,19 +89,14 @@ public class DockingCollar implements Transporter {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        /*
-         * For now disable everything until I get docking worked out
-         */
+        // TODO : For now disable everything until we get docking worked out
         if (unit instanceof Dropship) {
-            // Dropships are all that collars can carry
+            // DropShips are all that collars can carry
             Dropship ds = (Dropship) unit;
-            result = true;
 
-            // If the dropship's collar is damaged, or it's a primitive without a collar
+            // If the dropShip's collar is damaged, or it's a primitive without a collar
             // we can't mate with it.
-            if (ds.isDockCollarDamaged()) {
-                result = false;
-            }
+            result = !ds.isDockCollarDamaged();
 
             // If this collar is in use, or if it's damaged, then we can't
             if ((currentSpace < 1) || isDamaged()) {

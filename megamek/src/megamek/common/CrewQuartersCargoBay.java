@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -28,8 +28,6 @@ public final class CrewQuartersCargoBay extends Bay {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the

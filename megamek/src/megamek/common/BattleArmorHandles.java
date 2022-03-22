@@ -37,14 +37,12 @@ class BattleArmorHandles implements Transporter {
     /**
      * The set of front locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_FRONT =
-        { Mech.LOC_RT, Mech.LOC_LT };
+    private static final int[] EXTERIOR_LOCATIONS_FRONT = { Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The set of rear locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_REAR =
-        { Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT };
+    private static final int[] EXTERIOR_LOCATIONS_REAR = { Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The <code>String</code> reported when the handles are in use.
@@ -55,8 +53,6 @@ class BattleArmorHandles implements Transporter {
      * The <code>String</code> reported when the handles are available.
      */
     private static final String HAVE_VACANCY_STRING = "One battle armor squad";
-
-    // Protected constructors and methods.
 
     /**
      * Get the exterior locations that a loaded squad covers.
@@ -96,12 +92,11 @@ class BattleArmorHandles implements Transporter {
         return BattleArmorHandles.HAVE_VACANCY_STRING;
     }
 
-    // Public constructors and methods.
-
     /**
      * Create a set of handles.
      */
     public BattleArmorHandles() {
+
     }
 
     /**
@@ -264,7 +259,7 @@ class BattleArmorHandles implements Transporter {
             if ((trooper.locations() > tloc) && (trooper.getInternal(tloc) > 0)) {
                 result = true;
             }
-        } // End carrying-troopers
+        }
 
         // Return our result.
         return result;

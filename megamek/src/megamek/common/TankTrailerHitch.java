@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2002-2018 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2002-2018 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,7 +12,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -22,16 +22,9 @@ import java.util.Vector;
 /**
  * Represents a trailer hitch that allows a wheeled or tracked vehicle to tow trailers.
  *
- * @see megamek.common.MechFileParser#postLoadInit
+ * @see MechFileParser#postLoadInit
  */
-
 public class TankTrailerHitch implements Transporter {
-
-    // Private attributes, constants and helper functions.
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1193349063084937973L;
     
     /**
@@ -59,8 +52,6 @@ public class TankTrailerHitch implements Transporter {
      */
     private static final String HAVE_VACANCY_STRING = "One trailer";
 
-    // Protected constructors and methods.
-
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of a
      * towed trailer.
@@ -80,8 +71,6 @@ public class TankTrailerHitch implements Transporter {
         }
         return TankTrailerHitch.HAVE_VACANCY_STRING;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a new hitch, specified as a (front) or rear mount.
@@ -277,4 +266,4 @@ public class TankTrailerHitch implements Transporter {
     public void setGame(Game game) {
         this.game = game;
     }
-} // End package class TankTrailerHitch implements Transporter
+}

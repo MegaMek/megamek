@@ -44,7 +44,6 @@ public class DockingCollar implements Transporter {
      */
     int currentSpace;
 
-
     /**
      * The default constructor is only for serialization.
      */
@@ -53,13 +52,11 @@ public class DockingCollar implements Transporter {
         currentSpace = 0;
     }
 
-    // Public constructors and methods.
-
     /**
-     * Create a Jumpship collar that can carry one dropship
+     * Create a Jumpship collar that can carry one DropShip
      *
-     * @param docks Capacity. A collar can always carry one dropship.
-     * @param collarNumber the Id of this collar, used for tracking in MHQ 
+     * @param docks Capacity. A collar can always carry one DropShip.
+     * @param collarNumber the id of this collar, used for tracking in MHQ
      */
     public DockingCollar(int docks, int collarNumber) {
         totalSpace = docks;

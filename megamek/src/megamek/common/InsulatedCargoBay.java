@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -29,15 +29,12 @@ public final class InsulatedCargoBay extends Bay {
         currentSpace = 0;
     }
 
-    // Public constructors and methods.
-
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public InsulatedCargoBay(double space, int doors, int bayNumber) {
         totalSpace = space;
@@ -51,15 +48,12 @@ public final class InsulatedCargoBay extends Bay {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-
         return false;
     }
 
@@ -92,7 +86,6 @@ public final class InsulatedCargoBay extends Bay {
     public String toString() {
         return "insulatedcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
-    
     
     @Override
     public boolean isCargo() {

@@ -47,19 +47,17 @@ public class Bay implements Transporter, ITechnology {
     /**
      * The troops being carried.
      */
-    /* package */Vector<Integer> troops = new Vector<>();
+    Vector<Integer> troops = new Vector<>();
 
     /**
      * The total amount of space available for troops.
      */
-    /* package */double totalSpace;
+    double totalSpace;
 
     /**
      * The current amount of space not occupied by troops or cargo.
      */
-    /* package */double currentSpace;
-
-    // Protected constructors and methods.
+    double currentSpace;
 
     /**
      * The default constructor is only for serialization.
@@ -70,15 +68,12 @@ public class Bay implements Transporter, ITechnology {
         damage = 0;
     }
 
-    // Public constructors and methods.
-
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      * @param doors
      * @param bayNumber
      */

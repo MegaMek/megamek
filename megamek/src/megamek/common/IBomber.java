@@ -130,14 +130,14 @@ public interface IBomber {
                             ((Entity) this).addEquipment(ammo, loc, false);
                                                         
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
 
                     }
                 } else {
                     try {
-                        ((Entity) this).addEquipment(EquipmentType.get(BombType
-                                .getBombInternalName(type)), loc, false);
-                    } catch (LocationFullException ex) {
+                        ((Entity) this).addEquipment(EquipmentType.get(BombType.getBombInternalName(type)),
+                                loc, false);
+                    } catch (LocationFullException ignored) {
 
                     }
                 }

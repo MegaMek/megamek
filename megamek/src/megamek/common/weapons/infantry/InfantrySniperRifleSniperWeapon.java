@@ -22,20 +22,21 @@ import megamek.common.AmmoType;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleSniperWeapon extends InfantryWeapon {
+public class InfantrySniperRifleSniperWeapon extends InfantryWeapon {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryRifleSniperWeapon() {
+	public InfantrySniperRifleSniperWeapon() {
 		super();
 
-		name = "Rifle (Sniper)";
+		name = "Sniper Rifle (Bolt Action)";
 		setInternalName(name);
 		addLookupName("InfantryBoltActionSniperRifle");
 		addLookupName("Infantry Sniper Rifle");
+		addLookupName("Rifle (Sniper)");
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 350;
 		bv = 0.92;

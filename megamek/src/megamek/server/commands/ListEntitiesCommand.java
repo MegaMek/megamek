@@ -10,11 +10,8 @@ import megamek.server.Server;
 public class ListEntitiesCommand extends ServerCommand {
 
     public ListEntitiesCommand(Server server) {
-        super(
-                server,
-                "listEntities",
-                "Show the ids of all entities owned by this player. " +
-                "Usage: /listEntities");
+        super(server, "listEntities",
+                "Show the ids of all entities owned by this player. Usage: /listEntities");
     }
 
     /**
@@ -28,15 +25,14 @@ public class ListEntitiesCommand extends ServerCommand {
         if (null == p) {
             return;
         }
+
         for (Entity ent : server.getGame().getEntitiesVector()) {
             try {
                 if (ent.getOwnerId() == connId) {
-                    server.sendServerChat(connId,
-                            ent.getId() + " - " + ent.getDisplayName());
+                    server.sendServerChat(connId, ent.getId() + " - " + ent.getDisplayName());
                 }
-            } catch (NumberFormatException nfe) {
-            } catch (NullPointerException npe) {
-            } catch (IndexOutOfBoundsException ioobe) {
+            } catch (Exception ignored) {
+
             }
         }
     }

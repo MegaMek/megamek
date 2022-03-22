@@ -119,6 +119,9 @@
 		<weightDistribution era='3100' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
+	<faction key='CEI'>
+		<techMargin>6</techMargin>
+	</faction>
 	<faction key='DA'>
 		<pctOmni>0,5,12,16,24</pctOmni>
 		<pctClan>0,0,4,8,18</pctClan>
@@ -137,8 +140,41 @@
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='5'>LA:4</salvage>
 	</faction>
-	<faction key='CEI'>
+	<faction key='MSC'>
+		<pctOmni>0,8,12,17,30</pctOmni>
+		<pctClan>0,0,5,10,20</pctClan>
+		<pctSL>50,60,66,68,80</pctSL>
+		<omniMargin>6</omniMargin>
 		<techMargin>6</techMargin>
+		<upgradeMargin>3</upgradeMargin>
+		<salvage pct='5'>RF:2,ROS:3</salvage>
+	</faction>
+	<faction key='OP'>
+		<pctOmni>0,8,14,18,28</pctOmni>
+		<pctClan>0,0,5,10,20</pctClan>
+		<pctSL>50,60,77,76,80</pctSL>
+		<omniMargin>6</omniMargin>
+		<techMargin>6</techMargin>
+		<upgradeMargin>3</upgradeMargin>
+		<salvage pct='5'>CC:10,DA:2</salvage>
+	</faction>
+	<faction key='RF'>
+		<pctOmni>0,6,12,16,26</pctOmni>
+		<pctClan>0,0,5,8,18</pctClan>
+		<pctSL>50,60,70,76,82</pctSL>
+		<omniMargin>6</omniMargin>
+		<techMargin>6</techMargin>
+		<upgradeMargin>3</upgradeMargin>
+		<salvage pct='5'>FWL:10,MSC:2</salvage>
+	</faction>
+	<faction key='RCM'>
+		<pctOmni>0,8,14,18,28</pctOmni>
+		<pctClan>0,0,5,10,20</pctClan>
+		<pctSL>50,60,70,72,80</pctSL>
+		<omniMargin>6</omniMargin>
+		<techMargin>6</techMargin>
+		<upgradeMargin>3</upgradeMargin>
+		<salvage pct='5'>RF:1,FWL:10</salvage>
 	</faction>
 	<faction key='FS'>
 		<pctOmni>8,14,19,26,34</pctOmni>
@@ -235,15 +271,6 @@
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MSC'>
-		<pctOmni>0,8,12,17,30</pctOmni>
-		<pctClan>0,0,5,10,20</pctClan>
-		<pctSL>50,60,66,68,80</pctSL>
-		<omniMargin>6</omniMargin>
-		<techMargin>6</techMargin>
-		<upgradeMargin>3</upgradeMargin>
-		<salvage pct='5'>RF:2,ROS:3</salvage>
-	</faction>
 	<faction key='MERC'>
 		<pctOmni>0,10,12,16,26</pctOmni>
 		<pctClan>0,6,8,10,22</pctClan>
@@ -264,15 +291,6 @@
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='5'>MH:2,RCM:2</salvage>
-	</faction>
-	<faction key='OP'>
-		<pctOmni>0,8,14,18,28</pctOmni>
-		<pctClan>0,0,5,10,20</pctClan>
-		<pctSL>50,60,77,76,80</pctSL>
-		<omniMargin>6</omniMargin>
-		<techMargin>6</techMargin>
-		<upgradeMargin>3</upgradeMargin>
-		<salvage pct='5'>CC:10,DA:2</salvage>
 	</faction>
 	<faction key='Periphery'>
 		<omniMargin>6</omniMargin>
@@ -311,15 +329,6 @@
 		<techMargin>6</techMargin>
 		<salvage pct='10'>FS:10,DC:10</salvage>
 	</faction>
-	<faction key='RF'>
-		<pctOmni>0,6,12,16,26</pctOmni>
-		<pctClan>0,0,5,8,18</pctClan>
-		<pctSL>50,60,70,76,82</pctSL>
-		<omniMargin>6</omniMargin>
-		<techMargin>6</techMargin>
-		<upgradeMargin>3</upgradeMargin>
-		<salvage pct='5'>FWL:10,MSC:2</salvage>
-	</faction>
 	<faction key='ROS'>
 		<pctOmni>4,8,18,28</pctOmni>
 		<pctClan>0,12,20,28</pctClan>
@@ -334,15 +343,6 @@
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='5'>RT:1,LA:10</salvage>
-	</faction>
-	<faction key='RCM'>
-		<pctOmni>0,8,14,18,28</pctOmni>
-		<pctClan>0,0,5,10,20</pctClan>
-		<pctSL>50,60,70,72,80</pctSL>
-		<omniMargin>6</omniMargin>
-		<techMargin>6</techMargin>
-		<upgradeMargin>3</upgradeMargin>
-		<salvage pct='5'>RF:1,FWL:10</salvage>
 	</faction>
 	<faction key='RT'>
 		<omniMargin>6</omniMargin>
@@ -1378,6 +1378,12 @@
 		</model>
 		<model name='ALB-4U'>
 			<availability>DTA:6,OP:6,FWL:6,MSC:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1:3131</availability>
+		<model name='AL-A1'>
+			<availability>LA:1:3131</availability>
 		</model>
 	</chassis>
 	<chassis name='Alliance Space Station' unitType='Space Station'>
@@ -4598,6 +4604,9 @@
 		<model name='H'>
 			<availability>General:5</availability>
 		</model>
+		<model name='I'>
+			<availability>General:4</availability>
+		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
 		</model>
@@ -5929,6 +5938,9 @@
 		<model name='(Support) [Plasma]' mechanized='true'>
 			<availability>General:5</availability>
 		</model>
+		<model name='2 [MG]' mechanized='false'>
+			<availability>CC:2</availability>
+		</model>
 		<model name='[Flamer]' mechanized='true'>
 			<availability>CC:7</availability>
 		</model>
@@ -6918,6 +6930,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Gladiator Exoskeleton' unitType='BattleArmor'>
+		<availability>MH:2</availability>
+		<model name='(Standard) [AG]' mechanized='false'>
+			<availability>MH:3</availability>
+		</model>
+		<model name='(Standard) [BC/ID]' mechanized='false'>
+			<availability>MH:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>
 		<availability>MOC:1-,FVC:2-,LA:3,MH:3,MERC:4,Periphery:1-,TC:1-</availability>
 		<model name='GLD-1R'>
@@ -7073,6 +7094,16 @@
 		</model>
 		<model name='3'>
 			<availability>RA:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Gorilla Exoskeleton' unitType='BattleArmor'>
+		<availability>OP:2,MERC.KH:5,MERC.WD:5,IS:6,FWL:2,MERC:5,Periphery:4</availability>
+		<model name='&apos;Falcata&apos;' mechanized='false'>
+			<availability>OP:4,FWL:4</availability>
+		</model>
+		<model name='PEX-2B' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:5-,MERC.WD:5-,IS:6-,MERC:5-,Periphery:4-</availability>
 		</model>
 	</chassis>
 	<chassis name='Goshawk (Vapor Eagle)' unitType='Mek'>
@@ -7407,6 +7438,32 @@
 		<model name='2'>
 			<roles>urban</roles>
 			<availability>RD:8,CGB:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Groundhog Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:3-,MERC.WD:3-,IS:4-,MERC:3-,Periphery:3-</availability>
+		<model name='CEX-205 [Armored Glove]' mechanized='false'>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Basic Manipulator]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Cargo Lifter]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Mine Clearance]' mechanized='false'>
+			<roles>support,minesweeper</roles>
+			<availability>MERC.KH:3,MERC.WD:3,IS:4,MERC:3,Periphery:3</availability>
+		</model>
+		<model name='CEX-205 [Salvage Arm]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:3-,MERC.WD:3-,IS:4,MERC:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
@@ -8749,6 +8806,15 @@
 		</model>
 		<model name='(2850)'>
 			<availability>CLAN:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>CDS:2,ROS:2+</availability>
+		<model name='D'>
+			<availability>CDS:3,ROS:3</availability>
+		</model>
+		<model name='Prime'>
+			<availability>CDS:8,ROS:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ironhold Assault Battle Armor' unitType='BattleArmor'>
@@ -11270,7 +11336,10 @@
 		</model>
 	</chassis>
 	<chassis name='Mercury' unitType='Mek'>
-		<availability>ROS:4</availability>
+		<availability>CC:2,ROS:4</availability>
+		<model name='MCY-105'>
+			<availability>CC:2,ROS:4</availability>
+		</model>
 		<model name='MCY-97'>
 			<roles>recon</roles>
 			<availability>ROS:4</availability>
@@ -14571,7 +14640,7 @@
 		</model>
 	</chassis>
 	<chassis name='Scorpion' unitType='Mek'>
-		<availability>CC:2,FVC:2,LA:4,ROS:2,FWL:2,MERC:2,DC:4,Periphery:3</availability>
+		<availability>CC:2,OP:2,MERC:2,Periphery:3-,DTA:2,FVC:2,RF:2-,LA:4,ROS:2,PIR:2,FWL:2,MSC:2,RCM:2-,DA:2,DC:4</availability>
 		<model name='SCP-10M'>
 			<availability>CC:6,MOC:4,ROS:6,FWL:8,MERC:6,DC:6</availability>
 		</model>
@@ -14586,10 +14655,14 @@
 			<availability>Periphery:2-</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>IS:2,Periphery.Deep:4,Periphery:6</availability>
+			<availability>CC:2-,RF:2-,FRR:2-,Periphery.Deep:4,FWL:2-,RCM:2-,MERC:1-,Periphery:3,DC:1-</availability>
 		</model>
 		<model name='SCP-1TB'>
 			<availability>ROS:4,MERC:4</availability>
+		</model>
+		<model name='SCP-2N'>
+			<roles>spotter</roles>
+			<availability>DTA:2,OP:2,ROS:2,PIR:2,FWL:2,MSC:2,DA:2,RCM:2,MERC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Scourge' unitType='Mek'>
@@ -14668,6 +14741,12 @@
 		<availability>TC:6</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
@@ -15346,7 +15425,7 @@
 		</model>
 	</chassis>
 	<chassis name='Spider' unitType='Mek'>
-		<availability>MOC:1,CC:2,FVC:2,ROS:4,Periphery.MW:4,Periphery.ME:4,FWL:6,MERC:2,FS:2,Periphery:2,TC:1,DC:6</availability>
+		<availability>MOC:1,CC:2,OP:4,FR:1:3131,MERC:2,FS:2,Periphery:2,TC:1,DTA:4,FVC:2,RF:5,ROS:4,Periphery.MW:4,Periphery.ME:4,FWL:6,MH:1:3131,MSC:3,DA:3,RCM:6,DC:6</availability>
 		<model name='SDR-10K'>
 			<availability>ROS:3</availability>
 		</model>
@@ -15382,6 +15461,9 @@
 		</model>
 		<model name='SDR-8Xr'>
 			<availability>ROS:4,MERC:4,DC:4</availability>
+		</model>
+		<model name='SDR-9M'>
+			<availability>DTA:4,MOC:1:3131,OP:4,RF:5,FWL:4,MH:1:3131,MSC:3,FR:1:3131,MERC:2,RCM:6,DA:3,DC:4</availability>
 		</model>
 		<model name='SDR-C'>
 			<availability>CC:4,FWL:4,FS:4,MERC:4,DC:4</availability>
@@ -16979,6 +17061,54 @@
 			<availability>CW:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Tunnel Rat I Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat II Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-,Periphery:4</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat III Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat IV Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+		<model name='[Armored Glove/GL]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Armored Glove/LMG]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Battle Claw/GL]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Battle Claw/LMG]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+	</chassis>
 	<chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
 		<availability>ROS:4,DC:4</availability>
 		<model name='(C3)'>
@@ -18002,6 +18132,12 @@
 		<model name='(2901)'>
 			<roles>destroyer</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>

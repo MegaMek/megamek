@@ -1770,6 +1770,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>TH:2-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:2-,IS:2-,Periphery:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Winchester Cruiser' unitType='Warship'>
 		<availability>TC:3</availability>
 		<model name='(2364)'>

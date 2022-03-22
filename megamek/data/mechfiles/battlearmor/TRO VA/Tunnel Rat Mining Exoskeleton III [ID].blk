@@ -13,19 +13,19 @@ BattleArmor
 </UnitType>
 
 <Name>
-Tunnel Rat Mining Exoskeleton
+Tunnel Rat III Mining Exoskeleton
 </Name>
 
 <Model>
-II [Industrial Drill]
+[Industrial Drill]
 </Model>
 
 <mul id:>
-7218
+7219
 </mul id:>
 
 <year>
-3058
+3062
 </year>
 
 <type>
@@ -33,7 +33,7 @@ IS Level 2
 </type>
 
 <motion_type>
-Leg
+Jump
 </motion_type>
 
 <cruiseMP>
@@ -72,7 +72,7 @@ BAIndustrialDrill:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO Vehicle Annex (r) - Clan Invasion
+TRO Vehicle Annex (r) - Civil War
 </source>
 
 <chassis>
@@ -80,11 +80,11 @@ biped
 </chassis>
 
 <jumpingMP>
-0
+1
 </jumpingMP>
 
 <armor>
-1
+2
 </armor>
 
 <Trooper Count>

@@ -394,7 +394,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         try (OutputStream os = new FileOutputStream(selectedFile)) {
             mapSettings.save(os);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
         return true;
     }

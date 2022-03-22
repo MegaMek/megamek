@@ -2368,12 +2368,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
     
     /**
-     * Returns the panel for the current phase.  The ClientGUI is split into
-     * the main panel (view) at the top, which takes up the majority of the view
-     * and the the "current panel" which has different controls  based on the
-     * phase.
+     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
+     * the view and the "current panel" which has different controls based on the phase.
      * 
-     * @return
+     * @return the panel for the current phase
      */
     public JComponent getCurrentPanel() {
         return curPanel;

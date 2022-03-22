@@ -141,8 +141,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-
-
     public enum MPBoosters {
         NONE(),
         MASC_ONLY(),
@@ -605,7 +603,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean salvageable = true;
 
     /**
-     * The removal condition is set when the entitiy is removed from the game.
+     * The removal condition is set when the entity is removed from the game.
      */
     private int removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
 
@@ -2708,7 +2706,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the closest valid secondary facing to the given direction.
      *
-     * @return the the closest valid secondary facing.
+     * @return the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
 
@@ -4329,11 +4327,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         bomb.setWeaponGroup(true);
                         weaponGroupList.add(bomb);
                     }
-                } catch (LocationFullException ex) {
+                } catch (LocationFullException ignored) {
 
                 }
                 foundSpaceBomb = true;
             }
+
             if (!game.getBoard().inSpace()
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMech)
@@ -4345,24 +4344,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
+
                     }
                 }
-                if (numGroundBombs < 10 && isFighter()) {
+
+                if ((numGroundBombs < 10) && isFighter()) {
                     try {
                         Mounted bomb = addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
+
                     }
                 }
                 numGroundBombs++;
             }
-
         }
-
     }
 
     /**
@@ -5088,8 +5088,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the the location has a system of the type, whether is
-     * destroyed or not
+     * @return true if the location has a system of the type, whether is destroyed or not
      */
     public boolean hasSystem(int system, int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
@@ -9751,9 +9750,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the the given player can see this Entity, including
-     * teammates if team_vision is on.
-     *
+     * @return true if the given player can see this Entity, including teammates if team_vision is on.
      */
     public boolean hasDetectedEntity(Player p) {
         // No sensors - no one detects anything
@@ -12183,9 +12180,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // if the small craft does not already have ECM, then give them a single
         // hex ECM so they can change the mode
-        // FIXME: This is a really hacky way to to do it that results in small
-        // craft having
-        // ECM when the rule is not in effect and in non-space maps
+        // FIXME : This is a really hacky way to do it that results in small craft having ECM when
+        // FIXME : the rule is not in effect and in non-space maps
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
             && !hasActiveECM() && isMilitary()) {
             try {
@@ -12193,15 +12189,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 this.addEquipment(
                         EquipmentType.get(prefix + BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-                // ignore
+            } catch (LocationFullException ignored) {
+
             }
         }
         
         for (Mounted mounted : getWeaponList()) {
-            if (mounted.getType() instanceof Weapon)
+            if (mounted.getType() instanceof Weapon) {
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
-                mounted.setModesForMapType();
+            }
+            mounted.setModesForMapType();
         }
 
         for (Mounted misc : getMisc()) {
@@ -12306,11 +12303,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isCarefulStand() {
         return false;
     }
-    
+
     public void setTurnInterrupted(boolean interrupted) {
         turnWasInterrupted = interrupted;
     }
-    
+
     /**
      * This should eventually be true for any situation where the entity's
      * turn was interrupted, e.g. walking over a minefield
@@ -12354,10 +12351,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean hasModularArmor(int loc) {
         for (Mounted mount : this.getEquipment()) {
             if ((loc == -1) || (mount.getLocation() == loc)) {
-                if (!mount.isDestroyed()
-                    && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType())
-                        .hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                if (!mount.isDestroyed() && (mount.getType() instanceof MiscType)
+                        && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
                     return true;
                 }
             }
@@ -12366,8 +12361,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public int getDamageReductionFromModularArmor(HitData hit, int damage,
-                                                  Vector<Report> vDesc) {
+    public int getDamageReductionFromModularArmor(HitData hit, int damage, Vector<Report> vDesc) {
         int loc = hit.getLocation();
         if (!hasModularArmor(loc)) {
             return damage;
@@ -12376,8 +12370,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((mount.getLocation() == loc)
                 && !mount.isDestroyed()
                 && (mount.getType() instanceof MiscType)
-                && ((MiscType) mount.getType())
-                    .hasFlag(MiscType.F_MODULAR_ARMOR)
+                && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)
                 // On 'Mech torsos only, modular armor covers either front
                 // or rear, as mounted.
                 && (!(this instanceof Mech)

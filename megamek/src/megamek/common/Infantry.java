@@ -1930,7 +1930,7 @@ public class Infantry extends Entity {
             try {
                 addEquipment(armorKit, LOC_INFANTRY);
             } catch (LocationFullException ex) {
-                ex.printStackTrace();
+                LogManager.getLogger().error("", ex);
             }
             damageDivisor = ((MiscType) armorKit).getDamageDivisor();
             encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;

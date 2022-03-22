@@ -6535,7 +6535,7 @@ public abstract class Mech extends Entity {
         }
         sb.append(newLine);
         sb.append(MtfFile.ERA).append(year).append(newLine);
-        if ((source != null) && (source.trim().length() > 0)) {
+        if ((source != null) && !source.isBlank()) {
             sb.append(MtfFile.SOURCE).append(source).append(newLine);
         }
         sb.append(MtfFile.RULES_LEVEL).append(
@@ -6692,56 +6692,56 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
 
-        if (getFluff().getOverview().trim().length() > 0) {
+        if (!getFluff().getOverview().isBlank()) {
             sb.append(MtfFile.OVERVIEW);
             sb.append(getFluff().getOverview());
             sb.append(newLine);
         }
 
-        if (getFluff().getCapabilities().trim().length() > 0) {
+        if (!getFluff().getCapabilities().isBlank()) {
             sb.append(MtfFile.CAPABILITIES);
             sb.append(getFluff().getCapabilities());
             sb.append(newLine);
         }
 
-        if (getFluff().getDeployment().trim().length() > 0) {
+        if (!getFluff().getDeployment().isBlank()) {
             sb.append(MtfFile.DEPLOYMENT);
             sb.append(getFluff().getDeployment());
             sb.append(newLine);
         }
 
-        if (getFluff().getHistory().trim().length() > 0) {
+        if (!getFluff().getHistory().isBlank()) {
             sb.append(MtfFile.HISTORY);
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
 
-        if (getFluff().getManufacturer().trim().length() > 0) {
+        if (!getFluff().getManufacturer().isBlank()) {
             sb.append(MtfFile.MANUFACTURER);
             sb.append(getFluff().getManufacturer());
             sb.append(newLine);
         }
 
-        if (getFluff().getPrimaryFactory().trim().length() > 0) {
+        if (!getFluff().getPrimaryFactory().isBlank()) {
             sb.append(MtfFile.PRIMARY_FACTORY);
             sb.append(getFluff().getPrimaryFactory());
             sb.append(newLine);
         }
 
-        if (getFluff().getNotes().trim().length() > 0) {
+        if (!getFluff().getNotes().isBlank()) {
             sb.append(MtfFile.NOTES);
             sb.append(getFluff().getNotes());
             sb.append(newLine);
         }
 
-        if (getFluff().getMMLImagePath().trim().length() > 0) {
+        if (!getFluff().getMMLImagePath().isBlank()) {
             sb.append(MtfFile.IMAGE_FILE);
             sb.append(getFluff().getMMLImagePath());
             sb.append(newLine);
         }
 
         for (EntityFluff.System system : EntityFluff.System.values()) {
-            if (getFluff().getSystemManufacturer(system).length() > 0) {
+            if (!getFluff().getSystemManufacturer(system).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MANUFACTURER);
                 sb.append(system.toString()).append(":");
                 sb.append(getFluff().getSystemManufacturer(system));

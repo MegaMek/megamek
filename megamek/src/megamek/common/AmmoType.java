@@ -308,16 +308,6 @@ public class AmmoType extends EquipmentType {
     // If you want to add another munition type, tough luck: longs can only be
     // bit-shifted 63 times.
 
-    /*
-     * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
-     * "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
-     * "Extended Range", "High Explosive", "Flare", "Fragmentation", "Inferno",
-     * "Semiguided", "Swarm", "Swarm-I", "Thunder", "Thunder/Augmented",
-     * "Thunder/Inferno", "Thunder/Vibrabomb", "Thunder/Active", "Explosive", "ECM",
-     * "Haywire", "Nemesis", "Homing", "FASCAM", "Inferno-IV", "Vibrabomb-IV",
-     * "Smoke", "Narc-Capable", "Artemis-Capable", "Listen-Kill", "Anti-TSM",
-     * "Acid-Head" };
-     */
     private static Vector<AmmoType>[] m_vaMunitions = new Vector[NUM_TYPES];
 
     public static Vector<AmmoType> getMunitionsFor(int nAmmoType) {
@@ -429,22 +419,6 @@ public class AmmoType extends EquipmentType {
                 return true;
             }
         }
-
-        // AR-10 Launchers, ugh.
-        /*
-         * if (getAmmoType() == T_AR10 || a2.getAmmoType() == T_AR10) { // Barracuda if
-         * (getAmmoType() == T_AR10 && hasFlag(F_AR10_BARRACUDA) && a2.getAmmoType() ==
-         * T_BARRACUDA) { result = true; } else if (a2.getAmmoType() == T_AR10 &&
-         * a2.hasFlag(F_AR10_BARRACUDA) && getAmmoType() == T_BARRACUDA) { result =
-         * true; } // Killer Whale if (getAmmoType() == T_AR10 &&
-         * hasFlag(F_AR10_KILLER_WHALE) && a2.getAmmoType() == T_KILLER_WHALE) { result
-         * = true; } else if (a2.getAmmoType() == T_AR10 &&
-         * a2.hasFlag(F_AR10_KILLER_WHALE) && getAmmoType() == T_KILLER_WHALE) { result
-         * = true; } // White Shark if (getAmmoType() == T_AR10 &&
-         * hasFlag(F_AR10_WHITE_SHARK) && a2.getAmmoType() == T_WHITE_SHARK) { result =
-         * true; } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_WHITE_SHARK)
-         * && getAmmoType() == T_WHITE_SHARK) { result = true; } }
-         */
 
         // General Launchers
         if (is(other.getAmmoType()) && (getMunitionType() == other.getMunitionType())) {
@@ -13653,11 +13627,7 @@ public class AmmoType extends EquipmentType {
 
     @Override
     public String getShortName() {
-        if (shortName.trim().length() < 1) {
-            return getName();
-        }
-
-        return shortName;
+        return shortName.isBlank() ? getName() : shortName;
     }
 
     public String getSubMunitionName() {

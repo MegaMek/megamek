@@ -752,7 +752,7 @@ public class MULParser {
 
         // quirks
         String quirks = entityTag.getAttribute(QUIRKS);
-        if ((null != quirks) && (quirks.trim().length() > 0)) {
+        if (!quirks.isBlank()) {
             StringTokenizer st = new StringTokenizer(quirks, "::");
             while (st.hasMoreTokens()) {
                 String quirk = st.nextToken();
@@ -1660,7 +1660,7 @@ public class MULParser {
                 mounted.restore();
 
                 // quirks
-                if ((null != quirks) && (quirks.trim().length() > 0)) {
+                if (!quirks.isBlank()) {
                     StringTokenizer st = new StringTokenizer(quirks, "::");
                     while (st.hasMoreTokens()) {
                         String quirk = st.nextToken();
@@ -1676,9 +1676,8 @@ public class MULParser {
                 }
 
                 // trooper missing equipment
-                if ((null != trooperMiss) && (trooperMiss.trim().length() > 0)) {
-                    StringTokenizer st = new StringTokenizer(trooperMiss,
-                            "::");
+                if (!trooperMiss.isBlank()) {
+                    StringTokenizer st = new StringTokenizer(trooperMiss, "::");
                     int i = BattleArmor.LOC_TROOPER_1;
                     while (st.hasMoreTokens() && i <= BattleArmor.LOC_TROOPER_6) {
                         String tmiss = st.nextToken();

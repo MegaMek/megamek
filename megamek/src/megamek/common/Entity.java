@@ -6851,10 +6851,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Calculates the Battle Value of this unit. The parameters can be used to ignore C3 / skill-based changes
+     * Calculates the Battle Value of this unit. The parameters can be used to control C3 / skill-based changes
      * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
      * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
-     * <P>This method should be overridden by subclasses of Entity to provide unit type specific calculations.
      *
      * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
      * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
@@ -6891,14 +6890,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Calculates the Battle Value of this unit. The parameters can be used to ignore C3 / skill-based changes
-     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
-     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
-     * <P>This method should be overridden by subclasses of Entity to provide unit type specific calculations.
+     * Calculates and returns the Battle Value of this unit taking into account the parameters.
+     * This method should be overridden by subclasses of Entity to provide a unit type specific calculation of the
+     * Battle Value.
      *
      * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
      * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
-     * @return The Battle Value of this unit
+     * @return The Battle Value of this unit calculated from its current state
      */
     protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill);
 

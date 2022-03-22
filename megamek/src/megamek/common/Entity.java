@@ -16183,7 +16183,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getBraceMPCost() {
         return Entity.LOC_NONE;
     }
-    
+
     public List<Integer> getValidBraceLocations() {
         return Collections.emptyList();
     }
@@ -16197,7 +16197,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (Mounted m : getEquipment()) {
             if (!m.isInoperable() && (m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_MASC) ) {
-                //Supercharger is a subtype of MASC in MiscType
+                // Supercharger is a subtype of MASC in MiscType
                 if ( m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
                     hasSupercharger = !onlyArmed || m.curMode().equals("Armed");
                 } else {

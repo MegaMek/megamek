@@ -35,7 +35,7 @@ public class InfantrySniperRifleThorshammer extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Thorshammer");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .28;
        tonnage =  0.007;
        infantryDamage =  0.3;
        infantryRange =  6;

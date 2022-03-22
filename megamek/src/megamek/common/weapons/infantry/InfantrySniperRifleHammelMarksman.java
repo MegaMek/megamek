@@ -35,7 +35,7 @@ public class InfantrySniperRifleHammelMarksman extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Hammel Marksman");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .28;
        tonnage =  0.005;
        infantryDamage =  0.3;
        infantryRange =  4;

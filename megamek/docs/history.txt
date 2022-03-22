@@ -27,7 +27,7 @@ VERSION HISTORY:
 + Issue #3448: Display unit cost in mech summary without counting ammo.
 + Issue #3502: Disable Jump Button when prone
 + Data: Adding Shrapnel Infantry Weapons. These have been converted per the rules in AToWC but things like
-        BV, proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
+        proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
         Compared to lots of the existing infantry weapons these are long ranged, and more powerful especially the sniper
         rifles.
 + PR #3490: RATGeneratorEditor UX Improvements

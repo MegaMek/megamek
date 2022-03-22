@@ -32,7 +32,7 @@ public class InfantrySMGHunkleV extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Hunkle V");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = 1.1;
        tonnage =  0.0027;
        infantryDamage =  0.55;
        infantryRange =  1;

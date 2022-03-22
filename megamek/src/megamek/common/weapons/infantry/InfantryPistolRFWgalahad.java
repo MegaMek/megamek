@@ -35,7 +35,7 @@ public class InfantryPistolRFWgalahad extends InfantryWeapon {
        setInternalName(name);
        addLookupName("RFW Galahad");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .315;
        tonnage =  0.0021;
        infantryDamage =  0.33;
        infantryRange =  1;

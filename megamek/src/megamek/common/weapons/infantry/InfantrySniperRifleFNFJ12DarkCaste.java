@@ -35,7 +35,7 @@ public class InfantrySniperRifleFNFJ12DarkCaste extends InfantryWeapon {
        setInternalName(name);
        addLookupName("FNF-J12 (Dark Caste)");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .336;
        tonnage =  0.006;
        infantryDamage =  0.44;
        infantryRange =  5;

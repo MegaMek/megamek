@@ -31,7 +31,7 @@ public class InfantrySMGSupekuta extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Supekuta");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .33;
        tonnage =  0.0025;
        infantryDamage =  0.33;
        infantryRange =  1;

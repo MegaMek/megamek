@@ -35,7 +35,7 @@ public class InfantryPistolYanjingshe extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Ya Njingshe");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .35;
        tonnage =  0.001;
        infantryDamage =  0.37;
        infantryRange =  1;

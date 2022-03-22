@@ -32,7 +32,7 @@ public class InfantryShotgunRisen15 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Risen-15");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .216;
        tonnage =  0.0039;
        infantryDamage =  0.28;
        infantryRange =  0;

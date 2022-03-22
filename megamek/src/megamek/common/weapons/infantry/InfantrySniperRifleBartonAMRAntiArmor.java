@@ -36,7 +36,7 @@ public class InfantrySniperRifleBartonAMRAntiArmor extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Barton AMR (Anti-Armor)");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = 1.176;
        tonnage =  0.014;
        ammoWeight =  0.014;
        cost = 700;

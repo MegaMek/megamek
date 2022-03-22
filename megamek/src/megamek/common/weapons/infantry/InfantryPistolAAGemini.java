@@ -35,7 +35,7 @@ public class InfantryPistolAAGemini extends InfantryWeapon {
         setInternalName(name);
         addLookupName("AAGemini");
         ammoType = AmmoType.T_INFANTRY;
-        bv = 1;
+        bv = .28;
         tonnage =  0.0015;
         infantryDamage =  0.39;
         infantryRange =  1;

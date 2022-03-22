@@ -32,7 +32,7 @@ public class InfantryShotgunDokuhebi extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Dokuhebi");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .225;
        tonnage =  0.0024;
        infantryDamage =  0.47;
        infantryRange =  0;

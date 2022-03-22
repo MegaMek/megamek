@@ -35,7 +35,7 @@ public class InfantrySniperRifleYuanLing extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Yuan Ling");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .28;
        tonnage =  0.006;
        infantryDamage =  0.3;
        infantryRange =  7;

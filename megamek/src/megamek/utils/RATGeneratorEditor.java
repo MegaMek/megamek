@@ -16,12 +16,14 @@ package megamek.utils;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -96,7 +98,7 @@ public class RATGeneratorEditor extends JFrame {
         while (!rg.isInitialized()) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException ignored) {
                 // Do nothing
             }
         }
@@ -206,7 +208,7 @@ public class RATGeneratorEditor extends JFrame {
         for (String movementTypeName : MOVEMENT_TYPE_NAMES) {
             cbMovementType.addItem(movementTypeName);
         }
-        cbMovementType.addActionListener(arg0 -> filterMasterUnitList());
+        cbMovementType.addActionListener(evt -> filterMasterUnitList());
 
         result.add(new JLabel("Unit Type:"));
         result.add(cbUnitType);
@@ -233,43 +235,41 @@ public class RATGeneratorEditor extends JFrame {
 
     private JComponent createUnitTab() {
         Box unitSelectorSide = Box.createVerticalBox();
-        JPanel unitSearchPanel = new UIUtil.FixedYPanel();
+        JPanel unitSearchPanel = new FixedYPanel();
         unitSelectorSide.add(unitSearchPanel);
 
         unitSearchPanel.add(new JLabel("Search:"));
         unitSearchPanel.add(txtSearch);
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
-
             @Override
-            public void changedUpdate(DocumentEvent arg0) {
+            public void changedUpdate(DocumentEvent evt) {
                 filterMasterUnitList();
             }
 
             @Override
-            public void insertUpdate(DocumentEvent arg0) {
+            public void insertUpdate(DocumentEvent evt) {
                 filterMasterUnitList();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent arg0) {
+            public void removeUpdate(DocumentEvent evt) {
                 filterMasterUnitList();
             }
-
         });
 
         tblMasterUnitList.setModel(masterUnitListModel);
         masterUnitListSorter = new TableRowSorter<>(masterUnitListModel);
         masterUnitListSorter.setComparator(MasterUnitListTableModel.COL_UNIT_TYPE, new UnitTypeComparator());
         masterUnitListSorter.setComparator(MasterUnitListTableModel.COL_WEIGHT, Comparator.comparingDouble(d -> (double) d));
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(MasterUnitListTableModel.COL_UNIT_TYPE, SortOrder.ASCENDING));
-        sortKeys.add(new RowSorter.SortKey(MasterUnitListTableModel.COL_CHASSIS, SortOrder.ASCENDING));
-        sortKeys.add(new RowSorter.SortKey(MasterUnitListTableModel.COL_MODEL, SortOrder.ASCENDING));
-        sortKeys.add(new RowSorter.SortKey(MasterUnitListTableModel.COL_YEAR, SortOrder.ASCENDING));
+        List<SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new SortKey(MasterUnitListTableModel.COL_UNIT_TYPE, SortOrder.ASCENDING));
+        sortKeys.add(new SortKey(MasterUnitListTableModel.COL_CHASSIS, SortOrder.ASCENDING));
+        sortKeys.add(new SortKey(MasterUnitListTableModel.COL_MODEL, SortOrder.ASCENDING));
+        sortKeys.add(new SortKey(MasterUnitListTableModel.COL_YEAR, SortOrder.ASCENDING));
         masterUnitListSorter.setSortKeys(sortKeys);
         tblMasterUnitList.setRowSorter(masterUnitListSorter);
         tblMasterUnitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblMasterUnitList.getSelectionModel().addListSelectionListener(arg0 -> {
+        tblMasterUnitList.getSelectionModel().addListSelectionListener(evt -> {
             setCurrentUnitFactions();
             if (tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord rec = masterUnitListModel.
@@ -493,14 +493,14 @@ public class RATGeneratorEditor extends JFrame {
         masterFactionListModel = new FactionListTableModel(rg.getFactionList());
         tblMasterFactionList.setModel(masterFactionListModel);
         masterFactionListSorter = new TableRowSorter<>(masterFactionListModel);
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(FactionListTableModel.COL_CODE, SortOrder.ASCENDING));
-        sortKeys.add(new RowSorter.SortKey(FactionListTableModel.COL_NAME, SortOrder.ASCENDING));
-        sortKeys.add(new RowSorter.SortKey(FactionListTableModel.COL_CLAN, SortOrder.ASCENDING));
+        List<SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new SortKey(FactionListTableModel.COL_CODE, SortOrder.ASCENDING));
+        sortKeys.add(new SortKey(FactionListTableModel.COL_NAME, SortOrder.ASCENDING));
+        sortKeys.add(new SortKey(FactionListTableModel.COL_CLAN, SortOrder.ASCENDING));
         masterFactionListSorter.setSortKeys(sortKeys);
         tblMasterFactionList.setRowSorter(masterFactionListSorter);
         tblMasterFactionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblMasterFactionList.getSelectionModel().addListSelectionListener(arg0 -> {
+        tblMasterFactionList.getSelectionModel().addListSelectionListener(evt -> {
             if (tblMasterFactionList.getSelectedRow() >= 0) {
                 FactionRecord rec = masterFactionListModel.
                         getFactionRecord(tblMasterFactionList.convertRowIndexToModel(tblMasterFactionList.getSelectedRow()));

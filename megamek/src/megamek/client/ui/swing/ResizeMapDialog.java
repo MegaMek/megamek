@@ -503,17 +503,14 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     @Override
-    public void keyPressed(KeyEvent arg0) {
+    public void keyPressed(KeyEvent evt) {
+
     }
 
     @Override
-    public void keyReleased(KeyEvent arg0) {
+    public void keyReleased(KeyEvent evt) {
         // Disable the Okay button when the input is invalid
-        if (!isExpandValid()) {
-            okayButton.setEnabled(false);
-        } else {
-            okayButton.setEnabled(true);
-        }
+        okayButton.setEnabled(isExpandValid());
 
         // Give notice when having an odd west expansion and no south expansion
         if (isExpandWestProblem()) {
@@ -527,13 +524,13 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     }
 
     @Override
-    public void keyTyped(KeyEvent arg0) {
+    public void keyTyped(KeyEvent evt) {
 
     }
     
     /**
      * Updates the theme list and sets the dialog to visible.
-     * Returns true if the user pressed Cancel.
+     * @return true if the user pressed Cancel.
      */
     public boolean activateDialog(Set<String> themeList) {
         for (String s : themeList) {

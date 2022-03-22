@@ -530,8 +530,7 @@ public class Princess extends BotClient {
             }
         }
 
-        turretDeploymentLocations.sort((arg0, arg1) -> calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(
-                arg0));        
+        turretDeploymentLocations.sort((arg0, arg1) -> calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(arg0));
         return turretDeploymentLocations;
     }
     

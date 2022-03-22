@@ -18,6 +18,7 @@ import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomUnitGenerator;
+import megamek.client.generator.RandomUnitGenerator.RatTreeNode;
 import megamek.client.ratgenerator.*;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -45,16 +46,13 @@ import java.util.List;
 import java.util.*;
 
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
-    private static final long serialVersionUID = 4072453002423681675L;
-    
-    @SuppressWarnings(value = "unused")
     private static final int TAB_BV_MATCHING       = 0;
     private static final int TAB_RAT               = 1;
     private static final int TAB_RAT_GENERATOR     = 2;
     private static final int TAB_FORMATION_BUILDER = 3;
     private static final int TAB_FORCE_GENERATOR   = 4;
     
-    private static final String CARD_PREVIEW    = "card_preview";
+    private static final String CARD_PREVIEW = "card_preview";
     private static final String CARD_FORCE_TREE = "card_force_tree";
     
     private ClientGUI m_clientgui;
@@ -740,7 +738,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     WindowListener windowListener = new WindowAdapter() {
         @Override
-        public void windowClosed(WindowEvent arg0) {
+        public void windowClosed(WindowEvent evt) {
             saveWindowSettings();
         }
 
@@ -752,7 +750,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             guip.setRndArmyPosY(getLocation().y);
             guip.setRndArmySplitPos(m_pSplit.getDividerLocation());
         }
-
     };
     
     private void updatePlayerChoice() {
@@ -815,7 +812,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             return;
         }  
         
-        RandomUnitGenerator.RatTreeNode ratTree = rug.getRatTree();
+        RatTreeNode ratTree = rug.getRatTree();
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(ratTree.name);
         createRatTreeNodes(root, ratTree);
         m_treeRAT.setModel(new DefaultTreeModel(root));
@@ -837,21 +834,21 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pForceGen.setYear(gameYear);
     }
 
-    private void createRatTreeNodes(DefaultMutableTreeNode parentNode, RandomUnitGenerator.RatTreeNode ratTreeNode) {
-        for (RandomUnitGenerator.RatTreeNode child : ratTreeNode.children) {
+    private void createRatTreeNodes(DefaultMutableTreeNode parentNode, RatTreeNode ratTreeNode) {
+        for (RatTreeNode child : ratTreeNode.children) {
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(child.name);
-            if (child.children.size() > 0) {
+            if (!child.children.isEmpty()) {
                 createRatTreeNodes(newNode, child);
             }
             parentNode.add(newNode);
         }
     }
-    
-    private TreePath findPathByName(String[] nodeNames) {
+
+    private TreePath findPathByName(String... nodeNames) {
         TreeNode root = (TreeNode) m_treeRAT.getModel().getRoot();
         return findNextNode(new TreePath(root), nodeNames, 0);
     }
-    
+
     private TreePath findNextNode(TreePath parent, String[] nodes, int depth) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         String currNode = node.toString();
@@ -879,8 +876,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         // No match at this branch
         return null;
     }
-    
-    @SuppressWarnings("unchecked")
+
+    @SuppressWarnings(value = "unchecked")
     private void generateRAT() {
         FactionRecord fRec = m_pRATGenOptions.getFaction();
         if (fRec != null) {
@@ -927,8 +924,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
      */
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
-        public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if (!e.isMapSettingsOnlyChange()) {
+        public void gameSettingsChange(GameSettingsChangeEvent evt) {
+            if (!evt.isMapSettingsOnlyChange()) {
                 updateRATYear();
             }
         }
@@ -938,9 +935,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
      * A table model for displaying units
      */
     public static class UnitTableModel extends AbstractTableModel {
-
-        private static final long serialVersionUID = 4819661751806908535L;
-
         private static final int COL_UNIT = 0;
         private static final int COL_BV = 1;
         private static final int COL_MOVE = 2;
@@ -980,14 +974,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_UNIT):
+                case COL_UNIT:
                     return Messages.getString("RandomArmyDialog.colUnit");
-                case (COL_MOVE):
+                case COL_MOVE:
                     return Messages.getString("RandomArmyDialog.colMove");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
+                default:
+                    return "??";
             }
-            return "??";
         }
 
         @Override
@@ -1027,8 +1022,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
      * A table model for displaying a generated RAT
      */
     public class RATTableModel extends AbstractTableModel {
-        private static final long serialVersionUID = 7807207311532173654L;
-
         private static final int COL_WEIGHT = 0;
         private static final int COL_UNIT = 1;
         private static final int COL_CL_IS = 2;

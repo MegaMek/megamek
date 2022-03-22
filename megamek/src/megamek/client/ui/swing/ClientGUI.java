@@ -2318,22 +2318,22 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     @Override
-    public void componentHidden(ComponentEvent arg0) {
+    public void componentHidden(ComponentEvent evt) {
 
     }
 
     @Override
-    public void componentMoved(ComponentEvent arg0) {
+    public void componentMoved(ComponentEvent evt) {
 
     }
 
     @Override
-    public void componentResized(ComponentEvent arg0) {
+    public void componentResized(ComponentEvent evt) {
         bv.setPreferredSize(getSize());        
     }
 
     @Override
-    public void componentShown(ComponentEvent arg0) {
+    public void componentShown(ComponentEvent evt) {
 
     }
 
@@ -2360,7 +2360,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     client.getGame(), client.getHost(), client.getPort(), message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
-            // can be configured and it will faithfully press Done when the local player does.
+            // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase() == GamePhase.LOUNGE) {
                 getBots().put(player, princess);   
             } 

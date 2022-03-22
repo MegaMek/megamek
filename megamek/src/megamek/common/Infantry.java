@@ -885,20 +885,8 @@ public class Infantry extends Entity {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Entity#calculateBattleValue()
-     */
     @Override
-    public int calculateBattleValue() {
-        return calculateBattleValue(false, false);
-    }
-
-    /**
-     * Calculates the battle value of this platoon.
-     */
-    @Override
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
         DecimalFormat df = new DecimalFormat("0.##");
         bvText = new StringBuffer(
                 "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
@@ -1382,7 +1370,7 @@ public class Infantry extends Entity {
 
         // and then factor in pilot
         double pilotFactor = 1;
-        if (!ignorePilot) {
+        if (!ignoreSkill) {
             pilotFactor = getCrew().getBVSkillMultiplier(isAntiMekTrained(), game);
         }
         return (int) Math.round((bv) * pilotFactor);

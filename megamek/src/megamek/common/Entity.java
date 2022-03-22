@@ -29,7 +29,6 @@ import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.*;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
@@ -772,7 +771,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean taserInterferenceHeat = false;
 
     // contains a HTML string describing BV calculation
-    protected StringBuffer bvText = null;
+    protected StringBuffer bvText = new StringBuffer();
     protected String startTable = "<TABLE>";
     protected String endTable = "</TABLE>";
 
@@ -6841,9 +6840,46 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Calculates the battle value of this entity
+     * Calculates the Battle Value of this unit. Both C3 and crew skill based changes
+     * to the BV are taken into account. Note that when a unit has a manual BV value set in its definition file,
+     * this manual BV value is returned instead of a calculated BV value.
+     *
+     * @return The full Battle Value of this unit including C3 and crew skill modifications or the manual BV in
+     * case this unit uses a manual BV value
      */
-    public abstract int calculateBattleValue();
+    public final int calculateBattleValue() {
+        return manualOrCalculateBV(false, false);
+    }
+
+    /**
+     * Calculates the Battle Value of this unit. The parameters can be used to ignore C3 / skill-based changes
+     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
+     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
+     * <P>This method should be overridden by subclasses of Entity to provide unit type specific calculations.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @return The Battle Value of this unit
+     */
+    public final int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill) {
+        return manualOrCalculateBV(ignoreC3, ignoreSkill);
+    }
+
+    /**
+     * Checks if this unit uses a manual BV and if so, returns it. Otherwise, forwards to the actual
+     * BV calculation method.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @return The Battle Value of this unit
+     */
+    private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill) {
+        if (useManualBV) {
+            return manualBV;
+        } else {
+            return doBattleValueCalculation(false, false);
+        }
+    }
 
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
@@ -6856,21 +6892,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Calculates the battle value of this mech. If the parameter is true, then
-     * the battle value for c3 will be added whether the mech is currently part
-     * of a network or not. This should be overwritten if necessary
+     * Calculates the Battle Value of this unit. The parameters can be used to ignore C3 / skill-based changes
+     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
+     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
+     * <P>This method should be overridden by subclasses of Entity to provide unit type specific calculations.
      *
-     * @param ignoreC3    if the contribution of the C3 computer should be ignored when
-     *                    calculating BV.
-     * @param ignorePilot if the extra BV due to piloting skill should be ignore, needed
-     *                    for c3 bv
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @return The Battle Value of this unit
      */
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-        return calculateBattleValue();
-    }
+    protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill);
 
     /**
      * Generates a vector containing reports on all useful information about

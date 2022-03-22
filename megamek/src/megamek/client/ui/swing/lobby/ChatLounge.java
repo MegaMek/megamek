@@ -1666,7 +1666,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void gameClientFeedbackRequest(GameCFREvent evt) {
         // Do nothing
     }
-
     
     private ActionListener lobbyListener = new ActionListener() {
         @Override

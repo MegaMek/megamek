@@ -178,7 +178,7 @@ public class InfantryBVCalculator extends BVCalculator {
         bvText.append(endRow);
 
         // double weaponbv;
-        double obr; //offensive battle rating
+        double obr; // offensive battle rating
 
         int speedFactorTableLookup = Math.max(infantry.getRunMP(false, true, true), Math.max(jumpMP, umuMP));
         double speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10.0), 1.2);
@@ -197,8 +197,8 @@ public class InfantryBVCalculator extends BVCalculator {
             wbv += secondW.getBV(infantry) * (secondn);
         }
         wbv = wbv * (men/squadsize);
-        //if anti-mek then double this
-        //TODO: need to factor archaic weapons out of this
+        // if anti-mek then double this
+        // TODO : need to factor archaic weapons out of this
         double ambv = 0;
         if (infantry.canMakeAntiMekAttacks()) {
             if (primaryW != null && !primaryW.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
@@ -229,8 +229,6 @@ public class InfantryBVCalculator extends BVCalculator {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-
-
 
         if (null != primaryW) {
             bvText.append(startRow);
@@ -367,7 +365,7 @@ public class InfantryBVCalculator extends BVCalculator {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        double utm; //unit type modifier
+        double utm; // unit type modifier
         switch (infantry.getMovementMode()) {
             case INF_MOTORIZED:
             case WHEELED:
@@ -529,7 +527,5 @@ public class InfantryBVCalculator extends BVCalculator {
             pilotFactor = infantry.getCrew().getBVSkillMultiplier(infantry.isAntiMekTrained(), infantry.getGame());
         }
         return (int) Math.round((bv) * pilotFactor);
-
-
     }
 }

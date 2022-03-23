@@ -29,7 +29,6 @@ import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.*;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
@@ -1968,8 +1967,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public HashSet<Coords> getOccupiedCoords() {
         HashSet<Coords> positions = new HashSet<>();
-        if ((getSecondaryPositions() != null)
-            && (getSecondaryPositions().size() != 0)) {
+        if ((getSecondaryPositions() != null) && !getSecondaryPositions().isEmpty()) {
             for (int key : getSecondaryPositions().keySet()) {
                 positions.add(getSecondaryPositions().get(key));
             }
@@ -2622,17 +2620,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else if (duplicateMarker > 1) {
             // if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
-            builder.append(" #" + duplicateMarker);
+            builder.append(" #").append(duplicateMarker);
         }
 
         return builder.toString();
     }
 
     public String getShortNameRaw() {
-        if ((model == null) || (model.length() == 0)) {
-            return chassis;
-        }
-        return chassis + " " + model;
+        return StringUtility.isNullOrBlank(model) ? chassis : chassis + ' ' + model;
     }
 
     /**
@@ -8280,7 +8275,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
 
-        if (potential.size() > 0) {
+        if (!potential.isEmpty()) {
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
@@ -8329,7 +8324,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
 
-        if (potential.size() > 0) {
+        if (!potential.isEmpty()) {
             DockingCollar chosenDC = potential.elementAt(Compute.randomInt(potential.size()));
             chosenDC.setDamaged(true);
             result = true;
@@ -11990,7 +11985,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * What coords were passed through previous to the given one
      */
     public Coords passedThroughPrevious(Coords c) {
-        if (passedThrough.size() == 0) {
+        if (passedThrough.isEmpty()) {
             return getPosition();
         }
         Coords prevCrd = passedThrough.get(0);
@@ -13367,7 +13362,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setBattleForceMovement(Map<String,Integer> movement) {
         int baseMove = (int) Math.round(getBaseBattleForceMovement());
         int jumpMove = getOriginalJumpMP();
-        if (jumpMove == baseMove && getMovementModeAsBattleForceString().length() == 0) {
+        if ((jumpMove == baseMove) && getMovementModeAsBattleForceString().isBlank()) {
             movement.put("j", baseMove);
         } else {
             movement.put(getMovementModeAsBattleForceString(), baseMove);
@@ -13718,7 +13713,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
 
-        if (getAmmo().size() > 0) {
+        if (!getAmmo().isEmpty()) {
             if (isClan()) {
                 specialAbilities.put(BattleForceSPA.CASE, null);
             }
@@ -13732,8 +13727,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (hasEngine()) {
-            if (getEngine().getEngineType() == Engine.STEAM
-                    && getEngine().getEngineType() == Engine.FUEL_CELL) {
+            if ((getEngine().getEngineType() == Engine.STEAM)
+                    && (getEngine().getEngineType() == Engine.FUEL_CELL)) {
                 specialAbilities.put(BattleForceSPA.EE, null);
             } else if (getEngine().getEngineType() == Engine.STEAM) {
                 specialAbilities.put(BattleForceSPA.FC, null);
@@ -13798,20 +13793,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getBattleForceSize() {
-        // the default BF Size is for ground Combat elements. Other types will
-        // need to override this
+        // The default BF Size is for ground Combat elements. Other types will need to override this
         // The tables are on page 356 of StartOps
         if (getWeight() < 40) {
             return 1;
-        }
-        if (getWeight() < 60) {
+        } else if (getWeight() < 60) {
             return 2;
-        }
-        if (getWeight() < 80) {
+        } else if (getWeight() < 80) {
             return 3;
+        } else {
+            return 4;
         }
-
-        return 4;
     }
 
     @Override
@@ -13855,12 +13847,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean hasStealth() {
         // only non-patchwork stealth actually works as stealth
-        if (((getArmorType(1) == EquipmentType.T_ARMOR_STEALTH) || (getArmorType(1) == EquipmentType
-                .T_ARMOR_STEALTH_VEHICLE))
-            && !hasPatchworkArmor()) {
-            return true;
-        }
-        return false;
+        return !hasPatchworkArmor() && ((getArmorType(1) == EquipmentType.T_ARMOR_STEALTH)
+                || (getArmorType(1) == EquipmentType.T_ARMOR_STEALTH_VEHICLE));
     }
 
     /**
@@ -13880,7 +13868,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             return 0.0;
         }
-        // Otherwise we need to iterate over our weapons, find out which of them
+        // Otherwise, we need to iterate over our weapons, find out which of them
         // require amplification, and keep a running weight total of those.
         double total = 0.0;
         for (Mounted m : getWeaponList()) {
@@ -13919,8 +13907,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getExtraC3BV(int baseBV) {
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3
-        // times
+        // also, each 'has' loops through all equipment. inefficient to do it 3 times
         int xbv = 0;
         if ((game != null)
             && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
@@ -14881,7 +14868,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
-            if (StringUtility.isNullOrEmpty(q.getLocation())) {
+            if (StringUtility.isNullOrBlank(q.getLocation())) {
 
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {

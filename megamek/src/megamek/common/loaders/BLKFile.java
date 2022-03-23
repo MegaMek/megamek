@@ -932,8 +932,8 @@ public class BLKFile {
                     augmentations.add(o.getName());
                 }
             }
-            if (augmentations.size() > 0) {
-                blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
+            if (!augmentations.isEmpty()) {
+                blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());

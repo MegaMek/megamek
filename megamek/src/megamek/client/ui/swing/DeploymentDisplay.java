@@ -198,8 +198,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 assaultDropPreference = false;
             }
             
-            setLoadEnabled(getLoadableEntities().size() > 0);
-            setUnloadEnabled(ce().getLoadedUnits().size() > 0);
+            setLoadEnabled(!getLoadableEntities().isEmpty());
+            setUnloadEnabled(!ce().getLoadedUnits().isEmpty());
             
             setNextEnabled(true);
             setRemoveEnabled(true);
@@ -616,16 +616,16 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // ActionListener
     //
     @Override
-    public void actionPerformed(ActionEvent ev) {
+    public void actionPerformed(ActionEvent evt) {
         final Client client = clientgui.getClient();
-        final String actionCmd = ev.getActionCommand();
+        final String actionCmd = evt.getActionCommand();
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
+
         if (!client.isMyTurn()) {
-            // odd...
-            return;
+
         } else if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             if (ce() != null) {
                 ce().setPosition(null);
@@ -649,12 +649,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             List<Entity> choices = getLoadableEntities();
 
             // Do we have anyone to load?
-            if (choices.size() > 0) {
+            if (!choices.isEmpty()) {
                 String input = (String) JOptionPane.showInputDialog(clientgui,
-                                Messages.getString("DeploymentDisplay.loadUnitDialog.message", ce().getShortName(), ce().getUnusedString()), 
-                                Messages.getString("DeploymentDisplay.loadUnitDialog.title"), 
-                                JOptionPane.QUESTION_MESSAGE, null,
-                                SharedUtility.getDisplayArray(choices), null);
+                        Messages.getString("DeploymentDisplay.loadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
+                        Messages.getString("DeploymentDisplay.loadUnitDialog.title"),
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        SharedUtility.getDisplayArray(choices), null);
                 Entity other = (Entity) SharedUtility.getTargetPicked(choices, input);
                 if (!(other instanceof Infantry)) {
                     List<Integer> bayChoices = new ArrayList<>();
@@ -673,7 +673,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         String title = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.title"); 
                         String msg = Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.message", ce().getShortName());
                         String bayString = (String) JOptionPane.showInputDialog(clientgui, msg, title,
-                                        JOptionPane.QUESTION_MESSAGE, null, retVal, null);
+                                JOptionPane.QUESTION_MESSAGE, null, retVal, null);
                         int bayNum = Integer.parseInt(bayString.substring(0, bayString.indexOf(" ")));
                         other.setTargetBay(bayNum);
                         // We need to update the entity here so that the server knows about our target bay
@@ -691,32 +691,31 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             for (Integer bn : bayChoices) {
                                 retVal[i++] = bn > 0 ?
                                         Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
-                                            Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                                        Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
                             }
                             String bayString = (String) JOptionPane.showInputDialog(clientgui,
-                                            Messages.getString("MovementDisplay.loadProtoClampMountDialog.message", ce().getShortName()), 
-                                            Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"), 
-                                            JOptionPane.QUESTION_MESSAGE, null, retVal, null);
+                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.message", ce().getShortName()),
+                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"),
+                                    JOptionPane.QUESTION_MESSAGE, null, retVal, null);
                             other.setTargetBay(bayString.equals(Messages.getString("MovementDisplay.loadProtoClampMountDialog.front")) ? 0 : 1);
                             // We need to update the entity here so that the server knows about our target bay
                             clientgui.getClient().sendUpdateEntity(other);
                         } else {
                             other.setTargetBay(-1); // Safety set!
                         }
-                    } else if (other != null) {
+                    } else {
                         other.setTargetBay(-1); // Safety set!
                     }
-                } else if (other != null) {
+                } else {
                     other.setTargetBay(-1); // Safety set!
                 }
-                if (other != null) {
-                    // Please note, the Server may never get this load order.
-                    ce().load(other, false, other.getTargetBay());
-                    other.setTransportId(cen);
-                    clientgui.mechD.displayEntity(ce());
-                    setUnloadEnabled(true);
-                }
-            } else { // End have-choices
+
+                // Please note, the Server may never get this load order.
+                ce().load(other, false, other.getTargetBay());
+                other.setTransportId(cen);
+                clientgui.mechD.displayEntity(ce());
+                setUnloadEnabled(true);
+            } else {
                 JOptionPane.showMessageDialog(clientgui.frame, 
                         Messages.getString("DeploymentDisplay.alertDialog1.message", ce().getShortName()), 
                         Messages.getString("DeploymentDisplay.alertDialog1.title"), 
@@ -726,13 +725,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // Do we have anyone to unload?
             Entity loader = ce();
             List<Entity> choices = loader.getLoadedUnits();
-            if (choices.size() > 0) {
-                Entity loaded = null;
+            if (!choices.isEmpty()) {
                 String msg = Messages.getString("DeploymentDisplay.unloadUnitDialog.message", ce().getShortName(), ce().getUnusedString());
                 String title = Messages.getString("DeploymentDisplay.unloadUnitDialog.title"); 
                 String input = (String) JOptionPane.showInputDialog(clientgui, msg, title, JOptionPane.QUESTION_MESSAGE, null,
                         SharedUtility.getDisplayArray(choices), null);
-                loaded = (Entity) SharedUtility.getTargetPicked(choices, input);
+                Entity loaded = (Entity) SharedUtility.getTargetPicked(choices, input);
                 if (loaded != null) {
                     if (loader.unload(loaded)) {
                         loaded.setTransportId(Entity.NONE);
@@ -747,7 +745,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             // Need to take turn for unloaded unit, so select it
                             selectEntity(loaded.getId());
                         }
-                        setLoadEnabled(getLoadableEntities().size() > 0);
+                        setLoadEnabled(!getLoadableEntities().isEmpty());
                     } else {
                         LogManager.getLogger().error("Could not unload " + loaded.getShortName() + " from " + ce().getShortName()); 
                     }

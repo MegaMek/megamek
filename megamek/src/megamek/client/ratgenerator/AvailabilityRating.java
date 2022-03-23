@@ -15,6 +15,7 @@
 */
 package megamek.client.ratgenerator;
 
+import megamek.codeUtilities.StringUtility;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -162,7 +163,7 @@ public class AvailabilityRating {
 
     public String getFactionCode() {
         String retVal = faction;
-        if (ratings != null && ratings.length() > 0) {
+        if (!StringUtility.isNullOrBlank(ratings)) {
             retVal += "!" + ratings;
         }
         return retVal;

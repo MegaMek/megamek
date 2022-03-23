@@ -196,7 +196,7 @@ public class Dropship extends SmallCraft {
         }
         // DS on more than 2 different elevations
         // or not on an elevation, what?
-        if ((elevations.size() > 2) || (elevations.size() == 0)) {
+        if ((elevations.size() > 2) || elevations.isEmpty()) {
             return true;
         }
 

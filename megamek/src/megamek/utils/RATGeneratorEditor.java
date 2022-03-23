@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -15,7 +15,7 @@ package megamek.utils;
 
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
@@ -40,9 +40,6 @@ import java.util.stream.Collectors;
  * @author neoancient
  */
 public class RATGeneratorEditor extends JFrame {
-
-    private static final long serialVersionUID = 6544418066071039219L;
-
     private static final String[] MOVEMENT_TYPE_NAMES = {
             "Leg", "Tracked", "Wheeled", "Hover", "WiGE", "VTOL",
             "Naval", "Underwater", "Jump", "Motorized", "Atmospheric",
@@ -283,7 +280,7 @@ public class RATGeneratorEditor extends JFrame {
         });
 
         JScrollPane scroll = new JScrollPane(tblMasterUnitList);
-        JPanel unitContainer = new UIUtil.FixedXPanel();
+        JPanel unitContainer = new FixedXPanel();
         unitContainer.setLayout(new BorderLayout());
         unitSelectorSide.add(scroll);
         unitContainer.add(unitSelectorSide, BorderLayout.CENTER);
@@ -325,7 +322,7 @@ public class RATGeneratorEditor extends JFrame {
 
     private JComponent createUnitModelEditor() {
         Box unitModelEditor = Box.createVerticalBox();
-        JPanel topPanel = new UIUtil.FixedYPanel();
+        JPanel topPanel = new FixedYPanel();
         unitModelEditor.add(topPanel);
         topPanel.add(new JLabel("--- Model ---       "));
         topPanel.add(factionChooserForModel);
@@ -372,8 +369,8 @@ public class RATGeneratorEditor extends JFrame {
 
         TableRowSorter<UnitEditorTableModel> unitEditorListSorter = new TableRowSorter<>(unitModelEditorModel);
         unitEditorListSorter.setComparator(0, Comparator.comparing(String::toString));
-        List<RowSorter.SortKey> unitSortKeys = new ArrayList<>();
-        unitSortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        List<SortKey> unitSortKeys = new ArrayList<>();
+        unitSortKeys.add(new SortKey(0, SortOrder.ASCENDING));
         unitEditorListSorter.setSortKeys(unitSortKeys);
         tblUnitModelEditor.setRowSorter(unitEditorListSorter);
         JScrollPane scroll = new JScrollPane(tblUnitModelEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -384,7 +381,7 @@ public class RATGeneratorEditor extends JFrame {
 
     private JComponent createUnitChassisEditor() {
         Box unitChassisEditor = Box.createVerticalBox();
-        JPanel topPanel = new UIUtil.FixedYPanel();
+        JPanel topPanel = new FixedYPanel();
         unitChassisEditor.add(topPanel);
         topPanel.add(new JLabel("--- Chassis ---       "));
         topPanel.add(factionChooserForChassis);
@@ -436,8 +433,8 @@ public class RATGeneratorEditor extends JFrame {
 
         TableRowSorter<UnitEditorTableModel> unitEditorListSorter = new TableRowSorter<>(unitChassisEditorModel);
         unitEditorListSorter.setComparator(0, Comparator.comparing(String::toString));
-        List<RowSorter.SortKey> unitSortKeys = new ArrayList<>();
-        unitSortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        List<SortKey> unitSortKeys = new ArrayList<>();
+        unitSortKeys.add(new SortKey(0, SortOrder.ASCENDING));
         unitEditorListSorter.setSortKeys(unitSortKeys);
         tblUnitChassisEditor.setRowSorter(unitEditorListSorter);
         JScrollPane scroll = new JScrollPane(tblUnitChassisEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -449,7 +446,7 @@ public class RATGeneratorEditor extends JFrame {
     private JPanel createFactionTab() {
         JButton newButton = new JButton("New");
         newButton.addActionListener(ev -> {
-            if (txtNewFaction.getText().length() > 0) {
+            if (!txtNewFaction.getText().isBlank()) {
                 FactionRecord rec = new FactionRecord(txtNewFaction.getText());
                 rg.addFaction(rec);
                 masterFactionListModel.addRecord(rec);
@@ -469,8 +466,8 @@ public class RATGeneratorEditor extends JFrame {
 
         JButton copyButton = new JButton("Copy");
         copyButton.addActionListener(ev -> {
-            if (txtNewFaction.getText().length() > 0
-                    && tblMasterFactionList.getSelectedRow() >= 0) {
+            if (!txtNewFaction.getText().isBlank()
+                    && (tblMasterFactionList.getSelectedRow() >= 0)) {
                 FactionRecord from = masterFactionListModel.getFactionRecord(
                         tblMasterFactionList.convertRowIndexToModel(
                                 tblMasterFactionList.getSelectedRow()));
@@ -512,7 +509,7 @@ public class RATGeneratorEditor extends JFrame {
             }
         });
         JScrollPane masterScroll = new JScrollPane(tblMasterFactionList);
-        JPanel masterPanel = new UIUtil.FixedXPanel();
+        JPanel masterPanel = new FixedXPanel();
         masterPanel.add(masterScroll);
 
         factionEditorModel = new FactionEditorTableModel(null);
@@ -555,7 +552,7 @@ public class RATGeneratorEditor extends JFrame {
         optionsPanel.add(chkShowSubfactions);
         optionsPanel.add(chkShowMinorFactions);
 
-        JPanel salvageButtonPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel salvageButtonPanel = new FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         salvageButtonPanel.add(txtSalvageFaction);
         salvageButtonPanel.add(addSalvageButton);
         salvageButtonPanel.add(delSalvageButton);
@@ -567,7 +564,7 @@ public class RATGeneratorEditor extends JFrame {
         rightSide.add(salvageButtonPanel);
         rightSide.add(salvageScroll);
 
-        JPanel masterContainer = new UIUtil.FixedXPanel();
+        JPanel masterContainer = new FixedXPanel();
         masterContainer.setLayout(new BorderLayout());
         masterContainer.add(masterScroll, BorderLayout.CENTER);
 
@@ -581,8 +578,7 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private void filterFactionList() {
-        RowFilter<FactionListTableModel, Integer> rf;
-        rf = new RowFilter<>() {
+        RowFilter<FactionListTableModel, Integer> rf = new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends FactionListTableModel, ? extends Integer> entry) {
                 FactionListTableModel model = entry.getModel();
@@ -598,8 +594,7 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private void filterMasterUnitList() {
-        RowFilter<MasterUnitListTableModel, Integer> rf;
-        rf = new RowFilter<>() {
+        RowFilter<MasterUnitListTableModel, Integer> rf = new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends MasterUnitListTableModel, ? extends Integer> entry) {
                 MasterUnitListTableModel model = entry.getModel();
@@ -607,10 +602,12 @@ public class RATGeneratorEditor extends JFrame {
                 if (cbUnitType.getSelectedIndex() > 0 && !UnitType.getTypeName(rec.getUnitType()).equals(cbUnitType.getSelectedItem())) {
                     return false;
                 }
+
                 if (cbMovementType.getSelectedIndex() > 0 && (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
                     return false;
                 }
-                if (txtSearch.getText().length() > 0) {
+
+                if (!txtSearch.getText().isBlank()) {
                     return rec.getKey().toLowerCase().contains(txtSearch.getText().toLowerCase());
                 }
                 return true;
@@ -718,7 +715,7 @@ public class RATGeneratorEditor extends JFrame {
             } else if (col == COL_DEPLOYED_WITH) {
                 data.get(row).getRequiredUnits().clear();
                 data.get(row).getDeployedWith().clear();
-                if (((String) val).length() > 0) {
+                if (!((String) val).isBlank()) {
                     for (String unit : ((String) val).split(",")) {
                         if (unit.startsWith("req:")) {
                             data.get(row).getRequiredUnits().add(unit);             
@@ -1022,7 +1019,6 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private class FactionListTableModel extends DefaultTableModel {
-
         public static final int COL_CODE = 0;
         public static final int COL_NAME = 1;
         public static final int COL_YEARS = 2;
@@ -1148,9 +1144,6 @@ public class RATGeneratorEditor extends JFrame {
     }
     
     private static class FactionEditorTableModel extends DefaultTableModel {
-        
-        private static final long serialVersionUID = 5324520609209690560L;
-        
         private static final int CAT_OMNI_PCT = 0;
         private static final int CAT_CLAN_PCT = 1;
         private static final int CAT_SL_PCT = 2;
@@ -1159,6 +1152,7 @@ public class RATGeneratorEditor extends JFrame {
         private static final int CAT_SL_AERO_PCT = 5;
         private static final int CAT_CLAN_VEE_PCT = 6;
         private static final int CAT_SL_VEE_PCT = 7;
+
         private static final String[] CATEGORIES = {
             "Omni %", "Clan %", "SL %",
             "Omni % (Aero)", "Clan % (Aero)", "SL % (Aero)",
@@ -1268,22 +1262,22 @@ public class RATGeneratorEditor extends JFrame {
         public void setValueAt(Object val, int row, int col) {
             int era = ERAS[col - 1];
             Integer value = null;
-            if (((String) val).length() > 0) {
+            if (!((String) val).isBlank()) {
                 try {
                     value = Integer.parseInt((String) val);
-                } catch (NumberFormatException ex) {
-                    //leave null
+                } catch (Exception ignored) {
+
                 }
             }
             if (row == 0) {
                 factionRec.setPctSalvage(era, value);
             } else if (row > factionRec.getRatingLevels().size() * CATEGORIES.length) {
                 int unitType = WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length];
-                if (((String) val).length() > 0) {
+                if (!((String) val).isBlank()) {
                     try {
                         factionRec.setWeightDistribution(era, unitType, (String) val);
-                    } catch (Exception ex) {
-                        //ignore
+                    } catch (Exception ignored) {
+
                     }
                 } else {
                     factionRec.setWeightDistribution(era, unitType, null);
@@ -1320,9 +1314,8 @@ public class RATGeneratorEditor extends JFrame {
         }
         
     }
-    
+
     private static class SalvageEditorTableModel extends DefaultTableModel {
-        
         ArrayList<String> factions;
         HashMap<String, ArrayList<String>> data;
         private FactionRecord factionRec;
@@ -1459,7 +1452,6 @@ public class RATGeneratorEditor extends JFrame {
             }
             fireTableDataChanged();
         }
-        
     }
 
     private static String getEra(int year) {
@@ -1495,7 +1487,7 @@ public class RATGeneratorEditor extends JFrame {
      *             of the arguments. If the {@code args} element is empty, or the first element
      *             is not a valid directory, loads from the default location.
      */
-    public static void main(String[] args) {
+    public static void main(String... args) {
         SwingUtilities.invokeLater (() -> {
             RATGeneratorEditor ui;
             if (args.length > 0) {

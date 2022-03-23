@@ -451,8 +451,7 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Randomize" submenu, allowing to randomly assign
-     * name, callsign and skills
+     * Returns the "Randomize" submenu, allowing to randomly assign name, callsign and skills
      */
     private static JMenu randomizeMenu(boolean enabled, ActionListener listener, String eIds) {
         // listener menu uses the following Mnemonic Keys: C, N, S
@@ -468,7 +467,8 @@ class LobbyMekPopup {
     }
     
     /** Returns the C3 computer submenu. */
-    private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg, ActionListener listener) {
+    private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg,
+                                ActionListener listener) {
         JMenu menu = new JMenu("C3");
 
         if (entities.stream().anyMatch(Entity::hasAnyC3System)) {
@@ -568,9 +568,9 @@ class LobbyMekPopup {
     /**
      * Returns the "Change Unit Owner" submenu.
      */
-    private static JMenu changeOwnerMenu(boolean enabled, ClientGUI clientGui, ActionListener listener, 
-            Collection<Entity> entities, Collection<Force> forces) {
-
+    private static JMenu changeOwnerMenu(boolean enabled, ClientGUI clientGui,
+                                         ActionListener listener, Collection<Entity> entities,
+                                         Collection<Force> forces) {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
         menu.setEnabled(enabled);
         menu.setMnemonic(KeyEvent.VK_O);
@@ -584,7 +584,7 @@ class LobbyMekPopup {
                 menu.add(menuItem(player.getName(), command, enabled, listener));
             }
         }
-        
+
         if (entities.isEmpty() && !forces.isEmpty()) {
             JMenu assignMenu = new JMenu("Assign to");
             JMenu fOnlyMenu = new JMenu("Force only");
@@ -608,11 +608,9 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Quirks" submenu, allowing to save the quirks
-     * to the quirks config file.
+     * Returns the "Quirks" submenu, allowing to save the quirks to the quirks config file.
      */
     private static JMenu quirksMenu(boolean enabled, ActionListener listener, String eIds) {
-
         JMenu menu = new JMenu(Messages.getString("ChatLounge.popup.quirks"));
         menu.setEnabled(enabled);
         menu.add(menuItem("Save Quirks for Chassis", LMP_SAVE_QUIRKS_ALL + NOINFO + eIds, enabled, listener));
@@ -625,9 +623,9 @@ class LobbyMekPopup {
      * hotloading LRMs and
      * setting MGs to rapid fire mode
      */
-    private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn, boolean anyHLOff,
-            boolean optHL, boolean optRF, ActionListener listener, String eIds) {
-
+    private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn,
+                                   boolean anyHLOff, boolean optHL, boolean optRF,
+                                   ActionListener listener, String eIds) {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
         menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn);        
         if (optRF) {
@@ -644,18 +642,17 @@ class LobbyMekPopup {
         }
         return menu;
     }
-    
+
     /**
      * Returns the "Offload from" submenu, allowing to offload
      * units from a specific bay of the given entity
      */
     private static JMenu offloadBayMenu(boolean enabled, Collection<Entity> entities, ActionListener listener) {
-
         JMenu menu = new JMenu("Offload All From...");
         if (enabled && entities.size() == 1) {
             Entity entity = theElement(entities);
             for (Bay bay : entity.getTransportBays()) {
-                if (bay.getLoadedUnits().size() > 0) {
+                if (!bay.getLoadedUnits().isEmpty()) {
                     String label = "Bay #" + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)";
                     menu.add(menuItem(label, LMP_UNLOADALLFROMBAY + "|" + bay.getBayNumber() + enToken(entities), enabled, listener));
                 }

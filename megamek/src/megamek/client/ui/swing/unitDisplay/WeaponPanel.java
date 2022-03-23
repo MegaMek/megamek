@@ -1,12 +1,26 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Rectangle;
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.ui.GBC;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.FiringDisplay;
+import megamek.client.ui.swing.MovementDisplay;
+import megamek.client.ui.swing.TargetingPhaseDisplay;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.Entity.WeaponSortOrder;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.gaussrifles.HAGWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
@@ -16,70 +30,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.AbstractListModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.ui.GBC;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.FiringDisplay;
-import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TargetingPhaseDisplay;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.SmallCraft;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.WeaponComparatorArc;
-import megamek.common.WeaponComparatorCustom;
-import megamek.common.WeaponComparatorDamage;
-import megamek.common.WeaponComparatorNum;
-import megamek.common.WeaponComparatorRange;
-import megamek.common.WeaponType;
-import megamek.common.enums.GamePhase;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.gaussrifles.HAGWeapon;
-import megamek.common.weapons.infantry.InfantryWeapon;
-
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
  */
 public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
-    
     /**
      * Mouse adaptor for the weapon list.  Supports rearranging the weapons
      * to define a custom ordering.
@@ -126,11 +80,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 dragSourceIndex = currentIndex;
                 Entity ent = weap1.getEntity();
                 // Is the sort order custom?
-                int customId = Entity.WeaponSortOrder.CUSTOM.ordinal();
+                int customId = WeaponSortOrder.CUSTOM.ordinal();
                 // Update weap sort order drop down
                 if (weapSortOrder.getSelectedIndex() != customId) {
                     // Set the order to custom
-                    ent.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
+                    ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
                     weapSortOrder.setSelectedIndex(customId);
                 }
                 // Update custom order
@@ -326,12 +280,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             weapons.sort(comparator);
             fireContentsChanged(this, 0, weapons.size() - 1);
         }
-
     }
 
     private final UnitDisplay unitDisplay;
 
-    private static final long serialVersionUID = -5728839963281503332L;
     private JComboBox<String> weapSortOrder;
     public JList<String> weaponList;
     /**
@@ -418,7 +370,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
         weapSortOrder = new JComboBox<>();
-        for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
+        for (WeaponSortOrder s : WeaponSortOrder.values()) {
             String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
             weapSortOrder.addItem(Messages.getString(entry));
         }
@@ -828,79 +780,65 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopLeftCorner()).toString());
+        tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+        tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
-
     }
 
     /**
@@ -937,18 +875,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (en.infernos.isStillBurning()) { // hit with inferno ammo
                 currentHeatBuildup += en.infernos.getHeat();
             }
+
             if (!((Mech) en).hasLaserHeatSinks()) {
                 // extreme temperatures.
                 if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
-                    int buildup = game.getPlanetaryConditions()
-                                      .getTemperatureDifference(50, -30);
+                    int buildup = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
                     if (((Mech) en).hasIntactHeatDissipatingArmor()) {
                         buildup /= 2;
                     }
                     currentHeatBuildup += buildup;
                 } else if (game != null) {
-                    currentHeatBuildup -= game.getPlanetaryConditions()
-                                              .getTemperatureDifference(50, -30);
+                    currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
                 }
             }
         }
@@ -965,6 +902,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     currentHeatBuildup += 5;
                 }
             }
+
             if (hex.terrainLevel(Terrains.MAGMA) == 1) {
                 if ((en instanceof Mech)
                     && ((Mech) en).hasIntactHeatDissipatingArmor()) {
@@ -981,10 +919,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
+
         if ((((en instanceof Mech) || (en instanceof Aero)) && en.isStealthActive())
-            || en.isNullSigActive() || en.isVoidSigActive()) {
-            currentHeatBuildup += 10; // active stealth/null sig/void sig
-            // heat
+                || en.isNullSigActive() || en.isVoidSigActive()) {
+            currentHeatBuildup += 10; // active stealth/null sig/void sig heat
         }
 
         if ((en instanceof Mech) && en.isChameleonShieldOn()) {
@@ -1026,16 +964,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
-                && (game.getPhase() == mounted.usedInPhase())
-                && (game.getPhase() == GamePhase.FIRING)) {
+                    && (game.getPhase() == mounted.usedInPhase())
+                    && game.getPhase().isFiring()) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                         for (int wId : mounted.getBayWeapons()) {
-                            currentHeatBuildup += entity.getEquipment(wId)
-                                                        .getCurrentHeat();
+                            currentHeatBuildup += entity.getEquipment(wId).getCurrentHeat();
                         }
                     } else {
                         // check whether arc has fired
@@ -1043,14 +980,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         boolean rearMount = mounted.isRearMounted();
                         if (!rearMount) {
                             if (!usedFrontArc[loc]) {
-                                currentHeatBuildup += entity.getHeatInArc(
-                                        loc, rearMount);
+                                currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
                                 usedFrontArc[loc] = true;
                             }
                         } else {
                             if (!usedRearArc[loc]) {
-                                currentHeatBuildup += entity.getHeatInArc(
-                                        loc, rearMount);
+                                currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
                                 usedRearArc[loc] = true;
                             }
                         }
@@ -1098,7 +1033,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (heatCap < heatCapWater) {
             heatCapacityStr = heatCap + " [" + heatCapWater + ']';
         }
-        // end duplicate block
 
         // check for negative values due to extreme temp
         if (currentHeatBuildup < 0) {
@@ -1195,16 +1129,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     /**
-     * Returns the Mounted for the selected weapon in the weapon list.
-     * @return
+     * @return the Mounted for the selected weapon in the weapon list.
      */
     public Mounted getSelectedWeapon() {
         int selected = weaponList.getSelectedIndex();
         if (selected == -1) {
             return null;
         }
-        return ((WeaponListModel) weaponList.getModel())
-                .getWeaponAt(selected);
+        return ((WeaponListModel) weaponList.getModel()).getWeaponAt(selected);
     }
 
     /**
@@ -1215,8 +1147,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (selected == -1) {
             return -1;
         }
-        return entity.getEquipmentNum(((WeaponListModel) weaponList
-                .getModel()).getWeaponAt(selected));
+        return entity.getEquipmentNum(((WeaponListModel) weaponList.getModel()).getWeaponAt(selected));
     }
 
     /**
@@ -1225,9 +1156,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     public int selectFirstWeapon() {
         // Entity has no weapons, return -1;
-        if (entity.getWeaponList().size() == 0
-                || (entity.usesWeaponBays() 
-                        && entity.getWeaponBayList().size() == 0)) {
+        if (entity.getWeaponList().isEmpty()
+                || (entity.usesWeaponBays() && entity.getWeaponBayList().isEmpty())) {
             return -1;
         }
         WeaponListModel weapList = (WeaponListModel) weaponList.getModel();

@@ -1345,7 +1345,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // limit large craft to zero net heat and to heat by arc
         final int heatcap = ae.getHeatCapacity();
-        if (ae.usesWeaponBays() && weapon != null && (weapon.getBayWeapons().size() > 0)) {
+        if (ae.usesWeaponBays() && (weapon != null) && !weapon.getBayWeapons().isEmpty()) {
             int totalheat = 0;
 
             // first check to see if there are any usable weapons
@@ -1580,9 +1580,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.AttackerTooHigh");
                 }
                 // Additional Nape-of-Earth restrictions for strafing
-                if (ae.getAltitude() == 1 && isStrafing) {
+                if ((ae.getAltitude() == 1) && isStrafing) {
                     Vector<Coords> passedThrough = ae.getPassedThrough();
-                    if ((passedThrough.size() == 0) || passedThrough.get(0).equals(target.getPosition())) {
+                    if (passedThrough.isEmpty() || passedThrough.get(0).equals(target.getPosition())) {
                         // TW pg 243 says units flying at NOE have a harder time
                         // establishing LoS while strafing and hence have to
                         // consider the adjacent hex along the flight place in the

@@ -1322,7 +1322,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     }
                 }
             }
-            if (gearSlots.size() > 0) {
+
+            if (!gearSlots.isEmpty()) {
                 int index = Compute.randomInt(gearSlots.size());
                 gearSlots.get(index).setDestroyed(true);
             }

@@ -793,9 +793,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case FIRE_SAVE_WEAPON_ORDER:
                 Entity ent = mechD.getCurrentEntity();
                 if (ent != null) {
-                    WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
-                            ent.getModel(), ent.getWeaponSortOrder(),
-                            ent.getCustomWeaponOrder());
+                    WeaponOrderHandler.setWeaponOrder(ent.getChassis(), ent.getModel(),
+                            ent.getWeaponSortOrder(), ent.getCustomWeaponOrder());
                     client.sendEntityWeaponOrderUpdate(ent);
                 }
                 break;
@@ -831,14 +830,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 destroyed.add(entity);
             }
         }
-        if (destroyed.size() > 0) {
+
+        if (!destroyed.isEmpty()) {
             String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            // TODO : Salvage file name shouldn't be inline
-            String fileName = "salvage.mul";
+            String fileName = "salvage.mul"; // TODO : remove inline filename
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 fileName = StringUtil.addDateTimeStamp(fileName);
             }
@@ -846,9 +845,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             try {
                 // Save the destroyed entities to the file.
                 EntityListFile.saveTo(unitFile, destroyed);
-            } catch (IOException e) {
-                LogManager.getLogger().error("", e);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
     }
@@ -898,6 +897,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // cleanup our timers first
             bv.die();
         }
+
         for (String s : phaseComponents.keySet()) {
             JComponent component = phaseComponents.get(s);
             if (component instanceof ReportDisplay) {
@@ -909,7 +909,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             if (component instanceof Distractable) {
                 ((Distractable) component).removeAllListeners();
             }
-        } // Handle the next component
+        }
         phaseComponents.clear();
 
         frame.removeAll();
@@ -1600,11 +1600,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul");
-                } catch (IOException ignored) {
+                } catch (Exception ignored) {
                     // nothing needs to be done here
                     return;
                 }
             }
+
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
@@ -1642,11 +1643,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul");
-                } catch (IOException ignored) {
+                } catch (Exception ignored) {
                     // nothing needs to be done here
                     return;
                 }
             }
+
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, getClient());
@@ -1707,7 +1709,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
-        public void gamePlayerChange(GamePlayerChangeEvent e) {
+        public void gamePlayerChange(GamePlayerChangeEvent evt) {
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
@@ -1718,7 +1720,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         @Override
-        public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
+        public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
             JOptionPane.showMessageDialog(frame,
                 Messages.getString("ClientGUI.Disconnected.message"),
                 Messages.getString("ClientGUI.Disconnected.title"),
@@ -1796,7 +1798,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         }
 
-
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
@@ -1821,10 +1822,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // Don't bother asking if none survived.
             if (!living.isEmpty() && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
                     Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
-
                 // Allow the player to save the units to a file.
                 saveVictoryList();
-            } // End user-wants-a-MUL
+            }
 
             // save all destroyed units in a separate "salvage MUL"
             ArrayList<Entity> destroyed = new ArrayList<>();
@@ -1835,7 +1835,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     destroyed.add(entity);
                 }
             }
-            if (destroyed.size() > 0) {
+
+            if (!destroyed.isEmpty()) {
                 String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
                 File logDir = new File(sLogDir);
                 if (!logDir.exists()) {

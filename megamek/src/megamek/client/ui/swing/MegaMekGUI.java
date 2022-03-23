@@ -35,6 +35,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -201,57 +202,49 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Display the main menu.
      */
     private void showMainMenu() {
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.MainMenuBorder.getComp(),
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(UIComponents.MainMenuBorder.getComp(),
                 true);
         frame.getContentPane().removeAll();
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         frame.setResizable(false);
 
-        MegamekButton hostB;
-        MegamekButton connectB;
-        MegamekButton botB;
-        MegamekButton editB;
-        MegamekButton skinEditB;
-        MegamekButton scenB;
-        MegamekButton loadB;
-        MegamekButton quitB;
         JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION,
                 JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250, 15));
-        if (skinSpec.fontColors.size() > 0) {
+        if (!skinSpec.fontColors.isEmpty()) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
-        hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand(ClientGUI.FILE_GAME_NEW);
         hostB.addActionListener(actionListener);
-        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand(ClientGUI.FILE_GAME_SCENARIO);
         scenB.addActionListener(actionListener);
-        loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         loadB.setActionCommand(ClientGUI.FILE_GAME_LOAD);
         loadB.addActionListener(actionListener);
-        connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
-        botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
         botB.addActionListener(actionListener);
-        editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand(ClientGUI.BOARD_NEW);
         editB.addActionListener(actionListener);
-        skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand(ClientGUI.MAIN_SKIN_NEW);
         skinEditB.addActionListener(actionListener);
-        quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);
 
@@ -270,7 +263,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             backgroundIcon = null;
         }
 
-        // Use the current monitor so we don't "overflow" computers whose primary
+        // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
         Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
         Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorSize.width, scaledMonitorSize.height);

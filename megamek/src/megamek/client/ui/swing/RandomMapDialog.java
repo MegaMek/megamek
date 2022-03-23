@@ -305,7 +305,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtility.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrBlank(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 

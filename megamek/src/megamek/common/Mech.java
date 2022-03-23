@@ -5753,11 +5753,11 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isVoidSigActive() {
-        // per the rules questions forum, externally mounted BA invalidates Void
-        // Sig
-        if (getLoadedUnits().size() > 0) {
+        // per the rules questions forum, externally mounted BA invalidates Void Sig
+        if (!getLoadedUnits().isEmpty()) {
             return false;
         }
+
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -5794,11 +5794,11 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isChameleonShieldActive() {
-        // TO pg 300 states that generates heat but doesn't operate if the unit
-        //  has mounted BA
-        if (getLoadedUnits().size() > 0) {
+        // TO pg 300 states that generates heat but doesn't operate if the unit has mounted BA
+        if (!getLoadedUnits().isEmpty()) {
             return false;
         }
+
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -5927,10 +5927,8 @@ public abstract class Mech extends Entity {
             }
         }
 
-        // Return the result.
         return result;
-
-    } // End public TargetRoll getStealthModifier( char )
+    }
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
@@ -5951,16 +5949,14 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean canCharge() {
-        // Mechs can charge, unless they are Clan and the "no clan physicals"
-        // option is set
+        // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
         return super.canCharge()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
     }
 
     @Override
     public boolean canDFA() {
-        // Mechs can DFA, unless they are Clan and the "no clan physicals"
-        // option is set
+        // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
     }
@@ -5972,6 +5968,7 @@ public abstract class Mech extends Entity {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
+
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinks++;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
@@ -6004,6 +6001,7 @@ public abstract class Mech extends Entity {
                     break;
                 }
             }
+
             if (hasLaserHeatSinks == HAS_UNKNOWN) {
                 hasLaserHeatSinks = HAS_FALSE;
             }
@@ -6066,8 +6064,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectAmmo
-     *            The condEjectAmmo to set.
+     * @param condEjectAmmo The condEjectAmmo to set.
      */
     public void setCondEjectAmmo(boolean condEjectAmmo) {
         this.condEjectAmmo = condEjectAmmo;
@@ -6081,8 +6078,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectEngine
-     *            The condEjectEngine to set.
+     * @param condEjectEngine The condEjectEngine to set.
      */
     public void setCondEjectEngine(boolean condEjectEngine) {
         this.condEjectEngine = condEjectEngine;
@@ -6096,8 +6092,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectCTDest
-     *            The condEjectCTDest to set.
+     * @param condEjectCTDest The condEjectCTDest to set.
      */
     public void setCondEjectCTDest(boolean condEjectCTDest) {
         this.condEjectCTDest = condEjectCTDest;
@@ -6111,8 +6106,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectHeadshot
-     *            The condEjectHeadshot to set.
+     * @param condEjectHeadshot The condEjectHeadshot to set.
      */
     public void setCondEjectHeadshot(boolean condEjectHeadshot) {
         this.condEjectHeadshot = condEjectHeadshot;
@@ -6747,7 +6741,8 @@ public abstract class Mech extends Entity {
                 sb.append(getFluff().getSystemManufacturer(system));
                 sb.append(newLine);
             }
-            if (getFluff().getSystemModel(system).length() > 0) {
+
+            if (!getFluff().getSystemModel(system).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MODEL);
                 sb.append(system.toString()).append(":");
                 sb.append(getFluff().getSystemModel(system));

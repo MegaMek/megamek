@@ -771,7 +771,7 @@ public class TestAdvancedAerospace extends TestAero {
         // Make sure all bays have at least one weapon and that there are at least
         // ten shots of ammo for each ammo-using weapon in the bay.
         for (Mounted bay : vessel.getWeaponBayList()) {
-            if (bay.getBayWeapons().size() == 0) {
+            if (bay.getBayWeapons().isEmpty()) {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }

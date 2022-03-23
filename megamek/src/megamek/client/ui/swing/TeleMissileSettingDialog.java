@@ -1,43 +1,33 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
 import megamek.common.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  * Ask for the velocity setting for a teleoperated missile.
  */
 public class TeleMissileSettingDialog extends JDialog implements ActionListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -7642946136536329067L;
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
@@ -90,7 +80,7 @@ public class TeleMissileSettingDialog extends JDialog implements ActionListener 
         if (actionEvent.getSource().equals(butOk)) {
             String s = fldSetting.getText();
             try {
-                if (s != null && s.length() != 0) {
+                if (s != null && !s.isBlank()) {
                     setting = Integer.parseInt(s);
                 }
             } catch (NumberFormatException e) {

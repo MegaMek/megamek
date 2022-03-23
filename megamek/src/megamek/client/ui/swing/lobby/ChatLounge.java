@@ -2157,13 +2157,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     && (game.getEntitiesOwnedBy(localPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
             }
+
             for (Client bc : clientgui.getBots().values()) {
                 if ((game.getLiveCommandersOwnedBy(bc.getLocalPlayer()) < 1)
                         && (game.getEntitiesOwnedBy(bc.getLocalPlayer()) > 0)) {
                     players.add(bc.getLocalPlayer().getName());
                 }
             }
-            if (players.size() > 0) {
+
+            if (!players.isEmpty()) {
                 String title = Messages.getString("ChatLounge.noCmdr.title"); 
                 String msg = Messages.getString("ChatLounge.noCmdr.msg"); 
                 for (String player : players) {
@@ -2172,7 +2174,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 clientgui.doAlertDialog(title, msg);
                 return;
             }
-
         }
 
         boolean done = !localPlayer().isDone();
@@ -2187,6 +2188,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if ((tablePlayers == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return null;
         }
+
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         if (localPlayer().equals(player)) {
             return client();

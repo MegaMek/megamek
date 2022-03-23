@@ -898,10 +898,7 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
-        if (getEquipment(weaponId).getLocation() == getLocTurret()) {
-            return true;
-        }
-        return false;
+        return getEquipment(weaponId).getLocation() == getLocTurret();
     }
 
     /**
@@ -918,8 +915,7 @@ public class Tank extends Entity {
         int motiveMod = getMotiveSideMod(side);
         setPotCrit(HitData.EFFECT_NONE);
         if (isHullDown()) {
-            // which direction a tank moved in before going hull down is
-            // important
+            // which direction a tank moved in before going hull down is important
             int moveInDirection;
             if (!m_bBackedIntoHullDown) {
                 moveInDirection = ToHitData.SIDE_FRONT;
@@ -3126,7 +3122,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 7:
-                        if (getLoadedUnits().size() > 0) {
+                        if (!getLoadedUnits().isEmpty()) {
                             return CRIT_CARGO;
                         }
                     case 8:
@@ -3212,7 +3208,7 @@ public class Tank extends Entity {
             } else {
                 switch (roll) {
                     case 6:
-                        if (getLoadedUnits().size() > 0) {
+                        if (!getLoadedUnits().isEmpty()) {
                             return CRIT_CARGO;
                         }
                     case 7:
@@ -3362,7 +3358,7 @@ public class Tank extends Entity {
      * @return True if there are any jammed weapons and the crew isn't stunned
      */
     public boolean canUnjamWeapon() {
-        return getJammedWeapons().size() > 0 && getStunnedTurns() <= 0;
+        return !getJammedWeapons().isEmpty() && getStunnedTurns() <= 0;
     }
     
     /** 
@@ -3412,8 +3408,8 @@ public class Tank extends Entity {
         for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
             if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                m.setBreached(false); // not destroyed, just
-                // unpowered
+                // not destroyed, just unpowered
+                m.setBreached(false);
             }
         }
     }
@@ -3422,21 +3418,11 @@ public class Tank extends Entity {
         return engineHit;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getTotalCommGearTons()
-     */
     @Override
     public int getTotalCommGearTons() {
         return 1 + getExtraCommGearTons();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getIniBonus()
-     */
     @Override
     public int getHQIniBonus() {
         int bonus = super.getHQIniBonus();
@@ -3575,10 +3561,8 @@ public class Tank extends Entity {
                 if (!addedCargo) {
                     usedSlots += mount.getType().getTankSlots(this);
                     addedCargo = true;
-                    continue;
-                } else {
-                    continue;
                 }
+                continue;
             }
             if ((mount.getType() instanceof MiscType)
                     && (mount.getType().hasFlag(MiscType.F_JUMP_JET)

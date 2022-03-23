@@ -21,8 +21,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
- *         of fighters.
+ * Fighter squadrons are basically "containers" for a bunch of fighters.
+ * @author Jay Lawson
  */
 public class FighterSquadron extends Aero {
     private static final long serialVersionUID = 3491212296982370726L;
@@ -37,8 +37,7 @@ public class FighterSquadron extends Aero {
     
     private Vector<Integer> fighters = new Vector<>();
 
-    // fighter squadrons need to keep track of heat capacity apart from their
-    // fighters
+    // fighter squadrons need to keep track of heat capacity apart from their fighters
     private int heatcap = 0;
     private int heatcapNoRHS = 0;
 
@@ -57,11 +56,6 @@ public class FighterSquadron extends Aero {
         setModel("");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.Aero#getCost(boolean)
-     */
     @Override
     public double getCost(boolean ignoreAmmo) {
         return getSubEntities().stream()
@@ -79,12 +73,18 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int get0SI() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).get0SI()).min().orElse(0);
+        return getActiveSubEntities().stream()
+                .mapToInt(ent -> ((IAero) ent).get0SI())
+                .min()
+                .orElse(0);
     }
 
     @Override
     public int getSI() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getSI()).min().orElse(0);
+        return getActiveSubEntities().stream()
+                .mapToInt(ent -> ((IAero) ent).getSI())
+                .min()
+                .orElse(0);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class FighterSquadron extends Aero {
                 .sum();
     }
     
-    /*
+    /**
      * Per SO, fighter squadrons can't actually be crippled
      * Individual crippled fighters should be detached and sent home, but it isn't required by the rules
      * @see megamek.common.Aero#isCrippled()
@@ -125,28 +125,36 @@ public class FighterSquadron extends Aero {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return getActiveSubEntities().stream()
-                .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat)).min()
+                .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat))
+                .min()
                 .orElse(0);
     }
-    
+
     @Override
     public int getCurrentThrust() {
         return getActiveSubEntities().stream()
-                .mapToInt(ent -> ((IAero) ent).getCurrentThrust()).min()
+                .mapToInt(ent -> ((IAero) ent).getCurrentThrust())
+                .min()
                 .orElse(0);
     }
 
     @Override
     public int getFuel() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getFuel()).min().orElse(0);
+        return getActiveSubEntities().stream()
+                .mapToInt(ent -> ((IAero) ent).getFuel())
+                .min()
+                .orElse(0);
     }
     
     @Override
     public int getCurrentFuel() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getCurrentFuel()).min().orElse(0);
+        return getActiveSubEntities().stream()
+                .mapToInt(ent -> ((IAero) ent).getCurrentFuel())
+                .min()
+                .orElse(0);
     }
 
-    /*
+    /**
      * Squadrons have an SI for PSR purposes, but don't take SI damage. This should return 100%.
      */
     @Override
@@ -161,7 +169,8 @@ public class FighterSquadron extends Aero {
             return false;
         }
         int nTC = activeFighters.stream()
-                .mapToInt(ent -> ent.hasTargComp() ? 1 : 0).sum();
+                .mapToInt(ent -> ent.hasTargComp() ? 1 : 0)
+                .sum();
         return (nTC * 1.0 / activeFighters.size() >= 0.5);
     }
 
@@ -184,7 +193,6 @@ public class FighterSquadron extends Aero {
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
-
         // movement effects
         // some question whether "above safe thrust" applies to thrust or velocity
         // I will treat it as thrust until it is resolved
@@ -202,13 +210,15 @@ public class FighterSquadron extends Aero {
         if (!(game.getBoard().inSpace() || atmoCond == PlanetaryConditions.ATMO_VACUUM)) {
             prd.addModifier(+2, "Atmospheric operations");
 
-            prd.addModifier(-1, "fighter/small craft");
+            prd.addModifier(-1, "fighter/ small craft");
         }
 
         // according to personal communication with Welshman, the normal crit
         // penalties are added up across the fighter squadron
-        fighters.stream().map(fid -> game.getEntity(fid))
-            .filter(ACTIVE_CHECK).map(ent -> (IAero) ent).forEachOrdered(
+        fighters.stream()
+                .map(fid -> game.getEntity(fid))
+                .filter(ACTIVE_CHECK).map(ent -> (IAero) ent)
+                .forEachOrdered(
             ent -> {
                 int avihits = ent.getAvionicsHits();
                 if ((avihits > 0) && (avihits < 3)) {
@@ -234,7 +244,8 @@ public class FighterSquadron extends Aero {
     public int getClusterMods() {
         return getActiveSubEntities().stream()
                 .filter(ent -> (((IAero) ent).getFCSHits() <= 2))
-                .mapToInt(ent -> ((IAero) ent).getClusterMods()).sum();
+                .mapToInt(ent -> ((IAero) ent).getClusterMods())
+                .sum();
     }
 
     @Override
@@ -253,11 +264,6 @@ public class FighterSquadron extends Aero {
         return bv;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.Aero#calculateBattleValue()
-     */
     @Override
     public int calculateBattleValue() {
         if (useManualBV) {
@@ -438,22 +444,6 @@ public class FighterSquadron extends Aero {
     }
 
     /**
-     * When fighters are removed it is necessary to unlink all ammo to the
-     * squadron's weapons and reload it to ensure that ammo from the removed
-     * fighter does not remain linked
-     */
-    // TODO: Evaluate for removal
-    @SuppressWarnings("unused")
-    private void reloadAllWeapons() {
-        for (Mounted weapon : getTotalWeaponList()) {
-            if ((((WeaponType) weapon.getType()).getAmmoType() != AmmoType.T_NA) && (null != weapon.getLinked())
-                    && (weapon.getLinked().getType() instanceof AmmoType)) {
-                weapon.unlink();
-            }
-        }
-    }
-
-    /**
      * update the skills for this squadron
      */
     public void updateSkills() {
@@ -512,7 +502,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public void setBombChoices(int[] bc) {
+    public void setBombChoices(int... bc) {
         // Set the bombs for the squadron
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
@@ -590,8 +580,7 @@ public class FighterSquadron extends Aero {
                 if ((type == BombType.B_ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
-                }
-                if ((type > BombType.B_TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                } else if ((type > BombType.B_TAG) && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
 
@@ -601,8 +590,8 @@ public class FighterSquadron extends Aero {
                         && (type != BombType.B_HOMING)) {
                     try {
                         addBomb(EquipmentType.get(BombType.getBombWeaponName(type)), LOC_NOSE);
-                    } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
+                    } catch (Exception ignored) {
+
                     }
                 }
                 // If the bomb was added as a weapon, don't add the ammo
@@ -611,8 +600,8 @@ public class FighterSquadron extends Aero {
                 if ((type != BombType.B_TAG) && (null == BombType.getBombWeaponName(type))) {
                     try {
                         addEquipment(EquipmentType.get(BombType.getBombInternalName(type)), LOC_NOSE, false);
-                    } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
+                    } catch (Exception ignored) {
+
                     }
                 }
             }
@@ -621,24 +610,26 @@ public class FighterSquadron extends Aero {
         }
         // add the space bomb attack
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace() && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+                && game.getBoard().inSpace() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-                // throw new LocationFullException(ex.getMessage());
+            } catch (Exception ignored) {
+
             }
         }
-        if (!game.getBoard().inSpace() && (getBombs(AmmoType.F_GROUND_BOMB).size() > 0)) {
+
+        if (!game.getBoard().inSpace() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-                // throw new LocationFullException(ex.getMessage());
+            } catch (Exception ignored) {
+
             }
+
             for (int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
                 try {
                     addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
-                } catch (LocationFullException ex) {
-                    // throw new LocationFullException(ex.getMessage());
+                } catch (Exception ignored) {
+
                 }
             }
         }
@@ -647,20 +638,13 @@ public class FighterSquadron extends Aero {
         loadAllWeapons();
     }
 
-    /*
+    /**
      * Determine MAX_SIZE based on game options
      */
     public int getMaxSize() {
-        if (game.getOptions().booleanOption(
-                OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)) {
-            return ALTERNATE_MAX_SIZE;
-        }
-        return MAX_SIZE;
+        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
+                ? ALTERNATE_MAX_SIZE : MAX_SIZE;
     }
-
-    /*
-     * The transporter functions
-     */
 
     /**
      * Determines if this object can accept the given unit. The unit may not be
@@ -683,7 +667,7 @@ public class FighterSquadron extends Aero {
         if ((unit instanceof FighterSquadron)
                 && !unit.isEnemyOf(this)
                 && (getId() != unit.getId())
-                && (((FighterSquadron) unit).fighters.size() > 0)
+                && !((FighterSquadron) unit).fighters.isEmpty()
                 && ((fighters.size() + ((FighterSquadron) unit).fighters.size()) <= getMaxSize())) {
             return true;
         }

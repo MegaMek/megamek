@@ -888,7 +888,7 @@ public class ScenarioLoader {
             while ((line = reader.readLine()) != null) {
                 lineNum++;
                 line = line.trim();
-                if (line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
+                if (line.startsWith(COMMENT_MARK) || line.isBlank()) {
                     continue;
                 } else if (!line.contains(SEPARATOR_PROPERTY)) {
                     LogManager.getLogger().error(String.format("Equality sign in scenario file %s on line %d missing; ignoring",
@@ -1164,7 +1164,7 @@ public class ScenarioLoader {
 
         public String getString(String key, String separator) {
             Collection<String> values = get(key);
-            if ((values == null) || (values.size() == 0)) {
+            if ((values == null) || values.isEmpty()) {
                 return null;
             }
             

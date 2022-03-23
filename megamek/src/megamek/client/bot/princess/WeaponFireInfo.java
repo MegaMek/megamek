@@ -362,13 +362,13 @@ public class WeaponFireInfo {
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && (!weapon.getBayWeapons().isEmpty())) {
             int bayDamage = 0;
             for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
-                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
-                        weaponType.getExtremeRange() : weaponType.getLongRange(); 
+                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+                        ? weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
                 
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
@@ -431,10 +431,10 @@ public class WeaponFireInfo {
      * @return Generated heat.
      */
     int computeHeat(Mounted weapon) {
-     // bay weapons require special consideration, by looping through all weapons and adding up the damage
+        // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayHeat = 0;
             for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
@@ -444,7 +444,7 @@ public class WeaponFireInfo {
             
             return bayHeat;
         } else {
-            return ((WeaponType) weapon.getType()).getHeat();
+            return weapon.getType().getHeat();
         }
     }
     

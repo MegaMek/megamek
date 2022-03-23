@@ -413,14 +413,15 @@ public final class UnitToolTip {
                                         .replace("Ammo", "").replace("[IS]", "").replace("[Clan]", "")
                                         .replace("(Clan)", "").replace("[Half]", "").replace("Half", "")
                                         .replace(curWp.getDesc(), "").trim();
-                                if (name.length() == 0) {
+                                if (name.isBlank()) {
                                     name = "Standard";
                                 }
+
                                 if (amounted.isHotLoaded()) {
                                     name += " (Hot-Loaded)";
                                 }
                                 int count = amounted.getUsableShotsLeft();
-                                count += currAmmo.ammos.containsKey(name) ? currAmmo.ammos.get(name) : 0;
+                                count += currAmmo.ammos.getOrDefault(name, 0);
                                 currAmmo.ammos.put(name, count);
                             }
                         }
@@ -711,7 +712,7 @@ public final class UnitToolTip {
         }
         
         // Towing
-        if (entity.getAllTowedUnits().size() > 0) {
+        if (!entity.getAllTowedUnits().isEmpty()) {
             String unitList = entity.getAllTowedUnits().stream()
                     .map(id -> entity.getGame().getEntity(id).getShortName())
                     .collect(Collectors.joining(", "));

@@ -105,7 +105,7 @@ public class StringUtil {
      * @return TRUE if the value can be parsed to a {@link Double} without throwing a {@link NumberFormatException}.
      */
     public static boolean isNumeric(String number) {
-        if (StringUtility.isNullOrEmpty(number)) {
+        if (StringUtility.isNullOrBlank(number)) {
             return false;
         }
         try {
@@ -124,7 +124,7 @@ public class StringUtil {
      *         and the parsed value is greater than or equal to zero.
      */
     public static boolean isPositiveInteger(String number) {
-        if (StringUtility.isNullOrEmpty(number)) {
+        if (StringUtility.isNullOrBlank(number)) {
             return false;
         }
         try {
@@ -142,7 +142,7 @@ public class StringUtil {
      *         and the parsed value is greater than or equal to zero.
      */
     public static boolean isInteger(String number) {
-        if (StringUtility.isNullOrEmpty(number)) {
+        if (StringUtility.isNullOrBlank(number)) {
             return false;
         }
         try {

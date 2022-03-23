@@ -21,6 +21,7 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.PMUtil;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -787,7 +788,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                if ((message != null) && (message.length() > 0)) {
+                if (!StringUtility.isNullOrBlank(message)) {
                     cb.history.addFirst(message);
                     cb.historyBookmark = -1;
 

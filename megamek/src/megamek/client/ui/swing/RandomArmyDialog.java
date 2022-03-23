@@ -20,6 +20,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.RandomUnitGenerator.RatTreeNode;
 import megamek.client.ratgenerator.*;
+import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -633,8 +634,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                             m_pFormationOptions.getYear(),
                             m_pFormationOptions.getRating(), null,
                             ModelRecord.NETWORK_NONE,
-                            java.util.EnumSet.noneOf(EntityMovementMode.class),
-                            java.util.EnumSet.noneOf(MissionRole.class), 0, fRec));
+                            EnumSet.noneOf(EntityMovementMode.class),
+                            EnumSet.noneOf(MissionRole.class), 0, fRec));
                     List<Integer> numUnits = new ArrayList<>();
                     numUnits.add(m_pFormationOptions.getNumUnits());
                     
@@ -644,8 +645,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                     m_pFormationOptions.getIntegerOption("otherUnitType"),
                                     m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                     ModelRecord.NETWORK_NONE,
-                                    java.util.EnumSet.noneOf(EntityMovementMode.class),
-                                    java.util.EnumSet.noneOf(MissionRole.class), 0, fRec));
+                                    EnumSet.noneOf(EntityMovementMode.class),
+                                    EnumSet.noneOf(MissionRole.class), 0, fRec));
                             numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                         } else if (m_pFormationOptions.getBooleanOption("mechBA")) {
                             // Make sure at least a number units equals to the number of BA points/squads are omni
@@ -663,16 +664,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     if (ft != null) {
                         unitList.addAll(ft.generateFormation(params,
                                 numUnits, m_pFormationOptions.getIntegerOption("network"), false));
-                        if (unitList.size() > 0 && m_pFormationOptions.getIntegerOption("numOtherUnits") > 0) {
+                        if (!unitList.isEmpty() && (m_pFormationOptions.getIntegerOption("numOtherUnits") > 0)) {
                             if (m_pFormationOptions.getBooleanOption("mechBA")) {
-                                /* Try to generate the BA portion using the same formation type as the
-                                 * parent, otherwise generate randomly.
-                                 */
-                                UnitTable.Parameters p = new UnitTable.Parameters(fRec, UnitType.BATTLE_ARMOR,
+                                // Try to generate the BA portion using the same formation type as
+                                // the parent, otherwise generate randomly.
+                                Parameters p = new Parameters(fRec, UnitType.BATTLE_ARMOR,
                                         m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                         ModelRecord.NETWORK_NONE,
-                                        java.util.EnumSet.noneOf(EntityMovementMode.class),
-                                        java.util.EnumSet.of(MissionRole.MECHANIZED_BA), 0, fRec);
+                                        EnumSet.noneOf(EntityMovementMode.class),
+                                        EnumSet.of(MissionRole.MECHANIZED_BA), 0, fRec);
                                 List<MechSummary> ba = ft.generateFormation(p,
                                         m_pFormationOptions.getIntegerOption("numOtherUnits"),
                                         ModelRecord.NETWORK_NONE, true);
@@ -684,8 +684,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                                 UnitTable t = UnitTable.findTable(fRec, UnitType.AERO,
                                         m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                         ModelRecord.NETWORK_NONE,
-                                        java.util.EnumSet.noneOf(EntityMovementMode.class),
-                                        java.util.EnumSet.noneOf(MissionRole.class), 0, fRec);
+                                        EnumSet.noneOf(EntityMovementMode.class),
+                                        EnumSet.noneOf(MissionRole.class), 0, fRec);
                                 MechSummary unit = t.generateUnit();
                                 if (unit != null) {
                                     unitList.add(unit);
@@ -695,8 +695,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                             }
                         }
                     } else {
-                        System.err.println("Could not find formation type " + m_pFormationOptions.getStringOption("formationType"));
-                    }                      
+                        LogManager.getLogger().error("Could not find formation type " + m_pFormationOptions.getStringOption("formationType"));
+                    }
                     unitsModel.setData(unitList);
                     m_pFormationOptions.updateGeneratedUnits(unitList);
                 } else {
@@ -716,6 +716,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     unitsModel.setData(RandomArmyCreator.generateArmy(p));
                 }
             } catch (NumberFormatException ignored) {
+
             } finally {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
@@ -811,7 +812,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         if (null == rats) {
             return;
         }  
-        
+
         RatTreeNode ratTree = rug.getRatTree();
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(ratTree.name);
         createRatTreeNodes(root, ratTree);
@@ -828,7 +829,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     
     private void updateRATYear() {
         int gameYear = m_clientgui.getClient().getGame().getOptions().intOption("year");
-        
         m_pRATGenOptions.setYear(gameYear);
         m_pFormationOptions.setYear(gameYear);
         m_pForceGen.setYear(gameYear);

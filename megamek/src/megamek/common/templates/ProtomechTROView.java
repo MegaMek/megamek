@@ -87,7 +87,7 @@ public class ProtomechTROView extends TROView {
         setModelData("hsMass", NumberFormat.getInstance().format(testproto.getWeightHeatSinks() * 1000));
         setModelData("cockpitMass", NumberFormat.getInstance().format(testproto.getWeightControls() * 1000));
         final String atName = formatArmorType(proto, true);
-        if (atName.length() > 0) {
+        if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
         } else {
             setModelData("armorType", "");

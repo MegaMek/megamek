@@ -29,8 +29,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, Server s) {
+    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -49,10 +48,9 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param bldgAbsorbs
      */
     @Override
-    protected void handlePartialCoverHit(Entity entityTarget,
-            Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits,
-            int nCluster, int bldgAbsorbs) {
-
+    protected void handlePartialCoverHit(Entity entityTarget, Vector<Report> vPhaseReport,
+                                         HitData hit, Building bldg, int hits, int nCluster,
+                                         int bldgAbsorbs) {
         // Report the hit and table description, if this isn't part of a salvo
         Report r;
         if (!bSalvo) {
@@ -159,9 +157,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hits = calcHits(vPhaseReport);
             // Plasma Cannons do double damage per-hit to buildings
             int nDamage = 2 * hits;
-            Vector<Report> buildingReport = server.damageBuilding(
-                    coverBuilding, nDamage, " blocks the shot and takes ",
-                    coverLoc);
+            Vector<Report> buildingReport = server.damageBuilding(coverBuilding, nDamage,
+                    " blocks the shot and takes ", coverLoc);
             target = origTarget;
             for (Report report : buildingReport) {
                 report.subject = subjectId;
@@ -169,9 +166,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addAll(buildingReport);
             // Damage any infantry in the building.
-            Vector<Report> infantryReport = server.damageInfantryIn(
-                    coverBuilding, nDamage, coverLoc,
-                    wtype.getInfantryDamageClass());
+            Vector<Report> infantryReport = server.damageInfantryIn(coverBuilding, nDamage,
+                    coverLoc, wtype.getInfantryDamageClass());
             for (Report report : infantryReport) {
                 report.indent(2);
             }
@@ -180,17 +176,9 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         missed = true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
-     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
 
         if (entityTarget.tracksHeat()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
@@ -198,16 +186,15 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                     waa.getAimingMode(), toHit.getCover());
             hit.setGeneralDamageType(generalDamageType);
             hit.setAttackerId(getAttackerId());
-            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget,
-                    weapon.getCalledShot().getCall()))) {
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                    Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
-                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
-                        hits, nCluster, bldgAbsorbs);
+                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;
             }
+
             if (!bSalvo) {
-                // Each hit in the salvo get's its own hit location.
+                // Each hit in the salvo gets its own hit location.
                 Report r = new Report(3405);
                 r.subject = subjectId;
                 r.add(toHit.getTableDesc());
@@ -219,8 +206,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.indent(2);
             int extraHeat = Compute.d6(2);
             if (entityTarget.getArmor(hit) > 0 &&                        
-                    (entityTarget.getArmorType(hit.getLocation()) == 
-                       EquipmentType.T_ARMOR_REFLECTIVE)) {
+                    (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
                entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                r.add(Math.max(1, extraHeat / 2));
                r.choose(true);
@@ -229,8 +215,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                r.add(EquipmentType.armorNames
                        [entityTarget.getArmorType(hit.getLocation())]);
             } else if (entityTarget.getArmor(hit) > 0 &&  
-                   (entityTarget.getArmorType(hit.getLocation()) == 
-                       EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                   (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                entityTarget.heatFromExternal += extraHeat / 2;
                r.add(extraHeat / 2);
                r.choose(true);
@@ -248,11 +233,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         if (target.tracksHeat()) {
@@ -275,11 +255,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         return toReturn;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
     @Override
     protected int calcnCluster() {
         if (target.tracksHeat()) {
@@ -290,11 +265,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         return 5;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
@@ -326,8 +296,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -357,20 +326,17 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, Coords coords) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+                                        Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }
-
 }

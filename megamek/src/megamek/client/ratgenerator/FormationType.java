@@ -1,5 +1,6 @@
 package megamek.client.ratgenerator;
 
+import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.common.*;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -22,7 +23,6 @@ import java.util.stream.IntStream;
  * @author Neoancient
  */
 public class FormationType {
-    
     public static final int FLAG_MEK = 1 << UnitType.MEK;
     public static final int FLAG_TANK = 1 << UnitType.TANK;
     public static final int FLAG_BATTLE_ARMOR = 1 << UnitType.BATTLE_ARMOR;
@@ -357,7 +357,7 @@ public class FormationType {
         }
         for (String veeMode : veeModeAttemptOrder) {
             for (String infMode : infModeAttemptOrder) {
-                List<UnitTable.Parameters> tempParams = params.stream().map(UnitTable.Parameters::copy)
+                List<Parameters> tempParams = params.stream().map(Parameters::copy)
                         .collect(Collectors.toList());
                 for (int index : undeterminedVees) {
                     tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(veeMode));
@@ -453,7 +453,7 @@ public class FormationType {
         if (numNetworked > networkEligible) {
             numNetworked = networkEligible;
         }
-        
+
         /* General case:
          * Select randomly from all unique combinations of the various criteria. Each combination
          * is represented by a Map<Integer,Integer in which the various criteria are encoded as the keys
@@ -465,16 +465,16 @@ public class FormationType {
          * Example: if otherCriteria.size() == 3, then the value of combinations[6] is the number of
          * units that must meet the first two constraints (110), while combinations[7] must meet all
          * three and combinations[0] need not meet any.
-         * 
+         *
          * The next three bits indicate C3 network requirements. The lowest order is the number that
          * must have a C3 slave, C3i, NC3, or Nova, depending on the value of networkMask. The middle bit
          * is the number of required C3 masters, and the highest bit is the number of dual-C3M units.
          * Note that only one of these three bits can be set; while a unit can have a C3M and a C3S,
          * only one can fulfill its role in the network.
-         * 
-         *  The highest order section is the unit type. Each element of the params list has one
-         *  bit, beginning with the lowest order bit at index 0. As with networks, only one 
-         *  bit in this section can be set.
+         *
+         * The highest order section is the unit type. Each element of the params list has one
+         * bit, beginning with the lowest order bit at index 0. As with networks, only one
+         * bit in this section can be set.
          */
         
         do {
@@ -490,35 +490,35 @@ public class FormationType {
             } else {
                 combinations = findCombinations(cUnits);
             }
-            //Group units by param index so they can be returned in the order requested.
+            // Group units by param index so they can be returned in the order requested.
             Map<Integer,List<MechSummary>> list = new TreeMap<>();
             final int POS_C3S = 0;
             final int POS_C3M = 1;
             final int POS_C3MM = 2;
             final int POS_C3_NUM = 3;
-            while (combinations.size() > 0) {
+            while (!combinations.isEmpty()) {
                 int index = Compute.randomInt(combinations.size());
                 Map<Integer,Integer> baseCombo = combinations.get(index);
 
                 int[] networkGroups = new int[POS_C3_NUM];
                 networkGroups[POS_C3S] = Math.max(0, numNetworked - numMasters);
                 if ((networkMask & ModelRecord.NETWORK_COMPANY_COMMAND) == 0) {
-                    networkGroups[POS_C3M] = Math.max(0, numMasters);
+                    networkGroups[POS_C3M] = numMasters;
                 } else {
-                    networkGroups[POS_C3MM] = Math.max(0, numMasters);
+                    networkGroups[POS_C3MM] = numMasters;
                 }
                 List<Map<Integer,Integer>> networkGroupings = findGroups(baseCombo, networkGroups,
                         otherCriteria.size());
                 if (altNumMasters > 0) {
                     networkGroups[POS_C3S] = Math.max(0, numNetworked - altNumMasters);
-                    networkGroups[POS_C3M] = Math.max(0, altNumMasters);
+                    networkGroups[POS_C3M] = altNumMasters;
                     networkGroups[POS_C3MM] = 0;
                     networkGroupings.addAll(findGroups(baseCombo, networkGroups, otherCriteria.size()));
                 }
-                while (networkGroupings.size() > 0) {
+                while (!networkGroupings.isEmpty()) {
                     list.clear();
                     int networkIndex = Compute.randomInt(networkGroupings.size());
-                    Map<Integer,Integer> combo = networkGroupings.get(networkIndex);
+                    Map<Integer, Integer> combo = networkGroupings.get(networkIndex);
 
                     int[] unitsPerGroup = new int[params.size()];
                     for (int i = 0; i < numUnits.size(); i++) {
@@ -526,7 +526,7 @@ public class FormationType {
                     }
                     List<Map<Integer,Integer>> unitTypeGroupings = findGroups(combo, unitsPerGroup,
                             otherCriteria.size() + POS_C3_NUM);
-                    while (unitTypeGroupings.size() > 0) {
+                    while (!unitTypeGroupings.isEmpty()) {
                         list.clear();
                         int utIndex = Compute.randomInt(unitTypeGroupings.size());
                         combo = unitTypeGroupings.get(utIndex);
@@ -546,7 +546,7 @@ public class FormationType {
                             }
                             List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
 
-                            while (groups.size() > 0) {
+                            while (!groups.isEmpty()) {
                                 int gIndex = Compute.randomInt(groups.size());
                                 list.clear();
                                 Map<Integer,List<MechSummary>> found = new TreeMap<>();
@@ -566,7 +566,7 @@ public class FormationType {
                                             if (g.containsKey(i)) {
                                                 // Decode unit type
                                                 int tableIndex = 0;
-                                                if (params.size() > 0) {
+                                                if (!params.isEmpty()) {
                                                     int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
                                                     while (tmp != 0 && (tmp & 1) == 0) {
                                                         tableIndex++;
@@ -620,7 +620,7 @@ public class FormationType {
                                     if (workingCombo.get(i) > 0) {
                                         // Decode unit type
                                         int tableIndex = 0;
-                                        if (params.size() > 0) {
+                                        if (!params.isEmpty()) {
                                             int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
                                             while (tmp != 0 && (tmp & 1) == 0) {
                                                 tableIndex++;
@@ -649,7 +649,7 @@ public class FormationType {
                             for (int i : combo.keySet()) {
                                 // Decode unit type
                                 int tableIndex = 0;
-                                if (params.size() > 0) {
+                                if (!params.isEmpty()) {
                                     int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
                                     while (tmp != 0 && (tmp & 1) == 0) {
                                         tableIndex++;
@@ -1089,7 +1089,7 @@ public class FormationType {
             List<MechSummary> groupedUnits = units.stream()
                     .filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
                     .collect(Collectors.toList());
-            if (groupedUnits.size() > 0) {
+            if (!groupedUnits.isEmpty()) {
                 Map<String,List<MechSummary>> groups = groupedUnits.stream()
                         .collect(Collectors.groupingBy(MechSummary::getChassis));
                 GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
@@ -1228,7 +1228,7 @@ public class FormationType {
                 sb.append("</font>");
             }
 
-            if (other.get(i).size() > 0) {
+            if (!other.get(i).isEmpty()) {
                 sb.append("&nbsp;&nbsp;&nbsp;").append(other.get(i).stream().map(MechSummary::getName)
                         .collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
             } else {
@@ -1240,7 +1240,7 @@ public class FormationType {
             List<MechSummary> groupedUnits = units.stream()
                     .filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
                     .collect(Collectors.toList());
-            if (groupedUnits.size() > 0) {
+            if (!groupedUnits.isEmpty()) {
                 Map<String,List<MechSummary>> groups = groupedUnits.stream()
                         .collect(Collectors.groupingBy(MechSummary::getChassis));
                 GROUP_LOOP: for (List<MechSummary> group : groups.values()) {

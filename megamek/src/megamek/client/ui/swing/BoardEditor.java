@@ -550,7 +550,7 @@ public class BoardEditor extends JPanel
         button.setDisabledImage(imageButton);
 
         String tt = Messages.getString("BoardEditor."+iconName+"TT");
-        if (tt.length() != 0) {
+        if (!tt.isBlank()) {
             button.setToolTipText(tt);
         }
         button.setMargin(new Insets(0, 0, 0, 0));

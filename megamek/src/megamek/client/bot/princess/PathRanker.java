@@ -167,7 +167,7 @@ public abstract class PathRanker implements IPathRanker {
                 if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                    if (!StringUtility.isNullOrEmpty(validation)) {
+                    if (!StringUtility.isNullOrBlank(validation)) {
                         msg.append("\n\t").append(validation);
                         continue;
                     }

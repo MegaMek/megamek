@@ -39,6 +39,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
@@ -3268,7 +3269,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     public boolean isMovingUnits() {
-        return movingUnits.size() > 0;
+        return !movingUnits.isEmpty();
     }
 
     /**
@@ -4194,7 +4195,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
         EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
-                ae.getSecondaryPositions().size() > 0 ? 0 : -1));
+                (ae.getSecondaryPositions().isEmpty() ? -1 : 0)));
         if (eSprite != null && eSprite.onlyDetectedBySensors()) {
             return;
         }
@@ -4209,8 +4210,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     WeaponAttackAction waa = (WeaponAttackAction) aa;
                     if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                         sprite.addWeapon(waa);
-                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer
-                            .getId()) {
+                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
                         sprite.addWeapon(waa);
                     }
                 }
@@ -4266,7 +4266,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Removes all attack sprites from a certain entity
      */
-    public synchronized void removeAttacksFor(Entity e) {
+    public synchronized void removeAttacksFor(@Nullable Entity e) {
         if (e == null) {
             return;
         }
@@ -4306,7 +4306,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (Entity e : game.getEntitiesVector()) {
             if (e.getPosition() != null) {
                 movementSprites.add(new MovementSprite(this, e, e.getVectors(),
-                        Color.gray, false));
+                        Color.GRAY, false));
             }
         }
     }
@@ -4997,7 +4997,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             if (game.getPhase() == GamePhase.MOVEMENT) {
                 refreshMoveVectors();
             }
-            if ((mp != null) && (mp.size() > 0) && guip.getShowMoveStep()
+            if ((mp != null) && !mp.isEmpty() && guip.getShowMoveStep()
                     && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
                 if ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -5243,7 +5243,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             // Update Entity sprite's ECM status
             int secondaryIdx = -1;
-            if (e.getSecondaryPositions().size() > 0) {
+            if (!e.getSecondaryPositions().isEmpty()) {
                 secondaryIdx = 0;
             }
             EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(e.getId(), secondaryIdx));
@@ -5868,42 +5868,34 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return scrollpane;
         }
 
-        SkinSpecification bvSkinSpec = SkinXMLHandler
-                .getSkin(SkinSpecification.UIComponents.BoardView.getComp());
+        SkinSpecification bvSkinSpec = SkinXMLHandler.getSkin(UIComponents.BoardView.getComp());
 
         // Setup background icons
         try {
             File file;
-            if (bvSkinSpec.backgrounds.size() > 0) {
-                file = new MegaMekFile(Configuration.widgetsDir(),
-                        bvSkinSpec.backgrounds.get(0)).getFile();
+            if (!bvSkinSpec.backgrounds.isEmpty()) {
+                file = new MegaMekFile(Configuration.widgetsDir(), bvSkinSpec.backgrounds.get(0)).getFile();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: "
-                            + file.getAbsolutePath());
+                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
                 } else {
-                    bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
-                            file.getAbsolutePath());
+                    bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(file.getAbsolutePath());
                     bvBgShouldTile = bvSkinSpec.tileBackground;
                 }
             }
             if (bvSkinSpec.backgrounds.size() > 1) {
-                file = new MegaMekFile(Configuration.widgetsDir(),
-                        bvSkinSpec.backgrounds.get(1)).getFile();
+                file = new MegaMekFile(Configuration.widgetsDir(), bvSkinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: "
-                            + file.getAbsolutePath());
+                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     scrollPaneBgImg = ImageUtil.loadImageFromFile(file.getAbsolutePath());
                 }
             }
-        } catch (Exception e) {
-            LogManager.getLogger().error("Error loading BoardView background images!", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error loading BoardView background images!", ex);
         }
 
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this) {
-            private static final long serialVersionUID = 5973610449428194319L;
-
             @Override
             protected void paintComponent(Graphics g) {
                 if (scrollPaneBgImg == null) {
@@ -5959,10 +5951,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     AbstractAction DoNothing = new AbstractAction() {
-        private static final long serialVersionUID = 5944877465265121983L;
-
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent evt) {
+
         }
     };
 
@@ -6037,7 +6028,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Changes hex dimensions and refreshes the map with the new scale
      */
     private void zoom() {
-
         checkZoomIndex();
         stopSoftCentering();
         scale = ZOOM_FACTORS[zoomIndex];
@@ -6055,9 +6045,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (Sprite spr : moveEnvSprites) {
             spr.prepare();
         }
+
         for (Sprite spr : moveModEnvSprites) {
             spr.prepare();
         }
+
         for (Sprite spr : fieldofFireSprites) {
             spr.prepare();
         }
@@ -6067,6 +6059,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (StepSprite sprite : pathSprites) {
             sprite.refreshZoomLevel();
         }
+
         for (FiringSolutionSprite sprite : firingSprites) {
             sprite.prepare();
         }
@@ -6082,11 +6075,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             font_hexnum = FONT_7;
             font_minefield = FONT_7;
         }
+
         if ((zoomIndex <= 5) & (zoomIndex > 4)) {
             font_elev = FONT_8;
             font_hexnum = FONT_8;
             font_minefield = FONT_8;
         }
+
         if (zoomIndex > 5) {
             font_elev = FONT_9;
             font_hexnum = FONT_9;
@@ -6103,10 +6098,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * @param useCache This flag determines whether the scaled image should
      *                 be stored in a cache for later retrieval.
      */
-    Image getScaledImage(Image base, boolean useCache) {
+    @Nullable Image getScaledImage(Image base, boolean useCache) {
         if (base == null) {
             return null;
         }
+
         if (zoomIndex == BASE_ZOOM_INDEX) {
             return base;
         }

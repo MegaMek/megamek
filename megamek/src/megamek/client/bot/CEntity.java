@@ -1071,16 +1071,13 @@ public class CEntity {
             possible.add((base.clone()).addStep(MoveStepType.START_JUMP));
         }
 
-        possible.add(base); // Add the base movement option to the arraylist of
-        // possibles
-        discovered.put(base); // Add the base movement option to the movement
-        // option table
+        possible.add(base); // Add the base movement option to the arraylist of possibles
+        discovered.put(base); // Add the base movement option to the movement option table
 
-        while (possible.size() > 0) { // Keep going until the arraylist is
-            // empty (why?)
+        while (!possible.isEmpty()) {
+            // Keep going until the arraylist is empty (why?)
 
-            // Get the first movement option, while stripping it from the
-            // arraylist
+            // Get the first movement option, while stripping it from the arraylist
             MoveOption min = possible.remove(0);
             Iterator<MovePath> adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
@@ -1101,8 +1098,7 @@ public class CEntity {
                         if (next.isJumping()) {
                             MoveOption left = next.clone();
                             MoveOption right = next.clone();
-                            // Think about skipping this for infantry, which
-                            // have no facing
+                            // Think about skipping this for infantry, which have no facing
                             for (int turn = 0; turn < 2; turn++) {
                                 left.addStep(MoveStepType.TURN_LEFT);
                                 right.addStep(MoveStepType.TURN_RIGHT);
@@ -1153,7 +1149,7 @@ public class CEntity {
                 }
             }
             String pilotChecks = SharedUtility.doPSRCheck(next);
-            if (pilotChecks.length() > 0) {
+            if (!pilotChecks.isBlank()) {
                 next.inDanger = true;
             }
         }

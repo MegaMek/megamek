@@ -1277,9 +1277,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        if ((((attacks.size() == 0) && (ce() instanceof Tank) && (((Tank) ce())
-                .isTurretJammed(((Tank) ce()).getLocTurret()))) || ((Tank) ce())
-                .isTurretJammed(((Tank) ce()).getLocTurret2()))) {
+
+        if ((attacks.isEmpty() && (ce() instanceof Tank)
+                && (((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret())))
+                || ((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret2())) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
             attacks.add(uta);
             ready();
@@ -1490,7 +1491,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         // validate
         if ((ce() == null)
-                || (target == null && (!isStrafing || strafingCoords.size() == 0))
+                || (target == null && (!isStrafing || strafingCoords.isEmpty()))
                 || (mounted == null)
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid");
@@ -1974,7 +1975,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (ce().isBomber() && ((IBomber) ce()).isVTOLBombing()) {
             target(((IBomber) ce()).getVTOLBombTarget());
             clientgui.getBoardView().addStrafingCoords(target.getPosition());
-        } else if ((ce() instanceof VTOL) && ((VTOL) ce()).getStrafingCoords().size() > 0) {
+        } else if ((ce() instanceof VTOL) && !((VTOL) ce()).getStrafingCoords().isEmpty()) {
             strafingCoords.addAll(((VTOL) ce()).getStrafingCoords());
             strafingCoords.forEach(c -> clientgui.getBoardView().addStrafingCoords(c));
             isStrafing = true;
@@ -2099,8 +2100,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
                 } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
-                    if ((targ instanceof Entity)
-                            && Compute.isGroundToAir(ce(), targ)) {
+                    if ((targ instanceof Entity) && Compute.isGroundToAir(ce(), targ)) {
                         Entity entTarg = (Entity) targ;
                         boolean alreadyShotAt = false;
                         List<EntityAction> actions = clientgui.getClient()
@@ -2164,7 +2164,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-
         // In case of a /reset command, ensure the state gets reset
         if (clientgui.getClient().getGame().getPhase()
                 == GamePhase.LOUNGE) {
@@ -2272,21 +2271,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && !ce().isHidden()
-                && SearchlightAttackAction.isPossible(clientgui.getClient()
-                        .getGame(), cen, target, null)
+                && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null)
                 && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));
     }
 
     private void updateClearTurret() {
-        setFireClearTurretEnabled((ce() instanceof Tank)
-                && ((Tank) ce()).canClearTurret()
-                && (attacks.size() == 0));
+        setFireClearTurretEnabled((ce() instanceof Tank) && ((Tank) ce()).canClearTurret()
+                && attacks.isEmpty());
     }
 
     private void updateClearWeaponJam() {
-        setFireClearWeaponJamEnabled((ce() instanceof Tank)
-                && ((Tank) ce()).canUnjamWeapon()
-                && (attacks.size() == 0));
+        setFireClearWeaponJamEnabled((ce() instanceof Tank) && ((Tank) ce()).canUnjamWeapon()
+                && attacks.isEmpty());
     }
 
     private void updateStrafe() {
@@ -2528,24 +2524,24 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         List<Targetable> targets = new ArrayList<>();
         final Player localPlayer = clientgui.getClient().getLocalPlayer();
         while (choices.hasNext()) {
-            Targetable t = choices.next();
+            Entity t = choices.next();
             boolean isSensorReturn = false;
             boolean isVisible = true;
             boolean isHidden = false;
-            if (t instanceof Entity) {
-                isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
-                isVisible = ((Entity) t).hasSeenEntity(localPlayer);
-                isHidden = ((Entity) t).isHidden();
+            if (t != null) {
+                isSensorReturn = t.isSensorReturn(localPlayer);
+                isVisible = t.hasSeenEntity(localPlayer);
+                isHidden = t.isHidden();
             }
+
             if (!ce().equals(t) && !isSensorReturn && isVisible && !isHidden) {
                 targets.add(t);
             }
         }
 
         // If there aren't other targets, check for targets flying over pos
-        if (targets.size() == 0) {
-            List<Entity> flyovers =
-                    clientgui.getBoardView().getEntitiesFlyingOver(pos);
+        if (targets.isEmpty()) {
+            List<Entity> flyovers = clientgui.getBoardView().getEntitiesFlyingOver(pos);
             for (Entity e : flyovers) {
                 if (!targets.contains(e)) {
                     targets.add(e);
@@ -2554,15 +2550,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // Is there a building in the hex?
-        Building bldg = clientgui.getClient().getGame().getBoard()
-                .getBuildingAt(pos);
+        Building bldg = clientgui.getClient().getGame().getBoard().getBuildingAt(pos);
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
-                    .getBoard(), false));
+            targets.add(new BuildingTarget(pos, clientgui.getClient().getGame().getBoard(), false));
         }
 
         // If we clicked on a wooded hex with no other targets, clear woods
-        if (targets.size() == 0) {
+        if (targets.isEmpty()) {
             Hex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -2572,7 +2566,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         // Do we have a single choice?
         if (targets.size() == 1) {
-
             // Return that choice.
             choice = targets.get(0);
         } else if (targets.size() > 1) {

@@ -508,7 +508,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
             skinSpec.backgrounds.add(background.path.get(i).getText());
         }
         skinSpec.tileBackground = false;
-        if (background.tiled.size() > 0) {
+        if (!background.tiled.isEmpty()) {
             skinSpec.tileBackground = background.tiled.get(0).isSelected();
         }
 

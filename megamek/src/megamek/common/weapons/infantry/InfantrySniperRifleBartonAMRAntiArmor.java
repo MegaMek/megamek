@@ -44,7 +44,7 @@ public class InfantrySniperRifleBartonAMRAntiArmor extends InfantryWeapon {
        shots =  8;
        bursts =  1;
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER);
-       infantryDamage = 0.78;
+       infantryDamage = 0.74;
        infantryRange = 7;
        rulesRefs = "Shrapnel #1";
        techAdvancement

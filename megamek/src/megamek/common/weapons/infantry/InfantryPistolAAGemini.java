@@ -37,7 +37,7 @@ public class InfantryPistolAAGemini extends InfantryWeapon {
         ammoType = AmmoType.T_INFANTRY;
         bv = .28;
         tonnage =  0.0015;
-        infantryDamage =  0.39;
+        infantryDamage =  0.35;
         infantryRange =  1;
         ammoWeight =  0.00001;
         cost = 400;

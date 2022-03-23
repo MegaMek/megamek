@@ -34,7 +34,7 @@ public class InfantryShotgunWranglemanTriBarrel extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .243;
        tonnage =  0.003;
-       infantryDamage =  0.28;
+       infantryDamage =  0.27;
        infantryRange =  1;
        ammoWeight =  0.003;
        cost = 750;

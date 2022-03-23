@@ -34,7 +34,7 @@ public class InfantryShotgunSGM3 extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .248;
        tonnage =  0.0029;
-       infantryDamage =  0.24;
+       infantryDamage =  0.25;
        infantryRange =  1;
        ammoWeight =  0.0029;
        cost = 1000;

@@ -37,7 +37,7 @@ public class InfantryPistolNambu380 extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .21;
        tonnage =  0.00095;
-       infantryDamage =  0.22;
+       infantryDamage =  0.21;
        infantryRange =  1;
        ammoWeight =  0.00004;
        cost = 350;

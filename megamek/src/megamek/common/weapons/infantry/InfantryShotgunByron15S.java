@@ -34,7 +34,7 @@ public class InfantryShotgunByron15S extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .675;
        tonnage =  0.0035;
-       infantryDamage =  0.59;
+       infantryDamage =  0.56;
        infantryRange =  1;
        ammoWeight =  0.0035;
        cost = 600;

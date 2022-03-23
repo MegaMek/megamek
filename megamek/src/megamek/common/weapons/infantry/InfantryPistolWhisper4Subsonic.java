@@ -37,7 +37,7 @@ public class InfantryPistolWhisper4Subsonic extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .0945;
        tonnage =  0.0012;
-       infantryDamage =  0.17;
+       infantryDamage =  0.16;
        infantryRange =  0;
        ammoWeight =  0.00005;
        cost = 650;

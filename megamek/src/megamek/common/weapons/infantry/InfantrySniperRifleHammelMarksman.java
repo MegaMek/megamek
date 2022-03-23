@@ -37,7 +37,7 @@ public class InfantrySniperRifleHammelMarksman extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .28;
        tonnage =  0.005;
-       infantryDamage =  0.3;
+       infantryDamage =  0.28;
        infantryRange =  4;
        ammoWeight =  0.005;
        cost = 500;

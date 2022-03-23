@@ -37,7 +37,7 @@ public class InfantrySniperRifleFNFJ12SLDF extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .336;
        tonnage =  0.006;
-       infantryDamage =  0.44;
+       infantryDamage =  0.42;
        infantryRange =  6;
        ammoWeight =  0.006;
        cost = 3500;

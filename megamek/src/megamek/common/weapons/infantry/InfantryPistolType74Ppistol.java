@@ -37,7 +37,7 @@ public class InfantryPistolType74Ppistol extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .28;
        tonnage =  0.0008;
-       infantryDamage =  0.3;
+       infantryDamage =  0.28;
        infantryRange =  1;
        ammoWeight =  0.000001;
        cost = 150;

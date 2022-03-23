@@ -36,7 +36,7 @@ public class InfantryPistolSturmEagleMK4M extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .28;
        tonnage =  0.0012;
-       infantryDamage =  0.3;
+       infantryDamage =  0.28;
        infantryRange =  0;
        ammoWeight =  0.00001;
        cost = 120;

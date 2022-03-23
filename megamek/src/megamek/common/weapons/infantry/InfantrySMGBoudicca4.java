@@ -36,7 +36,7 @@ public class InfantrySMGBoudicca4 extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .27;
        tonnage =  0.0025;
-       infantryDamage =  0.28;
+       infantryDamage =  0.27;
        infantryRange =  1;
        ammoWeight =  0.0025;
        cost = 300;

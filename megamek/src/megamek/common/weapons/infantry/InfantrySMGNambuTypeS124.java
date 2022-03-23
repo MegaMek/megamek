@@ -33,7 +33,7 @@ public class InfantrySMGNambuTypeS124 extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .202;
        tonnage =  0.0039;
-       infantryDamage =  0.22;
+       infantryDamage =  0.2;
        infantryRange =  1;
        ammoWeight =  0.0039;
        cost = 450;

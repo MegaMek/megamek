@@ -34,7 +34,7 @@ public class InfantryShotgunDaystarIIIC extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .36;
        tonnage =  0.0026;
-       infantryDamage =  0.38;
+       infantryDamage =  0.36;
        infantryRange =  1;
        ammoWeight =  0.0026;
        cost = 350;

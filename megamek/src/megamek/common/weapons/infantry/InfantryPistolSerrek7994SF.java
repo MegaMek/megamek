@@ -37,7 +37,7 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .202;
        tonnage =  0.0011;
-       infantryDamage =  0.18;
+       infantryDamage =  0.2;
        infantryRange =  1;
        ammoWeight =  0.000004;
        cost = 400;

@@ -33,7 +33,7 @@ public class InfantrySMGSpartacus extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .44;
        tonnage =  0.0028;
-       infantryDamage =  0.41;
+       infantryDamage =  0.44;
        infantryRange =  2;
        ammoWeight =  0.0028;
        cost = 750;

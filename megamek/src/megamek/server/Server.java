@@ -1,19 +1,18 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
-* Copyright (C) 2018-2021 - The MegaMek Team. All Rights Reserved.
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.server;
 
 import com.thoughtworks.xstream.XStream;
@@ -67,6 +66,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -157,7 +157,7 @@ public class Server implements Runnable {
                     synchronized (packetQueue) {
                         packetQueue.wait();
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     // If we are interrupted, just keep going, generally
                     // this happens after we are signalled to stop.
                 }

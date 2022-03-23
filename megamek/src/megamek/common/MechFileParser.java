@@ -84,7 +84,7 @@ public class MechFileParser {
         return m_entity;
     }
 
-    public void parse(InputStream is, String fileName) throws EntityLoadingException {
+    public void parse(InputStream is, String fileName) throws Exception {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -460,7 +460,7 @@ public class MechFileParser {
 
                 if (ent.hasTargComp()
                         || ((Mech) ent).hasTSM(true)
-                        || (((Mech) ent).getMPBoosters().hasMASCAndOrSupercharger() && !ent.hasWorkingMisc(
+                        || (ent.getMPBoosters().hasMASCAndOrSupercharger() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible systems for "+ent.getShortName());

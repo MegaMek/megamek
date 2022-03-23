@@ -43,17 +43,18 @@ public class MechView {
      * Provides common interface for various ways to present data that can be formatted
      * either as HTML or as plain text.
      * 
-     * @see MechView.SingleLine
-     * @see MechView.LabeledElement
-     * @see MechView.TableElement
-     * @see MechView.ItemList
-     * @see MechView.Title
-     * @see MechView.EmptyElement
+     * @see SingleLine
+     * @see LabeledElement
+     * @see TableElement
+     * @see ItemList
+     * @see Title
+     * @see EmptyElement
      */
     interface ViewElement {
         String toPlainText();
         String toHTML();
     }
+
     private Entity entity;
     private boolean isMech;
     private boolean isInf;

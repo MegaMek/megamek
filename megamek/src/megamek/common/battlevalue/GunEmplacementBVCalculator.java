@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * protoMek file is part of MegaMek.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,7 @@ public class GunEmplacementBVCalculator extends BVCalculator {
             }
 
             if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
-                    || ((etype instanceof AmmoType) && (((AmmoType) etype)
-                    .getAmmoType() == AmmoType.T_AMS))
+                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))
                     || etype.hasFlag(MiscType.F_ECM)) {
                 dEquipmentBV += etype.getBV(gunEmplacement);
             }
@@ -101,7 +100,6 @@ public class GunEmplacementBVCalculator extends BVCalculator {
                     dBV *= 1.15;
                 }
             }
-
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * protoMek file is part of MegaMek.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ public class AeroBVCalculator extends BVCalculator {
             if (mounted.isWeaponGroup()) {
                 continue;
             }
-            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
+            if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS)) {
                 amsBV += etype.getBV(aero);
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -365,7 +365,7 @@ public class AeroBVCalculator extends BVCalculator {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Explosive Weapons/Equipment Penalty ");
+        bvText.append("Explosive Weapons / Equipment Penalty ");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -480,9 +480,9 @@ public class AeroBVCalculator extends BVCalculator {
             if (aero.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 targetingSystemBVMod = 1.0;
             } else if (aero.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
-                targetingSystemBVMod = .9;
+                targetingSystemBVMod = 0.9;
             } else {
-                targetingSystemBVMod = .8;
+                targetingSystemBVMod = 0.8;
             }
         }
 
@@ -824,12 +824,9 @@ public class AeroBVCalculator extends BVCalculator {
         bvText.append(endRow);
 
         if (maximumHeat > aeroHeatEfficiency) {
-
             bvText.append(startRow);
             bvText.append(startColumn);
-
             bvText.append("(Heat Exceeds Aero Heat Efficiency) ");
-
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(endColumn);
@@ -1277,7 +1274,7 @@ public class AeroBVCalculator extends BVCalculator {
             pilotFactor = aero.getCrew().getBVSkillMultiplier(aero.getGame());
         }
 
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
+        int retVal = (int) Math.round(finalBV * pilotFactor);
 
         return retVal;
     }

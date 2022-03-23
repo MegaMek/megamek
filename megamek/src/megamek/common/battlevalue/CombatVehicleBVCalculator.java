@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * protoMek file is part of MegaMek.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,9 +175,8 @@ public class CombatVehicleBVCalculator extends BVCalculator {
                 continue;
             }
 
-            if (((etype instanceof WeaponType) && (etype
-                    .hasFlag(WeaponType.F_AMS) || etype
-                    .hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) ||
+                    etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
@@ -199,8 +198,7 @@ public class CombatVehicleBVCalculator extends BVCalculator {
                     || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_BULLDOZER)
-                    || etype.hasFlag(MiscType.F_CHAFF_POD) || etype
-                    .hasFlag(MiscType.F_BAP)))
+                    || etype.hasFlag(MiscType.F_CHAFF_POD) || etype.hasFlag(MiscType.F_BAP)))
                     || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(tank, mounted.getLocation());
@@ -412,7 +410,6 @@ public class CombatVehicleBVCalculator extends BVCalculator {
                 }
             }
 
-
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgBV = 0;
@@ -462,7 +459,6 @@ public class CombatVehicleBVCalculator extends BVCalculator {
                 dBV *= 0.8;
                 bvText.append(" x 0.8 Drone OS");
             }
-
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {

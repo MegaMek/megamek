@@ -885,7 +885,7 @@ public class BattleArmor extends Infantry {
      */
     public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
         if (useManualBV) {
-            return manualBV; //TODO: divide by the number of troopers when singleTrooper is true?
+            return manualBV; // TODO : divide by the number of troopers when singleTrooper is true?
         }
         return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText, singleTrooper);
     }

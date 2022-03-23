@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * protoMek file is part of MegaMek.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,10 +85,8 @@ public class ProtoMekBVCalculator extends BVCalculator {
                 continue;
             }
 
-            if (((etype instanceof WeaponType) && etype
-                    .hasFlag(WeaponType.F_AMS))
-                    || ((etype instanceof MiscType) && (etype
-                    .hasFlag(MiscType.F_ECM)
+            if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
+                    || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM)
                     || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
                     || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || etype.hasFlag(MiscType.F_BAP)))) {
@@ -144,13 +142,13 @@ public class ProtoMekBVCalculator extends BVCalculator {
         }
 
         final int jumpMP = protoMek.getJumpMP(false);
-        final int tmmJumped = (jumpMP > 0) ? Compute.
-                getTargetMovementModifier(jumpMP, true, false, protoMek.getGame()).getValue()
+        final int tmmJumped = (jumpMP > 0) ?
+                Compute.getTargetMovementModifier(jumpMP, true, false, protoMek.getGame()).getValue()
                 : 0;
 
         final int umuMP = protoMek.getActiveUMUCount();
-        final int tmmUMU = (umuMP > 0) ? Compute.
-                getTargetMovementModifier(umuMP, false, false, protoMek.getGame()).getValue()
+        final int tmmUMU = (umuMP > 0) ?
+                Compute.getTargetMovementModifier(umuMP, false, false, protoMek.getGame()).getValue()
                 : 0;
 
         double tmmFactor = 1 + (Math.max(tmmRan, Math.max(tmmJumped, tmmUMU))
@@ -314,8 +312,8 @@ public class ProtoMekBVCalculator extends BVCalculator {
             // to compare with ammo BV later for excessive ammo BV rule
             if (!(wtype.hasFlag(WeaponType.F_ENERGY)
                     || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                    .getAmmoType() == AmmoType.T_NA))) {
+                    || wtype.hasFlag(WeaponType.F_INFANTRY)
+                    || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(protoMek));

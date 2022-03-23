@@ -19,7 +19,6 @@
 package megamek.common.battlevalue;
 
 public class BVCalculator {
-
     protected static final String startTable = "<TABLE>";
     protected static final String endTable = "</TABLE>";
     protected static final String startRow = "<TR>";

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * protoMek file is part of MegaMek.
+ * This file is part of MegaMek.
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ public class MekBVCalculator extends BVCalculator {
         bvText.append(startTable);
         for (int loc = 0; loc < mek.locations(); loc++) {
             // total armor points
-
             switch (mek.getArmorType(loc)) {
                 case EquipmentType.T_ARMOR_COMMERCIAL:
                     armorMultiplier = 0.5;
@@ -229,12 +228,9 @@ public class MekBVCalculator extends BVCalculator {
                 continue;
             }
 
-            if (((etype instanceof WeaponType) && (etype
-                    .hasFlag(WeaponType.F_AMS)
-                    || etype.hasFlag(WeaponType.F_M_POD) || etype
-                    .hasFlag(WeaponType.F_B_POD)))
-                    || ((etype instanceof MiscType) && (etype
-                    .hasFlag(MiscType.F_ECM)
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)
+                    || etype.hasFlag(WeaponType.F_M_POD) || etype.hasFlag(WeaponType.F_B_POD)))
+                    || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM)
                     || etype.hasFlag(MiscType.F_BAP)
                     || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
                     || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
@@ -246,11 +242,8 @@ public class MekBVCalculator extends BVCalculator {
                     || etype.hasFlag(MiscType.F_CHAFF_POD)
                     || etype.hasFlag(MiscType.F_HARJEL_II)
                     || etype.hasFlag(MiscType.F_HARJEL_III)
-                    || etype.hasFlag(MiscType.F_SPIKES) || (etype
-                    .hasFlag(MiscType.F_CLUB) && (etype
-                    .hasSubType(MiscType.S_SHIELD_LARGE)
-                    || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype
-                    .hasSubType(MiscType.S_SHIELD_SMALL)))))) {
+                    || etype.hasFlag(MiscType.F_SPIKES) || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE)
+                    || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(mek);
                 if (etype instanceof WeaponType) {
                     WeaponType wtype = (WeaponType) etype;
@@ -566,13 +559,13 @@ public class MekBVCalculator extends BVCalculator {
 
         // Calculate modifiers for jump and UMU movement where applicable.
         final int jumpMP = Math.max(mek.getJumpMP(false, true), airmechMP);
-        final int tmmJumped = (jumpMP > 0) ? Compute.
-                getTargetMovementModifier(jumpMP, true, false, mek.getGame()).getValue()
+        final int tmmJumped = (jumpMP > 0) ?
+                Compute.getTargetMovementModifier(jumpMP, true, false, mek.getGame()).getValue()
                 : 0;
 
         final int umuMP = mek.getActiveUMUCount();
-        final int tmmUMU = (umuMP > 0) ? Compute.
-                getTargetMovementModifier(umuMP, false, false, mek.getGame()).getValue()
+        final int tmmUMU = (umuMP > 0) ?
+                Compute.getTargetMovementModifier(umuMP, false, false, mek.getGame()).getValue()
                 : 0;
 
         bvText.append(startRow);
@@ -634,8 +627,8 @@ public class MekBVCalculator extends BVCalculator {
             bvText.append("+2");
             bvText.append(endColumn);
             bvText.append(endRow);
-
         }
+
         if (mek.hasChameleonShield()) {
             targetMovementModifier += 2;
             bvText.append(startRow);
@@ -650,8 +643,8 @@ public class MekBVCalculator extends BVCalculator {
             bvText.append("+2");
             bvText.append(endColumn);
             bvText.append(endRow);
-
         }
+
         if (mek.hasVoidSig()) {
             bvText.append(startRow);
             bvText.append(startColumn);
@@ -676,6 +669,7 @@ public class MekBVCalculator extends BVCalculator {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
+
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
 
@@ -1277,7 +1271,6 @@ public class MekBVCalculator extends BVCalculator {
         }
 
         if (mek.hasVibroblades()) {
-
             for (int location = Mech.LOC_RARM; location <= Mech.LOC_LARM; location++) {
                 for (int slot = 0; slot < mek.locations(); slot++) {
                     CriticalSlot cs = mek.getCritical(location, slot);
@@ -1538,16 +1531,13 @@ public class MekBVCalculator extends BVCalculator {
                     || mtype.hasFlag(MiscType.F_SPIKES)
                     || mtype.hasFlag(MiscType.F_HARJEL_II)
                     || mtype.hasFlag(MiscType.F_HARJEL_III)
-                    || (mtype.hasFlag(MiscType.F_CLUB) && (mtype
-                    .hasSubType(MiscType.S_SHIELD_LARGE)
-                    || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype
-                    .hasSubType(MiscType.S_SHIELD_SMALL)))) {
+                    || (mtype.hasFlag(MiscType.F_CLUB) && (mtype.hasSubType(MiscType.S_SHIELD_LARGE)
+                    || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype.hasSubType(MiscType.S_SHIELD_SMALL)))) {
                 continue;
             }
             double bv = mtype.getBV(mek);
             // if physical weapon linked to AES, multiply by 1.25
-            if ((mtype.hasFlag(MiscType.F_CLUB) || mtype
-                    .hasFlag(MiscType.F_HAND_WEAPON))
+            if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON))
                     && mek.hasFunctionalArmAES(mounted.getLocation())) {
                 bv *= 1.25;
             }

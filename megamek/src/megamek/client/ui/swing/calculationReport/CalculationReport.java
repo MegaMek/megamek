@@ -22,6 +22,7 @@ import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Locale;
+
 /**
  * This represents a report for any typical MegaMek suite calculation such as BV, cost or AS conversion.
  * It assumes that each line will have at most three entries, a sort of header text ("Damage:"), a calculation

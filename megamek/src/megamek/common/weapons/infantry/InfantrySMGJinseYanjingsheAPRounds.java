@@ -31,7 +31,7 @@ public class InfantrySMGJinseYanjingsheAPRounds extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Jinse Yanjingshe (AP Rounds)");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = 1.26;
        tonnage =  0.0031;
        infantryDamage =  0.63;
        infantryRange =  1;

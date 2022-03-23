@@ -35,7 +35,7 @@ public class InfantryPistolNambu380 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Nambu 380");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .21;
        tonnage =  0.00095;
        infantryDamage =  0.22;
        infantryRange =  1;

@@ -35,7 +35,7 @@ public class InfantryPistolLemisonCombatRevolver extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Lemison Combat Revolver");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .28;
        tonnage =  0.0016;
        infantryDamage =  0.37;
        infantryRange =  0;

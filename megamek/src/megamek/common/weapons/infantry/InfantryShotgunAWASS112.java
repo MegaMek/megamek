@@ -32,7 +32,7 @@ public class InfantryShotgunAWASS112 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("AWA SS-112");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .252;
        tonnage =  0.0028;
        infantryDamage =  0.38;
        infantryRange =  1;

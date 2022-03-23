@@ -35,7 +35,7 @@ public class InfantrySniperRifleWilimtonRS14 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Wilimton RS-14");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .35;
        tonnage =  0.007;
        infantryDamage =  0.37;
        infantryRange =  5;

@@ -177,5 +177,6 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String SPRAYER_MEK = "MechSprayer";
     @EquipmentName public static final String SPRAYER_VEE = "Tank Sprayer";
     @EquipmentName public static final String WRECKING_BALL = "IS Wrecking Ball";
-  
+    @EquipmentName public static final String LAM_FUEL_TANK = "LAM Fuel Tank";
+    @EquipmentName public static final String LAM_BOMB_BAY = "Bomb Bay";
 }

@@ -27,11 +27,13 @@ VERSION HISTORY:
 + Issue #3448: Display unit cost in mech summary without counting ammo.
 + Issue #3502: Disable Jump Button when prone
 + Data: Adding Shrapnel Infantry Weapons. These have been converted per the rules in AToWC but things like
-        BV, proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
+        proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
         Compared to lots of the existing infantry weapons these are long ranged, and more powerful especially the sniper
         rifles.
 + PR #3490: RATGeneratorEditor UX Improvements
 + PR #3515: Modernizing a bunch of Legacy Logging
++ Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
++ MML Issue #927: Add LAM FuelTank
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2
@@ -40,7 +42,6 @@ VERSION HISTORY:
 + Adding JUnit Jupiter 5.8.2
 + Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
 + Updating to Mockito 4.4.0 from 4.2.0
-+ Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

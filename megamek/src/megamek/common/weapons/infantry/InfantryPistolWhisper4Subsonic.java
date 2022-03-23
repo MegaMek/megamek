@@ -35,7 +35,7 @@ public class InfantryPistolWhisper4Subsonic extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Whisper-4 (Sub-Sonic)");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .0945;
        tonnage =  0.0012;
        infantryDamage =  0.17;
        infantryRange =  0;

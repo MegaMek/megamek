@@ -35,7 +35,7 @@ public class InfantrySniperRifleSairentosutomu extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Sairentosutomu");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .224;
        tonnage =  0.007;
        infantryDamage =  0.3;
        infantryRange =  5;

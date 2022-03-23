@@ -32,7 +32,7 @@ public class InfantryPistolDreamelDerringer extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Dreamel J-4 Derringer");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .042;
        tonnage =  0.0002;
        infantryDamage =  0.15;
        infantryRange =  0;

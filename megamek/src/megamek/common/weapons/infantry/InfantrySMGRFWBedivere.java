@@ -31,7 +31,7 @@ public class InfantrySMGRFWBedivere extends InfantryWeapon {
        setInternalName(name);
        addLookupName("RFW Bedivere");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .202;
        tonnage =  0.0012;
        infantryDamage =  0.22;
        infantryRange =  1;

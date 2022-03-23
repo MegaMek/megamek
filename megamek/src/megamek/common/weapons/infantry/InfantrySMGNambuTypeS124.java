@@ -31,7 +31,7 @@ public class InfantrySMGNambuTypeS124 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Nambu Type S-124");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = .202;
        tonnage =  0.0039;
        infantryDamage =  0.22;
        infantryRange =  1;

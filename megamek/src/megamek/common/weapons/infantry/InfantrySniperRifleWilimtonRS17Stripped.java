@@ -35,7 +35,7 @@ public class InfantrySniperRifleWilimtonRS17Stripped extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Wilimton RS-17 (Stripped)");
        ammoType = AmmoType.T_INFANTRY;
-       bv = 1;
+       bv = 1.05;
        tonnage =  0.009;
        infantryDamage =  0.56;
        infantryRange =  6;

@@ -99,16 +99,10 @@ public class MechWarrior extends EjectedCrew {
         this.pickedUpById = pickedUpById;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Infantry#calculateBattleValue()
-     */
     @Override
-    public int calculateBattleValue() {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
         return 0;
     }
-
 
     /**
      * Ejected pilots do not get killed by ammo/fusion engine explosions

@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.battlevalue.BattleArmorBVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
@@ -863,227 +864,30 @@ public class BattleArmor extends Infantry {
         return super.hasHittableCriticals(loc);
     }
 
-    /**
-     * Calculates the battle value of this platoon.
-     */
     @Override
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-        return calculateBattleValue(ignoreC3, ignorePilot, false);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
+        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
     }
 
     /**
-     * Calculates the battle value of this platoon.
+     * Calculates the Battle Value of this BattleArmor. When singleTrooper is true the Battle Value of one
+     * trooper is returned, otherwise the BV of the whole unit. Calling this method with the value of
+     * singleTrooper being false is equivalent to calling the standard calculateBattleValue methods.
      *
-     * @param ignoreC3
-     *            ignore C3 linkage
-     * @param ignorePilot
-     *            ignore the skill of the pilot
-     * @param singleTrooper
-     *            calculate just the BV of a single trooper
-     * @return the battlevalue
+     * <P> As in all other BV calculations, the other parameters can be used to ignore C3 / skill-based changes
+     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
+     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @param singleTrooper When true, returns the BV of a single trooper of this BA, otherwise of the full unit
+     * @return The Battle Value of this BattleArmor
      */
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot, boolean singleTrooper) {
+    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
         if (useManualBV) {
-            return manualBV;
+            return manualBV; // TODO : divide by the number of troopers when singleTrooper is true?
         }
-        // we do this per trooper, then add up
-        double squadBV = 0;
-        for (int i = 1; i < locations(); i++) {
-            if (this.getInternal(i) <= 0) {
-                continue;
-            }
-            double dBV = 0;
-            double armorBV = 2.5;
-            if (isFireResistant() || isReflective() || isReactive()) {
-                armorBV = 3.5;
-            }
-            dBV += (getArmor(i) * armorBV) + 1;
-            // improved sensors add 1
-            if (hasImprovedSensors()) {
-                dBV += 1;
-            }
-            // active probes add 1
-            if (hasActiveProbe()) {
-                dBV += 1;
-            }
-            // ECM adds 1
-            for (Mounted mounted : getMisc()) {
-                if (mounted.getType().hasFlag(MiscType.F_ECM)) {
-                    if (mounted.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
-                        dBV += 2;
-                    } else {
-                        dBV += 1;
-                    }
-                    break;
-                }
-            }
-            for (Mounted weapon : getWeaponList()) {
-                if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                    if (weapon.getLocation() == LOC_SQUAD) {
-                        dBV += weapon.getType().getBV(this);
-                    } else {
-                        // squad support, count at 1/troopercount
-                        dBV += weapon.getType().getBV(this) / getTotalOInternal();
-                    }
-                }
-            }
-            int runMP = getWalkMP(false, false, true, true, false);
-            int umuMP = getActiveUMUCount();
-            int tmmRan = Compute.getTargetMovementModifier(Math.max(runMP, umuMP), false, false, game).getValue();
-            // get jump MP, ignoring burden
-            int rawJump = getJumpMP(false, true, true);
-            int tmmJumped = (rawJump > 0)
-                    ? Compute.getTargetMovementModifier(rawJump, true, false, game).getValue() : 0;
-            double targetMovementModifier = Math.max(tmmRan, tmmJumped);
-            double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
-            if (hasCamoSystem) {
-                tmmFactor += 0.2;
-            }
-            if (isStealthy) {
-                tmmFactor += 0.2;
-            }
-            // improved stealth get's an extra 0.1, for 0.3 total
-            if ((stealthName != null) && stealthName.equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
-                tmmFactor += 0.1;
-            }
-            if (isMimetic) {
-                tmmFactor += 0.3;
-            }
-
-            dBV *= tmmFactor;
-            double oBV = 0;
-            for (Mounted weapon : getWeaponList()) {
-                // infantry weapons don't count at all
-                if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-
-                if (weapon.getLocation() == LOC_SQUAD) {
-                    // Squad support, count at 1/troopercount
-                    if (weapon.isSquadSupportWeapon()) {
-                        oBV += weapon.getType().getBV(this) / getTotalOInternal();
-                    } else {
-                        oBV += weapon.getType().getBV(this);
-                    }
-                } else {
-                    oBV += weapon.getType().getBV(this) / getTotalOInternal();
-                }
-            }
-
-            for (Mounted misc : getMisc()) {
-                if (misc.getType().hasFlag(MiscType.F_MINE)) {
-                    if (misc.getLocation() == LOC_SQUAD) {
-                        oBV += misc.getType().getBV(this);
-                    } else {
-                        oBV += misc.getType().getBV(this) / getTotalOInternal();
-                    }
-                }
-                if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                    if (misc.getLocation() == LOC_SQUAD) {
-                        oBV += misc.getType().getBV(this);
-                    } else {
-                        oBV += misc.getType().getBV(this) / getTotalOInternal();
-                    }
-                }
-            }
-            for (Mounted ammo : getAmmo()) {
-                int loc = ammo.getLocation();
-                // don't count oneshot ammo
-                if (loc == LOC_NONE) {
-                    continue;
-                }
-                if ((loc == LOC_SQUAD) || (loc == i)) {
-                    double ammoBV = ((AmmoType) ammo.getType()).getBABV();
-                    oBV += ammoBV;
-                }
-            }
-            if (canMakeAntiMekAttacks()) {
-                // all non-missile and non-body mounted direct fire weapons counted again
-                for (Mounted weapon : getWeaponList()) {
-                    // infantry weapons don't count at all
-                    if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                        continue;
-                    }
-
-                    if (weapon.getLocation() == LOC_SQUAD) {
-                        if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !weapon.isBodyMounted()) {
-                            oBV += weapon.getType().getBV(this);
-                        }
-                    } else {
-                        // squad support, count at 1/troopercount
-                        oBV += weapon.getType().getBV(this) / getTotalOInternal();
-                    }
-                }
-                // magnetic claws and vibro claws counted again
-                for (Mounted misc : getMisc()) {
-                    if ((misc.getLocation() == LOC_SQUAD) || (misc.getLocation() == i)) {
-                        if (misc.getType().hasFlag(MiscType.F_MAGNET_CLAW) || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
-                            oBV += misc.getType().getBV(this);
-                        }
-                    }
-                }
-            }
-            // getJumpMP won't return UMU MP, so weed need to count that extra
-            int movement = Math.max(getWalkMP(false, false, true, true, false),
-                    Math.max(getJumpMP(false, true, true), getActiveUMUCount()));
-            double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
-            speedFactor = Math.round(speedFactor * 100) / 100.0;
-            oBV *= speedFactor;
-
-            double soldierBV;
-            if (useGeometricMeanBV()) {
-                soldierBV = 2 * Math.sqrt(oBV * dBV);
-                if (soldierBV == 0) {
-                    soldierBV = oBV + dBV;
-                }
-            } else {
-                soldierBV = oBV + dBV;
-            }
-
-            squadBV += soldierBV;
-        }
-        // we have now added all troopers, divide by current strength to then
-        // multiply by the unit size mod
-        squadBV /= getShootingStrength();
-        // we might want to get just the BV of a single trooper
-        if (singleTrooper) {
-            return (int) Math.round(squadBV);
-        }
-
-        switch (getShootingStrength()) {
-            case 1:
-                break;
-            case 2:
-                squadBV *= 2.2;
-                break;
-            case 3:
-                squadBV *= 3.6;
-                break;
-            case 4:
-                squadBV *= 5.2;
-                break;
-            case 5:
-                squadBV *= 7;
-                break;
-            case 6:
-                squadBV *= 9;
-                break;
-        }
-
-        if (!ignoreC3) {
-            squadBV += getExtraC3BV((int) Math.round(squadBV));
-        }
-
-        // Adjust BV for crew skills.
-        double pilotFactor = 1;
-        if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMekTrained(), game);
-        }
-
-        return (int) Math.round(squadBV * pilotFactor);
+        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText, singleTrooper);
     }
 
     /**

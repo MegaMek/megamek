@@ -284,8 +284,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Initializes a step as part of this movement path. Then adds it to the
-     * list.
+     * Initializes a step as part of this movement path. Then adds it to the list.
      *
      * @param step
      */
@@ -330,7 +329,6 @@ public class MovePath implements Cloneable, Serializable {
         // the previous step, then update the older steps, letting
         // them know that they are no longer the end of the path.
         if (step.isLegal(this) && (null != prev) && !land.equals(prev.getPosition())) {
-
             // Loop through the steps from back to front.
             // Stop looping when the step says to, or we run out of steps.
             int index = steps.size() - 2;

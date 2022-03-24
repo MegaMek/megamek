@@ -28,9 +28,8 @@ public class FighterSquadron extends Aero {
     private static final long serialVersionUID = 3491212296982370726L;
 
     public static final int MAX_SIZE = 6;
-    // Value is arbitrary, but StratOps shows up to 10 so we'll use that as an
-    // alternate MAX_SIZE when using
-    // the option for larger squadrons
+    // Value is arbitrary, but StratOps shows up to 10, so we'll use that as an alternate MAX_SIZE
+    // when using the option for larger squadrons
     public static final int ALTERNATE_MAX_SIZE = 10;
 
     private static final Predicate<Entity> ACTIVE_CHECK = ent -> !(ent.isDestroyed() || ent.isDoomed());
@@ -100,7 +99,7 @@ public class FighterSquadron extends Aero {
                 .mapToInt(entity -> ((IAero) entity).getCap0Armor())
                 .sum();
     }
-    
+
     /**
      * Per SO, fighter squadrons can't actually be crippled
      * Individual crippled fighters should be detached and sent home, but it isn't required by the rules
@@ -112,7 +111,7 @@ public class FighterSquadron extends Aero {
     }
 
     /**
-     * Returns the percent of the armor remaining
+     * @return the percent of the armor remaining
      */
     @Override
     public double getArmorRemainingPercent() {

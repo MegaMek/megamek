@@ -177,11 +177,11 @@ public class MepFile implements IMechLoader {
                 mech.setModel(name.substring(5).trim());
             }
 
-            mech.setWeight(Integer.decode(tonnage.trim()).intValue());
+            mech.setWeight(Integer.decode(tonnage.trim()));
             mech.setYear(Integer.parseInt(techYear.trim()));
             mech.setOmni("OmniMech".equals(chassisType.trim()));
 
-            // TODO: this ought to be a better test
+            // TODO : this ought to be a better test
             if ("InnerSphere".equals(innerSphere.trim())) {
                 if (mech.getYear() == 3025) {
                     mech.setTechLevel(TechConstants.T_INTRO_BOXSET);

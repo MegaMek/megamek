@@ -181,7 +181,7 @@ public class ComputeECM {
             // first, subtract 1 for each enemy ECM that affects us
             Enumeration<Integer> ranges = vEnemyECMRanges.elements();
             for (Coords enemyECMCoords : vEnemyECMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(enemyECMCoords);
                 if (nDist <= range) {
                     ecmStatus++;
@@ -190,7 +190,7 @@ public class ComputeECM {
             // now check for friendly eccm
             ranges = vFriendlyECCMRanges.elements();
             for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyECCMCoords);
                 if (nDist <= range) {
                     eccmPresent = true;
@@ -202,15 +202,13 @@ public class ComputeECM {
                 ranges = vFriendlyBAPRanges.elements();
                 Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
                 for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
-                    int range = ranges.nextElement().intValue();
+                    int range = ranges.nextElement();
                     int nDist = c.distance(friendlyBAPCoords);
-                    int facing = facings.nextElement().intValue();
+                    int facing = facings.nextElement();
                     if (nDist <= range) {
-                        // still might need to check for right arc if using
-                        // medium range
+                        // still might need to check for right arc if using medium range
                         if ((range < 7)
-                            || Compute.isInArc(friendlyBAPCoords, facing,
-                                               c, Compute.ARC_NOSE)) {
+                                || Compute.isInArc(friendlyBAPCoords, facing, c, Compute.ARC_NOSE)) {
                             eccmPresent = true;
                             break;
                         }

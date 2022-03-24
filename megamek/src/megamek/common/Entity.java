@@ -6890,7 +6890,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The Battle Value of this unit
      */
     private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill) {
-        return useManualBV ? manualBV : doBattleValueCalculation(false, false);
+        return useManualBV ? manualBV : doBattleValueCalculation(ignoreC3, ignoreSkill);
     }
 
     public boolean useGeometricMeanBV() {

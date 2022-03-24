@@ -33,8 +33,10 @@ public class EntityTest {
 
     private Entity setupGunEmplacement() {
         Entity testEntity = Mockito.mock(GunEmplacement.class);
+        testEntity.bvText = new StringBuffer();
         Mockito.when(testEntity.calculateBattleValue()).thenCallRealMethod();
         Mockito.when(testEntity.calculateBattleValue(Mockito.anyBoolean(), Mockito.anyBoolean())).thenCallRealMethod();
+        Mockito.when(testEntity.doBattleValueCalculation(Mockito.anyBoolean(), Mockito.anyBoolean())).thenCallRealMethod();
         Mockito.when(testEntity.getTotalArmor()).thenReturn(100);
         ArrayList<Mounted> equipment = new ArrayList<>(2);
         WeaponType ppcType = Mockito.mock(WeaponType.class);

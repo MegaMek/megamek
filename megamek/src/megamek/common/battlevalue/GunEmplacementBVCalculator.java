@@ -153,6 +153,6 @@ public class GunEmplacementBVCalculator extends BVCalculator {
             pilotFactor = gunEmplacement.getCrew().getBVSkillMultiplier(gunEmplacement.getGame());
         }
 
-        return (int) Math.round((finalBV) * pilotFactor);
+        return (int) Math.round(finalBV * pilotFactor);
     }
 }

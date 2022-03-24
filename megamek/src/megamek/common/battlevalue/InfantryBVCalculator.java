@@ -177,7 +177,6 @@ public class InfantryBVCalculator extends BVCalculator {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        // double weaponbv;
         double obr; // offensive battle rating
 
         int speedFactorTableLookup = Math.max(infantry.getRunMP(false, true, true), Math.max(jumpMP, umuMP));
@@ -237,7 +236,7 @@ public class InfantryBVCalculator extends BVCalculator {
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append((squadsize - secondn) * squadn);
-            bvText.append(" x " );
+            bvText.append(" x ");
             bvText.append(df.format(primaryW.getBV(infantry)));
             bvText.append(endColumn);
             bvText.append(startColumn);
@@ -253,7 +252,7 @@ public class InfantryBVCalculator extends BVCalculator {
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(secondn * squadn);
-            bvText.append(" x " );
+            bvText.append(" x ");
             bvText.append(df.format(secondW.getBV(infantry)));
             bvText.append(endColumn);
             bvText.append(startColumn);
@@ -526,6 +525,6 @@ public class InfantryBVCalculator extends BVCalculator {
         if (!ignoreSkill) {
             pilotFactor = infantry.getCrew().getBVSkillMultiplier(infantry.isAntiMekTrained(), infantry.getGame());
         }
-        return (int) Math.round((bv) * pilotFactor);
+        return (int) Math.round(bv * pilotFactor);
     }
 }

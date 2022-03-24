@@ -249,27 +249,12 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
         int bv = 0;
-        
-        // We'll just add up the BV of all non-destroyed fighters in the squadron.
         for (Entity fighter : getActiveSubEntities()) {
-            bv += fighter.calculateBattleValue(ignoreC3, ignorePilot);
+            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill);
         }
-
         return bv;
-    }
-
-    @Override
-    public int calculateBattleValue() {
-        if (useManualBV) {
-            return manualBV;
-        }
-        return calculateBattleValue(false, false);
     }
 
     @Override

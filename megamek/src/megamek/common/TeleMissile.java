@@ -158,7 +158,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public int calculateBattleValue() {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
         return 0;
     }
     

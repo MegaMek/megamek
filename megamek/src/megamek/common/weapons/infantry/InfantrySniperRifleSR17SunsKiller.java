@@ -37,7 +37,7 @@ public class InfantrySniperRifleSR17SunsKiller extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .35;
        tonnage =  0.006;
-       infantryDamage =  0.37;
+       infantryDamage =  0.35;
        infantryRange =  5;
        ammoWeight =  0.006;
        cost = 600;

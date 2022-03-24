@@ -37,7 +37,7 @@ public class InfantrySniperRifleWilimtonRS14 extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .35;
        tonnage =  0.007;
-       infantryDamage =  0.37;
+       infantryDamage =  0.35;
        infantryRange =  5;
        ammoWeight =  0.007;
        cost = 1500;

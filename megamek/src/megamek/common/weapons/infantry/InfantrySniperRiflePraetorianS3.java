@@ -37,7 +37,7 @@ public class InfantrySniperRiflePraetorianS3 extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .875;
        tonnage =  0.008;
-       infantryDamage =  0.46;
+       infantryDamage =  0.44;
        infantryRange =  5;
        ammoWeight =  0.008;
        cost = 400;

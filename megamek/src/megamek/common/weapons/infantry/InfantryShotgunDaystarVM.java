@@ -34,7 +34,7 @@ public class InfantryShotgunDaystarVM extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .55;
        tonnage =  0.0025;
-       infantryDamage =  0.57;
+       infantryDamage =  0.55;
        infantryRange =  1;
        ammoWeight =  0.0025;
        cost = 600;

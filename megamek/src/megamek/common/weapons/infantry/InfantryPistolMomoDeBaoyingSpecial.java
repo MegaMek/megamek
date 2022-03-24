@@ -36,7 +36,7 @@ public class InfantryPistolMomoDeBaoyingSpecial extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = 1.05;
        tonnage =  0.0011;
-       infantryDamage =  0.56;
+       infantryDamage =  0.53;
        infantryRange =  1;
        ammoWeight =  0.000001;
        cost = 275;

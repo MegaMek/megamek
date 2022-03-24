@@ -33,7 +33,7 @@ public class InfantrySMGTiberius extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = 1.1;
        tonnage =  0.003;
-       infantryDamage =  0.59;
+       infantryDamage =  0.55;
        infantryRange =  1;
        ammoWeight =  0.003;
        cost = 600;

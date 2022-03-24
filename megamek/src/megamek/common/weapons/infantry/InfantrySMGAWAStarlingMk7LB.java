@@ -36,7 +36,7 @@ public class InfantrySMGAWAStarlingMk7LB extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .33;
        tonnage =  0.0031;
-       infantryDamage =  0.31;
+       infantryDamage =  0.33;
        infantryRange =  1;
        ammoWeight =  0.0031;
        cost = 400;

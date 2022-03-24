@@ -33,7 +33,7 @@ public class InfantryPistolCamdenHR7 extends InfantryWeapon {
         ammoType = AmmoType.T_INFANTRY;
         bv = .44;
         tonnage =  0.0025;
-        infantryDamage =  0.46;
+        infantryDamage =  0.44;
         infantryRange =  1;
         ammoWeight =  0.000005;
         cost = 650;

@@ -33,7 +33,7 @@ public class InfantrySMGJ17Hagel extends InfantryWeapon {
        ammoType = AmmoType.T_INFANTRY;
        bv = .55;
        tonnage =  0.0023;
-       infantryDamage =  0.51;
+       infantryDamage =  0.55;
        infantryRange =  1;
        ammoWeight =  0.0023;
        cost = 700;

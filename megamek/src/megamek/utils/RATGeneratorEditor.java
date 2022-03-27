@@ -18,6 +18,7 @@ import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
+import megamek.common.UnitRoleHandler;
 import megamek.common.UnitType;
 import org.apache.logging.log4j.LogManager;
 
@@ -627,12 +628,13 @@ public class RATGeneratorEditor extends JFrame {
         public static final int COL_UNIT_TYPE = 2;
         public static final int COL_WEIGHT = 3;
         public static final int COL_YEAR = 4;
-        public static final int COL_ROLE = 5;
-        public static final int COL_DEPLOYED_WITH = 6;
-        public static final int COL_EXCLUDE_FACTIONS = 7;
-        public static final int NUM_COLS = 8;
+        public static final int COL_CANON_ROLE = 5;
+        public static final int COL_ROLE = 6;
+        public static final int COL_DEPLOYED_WITH = 7;
+        public static final int COL_EXCLUDE_FACTIONS = 8;
+        public static final int NUM_COLS = 9;
         public static final String[] colNames = {
-                "Chassis", "Model", "Unit Type", "Weight", "Year", "Role", "Deployed With", "Exclude Factions"
+                "Chassis", "Model", "Unit Type", "Weight", "Year", "MUL Role", "Role", "Deployed With", "Exclude Factions"
         };
 
         private final ArrayList<ModelRecord> data;
@@ -699,6 +701,8 @@ public class RATGeneratorEditor extends JFrame {
                     return data.get(row).getMechSummary().getYear();
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
+                case COL_CANON_ROLE:
+                    return UnitRoleHandler.getRoleFor(data.get(row).getChassis() + " " + data.get(row).getModel()).toString();
                 case COL_DEPLOYED_WITH:
                     StringJoiner sj = new StringJoiner(",");
                     data.get(row).getDeployedWith().forEach(sj::add);

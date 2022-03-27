@@ -7845,11 +7845,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7868,11 +7869,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7893,11 +7895,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7916,11 +7919,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7941,11 +7945,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7964,11 +7969,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 8;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7989,11 +7995,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -8012,11 +8019,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 

@@ -5628,6 +5628,19 @@
 			<availability>General:9</availability>
 		</model>
 	</chassis>
+	<chassis name='Eris' unitType='Mek'>
+		<availability>DTA:2,OP:3,RF:3,FWL:2,MSC:4,DA:3,RCM:2,MERC:2</availability>
+		<model name='ERS-2H'>
+			<availability>DTA:2,OP:3,RF:3,FWL:2,MSC:4,DA:3,MERC:2,RCM:2</availability>
+		</model>
+		<model name='ERS-2N'>
+			<availability>DTA:1,OP:2,RF:2,FWL:1,MSC:2,DA:1,RCM:1</availability>
+		</model>
+		<model name='ERS-3R'>
+			<roles>spotter</roles>
+			<availability>DTA:1,OP:2,FWL:1,MSC:3,DA:2,RCM:1</availability>
+		</model>
+	</chassis>
 	<chassis name='Essex II Destroyer' unitType='Warship'>
 		<availability>CSA:2,CDS:2,ROS:1,CCO:1,RA:1</availability>
 		<model name='(2711)'>
@@ -9111,6 +9124,9 @@
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
+		</model>
+		<model name='X'>
+			<availability>CDS:2,ROS:2,CNC:2,RA:2,CGB:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Kinnol MBT' unitType='Tank'>
@@ -17556,13 +17572,16 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:5,HL:3,IS:5,Periphery.Deep:5,FS:6,Periphery:4,TC:4,LA:5,CNC:2,FWL:8,NIOPS:3-,MH:4,DC:5,CGB:1</availability>
+		<model name='WVR-1R'>
+			<availability>CC:1-,RF:2,FWL:1-,FS:1-,MERC:1,RCM:2,DC:1-</availability>
+		</model>
 		<model name='WVR-6M'>
 			<roles>recon</roles>
 			<availability>Periphery.MW:4-,PIR:4-,Periphery.ME:4-,FWL:2-,MH:4-</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:2-,Periphery.Deep:8,Periphery:3-</availability>
+			<availability>General:1-,Periphery:2-</availability>
 		</model>
 		<model name='WVR-7D'>
 			<roles>recon</roles>
@@ -17575,6 +17594,9 @@
 		<model name='WVR-7M'>
 			<roles>recon</roles>
 			<availability>CC:4,MOC:4,FWL:5,MH:4,MERC:6,DC:4</availability>
+		</model>
+		<model name='WVR-7M2'>
+			<availability>CC:6,MOC:2,OP:2,DO:6,MERC:6,DTA:5,RF:4,FWL:6,MH:2,MSC:4,DA:6,RCM:2,DC:3</availability>
 		</model>
 		<model name='WVR-8C'>
 			<availability>ROS:4,MERC:3,DC:6</availability>
@@ -17594,6 +17616,9 @@
 		</model>
 		<model name='WVR-9M'>
 			<availability>LA:3,ROS:4,FWL:5,MH:3,MERC:3</availability>
+		</model>
+		<model name='WVR-9R'>
+			<availability>IS:3,MERC:3,Periphery:2</availability>
 		</model>
 		<model name='WVR-9W2'>
 			<availability>IS:4,DC:6</availability>

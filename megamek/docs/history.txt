@@ -36,6 +36,7 @@ VERSION HISTORY:
 + Data #3533, #3529, #3528, #3527, #3518, #3517, #3516, #3430, and #3410 fixes for various unit files. 
 	RAT Generator Rec Guide 18 updates, Tech Progression errata. 
 + MML Issue #927: Add LAM FuelTank
++ PR #3525: RATGeneratorEditor: Allow deleting RAT Roles and show MUL Role
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

@@ -17006,13 +17006,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:5,HL:4,FRR:5,IS:5,Periphery.Deep:5,WOB:3-,FS:6,Periphery:5,TC:5,CS:3-,LA:5,CNC:2,FWL:8,NIOPS:3-,MH:4,DC:5</availability>
+		<model name='WVR-1R'>
+			<availability>CC:2-,FWL:2-,FS:2-,MERC:2,RCM:2,DC:2-</availability>
+		</model>
+		<model name='WVR-6D'>
+			<availability>FS:1-</availability>
+		</model>
 		<model name='WVR-6M'>
 			<roles>recon</roles>
 			<availability>Periphery.MW:5,PIR:4,Periphery.ME:5,FWL:3-,MH:4</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>HL:2-,General:4-,Periphery.Deep:8,Periphery:4-</availability>
+			<availability>HL:2-,General:3-,Periphery:3-</availability>
 		</model>
 		<model name='WVR-7D'>
 			<roles>recon</roles>
@@ -17025,6 +17031,9 @@
 		<model name='WVR-7M'>
 			<roles>recon</roles>
 			<availability>CC:4,FWL:6,WOB:5,MERC:6,DC:4</availability>
+		</model>
+		<model name='WVR-7M2'>
+			<availability>CC:5,DTA:4,MERC.KH:5,MERC.WD:3,FWL:5,WOB:5,MERC:5,RCM:2,DC:3</availability>
 		</model>
 		<model name='WVR-8C'>
 			<availability>DC:5</availability>

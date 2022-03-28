@@ -761,9 +761,10 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+    //Greekfire requested Errata March 2022 for RS Jihad book. 
     private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(3060, 3068, 3072).setISApproximate(true)
+            .setISAdvancement(3060, 3066, 3072, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, true,false,false)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)

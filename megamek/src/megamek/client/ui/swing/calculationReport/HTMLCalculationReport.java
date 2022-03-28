@@ -20,6 +20,10 @@ package megamek.client.ui.swing.calculationReport;
 
 import javax.swing.*;
 
+/**
+ * This is a Calculation Report that builds its output as an HTML text which can be obtained
+ * from toString() as a String or from toJComponent() inside a JEditorPane.
+ */
 public class HTMLCalculationReport implements CalculationReport {
 
     private final static String HTML_START = "<HTML><BODY>";

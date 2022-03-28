@@ -1730,7 +1730,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Von Rohrs (Hebis)' unitType='Mek'>
+	<chassis name='Von Rohrs (Hebi)' unitType='Mek'>
 		<availability>DC:4</availability>
 		<model name='VON 4RH-5'>
 			<availability>General:8</availability>

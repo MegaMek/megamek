@@ -24,7 +24,7 @@ public class EloFormulaDefault implements EloFormula {
         public int calcElo(LeaderBoard lb, Player winner, Player loser, double destWinner, double destLoser){
 
             LeaderBoardEntry winnerEntry = lb.get(winner);
-            LeaderBoardEntry loserEntry = lb.get(winner);
+            LeaderBoardEntry loserEntry = lb.get(loser);
 
             double eloFactor = winnerEntry.getElo() / loserEntry.getElo();
             double destFactor = destWinner / destLoser;

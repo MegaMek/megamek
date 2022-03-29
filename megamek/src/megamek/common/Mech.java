@@ -21,18 +21,10 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
-import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
-import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
-import megamek.common.weapons.lasers.ISRISCHyperLaser;
-import megamek.common.weapons.other.ISMekTaser;
-import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.common.weapons.prototypes.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;

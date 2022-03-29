@@ -11,16 +11,14 @@
  */
 package megamek.common;
 
+import megamek.common.battlevalue.JumpShipBVCalculator;
+import megamek.common.options.OptionsConstants;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
-import megamek.common.battlevalue.JumpShipBVCalculator;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
@@ -53,7 +51,7 @@ public class Jumpship extends Aero {
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
             "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
-    //K-F Drive Stuff
+    // K-F Drive Stuff
     private int original_kf_integrity = 0;
     private int kf_integrity = 0;
     private int original_sail_integrity = 0;
@@ -67,7 +65,7 @@ public class Jumpship extends Aero {
     private boolean lfBatteryHit = false;
     private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
-    private int jumpRange = 30; // Primitive jumpships can have a reduced range
+    private int jumpRange = 30; // Primitive JumpShips can have a reduced range
     
     // lithium fusion
     boolean hasLF = false;

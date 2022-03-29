@@ -14,7 +14,6 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.common.*;
 
 import javax.swing.*;

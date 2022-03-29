@@ -14,10 +14,12 @@ package megamek.common;
 import megamek.common.battlevalue.DropShipBVCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.BayWeapon;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson

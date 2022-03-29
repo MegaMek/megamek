@@ -19,19 +19,19 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URI;
+import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
+import megamek.common.Entity;
+import megamek.common.MechView;
+import megamek.common.templates.TROView;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-
-import megamek.client.ui.swing.util.FluffImageHelper;
-import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
-import megamek.common.*;
-import megamek.common.templates.TROView;
-import org.apache.logging.log4j.LogManager;
+import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 /**
  * @author Jay Lawson

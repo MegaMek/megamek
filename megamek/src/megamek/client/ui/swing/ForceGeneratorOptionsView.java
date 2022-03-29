@@ -8,17 +8,13 @@ import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,8 +26,6 @@ import java.util.stream.Collectors;
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
-    private static final long serialVersionUID = 5269823128861856001L;
-
     private int currentYear;
     private Consumer<ForceDescriptor> onGenerate;
 

@@ -19,7 +19,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Vector;
-import java.util.stream.Stream;
 
 /**
  * buildingBlock is based on a file format I used in an online game. The

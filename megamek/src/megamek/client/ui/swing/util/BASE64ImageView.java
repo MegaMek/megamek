@@ -22,14 +22,12 @@ import javax.swing.text.html.ImageView;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 public class BASE64ImageView extends ImageView {
-
     private URL url;
 
     /**
@@ -43,7 +41,7 @@ public class BASE64ImageView extends ImageView {
         populateImage();
     }
 
-    //Creates a cache of images for each <img> src,
+    // Creates a cache of images for each <img> src,
     @SuppressWarnings("unchecked")
     private void populateImage() {
         Dictionary<URL, Image> cache = (Dictionary<URL, Image>) getDocument()

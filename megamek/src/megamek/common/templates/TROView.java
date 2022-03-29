@@ -15,7 +15,6 @@
 package megamek.common.templates;
 
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;

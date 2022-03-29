@@ -11,7 +11,6 @@ import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.other.TSEMPWeapon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,8 +24,6 @@ import java.util.Enumeration;
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-    private static final long serialVersionUID = -4907296187995261075L;
-
     private final UnitDisplay unitDisplay;
 
     private JLabel lblLastTarget;

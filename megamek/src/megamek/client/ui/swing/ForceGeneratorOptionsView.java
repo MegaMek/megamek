@@ -1029,7 +1029,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
     }
 
-    private class GenerateTask extends SwingWorker<ForceDescriptor,Double> implements ProgressListener {
+    private class GenerateTask extends SwingWorker<ForceDescriptor, Double> implements ProgressListener {
         private ForceDescriptor fd;
 
         private final Object progressLock = new Object();

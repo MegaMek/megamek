@@ -397,7 +397,6 @@ public class RATGenerator {
      * @param now The year for which to calculate a value.
      * @return The value for the year in question. Returns null if av1 and av2 are both null.
      */
-    
     private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
         if (av1 == null && av2 == null) {
             return null;
@@ -456,6 +455,7 @@ public class RATGenerator {
         if (rating == null && fRec.getRatingLevels().size() == 1) {
             ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
         }
+
         if (rating != null && numRatingLevels > 1) {
             ratingLevel = factionRatings.indexOf(rating);
         }
@@ -532,23 +532,29 @@ public class RATGenerator {
                 // Ultra-light and superheavy are too rare to warrant their own values and for
                 // weight class distribution purposes are grouped with light and assault,
                 // respectively.
-                final int[] wcdIndex = {0, 0, 1, 2, 3, 3};
+                final int[] wcdIndex = { 0, 0, 1, 2, 3, 3 };
                 // Find the totals of the weight for the generated table
-                double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+                double totalMRWeight = unitWeights.values().stream()
+                        .mapToDouble(Double::doubleValue)
+                        .sum();
                 // Find the sum of the weight distribution values for all weight classes in use.
-                int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
-                        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
+                int totalWCDWeights = weightClasses.stream()
+                        .filter(wc -> wcdIndex[wc] < wcd.size())
+                        .mapToInt(wc -> wcd.get(wcdIndex[wc]))
+                        .sum();
 
                 if (totalWCDWeights > 0) {
                     // Group all the models of the generated table by weight class.
-                    Function<ModelRecord,Integer> grouper = mr -> wcdIndex[mr.getWeightClass()];
-                    Map<Integer,List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
+                    Function<ModelRecord, Integer> grouper = mr -> wcdIndex[mr.getWeightClass()];
+                    Map<Integer, List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
                             .collect(Collectors.groupingBy(grouper));
                     
                     // Go through the weight class groups and adjust the table weights so the total
                     // of each group corresponds to the distribution for this faction.
                     for (int i : weightGroups.keySet()) {
-                        double totalWeight = weightGroups.get(i).stream().mapToDouble(unitWeights::get).sum();
+                        double totalWeight = weightGroups.get(i).stream()
+                                .mapToDouble(unitWeights::get)
+                                .sum();
                         if (totalWeight > 0) {
                             double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
                             weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x, y) -> x * y));
@@ -561,15 +567,16 @@ public class RATGenerator {
         double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 
         if (fRec.getPctSalvage(early) != null) {
-            HashMap<String,Double> salvageEntries = new HashMap<>();
-            for (Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
+            HashMap<String, Double> salvageEntries = new HashMap<>();
+            for (Entry<String, Integer> entry : fRec.getSalvage(early).entrySet()) {
                 salvageEntries.put(entry.getKey(),
                         interpolate(entry.getValue(),
                                 fRec.getSalvage(late).get(entry.getKey()),
                                         early, late, year));
             }
+
             if (!late.equals(early)) {
-                for (Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
+                for (Entry<String, Integer> entry : fRec.getSalvage(late).entrySet()) {
                     if (!salvageEntries.containsKey(entry.getKey())) {
                         salvageEntries.put(entry.getKey(), interpolate(0.0,
                                 entry.getValue(), early, late, year));
@@ -585,7 +592,8 @@ public class RATGenerator {
                 salvage = salvage * total / (100 - salvage);
             }
             double totalFactionWeight = salvageEntries.values().stream()
-                    .mapToDouble(Double::doubleValue).sum();
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
             for (String fKey : salvageEntries.keySet()) {
                 FactionRecord salvageFaction = factions.get(fKey);
                 if (salvageFaction == null) {
@@ -599,8 +607,7 @@ public class RATGenerator {
         }
         
         if (ratingLevel >= 0) {
-            adjustForRating(fRec, unitType, year, ratingLevel,
-                    unitWeights, salvageWeights, early, late);
+            adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, early, late);
         }
         
         // Increase weights if necessary to keep smallest from rounding down to zero

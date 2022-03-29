@@ -13,29 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -59,6 +36,12 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.*;
+import java.util.*;
+
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
  * with something else
@@ -69,7 +52,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the deploy minefield phase.  Each command has a string
+     * carried out during the deploy minefield phase. Each command has a string
      * for the command plus a flag that determines what unit type it is
      * appropriate for.
      *
@@ -144,21 +127,18 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
         super(clientgui);
-        phase = offboard ? GamePhase.OFFBOARD
-                : GamePhase.TARGETING;
+        phase = offboard ? GamePhase.OFFBOARD : GamePhase.TARGETING;
         shiftheld = false;
 
         // fire
         attacks = new Vector<>();
 
-        setupStatusBar(Messages
-                .getString("TargetingPhaseDisplay.waitingForTargetingPhase"));
+        setupStatusBar(Messages.getString("TargetingPhaseDisplay.waitingForTargetingPhase"));
 
         buttons = new HashMap<>(
                 (int) (TargetingCommand.values().length * 1.25 + 0.5));
         for (TargetingCommand cmd : TargetingCommand.values()) {
-            String title = Messages.getString("TargetingPhaseDisplay."
-                    + cmd.getCmd());
+            String title = Messages.getString("TargetingPhaseDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             String ttKey = "TargetingPhaseDisplay." + cmd.getCmd() + ".tooltip";
@@ -170,8 +150,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             newButton.setEnabled(false);
             buttons.put(cmd, newButton);
         }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0)
-                / buttonsPerGroup);
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
         butDone.setText(Messages.getString("TargetingPhaseDisplay.Done"));
         butDone.setEnabled(false);
@@ -202,7 +181,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     }
                 });
 
-     // Register the action for FIRE
+        // Register the action for FIRE
         controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
                 new CommandAction() {
 
@@ -561,8 +540,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // Calculate firing solutions
         Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
-            boolean friendlyFire = game.getOptions().booleanOption(
-                    OptionsConstants.BASE_FRIENDLY_FIRE);
+            boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
@@ -596,8 +574,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // There's special processing for triggering AP Pods.
         if ((turn instanceof GameTurn.TriggerAPPodTurn) && (null != ce())) {
             disableButtons();
-            TriggerAPPodDialog dialog = new TriggerAPPodDialog(
-                    clientgui.getFrame(), ce());
+            TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<TriggerAPPodAction> actions = dialog.getActions();
@@ -646,7 +623,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
-
     }
 
     /**
@@ -695,7 +671,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.systemMessage(Messages.getString(
                     "FiringDisplay.switched", new Object[] { m.getName(),
                             m.curMode().getDisplayableName() }));
-
         } else {
             clientgui.systemMessage(Messages.getString(
                     "FiringDisplay.willSwitch", new Object[] { m.getName(),
@@ -713,17 +688,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty()
-            && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
-            String title = Messages
-                    .getString("TargetingPhaseDisplay.DontFireDialog.title");
-            String body = Messages
-                    .getString("TargetingPhaseDisplay.DontFireDialog.message");
+            String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
+            String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
             }
+
             if (!response.getAnswer()) {
                 return;
             }
@@ -750,8 +723,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void doSearchlight() {
         // validate
         if ((ce() == null) || (target == null)) {
-            throw new IllegalArgumentException(
-                    "current searchlight parameters are invalid");
+            throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
         if (!SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null)) {
@@ -759,8 +731,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
-                .getTargetType(), target.getTargetId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getTargetId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -783,8 +754,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // validate
         if ((ce() == null) || (target == null) || (mounted == null)
                 || !(mounted.getType() instanceof WeaponType)) {
-            throw new IllegalArgumentException(
-                    "current fire parameters are invalid");
+            throw new IllegalArgumentException("current fire parameters are invalid");
         }
 
         // declare searchlight, if possible
@@ -792,19 +762,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             doSearchlight();
         }
 
-        WeaponAttackAction waa = new WeaponAttackAction(cen,
-                target.getTargetType(), target.getTargetId(), weaponNum);
+        WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
+                target.getTargetId(), weaponNum);
         Game game = clientgui.getClient().getGame();
-        int distance = Compute.effectiveDistance(game, waa.getEntity(game),
-                waa.getTarget(game));
+        int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
                 || (mounted.isInBearingsOnlyMode()
-                            && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
+                        && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
                 || (mounted.getType() instanceof CapitalMissileWeapon
-                                && Compute.isGroundToGround(ce(), target))) {
+                        && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum, clientgui.getClient()
-                            .getGame());
+                    target.getTargetId(), weaponNum, clientgui.getClient().getGame());
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
                 TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame, clientgui.getClient().getGame());
@@ -829,8 +797,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-                VibrabombSettingDialog vsd = new VibrabombSettingDialog(
-                        clientgui.frame);
+                VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
             }
@@ -882,7 +849,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
         updateTarget();
     }
-    
+
     /**
      * Skips to the previous weapon
      */
@@ -941,9 +908,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // remove temporary attacks from game & board
         clientgui.getClient().getGame().removeActionsFor(cen);
         clientgui.getBoardView().removeAttacksFor(ce());
-
     }
-    
+
     /**
      * removes the last action
      */
@@ -982,7 +948,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     void target(Targetable t) {
         target = t;
         updateTarget();
-
     }
 
     /**
@@ -1001,7 +966,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
                     // For other weapons that can make artillery attacks
                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;            
-            
+
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
             
@@ -1013,23 +978,19 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             }
             
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
-            clientgui.mechD.wPan.wRangeR
-                    .setText(String.format("%d %s", targetDistance, flightTimeText));
+            clientgui.mechD.wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
             
             Game game = clientgui.getClient().getGame();
-            int distance = Compute.effectiveDistance(game, ce(),
-                    target);
+            int distance = Compute.effectiveDistance(game, ce(), target);
             if (m.isUsedThisRound()) {
-                clientgui.mechD.wPan.wToHitR.setText(Messages
-                        .getString("TargetingPhaseDisplay.alreadyFired"));
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.alreadyFired"));
 
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.mechD.wPan.wToHitR.setText(Messages
-                        .getString("TargetingPhaseDisplay.autoFiringWeapon"));
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
 
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -1293,19 +1254,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(targets), null);
             choice = SharedUtility.getTargetPicked(targets, input);
-        } // End have-choices
+        }
 
         // Return the chosen unit.
         return choice;
-
-    } // End private Targetable chooseTarget( Coords )
+    }
 
     //
     // GameListener
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-
         // In case of a /reset command, ensure the state gets reset
         if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             endMyTurn();
@@ -1325,28 +1284,23 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (clientgui.getClient().getGame().getPhase() == phase) {
-
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages
-                        .getString("TargetingPhaseDisplay.its_your_turn"));
+                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn"));
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getString(
-                            "TargetingPhaseDisplay.its_others_turn",
+                    setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn",
                             e.getPlayer().getName()));
                 }
-
             }
         }
     }
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -1358,8 +1312,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
         // if we're ending the firing phase, unregister stuff.
         if (clientgui.getClient().getGame().getPhase() == phase) {
-            setStatusBarText(Messages
-                    .getString("TargetingPhaseDisplay.waitingForFiringPhase"));
+            setStatusBarText(Messages.getString("TargetingPhaseDisplay.waitingForFiringPhase"));
         }
     }
 
@@ -1368,7 +1321,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -1420,8 +1372,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (target != null)
                 && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
-                && SearchlightAttackAction.isPossible(clientgui.getClient()
-                        .getGame(), cen, target, null));
+                && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), cen, target, null));
     }
 
     private void setFireEnabled(boolean enabled) {
@@ -1477,11 +1428,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     // ItemListener
     //
     @Override
-    public void itemStateChanged(ItemEvent ev) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
+    public void itemStateChanged(ItemEvent evt) {
 
     }
 
@@ -1536,6 +1483,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (event.getValueIsAdjusting()) {
             return;
         }
+
         if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
             // update target data in weapon display
             updateTarget();
@@ -1544,7 +1492,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the arty targeting phase
-        if (!(clientgui.getClient().getGame().getPhase() == GamePhase.TARGETING)) {
+        if (!clientgui.getClient().getGame().getPhase().isTargeting()) {
             return;
         }
         

@@ -2,6 +2,7 @@ package megamek.client.ratgenerator;
 
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
@@ -515,6 +516,7 @@ public class FormationType {
                     networkGroups[POS_C3MM] = 0;
                     networkGroupings.addAll(findGroups(baseCombo, networkGroups, otherCriteria.size()));
                 }
+
                 while (!networkGroupings.isEmpty()) {
                     list.clear();
                     int networkIndex = Compute.randomInt(networkGroupings.size());
@@ -534,7 +536,7 @@ public class FormationType {
                         if (useGrouping != null
                                 && params.stream().anyMatch(p -> useGrouping.appliesTo(p.getUnitType()))) {
                             /* Create a temporary map that only includes units that have a grouping criterion */
-                            Map<Integer,Integer> groupedUnits = new LinkedHashMap<>();
+                            Map<Integer, Integer> groupedUnits = new LinkedHashMap<>();
                             for (int p = 0; p < params.size(); p++) {
                                 if (useGrouping.appliesTo(params.get(p).getUnitType())) {
                                     for (Integer i : combo.keySet()) {
@@ -544,14 +546,14 @@ public class FormationType {
                                     }
                                 }
                             }
-                            List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
+                            List<List<Map<Integer, Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
 
                             while (!groups.isEmpty()) {
                                 int gIndex = Compute.randomInt(groups.size());
                                 list.clear();
-                                Map<Integer,List<MechSummary>> found = new TreeMap<>();
-                                Map<Integer,Integer> workingCombo = new HashMap<>(combo);
-                                for (Map<Integer,Integer> g : groups.get(gIndex)) {
+                                Map<Integer, List<MechSummary>> found = new TreeMap<>();
+                                Map<Integer, Integer> workingCombo = new HashMap<>(combo);
+                                for (Map<Integer, Integer> g : groups.get(gIndex)) {
                                     /* The first unit selected may lead to a dead end, if the constraints
                                      * for the other group members cannot be met in a unit that matches the
                                      * base. To deal with this we make a second attempt if necessary
@@ -608,14 +610,17 @@ public class FormationType {
                                             break;
                                         }
                                     }
+
                                     for (Map.Entry<Integer, List<MechSummary>> e : found.entrySet()) {
                                         list.putIfAbsent(e.getKey(), new ArrayList<>());
                                         list.get(e.getKey()).addAll(e.getValue());
                                     }
+
                                     for (Integer k : g.keySet()) {
                                         workingCombo.merge(k, -g.get(k), Integer::sum);
                                     }
                                 }
+
                                 for (int i : workingCombo.keySet()) {
                                     if (workingCombo.get(i) > 0) {
                                         // Decode unit type
@@ -638,7 +643,8 @@ public class FormationType {
                                     }
                                 }
                                 List<MechSummary> retVal = list.values().stream()
-                                        .flatMap(Collection::stream).collect(Collectors.toList());
+                                        .flatMap(Collection::stream)
+                                        .collect(Collectors.toList());
                                 if (retVal.size() < cUnits) {
                                     groups.remove(gIndex);
                                 } else {
@@ -667,7 +673,8 @@ public class FormationType {
                             }
                         }
                         List<MechSummary> retVal = list.values().stream()
-                                .flatMap(Collection::stream).collect(Collectors.toList());
+                                .flatMap(Collection::stream)
+                                .collect(Collectors.toList());
                         if (retVal.size() < cUnits) {
                             unitTypeGroupings.remove(utIndex);
                         } else {
@@ -675,7 +682,8 @@ public class FormationType {
                         }
                     }
                     List<MechSummary> retVal = list.values().stream()
-                            .flatMap(Collection::stream).collect(Collectors.toList());
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toList());
                     if (retVal.size() < cUnits) {
                         networkGroupings.remove(networkIndex);
                     } else {
@@ -686,12 +694,9 @@ public class FormationType {
             }
             numNetworked--;
         } while (numNetworked >= 0);        
-        
+
         List<MechSummary> onRole = tryIdealRole(params, numUnits);
-        if (onRole != null) {
-            return onRole;
-        }
-        return new ArrayList<>();
+        return (onRole == null) ? new ArrayList<>() : onRole;
     }
     
     private Predicate<MechSummary> getFilterFromIndex(int index, int slaveType, int masterType) {
@@ -722,7 +727,8 @@ public class FormationType {
     /**
      * Attempts to build unit entirely on ideal role. Returns null if unsuccessful.
      */
-    private List<MechSummary> tryIdealRole(List<UnitTable.Parameters> params, List<Integer> numUnits) {
+    private @Nullable List<MechSummary> tryIdealRole(List<UnitTable.Parameters> params,
+                                                     List<Integer> numUnits) {
         if (idealRole.equals(UnitRole.UNDETERMINED)) {
             return null;
         }

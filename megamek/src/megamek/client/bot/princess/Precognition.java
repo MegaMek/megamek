@@ -248,7 +248,7 @@ public class Precognition implements Runnable {
                     int cfrType = (int) c.getData()[0];
                     GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                     switch (cfrType) {
-                        case (Packet.COMMAND_CFR_DOMINO_EFFECT):
+                        case Packet.COMMAND_CFR_DOMINO_EFFECT:
                             cfrEvt.setEntityId((int) c.getData()[1]);
                             break;
                         case Packet.COMMAND_CFR_AMS_ASSIGN:

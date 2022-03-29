@@ -1063,16 +1063,17 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_WEIGHT):
+                case COL_WEIGHT:
                     return Messages.getString("RandomArmyDialog.colWeight");
-                case (COL_UNIT):
+                case COL_UNIT:
                     return Messages.getString("RandomArmyDialog.colUnit");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
                 case COL_CL_IS:
                     return Messages.getString("RandomArmyDialog.colCLIS");
+                default:
+                    return "??";
             }
-            return "??";
         }
 
         @Override

@@ -1275,32 +1275,32 @@ public class FireControl {
         final double damageFraction = (existingDamage + expectedDamage) / ((double) targetHP);
         final double previousDamageFraction = existingDamage / ((double) targetHP);
 
-        //Do not shoot at units we already expect to deal more than their total HP of damage to!
+        // Do not shoot at units we already expect to deal more than their total HP of damage to!
         if (1.0 <= previousDamageFraction) {
             return 100; 
 
-            // In cases that are not generally overkill(less than 50% of the
-            // target's total HP in damage), target as normal(don't want to
-            // spread damage in these cases).
-            // Also want to disregard damage allocation weighting if the target
-            // is a building or infantry/BA(as they don't die until you do 100%
-            // damage to them normally).
-        } else if (0.5 > damageFraction
-                   || Targetable.TYPE_BUILDING == target.getTargetType()
-                   || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry) {
+            // In cases that are not generally overkill (less than 50% of the target's total HP in
+            // damage), target as normal (don't want to spread damage in these cases).
+            // Also want to disregard damage allocation weighting if the target is a building or
+            // infantry/BA (as they don't die until you do 100% damage to them normally).
+        } else if ((damageFraction < 0.5)
+                || (target.getTargetType() == Targetable.TYPE_BUILDING)
+                   || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                   || (owner.getGame().getEntity(target.getTargetId()) instanceof Infantry)) {
             return 0;
         }
-        //In the remaining case(0.5<=damage), return the fraction of target HP dealt as the penalty scaling factor(multiplied by the weight value to produce a penalty).
+
+        // In the remaining case, namely 0.5 <= damage, return the fraction of target HP dealt as
+        // the penalty scaling factor (multiplied by the weight value to produce a penalty).
         return damageFraction;
     }
 
     /**
-     * Calculates the potential damage that the target could theoretically
-     * deliver as a measure of it's potential "threat" to any allied unit on the
-     * board, thus prioritizing highly damaging enemies over less damaging ones.
-     * For now, this works by simply getting the max damage of the target at
-     * range=1, ignoring to-hit, heat, etc.
+     * Calculates the potential damage that the target could theoretically deliver as a measure of
+     * its potential "threat" to any allied unit on the board, thus prioritizing highly damaging
+     * enemies over less damaging ones.
+     * For now, this works by simply getting the max damage of the target at range = 1 while
+     * ignoring to-hit, heat, etc.
      */
     private double calcTargetPotentialDamage(final Targetable target) {
         if (!(target instanceof Entity)) {
@@ -1335,7 +1335,6 @@ public class FireControl {
      * @param physicalInfo The {@link PhysicalInfo} to be calculated.
      */
     void calculateUtility(final PhysicalInfo physicalInfo) {
-
         // If we can't hit, there's no point.
         if (0.0 >= physicalInfo.getProbabilityToHit()) {
             physicalInfo.setUtility(-10000);

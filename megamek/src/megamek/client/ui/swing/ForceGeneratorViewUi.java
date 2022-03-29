@@ -20,6 +20,7 @@ import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
 import org.apache.logging.log4j.LogManager;
@@ -325,11 +326,11 @@ public class ForceGeneratorViewUi {
                 if (node instanceof ForceDescriptor) {
                     final ForceDescriptor fd = (ForceDescriptor) node;
                     JPopupMenu menu = new JPopupMenu();
-                    
+
                     JMenuItem item = new JMenuItem("Add to game");
                     item.addActionListener(ev -> modelChosen.addEntities(fd));
                     menu.add(item);
-                    
+
                     item = new JMenuItem("Export as MUL");
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
@@ -344,27 +345,27 @@ public class ForceGeneratorViewUi {
         public void mousePressed(MouseEvent evt) {
             showPopup(evt);
         }
-        
+
         @Override
         public void mouseReleased(MouseEvent evt) {
             showPopup(evt);
         }
-        
+
         private void showPopup(MouseEvent evt) {
             if (evt.isPopupTrigger()) {
                 if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
-                    
+
                     JMenuItem item = new JMenuItem("Remove");
                     item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
                     menu.add(item);
-                    
+
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         }
     };
-    
+
     private KeyListener tableKeyListener = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent evt) {
@@ -508,18 +509,18 @@ public class ForceGeneratorViewUi {
             return this;
         }
     }
-    
+
     private static class ChosenEntityModel extends AbstractTableModel {
         public static final int COL_ENTITY = 0;
         public static final int COL_BV     = 1;
         public static final int COL_MOVE   = 2;
         public static final int NUM_COLS   = 3;
-        
+
         private List<Entity> entities = new ArrayList<>();
         private Set<String> entityIds = new HashSet<>();
-        
-        public boolean hasEntity(Entity en) {
-            return (null != en) && entityIds.contains(en.getExternalIdAsString());
+
+        public boolean hasEntity(final @Nullable Entity en) {
+            return (en != null) && entityIds.contains(en.getExternalIdAsString());
         }
         
         public void addEntity(Entity en) {
@@ -529,7 +530,7 @@ public class ForceGeneratorViewUi {
             }
             fireTableDataChanged();
         }
-        
+
         public void clearData() {
             entityIds.clear();
             entities.clear();
@@ -556,7 +557,7 @@ public class ForceGeneratorViewUi {
             fd.getSubforces().forEach(this::addEntities);
             fd.getAttached().forEach(this::addEntities);
         }
-        
+
         public List<Entity> allEntities() {
             return entities;
         }
@@ -581,21 +582,23 @@ public class ForceGeneratorViewUi {
                     return en.calculateBattleValue();
                 case COL_MOVE:
                     return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getJumpMP();
+                default:
+                    return "";
             }
-            return "";
         }
 
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_ENTITY):
+                case COL_ENTITY:
                     return Messages.getString("RandomArmyDialog.colUnit");
-                case (COL_MOVE):
+                case COL_MOVE:
                     return Messages.getString("RandomArmyDialog.colMove");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
+                default:
+                    return "??";
             }
-            return "??";
         }
     }
 }

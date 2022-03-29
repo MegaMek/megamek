@@ -2632,7 +2632,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public String getShortNameRaw() {
-        return StringUtility.isNullOrBlank(model) ? chassis : chassis + ' ' + model;
+        return StringUtility.isNullOrEmpty(model) ? chassis : chassis + ' ' + model;
     }
 
     /**
@@ -14917,7 +14917,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
-            if (StringUtility.isNullOrBlank(q.getLocation())) {
+            if (StringUtility.isNullOrEmpty(q.getLocation())) {
 
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {

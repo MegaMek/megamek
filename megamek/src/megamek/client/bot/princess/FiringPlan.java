@@ -328,7 +328,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     String getWeaponNames() {
         StringBuilder out = new StringBuilder();
         for (WeaponFireInfo wfi : this) {
-            if (!StringUtility.isNullOrBlank(out)) {
+            if (!StringUtility.isNullOrEmpty(out)) {
                 out.append(",");
             }
 

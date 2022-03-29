@@ -375,7 +375,7 @@ public class QuirksHandler {
                 output.write(getCloseTag(CHASSIS) + "\n");
 
                 // Write Model
-                if (!StringUtility.isNullOrBlank(model)) {
+                if (!StringUtility.isNullOrEmpty(model)) {
                     output.write("\t\t" + getOpenTag(MODEL));
                     output.write(model);
                     output.write(getCloseTag(MODEL) + "\n");

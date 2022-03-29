@@ -104,7 +104,7 @@ public class AddBotUtil {
             }
         }
 
-        if (StringUtility.isNullOrBlank(playerName)) {
+        if (StringUtility.isNullOrEmpty(playerName)) {
             String argLine = fullLine.toString();
             argLine = argLine.replaceFirst("/replacePlayer", "");
             argLine = argLine.replaceFirst("-b:" + botName, "");
@@ -134,7 +134,7 @@ public class AddBotUtil {
         final BotClient botClient;
         if ("Princess".equalsIgnoreCase(botName.toString())) {
             botClient = makeNewPrincessClient(target, host, port);
-            if (!StringUtility.isNullOrBlank(configName)) {
+            if (!StringUtility.isNullOrEmpty(configName)) {
                 final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
                         .getBehavior(configName.toString());
                 if (null != behavior) {

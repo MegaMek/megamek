@@ -1011,7 +1011,7 @@ public class MechView {
 
         retVal.add(new SingleLine());
         String capacity = entity.getUnusedString(html);
-        if (!StringUtility.isNullOrBlank(capacity)) {
+        if (!StringUtility.isNullOrEmpty(capacity)) {
             // The entries have already been formatted into a list, but we're still going to
             // format it as a list to get the items under the label.
             ItemList list = new ItemList(Messages.getString("MechView.CarryingCapacity"));

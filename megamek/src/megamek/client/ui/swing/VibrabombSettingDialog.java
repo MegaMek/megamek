@@ -82,7 +82,7 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
         if (actionEvent.getSource().equals(butOk)) {
             String s = fldSetting.getText();
             try {
-                if (!StringUtility.isNullOrBlank(s)) {
+                if (!StringUtility.isNullOrEmpty(s)) {
                     setting = Integer.parseInt(s);
                 }
             } catch (NumberFormatException e) {

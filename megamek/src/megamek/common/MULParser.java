@@ -464,7 +464,7 @@ public class MULParser {
             if (nodeType == Node.ELEMENT_NODE) {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(KILL)) {
-                    String killed =  ((Element) currNode).getAttribute(KILLED);
+                    String killed = ((Element) currNode).getAttribute(KILLED);
                     String killer = ((Element) currNode).getAttribute(KILLER);
                     if (!killed.isBlank() && !killer.isBlank()) {
                         kills.put(killed, killer);
@@ -476,7 +476,7 @@ public class MULParser {
 
     /**
      * Parse an Entity tag. Entity tags will have a number of attributes such as model, chassis,
-     * type, etc. They should also have a child Pilot tag and they may also contain some number of
+     * type, etc. They should also have a child Pilot tag, and they may also contain some number of
      * location tags.
      *
      * @param entityNode the node to parse the entity tag from
@@ -485,14 +485,12 @@ public class MULParser {
      */
     private void parseEntity(final Element entityNode, final @Nullable GameOptions options,
                              final Vector<Entity> list) {
-        Entity entity;
-
         // We need to get a new Entity, use the chassis and model to create one
-        String chassis =  entityNode.getAttribute(CHASSIS);
+        String chassis = entityNode.getAttribute(CHASSIS);
         String model = entityNode.getAttribute(MODEL);
 
         // Create a new entity
-        entity = getEntity(chassis, model);
+        Entity entity = getEntity(chassis, model);
 
         // Make sure we've got an Entity
         if (entity == null) {

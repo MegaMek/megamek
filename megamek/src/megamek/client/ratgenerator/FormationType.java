@@ -251,7 +251,7 @@ public class FormationType {
                 useGrouping.numGroups = 0;
             }
             if (nGroups > 0) {
-                useGrouping.numGroups =  nGroups;
+                useGrouping.numGroups = nGroups;
                 useGrouping.groupSize = 0;
             }
         }

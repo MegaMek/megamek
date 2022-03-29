@@ -528,10 +528,10 @@ public class MovePath implements Cloneable, Serializable {
             boolean fwd = false;
             boolean rev = false;
             for (MoveStep s : steps) {
-                fwd |=  s.getType() == MoveStepType.FORWARDS
+                fwd |= s.getType() == MoveStepType.FORWARDS
                         || s.getType() == MoveStepType.LATERAL_LEFT
                         || s.getType() == MoveStepType.LATERAL_RIGHT;
-                rev |=  s.getType() == MoveStepType.BACKWARDS
+                rev |= s.getType() == MoveStepType.BACKWARDS
                         || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
                         || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
             }

@@ -1053,7 +1053,7 @@ public abstract class Mech extends Entity {
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
         if (mpBoosters.hasMASCAndOrSupercharger()) {
-            String str =  getRunMPwithoutMASC() + "(" + getRunMP()+")";
+            String str = getRunMPwithoutMASC() + "(" + getRunMP()+")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
@@ -3091,7 +3091,7 @@ public abstract class Mech extends Entity {
         return getTechAdvancement(getEntityType(), isPrimitive(), isIndustrial(), getWeightClass());
     }
 
-    private static final TechAdvancement[] GYRO_TA =  {
+    private static final TechAdvancement[] GYRO_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
                 .setApproximate(true, false, false).setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TH).setTechRating(RATING_D)

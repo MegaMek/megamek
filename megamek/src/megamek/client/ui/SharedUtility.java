@@ -841,13 +841,12 @@ public class SharedUtility {
                 // I need to consider both of these passed through for purposes of bombing
                 en.addPassedThrough(right);
                 en.addPassedThrough(left);
-                if (client !=  null) {
+                if (client != null) {
                     client.sendUpdateEntity(en);
                 }
 
                 // if the left is preferred, increment i so next one is skipped
-                if ((leftTonnage < rightTonnage)
-                        || !game.getBoard().contains(right)) {
+                if ((leftTonnage < rightTonnage) || !game.getBoard().contains(right)) {
                     i++;
                 } else {
                     continue;

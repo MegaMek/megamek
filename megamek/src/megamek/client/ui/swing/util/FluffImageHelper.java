@@ -163,7 +163,7 @@ public class FluffImageHelper {
                 for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
                     extMatch |= name.endsWith(ext);
                 }
-                String chassis =  name.split("\\[")[0].trim();
+                String chassis = name.split("\\[")[0].trim();
                 return chassis.equalsIgnoreCase(unit.getChassis()) && extMatch;
             });
 

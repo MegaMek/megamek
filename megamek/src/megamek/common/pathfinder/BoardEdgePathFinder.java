@@ -553,12 +553,12 @@ public class BoardEdgePathFinder {
         boolean destinationHasBuilding = destHex.containsTerrain(Terrains.BLDG_CF) || destHex.containsTerrain(Terrains.FUEL_TANK_CF);
         
         // if we're going to step onto a bridge that will collapse, let's not consider going there
-        mli.destinationHasWeakBridge =  destinationIsBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+        mli.destinationHasWeakBridge = destinationIsBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
         // if we're going to step onto a building that will collapse, let's not consider going there
         mli.destinationHasWeakBuilding = destinationHasBuilding && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
 
-        // this condition indicates that that we are unable to go to the destination because it's too high compared to the source
+        // this condition indicates that we are unable to go to the destination because it's too high compared to the source
         mli.goingUpTooHigh = mli.destHexElevation - mli.srcHexElevation > maxUpwardElevationChange;
 
         // this condition indicates that we are unable to go to the destination because it's too low compared to the source

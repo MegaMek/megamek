@@ -2469,25 +2469,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setModeConvertEnabled(false);
                 return;
             }
-        } else if (!(ce instanceof QuadVee
-                || (ce instanceof Mech && ((Mech) ce).hasTracks()))) {
+        } else if (!((ce instanceof QuadVee)
+                || ((ce instanceof Mech) && ((Mech) ce).hasTracks()))) {
             setModeConvertEnabled(false);
             return;
         }
         
-        Hex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
-        if (currHex.containsTerrain(Terrains.WATER)
-                && ce.getElevation() < 0) {
+        Hex currHex = clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
+        if (currHex.containsTerrain(Terrains.WATER) && (ce.getElevation() < 0)) {
             setModeConvertEnabled(false);
             return;
         }
         
-        if (ce instanceof LandAirMech && ce.isGyroDestroyed()) {
+        if ((ce instanceof LandAirMech) && ce.isGyroDestroyed()) {
             setModeConvertEnabled(false);
             return;
         }
         
-        if (ce instanceof QuadVee && ((QuadVee) ce).conversionCost() > ce.getRunMP()) {
+        if ((ce instanceof QuadVee) && (((QuadVee) ce).conversionCost() > ce.getRunMP())) {
             setModeConvertEnabled(false);
             return;
         }

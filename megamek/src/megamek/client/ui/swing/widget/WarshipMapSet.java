@@ -217,9 +217,9 @@ public class WarshipMapSet implements DisplayMapSet {
         labels[15] = WidgetUtils.createLabel("K-F Drive:", fm, Color.white, 10, 270);
         labels[16] = WidgetUtils.createLabel("Jump Sail:", fm, Color.white, 10, 285);
 
-        //Value labels for all parts of mek
-        //front
-        fm =  comp.getFontMetrics(FONT_VALUE);   
+        // Value labels for all parts of mek
+        // front
+        fm = comp.getFontMetrics(FONT_VALUE);
         vLabels[Jumpship.LOC_NOSE] = WidgetUtils.createValueLabel(50, 30, "", fm);
         vLabels[Jumpship.LOC_FLS] = WidgetUtils.createValueLabel(17, 85, "", fm);
         vLabels[Jumpship.LOC_FRS] = WidgetUtils.createValueLabel(83, 85, "", fm);

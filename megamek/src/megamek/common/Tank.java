@@ -582,7 +582,7 @@ public class Tank extends Entity {
 
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
-        boolean hexHasRoad =  hex.containsTerrain(Terrains.ROAD);
+        boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
 
         // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {

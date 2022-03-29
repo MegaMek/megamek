@@ -5713,7 +5713,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 if (aaa.getWeaponId() > -1) {
                     wpName = artyEnt.getEquipment(aaa.getWeaponId()).getName();
                     if (aaa.getAmmoId() > -1) {
-                        ammoName =  artyEnt.getEquipment(aaa.getAmmoId()).getName();
+                        ammoName = artyEnt.getEquipment(aaa.getAmmoId()).getName();
                     }
                 }
             }

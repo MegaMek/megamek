@@ -226,19 +226,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int year = 3071;
     protected int techLevel;
     private CompositeTechLevel compositeTechLevel;
+
     /**
      * Used by support vehicles to define the structural tech rating
-     * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
+     * (TM pg 117). The values should come from EquipmentType.RATING_A-X.
      */
-    protected int structuralTechRating =  EquipmentType.RATING_A;
+    protected int structuralTechRating = EquipmentType.RATING_A;
+
     /**
-     * Used by support vehicles to define tech rating of armor.  Default value
+     * Used by support vehicles to define tech rating of armor. Default value
      * indicates that structural tech rating should be used, as in most cases
      * the armor and structural tech ratings match.
      */
     protected int armorTechRating = USE_STRUCTURAL_RATING;
+
     /**
-     * Used by support vehicles to define tech rating of armor.  Default value
+     * Used by support vehicles to define tech rating of armor. Default value
      * indicates that structural tech rating should be used, as in most cases
      * the engine and structural tech ratings match.
      */
@@ -248,6 +251,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Used by omni support vehicles to track the weight of optional fire control systems.
      */
     private double baseChassisFireConWeight = 0.0;
+
     /**
      * Year to use calculating engine and control system weight and fuel efficiency for primitive
      * support vehicles and aerospace units. This needs to be tracked separately from intro year to
@@ -360,12 +364,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
     public EntityMovementType movedLastRound = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;
+
     /**
      * Used to keep track of usage of the power reverse quirk, which allows a
-     * combat vehicle to use flank MP in reverse.  If power reverse is used and
+     * combat vehicle to use flank MP in reverse. If power reverse is used and
      * a PSR is required, it adds a +1 modifier to the PSR.
      */
     private boolean isPowerReverse = false;
+
     private boolean wigeLiftoffHover = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
@@ -382,8 +388,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int damageThisPhase;
     public int damageThisRound;
     public int engineHitsThisPhase;
-    public boolean rolledForEngineExplosion = false; // So that we don't roll
-    // twice in one round
+    public boolean rolledForEngineExplosion = false; // So that we don't roll twice in one round
     public boolean dodging;
     public boolean reckless;
     private boolean evading = false;
@@ -397,10 +402,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int[] vectors = { 0, 0, 0, 0, 0, 0 };
     private int recoveryTurn = 0;
-    // need to keep a list of areas that this entity has passed through on the
-    // current turn
+
+    // need to keep a list of areas that this entity has passed through on the current turn
     private Vector<Coords> passedThrough = new Vector<>();
+
     private List<Integer> passedThroughFacing = new ArrayList<>();
+
     /**
      * Stores the player selected hex ground to air targeting.
      * For ground to air, distance to target for the ground unit is determined
@@ -412,6 +419,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * hexes.
      */
     private Map<Integer, Coords> playerPickedPassThrough = new HashMap<>();
+
     private boolean ramming;
     // to determine what arcs have fired for large craft
     private boolean[] frontArcFired;
@@ -448,7 +456,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     private int tsempEffect = MMConstants.TSEMP_EFFECT_NONE;
 
-
     /**
      * Keeps track of the current ASEW effect on this entity
      */
@@ -460,7 +467,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean firedTsempThisTurn = false;
 
     /**
-     * Keeps track of whether this Entity has ever fired a TSEMP.  This is used
+     * Keeps track of whether this Entity has ever fired a TSEMP. This is used
      * to avoid having to iterate over all weapons looking for TSEMPs to reset
      * at the start of every round.
      */
@@ -524,7 +531,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * locations entities have and how many slots there are in each is
      * determined by the subclasses of Entity such as Mech.
      */
-    protected CriticalSlot[][] crits; // [loc][slot]
+    protected CriticalSlot[][] crits;
 
     /**
      * Stores the current movement mode.
@@ -535,8 +542,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean isHidden = false;
 
     /**
-     * Used to determine if this Entity has made a pointblank shot so far this
-     * round.
+     * Used to determine if this Entity has made a pointblank shot so far this round.
      */
     protected boolean madePointblankShot = false;
 
@@ -706,8 +712,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private Vector<Integer> hitBySwarmsEntity = new Vector<>();
 
     /**
-     * A vector that stores from which launcher we where hit by a swarm weapon
-     * this round. This vector holds the weapon ID's.
+     * A vector that stores from which launcher we were hit by a swarm weapon this round. This
+     * vector holds the weapon IDs.
      *
      * @see Entity#hitBySwarmsEntity
      */
@@ -719,14 +725,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean canon;
 
     private int assaultDropInProgress = 0;
-    private boolean climbMode = GUIPreferences.getInstance()
-            .getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE);
+    private boolean climbMode = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE);
 
     protected int lastTarget = Entity.NONE;
     protected String lastTargetDisplayName = "";
 
     /**
-     * the entity id of our current spot-target
+     * The entity id of our current spot-target
      */
     private int spotTargetId = Entity.NONE;
 
@@ -737,7 +742,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean turnWasInterrupted = false;
 
     /**
-     * a vector of currently active sensors that might be able to check range
+     * A vector of currently active sensors that might be able to check range
      */
     private Vector<Sensor> sensors = new Vector<>();
     // the currently selected sensor

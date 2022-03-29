@@ -272,7 +272,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
         int height = metrics.getHeight();
-        Dimension textDim =  new Dimension(width+50, height+10);
+        Dimension textDim = new Dimension(width + 50, height + 10);
 
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.

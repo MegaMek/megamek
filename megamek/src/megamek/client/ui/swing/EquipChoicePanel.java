@@ -857,7 +857,7 @@ public class EquipChoicePanel extends JPanel {
                     
                 // Add the newly mounted weapon
                 try {
-                    Mounted newWeap =  entity.addEquipment(apType, m_APmounted.getLocation());
+                    Mounted newWeap = entity.addEquipment(apType, m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
                     newWeap.setAPMMounted(true);

@@ -1744,7 +1744,7 @@ public class BoardEditor extends JPanel
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight() / 2));
             JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
         } else {
-            String title =  Messages.getString("BoardEditor.validBoard.title");
+            String title = Messages.getString("BoardEditor.validBoard.title");
             String msg = Messages.getString("BoardEditor.validBoard.report");
             JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.INFORMATION_MESSAGE);
         }

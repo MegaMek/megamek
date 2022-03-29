@@ -3435,7 +3435,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
-        Vector<Entity> launchableDropships = ce.getLaunchableDropships();
+        List<Entity> launchableDropships = ce.getLaunchableDropships();
 
         // Handle error condition.
         if ((launchableFighters.size() <= 0)
@@ -3556,7 +3556,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
-        Vector<Entity> launchableDropships = ce.getLaunchableDropships();
+        List<Entity> launchableDropships = ce.getLaunchableDropships();
 
         // Handle error condition.
         if ((launchableFighters.size() <= 0)
@@ -3570,14 +3570,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             int i = 0;
             int collarNum = 1;
             for (DockingCollar collar : ce.getDockingCollars()) {
-                Vector<Entity> currentDropships = collar.getLaunchableUnits();
+                List<Entity> currentDropships = collar.getLaunchableUnits();
                 Vector<Integer> collarChoices = new Vector<>();
                 if (currentDropships.size() > 0) {
                     String[] names = new String[currentDropships.size()];
                     String question = Messages.getString("MovementDisplay.LaunchDropshipDialog.message",
                             ce.getShortName(), 1, collarNum);
                     for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentDropships.elementAt(loop)
+                        names[loop] = currentDropships.get(loop)
                                                       .getShortName();
                     }
 
@@ -3607,9 +3607,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         // load up the choices
                         int[] unitsLaunched = choiceDialog.getChoices();
                         for (int element : unitsLaunched) {
-                            collarChoices.add(currentDropships.elementAt(element).getId());
+                            collarChoices.add(currentDropships.get(element).getId());
                             // Prompt the player to load passengers aboard the launching ship(s)
-                            Entity en = clientgui.getClient().getGame().getEntity(currentDropships.elementAt(element).getId());
+                            Entity en = clientgui.getClient().getGame().getEntity(currentDropships.get(element).getId());
                             if (en instanceof SmallCraft) {
                                 loadPassengerAtLaunch((SmallCraft) en);
                             }

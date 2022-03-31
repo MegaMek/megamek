@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
  */
 public class DockingCollar implements Transporter {
 
+    private static final long serialVersionUID = -4699786673513410716L;
+
     private final Set<Integer> dockedUnits = new HashSet<>();
     private boolean damaged = false;
     private final int collarId;

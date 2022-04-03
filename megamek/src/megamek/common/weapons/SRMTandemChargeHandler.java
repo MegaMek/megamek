@@ -30,7 +30,7 @@ import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.DamageType;
 
 /**
  * @author Jason Tighe

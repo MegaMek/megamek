@@ -29,7 +29,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.DamageType;
 
 /**
  * @author Sebastian Brocks

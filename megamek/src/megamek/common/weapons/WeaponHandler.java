@@ -21,8 +21,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageType;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.DamageType;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 

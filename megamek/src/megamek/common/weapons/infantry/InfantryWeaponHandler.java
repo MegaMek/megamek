@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.DamageType;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;

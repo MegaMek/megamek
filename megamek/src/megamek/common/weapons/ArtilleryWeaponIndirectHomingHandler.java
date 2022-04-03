@@ -25,7 +25,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.DamageType;
 
 import java.util.ArrayList;
 import java.util.List;

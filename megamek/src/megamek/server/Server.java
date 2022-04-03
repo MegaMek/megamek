@@ -101,10 +101,7 @@ public class Server implements Runnable {
     /**
      * The DamageType enumeration is used for the damageEntity function.
      */
-    public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, INFERNO, IGNORE_PASSENGER,
-        ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET, NONPENETRATING
-    }
+
 
     private static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 

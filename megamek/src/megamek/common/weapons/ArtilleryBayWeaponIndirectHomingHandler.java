@@ -45,7 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.DamageType;
 
 public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
     private static final long serialVersionUID = -7243477723032010917L;

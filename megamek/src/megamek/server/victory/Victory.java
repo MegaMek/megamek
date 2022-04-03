@@ -15,12 +15,10 @@ package megamek.server.victory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
-import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;

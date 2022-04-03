@@ -30,6 +30,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.DamageType;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -52,7 +53,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -70,34 +70,7 @@ import java.util.zip.GZIPOutputStream;
  * @author Ben Mazur
  */
 public class Server implements Runnable {
-    private static class EntityTargetPair {
-        Entity ent;
 
-        Targetable target;
-
-        EntityTargetPair (Entity e, Targetable t) {
-            ent = e;
-            target = t;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if ((null == o) || (getClass() != o.getClass())) {
-                return false;
-            }
-            final EntityTargetPair other = (EntityTargetPair) o;
-            return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(ent, target);
-        }
-
-    }
     /**
      * The DamageType enumeration is used for the damageEntity function.
      */
@@ -117,50 +90,6 @@ public class Server implements Runnable {
     private EmailService mailer;
 
 
-    private static class ReceivedPacket {
-        public int connId;
-        public Packet packet;
-
-        ReceivedPacket(int cid, Packet p) {
-            packet = p;
-            connId = cid;
-        }
-
-    }
-
-    private class PacketPump implements Runnable {
-
-        boolean shouldStop;
-
-        PacketPump() {
-            shouldStop = false;
-        }
-
-        void signalEnd() {
-            shouldStop = true;
-        }
-
-        @Override
-        public void run() {
-            while (!shouldStop) {
-                while (!packetQueue.isEmpty()) {
-                    ReceivedPacket rp = packetQueue.poll();
-                    synchronized (serverLock) {
-                        handle(rp.connId, rp.packet);
-                    }
-                }
-                try {
-                    synchronized (packetQueue) {
-                        packetQueue.wait();
-                    }
-                } catch (InterruptedException e) {
-                    // If we are interrupted, just keep going, generally
-                    // this happens after we are signalled to stop.
-                }
-            }
-        }
-
-    }
 
     // game info
     private Vector<AbstractConnection> connections = new Vector<>(4);
@@ -482,7 +411,7 @@ public class Server implements Runnable {
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
 
-        packetPump = new PacketPump();
+        packetPump = new PacketPump(packetQueue,serverLock,this);
         packetPumpThread = new Thread(packetPump, "Packet Pump");
         packetPumpThread.start();
 
@@ -21666,8 +21595,8 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-            boolean ammoExplosion, DamageType bFrag, boolean damageIS,
-            boolean areaSatArty, boolean throughFront, boolean underWater) {
+                                       boolean ammoExplosion, DamageType bFrag, boolean damageIS,
+                                       boolean areaSatArty, boolean throughFront, boolean underWater) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
                             areaSatArty, throughFront, underWater, false);
     }
@@ -31137,7 +31066,7 @@ public class Server implements Runnable {
      * @param packet
      *            - the <code>Packet</code> to be processed.
      */
-    protected void handle(int connId, Packet packet) {
+    public void handle(int connId, Packet packet) {
         Player player = game.getPlayer(connId);
         // Check player. Please note, the connection may be pending.
         if ((null == player) && (null == getPendingConnection(connId))) {

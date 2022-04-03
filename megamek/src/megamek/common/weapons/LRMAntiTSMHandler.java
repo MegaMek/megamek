@@ -19,7 +19,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
-import megamek.server.DamageType;
+import megamek.common.enums.DamageType;
 /**
  * @author Sebastian Brocks
  */

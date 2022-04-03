@@ -18,7 +18,7 @@ import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.DamageType;
+import megamek.common.enums.DamageType;
 
 /**
  * @author Andrew Hunter

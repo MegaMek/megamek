@@ -1,4 +1,4 @@
-package megamek.server;
+package megamek.common.enums;
 
 public enum DamageType {
     NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, INFERNO, IGNORE_PASSENGER,

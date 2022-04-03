@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.server.Server;
-import megamek.server.DamageType;
+import megamek.common.enums.DamageType;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;

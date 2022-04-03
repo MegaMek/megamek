@@ -23,7 +23,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.DamageType;
+import megamek.common.enums.DamageType;
 import megamek.server.Server;
 
 /**

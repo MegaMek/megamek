@@ -13,11 +13,13 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-package megamek.server;
+package megamek.server.Processor;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.server.Server;
+import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -32,7 +34,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = server.getGame();
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             this.vPhaseReport = vPhaseReport;

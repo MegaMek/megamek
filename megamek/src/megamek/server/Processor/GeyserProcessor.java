@@ -12,12 +12,13 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.server;
+package megamek.server.Processor;
 
 import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.Server;
 
 /**
  * This class allows for dynamic Geysers to be added to maps which will go off

@@ -12,11 +12,12 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.server;
+package megamek.server.Processor;
 
 import java.util.Vector;
 
 import megamek.common.Report;
+import megamek.server.Server;
 
 public abstract class DynamicTerrainProcessor {
     protected Server server;
@@ -30,5 +31,5 @@ public abstract class DynamicTerrainProcessor {
      * 
      * @param vPhaseReport reports for the server to send out
      */
-    abstract void doEndPhaseChanges(Vector<Report> vPhaseReport);
+    public abstract void doEndPhaseChanges(Vector<Report> vPhaseReport);
 }

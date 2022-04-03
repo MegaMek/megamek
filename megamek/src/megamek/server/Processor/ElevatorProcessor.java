@@ -12,7 +12,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.server;
+package megamek.server.Processor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.Server;
 
 /**
  * This is for simulating the vertically moving walls in the Solaris 7
@@ -34,7 +35,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         // 1st time, find elevators on board
         if (elevators == null || server.getGame().getRoundCount() == 1) {
             elevators = new ElevatorInfo[6];

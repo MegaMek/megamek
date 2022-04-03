@@ -12,7 +12,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.server;
+package megamek.server.Processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.server.Server;
+import megamek.server.SmokeCloud;
 
 public class SmokeProcessor extends DynamicTerrainProcessor {
 
@@ -31,7 +33,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = server.getGame();
 
         this.vPhaseReport = vPhaseReport;

@@ -12,11 +12,12 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.server;
+package megamek.server.Processor;
 
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.server.Server;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 
@@ -28,7 +29,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
+    public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = server.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveScreen();

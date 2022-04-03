@@ -85,6 +85,11 @@ public final class Player extends TurnOrdered {
      * player's request to change teams.
      */
     private boolean allowingTeamChange = false;
+
+    /**
+     * Value that keeps track of a (real or artificial) player quality of gameplay
+     */
+    private int rating = 1000;
     //endregion Variable Declarations
 
     //region Constructors
@@ -539,6 +544,17 @@ public final class Player extends TurnOrdered {
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
     }
 
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public void updateRating(int ratingChange){
+        this.rating += ratingChange;
+    }
     /**
      * Un-sets any data that may be considered private.
      *
@@ -613,6 +629,8 @@ public final class Player extends TurnOrdered {
         copy.visibleMinefields = new Vector<>(visibleMinefields);
 
         copy.admitsDefeat = admitsDefeat;
+
+        copy.rating = rating;
 
         return copy;
     }

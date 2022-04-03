@@ -2623,6 +2623,7 @@ public class Game implements Serializable {
 
     public void end(int winner, int winnerTeam) {
         setVictoryPlayerId(winner);
+        setRating(winner);
         setVictoryTeam(winnerTeam);
         processGameEvent(new GameEndEvent(this));
 
@@ -2687,6 +2688,27 @@ public class Game implements Serializable {
 
     public void setVictoryContext(HashMap<String, Object> ctx) {
         victoryContext = ctx;
+    }
+
+    /**
+     *
+     * @param winner Id if player who won
+     *
+     * */
+
+    private void setRating(int winner){
+        Enumeration<Player> iter = getPlayers();
+        while (iter.hasMoreElements()) {
+            Player player = iter.nextElement();
+            int ratingChange;
+            // TODO : Implement accurate elo rating calculation
+            if(player.getId() == winner){
+                ratingChange = 20;
+            } else {
+                ratingChange = -20;
+            }
+            player.updateRating(ratingChange);
+        }
     }
 
     /**

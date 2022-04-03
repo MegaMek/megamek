@@ -15,17 +15,21 @@ package megamek.server.victory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.LeaderBoard.LeaderBoard;
+import megamek.server.LeaderBoard.LeaderBoardEntry;
 
 public class Victory implements Serializable {
     private static final long serialVersionUID = -8633873540471130320L;
-    
+
     private boolean checkForVictory;
     private int neededVictoryConditions;
 
@@ -143,6 +147,17 @@ public class Victory implements Serializable {
 
         if (!vr.victory() && game.gameTimerIsExpired()) {
             return VictoryResult.drawResult();
+        }
+
+        //
+        Enumeration<Player> players = game.getPlayers();
+        LeaderBoard lb = game.leaderBoard.get();
+
+        LeaderBoardEntry entry = lb.get(players.nextElement());
+        if (entry.getElo() == 0){
+
+        }else{
+
         }
 
         return vr;

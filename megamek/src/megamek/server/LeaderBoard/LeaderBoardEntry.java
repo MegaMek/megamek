@@ -42,6 +42,10 @@ public class LeaderBoardEntry {
         this.elo = elo;
     }
 
+    public void addElo(int elo) {
+        this.elo += elo;
+    }
+
     @Override
     public String toString() {
         return "LeaderBoardEntry{" +

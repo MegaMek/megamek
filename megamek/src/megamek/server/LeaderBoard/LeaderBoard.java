@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class LeaderBoard {
 
     private static LeaderBoard SINGLETON;
-    private LeaderBoard() {
+    public LeaderBoard() {
         leaderboard = new ArrayList<>();
     }
 
@@ -49,4 +49,25 @@ public class LeaderBoard {
         return SINGLETON;
     }
 
+    public LeaderBoardEntry getEntry(Player player) {
+
+        for(int i = 0; i < leaderboard.size(); i++){
+           if(leaderboard.get(i).getPlayer().getId() == player.getId()) return leaderboard.get(i);
+        }
+        return emptyEntry();
+    }
+
+    public void print(){
+        this.sortHighscores();
+        System.out.println("----- LEADER BORD SORTED BY HIGHEST ELO ----");
+        System.out.println("Rank # - Player - Elo Score");
+
+        for(int i = 0; i < leaderboard.size(); i++){
+            String name = leaderboard.get(i).getPlayer().getName();
+            int elo = leaderboard.get(i).getElo();
+            System.out.println(i + "-" +name + "-" +elo);
+
+        }
+    }
+    private LeaderBoardEntry emptyEntry(){return new LeaderBoardEntry(new Player(0,""),0);}
 }

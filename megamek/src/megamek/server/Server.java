@@ -50,7 +50,10 @@ import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.AreaEffectHelper.NukeStats;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.server.LeaderBoard.LeaderBoard;
 import megamek.server.commands.*;
+import megamek.server.leaderBoardUtil.EloFormula;
+import megamek.server.leaderBoardUtil.EloFormulaDefault;
 import megamek.server.victory.VictoryResult;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
@@ -70,6 +73,8 @@ import java.util.zip.GZIPOutputStream;
  * @author Ben Mazur
  */
 public class Server implements Runnable {
+    public LeaderBoard lb = new LeaderBoard();
+    public EloFormula eloFormula = new EloFormulaDefault();
     private static class EntityTargetPair {
         Entity ent;
 

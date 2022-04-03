@@ -16,6 +16,10 @@ package megamek.server.victory;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.server.LeaderBoard.LeaderBoard;
+import megamek.server.LeaderBoard.LeaderBoardEntry;
+import megamek.server.Server;
+import megamek.server.leaderBoardUtil.EloFormula;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -76,6 +80,27 @@ public class VictoryResult {
         if (draw)
             return defaultEntity;
         return maxEntity;
+    }
+    private int getLosingPlayerOrTeam(Map<Integer, Double> entities, int defaultEntity) {
+        double less = Double.MAX_VALUE;
+        int lessEntity = defaultEntity;
+        boolean draw = false;
+        for (Map.Entry<Integer, Double> entry : entities.entrySet()) {
+            if (entry.getValue() == less) {
+                draw = true;
+            }
+            if (entry.getValue() < less) {
+                draw = false;
+                less = entry.getValue();
+                lessEntity = entry.getKey();
+            }
+        }
+        if (draw)
+            return defaultEntity;
+        return lessEntity;
+    }
+    public int getLosingPlayer() {
+        return getLosingPlayerOrTeam(playerScore, Player.PLAYER_NONE);
     }
 
     /**
@@ -194,12 +219,27 @@ public class VictoryResult {
             int wonPlayer = getWinningPlayer();
             int wonTeam = getWinningTeam();
 
+            int lostPlayer = getLosingPlayer();
             if (wonPlayer != Player.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add(game.getPlayer(wonPlayer).getColorForPlayer());
                 someReports.add(r);
             }
 
+            EloFormula eloFormula = Server.getServerInstance().eloFormula;
+            LeaderBoard lb = Server.getServerInstance().lb;
+
+            LeaderBoardEntry wEntry = lb.getEntry(game.getPlayer(wonPlayer));
+            LeaderBoardEntry lEntry = lb.getEntry(game.getPlayer(lostPlayer));
+
+            Player winner = wEntry.getPlayer();
+            Player loser = lEntry.getPlayer();
+
+
+            wEntry.addElo(eloFormula.calcElo(lb,winner,loser));
+            lEntry.addElo(-eloFormula.calcElo(lb,winner,loser));
+
+            System.out.println(lb);
             if (wonTeam != Player.TEAM_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team " + wonTeam);

@@ -29,10 +29,7 @@ import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.LeaderBoard.LeaderBoard;
 import megamek.server.SmokeCloud;
-import megamek.server.leaderBoardUtil.EloFormula;
-import megamek.server.leaderBoardUtil.EloFormulaDefault;
 import megamek.server.victory.Victory;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
@@ -62,15 +59,13 @@ public class Game implements Serializable {
 
     private GameOptions options = new GameOptions();
 
-    public LeaderBoard leaderBoard = new LeaderBoard();
-    public EloFormula eloFormula = new EloFormulaDefault();
-
     private Board board = new Board();
 
     private final List<Entity> entities = new CopyOnWriteArrayList<>();
     private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
 
     /**
+     * Track entities removed from the game (probably by death)
      * Track entities removed from the game (probably by death)
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
@@ -3196,7 +3191,7 @@ public class Game implements Serializable {
     }
 
     public VictoryResult getVictoryResult() {
-        return victory.checkForVictory(this, getVictoryContext(), leaderBoard);
+        return victory.checkForVictory(this, getVictoryContext());
     }
 
     // a shortcut function for determining whether vectored movement is

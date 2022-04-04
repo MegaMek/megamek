@@ -28,7 +28,7 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import megamek.server.Server;
+import megamek.server.Processor.MovementProcessor;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -231,7 +231,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         }
 
         try {
-            setPlayerName(Server.validatePlayerName(playerName));
+            setPlayerName(MovementProcessor.validatePlayerName(playerName));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PlayerNameError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);
@@ -239,7 +239,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         }
 
         try {
-            setPort(Server.validatePort(port));
+            setPort(MovementProcessor.validatePort(port));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.PortError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);

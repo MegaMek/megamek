@@ -22,7 +22,7 @@ import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.server.Server;
+import megamek.server.Processor.MovementProcessor;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.VictoryCommand;
 import org.junit.Assert;
@@ -110,13 +110,13 @@ public class ChatProcessorTest {
 
         // Test individual human victory.
         String cmd = VictoryCommand.getDeclareIndividual(mockHumanPlayerDave.getName());
-        String msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        String msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertTrue(mockHumanPlayerDave.isEnemyOf(mockBotPlayerHal));
         Assert.assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test team human victory.
         cmd = VictoryCommand.getDeclareTeam(mockHumanPlayerDave.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test a different message.
@@ -132,17 +132,17 @@ public class ChatProcessorTest {
 
         // Test victory by human partner.
         cmd = VictoryCommand.getDeclareIndividual(mockHumanPlayerKirk.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test victory by self.
         cmd = VictoryCommand.getDeclareIndividual(mockBotPlayerHal.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
 
         // Test victory by opposing bot.
         cmd = VictoryCommand.getDeclareIndividual(mockBotPlayerVGer.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
     }
 
@@ -152,22 +152,22 @@ public class ChatProcessorTest {
 
         // Test enemy wants defeat.
         String cmd = DefeatCommand.getWantsDefeat(mockHumanPlayerDave.getName());
-        String msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        String msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertTrue(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
 
         // Test enemy admits defeat.
         cmd = DefeatCommand.getAdmitsDefeat(mockHumanPlayerDave.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
 
         // Test ally wants defeat.
         cmd = DefeatCommand.getWantsDefeat(mockHumanPlayerKirk.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
 
         // Test ally admits defeat.
         cmd = DefeatCommand.getAdmitsDefeat(mockHumanPlayerKirk.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
+        msg = MovementProcessor.formatChatMessage(MovementProcessor.ORIGIN, cmd);
         Assert.assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
 
         // Test a different message.

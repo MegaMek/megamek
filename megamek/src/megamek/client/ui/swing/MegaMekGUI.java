@@ -48,6 +48,7 @@ import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.Processor.MovementProcessor;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
@@ -417,8 +418,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                             String mailPropertiesFileName, File saveGameFile) {
 
         try {
-            serverPassword = Server.validatePassword(serverPassword);
-            port = Server.validatePort(port);
+            serverPassword = MovementProcessor.validatePassword(serverPassword);
+            port = MovementProcessor.validatePort(port);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start Server", ex);
             frame.setVisible(true);
@@ -481,9 +482,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     public void startClient(String playerName, String serverAddress, int port) {
         try {
-            playerName = Server.validatePlayerName(playerName);
-            serverAddress = Server.validateServerAddress(serverAddress);
-            port = Server.validatePort(port);
+            playerName = MovementProcessor.validatePlayerName(playerName);
+            serverAddress = MovementProcessor.validateServerAddress(serverAddress);
+            port = MovementProcessor.validatePort(port);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start client", ex);
             JOptionPane.showMessageDialog(frame,

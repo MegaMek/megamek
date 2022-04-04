@@ -27,7 +27,7 @@ import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.server.Server;
+import megamek.server.Processor.MovementProcessor;
 
 /** The Connect to game (as Bot or Player) dialog */
 public class ConnectDialog extends AbstractGameConnectionDialog {
@@ -87,7 +87,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     @Override
     public boolean dataValidation(String errorTitleKey) {
         try {
-            setServerAddress(Server.validateServerAddress(getServerAddress()));
+            setServerAddress(MovementProcessor.validateServerAddress(getServerAddress()));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(getOwner(), Messages.getString("MegaMek.ServerAddressError"),
                     Messages.getString(errorTitleKey), JOptionPane.ERROR_MESSAGE);

@@ -45,7 +45,7 @@ import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.Processor.MovementProcessor;
 
 public class SharedUtility {
 
@@ -135,7 +135,7 @@ public class SharedUtility {
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT 
                     && (entity.isFighter())) {
-                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
+                rollTarget = MovementProcessor.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
         }
@@ -509,7 +509,7 @@ public class SharedUtility {
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT 
                     && (entity instanceof Mech)) {
-                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
+                rollTarget = MovementProcessor.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
             
@@ -521,7 +521,7 @@ public class SharedUtility {
                         && (targ instanceof Infantry)
                         && (((Entity) targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
-                    rollTarget = Server.getEjectModifiers(game, (Entity) targ, 0,
+                    rollTarget = MovementProcessor.getEjectModifiers(game, (Entity) targ, 0,
                             false, entity.getPosition(), "zip lining");
                     // Factor in Elevation
                     if (entity.getElevation() > 0) {

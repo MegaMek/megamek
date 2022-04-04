@@ -129,15 +129,7 @@ public class GunEmplacementBVCalculator {
 
         // structure modifier
         obv *= 0.44;
-        double finalBV;
-        if (gunEmplacement.useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = obv + dbv;
-            }
-        } else {
-            finalBV = obv + dbv;
-        }
+        double finalBV = obv + dbv;
         double xbv = 0.0;
         if (!ignoreC3 && (gunEmplacement.getGame() != null)) {
             xbv += gunEmplacement.getExtraC3BV((int) Math.round(finalBV));

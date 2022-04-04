@@ -861,18 +861,8 @@ public class MekBVCalculator {
                 String heatEffText = "Heat efficiency reached, ";
                 double dBV = (Double) weaponValues.get(0);
                 if (heatAdded >= mechHeatEfficiency) {
-                    if (mek.useReducedOverheatModifierBV()) {
-                        dBV /= 10;
-                    } else {
-                        dBV /= 2;
-                    }
-                }
-                if (heatAdded >= mechHeatEfficiency) {
-                    if (mek.useReducedOverheatModifierBV()) {
-                        heatEffText += "BV * 0.1";
-                    } else {
-                        heatEffText += "half BV";
-                    }
+                    dBV /= 2;
+                    heatEffText += "half BV";
                 }
                 heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;
@@ -1062,21 +1052,9 @@ public class MekBVCalculator {
         obv = weaponBV * speedFactor;
         bvReport.addLine("Weapons BV * Speed Factor ", weaponBV + " x " + speedFactor, "= " + obv);
 
-        String sumBVType = mek.useGeometricMeanBV() ? "2 * sqrt(Offensive BV * Defensive BV" : "Offensive BV + Defensive BV";
-        String sumBVcalc;
-        double finalBV;
-        if (mek.useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = dbv + obv;
-            }
-            sumBVcalc = "2 * sqrt(" + obv + " + " + dbv + ")";
-        } else {
-            finalBV = dbv + obv;
-            sumBVcalc = dbv + " + " + obv;
-        }
+        double finalBV = dbv + obv;
         double totalBV = finalBV;
-        bvReport.addLine(sumBVType, sumBVcalc, "= " + finalBV);
+        bvReport.addLine("Offensive BV + Defensive BV", dbv + " + " + obv, "= " + finalBV);
 
         double cockpitMod = 1;
         if ((mek.getCockpitType() == Mech.COCKPIT_SMALL)

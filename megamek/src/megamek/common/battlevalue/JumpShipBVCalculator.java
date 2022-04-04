@@ -463,17 +463,8 @@ public class JumpShipBVCalculator {
         obv = weaponBV * speedFactor;
         bvReport.addLine("Weapons BV * Speed Factor ",weaponBV + " * " + speedFactor, "", obv);
 
-        double finalBV;
-        if (jumpShip.useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = dbv + obv;
-            }
-            bvReport.addLine("2 * sqrt(Offensive BV * Defensive BV","2 * sqrt(" + obv + " + " + dbv + ")", "");
-        } else {
-            finalBV = dbv + obv;
-            bvReport.addLine("Offensive BV + Defensive BV",obv + " + " + dbv, "");
-        }
+        double finalBV = dbv + obv;
+        bvReport.addLine("Offensive BV + Defensive BV",obv + " + " + dbv, "");
         bvReport.addResultLine("Final BV", "", finalBV);
 
         // we get extra bv from some stuff

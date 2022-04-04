@@ -311,17 +311,8 @@ public class ProtoMekBVCalculator {
         bvReport.addLine("Offensive BV", "", obv);
         bvReport.addLine("Extra BV", "", xbv);
 
-        int finalBV;
-        if (protoMek.useGeometricMeanBV()) {
-            finalBV = (int) Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
-            if (finalBV == 0) {
-                finalBV = (int) Math.round(dbv + obv);
-            }
-            bvReport.addResultLine("Geometric Mean (2Sqrt(O*D) + X", "= ", finalBV);
-        } else {
-            finalBV = (int) Math.round(dbv + obv + xbv);
-            bvReport.addResultLine("Sum", "= ", finalBV);
-        }
+        int finalBV = (int) Math.round(dbv + obv + xbv);
+        bvReport.addResultLine("Sum", "= ", finalBV);
 
         // and then factor in pilot
         double pilotFactor = 1;

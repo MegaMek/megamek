@@ -17,6 +17,8 @@ package megamek.common;
 
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -6865,7 +6867,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * case this unit uses a manual BV value
      */
     public final int calculateBattleValue() {
-        return manualOrCalculateBV(false, false);
+        return manualOrCalculateBV(false, false, new DummyCalculationReport());
     }
 
     /**
@@ -6878,7 +6880,36 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The Battle Value of this unit
      */
     public final int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill) {
-        return manualOrCalculateBV(ignoreC3, ignoreSkill);
+        return manualOrCalculateBV(ignoreC3, ignoreSkill, new DummyCalculationReport());
+    }
+
+    /**
+     * Calculates the Battle Value of this unit. Both C3 and crew skill based changes
+     * to the BV are taken into account. Note that when a unit has a manual BV value set in its definition file,
+     * this manual BV value is returned instead of a calculated BV value and no calculation report info will be
+     * generated.
+     *
+     * @param calculationReport A CalculationReport to write the BV calculation to
+     * @return The full Battle Value of this unit including C3 and crew skill modifications or the manual BV in
+     * case this unit uses a manual BV value
+     */
+    public int calculateBattleValue(CalculationReport calculationReport) {
+        return manualOrCalculateBV(false, false, calculationReport);
+    }
+
+    /**
+     * Calculates the Battle Value of this unit. The parameters can be used to control C3 / skill-based changes
+     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
+     * value set in its definition file, this manual BV value is returned instead of a calculated BV value and
+     * no calculation report info will be generated.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @param calculationReport A CalculationReport to write the BV calculation to
+     * @return The Battle Value of this unit
+     */
+    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return manualOrCalculateBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**
@@ -6887,11 +6918,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
      * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @param calculationReport A CalculationReport to write the BV calculation to
      * @return The Battle Value of this unit
      */
-    private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill) {
-        return useManualBV ? manualBV : doBattleValueCalculation(ignoreC3, ignoreSkill);
+    private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return useManualBV ? manualBV : doBattleValueCalculation(ignoreC3, ignoreSkill, calculationReport);
     }
+
+    /**
+     * Calculates and returns the Battle Value of this unit taking into account the parameters.
+     * This method should be overridden by subclasses of Entity to provide a unit type specific calculation of the
+     * Battle Value. A report of the calculation should be written to the given calculationReport.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @param calculationReport A CalculationReport to write the BV calculation to
+     * @return The Battle Value of this unit calculated from its current state
+     */
+    protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport);
 
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
@@ -6902,17 +6946,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return (useReducedOverheatModifierBV || ((game != null)
                                                 && game.getOptions().booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)));
     }
-
-    /**
-     * Calculates and returns the Battle Value of this unit taking into account the parameters.
-     * This method should be overridden by subclasses of Entity to provide a unit type specific calculation of the
-     * Battle Value.
-     *
-     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
-     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
-     * @return The Battle Value of this unit calculated from its current state
-     */
-    protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill);
 
     /**
      * Generates a vector containing reports on all useful information about

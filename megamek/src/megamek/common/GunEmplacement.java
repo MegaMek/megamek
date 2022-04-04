@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.GunEmplacementBVCalculator;
 import megamek.common.enums.AimingMode;
 import org.apache.logging.log4j.LogManager;
@@ -183,8 +185,8 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return GunEmplacementBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return GunEmplacementBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     @Override

@@ -12,6 +12,7 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
@@ -158,7 +159,7 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         return 0;
     }
     

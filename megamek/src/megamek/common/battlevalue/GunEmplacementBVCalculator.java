@@ -18,15 +18,17 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
-public class GunEmplacementBVCalculator extends BVCalculator {
+public class GunEmplacementBVCalculator {
 
-    public static int calculateBV(GunEmplacement gunEmplacement, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText) {
-        bvText.delete(0, bvText.length());
-        bvText.append("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+    public static int calculateBV(GunEmplacement gunEmplacement, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+        bvReport.addHeader("Battle Value Calculations For");
+        bvReport.addHeader(gunEmplacement.getChassis() + " " + gunEmplacement.getModel());
+        bvReport.addLine("There is currently no report available for Gun Emplacements.");
+
         // using structures BV rules from MaxTech
-
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -50,14 +52,10 @@ public class GunEmplacementBVCalculator extends BVCalculator {
             }
         }
         dbv += dEquipmentBV;
-
         dbv *= 0.5; // structure modifier
-
         double weaponBV = 0;
 
         // figure out base weapon bv
-        // double weaponsBVFront = 0;
-        // double weaponsBVRear = 0;
         boolean hasTargComp = gunEmplacement.hasTargComp();
         for (Mounted mounted : gunEmplacement.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();

@@ -18,15 +18,20 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
-public class BattleArmorBVCalculator extends BVCalculator {
+public class BattleArmorBVCalculator {
 
-    public static int calculateBV(BattleArmor battleArmor, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText) {
-        return calculateBV(battleArmor, ignoreC3, ignoreSkill, bvText, false);
+    public static int calculateBV(BattleArmor battleArmor, boolean ignoreC3,
+                                  boolean ignoreSkill, CalculationReport bvReport) {
+        return calculateBV(battleArmor, ignoreC3, ignoreSkill, bvReport, false);
     }
 
-    public static int calculateBV(BattleArmor battleArmor, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText,
-                                  boolean singleTrooper) {
+    public static int calculateBV(BattleArmor battleArmor, boolean ignoreC3, boolean ignoreSkill,
+                                  CalculationReport bvReport, boolean singleTrooper) {
+        bvReport.addHeader("Battle Value Calculations For");
+        bvReport.addHeader(battleArmor.getChassis() + " " + battleArmor.getModel());
+        bvReport.addLine("There is currently no report available for BattleArmor.");
 
         double squadBV = 0;
         for (int i = 1; i < battleArmor.locations(); i++) {
@@ -73,8 +78,9 @@ public class BattleArmorBVCalculator extends BVCalculator {
             int tmmRan = Compute.getTargetMovementModifier(Math.max(runMP, umuMP), false, false, battleArmor.getGame()).getValue();
             // get jump MP, ignoring burden
             int rawJump = battleArmor.getJumpMP(false, true, true);
-            int tmmJumped = (rawJump > 0)
-                    ? Compute.getTargetMovementModifier(rawJump, true, false, battleArmor.getGame()).getValue() : 0;
+            int tmmJumped = (rawJump > 0) ?
+                    Compute.getTargetMovementModifier(rawJump, true, false, battleArmor.getGame()).getValue()
+                    : 0;
             double targetMovementModifier = Math.max(tmmRan, tmmJumped);
             double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
             if (battleArmor.hasCamoSystem()) {

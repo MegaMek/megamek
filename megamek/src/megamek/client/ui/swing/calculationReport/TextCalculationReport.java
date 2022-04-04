@@ -97,8 +97,8 @@ public class TextCalculationReport implements CalculationReport {
 
     @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
-        addLine(type, calculation, result);
         reportLines.add(new ReportLine("", "", "", LineType.RESULT_LINE));
+        addLine(type, calculation, result);
         return this;
     }
 

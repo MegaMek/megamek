@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.battlevalue.AeroBVCalculator;
 import megamek.common.battlevalue.JumpShipBVCalculator;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -1110,8 +1113,8 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return JumpShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return JumpShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     public int getArcswGuns() {

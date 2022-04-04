@@ -386,7 +386,10 @@ public final class UIUtil {
                     int right = scaleForGUI(i.right);
                     panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
-                adjustDialog((JPanel) comp);
+                adjustDialog(panel);
+            }
+            if (comp instanceof Container) {
+                adjustDialog((Container) comp);
             }
             if (comp instanceof JTabbedPane) {
                 comp.setFont(scaledFont);

@@ -11,6 +11,7 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -238,7 +239,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         int bv = 0;
         for (Entity fighter : getActiveSubEntities()) {
             bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill);

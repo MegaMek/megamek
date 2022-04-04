@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.AeroBVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -1325,8 +1327,8 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return AeroBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return AeroBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     public double getBVTypeModifier() {

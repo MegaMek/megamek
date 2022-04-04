@@ -18,6 +18,7 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -26,23 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class DropShipBVCalculator extends BVCalculator {
+public class DropShipBVCalculator {
 
-    public static int calculateBV(Dropship dropShip, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText) {
-        bvText.delete(0, bvText.length());
-        bvText.append("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-        bvText.append(dropShip.getChassis());
-        bvText.append(" ");
-        bvText.append(dropShip.getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
+    public static int calculateBV(Dropship dropShip, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+        bvReport.addHeader("Battle Value Calculations For");
+        bvReport.addHeader(dropShip.getChassis() + " " + dropShip.getModel());
 
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-
+        bvReport.addSubHeader("Defensive Battle Rating Calculation:");
         double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
-
         int modularArmor = 0;
         for (Mounted mounted : dropShip.getEquipment()) {
             if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
@@ -50,51 +42,13 @@ public class DropShipBVCalculator extends BVCalculator {
             }
         }
 
-        // no use for armor mods right now but in case we need one later
-        double armorMod = 1.0;
-
-        bvText.append(startTable);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Armor Factor x 2.5 x");
-        bvText.append(armorMod);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        dbv += (dropShip.getTotalArmor() + modularArmor);
-
-        bvText.append(dbv);
-        bvText.append(" x 2.5 x ");
-        bvText.append(armorMod);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-
-        dbv *= 2.5 * armorMod;
-
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total SI x 2");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
+        dbv += dropShip.getTotalArmor() + modularArmor;
+        dbv *= 2.5;
+        bvReport.addLine("Total Armor Factor x 2.5 ",
+                (dropShip.getTotalArmor() + modularArmor) + " x 2.5", "= ", dbv);
         double dbvSI = dropShip.getSI() * 2.0;
         dbv += dbvSI;
-
-        bvText.append(dropShip.getSI());
-        bvText.append(" x 2");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(dbvSI);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total SI x 2", dropShip.getSI() + " x 2", "= ", dbvSI);
 
         // add defensive equipment
         double amsBV = 0;
@@ -114,259 +68,78 @@ public class DropShipBVCalculator extends BVCalculator {
             }
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(dropShip);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(dropShip));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + etype.getBV(dropShip), "");
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                // we need to deal with cases where ammo is loaded in multi-ton
-                // increments
-                // (on dropships and jumpships) - lets take the ratio of shots
-                // to shots left
+                // we need to deal with cases where ammo is loaded in multi-ton increments
+                // (on dropships and jumpships) - lets take the ratio of shots to shots left
                 double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
-                // since
-                // we don't make that adjustment elsewhere
+                // since we don't make that adjustment elsewhere
                 if (ratio < 1.0) {
                     ratio = 1.0;
                 }
                 amsAmmoBV += ratio * etype.getBV(dropShip);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(ratio * etype.getBV(dropShip));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + (ratio * etype.getBV(dropShip)), "");
             } else if ((etype instanceof AmmoType)
                     && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
-                // we need to deal with cases where ammo is loaded in multi-ton
-                // increments
-                // (on dropships and jumpships) - lets take the ratio of shots
-                // to shots left
+                // we need to deal with cases where ammo is loaded in multi-ton increments
+                // (on dropships and jumpships) - lets take the ratio of shots to shots left
                 double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
-                // since
-                // we don't make that adjustment elsewhere
+                // since we don't make that adjustment elsewhere
                 if (ratio < 1.0) {
                     ratio = 1.0;
                 }
                 screenAmmoBV += ratio * etype.getBV(dropShip);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(ratio * etype.getBV(dropShip));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + (ratio * etype.getBV(dropShip)), "");
             } else if ((etype instanceof WeaponType)
                     && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(dropShip);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(dropShip));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + etype.getBV(dropShip), "");
             } else if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
                 defEqBV += etype.getBV(dropShip);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(dropShip));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getName(), "+ " + etype.getBV(dropShip), "");
             }
         }
         if (amsBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total AMS BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(amsBV);
             dbv += amsBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total AMS BV:", "", amsBV);
         }
         if (screenBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Screen BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(screenBV);
             dbv += screenBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total Screen BV:", "", screenBV);
         }
         if (amsAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(Math.min(amsBV, amsAmmoBV));
             dbv += Math.min(amsBV, amsAmmoBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total AMS Ammo BV (to a maximum of AMS BV):", "", Math.min(amsBV, amsAmmoBV));
         }
         if (screenAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(Math.min(screenBV, screenAmmoBV));
             dbv += Math.min(screenBV, screenAmmoBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total Screen Ammo BV (to a maximum of Screen BV):", "", Math.min(screenBV, screenAmmoBV));
         }
         if (defEqBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total misc defensive equipment BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(defEqBV);
             dbv += defEqBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total misc defensive equipment BV:", "", defEqBV);
         }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // unit type multiplier
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Unit type Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dropShip.getBVTypeModifier());
+        bvReport.addResultLine("", dbv);
         dbv *= dropShip.getBVTypeModifier();
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("x" + dropShip.getBVTypeModifier());
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Multiply by Unit type Modifier", "" + dropShip.getBVTypeModifier(),
+                "x ", dropShip.getBVTypeModifier());
+        bvReport.addResultLine("", dbv);
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addSubHeader("Offensive Battle Rating Calculation:");
         // calculate heat efficiency
         int aeroHeatEfficiency = dropShip.getHeatCapacity();
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Base Heat Efficiency ");
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(aeroHeatEfficiency);
-
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Base Heat Efficiency ", "", aeroHeatEfficiency);
 
         // get arc BV and heat
-        // I am going to redo how I do this to cycle through locations, so I can
-        // spit it out
-        // to bvText. It will require a little trickery for rear LS/RS since
-        // those technically are not
-        // locations
         double[] arcBVs = new double[dropShip.locations() + 2];
         double[] arcHeats = new double[dropShip.locations() + 2];
         double[] ammoBVs = new double[dropShip.locations() + 2];
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Arc BV and Heat");
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Arc BV and Heat", "", "");
 
         // cycle through locations
         for (int loc = 0; loc < (dropShip.locations() + 2); loc++) {
@@ -378,18 +151,7 @@ public class DropShipBVCalculator extends BVCalculator {
                 rear = " (R)";
             }
             dropShip.getLocationName(l);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("<i>" + dropShip.getLocationName(l) + rear + "</i>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("<i>BV</i>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("<i>Heat</i>");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(dropShip.getLocationName(l) + rear, "BV", "Heat");
             double arcBV = 0.0;
             double arcHeat = 0.0;
             double arcAmmoBV = 0.0;
@@ -478,17 +240,7 @@ public class DropShipBVCalculator extends BVCalculator {
                         weaponsForExcessiveAmmo.put(key, wtype.getBV(dropShip) + weaponsForExcessiveAmmo.get(key));
                     }
                 }
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(wtype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+" + dBV);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+" + weaponHeat);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(wtype.getName(), "+ " + dBV, "+ ", weaponHeat);
                 arcBV += dBV;
                 arcHeat += weaponHeat;
             }
@@ -503,16 +255,12 @@ public class DropShipBVCalculator extends BVCalculator {
                     continue;
                 }
                 AmmoType atype = (AmmoType) mounted.getType();
-                // we need to deal with cases where ammo is loaded in multi-ton
-                // increments
-                // (on dropships and jumpships) - lets take the ratio of shots
-                // to
-                // shots left
+                // we need to deal with cases where ammo is loaded in multi-ton increments
+                // (on dropships and jumpships) - lets take the ratio of shots to shots left
                 double ratio = mounted.getUsableShotsLeft() / atype.getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
-                // since
-                // we don't make that adjustment elsewhere
+                // since we don't make that adjustment elsewhere
                 if (ratio < 1.0) {
                     ratio = 1.0;
                 }
@@ -531,11 +279,9 @@ public class DropShipBVCalculator extends BVCalculator {
                     continue;
                 }
 
-                // don't count oneshot ammo, it's considered part of the
-                // launcher.
+                // don't count oneshot ammo, it's considered part of the launcher.
                 if (mounted.getLocation() == Entity.LOC_NONE) {
-                    // assumption: ammo without a location is for a oneshot
-                    // weapon
+                    // assumption: ammo without a location is for a oneshot weapon
                     continue;
                 }
                 double abv = ratio * atype.getBV(dropShip);
@@ -562,60 +308,19 @@ public class DropShipBVCalculator extends BVCalculator {
             for (String fullkey : keys) {
                 String[] k = fullkey.split(";");
                 String key = k[1];
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(k[0]);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
                 if (weaponsForExcessiveAmmo.get(key) != null) {
                     if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
-                        bvText.append("+" + weaponsForExcessiveAmmo.get(key) + "*");
+                        bvReport.addLine(k[0], "+ " + weaponsForExcessiveAmmo.get(key) + "*", "");
                         arcAmmoBV += weaponsForExcessiveAmmo.get(key);
                     } else {
-                        bvText.append("+" + ammo.get(key));
+                        bvReport.addLine(k[0], "+ " + ammo.get(key), "");
                         arcAmmoBV += ammo.get(key);
                     }
                 }
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("");
-                bvText.append(endColumn);
-                bvText.append(endRow);
             }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("<b>" + dropShip.getLocationName(l) + rear + " Weapon Totals</b>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("<b>" + arcBV + "</b>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("<b>" + arcHeat + "</b>");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("<b>" + dropShip.getLocationName(l) + rear + " Ammo Totals</b>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("<b>" + arcAmmoBV + "</b>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("<b>" + dropShip.getLocationName(l) + rear + " Totals</b>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            double tempBV = arcBV + arcAmmoBV;
-            bvText.append("<b>" + tempBV + "</b>");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(dropShip.getLocationName(l) + rear + " Weapon Totals", "" + arcBV, "", arcHeat);
+            bvReport.addLine(dropShip.getLocationName(l) + rear + " Ammo Totals", "" + arcAmmoBV, "");
+            bvReport.addLine(dropShip.getLocationName(l) + rear + " Totals", "" + (arcBV + arcAmmoBV), "");
             arcBVs[loc] = arcBV;
             arcHeats[loc] = arcHeat;
             ammoBVs[loc] = arcAmmoBV;
@@ -685,101 +390,52 @@ public class DropShipBVCalculator extends BVCalculator {
         }
 
         // ok now lets go in and add the arcs
-        double totalHeat = 0.0;
+        double totalHeat;
         if (highArc > Integer.MIN_VALUE) {
             // ok now add the BV from this arc and reset to zero
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Highest BV Arc (" + getArcName(dropShip, highArc) + ")" + arcBVs[highArc] + "*1.0");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+" + arcBVs[highArc]);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startColumn);
             totalHeat = arcHeats[highArc];
-            bvText.append("Total Heat: " + totalHeat);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Highest BV Arc (" + getArcName(dropShip, highArc) + ")" + arcBVs[highArc] + "*1.0",
+                    "+ " + arcBVs[highArc], "Total Heat: " + totalHeat);
             weaponBV += arcBVs[highArc];
             arcBVs[highArc] = 0.0;
+
             if (adjArcH > Integer.MIN_VALUE) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(
-                        "Adjacent High BV Arc (" + getArcName(dropShip, adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+" + (arcBVs[adjArcH] * adjArcHMult));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                bvText.append(startRow);
-                bvText.append(startColumn);
                 totalHeat += arcHeats[adjArcH];
                 String over = "";
                 if (totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
                 }
-                bvText.append("Total Heat: " + totalHeat + over);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine("Adjacent High BV Arc (" + getArcName(dropShip, adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult,
+                        "+ " + (arcBVs[adjArcH] * adjArcHMult),
+                        "Total Heat: " + totalHeat + over);
                 weaponBV += adjArcHMult * arcBVs[adjArcH];
                 arcBVs[adjArcH] = 0.0;
             }
+
             if (adjArcL > Integer.MIN_VALUE) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(
-                        "Adjacent Low BV Arc (" + getArcName(dropShip, adjArcL) + ") " + arcBVs[adjArcL] + "*" + adjArcLMult);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+" + (adjArcLMult * arcBVs[adjArcL]));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                bvText.append(startRow);
-                bvText.append(startColumn);
                 totalHeat += arcHeats[adjArcL];
                 String over = "";
                 if (totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
                 }
-                bvText.append("Total Heat: " + totalHeat + over);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine("Adjacent Low BV Arc (" + getArcName(dropShip, adjArcL) + ") " + arcBVs[adjArcL] + "*" + adjArcLMult,
+                        "+ " + (adjArcLMult * arcBVs[adjArcL]),
+                        "Total Heat: " + totalHeat + over);
                 weaponBV += adjArcLMult * arcBVs[adjArcL];
                 arcBVs[adjArcL] = 0.0;
             }
             // ok now we can cycle through the rest and add 25%
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Remaining Arcs");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Remaining Arcs", "", "");
             for (int loc = 0; loc < arcBVs.length; loc++) {
                 if (arcBVs[loc] <= 0) {
                     continue;
                 }
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(getArcName(dropShip, loc) + " " + arcBVs[loc] + "*0.25");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+" + (0.25 * arcBVs[loc]));
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(getArcName(dropShip, loc) + " " + arcBVs[loc] + "*0.25",
+                        "+" + (0.25 * arcBVs[loc]), "");
                 weaponBV += (0.25 * arcBVs[loc]);
             }
         }
-
-        bvText.append("Total Weapons BV Adjusted For Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Total Weapons BV Adjusted For Heat:", "", weaponBV);
         // add offensive misc. equipment BV
         double oEquipmentBV = 0;
         for (Mounted mounted : dropShip.getMisc()) {
@@ -795,80 +451,21 @@ public class DropShipBVCalculator extends BVCalculator {
             }
             double bv = mtype.getBV(dropShip);
             if (bv > 0) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(bv);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getName(), "", bv);
             }
             oEquipmentBV += bv;
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Misc Offensive Equipment BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total Misc Offensive Equipment BV: ", "", oEquipmentBV);
         weaponBV += oEquipmentBV;
-
-        // adjust
 
         // adjust further for speed factor
         double speedFactor = Math.pow(1 + (((double) dropShip.getRunMP() - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Final Speed Factor: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Final Speed Factor: ", "", speedFactor);
+        double obv; // offensive bv
         obv = weaponBV * speedFactor;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Weapons BV * Speed Factor ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(weaponBV);
-        bvText.append(" * ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        if (dropShip.useGeometricMeanBV()) {
-            bvText.append("2 * sqrt(Offensive BV * Defensive BV");
-        } else {
-            bvText.append("Offensive BV + Defensive BV");
-        }
-        bvText.append(endColumn);
-        bvText.append(startColumn);
+        bvReport.addLine("Weapons BV * Speed Factor ",
+                weaponBV + " x " + speedFactor, "= ", obv);
 
         double finalBV;
         if (dropShip.useGeometricMeanBV()) {
@@ -876,60 +473,23 @@ public class DropShipBVCalculator extends BVCalculator {
             if (finalBV == 0) {
                 finalBV = dbv + obv;
             }
-            bvText.append("2 * sqrt(");
-            bvText.append(obv);
-            bvText.append(" + ");
-            bvText.append(dbv);
-            bvText.append(")");
+            bvReport.addLine("2 * sqrt(Offensive BV * Defensive BV)",
+                    "2 * sqrt(" + obv + " + " + dbv + ")", "= ", finalBV);
         } else {
             finalBV = dbv + obv;
-            bvText.append(dbv);
-            bvText.append(" + ");
-            bvText.append(obv);
+            bvReport.addLine("Offensive BV + Defensive BV",
+                    obv + " + " + dbv, "= ", finalBV);
         }
 
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
         finalBV = Math.round(finalBV);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
+        bvReport.addResultLine("Final BV", "", finalBV);
 
         // we get extra bv from some stuff
         double xbv = 0.0;
 
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3
-        // times
+        // also, each 'has' loops through all equipment. inefficient to do it 3 times
         if (!ignoreC3 && (dropShip.getGame() != null)) {
             xbv += dropShip.getExtraC3BV((int) Math.round(finalBV));
         }
@@ -941,9 +501,7 @@ public class DropShipBVCalculator extends BVCalculator {
             pilotFactor = dropShip.getCrew().getBVSkillMultiplier(dropShip.getGame());
         }
 
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
-
-        return retVal;
+        return (int) Math.round((finalBV) * pilotFactor);
     }
 
     private static String getArcName(Dropship dropShip, int loc) {

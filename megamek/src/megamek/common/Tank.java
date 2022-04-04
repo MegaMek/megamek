@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.CombatVehicleBVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
@@ -1203,8 +1205,8 @@ public class Tank extends Entity {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return CombatVehicleBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return CombatVehicleBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     @Override

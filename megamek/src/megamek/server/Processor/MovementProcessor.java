@@ -2,6 +2,7 @@ package megamek.server.Processor;
 
 import megamek.MMConstants;
 import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser;
@@ -14,6 +15,7 @@ import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -2106,7 +2108,7 @@ public class MovementProcessor {
             }
 
             // Handle disconnecting trailers.
-            if (step.getType() == MovePath.MoveStepType.DISCONNECT) {
+            if (step.getType() == MoveStepType.DISCONNECT) {
                 Targetable unloaded = step.getTarget(game);
                 if (null != step.getTargetPosition()) {
                 }
@@ -2119,9 +2121,7 @@ public class MovementProcessor {
             }
 
             // moving backwards over elevation change
-            if (((step.getType() == MovePath.MoveStepType.BACKWARDS)
-                    || (step.getType() == MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)
-                    || (step.getType() == MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS))
+            if ((Stream.of(MoveStepType.BACKWARDS, MoveStepType.LATERAL_LEFT_BACKWARDS, MoveStepType.LATERAL_RIGHT_BACKWARDS).anyMatch(moveStepType -> (step.getType() == moveStepType)))
                     && !(md.isJumping()
                             && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                     && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())

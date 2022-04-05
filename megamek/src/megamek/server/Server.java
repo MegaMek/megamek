@@ -59,10 +59,12 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -1017,7 +1019,7 @@ public class Server implements Runnable {
 
         // Write end of game to stdout so controlling scripts can rotate logs.
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-        LogManager.getLogger().info(format.format(new Date()) + " END OF GAME");
+        LogManager.getLogger().info(format.format(LocalDate.now()) + " END OF GAME");
 
         if (mailer != null) {
             mailer.reset();
@@ -2981,7 +2983,6 @@ public class Server implements Runnable {
             return;
         }
 
-        assert nextTurn != null;
         Player player = getPlayer(nextTurn.getPlayerNum());
 
         if ((player != null) && (game.getEntitiesOwnedBy(player) == 0)) {
@@ -15392,7 +15393,6 @@ public class Server implements Runnable {
 
         // do we hit?
         if (roll < toHit.getValue()) {
-            assert te != null;
             Coords dest = te.getPosition();
             Coords targetDest = Compute.getPreferredDisplacement(game, te.getId(), dest, direction);
             // miss
@@ -29672,18 +29672,17 @@ public class Server implements Runnable {
                     caa.getTarget(game).isConventionalInfantry(), caa.isZweihandering());
             if (caa.getTargetType() == Targetable.TYPE_BUILDING) {
                 EquipmentType clubType = caa.getClub().getType();
-                if (clubType.hasSubType(MiscType.S_BACKHOE)
-                        || clubType.hasSubType(MiscType.S_CHAINSAW)
-                        || clubType.hasSubType(MiscType.S_MINING_DRILL)
-                        || clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
+                if (!LongStream.of(MiscType.S_BACKHOE, MiscType.S_CHAINSAW, MiscType.S_MINING_DRILL, MiscType.S_PILE_DRIVER).anyMatch(clubType::hasSubType)) {
+                    if (clubType.hasSubType(MiscType.S_DUAL_SAW)) {
+                        damage += Compute.d6(2);
+                    } else if (clubType.hasSubType(MiscType.S_ROCK_CUTTER)) {
+                        damage += Compute.d6(3);
+                    }
+                    else if (clubType.hasSubType(MiscType.S_WRECKING_BALL)) {
+                        damage += Compute.d6(4);
+                    }
+                } else {
                     damage += Compute.d6(1);
-                } else if (clubType.hasSubType(MiscType.S_DUAL_SAW)) {
-                    damage += Compute.d6(2);
-                } else if (clubType.hasSubType(MiscType.S_ROCK_CUTTER)) {
-                    damage += Compute.d6(3);
-                }
-                else if (clubType.hasSubType(MiscType.S_WRECKING_BALL)) {
-                    damage += Compute.d6(4);
                 }
             }
         } else if (aaa instanceof DfaAttackAction) {

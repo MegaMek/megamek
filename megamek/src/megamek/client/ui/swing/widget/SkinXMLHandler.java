@@ -19,6 +19,7 @@ package megamek.client.ui.swing.widget;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
@@ -165,36 +166,32 @@ public class SkinXMLHandler {
      * Initializes using the default skin file.
      */
     public static boolean initSkinXMLHandler() {
-        String skinFilePath = GUIPreferences.getInstance().getSkinFile();
-        return initSkinXMLHandler(skinFilePath);
+        return initSkinXMLHandler(GUIPreferences.getInstance().getSkinFile());
     }
 
     /**
      * Initializes using the supplied skin file.
      */
-    public synchronized static boolean initSkinXMLHandler(String fileName) {
+    public synchronized static boolean initSkinXMLHandler(final @Nullable String filename) {
         // Reset UnitDisplay spec
         udSpec = null;
 
-        if (fileName == null) {
-            System.out.println("ERROR: Bad skin specification file: " +
-                    "null filename!");
+        if (filename == null) {
+            LogManager.getLogger().error("Cannot initialize skin based on a null filename.");
             return false;
         }
 
-        File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
+        File file = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
         if (!file.exists() || !file.isFile()) {
-            System.out.println("ERROR: Bad skin specification file: " +
-                    "file doesn't exist!  File name: " + fileName);
+            LogManager.getLogger().error("Cannot initialize skin based on a non-existent file with filename " + filename);
             return false;
         }
 
         // Build the XML document.
         try {
             DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
-            System.out.println("Parsing " + file.getName());
+            LogManager.getLogger().info("Parsing " + file.getName());
             Document doc = builder.parse(file);
-            System.out.println("Parsing finished.");
 
             // Get the list of units.
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
@@ -202,59 +199,49 @@ public class SkinXMLHandler {
             skinSpecs = new HashMap<>((int) (totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
                 Element borderList = (Element) listOfComponents.item(comp);
+                String name = borderList.getElementsByTagName(NAME).item(0).getTextContent();
 
-                String name = borderList.getElementsByTagName(NAME).
-                        item(0).getTextContent();
-
-                if (name.equals(SkinSpecification.UIComponents.UnitDisplay.getComp())) {
+                if (name.equals(UIComponents.UnitDisplay.getComp())) {
                     parseUnitDisplaySkinSpec(borderList);
                     continue;
                 }
 
                 SkinSpecification skinSpec;
                 // Parse no border
-                Element noBorderEle = (Element) borderList
-                        .getElementsByTagName(NO_BORDER).item(0);
+                Element noBorderEle = (Element) borderList.getElementsByTagName(NO_BORDER).item(0);
                 boolean noBorder = false;
                 if (noBorderEle != null) {
-                    noBorder = Boolean
-                            .parseBoolean(noBorderEle.getTextContent());
+                    noBorder = Boolean.parseBoolean(noBorderEle.getTextContent());
                 }
 
                 // Get the first element of this node.
-                Element plainTag = (Element)
-                        borderList.getElementsByTagName(PLAIN).item(0);
+                Element plainTag = (Element) borderList.getElementsByTagName(PLAIN).item(0);
                 // If there is no plain tag, load the icons
-                if (plainTag == null && !noBorder) {
+                if ((plainTag == null) && !noBorder) {
                     // Get the border specs
-                    Element border = (Element)
-                            borderList.getElementsByTagName(BORDER).item(0);
+                    Element border = (Element) borderList.getElementsByTagName(BORDER).item(0);
                     if (border == null) {
-                        System.err.println("Missing <" + BORDER +
-                                "> tag in element #" + comp);
+                        LogManager.getLogger().error(String.format("Missing <%s> tag in element %s", BORDER, comp));
                         continue;
                     }
 
                     skinSpec = parseBorderTag(name, border);
-                } else { // Plain skin, no icons
+                } else {
+                    // Plain skin, no icons
                     skinSpec = new SkinSpecification(name);
                     skinSpec.noBorder = noBorder;
                 }
 
                 // Get the background specs
                 if (plainTag == null) {
-                    NodeList backgrounds =
-                            borderList.getElementsByTagName(BACKGROUND_IMAGE);
-                    if (backgrounds != null) {
-                        for (int bg = 0; bg < backgrounds.getLength(); bg++) {
-                            skinSpec.backgrounds.add(backgrounds.item(bg).getTextContent());
-                        }
+                    NodeList backgrounds = borderList.getElementsByTagName(BACKGROUND_IMAGE);
+                    for (int bg = 0; bg < backgrounds.getLength(); bg++) {
+                        skinSpec.backgrounds.add(backgrounds.item(bg).getTextContent());
                     }
                 }
 
                 // Parse show scroll bars
-                Element showScrollEle = (Element) borderList
-                        .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
+                Element showScrollEle = (Element) borderList.getElementsByTagName(SHOW_SCROLL_BARS).item(0);
                 if (showScrollEle != null) {
                     skinSpec.showScrollBars = Boolean.parseBoolean(showScrollEle.getTextContent());
                 }
@@ -293,8 +280,8 @@ public class SkinXMLHandler {
                     skinSpec.tileBackground = Boolean.parseBoolean(tileBGEle.getTextContent());
                 }
 
-                if (SkinSpecification.UIComponents.getUIComponent(name) == null) {
-                    LogManager.getLogger().error("Unable to add unrecognized UI component: " + name + "!");
+                if (UIComponents.getUIComponent(name) == null) {
+                    LogManager.getLogger().error("Unable to add unrecognized UI component: " + name);
                 } else {
                     skinSpecs.put(name, skinSpec);
                 }
@@ -302,20 +289,20 @@ public class SkinXMLHandler {
 
             if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp())
                     || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
-                System.out.println("SKIN ERROR: Bad skin specification file: " +
-                        "file doesn't specify " + UIComponents.DefaultUIElement +
-                        " or " + UIComponents.DefaultButton + "!");
+                LogManager.getLogger().error(String.format("Skin specification file doesn't specify %s or %s",
+                        UIComponents.DefaultUIElement, UIComponents.DefaultButton));
                 return false;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return false;
         }
+
         // Skin spec didn't specify UnitDisplay skin, use default
         if (udSpec == null) {
             udSpec = new UnitDisplaySkinSpecification();
         }
+
         return true;
     }
 
@@ -326,14 +313,10 @@ public class SkinXMLHandler {
         SkinSpecification skinSpec = new SkinSpecification(compName);
 
         // Parse Corner Icons
-        skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
-                item(0).getTextContent();
-        skinSpec.tl_corner = border.getElementsByTagName(TL_CORNER).
-                item(0).getTextContent();
-        skinSpec.br_corner = border.getElementsByTagName(BR_CORNER).
-                item(0).getTextContent();
-        skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).
-                item(0).getTextContent();
+        skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).item(0).getTextContent();
+        skinSpec.tl_corner = border.getElementsByTagName(TL_CORNER).item(0).getTextContent();
+        skinSpec.br_corner = border.getElementsByTagName(BR_CORNER).item(0).getTextContent();
+        skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).item(0).getTextContent();
 
         // Parse Edge Icons from Edge tag
         NodeList edgeNodes = border.getElementsByTagName(EDGE);

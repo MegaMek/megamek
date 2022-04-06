@@ -24,6 +24,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 
+/**
+ * This is a Calculation Report that builds its output as an assembly of JLabels in a JPanel.
+ * This is best suited to being displayed in a dialog as it knows how wide and high it needs to be
+ * (better than an HTML report does). Note that its toString() method does not yield a readable report..
+ */
 public class SwingCalculationReport implements CalculationReport {
 
     private final JPanel report = new JPanel(new GridBagLayout());

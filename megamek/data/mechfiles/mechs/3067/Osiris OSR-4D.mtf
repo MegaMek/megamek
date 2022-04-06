@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Osiris
 OSR-4D
 mul id:4764
@@ -23,8 +23,8 @@ LA armor:9
 RA armor:9
 LT armor:10
 RT armor:10
-CT armor:14
-HD armor:9
+CT armor:15
+HD armor:8
 LL armor:13
 RL armor:13
 RTL armor:3
@@ -34,24 +34,24 @@ RTC armor:5
 Weapons:6
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
-ER Medium Laser, Right Torso
 Medium Pulse Laser, Right Torso
+ER Medium Laser, Right Torso
 ER Medium Laser, Center Torso
 ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 IS Ferro-Fibrous
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -152,11 +152,8 @@ IS Ferro-Fibrous
 -Empty-
 
 overview:The Osiris was essentially modeled after the Clan Dragonfly and designed by the same engineers who designed the Anubis. The Osiris was designed to be a fast, hit-and-fade style offensive platform and can perform well in that capacity with its awesome speed, although it does appear to rely too heavily on its mobility to protect it from damage.
-
 capabilities:While the limits of Inner Sphere technology forced the designers to skimp on the specifications somewhat, the Osiris does maintain the same speed as the design it is based off of with its powerful Pharaoh 240 XL. The armor and jump capacity are sadly lacking, however, as the Osiris can only jump half as far as the Dragonfly with its four Rawlings 61 jump jets and is armored with four and a half tons of StarGuard Ferro-Fibrous.
-
 deployment:A variant that was born out of the FedCom Civil War in 3067, the 4D drops the missiles and Machine Gun in favor of one Medium Pulse Laser and increased jump jet capacity, which is now 240 meters.
-
 manufacturer:Achernar BattleMechs
 primaryfactory:New Avalon
 systemmanufacturer:CHASSIS:FITES-O

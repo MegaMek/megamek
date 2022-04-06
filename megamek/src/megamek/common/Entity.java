@@ -29,7 +29,6 @@ import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.*;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
@@ -141,8 +140,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             i18nEntry = s;
         }
     }
-
-
 
     public enum MPBoosters {
         NONE(),
@@ -606,7 +603,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean salvageable = true;
 
     /**
-     * The removal condition is set when the entitiy is removed from the game.
+     * The removal condition is set when the entity is removed from the game.
      */
     private int removalCondition = IEntityRemovalConditions.REMOVE_UNKNOWN;
 
@@ -772,7 +769,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean taserInterferenceHeat = false;
 
     // contains a HTML string describing BV calculation
-    protected StringBuffer bvText = null;
+    protected StringBuffer bvText = new StringBuffer();
     protected String startTable = "<TABLE>";
     protected String endTable = "</TABLE>";
 
@@ -2709,7 +2706,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the closest valid secondary facing to the given direction.
      *
-     * @return the the closest valid secondary facing.
+     * @return the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
 
@@ -4330,11 +4327,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         bomb.setWeaponGroup(true);
                         weaponGroupList.add(bomb);
                     }
-                } catch (LocationFullException ex) {
+                } catch (LocationFullException ignored) {
 
                 }
                 foundSpaceBomb = true;
             }
+
             if (!game.getBoard().inSpace()
                     && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
                     && !((this instanceof LandAirMech)
@@ -4346,24 +4344,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
+
                     }
                 }
-                if (numGroundBombs < 10 && isFighter()) {
+
+                if ((numGroundBombs < 10) && isFighter()) {
                     try {
                         Mounted bomb = addEquipment(altBomb, m.getLocation(), false);
                         if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
                             bomb.setWeaponGroup(true);
                             weaponGroupList.add(bomb);
                         }
-                    } catch (LocationFullException ex) {
+                    } catch (LocationFullException ignored) {
+
                     }
                 }
                 numGroundBombs++;
             }
-
         }
-
     }
 
     /**
@@ -4509,6 +4508,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int count = 0;
         OUTER: for (Mounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(flag)
+                    && ((location == -1) || (m.getLocation() == location))) {
+                if (m.getType().hasModes()) {
+                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
+                        if (e.nextElement().equals("On") && !m.curMode().equals("On")) {
+                            continue OUTER;
+                        }
+                    }
+                }
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int countWorkingMisc(String internalName, int location) {
+        int count = 0;
+        OUTER: for (Mounted m : getMisc()) {
+            if (!m.isInoperable() && m.getType().getInternalName().equalsIgnoreCase(internalName)
                     && ((location == -1) || (m.getLocation() == location))) {
                 if (m.getType().hasModes()) {
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
@@ -5089,8 +5106,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the the location has a system of the type, whether is
-     * destroyed or not
+     * @return true if the location has a system of the type, whether is destroyed or not
      */
     public boolean hasSystem(int system, int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
@@ -6841,9 +6857,41 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Calculates the battle value of this entity
+     * Calculates the Battle Value of this unit. Both C3 and crew skill based changes
+     * to the BV are taken into account. Note that when a unit has a manual BV value set in its definition file,
+     * this manual BV value is returned instead of a calculated BV value.
+     *
+     * @return The full Battle Value of this unit including C3 and crew skill modifications or the manual BV in
+     * case this unit uses a manual BV value
      */
-    public abstract int calculateBattleValue();
+    public final int calculateBattleValue() {
+        return manualOrCalculateBV(false, false);
+    }
+
+    /**
+     * Calculates the Battle Value of this unit. The parameters can be used to control C3 / skill-based changes
+     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
+     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @return The Battle Value of this unit
+     */
+    public final int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill) {
+        return manualOrCalculateBV(ignoreC3, ignoreSkill);
+    }
+
+    /**
+     * Checks if this unit uses a manual BV and if so, returns it. Otherwise, forwards to the actual
+     * BV calculation method.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @return The Battle Value of this unit
+     */
+    private int manualOrCalculateBV(boolean ignoreC3, boolean ignoreSkill) {
+        return useManualBV ? manualBV : doBattleValueCalculation(ignoreC3, ignoreSkill);
+    }
 
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
@@ -6856,21 +6904,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Calculates the battle value of this mech. If the parameter is true, then
-     * the battle value for c3 will be added whether the mech is currently part
-     * of a network or not. This should be overwritten if necessary
+     * Calculates and returns the Battle Value of this unit taking into account the parameters.
+     * This method should be overridden by subclasses of Entity to provide a unit type specific calculation of the
+     * Battle Value.
      *
-     * @param ignoreC3    if the contribution of the C3 computer should be ignored when
-     *                    calculating BV.
-     * @param ignorePilot if the extra BV due to piloting skill should be ignore, needed
-     *                    for c3 bv
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @return The Battle Value of this unit calculated from its current state
      */
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-        return calculateBattleValue();
-    }
+    protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill);
 
     /**
      * Generates a vector containing reports on all useful information about
@@ -9720,9 +9762,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns true if the the given player can see this Entity, including
-     * teammates if team_vision is on.
-     *
+     * @return true if the given player can see this Entity, including teammates if team_vision is on.
      */
     public boolean hasDetectedEntity(Player p) {
         // No sensors - no one detects anything
@@ -12152,9 +12192,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // if the small craft does not already have ECM, then give them a single
         // hex ECM so they can change the mode
-        // FIXME: This is a really hacky way to to do it that results in small
-        // craft having
-        // ECM when the rule is not in effect and in non-space maps
+        // FIXME : This is a really hacky way to do it that results in small craft having ECM when
+        // FIXME : the rule is not in effect and in non-space maps
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
             && !hasActiveECM() && isMilitary()) {
             try {
@@ -12162,15 +12201,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 this.addEquipment(
                         EquipmentType.get(prefix + BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-                // ignore
+            } catch (LocationFullException ignored) {
+
             }
         }
         
         for (Mounted mounted : getWeaponList()) {
-            if (mounted.getType() instanceof Weapon)
+            if (mounted.getType() instanceof Weapon) {
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
-                mounted.setModesForMapType();
+            }
+            mounted.setModesForMapType();
         }
 
         for (Mounted misc : getMisc()) {
@@ -12275,11 +12315,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isCarefulStand() {
         return false;
     }
-    
+
     public void setTurnInterrupted(boolean interrupted) {
         turnWasInterrupted = interrupted;
     }
-    
+
     /**
      * This should eventually be true for any situation where the entity's
      * turn was interrupted, e.g. walking over a minefield
@@ -12323,10 +12363,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean hasModularArmor(int loc) {
         for (Mounted mount : this.getEquipment()) {
             if ((loc == -1) || (mount.getLocation() == loc)) {
-                if (!mount.isDestroyed()
-                    && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType())
-                        .hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                if (!mount.isDestroyed() && (mount.getType() instanceof MiscType)
+                        && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
                     return true;
                 }
             }
@@ -12335,8 +12373,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public int getDamageReductionFromModularArmor(HitData hit, int damage,
-                                                  Vector<Report> vDesc) {
+    public int getDamageReductionFromModularArmor(HitData hit, int damage, Vector<Report> vDesc) {
         int loc = hit.getLocation();
         if (!hasModularArmor(loc)) {
             return damage;
@@ -12345,8 +12382,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((mount.getLocation() == loc)
                 && !mount.isDestroyed()
                 && (mount.getType() instanceof MiscType)
-                && ((MiscType) mount.getType())
-                    .hasFlag(MiscType.F_MODULAR_ARMOR)
+                && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)
                 // On 'Mech torsos only, modular armor covers either front
                 // or rear, as mounted.
                 && (!(this instanceof Mech)

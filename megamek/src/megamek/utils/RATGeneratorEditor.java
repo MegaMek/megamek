@@ -18,13 +18,16 @@ import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
+import megamek.common.UnitRoleHandler;
 import megamek.common.UnitType;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
@@ -45,14 +48,14 @@ public class RATGeneratorEditor extends JFrame {
             "Aerospace", "Space", "None"
     };
 
+    private static final FactionRecord GENERAL_FACTION = new FactionRecord("General", "General");
+
     private static RATGenerator rg;
     
     private static Integer[] ERAS;
 
     private final JComboBox<String> cbUnitType = new JComboBox<>();
     private final JComboBox<String> cbMovementType = new JComboBox<>();
-    private final JRadioButton radioModel = new JRadioButton("Model");
-    private final JRadioButton radioChassis = new JRadioButton("Chassis");
 
     private final JTabbedPane panMain = new JTabbedPane();
 
@@ -61,9 +64,13 @@ public class RATGeneratorEditor extends JFrame {
     private MasterUnitListTableModel masterUnitListModel;
     private TableRowSorter<MasterUnitListTableModel> masterUnitListSorter;
 
-    private final JComboBox<FactionRecord> factionChooser = new JComboBox<>();
-    private final JTable tblUnitEditor = new JTable();
-    private final UnitEditorTableModel unitEditorModel = new UnitEditorTableModel();
+    private final JComboBox<FactionRecord> factionChooserForModel = new JComboBox<>();
+    private final JTable tblUnitModelEditor = new JTable();
+    private final UnitEditorTableModel unitModelEditorModel = new UnitEditorTableModel();
+
+    private final JComboBox<FactionRecord> factionChooserForChassis = new JComboBox<>();
+    private final JTable tblUnitChassisEditor = new JTable();
+    private final UnitEditorTableModel unitChassisEditorModel = new UnitEditorTableModel();
 
     private final JTextField txtNewFaction = new JTextField(20);
     private final JCheckBox chkShowSubfactions = new JCheckBox();
@@ -72,6 +79,8 @@ public class RATGeneratorEditor extends JFrame {
     private final JTable tblMasterFactionList = new JTable();
     private FactionListTableModel masterFactionListModel;
     private TableRowSorter<FactionListTableModel> masterFactionListSorter;
+
+    private final List<String> currentChassisFactions = new ArrayList<>();
 
     private final JTable tblFactionEditor = new JTable();
     private FactionEditorTableModel factionEditorModel;
@@ -162,15 +171,21 @@ public class RATGeneratorEditor extends JFrame {
         }
     }
 
-    private void fillFactionChooser() {
+    private void fillFactionChoosers() {
         if (rg.getFactionList() == null) {
             return;
         }
-        factionChooser.removeAllItems();
+        fillFactionChooser(factionChooserForModel);
+        fillFactionChooser(factionChooserForChassis);
+    }
+
+    private void fillFactionChooser(JComboBox<FactionRecord> combo) {
+        combo.removeAllItems();
+        combo.addItem(GENERAL_FACTION);
         rg.getFactionList().stream()
                 .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName()))
-                .forEach(factionChooser::addItem);
-        factionChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
+                .forEach(combo::addItem);
+        combo.setRenderer((list, value, index, isSelected, cellHasFocus) -> {
             if (value == null) {
                 return new JLabel();
             } else {
@@ -194,39 +209,27 @@ public class RATGeneratorEditor extends JFrame {
         }
         cbMovementType.addActionListener(arg0 -> filterMasterUnitList());
 
-        radioModel.setSelected(true);
-        radioModel.addActionListener(ev -> {
-            if (unitEditorModel.getMode() != UnitEditorTableModel.MODE_MODEL &&
-                    tblMasterUnitList.getSelectedRow() >= 0) {
-                ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
-                unitEditorModel.setData(model, UnitEditorTableModel.MODE_MODEL);
-            } else {
-                unitEditorModel.clearData();
-            }
-        });
-
-        radioChassis.addActionListener(ev ->  {
-            if (unitEditorModel.getMode() != UnitEditorTableModel.MODE_CHASSIS &&
-                    tblMasterUnitList.getSelectedRow() >= 0) {
-                ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
-                unitEditorModel.setData(model, UnitEditorTableModel.MODE_CHASSIS);
-            } else {
-                unitEditorModel.clearData();
-            }
-        });
-
         result.add(new JLabel("Unit Type:"));
         result.add(cbUnitType);
         result.add(new JLabel("Movement Type:"));
         result.add(cbMovementType);
-        result.add(radioModel);
-        result.add(radioChassis);
-
-        ButtonGroup group = new ButtonGroup();
-        group.add(radioModel);
-        group.add(radioChassis);
 
         return result;
+    }
+
+    private void setCurrentUnitFactions() {
+        currentChassisFactions.clear();
+        if (tblMasterUnitList.getSelectedRow() >= 0) {
+            ModelRecord model = masterUnitListModel.getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
+            for (int i = 0; i < rg.getEraSet().size(); i++) {
+                Collection<AvailabilityRating> chassisRecs = rg.getChassisFactionRatings(ERAS[i], model.getChassisKey());
+                if (chassisRecs != null) {
+                    for (AvailabilityRating rec : chassisRecs) {
+                        currentChassisFactions.add(rec.getFactionCode());
+                    }
+                }
+            }
+        }
     }
 
     private JComponent createUnitTab() {
@@ -258,6 +261,7 @@ public class RATGeneratorEditor extends JFrame {
         tblMasterUnitList.setModel(masterUnitListModel);
         masterUnitListSorter = new TableRowSorter<>(masterUnitListModel);
         masterUnitListSorter.setComparator(MasterUnitListTableModel.COL_UNIT_TYPE, new UnitTypeComparator());
+        masterUnitListSorter.setComparator(MasterUnitListTableModel.COL_WEIGHT, Comparator.comparingDouble(d -> (double) d));
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(MasterUnitListTableModel.COL_UNIT_TYPE, SortOrder.ASCENDING));
         sortKeys.add(new RowSorter.SortKey(MasterUnitListTableModel.COL_CHASSIS, SortOrder.ASCENDING));
@@ -267,12 +271,15 @@ public class RATGeneratorEditor extends JFrame {
         tblMasterUnitList.setRowSorter(masterUnitListSorter);
         tblMasterUnitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblMasterUnitList.getSelectionModel().addListSelectionListener(arg0 -> {
+            setCurrentUnitFactions();
             if (tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord rec = masterUnitListModel.
                         getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
-                unitEditorModel.setData(rec, radioModel.isSelected() ? UnitEditorTableModel.MODE_MODEL : UnitEditorTableModel.MODE_CHASSIS);
+                unitModelEditorModel.setData(rec, UnitEditorTableModel.MODE_MODEL);
+                unitChassisEditorModel.setData(rec, UnitEditorTableModel.MODE_CHASSIS);
             } else {
-                unitEditorModel.clearData();
+                unitModelEditorModel.clearData();
+                unitChassisEditorModel.clearData();
             }
         });
 
@@ -283,46 +290,161 @@ public class RATGeneratorEditor extends JFrame {
         unitContainer.add(unitSelectorSide, BorderLayout.CENTER);
 
         Box factionEditSide = Box.createVerticalBox();
+        factionEditSide.add(createUnitModelEditor());
+        factionEditSide.add(Box.createVerticalStrut(5));
+        factionEditSide.add(createCopyBetweenButtonPanel());
+        factionEditSide.add(Box.createVerticalStrut(5));
+        factionEditSide.add(createUnitChassisEditor());
+        return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
+    }
+
+    private JComponent createCopyBetweenButtonPanel() {
+        JPanel panel = new JPanel();
+        JButton copyToModelButton = new JButton("\u25B2");
+        copyToModelButton.addActionListener(ev -> {
+            if (tblUnitChassisEditor.getSelectedRow() >= 0) {
+                int modelRow = tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow());
+                copyBetween(unitChassisEditorModel, unitModelEditorModel, modelRow);
+            }
+        });
+        JButton copyToChassisButton = new JButton("\u25BC");
+        copyToChassisButton.addActionListener(ev -> {
+            if (tblUnitModelEditor.getSelectedRow() >= 0) {
+                int modelRow = tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow());
+                copyBetween(unitModelEditorModel, unitChassisEditorModel, modelRow);
+            }
+        });
+        panel.add(copyToModelButton);
+        panel.add(Box.createHorizontalStrut(100));
+        panel.add(copyToChassisButton);
+        return panel;
+    }
+
+    private void copyBetween(UnitEditorTableModel source, UnitEditorTableModel destination, int row) {
+        destination.addEntry(source.getRow(row));
+    }
+
+    private JComponent createUnitModelEditor() {
+        Box unitModelEditor = Box.createVerticalBox();
         JPanel topPanel = new UIUtil.FixedYPanel();
-        factionEditSide.add(topPanel);
-        topPanel.add(factionChooser);
-        fillFactionChooser();
+        unitModelEditor.add(topPanel);
+        topPanel.add(new JLabel("--- Model ---       "));
+        topPanel.add(factionChooserForModel);
+        fillFactionChoosers();
 
         JButton button = new JButton("Add Row");
         topPanel.add(button);
         button.addActionListener(ev -> {
-            if ((factionChooser.getSelectedItem() != null) && !unitEditorModel.addEntry(factionChooser.getSelectedItem().toString())) {
-                JOptionPane.showMessageDialog(this, 
+            if ((factionChooserForModel.getSelectedItem() != null) && !unitModelEditorModel.addEntry(factionChooserForModel.getSelectedItem().toString())) {
+                JOptionPane.showMessageDialog(this,
                         "Unable to add model or chassis entry. Please select a unit model. " +
-                        "If adding a model entry, make sure you already have a chassis entry defined.");
+                                "If adding a model entry, make sure you already have a chassis entry defined.");
             }
         });
 
         button = new JButton("Delete Row");
         topPanel.add(button);
         button.addActionListener(ev -> {
-            if (tblUnitEditor.getSelectedRow() >= 0) {
-                unitEditorModel.removeEntry(tblUnitEditor.convertRowIndexToModel(tblUnitEditor.getSelectedRow()));
+            if (tblUnitModelEditor.getSelectedRow() >= 0) {
+                unitModelEditorModel.removeEntry(tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow()));
             }
         });
 
         button = new JButton("Copy Row");
         topPanel.add(button);
         button.addActionListener(ev -> {
-            if ((tblUnitEditor.getSelectedRow() >= 0) && (factionChooser.getSelectedItem() != null)) {
-                unitEditorModel.copyRow(tblUnitEditor.convertRowIndexToModel(tblUnitEditor.getSelectedRow()),
-                        factionChooser.getSelectedItem().toString());
+            if ((tblUnitModelEditor.getSelectedRow() >= 0) && (factionChooserForModel.getSelectedItem() != null)) {
+                unitModelEditorModel.copyRow(tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow()),
+                        factionChooserForModel.getSelectedItem().toString());
             }
         });
 
-        tblUnitEditor.setModel(unitEditorModel);
-        tblUnitEditor.createDefaultColumnsFromModel();
-        tblUnitEditor.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        scroll = new JScrollPane(tblUnitEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        factionEditSide.add(scroll);
+        tblUnitModelEditor.setModel(unitModelEditorModel);
+        tblUnitModelEditor.createDefaultColumnsFromModel();
+        tblUnitModelEditor.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tblUnitModelEditor.getTableHeader().setPreferredSize(
+                new Dimension(tblMasterUnitList.getColumnModel().getTotalColumnWidth(), 32));
+        var columnModel = tblUnitModelEditor.getColumnModel();
+        for (int i = 1; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setPreferredWidth(50);
+        }
+        tblUnitModelEditor.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tblUnitModelEditor.setDefaultRenderer(String.class, unitListRenderer);
 
-        return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
+        TableRowSorter<UnitEditorTableModel> unitEditorListSorter = new TableRowSorter<>(unitModelEditorModel);
+        unitEditorListSorter.setComparator(0, Comparator.comparing(String::toString));
+        List<RowSorter.SortKey> unitSortKeys = new ArrayList<>();
+        unitSortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        unitEditorListSorter.setSortKeys(unitSortKeys);
+        tblUnitModelEditor.setRowSorter(unitEditorListSorter);
+        JScrollPane scroll = new JScrollPane(tblUnitModelEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        unitModelEditor.add(scroll);
+        return unitModelEditor;
+    }
+
+    private JComponent createUnitChassisEditor() {
+        Box unitChassisEditor = Box.createVerticalBox();
+        JPanel topPanel = new UIUtil.FixedYPanel();
+        unitChassisEditor.add(topPanel);
+        topPanel.add(new JLabel("--- Chassis ---       "));
+        topPanel.add(factionChooserForChassis);
+        fillFactionChoosers();
+
+        JButton button = new JButton("Add Row");
+        topPanel.add(button);
+        button.addActionListener(ev -> {
+            if ((factionChooserForChassis.getSelectedItem() != null) && !unitChassisEditorModel.addEntry(factionChooserForChassis.getSelectedItem().toString())) {
+                JOptionPane.showMessageDialog(this,
+                        "Unable to add model or chassis entry. Please select a unit model. " +
+                                "If adding a model entry, make sure you already have a chassis entry defined.");
+            }
+            setCurrentUnitFactions();
+            unitModelEditorModel.fireTableDataChanged();
+        });
+
+        button = new JButton("Delete Row");
+        topPanel.add(button);
+        button.addActionListener(ev -> {
+            if (tblUnitChassisEditor.getSelectedRow() >= 0) {
+                unitChassisEditorModel.removeEntry(tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow()));
+            }
+            setCurrentUnitFactions();
+            unitModelEditorModel.fireTableDataChanged();
+        });
+
+        button = new JButton("Copy Row");
+        topPanel.add(button);
+        button.addActionListener(ev -> {
+            if ((tblUnitChassisEditor.getSelectedRow() >= 0) && (factionChooserForChassis.getSelectedItem() != null)) {
+                unitChassisEditorModel.copyRow(tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow()),
+                        factionChooserForChassis.getSelectedItem().toString());
+            }
+            setCurrentUnitFactions();
+            unitModelEditorModel.fireTableDataChanged();
+        });
+
+        tblUnitChassisEditor.setModel(unitChassisEditorModel);
+        tblUnitChassisEditor.createDefaultColumnsFromModel();
+        tblUnitChassisEditor.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tblUnitChassisEditor.getTableHeader().setPreferredSize(
+                new Dimension(tblUnitChassisEditor.getColumnModel().getTotalColumnWidth(), 32));
+        var columnModel = tblUnitChassisEditor.getColumnModel();
+        for (int i = 1; i < columnModel.getColumnCount(); i++) {
+            columnModel.getColumn(i).setPreferredWidth(50);
+        }
+        tblUnitChassisEditor.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        TableRowSorter<UnitEditorTableModel> unitEditorListSorter = new TableRowSorter<>(unitChassisEditorModel);
+        unitEditorListSorter.setComparator(0, Comparator.comparing(String::toString));
+        List<RowSorter.SortKey> unitSortKeys = new ArrayList<>();
+        unitSortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        unitEditorListSorter.setSortKeys(unitSortKeys);
+        tblUnitChassisEditor.setRowSorter(unitEditorListSorter);
+        JScrollPane scroll = new JScrollPane(tblUnitChassisEditor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        unitChassisEditor.add(scroll);
+        return unitChassisEditor;
     }
 
     private JPanel createFactionTab() {
@@ -504,13 +626,15 @@ public class RATGeneratorEditor extends JFrame {
         public static final int COL_CHASSIS = 0;
         public static final int COL_MODEL = 1;
         public static final int COL_UNIT_TYPE = 2;
-        public static final int COL_YEAR = 3;
-        public static final int COL_ROLE = 4;
-        public static final int COL_DEPLOYED_WITH = 5;
-        public static final int COL_EXCLUDE_FACTIONS = 6;
-        public static final int NUM_COLS = 7;
+        public static final int COL_WEIGHT = 3;
+        public static final int COL_YEAR = 4;
+        public static final int COL_CANON_ROLE = 5;
+        public static final int COL_ROLE = 6;
+        public static final int COL_DEPLOYED_WITH = 7;
+        public static final int COL_EXCLUDE_FACTIONS = 8;
+        public static final int NUM_COLS = 9;
         public static final String[] colNames = {
-                "Chassis", "Model", "Unit Type", "Year", "Role", "Deployed With", "Exclude Factions"
+                "Chassis", "Model", "Unit Type", "Weight", "Year", "MUL Role", "Role", "Deployed With", "Exclude Factions"
         };
 
         private final ArrayList<ModelRecord> data;
@@ -568,6 +692,8 @@ public class RATGeneratorEditor extends JFrame {
                         System.err.println("Could not find mechsummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMechSummary().getUnitType();
+                case COL_WEIGHT:
+                    return data.get(row).getMechSummary().getTons();
                 case COL_YEAR:
                     if (data.get(row).getMechSummary() == null) {
                         System.err.println("Could not find mechsummary for " + data.get(row).getKey());
@@ -575,6 +701,8 @@ public class RATGeneratorEditor extends JFrame {
                     return data.get(row).getMechSummary().getYear();
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
+                case COL_CANON_ROLE:
+                    return UnitRoleHandler.getRoleFor(data.get(row).getChassis() + " " + data.get(row).getModel()).toString();
                 case COL_DEPLOYED_WITH:
                     StringJoiner sj = new StringJoiner(",");
                     data.get(row).getDeployedWith().forEach(sj::add);
@@ -620,7 +748,7 @@ public class RATGeneratorEditor extends JFrame {
         public static final int MODE_SUMMARY = 2;
 
         ArrayList<String> factions;
-        HashMap<String, ArrayList<String>> data;
+        HashMap<String, List<String>> data;
         private int mode;
         private AbstractUnitRecord unitRecord;
         
@@ -688,7 +816,7 @@ public class RATGeneratorEditor extends JFrame {
             if (col == 0) {
                 return "Faction";
             }
-            return ERAS[col - 1] + " (" + getEra(ERAS[col - 1]) + ")";
+            return "<HTML><CENTER>" + ERAS[col - 1] + "<BR>" + getEra(ERAS[col - 1]) + "</HTML>";
         }
 
         @Override
@@ -759,10 +887,18 @@ public class RATGeneratorEditor extends JFrame {
         }
 
         public boolean addEntry(String faction) {
-            if (unitRecord == null) {                 
+            ArrayList<String> list = new ArrayList<>();
+            while (list.size() < ERAS.length) {
+                list.add("");
+            }
+            return addEntry(faction, list);
+        }
+
+        public boolean addEntry(String faction, List<String> factionData) {
+            if (unitRecord == null) {
                 return false;
             }
-            
+
             if (mode == MODE_MODEL) {
                 boolean chassisRecordFound = false;
                 for (int era : ERAS) {
@@ -771,20 +907,34 @@ public class RATGeneratorEditor extends JFrame {
                         break;
                     }
                 }
-                
+
                 if (!chassisRecordFound) {
                     return false;
                 }
-            }                    
-            
-            factions.add(faction);
-            ArrayList<String> list = new ArrayList<>();
-            while (list.size() < ERAS.length) {
-                list.add("");
             }
-            data.put(faction, list);
+
+            factions.add(faction);
+            data.put(faction, factionData);
             fireTableDataChanged();
             return true;
+        }
+
+        public boolean addEntry(RowData rowData) {
+            boolean rowAdded = addEntry(rowData.faction, rowData.eraData);
+            if (rowAdded) {
+                for (int i = 0; i < ERAS.length; i++) {
+                    if (!rowData.eraData.get(i).isBlank()) {
+                        AvailabilityRating ar = new AvailabilityRating(getUnitKey(), ERAS[i],
+                                rowData.faction + ":" + rowData.eraData.get(i));
+                        if (mode == MODE_MODEL) {
+                            rg.setModelFactionRating(ERAS[i], getUnitKey(), ar);
+                        } else {
+                            rg.setChassisFactionRating(ERAS[i], getUnitKey(), ar);
+                        }
+                    }
+                }
+            }
+            return rowAdded;
         }
 
         public void removeEntry(int row) {
@@ -800,10 +950,15 @@ public class RATGeneratorEditor extends JFrame {
             fireTableDataChanged();
         }
 
+        /** Returns the given row data as a List with the first entry being the faction. */
+        public RowData getRow(int row) {
+            return new RowData(factions.get(row), data.get(factions.get(row)));
+        }
+
         public void copyRow(int row, String newFaction) {
-            ArrayList<String> copyFrom = data.get(factions.get(row));
+            List<String> copyFrom = data.get(factions.get(row));
             factions.add(newFaction);
-            ArrayList<String> copyTo = new ArrayList<>();
+            List<String> copyTo = new ArrayList<>();
             for (int i = 0; i < ERAS.length; i++) {
                 copyTo.add(copyFrom.get(i));
             }       
@@ -826,6 +981,33 @@ public class RATGeneratorEditor extends JFrame {
             return mode;
         }
     }
+
+    private static class RowData {
+        String faction;
+        List<String> eraData;
+
+        public RowData(String faction, List<String> eraData) {
+            this.faction = faction;
+            this.eraData = eraData;
+        }
+    }
+
+    TableCellRenderer unitListRenderer = new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if ((column == 0) && (value instanceof String)) {
+                String faction = (String) value;
+                if (!currentChassisFactions.contains(faction)) {
+                    setForeground(Color.RED);
+                } else {
+                    setForeground(null);
+                }
+            }
+
+            return this;
+        }
+    };
 
     private static class UnitTypeComparator implements Comparator<String> {
         private final Map<String, Integer> keys;
@@ -863,19 +1045,19 @@ public class RATGeneratorEditor extends JFrame {
         public FactionListTableModel(Collection<FactionRecord> factionList) {
             data = new ArrayList<>();
             data.addAll(factionList);
-            fillFactionChooser();
+            fillFactionChoosers();
         }
         
         public void addRecord(FactionRecord rec) {
             data.add(rec);
             fireTableDataChanged();
-            fillFactionChooser();
+            fillFactionChoosers();
         }
         
         public void delRecord(FactionRecord rec) {
             data.remove(rec);
             fireTableDataChanged();
-            fillFactionChooser();
+            fillFactionChoosers();
         }
         
         @Override

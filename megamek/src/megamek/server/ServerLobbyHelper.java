@@ -295,7 +295,7 @@ class ServerLobbyHelper {
      * Handles a force update packet, forwarding a client-side change that 
      * only affects forces, not entities:
      * - rename
-     * - move subforce/entity up/down (this does not change the entitiy, only the force)
+     * - move subforce/entity up/down (this does not change the entity, only the force)
      * - owner change of only the force (not the entities, only within a team) 
      * This method is intended for use in the lobby!
      */
@@ -379,12 +379,13 @@ class ServerLobbyHelper {
                     if (game.getEntity(id).getOwner().isEnemyOf(entity.getOwner())) {
                         entity.setC3NetIdSelf();
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (entity.hasAnyC3System()) {
-                if (entity.getC3Master() != null 
-                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner()))
-                entity.setC3Master(null, true);
+                if ((entity.getC3Master() != null)
+                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner())) {
+                    entity.setC3Master(null, true);
+                }
             }
         }
     }

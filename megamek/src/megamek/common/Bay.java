@@ -381,7 +381,7 @@ public class Bay implements Transporter, ITechnology {
 
     /**
      * @return The amount of unused space in the bay expressed in slots. For most bays this is the
-     *         same as the the unused space, but bays for units that can take up a variable amount
+     *         same as the unused space, but bays for units that can take up a variable amount
      *         of space (such as infantry bays) this calculates the number of the default unit size
      *         that can fit into the remaining space.
      */

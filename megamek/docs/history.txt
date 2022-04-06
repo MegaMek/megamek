@@ -26,6 +26,18 @@ VERSION HISTORY:
 + Issue #3505: Improved bot valuation of attacks by variable-damage infantry weapons (e.g. support lasers)
 + Issue #3448: Display unit cost in mech summary without counting ammo.
 + Issue #3502: Disable Jump Button when prone
++ Data: Adding Shrapnel Infantry Weapons. These have been converted per the rules in AToWC but things like
+        proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
+        Compared to lots of the existing infantry weapons these are long ranged, and more powerful especially the sniper
+        rifles.
++ PR #3490: RATGeneratorEditor UX Improvements
++ PR #3515: Modernizing a bunch of Legacy Logging
++ Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
++ Data #3533, #3529, #3528, #3527, #3518, #3517, #3516, #3430, and #3410 fixes for various unit files. 
+	RAT Generator Rec Guide 18 updates, Tech Progression errata. 
++ MML Issue #927: Add LAM FuelTank
++ PR #3525: RATGeneratorEditor: Allow deleting RAT Roles and show MUL Role
++ Data: Updating Clothing light to remove offending text. 
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

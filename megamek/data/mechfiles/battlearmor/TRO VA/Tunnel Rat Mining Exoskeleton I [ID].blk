@@ -13,12 +13,16 @@ BattleArmor
 </UnitType>
 
 <Name>
-Tunnel Rat Mining Exoskeleton
+Tunnel Rat I Mining Exoskeleton
 </Name>
 
 <Model>
-I [Industrial Drill]
+[Industrial Drill]
 </Model>
+
+<mul id:>
+7218
+</mul id:>
 
 <year>
 3055

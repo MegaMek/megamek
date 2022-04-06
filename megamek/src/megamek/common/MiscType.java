@@ -1777,6 +1777,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHarJelIII());
         EquipmentType.addType(MiscType.createRadicalHeatSinkSystem());
         EquipmentType.addType(MiscType.createLAMBombBay());
+        EquipmentType.addType(MiscType.createLAMAdditionalFuel());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystemMech());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
         EquipmentType.addType(MiscType.createFluidSuctionSystem());
@@ -3822,7 +3823,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createClothingLightInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Clothing, Light/Naked ;)";
+        misc.name = "Clothing, Light (e.g. Summer Wear/None)";
         misc.setInternalName(misc.name);
         misc.addLookupName("ClothingLightNone");
         misc.damageDivisor = 0.5;
@@ -4121,7 +4122,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createSnowSuitInfArmor() {
         MiscType misc = new MiscType();
-        misc.name = "Snow suit";
+        misc.name = "Snowsuit";
         misc.setInternalName(misc.name);
         misc.addLookupName("SnowSuit");
         misc.damageDivisor = 1.0;
@@ -6787,8 +6788,9 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "238, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3052, 3062, 3067, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setISAdvancement(3052, 3061, 3067, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, true, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
@@ -11153,39 +11155,39 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Unofficial or Made up Equipment
-    // No clue what this no unit is using this
-
-    /*
-     * public static MiscType createCoolantSystem() { MiscType misc = new
-     * MiscType();
-     * 
-     * misc.name = "Coolant System"; misc.setInternalName(misc.name); misc.tonnage =
-     * 9; misc.criticals = 2; misc.cost = 90000; misc.flags =
-     * misc.flags.or(F_COOLANT_SYSTEM).or(F_MECH_EQUIPMENT); misc.bv = 15;
-     * misc.techAdvancement.setTechBase(TECH_BASE_IS);
-     * misc.techAdvancement.setISAdvancement(DATE_NONE, 3049, DATE_NONE);
-     * misc.techAdvancement.setTechRating(RATING_C);
-     * misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X,
-     * RATING_E, RATING_X }); return misc; }
-     */
-
     public static MiscType createLAMBombBay() {
         MiscType misc = new MiscType();
         misc.name = "Bomb Bay";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.LAM_BOMB_BAY);
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
         misc.explosive = true;
+        misc.cost = 5000;
         misc.rulesRefs = "110, IO";
+        // IO, p.220/221 (LAMs can be constructed in all later eras so Bomb Bays must not go extinct)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684)
+                .setClanAdvancement(DATE_NONE, 2684)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setTechRating(RATING_D).setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
 
-        // Not listed in IO; this an amalgam of bimodal and standard LAM values.
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
-            .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    public static MiscType createLAMAdditionalFuel() {
+        MiscType misc = new MiscType();
+        misc.name = "Fuel Tank";
+        misc.setInternalName(EquipmentTypeLookup.LAM_FUEL_TANK);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 200;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT);
+        misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel, IO p.111
+        misc.rulesRefs = "114, IO";
+        // IO, p.220/221
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES)
+                .setTechRating(RATING_B).setAvailability(RATING_B, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
